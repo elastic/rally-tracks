@@ -59,11 +59,10 @@
         {
           "name": "percolator_with_content_president_bush",
           "index": "queries",
-          "type": "percolator",
+          "type": ".percolator",
           "body": {
             "query" : {
-              "percolate" : {
-                "field" : "query",
+              "percolator" : {
                 "document_type" : "content",
                 "document" : {
                   "body" : "president bush"
@@ -75,11 +74,10 @@
         {
           "name": "percolator_with_content_saddam_hussein",
           "index": "queries",
-          "type": "percolator",
+          "type": ".percolator",
           "body": {
             "query" : {
-              "percolate" : {
-                "field" : "query",
+              "percolator" : {
                 "document_type" : "content",
                 "document" : {
                   "body" : "saddam hussein"
@@ -91,11 +89,10 @@
         {
           "name": "percolator_with_content_hurricane_katrina",
           "index": "queries",
-          "type": "percolator",
+          "type": ".percolator",
           "body": {
             "query" : {
-              "percolate" : {
-                "field" : "query",
+              "percolator" : {
                 "document_type" : "content",
                 "document" : {
                   "body" : "hurricane katrina"
@@ -107,11 +104,10 @@
         {
           "name": "percolator_with_content_google",
           "index": "queries",
-          "type": "percolator",
+          "type": ".percolator",
           "body": {
             "query" : {
-              "percolate" : {
-                "field" : "query",
+              "percolator" : {
                 "document_type" : "content",
                 "document" : {
                   "body" : "google"
@@ -123,13 +119,12 @@
         {
           "name": "percolator_no_score_with_content_google",
           "index": "queries",
-          "type": "percolator",
+          "type": ".percolator",
           "body": {
             "query" : {
               "constant_score": {
                 "query": {
-                  "percolate" : {
-                    "field" : "query",
+                  "percolator" : {
                     "document_type" : "content",
                     "document" : {
                       "body" : "google"
@@ -142,11 +137,10 @@
         },        {
           "name": "percolator_with_highlighting",
           "index": "queries",
-          "type": "percolator",
+          "type": ".percolator",
           "body": {
             "query": {
-              "percolate" : {
-                "field" : "query",
+              "percolator" : {
                 "document_type" : "content",
                 "document" : {
                   "body" : "Israeli prime minister Ariel Sharon suffers a massive stroke; he is replaced by acting prime minister Ehud Olmert"
@@ -163,11 +157,10 @@
         {
           "name": "percolator_with_content_ignore_me",
           "index": "queries",
-          "type": "percolator",
+          "type": ".percolator",
           "body": {
             "query" : {
-              "percolate" : {
-                "field" : "query",
+              "percolator" : {
                 "document_type" : "content",
                 "document" : {
                   "body" : "ignore me"
@@ -179,13 +172,12 @@
         {
           "name": "percolator_no_score_with_content_ignore_me",
           "index": "queries",
-          "type": "percolator",
+          "type": ".percolator",
           "body": {
             "query" : {
               "constant_score": {
                 "query": {
-                  "percolate" : {
-                    "field" : "query",
+                  "percolator" : {
                     "document_type" : "content",
                     "document" : {
                       "body" : "ignore me"

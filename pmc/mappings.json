@@ -6,22 +6,24 @@
     },
     "properties": {
       "name": {
-        "type": "keyword"
+        "type": "string",
+        "index": "not_analyzed"
       },
       "journal": {
-        "type": "text"
+        "type": "string"
       },
       "date": {
-        "type": "text"
+        "type": "string"
       },
       "volume": {
-        "type": "text"
+        "type": "string"
       },
       "issue": {
-        "type": "text"
+        "type": "string"
       },
       "accession": {
-        "type": "keyword"
+        "type": "string",
+        "index": "not_analyzed"
       },
       "timestamp": {
         "type": "date",
@@ -31,7 +33,7 @@
         "type": "integer"
       },
       "body": {
-        "type": "text"
+        "type": "string"
       }
     }
   }

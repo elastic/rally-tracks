@@ -162,28 +162,6 @@
               "match_all": {}
             }
           }
-        },
-        {
-          "name": "expression",
-          "body": {
-            "query": {
-              "function_score": {
-                "query": {
-                  "match_all": {}
-                },
-                "functions": [
-                  {
-                    "script_score": {
-                      "script": {
-                        "inline": "(ln(abs(doc['population'])) + doc['elevation'] + doc['latitude']) * _score",
-                        "lang": "expression"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
         }        
       ]
     }

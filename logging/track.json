@@ -1,0 +1,286 @@
+{
+  "meta": {
+    "short-description": "Logging benchmark",
+    "description": "This benchmark indexes HTTP server log data from the 1998 world cup.",
+    "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/logging"
+  },
+  "indices": [
+    {
+      "name": "logs-181998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-181998.json.bz2",
+          "document-count": 2708746,
+          "compressed-bytes": 13815456,
+          "uncompressed-bytes": 363512754
+        }
+      ]
+    },
+    {
+      "name": "logs-191998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-191998.json.bz2",
+          "document-count": 9697882,
+          "compressed-bytes": 49439633,
+          "uncompressed-bytes": 1301732149
+        }
+      ]
+    },
+    {
+      "name": "logs-201998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-201998.json.bz2",
+          "document-count": 13053463,
+          "compressed-bytes": 65623436,
+          "uncompressed-bytes": 1744012279
+        }
+      ]
+    },
+    {
+      "name": "logs-211998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-211998.json.bz2",
+          "document-count": 17647279,
+          "compressed-bytes": 88258230,
+          "uncompressed-bytes": 2364230815
+        }
+      ]
+    },
+    {
+      "name": "logs-221998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-221998.json.bz2",
+          "document-count": 10716760,
+          "compressed-bytes": 54160603,
+          "uncompressed-bytes": 1438320123
+        }
+      ]
+    },
+    {
+      "name": "logs-231998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-231998.json.bz2",
+          "document-count": 11961342,
+          "compressed-bytes": 60927822,
+          "uncompressed-bytes": 1597530673
+        }
+      ]
+    },
+    {
+      "name": "logs-241998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-241998.json.bz2",
+          "document-count": 181463624,
+          "compressed-bytes": 905378242,
+          "uncompressed-bytes": 24555905444
+        }
+      ]
+    },
+    {
+      "name": "logs-251998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-251998.json.bz2",
+          "document-count": 200676479,
+          "compressed-bytes": 1028103583,
+          "uncompressed-bytes": 27113766144
+        }
+      ]
+    },
+    {
+      "name": "logs-261998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-261998.json.bz2",
+          "document-count": 49371733,
+          "compressed-bytes": 252108887,
+          "uncompressed-bytes": 6672123801
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "name": "index-append-default-settings",
+      "type": "index",
+      "index-settings": {
+        "index.number_of_replicas": 0
+      },
+      "bulk-size": 5000,
+      "force-merge": true,
+      "clients": {
+        "count": 8
+      }
+    },
+    {
+      "name": "index-append-fast-settings",
+      "type": "index",
+      "index-settings": {
+        "index.number_of_replicas": 0,
+        "index.refresh_interval": "30s",
+        "index.number_of_shards": 6,
+        "index.translog.flush_threshold_size": "4g"
+      },
+      "force-merge": true,
+      "bulk-size": 5000,
+      "clients": {
+        "count": 8
+      }
+    },
+    {
+      "name": "index-append-update-fast-settings",
+      "type": "index",
+      "index-settings": {
+        "index.number_of_replicas": 0,
+        "index.refresh_interval": "30s",
+        "index.number_of_shards": 6,
+        "index.translog.flush_threshold_size": "4g"
+      },
+      "bulk-size": 5000,
+      "force-merge": true,
+      "conflicts": "sequential",
+      "clients": {
+        "count": 8
+      }
+    },
+    {
+      "name": "stats",
+      "type": "stats",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": {
+        "count": 1
+      }
+    },
+    {
+      "name": "search",
+      "type": "search",
+      "target-throughput": 1,
+      "warmup-iterations": 1000,
+      "iterations": 1000,
+      "clients": {
+        "count": 1
+      },
+      "queries": [
+        {
+          "name": "default",
+          "index": "logs-*",
+          "type": "type",
+          "body": {
+            "query": {
+              "match_all": {}
+            }
+          }
+        },
+        {
+          "name": "term",
+          "index": "logs-*",
+          "type": "type",
+          "body": {
+            "query": {
+              "term": {
+                "request.raw": {
+                  "value": "GET / HTTP/1.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "range",
+          "index": "logs-*",
+          "type": "type",
+          "body": {
+            "query": {
+              "range": {
+                "@timestamp": {
+                  "gte": "now-{{'15-05-1998' | days_ago(now)}}d/d",
+                  "lt": "now/d"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "hourly_agg",
+          "index": "logs-*",
+          "type": "type",
+          "body": {
+            "size": 0,
+            "aggs": {
+              "by_hour": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "interval": "hour"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "scroll",
+          "query-type": "scroll",
+          "index": "logs-*",
+          "type": "type",
+          "pages": 25,
+          "results-per-page": 1000,
+          "body": {
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "name": "append-no-conflicts",
+      "description": "",
+      "schedule": [
+        "index-append-default-settings",
+        "stats",
+        "search"
+      ]
+    },
+    {
+      "name": "append-fast-no-conflicts",
+      "description": "",
+      "schedule": [
+        "index-append-fast-settings"
+      ]
+    },
+    {
+      "name": "append-fast-with-conflicts",
+      "description": "",
+      "schedule": [
+        "index-append-update-fast-settings"
+      ]
+    }
+
+  ]
+}

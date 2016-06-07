@@ -1,0 +1,33 @@
+{
+  "type": {
+    "dynamic": "strict",
+    "_all":       { 
+      "enabled": false  
+    },
+    "properties": {
+      "@timestamp": {
+        "format": "epoch_second",
+        "type": "date"
+      },
+      "clientip": {
+        "type": "ip"
+      },
+      "request": {
+        "type": "text",
+        "term_vector": "with_positions_offsets",
+        "fields": {
+          "raw": {
+            "ignore_above": 256,
+            "type": "keyword"
+          }
+        }
+      },
+      "status": {
+        "type": "integer"
+      },
+      "size": {
+        "type": "integer"
+      }
+    }
+  }
+}

@@ -6,10 +6,11 @@
         "type": "integer"
       },
       "name": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
@@ -17,10 +18,11 @@
         "type": "long"
       },
       "feature_class": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
@@ -28,67 +30,74 @@
         "type": "double"
       },
       "cc2": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
       "timezone": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
       "dem": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
       "country_code": {
-        "type": "text",
-        "fielddata": true,
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
       "admin1_code": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
       "admin2_code": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
       "admin3_code": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
       "admin4_code": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
@@ -96,26 +105,29 @@
         "type": "double"
       },
       "feature_code": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
       "alternatenames": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },
       "asciiname": {
-        "type": "text",
+        "type": "string",
         "fields": {
           "raw": {
-            "type": "keyword"
+            "index": "not_analyzed",
+            "type": "string"
           }
         }
       },

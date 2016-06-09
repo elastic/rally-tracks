@@ -1,0 +1,182 @@
+{
+  "meta": {
+    "short-description": "Logging benchmark",
+    "description": "This benchmark indexes HTTP server log data from the 1998 world cup.",
+    "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/logging"
+  },
+  "indices": [
+    {
+      "name": "logs-181998",
+      "types": [
+        {
+          "name": "type",
+          "mapping": "mappings.json",
+          "documents": "documents-181998.json.bz2",
+          "document-count": 2708746,
+          "compressed-bytes": 13815456,
+          "uncompressed-bytes": 363512754
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "name": "index-append-default-settings",
+      "type": "index",
+      "index-settings": {
+        "index.number_of_replicas": 0
+      },
+      "bulk-size": 5000,
+      "force-merge": true,
+      "clients": {
+        "count": 8
+      }
+    },
+    {
+      "name": "index-append-fast-settings",
+      "type": "index",
+      "index-settings": {
+        "index.number_of_replicas": 0,
+        "index.refresh_interval": "30s",
+        "index.number_of_shards": 6,
+        "index.translog.flush_threshold_size": "4g"
+      },
+      "force-merge": true,
+      "bulk-size": 5000,
+      "clients": {
+        "count": 8
+      }
+    },
+    {
+      "name": "index-append-update-fast-settings",
+      "type": "index",
+      "index-settings": {
+        "index.number_of_replicas": 0,
+        "index.refresh_interval": "30s",
+        "index.number_of_shards": 6,
+        "index.translog.flush_threshold_size": "4g"
+      },
+      "bulk-size": 5000,
+      "force-merge": true,
+      "conflicts": "sequential",
+      "clients": {
+        "count": 8
+      }
+    },
+    {
+      "name": "stats",
+      "type": "stats",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": {
+        "count": 1
+      }
+    },
+    {
+      "name": "search",
+      "type": "search",
+      "target-throughput": 1,
+      "warmup-iterations": 1000,
+      "iterations": 1000,
+      "clients": {
+        "count": 1
+      },
+      "queries": [
+        {
+          "name": "default",
+          "index": "logs-*",
+          "type": "type",
+          "body": {
+            "query": {
+              "match_all": {}
+            }
+          }
+        },
+        {
+          "name": "term",
+          "index": "logs-*",
+          "type": "type",
+          "body": {
+            "query": {
+              "term": {
+                "request.raw": {
+                  "value": "GET / HTTP/1.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "range",
+          "index": "logs-*",
+          "type": "type",
+          "body": {
+            "query": {
+              "range": {
+                "@timestamp": {
+                  "gte": "now-{{'15-05-1998' | days_ago(now)}}d/d",
+                  "lt": "now/d"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "hourly_agg",
+          "index": "logs-*",
+          "type": "type",
+          "body": {
+            "size": 0,
+            "aggs": {
+              "by_hour": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "interval": "hour"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "scroll",
+          "query-type": "scroll",
+          "index": "logs-*",
+          "type": "type",
+          "pages": 25,
+          "results-per-page": 1000,
+          "body": {
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "name": "append-no-conflicts",
+      "description": "",
+      "schedule": [
+        "index-append-default-settings",
+        "stats",
+        "search"
+      ]
+    },
+    {
+      "name": "append-fast-no-conflicts",
+      "description": "",
+      "schedule": [
+        "index-append-fast-settings"
+      ]
+    },
+    {
+      "name": "append-fast-with-conflicts",
+      "description": "",
+      "schedule": [
+        "index-append-update-fast-settings"
+      ]
+    }
+
+  ]
+}

@@ -13,12 +13,13 @@
         "type": "ip"
       },
       "request": {
-        "type": "text",
+        "type": "string",
         "term_vector": "with_positions_offsets",
         "fields": {
           "raw": {
             "ignore_above": 256,
-            "type": "keyword"
+            "type": "string",
+            "index": "not_analyzed"
           }
         }
       },

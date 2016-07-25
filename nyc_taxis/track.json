@@ -22,7 +22,60 @@
   "operations": [
     {
       "name": "index",
-      "type": "index",
+      "operation-type": "index",
+      "bulk-size": 10000
+    },
+    {
+      "name": "default",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "range",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "range": {
+            "total_amount": {
+              "gte": 5,
+              "lt": 15
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distance_amount_agg",
+      "operation-type": "search",
+      "cache": false,
+      "body": {
+        "size": 0,
+        "aggs": {
+          "distance_histo": {
+            "histogram": {
+              "field": "distance",
+              "interval": 1
+            },
+            "aggs": {
+              "total_amount_stats": {
+                "stats": {
+                  "field": "total_amount"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "challenges": [
+    {
+      "name": "append-no-conflicts",
+      "description": "index data and then run a couple search requests",
       "index-settings": {
         "index.number_of_shards": 1,
         "index.codec": "best_compression",
@@ -30,78 +83,34 @@
         "index.refresh_interval": "30s",
         "index.translog.flush_threshold_size": "4g"
       },
-      "bulk-size": 10000,
-      "force-merge": false,
-      "clients": {
-        "count": 8
-      }
-    },
-    {
-      "name": "search",
-      "type": "search",
-      "target-throughput": 1,
-      "warmup-iterations": 100,
-      "iterations": 100,
-      "clients": {
-        "count": 1
-      },
-      "queries": [
-        {
-          "name": "default",
-          "body": {
-            "query": {
-              "match_all": {}
-            }
-          }
-        },
-        {
-          "name": "range",
-          "body": {
-            "query": {
-              "range": {
-                "total_amount": {
-                  "gte": 5,
-                  "lt": 15
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "distance_amount_agg",
-          "cache": false,
-          "body": {
-            "size": 0,
-            "aggs": {
-              "distance_histo": {
-                "histogram": {
-                  "field": "distance",
-                  "interval": 1
-                },
-                "aggs": {
-                  "total_amount_stats": {
-                    "stats": {
-                      "field": "total_amount"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }        
-      ]
-    }
-  ],
-  "challenges": [
-    {
-      "name": "append-no-conflicts",
-      "description": "index data and then run a couple search requests",
       "schedule": [
-        "index",
-        "search"
+        {
+          "operation": "index",
+          "clients": 8
+        },
+        {
+          "parallel": {
+            "clients": 3,
+            "warmup-iterations": 100,
+            "iterations": 100,
+            "tasks": [
+              {
+                "operation": "default",
+                "target-throughput": 10
+              },
+              {
+                "operation": "range",
+                "target-throughput": 10
+              },
+              {
+                "operation": "distance_amount_agg",
+                "target-throughput": 10
+              }
+            ]
+          }
+        }
       ]
     }
-
   ]
 }
 

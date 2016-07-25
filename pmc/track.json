@@ -21,161 +21,206 @@
   ],
   "operations": [
     {
-      "name": "index-append-default-settings",
-      "type": "index",
-      "index-settings": {
-        "index.number_of_replicas": 0
-      },
+      "name": "index-append",
+      "operation-type": "index",
+      "bulk-size": 500
+    },
+    {
+      "name": "index-update",
+      "operation-type": "index",
       "bulk-size": 500,
-      "force-merge": true,
-      "clients": {
-        "count": 8
+      "conflicts": "sequential"
+    },
+    {
+      "name": "force-merge",
+      "operation-type": "force-merge"
+    },
+    {
+      "name": "index-stats",
+      "operation-type": "index-stats"
+    },
+    {
+      "name": "node-stats",
+      "operation-type": "node-stats"
+    },
+    {
+      "name": "default",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        }
       }
     },
     {
-      "name": "index-append-fast-settings",
-      "type": "index",
-      "index-settings": {
-        "index.number_of_replicas": 0,
-        "index.refresh_interval": "30s",
-        "index.number_of_shards": 6,
-        "index.translog.flush_threshold_size": "4g"
-      },
-      "force-merge": true,
-      "bulk-size": 500,
-      "clients": {
-        "count": 8
+      "name": "term",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "term": {
+            "body": "physician"
+          }
+        }
       }
     },
     {
-      "name": "index-append-update-fast-settings",
-      "type": "index",
-      "index-settings": {
-        "index.number_of_replicas": 0,
-        "index.refresh_interval": "30s",
-        "index.number_of_shards": 6,
-        "index.translog.flush_threshold_size": "4g"
-      },
-      "bulk-size": 500,
-      "force-merge": true,
-      "conflicts": "sequential",
-      "clients": {
-        "count": 8
+      "name": "phrase",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_phrase": {
+            "body": "newspaper coverage"
+          }
+        }
       }
     },
     {
-      "name": "stats",
-      "type": "stats",
-      "warmup-iterations": 100,
-      "iterations": 100,
-      "clients": {
-        "count": 1
-      }
-    },
-    {
-      "name": "search",
-      "type": "search",
-      "target-throughput": 1,
-      "warmup-iterations": 1000,
-      "iterations": 1000,
-      "clients": {
-        "count": 1
-      },
-      "queries": [
-        {
-          "name": "default",
-          "body": {
-            "query": {
-              "match_all": {}
-            }
-          }
-        },
-        {
-          "name": "term",
-          "body": {
-            "query": {
-              "term": {
-                "body": "physician"
-              }
-            }
-          }
-        },
-        {
-          "name": "phrase",
-          "body": {
-            "query": {
-              "match_phrase": {
-                "body": "newspaper coverage"
-              }
-            }
-          }
-        },
-        {
-          "name": "articles_monthly_agg_uncached",
-          "cache": false,
-          "body": {
-            "size": 0,
-            "aggs": {
-              "articles_over_time": {
-                "date_histogram": {
-                  "field": "timestamp",
-                  "interval": "month"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "articles_monthly_agg_cached",
-          "cache": true,
-          "body": {
-            "size": 0,
-            "aggs": {
-              "articles_over_time": {
-                "date_histogram": {
-                  "field": "timestamp",
-                  "interval": "month"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "scroll",
-          "query-type": "scroll",
-          "pages": 25,
-          "results-per-page": 1000,
-          "body": {
-            "query": {
-              "match_all": {}
+      "name": "articles_monthly_agg_uncached",
+      "operation-type": "search",
+      "cache": false,
+      "body": {
+        "size": 0,
+        "aggs": {
+          "articles_over_time": {
+            "date_histogram": {
+              "field": "timestamp",
+              "interval": "month"
             }
           }
         }
-      ]
+      }
+    },
+    {
+      "name": "articles_monthly_agg_cached",
+      "operation-type": "search",
+      "cache": true,
+      "body": {
+        "size": 0,
+        "aggs": {
+          "articles_over_time": {
+            "date_histogram": {
+              "field": "timestamp",
+              "interval": "month"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "scroll",
+      "operation-type": "search",
+      "pages": 25,
+      "results-per-page": 1000,
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
     }
   ],
   "challenges": [
     {
       "name": "append-no-conflicts",
       "description": "",
+      "index-settings": {
+        "index.number_of_replicas": 0
+      },
       "schedule": [
-        "index-append-default-settings",
-        "stats",
-        "search"
+        {
+          "operation": "index-append",
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        },
+        {
+          "operation": "index-stats",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "operation": "node-stats",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "parallel": {
+            "clients": 8,
+            "warmup-iterations": 1000,
+            "iterations": 1000,
+            "tasks": [
+              {
+                "operation": "default",
+                "target-throughput": 20
+              },
+              {
+                "operation": "term",
+                "target-throughput": 20
+              },
+              {
+                "operation": "phrase",
+                "target-throughput": 20
+              },
+              {
+                "operation": "articles_monthly_agg_uncached",
+                "target-throughput": 20
+              },
+              {
+                "operation": "articles_monthly_agg_cached",
+                "target-throughput": 20
+              },
+              {
+                "operation": "scroll",
+                "target-throughput": 20
+              }
+            ]
+          }
+        }
       ]
     },
     {
       "name": "append-fast-no-conflicts",
       "description": "",
+      "index-settings": {
+        "index.number_of_replicas": 0,
+        "index.refresh_interval": "30s",
+        "index.number_of_shards": 6,
+        "index.translog.flush_threshold_size": "4g"
+      },
       "schedule": [
-        "index-append-fast-settings"
+        {
+          "operation": "index-append",
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        }
       ]
     },
     {
       "name": "append-fast-with-conflicts",
       "description": "",
+      "index-settings": {
+        "index.number_of_replicas": 0,
+        "index.refresh_interval": "30s",
+        "index.number_of_shards": 6,
+        "index.translog.flush_threshold_size": "4g"
+      },
       "schedule": [
-        "index-append-update-fast-settings"
+        {
+          "operation": "index-update",
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        }
       ]
     }
   ]

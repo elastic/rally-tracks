@@ -78,7 +78,6 @@
       "description": "index data and then run a couple search requests",
       "index-settings": {
         "index.number_of_shards": 1,
-        "index.codec": "best_compression",
         "index.number_of_replicas": 0,
         "index.refresh_interval": "30s",
         "index.translog.flush_threshold_size": "4g"

@@ -10,14 +10,16 @@
         "format": "yyyy-MM-dd HH:mm:ss"
       },
       "trip_type": {
-        "type": "keyword"
+        "type": "string",
+        "index": "not_analyzed"
       },
       "mta_tax": {
         "scaling_factor": 100,
         "type": "scaled_float"
       },
       "rate_code_id": {
-        "type": "keyword"
+        "type": "string",
+        "index": "not_analyzed"
       },
       "passenger_count": {
         "type": "integer"
@@ -35,17 +37,20 @@
         "type": "scaled_float"
       },
       "payment_type": {
-        "type": "keyword"
+        "type": "string",
+        "index": "not_analyzed"
       },
       "extra": {
         "scaling_factor": 100,
         "type": "scaled_float"
       },
       "vendor_id": {
-        "type": "keyword"
+        "type": "string",
+        "index": "not_analyzed"
       },
       "store_and_fwd_flag": {
-        "type": "keyword"
+        "type": "string",
+        "index": "not_analyzed"
       },
       "improvement_surcharge": {
         "scaling_factor": 100,
@@ -60,13 +65,14 @@
         "type": "scaled_float"
       },
       "cab_color": {
-        "type": "keyword"
+        "type": "string",
+        "index": "not_analyzed"
       },
       "dropoff_location": {
         "type": "geo_point"
       },
       "vendor_name": {
-        "type": "text"
+        "type": "string"
       },
       "total_amount": {
         "scaling_factor": 100,

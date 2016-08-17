@@ -121,7 +121,7 @@
   "challenges": [
     {
       "name": "append-no-conflicts",
-      "description": "",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run in parallel by multiple clients.",
       "index-settings": {
         "index.number_of_replicas": 0
       },
@@ -185,7 +185,7 @@
     },
     {
       "name": "append-fast-no-conflicts",
-      "description": "",
+      "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings. Document ids are unique so all index operations are append only.",
       "index-settings": {
         "index.number_of_replicas": 0,
         "index.refresh_interval": "30s",
@@ -205,7 +205,7 @@
     },
     {
       "name": "append-fast-with-conflicts",
-      "description": "",
+      "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings. Rally will produce duplicate ids in 25% of all documents (not configurable) so we can simulate a scenario with appends most of the time and some updates in between.",
       "index-settings": {
         "index.number_of_replicas": 0,
         "index.refresh_interval": "30s",

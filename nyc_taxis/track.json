@@ -75,9 +75,10 @@
   "challenges": [
     {
       "name": "append-no-conflicts",
-      "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only. After that a couple of queries are run in parallel by multiple clients.",
+      "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "index-settings": {
         "index.number_of_shards": 1,
+        "index.codec": "best_compression",
         "index.number_of_replicas": 0,
         "index.refresh_interval": "30s",
         "index.translog.flush_threshold_size": "4g"
@@ -85,28 +86,29 @@
       "schedule": [
         {
           "operation": "index",
+          "warmup-time-period": 240,
           "clients": 8
         },
         {
-          "parallel": {
-            "clients": 3,
-            "warmup-iterations": 100,
-            "iterations": 100,
-            "tasks": [
-              {
-                "operation": "default",
-                "target-throughput": 10
-              },
-              {
-                "operation": "range",
-                "target-throughput": 10
-              },
-              {
-                "operation": "distance_amount_agg",
-                "target-throughput": 10
-              }
-            ]
-          }
+          "operation": "default",
+          "clients": 1,
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 10
+        },
+        {
+          "operation": "range",
+          "clients": 1,
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 10
+        },
+        {
+          "operation": "distance_amount_agg",
+          "clients": 1,
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 10
         }
       ]
     }

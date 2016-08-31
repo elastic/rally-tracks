@@ -211,7 +211,7 @@
       "schedule": [
         {
           "operation": "index-append",
-          "warmup-time-period": 5,
+          "warmup-time-period": 0,
           "clients": 8
         },
         {
@@ -309,7 +309,7 @@
       "schedule": [
         {
           "operation": "index-append",
-          "warmup-time-period": 5,
+          "warmup-time-period": 0,
           "clients": 8
         },
         {
@@ -330,7 +330,7 @@
       "schedule": [
         {
           "operation": "index-update",
-          "warmup-time-period": 5,
+          "warmup-time-period": 0,
           "clients": 8
         },
         {

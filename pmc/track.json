@@ -121,13 +121,14 @@
   "challenges": [
     {
       "name": "append-no-conflicts",
-      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run in parallel by multiple clients.",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "index-settings": {
         "index.number_of_replicas": 0
       },
       "schedule": [
         {
           "operation": "index-append",
+          "warmup-time-period": 240,
           "clients": 8
         },
         {
@@ -149,37 +150,46 @@
           "target-throughput": 50
         },
         {
-          "parallel": {
-            "clients": 8,
-            "warmup-iterations": 1000,
-            "iterations": 1000,
-            "tasks": [
-              {
-                "operation": "default",
-                "target-throughput": 20
-              },
-              {
-                "operation": "term",
-                "target-throughput": 20
-              },
-              {
-                "operation": "phrase",
-                "target-throughput": 20
-              },
-              {
-                "operation": "articles_monthly_agg_uncached",
-                "target-throughput": 20
-              },
-              {
-                "operation": "articles_monthly_agg_cached",
-                "target-throughput": 20
-              },
-              {
-                "operation": "scroll",
-                "target-throughput": 20
-              }
-            ]
-          }
+          "operation": "default",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 20
+        },
+        {
+          "operation": "term",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 20
+        },
+        {
+          "operation": "phrase",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 20
+        },
+        {
+          "operation": "articles_monthly_agg_uncached",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 20
+        },
+        {
+          "operation": "articles_monthly_agg_cached",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 20
+        },
+        {
+          "operation": "scroll",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 20
         }
       ]
     },
@@ -195,6 +205,7 @@
       "schedule": [
         {
           "operation": "index-append",
+          "warmup-time-period": 240,
           "clients": 8
         },
         {
@@ -215,6 +226,7 @@
       "schedule": [
         {
           "operation": "index-update",
+          "warmup-time-period": 240,
           "clients": 8
         },
         {

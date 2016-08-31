@@ -47,15 +47,17 @@
       "name": "polygon",
       "operation-type": "search",
       "body": {
-        "query" : {
-          "geo_polygon" : {
-            "location" : {
-              "points" : [[-0.1, 49.0],
+        "query": {
+          "geo_polygon": {
+            "location": {
+              "points": [
+                [-0.1, 49.0],
                 [5.0, 48.0],
                 [15.0, 49.0],
                 [14.0, 60.0],
                 [-0.1, 61.0],
-                [-0.1, 49.0]]
+                [-0.1, 49.0]
+              ]
             }
           }
         }
@@ -65,11 +67,11 @@
       "name": "bbox",
       "operation-type": "search",
       "body": {
-        "query" : {
-          "geo_bounding_box" : {
-            "location" : {
-              "top_left" : [-0.1, 61.0],
-              "bottom_right" : [15.0, 48.0]
+        "query": {
+          "geo_bounding_box": {
+            "location": {
+              "top_left": [-0.1, 61.0],
+              "bottom_right": [15.0, 48.0]
             }
           }
         }
@@ -79,10 +81,10 @@
       "name": "distance",
       "operation-type": "search",
       "body": {
-        "query" : {
-          "geo_distance" : {
-            "distance" : "200km",
-            "location" : [7.0, 55.0]
+        "query": {
+          "geo_distance": {
+            "distance": "200km",
+            "location": [7.0, 55.0]
           }
         }
       }
@@ -91,11 +93,11 @@
       "name": "distanceRange",
       "operation-type": "search",
       "body": {
-        "query" : {
-          "geo_distance_range" : {
-            "from" : "200km",
-            "to" : "400km",
-            "location" : [7.0, 55.0]
+        "query": {
+          "geo_distance_range": {
+            "from": "200km",
+            "to": "400km",
+            "location": [7.0, 55.0]
           }
         }
       }
@@ -104,13 +106,14 @@
   "challenges": [
     {
       "name": "append-no-conflicts",
-      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run in parallel by multiple clients.",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "index-settings": {
         "index.number_of_replicas": 0
       },
       "schedule": [
         {
           "operation": "index-append",
+          "warmup-time-period": 120,
           "clients": 8
         },
         {
@@ -132,29 +135,32 @@
           "target-throughput": 50
         },
         {
-          "parallel": {
-            "clients": 8,
-            "warmup-iterations": 1000,
-            "iterations": 1000,
-            "tasks": [
-              {
-                "operation": "polygon",
-                "target-throughput": 2
-              },
-              {
-                "operation": "bbox",
-                "target-throughput": 2
-              },
-              {
-                "operation": "distance",
-                "target-throughput": 5
-              },
-              {
-                "operation": "distanceRange",
-                "target-throughput": 2
-              }
-            ]
-          }
+          "operation": "polygon",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 2
+        },
+        {
+          "operation": "bbox",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 2
+        },
+        {
+          "operation": "distance",
+          "clients": 1,
+          "warmup-iterations": 1000,
+          "iterations": 1000,
+          "target-throughput": 5
+        },
+        {
+          "operation": "distanceRange",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 2
         }
       ]
     },
@@ -170,6 +176,7 @@
       "schedule": [
         {
           "operation": "index-append",
+          "warmup-time-period": 120,
           "clients": 8
         },
         {
@@ -190,6 +197,7 @@
       "schedule": [
         {
           "operation": "index-update",
+          "warmup-time-period": 120,
           "clients": 8
         },
         {

@@ -29,7 +29,7 @@
       "name": "index-update",
       "operation-type": "index",
       "bulk-size": 500,
-      "conflicts": "sequential"
+      "conflicts": "random"
     },
     {
       "name": "force-merge",

@@ -133,7 +133,7 @@
       "name": "index-update",
       "operation-type": "index",
       "bulk-size": 5000,
-      "conflicts": "sequential"
+      "conflicts": "random"
     },
     {
       "name": "force-merge",

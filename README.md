@@ -19,7 +19,7 @@ From time to time, setting and mapping formats change in Elasticsearch. As we wa
 
 As you can see, branches can match exact release numbers but Rally is also lenient in case settings mapping formats did not change for a few releases. Rally will try to match in the following order:
 
-1. major.minor.patch-extension_label (e.g. 5.0.0-alpha1)
+1. major.minor.patch-extension_label (e.g. 5.0.0-alpha5)
 2. major.minor.patch (e.g. 2.3.1)
 3. major.minor (e.g. 2.3)
 4. major (e.g. 2)
@@ -28,10 +28,10 @@ Apart from that, the master branch is always considered to be compatible with th
 
 To specify the version to check against, add `--distribution-version` when running Rally. It it is not specified, Rally assumes that you want to benchmark against the Elasticsearch master version. 
 
-Example: If you want to benchmark Elasticsearch 5.0.0-alpha1, run the following command:
+Example: If you want to benchmark Elasticsearch 5.0.0-alpha5, run the following command:
 
 ```
-esrally --pipeline=from-distribution --distribution-version=5.0.0-alpha1
+esrally --pipeline=from-distribution --distribution-version=5.0.0-alpha5
 ```
 
 How to Contribute

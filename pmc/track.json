@@ -187,9 +187,9 @@
         {
           "operation": "scroll",
           "clients": 1,
-          "warmup-iterations": 500,
-          "iterations": 1000,
-          "target-throughput": 20
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 1
         }
       ]
     },

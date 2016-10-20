@@ -94,10 +94,21 @@
       "operation-type": "search",
       "body": {
         "query": {
-          "geo_distance_range": {
-            "from": "200km",
-            "to": "400km",
-            "location": [7.0, 55.0]
+          "match_all": {}
+        },
+        "aggs": {
+          "geo_distance_range_agg": {
+            "geo_distance": {
+              "field": "location",
+              "origin": "55.0, 7.0",
+              "unit": "km",
+              "ranges": [
+                {
+                  "from": 200,
+                  "to": 400
+                }
+              ]
+            }
           }
         }
       }

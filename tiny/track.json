@@ -57,13 +57,8 @@
     {
       "name": "term",
       "operation-type": "search",
-      "body": {
-        "query": {
-          "term": {
-            "country_code": "AT"
-          }
-        }
-      }
+      "param-source": "term-param-source",
+      "countries": ["AT", "DE", "CH"]
     },
     {
       "name": "phrase",

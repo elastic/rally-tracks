@@ -43,149 +43,84 @@
     },
     {
       "name": "percolator_with_content_president_bush",
-      "operation-type": "search",
-      "index": "queries",
-      "type": ".percolator",
+      "operation-type": "percolate",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "president bush"
-            }
-          }
-        }
+        "doc": {
+          "body": "president bush"
+        },
+        "track_scores": true
       }
     },
     {
       "name": "percolator_with_content_saddam_hussein",
-      "operation-type": "search",
-      "index": "queries",
-      "type": ".percolator",
+      "operation-type": "percolate",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "saddam hussein"
-            }
-          }
-        }
+        "doc": {
+          "body": "saddam hussein"
+        },
+        "track_scores": true
       }
     },
     {
       "name": "percolator_with_content_hurricane_katrina",
-      "operation-type": "search",
-      "index": "queries",
-      "type": ".percolator",
+      "operation-type": "percolate",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "hurricane katrina"
-            }
-          }
-        }
+        "doc": {
+          "body": "hurricane katrina"
+        },
+        "track_scores": true
       }
     },
     {
       "name": "percolator_with_content_google",
-      "operation-type": "search",
-      "index": "queries",
-      "type": ".percolator",
+      "operation-type": "percolate",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "google"
-            }
-          }
-        }
+        "doc": {
+          "body": "google"
+        },
+        "track_scores": true
       }
     },
     {
       "name": "percolator_no_score_with_content_google",
-      "operation-type": "search",
-      "index": "queries",
-      "type": ".percolator",
+      "operation-type": "percolate",
       "body": {
-        "query" : {
-          "constant_score": {
-            "query": {
-              "percolate" : {
-                "field" : "query",
-                "document_type" : "content",
-                "document" : {
-                  "body" : "google"
-                }
-              }
-            }
-          }
-        }
+        "doc": {
+          "body": "google"
+        },
+        "track_scores": false
       }
-    },        {
+    },
+    {
       "name": "percolator_with_highlighting",
-      "operation-type": "search",
-      "index": "queries",
-      "type": ".percolator",
+      "operation-type": "percolate",
       "body": {
-        "query": {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "Israeli prime minister Ariel Sharon suffers a massive stroke; he is replaced by acting prime minister Ehud Olmert"
-            }
-          }
+        "doc": {
+          "body": "Israeli prime minister Ariel Sharon suffers a massive stroke; he is replaced by acting prime minister Ehud Olmert"
         },
         "highlight": {
-          "fields": {
-            "body": {}
-          }
-        }
+          "size": 10
+        },
+        "track_scores": true
       }
     },
     {
       "name": "percolator_with_content_ignore_me",
-      "operation-type": "search",
-      "index": "queries",
-      "type": ".percolator",
+      "operation-type": "percolate",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "ignore me"
-            }
-          }
+        "doc": {
+          "body": "ignore me",
+          "track_scores": true
         }
       }
     },
     {
       "name": "percolator_no_score_with_content_ignore_me",
-      "operation-type": "search",
-      "index": "queries",
-      "type": ".percolator",
+      "operation-type": "percolate",
       "body": {
-        "query": {
-          "constant_score": {
-            "query": {
-              "percolate": {
-                "field": "query",
-                "document_type": "content",
-                "document": {
-                  "body": "ignore me"
-                }
-              }
-            }
-          }
+        "doc": {
+          "body": "ignore me",
+          "track_scores": false
         }
       }
     }

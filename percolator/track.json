@@ -98,8 +98,9 @@
         "doc": {
           "body": "Israeli prime minister Ariel Sharon suffers a massive stroke; he is replaced by acting prime minister Ehud Olmert"
         },
+        "size": 2000000,
         "highlight": {
-          "size": 10
+          "field": "body"
         },
         "track_scores": true
       }
@@ -109,9 +110,9 @@
       "operation-type": "percolate",
       "body": {
         "doc": {
-          "body": "ignore me",
-          "track_scores": true
-        }
+          "body": "ignore me"
+        },
+        "track_scores": true
       }
     },
     {
@@ -119,9 +120,9 @@
       "operation-type": "percolate",
       "body": {
         "doc": {
-          "body": "ignore me",
-          "track_scores": false
-        }
+          "body": "ignore me"
+        },
+        "track_scores": false
       }
     }
   ],

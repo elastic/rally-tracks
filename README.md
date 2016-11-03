@@ -5,7 +5,7 @@ This repository contains the default track specifications for the Elasticsearch 
 
 Tracks are used to describe benchmarks in Rally.
 
-You should not need to use this repository directly, except if you want to look under the hood or create your own tracks. We have created a [tutorial on how to create your own tracks](https://esrally.readthedocs.io/en/latest/adding_benchmarks.html).
+You should not need to use this repository directly, except if you want to look under the hood or create your own tracks. We have created a [tutorial on how to create your own tracks](https://esrally.readthedocs.io/en/latest/adding_tracks.html).
 
 Versioning Scheme
 -----------------
@@ -28,10 +28,10 @@ Apart from that, the master branch is always considered to be compatible with th
 
 To specify the version to check against, add `--distribution-version` when running Rally. It it is not specified, Rally assumes that you want to benchmark against the Elasticsearch master version. 
 
-Example: If you want to benchmark Elasticsearch 5.0.0-alpha5, run the following command:
+Example: If you want to benchmark Elasticsearch 5.0.0, run the following command:
 
 ```
-esrally --pipeline=from-distribution --distribution-version=5.0.0-alpha5
+esrally --distribution-version=5.0.0
 ```
 
 How to Contribute

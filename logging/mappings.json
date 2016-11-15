@@ -6,8 +6,8 @@
     },
     "properties": {
       "@timestamp": {
-        "format": "epoch_second",
-        "type": "date"
+        "type": "date",
+        "numeric_resolution": "seconds"
       },
       "clientip": {
         "type": "ip"

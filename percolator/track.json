@@ -1,4 +1,8 @@
 {
+  "short-description": "Percolator benchmark based on 2M AOL queries",
+  "description": "This benchmark indexes 2M AOL queries and use the percolate query to match",
+  "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/percolator",
+  "#COMMENT": "DEPRECATED: The meta-properties below will stay for a while (for backwards compatibility). Please specify them on top-level for your own tracks",
   "meta": {
     "short-description": "Percolator benchmark based on 2M AOL queries",
     "description": "This benchmark indexes 2M AOL queries and use the percolate query to match",

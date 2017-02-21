@@ -29,7 +29,7 @@ class QueryParamSource:
             "body": {
                "query": {
                   "bool": {
-                     "filter": [
+                     "must": [
                         {
                            "match": {
                               "tag": "%s" % random.choice(self.tags)
@@ -40,7 +40,7 @@ class QueryParamSource:
                               "path": "answers",
                               "query": {
                                  "bool": {
-                                     "filter": [
+                                     "must": [
                                          {
                                             "range": {
                                                 "answers.date": {

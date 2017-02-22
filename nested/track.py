@@ -2,6 +2,7 @@ import random
 import os
 import csv
 
+
 class QueryParamSource:
     def __init__(self, indices, params):
         self._indices = indices
@@ -10,9 +11,11 @@ class QueryParamSource:
         self.tags = []
         self.users = []
         self.dates = []
+        # be predictably random. The seed has been chosen by a fair dice roll. ;)
+        random.seed(4)
         cwd = os.path.dirname(__file__)
         with open(os.path.join(cwd, "queries.csv"), "r") as ins:
-            csvreader = csv.reader(ins)        
+            csvreader = csv.reader(ins)
             for row in csvreader:
                 self.tags.append(row[0])
                 self.users.append(row[1])
@@ -25,42 +28,42 @@ class QueryParamSource:
         return 1
 
     def params(self):
-        result= {
+        result = {
             "body": {
-               "query": {
-                  "bool": {
-                     "must": [
-                        {
-                           "match": {
-                              "tag": "%s" % random.choice(self.tags)
-                           }
-                        },
-                        {
-                           "nested": {
-                              "path": "answers",
-                              "query": {
-                                 "bool": {
-                                     "must": [
-                                         {
-                                            "range": {
-                                                "answers.date": {
-                                                   "lte":  "%s" % random.choice(self.dates)
-                                                }
-                                         }
-                                        },
-                                         {
-                                            "term": {
-                                                "answers.user":  "%s" % random.choice(self.users)
-                                         }
-                                        },
-                                    ]
-                                 }
-                              }
-                           }
-                        }
-                     ]
-                  }
-               }
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "tag": "%s" % random.choice(self.tags)
+                                }
+                            },
+                            {
+                                "nested": {
+                                    "path": "answers",
+                                    "query": {
+                                        "bool": {
+                                            "must": [
+                                                {
+                                                    "range": {
+                                                        "answers.date": {
+                                                            "lte": "%s" % random.choice(self.dates)
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "term": {
+                                                        "answers.user": "%s" % random.choice(self.users)
+                                                    }
+                                                },
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
             },
             "index": None,
             "type": None,

@@ -20,17 +20,59 @@
 	}, {
 		"name": "force-merge",
 		"operation-type": "force-merge"
-	},  {
+	}, {
 		"name": "randomized-nested-queries",
 		"operation-type": "search",
 		"param-source": "nested-query-source",
-		"cache": false
-	}],
+		"use_request_cache": false
+        }, {
+                "name": "randomized-term-queries",
+                "operation-type": "search",
+                "param-source": "term-query-source",
+                "use_request_cache": false
+        }, {
+                "name": "randomized-sorted-term-queries",
+                "operation-type": "search",
+                "param-source": "sorted-term-query-source",
+                "use_request_cache": false
+	}, {
+                "name": "match-all",
+                "operation-type": "search",
+                "body": {
+                        "query": {
+                                "match_all": {}
+                        }
+                },
+                "use_request_cache": false
+        }, {
+                "name": "nested-date-histo",
+                "operation-type": "search",
+                "body": {
+                        "size": 0,
+                        "aggs": {
+                                "answers": {
+                                        "nested": {
+                                                "path": "answers"
+                                        },
+                                        "aggs": {
+                                                "date_histo": {
+                                                        "date_histogram": {
+                                                                "field": "answers.date",
+                                                                "interval": "month"
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                },
+                "use_request_cache": false
+        }],
 	"challenges": [{
 		"name": "nested-search-challenge",
 		"description": "Indexes document corpus for an hour using Elasticsearch default settings . After that randomized nested queries are run.",
 		"default": true,
 		"index-settings": {
+                        "index.number_of_shards": 1,
 			"index.number_of_replicas": 0
 		},
 		"schedule": [{
@@ -46,7 +88,27 @@
 			"clients": 2,
 			"warmup-iterations": 100,
 			"iterations": 5000
-		}
+		}, {
+                        "operation": "randomized-term-queries",
+                        "clients": 2,
+                        "warmup-iterations": 100,
+                        "iterations": 5000
+                }, {
+                        "operation": "randomized-sorted-term-queries",
+                        "clients": 2,
+                        "warmup-iterations": 100,
+                        "iterations": 5000
+                }, {
+                        "operation": "match-all",
+                        "clients": 2,
+                        "warmup-iterations": 100,
+                        "iterations": 5000
+                }, {
+                        "operation": "nested-date-histo",
+                        "clients": 2,
+                        "warmup-iterations": 100,
+                        "iterations": 1000
+                }
 		]
 	}]
 }

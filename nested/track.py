@@ -2,14 +2,12 @@ import random
 import os
 import csv
 
-
 class QueryParamSource:
     def __init__(self, indices, params):
         self._indices = indices
         self._params = params
         # here we read the queries data file into arrays which we'll then later use randomly.
         self.tags = []
-        self.users = []
         self.dates = []
         # be predictably random. The seed has been chosen by a fair dice roll. ;)
         random.seed(4)
@@ -18,14 +16,58 @@ class QueryParamSource:
             csvreader = csv.reader(ins)
             for row in csvreader:
                 self.tags.append(row[0])
-                self.users.append(row[1])
-                self.dates.append(row[2])
+                self.dates.append(row[1])
 
     def partition(self, partition_index, total_partitions):
         return self
 
     def size(self):
         return 1
+
+class TermQueryParamSource(QueryParamSource):
+
+    def params(self):
+        result = {
+            "body": {
+                "query": {
+                    "match": {
+                        "tag": "%s" % random.choice(self.tags)
+                    }
+                },
+                "sort": [
+                    {
+                        "answers.date": {
+                            "mode" :  "max",
+                            "order": "desc",
+                            "nested_path": "answers"
+                        }
+                    }
+                ]
+            },
+            "index": None,
+            "type": None,
+            "use_request_cache": self._params["use_request_cache"]
+        }
+        return result
+
+class SortedTermQueryParamSource(QueryParamSource):
+
+    def params(self):
+        result = {
+            "body": {
+                "query": {
+                    "match": {
+                        "tag": "%s" % random.choice(self.tags)
+                    }
+                }
+            },
+            "index": None,
+            "type": None,
+            "use_request_cache": self._params["use_request_cache"]
+        }
+        return result
+
+class NestedQueryParamSource(QueryParamSource):
 
     def params(self):
         result = {
@@ -42,21 +84,10 @@ class QueryParamSource:
                                 "nested": {
                                     "path": "answers",
                                     "query": {
-                                        "bool": {
-                                            "must": [
-                                                {
-                                                    "range": {
-                                                        "answers.date": {
-                                                            "lte": "%s" % random.choice(self.dates)
-                                                        }
-                                                    }
-                                                },
-                                                {
-                                                    "term": {
-                                                        "answers.user": "%s" % random.choice(self.users)
-                                                    }
-                                                },
-                                            ]
+                                        "range": {
+                                            "answers.date": {
+                                                "lte": "%s" % random.choice(self.dates)
+                                             }
                                         }
                                     }
                                 }
@@ -67,10 +98,12 @@ class QueryParamSource:
             },
             "index": None,
             "type": None,
-            "use_request_cache": False
+            "use_request_cache": self._params["use_request_cache"]
         }
         return result
 
 
 def register(registry):
-    registry.register_param_source("nested-query-source", QueryParamSource)
+    registry.register_param_source("nested-query-source", NestedQueryParamSource)
+    registry.register_param_source("term-query-source", TermQueryParamSource)
+    registry.register_param_source("sorted-term-query-source", SortedTermQueryParamSource)

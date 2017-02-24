@@ -24,17 +24,17 @@
 		"name": "randomized-nested-queries",
 		"operation-type": "search",
 		"param-source": "nested-query-source",
-		"cache": false
+		"use_request_cache": false
         }, {
                 "name": "randomized-term-queries",
                 "operation-type": "search",
                 "param-source": "term-query-source",
-                "cache": false
+                "use_request_cache": false
         }, {
                 "name": "randomized-sorted-term-queries",
                 "operation-type": "search",
                 "param-source": "sorted-term-query-source",
-                "cache": false
+                "use_request_cache": false
 	}, {
                 "name": "match-all",
                 "operation-type": "search",
@@ -43,7 +43,7 @@
                                 "match_all": {}
                         }
                 },
-                "cache": false
+                "use_request_cache": false
         }, {
                 "name": "nested-date-histo",
                 "operation-type": "search",
@@ -65,7 +65,7 @@
                                 }
                         }
                 },
-                "cache": false
+                "use_request_cache": false
         }],
 	"challenges": [{
 		"name": "nested-search-challenge",

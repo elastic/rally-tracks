@@ -46,7 +46,7 @@ class TermQueryParamSource(QueryParamSource):
             },
             "index": None,
             "type": None,
-            "use_request_cache": False
+            "use_request_cache": self._params["use_request_cache"]
         }
         return result
 
@@ -63,7 +63,7 @@ class SortedTermQueryParamSource(QueryParamSource):
             },
             "index": None,
             "type": None,
-            "use_request_cache": False
+            "use_request_cache": self._params["use_request_cache"]
         }
         return result
 
@@ -98,7 +98,7 @@ class NestedQueryParamSource(QueryParamSource):
             },
             "index": None,
             "type": None,
-            "use_request_cache": False
+            "use_request_cache": self._params["use_request_cache"]
         }
         return result
 

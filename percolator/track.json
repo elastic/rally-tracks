@@ -51,12 +51,12 @@
       "index": "queries",
       "type": "percolator",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "president bush"
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "president bush"
             }
           }
         }
@@ -68,12 +68,12 @@
       "index": "queries",
       "type": "percolator",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "saddam hussein"
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "saddam hussein"
             }
           }
         }
@@ -85,12 +85,12 @@
       "index": "queries",
       "type": "percolator",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "hurricane katrina"
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "hurricane katrina"
             }
           }
         }
@@ -102,12 +102,12 @@
       "index": "queries",
       "type": "percolator",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "google"
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "google"
             }
           }
         }
@@ -119,32 +119,33 @@
       "index": "queries",
       "type": "percolator",
       "body": {
-        "query" : {
+        "query": {
           "constant_score": {
             "query": {
-              "percolate" : {
-                "field" : "query",
-                "document_type" : "content",
-                "document" : {
-                  "body" : "google"
+              "percolate": {
+                "field": "query",
+                "document_type": "content",
+                "document": {
+                  "body": "google"
                 }
               }
             }
           }
         }
       }
-    },        {
+    },
+    {
       "name": "percolator_with_highlighting",
       "operation-type": "search",
       "index": "queries",
       "type": "percolator",
       "body": {
         "query": {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "Israeli prime minister Ariel Sharon suffers a massive stroke; he is replaced by acting prime minister Ehud Olmert"
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "Israeli prime minister Ariel Sharon suffers a massive stroke; he is replaced by acting prime minister Ehud Olmert"
             }
           }
         },
@@ -161,12 +162,12 @@
       "index": "queries",
       "type": "percolator",
       "body": {
-        "query" : {
-          "percolate" : {
-            "field" : "query",
-            "document_type" : "content",
-            "document" : {
-              "body" : "ignore me"
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "ignore me"
             }
           }
         }
@@ -283,6 +284,24 @@
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 50
+        }
+      ]
+    },
+    {
+      "name": "append-no-conflicts-index-only",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings.",
+      "index-settings": {
+        "index.number_of_replicas": 0
+      },
+      "schedule": [
+        {
+          "operation": "index",
+          "warmup-time-period": 20,
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
         }
       ]
     }

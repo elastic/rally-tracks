@@ -207,7 +207,8 @@
       "schedule": [
         {
           "operation": "index",
-          "warmup-time-period": 20,
+          "#COMMENT": "This is an incredibly short warmup time period but it is necessary to get also measurement samples. As this benchmark is rather about search than indexing this is ok.",
+          "warmup-time-period": 10,
           "clients": 8
         },
         {

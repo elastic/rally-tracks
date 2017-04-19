@@ -146,7 +146,7 @@
               {
                 "script_score": {
                   "script": {
-                    "inline": "(ln(abs(doc['population'])) + doc['elevation'] + doc['latitude']) * _score",
+                    "inline": "(ln(abs(doc['population'])) + doc['longitude'] + doc['latitude']) * _score",
                     "lang": "expression"
                   }
                 }
@@ -169,7 +169,7 @@
               {
                 "script_score": {
                   "script": {
-                    "inline": "(Math.log(Math.abs((int)((List)doc.population).get(0))) + (double)((List)doc.elevation).get(0) * (double)((List)doc.latitude).get(0))/_score",
+                    "inline": "(Math.log(Math.abs((int)((List)doc.population).get(0))) + (double)((List)doc.longitude).get(0) * (double)((List)doc.latitude).get(0))/_score",
                     "lang": "painless"
                   }
                 }
@@ -192,7 +192,7 @@
               {
                 "script_score": {
                   "script": {
-                    "inline": "(Math.log(Math.abs(doc['population'].value)) + doc['elevation'].value * doc['latitude'].value)/_score",
+                    "inline": "(Math.log(Math.abs(doc['population'].value)) + doc['longitude'].value * doc['latitude'].value)/_score",
                     "lang": "painless"
                   }
                 }

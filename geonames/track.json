@@ -146,7 +146,7 @@
               {
                 "script_score": {
                   "script": {
-                    "inline": "(ln(abs(doc['population'])) + doc['elevation'] + doc['latitude']) * _score",
+                    "inline": "(ln(abs(doc['population'])) + doc['longitude'] + doc['latitude']) * _score",
                     "lang": "expression"
                   }
                 }

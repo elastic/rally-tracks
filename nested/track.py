@@ -2,6 +2,7 @@ import random
 import os
 import csv
 
+
 class QueryParamSource:
     def __init__(self, indices, params):
         self._indices = indices
@@ -24,8 +25,8 @@ class QueryParamSource:
     def size(self):
         return 1
 
-class TermQueryParamSource(QueryParamSource):
 
+class SortedTermQueryParamSource(QueryParamSource):
     def params(self):
         result = {
             "body": {
@@ -37,7 +38,7 @@ class TermQueryParamSource(QueryParamSource):
                 "sort": [
                     {
                         "answers.date": {
-                            "mode" :  "max",
+                            "mode": "max",
                             "order": "desc",
                             "nested_path": "answers"
                         }
@@ -50,8 +51,8 @@ class TermQueryParamSource(QueryParamSource):
         }
         return result
 
-class SortedTermQueryParamSource(QueryParamSource):
 
+class TermQueryParamSource(QueryParamSource):
     def params(self):
         result = {
             "body": {
@@ -67,8 +68,8 @@ class SortedTermQueryParamSource(QueryParamSource):
         }
         return result
 
-class NestedQueryParamSource(QueryParamSource):
 
+class NestedQueryParamSource(QueryParamSource):
     def params(self):
         result = {
             "body": {
@@ -87,7 +88,7 @@ class NestedQueryParamSource(QueryParamSource):
                                         "range": {
                                             "answers.date": {
                                                 "lte": "%s" % random.choice(self.dates)
-                                             }
+                                            }
                                         }
                                     }
                                 }

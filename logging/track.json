@@ -134,12 +134,6 @@
       "bulk-size": 5000
     },
     {
-      "name": "index-update",
-      "operation-type": "index",
-      "bulk-size": 5000,
-      "conflicts": "random"
-    },
-    {
       "name": "force-merge",
       "operation-type": "force-merge"
     },
@@ -342,27 +336,6 @@
       "schedule": [
         {
           "operation": "index-append",
-          "warmup-time-period": 240,
-          "clients": 8
-        },
-        {
-          "operation": "force-merge",
-          "clients": 1
-        }
-      ]
-    },
-    {
-      "name": "append-fast-with-conflicts",
-      "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings. Rally will produce duplicate ids in 25% of all documents (not configurable) so we can simulate a scenario with appends most of the time and some updates in between.",
-      "index-settings": {
-        "index.number_of_replicas": 0,
-        "index.refresh_interval": "30s",
-        "index.number_of_shards": 6,
-        "index.translog.flush_threshold_size": "4g"
-      },
-      "schedule": [
-        {
-          "operation": "index-update",
           "warmup-time-period": 240,
           "clients": 8
         },

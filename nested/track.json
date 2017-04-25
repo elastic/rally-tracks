@@ -134,7 +134,6 @@
     {
       "name": "index-only",
       "description": "Indexes the document corpus for an hour using Elasticsearch default settings.",
-      "default": true,
       "index-settings": {
         "index.number_of_shards": 1,
         "index.number_of_replicas": 0

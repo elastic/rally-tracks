@@ -201,6 +201,21 @@
           }
         }
       }
+    },
+    {
+      "name": "large_terms",
+      "operation-type": "search",
+      "param-source": "pure-terms-query-source"
+    },
+    {
+      "name": "large_filtered_terms",
+      "operation-type": "search",
+      "param-source": "filtered-terms-query-source"
+    },
+    {
+      "name": "large_prohibited_terms",
+      "operation-type": "search",
+      "param-source": "prohibited-terms-query-source"
     }
   ],
   "challenges": [
@@ -297,6 +312,27 @@
           "warmup-iterations": 500,
           "iterations": 1000,
           "target-throughput": 20
+        },
+        {
+          "operation": "large_terms",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 3
+        },
+        {
+          "operation": "large_filtered_terms",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 3
+        },
+        {
+          "operation": "large_prohibited_terms",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 3
         }
       ]
     },

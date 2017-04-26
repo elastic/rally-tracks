@@ -34,6 +34,22 @@
       "use_request_cache": false
     },
     {
+      "name": "randomized-nested-queries-with-inner-hits_default",
+      "operation-type": "search",
+      "param-source": "nested-query-source-with-inner-hits",
+      "use_request_cache": false,
+      "size" : 10,
+      "inner_hits_size" : 3
+    },
+    {
+      "name": "randomized-nested-queries-with-inner-hits_default_big_size",
+      "operation-type": "search",
+      "param-source": "nested-query-source-with-inner-hits",
+      "use_request_cache": false,
+      "size" : 100,
+      "inner_hits_size" : 100
+    },
+    {
       "name": "randomized-term-queries",
       "operation-type": "search",
       "param-source": "term-query-source",
@@ -128,6 +144,18 @@
           "clients": 2,
           "warmup-iterations": 100,
           "iterations": 1000
+        },
+        {
+          "operation": "randomized-nested-queries-with-inner-hits_default",
+          "clients": 2,
+          "warmup-iterations": 100,
+          "iterations": 5000
+        },
+        {
+          "operation": "randomized-nested-queries-with-inner-hits_default_big_size",
+          "clients": 2,
+          "warmup-iterations": 100,
+          "iterations": 5000
         }
       ]
     },

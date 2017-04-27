@@ -118,12 +118,14 @@
         {
           "operation": "randomized-nested-queries",
           "clients": 2,
+          "target-throughput": 50,
           "warmup-iterations": 100,
           "iterations": 5000
         },
         {
           "operation": "randomized-term-queries",
           "clients": 2,
+          "target-throughput": 250,
           "warmup-iterations": 100,
           "iterations": 5000
         },
@@ -131,29 +133,34 @@
           "operation": "randomized-sorted-term-queries",
           "clients": 2,
           "warmup-iterations": 100,
+          "target-throughput": 25,
           "iterations": 5000
         },
         {
           "operation": "match-all",
           "clients": 2,
+          "target-throughput": 20,
           "warmup-iterations": 100,
           "iterations": 5000
         },
         {
           "operation": "nested-date-histo",
           "clients": 2,
+          "target-throughput": 1,
           "warmup-iterations": 100,
           "iterations": 1000
         },
         {
           "operation": "randomized-nested-queries-with-inner-hits_default",
           "clients": 2,
+          "target-throughput": 45,
           "warmup-iterations": 100,
           "iterations": 5000
         },
         {
           "operation": "randomized-nested-queries-with-inner-hits_default_big_size",
           "clients": 2,
+          "target-throughput": 20,
           "warmup-iterations": 100,
           "iterations": 5000
         }

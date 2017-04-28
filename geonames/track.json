@@ -15,10 +15,10 @@
         {
           "name": "type",
           "mapping": "mappings.json",
-          "documents": "documents.json.bz2",
-          "document-count": 8647880,
-          "compressed-bytes": 197857614,
-          "uncompressed-bytes": 2790927196
+          "documents": "documents-2.json.bz2",
+          "document-count": 11396505,
+          "compressed-bytes": 264698741,
+          "uncompressed-bytes": 3547614383
         }
       ]
     }
@@ -146,7 +146,7 @@
               {
                 "script_score": {
                   "script": {
-                    "inline": "(ln(abs(doc['population'])) + doc['longitude'] + doc['latitude']) * _score",
+                    "inline": "(ln(abs(doc['population']) + 1) + doc['location.lon'] + doc['location.lat']) * _score",
                     "lang": "expression"
                   }
                 }
@@ -177,6 +177,10 @@
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "default": true,
+      "#COMMENT": "We set indices.query.bool.max_clause_count in order to allow to run the large_terms queries (default is 1024, we need more than 45.000)",
+      "cluster-settings": {
+        "indices.query.bool.max_clause_count": 50000
+      },
       "index-settings": {
         "index.number_of_replicas": 0
       },

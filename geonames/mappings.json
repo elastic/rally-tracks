@@ -29,8 +29,9 @@
           }
         }
       },
-      "longitude": {
-        "type": "double"
+      "location": {
+        "type": "geo_point",
+        "lat_lon": true
       },
       "cc2": {
         "type": "string",
@@ -103,9 +104,6 @@
             "type": "string"
           }
         }
-      },
-      "latitude": {
-        "type": "double"
       },
       "feature_code": {
         "type": "string",

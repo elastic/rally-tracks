@@ -1,8 +1,8 @@
 import random
 import os
 
-class QueryParamSource:
 
+class QueryParamSource:
     def __init__(self, indices, params):
         self._indices = indices
         self._params = params
@@ -18,11 +18,11 @@ class QueryParamSource:
     def size(self):
         return 1
 
-class PureTermsQueryParamSource(QueryParamSource):
 
+class PureTermsQueryParamSource(QueryParamSource):
     def params(self):
-        query_terms = list(self.terms) # copy
-        query_terms.append(str(random.randint(1,100))) #avoid caching
+        query_terms = list(self.terms)  # copy
+        query_terms.append(str(random.randint(1, 100)))  # avoid caching
         result = {
             "body": {
                 "query": {
@@ -37,29 +37,29 @@ class PureTermsQueryParamSource(QueryParamSource):
         }
         return result
 
-class FilteredTermsQueryParamSource(QueryParamSource):
 
+class FilteredTermsQueryParamSource(QueryParamSource):
     def params(self):
-        query_terms = list(self.terms) # copy
-        query_terms.append(str(random.randint(1,1000))) # avoid caching
+        query_terms = list(self.terms)  # copy
+        query_terms.append(str(random.randint(1, 1000)))  # avoid caching
         result = {
             "body": {
                 "query": {
                     "bool": {
-                      "must": [
-                        {
-                          "match": {
-                            "feature_class.raw": "T"
-                          }
-                        }
-                      ],
-                      "filter": [
-                        {
-                          "terms": {
-                            "name.raw": query_terms
-                          }
-                        }
-                      ]
+                        "must": [
+                            {
+                                "match": {
+                                    "feature_class.raw": "T"
+                                }
+                            }
+                        ],
+                        "filter": [
+                            {
+                                "terms": {
+                                    "name.raw": query_terms
+                                }
+                            }
+                        ]
                     }
                 }
             },
@@ -69,29 +69,29 @@ class FilteredTermsQueryParamSource(QueryParamSource):
         }
         return result
 
-class ProhibitedTermsQueryParamSource(QueryParamSource):
 
+class ProhibitedTermsQueryParamSource(QueryParamSource):
     def params(self):
-        query_terms = list(self.terms) # copy
-        query_terms.append(str(random.randint(1,1000))) # avoid caching
+        query_terms = list(self.terms)  # copy
+        query_terms.append(str(random.randint(1, 1000)))  # avoid caching
         result = {
             "body": {
                 "query": {
-                    "bool": { 
-                      "must": [
-                        {
-                          "match": {
-                            "feature_class.raw": "A"
-                          }
-                        }
-                      ],
-                      "must_not": [
-                        {
-                          "terms": {
-                            "name.raw": query_terms
-                          }
-                        }
-                      ]
+                    "bool": {
+                        "must": [
+                            {
+                                "match": {
+                                    "feature_class.raw": "A"
+                                }
+                            }
+                        ],
+                        "must_not": [
+                            {
+                                "terms": {
+                                    "name.raw": query_terms
+                                }
+                            }
+                        ]
                     }
                 }
             },
@@ -100,6 +100,7 @@ class ProhibitedTermsQueryParamSource(QueryParamSource):
             "use_request_cache": self._params.get("use_request_cache", False)
         }
         return result
+
 
 def register(registry):
     registry.register_param_source("pure-terms-query-source", PureTermsQueryParamSource)

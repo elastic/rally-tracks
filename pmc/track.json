@@ -178,14 +178,14 @@
         {
           "operation": "articles_monthly_agg_uncached",
           "clients": 1,
-          "warmup-iterations": 500,
+          "warmup-iterations": 200,
           "iterations": 1000,
           "target-throughput": 20
         },
         {
           "operation": "articles_monthly_agg_cached",
           "clients": 1,
-          "warmup-iterations": 500,
+          "warmup-iterations": 200,
           "iterations": 1000,
           "target-throughput": 20
         },

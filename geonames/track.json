@@ -258,20 +258,6 @@
           "target-throughput": 2
         },
         {
-          "operation": "painless_static",
-          "clients": 1,
-          "warmup-iterations": 200,
-          "iterations": 200,
-          "target-throughput": 2
-        },
-        {
-          "operation": "painless_dynamic",
-          "clients": 1,
-          "warmup-iterations": 200,
-          "iterations": 200,
-          "target-throughput": 2
-        },
-        {
           "operation": "large_terms",
           "clients": 1,
           "warmup-iterations": 200,

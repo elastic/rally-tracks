@@ -2,12 +2,6 @@
   "short-description": "Full text benchmark containing 574.199 papers from PMC",
   "description": "This test indexes 574.199 papers from PMC (total 23.2 GB json) using 8 client threads and 500 docs per bulk request against Elasticsearch",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/pmc",
-  "#COMMENT": "DEPRECATED: The meta-properties below will stay for a while (for backwards compatibility). Please specify them on top-level for your own tracks",
-  "meta": {
-    "short-description": "Full text benchmark containing 574.199 papers from PMC",
-    "description": "This test indexes 574.199 papers from PMC (total 23.2 GB json) using 8 client threads and 500 docs per bulk request against Elasticsearch",
-    "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/pmc"
-  },
   "indices": [
     {
       "name": "pmc",

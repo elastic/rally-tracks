@@ -2,12 +2,6 @@
   "short-description": "Logging benchmark",
   "description": "This benchmark indexes HTTP server log data from the 1998 world cup.",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/logging",
-  "#COMMENT": "DEPRECATED: The meta-properties below will stay for a while (for backwards compatibility). Please specify them on top-level for your own tracks",
-  "meta": {
-    "short-description": "Logging benchmark",
-    "description": "This benchmark indexes HTTP server log data from the 1998 world cup.",
-    "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/logging"
-  },
   "indices": [
     {
       "name": "logs-181998",

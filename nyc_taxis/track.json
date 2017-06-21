@@ -1,3 +1,5 @@
+{% import "rally.helpers" as rally with context %}
+
 {
   "short-description": "Trip records completed in yellow and green taxis in New York in 2015",
   "description": "This test indexes 165M taxi rides using 8 client threads and 10,000 docs per bulk request against Elasticsearch",
@@ -18,151 +20,9 @@
     }
   ],
   "operations": [
-    {
-      "name": "index",
-      "operation-type": "index",
-      "bulk-size": 10000
-    },
-    {
-      "name": "default",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "match_all": {}
-        }
-      }
-    },
-    {
-      "name": "range",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "range": {
-            "total_amount": {
-              "gte": 5,
-              "lt": 15
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "distance_amount_agg",
-      "operation-type": "search",
-      "cache": false,
-      "body": {
-        "size": 0,
-        "aggs": {
-          "distance_histo": {
-            "histogram": {
-              "field": "distance",
-              "interval": 1
-            },
-            "aggs": {
-              "total_amount_stats": {
-                "stats": {
-                  "field": "total_amount"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    {{ rally.collect(parts="operations/*.json") }}
   ],
   "challenges": [
-    {
-      "name": "append-no-conflicts",
-      "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only. After that a couple of queries are run.",
-      "default": true,
-      "index-settings": {
-        "index.number_of_shards": 1,
-        "index.codec": "best_compression",
-        "index.number_of_replicas": 0,
-        "index.refresh_interval": "30s",
-        "index.translog.flush_threshold_size": "4g"
-      },
-      "schedule": [
-        {
-          "operation": "index",
-          "warmup-time-period": 240,
-          "clients": 8
-        },
-        {
-          "operation": "default",
-          "clients": 1,
-          "warmup-iterations": 50,
-          "iterations": 100,
-          "target-throughput": 3
-        },
-        {
-          "operation": "range",
-          "clients": 1,
-          "warmup-iterations": 50,
-          "iterations": 100,
-          "target-throughput": 1
-        },
-        {
-          "operation": "distance_amount_agg",
-          "clients": 1,
-          "warmup-iterations": 50,
-          "iterations": 100,
-          "target-throughput": 2
-        }
-      ]
-    },
-    {
-      "name": "append-no-conflicts-index-only",
-      "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only.",
-      "index-settings": {
-        "index.number_of_shards": 1,
-        "index.codec": "best_compression",
-        "index.number_of_replicas": 0,
-        "index.refresh_interval": "30s",
-        "index.translog.flush_threshold_size": "4g"
-      },
-      "schedule": [
-        {
-          "operation": "index",
-          "warmup-time-period": 240,
-          "clients": 8
-        }
-      ]
-    },
-    {
-      "name": "append-sorted-no-conflicts-index-only",
-      "description": "Indexes the whole document corpus in an index sorted by pickup_datetime field in descending order (most recent first) and using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only.",
-      "index-settings": {
-        "index.number_of_shards": 1,
-        "index.codec": "best_compression",
-        "index.number_of_replicas": 0,
-        "index.refresh_interval": "30s",
-        "index.translog.flush_threshold_size": "4g",
-        "index.sort.field": "pickup_datetime",
-        "index.sort.order": "desc"
-      },
-      "schedule": [
-        {
-          "operation": "index",
-          "warmup-time-period": 240,
-          "clients": 8
-        }
-      ]
-    },
-    {
-      "#COMMENT": "Temporary workaround for more realistic benchmarks with two nodes",
-      "name": "append-no-conflicts-index-only-1-replica",
-      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
-      "index-settings": {
-        "index.number_of_replicas": 1
-      },
-      "schedule": [
-        {
-          "operation": "index",
-          "warmup-time-period": 240,
-          "clients": 8
-        }
-      ]
-    }
+    {{ rally.collect(parts="challenges/*.json") }}
   ]
 }

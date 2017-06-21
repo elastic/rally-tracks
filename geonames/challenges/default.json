@@ -1,0 +1,195 @@
+    {
+      "name": "append-no-conflicts",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
+      "default": true,
+      "index-settings": {
+        "index.number_of_replicas": 0
+      },
+      "schedule": [
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        },
+        {
+          "operation": "index-stats",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 100
+        },
+        {
+          "operation": "node-stats",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 1000,
+          "target-throughput": 100
+        },
+        {
+          "operation": "default",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 50
+        },
+        {
+          "operation": "term",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 200
+        },
+        {
+          "operation": "phrase",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 200
+        },
+        {
+          "operation": "country_agg_uncached",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 5
+        },
+        {
+          "operation": "country_agg_cached",
+          "clients": 1,
+          "warmup-iterations": 500,
+          "iterations": 1000,
+          "target-throughput": 100
+        },
+        {
+          "operation": "scroll",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 500,
+          "target-throughput": 25
+        },
+        {
+          "operation": "expression",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 200,
+          "target-throughput": 2
+        },
+        {
+          "operation": "painless_static",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 200,
+          "target-throughput": 2
+        },
+        {
+          "operation": "painless_dynamic",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 200,
+          "target-throughput": 2
+        },
+        {
+          "operation": "large_terms",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 200,
+          "target-throughput": 2
+        },
+        {
+          "operation": "large_filtered_terms",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 200,
+          "target-throughput": 2
+        },
+        {
+          "operation": "large_prohibited_terms",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 200,
+          "target-throughput": 2
+        }
+      ]
+    },
+    {
+      "name": "append-no-conflicts-index-only",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
+      "index-settings": {
+        "index.number_of_replicas": 0
+      },
+      "schedule": [
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        }
+      ]
+    },
+    {
+      "#COMMENT": "Temporary workaround for more realistic benchmarks with two nodes",
+      "name": "append-no-conflicts-index-only-1-replica",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
+      "index-settings": {
+        "index.number_of_replicas": 1
+      },
+      "schedule": [
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        }
+      ]
+    },
+    {
+      "name": "append-sorted-no-conflicts",
+      "description": "Indexes the whole document corpus in an index sorted by country_code field in ascending order. Document ids are unique so all index operations are append only.",
+      "index-settings": {
+        "index.number_of_replicas": 0,
+        "index.sort.field": ["country_code.raw", "admin1_code.raw"],
+        "index.sort.order": ["asc", "asc"]
+      },
+      "schedule": [
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        }
+      ]
+    },
+    {
+      "name": "append-fast-with-conflicts",
+      "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings. Rally will produce duplicate ids in 25% of all documents (not configurable) so we can simulate a scenario with appends most of the time and some updates in between.",
+      "index-settings": {
+        "index.number_of_replicas": 0,
+        "index.refresh_interval": "30s",
+        "index.number_of_shards": 6,
+        "index.translog.flush_threshold_size": "4g"
+      },
+      "schedule": [
+        {
+          "operation": "index-update",
+          "warmup-time-period": 45,
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        }
+      ]
+    }

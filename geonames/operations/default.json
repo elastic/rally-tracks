@@ -1,0 +1,193 @@
+    {
+      "name": "index-append",
+      "operation-type": "index",
+      "bulk-size": 5000
+    },
+    {
+      "name": "index-update",
+      "operation-type": "index",
+      "bulk-size": 5000,
+      "conflicts": "random"
+    },
+    {
+      "name": "force-merge",
+      "operation-type": "force-merge"
+    },
+    {
+      "name": "index-stats",
+      "operation-type": "index-stats"
+    },
+    {
+      "name": "node-stats",
+      "operation-type": "node-stats"
+    },
+    {
+      "name": "default",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "term",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "term": {
+            "country_code": "AT"
+          }
+        }
+      }
+    },
+    {
+      "name": "phrase",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_phrase": {
+            "name": "Sankt Georgen"
+          }
+        }
+      }
+    },
+    {
+      "name": "country_agg_uncached",
+      "operation-type": "search",
+      "cache": false,
+      "body": {
+        "size": 0,
+        "aggs": {
+          "country_population": {
+            "terms": {
+              "field": "country_code"
+            },
+            "aggs": {
+              "sum_population": {
+                "sum": {
+                  "field": "population"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "country_agg_cached",
+      "operation-type": "search",
+      "cache": true,
+      "body": {
+        "size": 0,
+        "aggs": {
+          "country_population": {
+            "terms": {
+              "field": "country_code"
+            },
+            "aggs": {
+              "sum_population": {
+                "sum": {
+                  "field": "population"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "scroll",
+      "operation-type": "search",
+      "pages": 25,
+      "results-per-page": 1000,
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "expression",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "function_score": {
+            "query": {
+              "match_all": {}
+            },
+            "functions": [
+              {
+                "script_score": {
+                  "script": {
+                    "inline": "(ln(abs(doc['population']) + 1) + doc['location'].lon + doc['location'].lat) * _score",
+                    "lang": "expression"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "painless_static",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "function_score": {
+            "query": {
+              "match_all": {}
+            },
+            "functions": [
+              {
+                "script_score": {
+                  "script": {
+                    "inline": "(Math.log(Math.abs((int)((List)doc.population).get(0)) + 1) + (double)(doc.location.lon) * (double)(doc.location.lat))/_score",
+                    "lang": "painless"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "painless_dynamic",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "function_score": {
+            "query": {
+              "match_all": {}
+            },
+            "functions": [
+              {
+                "script_score": {
+                  "script": {
+                    "inline": "(Math.log(Math.abs(doc['population'].value) + 1) + doc['location'].lon * doc['location'].lat)/_score",
+                    "lang": "painless"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "large_terms",
+      "operation-type": "search",
+      "param-source": "pure-terms-query-source"
+    },
+    {
+      "name": "large_filtered_terms",
+      "operation-type": "search",
+      "param-source": "filtered-terms-query-source"
+    },
+    {
+      "name": "large_prohibited_terms",
+      "operation-type": "search",
+      "param-source": "prohibited-terms-query-source"
+    }

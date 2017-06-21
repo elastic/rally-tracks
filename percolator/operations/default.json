@@ -1,0 +1,150 @@
+    {
+      "name": "index",
+      "operation-type": "index",
+      "bulk-size": 5000
+    },
+    {
+      "name": "force-merge",
+      "operation-type": "force-merge"
+    },
+    {
+      "name": "index-stats",
+      "operation-type": "index-stats"
+    },
+    {
+      "name": "node-stats",
+      "operation-type": "node-stats"
+    },
+    {
+      "name": "percolator_with_content_president_bush",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "president bush"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percolator_with_content_saddam_hussein",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "saddam hussein"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percolator_with_content_hurricane_katrina",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "hurricane katrina"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percolator_with_content_google",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "google"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percolator_no_score_with_content_google",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "constant_score": {
+            "query": {
+              "percolate": {
+                "field": "query",
+                "document_type": "content",
+                "document": {
+                  "body": "google"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percolator_with_highlighting",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "Israeli prime minister Ariel Sharon suffers a massive stroke; he is replaced by acting prime minister Ehud Olmert"
+            }
+          }
+        },
+        "highlight": {
+          "fields": {
+            "body": {}
+          }
+        }
+      }
+    },
+    {
+      "name": "percolator_with_content_ignore_me",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "percolate": {
+            "field": "query",
+            "document_type": "content",
+            "document": {
+              "body": "ignore me"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percolator_no_score_with_content_ignore_me",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "constant_score": {
+            "query": {
+              "percolate": {
+                "field": "query",
+                "document_type": "content",
+                "document": {
+                  "body": "ignore me"
+                }
+              }
+            }
+          }
+        }
+      }
+    }

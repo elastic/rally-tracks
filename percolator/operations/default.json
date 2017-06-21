@@ -1,0 +1,101 @@
+    {
+      "name": "index",
+      "operation-type": "index",
+      "bulk-size": 5000
+    },
+    {
+      "name": "force-merge",
+      "operation-type": "force-merge"
+    },
+    {
+      "name": "index-stats",
+      "operation-type": "index-stats"
+    },
+    {
+      "name": "node-stats",
+      "operation-type": "node-stats"
+    },
+    {
+      "name": "percolator_with_content_president_bush",
+      "operation-type": "percolate",
+      "body": {
+        "doc": {
+          "body": "president bush"
+        },
+        "track_scores": true
+      }
+    },
+    {
+      "name": "percolator_with_content_saddam_hussein",
+      "operation-type": "percolate",
+      "body": {
+        "doc": {
+          "body": "saddam hussein"
+        },
+        "track_scores": true
+      }
+    },
+    {
+      "name": "percolator_with_content_hurricane_katrina",
+      "operation-type": "percolate",
+      "body": {
+        "doc": {
+          "body": "hurricane katrina"
+        },
+        "track_scores": true
+      }
+    },
+    {
+      "name": "percolator_with_content_google",
+      "operation-type": "percolate",
+      "body": {
+        "doc": {
+          "body": "google"
+        },
+        "track_scores": true
+      }
+    },
+    {
+      "name": "percolator_no_score_with_content_google",
+      "operation-type": "percolate",
+      "body": {
+        "doc": {
+          "body": "google"
+        },
+        "track_scores": false
+      }
+    },
+    {
+      "name": "percolator_with_highlighting",
+      "operation-type": "percolate",
+      "body": {
+        "doc": {
+          "body": "Israeli prime minister Ariel Sharon suffers a massive stroke; he is replaced by acting prime minister Ehud Olmert"
+        },
+        "size": 2000000,
+        "highlight": {
+          "field": "body"
+        },
+        "track_scores": true
+      }
+    },
+    {
+      "name": "percolator_with_content_ignore_me",
+      "operation-type": "percolate",
+      "body": {
+        "doc": {
+          "body": "ignore me"
+        },
+        "track_scores": true
+      }
+    },
+    {
+      "name": "percolator_no_score_with_content_ignore_me",
+      "operation-type": "percolate",
+      "body": {
+        "doc": {
+          "body": "ignore me"
+        },
+        "track_scores": false
+      }
+    }

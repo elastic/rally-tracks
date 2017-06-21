@@ -1,0 +1,89 @@
+    {
+      "name": "index-append",
+      "operation-type": "index",
+      "bulk-size": 5000
+    },
+    {
+      "name": "force-merge",
+      "operation-type": "force-merge"
+    },
+    {
+      "name": "index-stats",
+      "operation-type": "index-stats"
+    },
+    {
+      "name": "node-stats",
+      "operation-type": "node-stats"
+    },
+    {
+      "name": "default",
+      "operation-type": "search",
+      "index": "logs-*",
+      "type": "type",
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "term",
+      "operation-type": "search",
+      "index": "logs-*",
+      "type": "type",
+      "body": {
+        "query": {
+          "term": {
+            "request.raw": {
+              "value": "GET / HTTP/1.0"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range",
+      "operation-type": "search",
+      "index": "logs-*",
+      "type": "type",
+      "body": {
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "now-{{'15-05-1998' | days_ago(now)}}d/d",
+              "lt": "now/d"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "hourly_agg",
+      "operation-type": "search",
+      "index": "logs-*",
+      "type": "type",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "by_hour": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "interval": "hour"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "scroll",
+      "operation-type": "search",
+      "index": "logs-*",
+      "type": "type",
+      "pages": 25,
+      "results-per-page": 1000,
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    }

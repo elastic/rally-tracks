@@ -176,4 +176,24 @@
           "clients": 1
         }
       ]
+    },
+    {
+      "name": "scripts-only",
+      "description": "Only runs Painless scripts (static and dynamic). Note that this assumes that a corresponding indexing challenge has been run",
+      "schedule": [
+        {
+          "operation": "painless_static",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 200,
+          "target-throughput": 2
+        },
+        {
+          "operation": "painless_dynamic",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 200,
+          "target-throughput": 2
+        }
+      ]
     }

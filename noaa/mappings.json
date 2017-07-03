@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "properties": {
+      "TRANGE": {
+        "type": "double_range"
+      },
+      "MDTRANGE": {
+        "type": "double_range"
+      },
+      "station": {
+        "type": "object",
+        "properties": {
+          "location" : {
+            "type": "geo_point"
+          }
+        }
+      }
+    }
+  }
+}
+

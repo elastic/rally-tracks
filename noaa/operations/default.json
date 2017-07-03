@@ -1,0 +1,184 @@
+    {
+      "name": "index",
+      "operation-type": "index",
+      "bulk-size": 5000
+    },
+    {
+      "name": "range_field_big_range",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "range": {
+            "TRANGE": {
+              "gte": 0,
+              "lte": 30
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_small_range",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "range": {
+            "TRANGE": {
+              "gte": -20,
+              "lte": -10
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_conjunction_big_range_small_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "station.country_code": "JA"
+                }
+              },
+              {
+                "range": {
+                  "TRANGE": {
+                    "gte": 0,
+                    "lte": 30
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_conjunction_small_range_small_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "station.country_code": "JA"
+                }
+              },
+              {
+                "range": {
+                  "TRANGE": {
+                    "gte": -20,
+                    "lte": -10
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_conjunction_small_range_big_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "station.country_code": "US"
+                }
+              },
+              {
+                "range": {
+                  "TRANGE": {
+                    "gte": -20,
+                    "lte": -10
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_conjunction_big_range_big_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "station.country_code": "US"
+                }
+              },
+              {
+                "range": {
+                  "TRANGE": {
+                    "gte": 0,
+                    "lte": 30
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_disjunction_small_range_small_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "station.country_code": "JA"
+                }
+              },
+              {
+                "range": {
+                  "TRANGE": {
+                    "gte": -20,
+                    "lte": -10
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_disjunction_big_range_small_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "station.country_code": "JA"
+                }
+              },
+              {
+                "range": {
+                  "TRANGE": {
+                    "gte": 0,
+                    "lte": 30
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+    

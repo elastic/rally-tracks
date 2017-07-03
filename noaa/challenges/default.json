@@ -1,0 +1,88 @@
+    {
+      "name": "append-no-conflicts",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green and we want to ensure that we don't use the query cache. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
+      "default": true,
+      "index-settings": {
+        "index.number_of_shards": 1,
+        "index.number_of_replicas": 0,
+        "index.queries.cache.enabled": false
+      },
+      "schedule": [
+        {
+          "operation": "index",
+          "warmup-time-period": 240,
+          "clients": 8
+        },
+        {
+          "operation": "range_field_big_range",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "operation": "range_field_small_range",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "operation": "range_field_conjunction_big_range_small_term_query",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "operation": "range_field_conjunction_small_range_small_term_query",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "operation": "range_field_conjunction_small_range_big_term_query",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "operation": "range_field_conjunction_big_range_big_term_query",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "operation": "range_field_disjunction_small_range_small_term_query",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "operation": "range_field_disjunction_big_range_small_term_query",
+          "clients": 1,
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 50
+        }
+      ]
+    },
+    {
+      "name": "append-no-conflicts-index-only",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings.",
+      "index-settings": {
+        "index.number_of_replicas": 0
+      },
+      "schedule": [
+        {
+          "operation": "index",
+          "warmup-time-period": 240 ,
+          "clients": 8
+        }
+      ]
+    }
+    

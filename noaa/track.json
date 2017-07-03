@@ -1,0 +1,28 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "short-description": "Daily weather measurement summaries from around the globe.",
+  "description": "Indexes 10M+ weather measurement summaries from NOAA.",
+  "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/noaa",
+  "indices": [
+    {
+      "name": "weather-data-2016",
+      "types": [
+        {
+          "name": "summary",
+          "mapping": "mappings.json",
+          "documents": "documents.json.bz2",
+          "document-count": 10914068,
+          "compressed-bytes": 57359944,
+          "uncompressed-bytes": 3150540222
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

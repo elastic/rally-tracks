@@ -1,0 +1,28 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "short-description": "Indexing benchmark using up to questions and answers from StackOverflow",
+  "description": "This test indexes up to 11,203,029 questions from StackOverflow (total 3.64 GB json)",
+  "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/so",
+  "indices": [
+    {
+      "name": "so",
+      "types": [
+        {
+          "name": "so",
+          "mapping": "mappings.json",
+          "documents": "posts.json.bz2",
+          "document-count": 11203029,
+          "compressed-bytes": 695293381,
+          "uncompressed-bytes": 3637747670
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

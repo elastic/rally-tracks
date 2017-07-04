@@ -1,0 +1,41 @@
+    {
+      "name": "index-only-8clients",
+      "description": "Indexes the document corpus for up to an hour using 8 client connections",
+      "default": true,
+      "index-settings": {
+        "index.number_of_shards": 1,
+        "index.number_of_replicas": 0
+      },
+      "schedule": [
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "time-period": 3600,
+          "clients": 8
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        }
+      ]
+    },
+    {
+      "name": "index-only-16clients",
+      "description": "Indexes the document corpus for up to an hour using 16 client connections",
+      "index-settings": {
+        "index.number_of_shards": 1,
+        "index.number_of_replicas": 0
+      },
+      "schedule": [
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "time-period": 3600,
+          "clients": 16
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        }
+      ]
+    }

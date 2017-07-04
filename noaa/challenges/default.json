@@ -14,6 +14,10 @@
           "clients": 8
         },
         {
+          "operation": "force-merge",
+          "clients": 1
+        },
+        {
           "operation": "range_field_big_range",
           "clients": 1,
           "warmup-iterations": 100,

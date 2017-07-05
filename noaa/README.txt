@@ -10,8 +10,11 @@ Instructions on how to recreate the json documents:
 2) Execute: gunzip 2016.csv.gz
 3) Sort the file by station: sort --field-separator=',' --key=1,2 -o 2016-sorted.csv 2016.csv
 4) Execute a script like is specified at the end of the file to create json doccuments.
-5) Compress the documents json file: 
-   bzip2 -9 -c documents.json > documents.json.bz2
+5) Make sure that the ordering of json docs is randomized. (The script orders meansurements of the same station next to each other)
+   Ordering can be randomized by execution: 
+   shuf documents.json > documents1.json 
+6) Compress the documents json file: 
+   bzip2 -9 -c documents1.json > documents.json.bz2
 
 
 

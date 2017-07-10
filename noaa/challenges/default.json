@@ -22,57 +22,57 @@
           "operation": "range_field_big_range",
           "clients": 1,
           "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
+          "iterations": 500,
+          "target-throughput": 10
         },
         {
           "operation": "range_field_small_range",
           "clients": 1,
           "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
+          "iterations": 500,
+          "target-throughput": 10
         },
         {
           "operation": "range_field_conjunction_big_range_small_term_query",
           "clients": 1,
           "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
+          "iterations": 500,
+          "target-throughput": 10
         },
         {
           "operation": "range_field_conjunction_small_range_small_term_query",
           "clients": 1,
           "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
+          "iterations": 500,
+          "target-throughput": 10
         },
         {
           "operation": "range_field_conjunction_small_range_big_term_query",
           "clients": 1,
           "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
+          "iterations": 500,
+          "target-throughput": 10
         },
         {
           "operation": "range_field_conjunction_big_range_big_term_query",
           "clients": 1,
           "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
+          "iterations": 500,
+          "target-throughput": 10
         },
         {
           "operation": "range_field_disjunction_small_range_small_term_query",
           "clients": 1,
           "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
+          "iterations": 500,
+          "target-throughput": 10
         },
         {
           "operation": "range_field_disjunction_big_range_small_term_query",
           "clients": 1,
           "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
+          "iterations": 500,
+          "target-throughput": 10
         }
       ]
     },
@@ -80,7 +80,9 @@
       "name": "append-no-conflicts-index-only",
       "description": "Indexes the whole document corpus using Elasticsearch default settings.",
       "index-settings": {
-        "index.number_of_replicas": 0
+        "index.number_of_shards": 1,
+        "index.number_of_replicas": 0,
+        "index.queries.cache.enabled": false
       },
       "schedule": [
         {

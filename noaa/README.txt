@@ -3,12 +3,14 @@ ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/
 
 Instructions on how to recreate the json documents:
 1) Download the following files:
+* ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2014.csv.gz
+* ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2015.csv.gz
 * ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2016.csv.gz
 * ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
 * ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-countries.txt
 * ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-states.txt
-2) Execute: gunzip 2016.csv.gz
-3) Sort the file by station: sort --field-separator=',' --key=1,2 -o 2016-sorted.csv 2016.csv
+2) Decompress measurement files. For example: gunzip 2016.csv.gz
+3) Sort the files by station. For example: sort --field-separator=',' --key=1,2 -o 2016-sorted.csv 2016.csv
 4) Execute a script like is specified at the end of the file to create json doccuments.
 5) Make sure that the ordering of json docs is randomized. (The script orders meansurements of the same station next to each other)
    Ordering can be randomized by execution: 
@@ -21,7 +23,6 @@ Instructions on how to recreate the json documents:
 Python script that process the csv file into Elasticsearch json documents:
 
 ----------------------------------------------------------------------------------------------------
-
 import os
 import csv
 import json
@@ -31,7 +32,7 @@ stationsFile = 'ghcnd-stations.txt'
 countriesFile = 'ghcnd-countries.txt'
 statesFile = 'ghcnd-states.txt'
 
-weatherDataFile = '2016-sorted.csv'
+weatherDataFiles = ['2014-sorted.csv', '2015-sorted.csv', '2016-sorted.csv']
 indexPrefix = 'weather-data'
 docType = 'summary'
 
@@ -195,10 +196,11 @@ stationsMap = loadStationsFile(stationsFile, statesFile, countriesFile)
 outFile = 'documents.json'
 with open(outFile, 'w+') as file:
     count = 0
-    for doc in processWeatherFile(weatherDataFile, stationsMap):
-        doc['_source']['date'] = doc['_source']['date'].isoformat()
-        file.write(json.dumps(doc['_source']))
-        file.write('\n')
-        count = count + 1
+    for weatherDataFile in weatherDataFiles:
+        for doc in processWeatherFile(weatherDataFile, stationsMap):
+            doc['_source']['date'] = doc['_source']['date'].isoformat()
+            file.write(json.dumps(doc['_source']))
+            file.write('\n')
+            count = count + 1
 print('Wrote ' + str(count) + ' entries')
 ----------------------------------------------------------------------------------------------------

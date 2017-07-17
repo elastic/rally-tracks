@@ -10,8 +10,6 @@ built into the rally-eventdata-track can be CPU intensive.
 
 ## License
 
-We use the same license for the data as the original data from Geonames:
-
 ```
 This work is licensed under a Creative Commons Attribution 4.0 License,
 see https://creativecommons.org/licenses/by-sa/4.0/

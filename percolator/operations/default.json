@@ -22,7 +22,6 @@
         "query": {
           "percolate": {
             "field": "query",
-            "document_type": "content",
             "document": {
               "body": "president bush"
             }
@@ -37,7 +36,6 @@
         "query": {
           "percolate": {
             "field": "query",
-            "document_type": "content",
             "document": {
               "body": "saddam hussein"
             }
@@ -52,7 +50,6 @@
         "query": {
           "percolate": {
             "field": "query",
-            "document_type": "content",
             "document": {
               "body": "hurricane katrina"
             }
@@ -67,7 +64,6 @@
         "query": {
           "percolate": {
             "field": "query",
-            "document_type": "content",
             "document": {
               "body": "google"
             }
@@ -81,10 +77,9 @@
       "body": {
         "query": {
           "constant_score": {
-            "query": {
+            "filter": {
               "percolate": {
                 "field": "query",
-                "document_type": "content",
                 "document": {
                   "body": "google"
                 }
@@ -101,7 +96,6 @@
         "query": {
           "percolate": {
             "field": "query",
-            "document_type": "content",
             "document": {
               "body": "Israeli prime minister Ariel Sharon suffers a massive stroke; he is replaced by acting prime minister Ehud Olmert"
             }
@@ -121,7 +115,6 @@
         "query": {
           "percolate": {
             "field": "query",
-            "document_type": "content",
             "document": {
               "body": "ignore me"
             }
@@ -135,10 +128,9 @@
       "body": {
         "query": {
           "constant_score": {
-            "query": {
+            "filter": {
               "percolate": {
                 "field": "query",
-                "document_type": "content",
                 "document": {
                   "body": "ignore me"
                 }

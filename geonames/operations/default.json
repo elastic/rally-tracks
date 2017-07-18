@@ -120,7 +120,7 @@
               {
                 "script_score": {
                   "script": {
-                    "inline": "(ln(abs(doc['population']) + 1) + doc['location'].lon + doc['location'].lat) * _score",
+                    "source": "(ln(abs(doc['population']) + 1) + doc['location'].lon + doc['location'].lat) * _score",
                     "lang": "expression"
                   }
                 }
@@ -143,7 +143,7 @@
               {
                 "script_score": {
                   "script": {
-                    "inline": "(Math.log(Math.abs((int)((List)doc.population).get(0)) + 1) + (double)(doc.location.lon) * (double)(doc.location.lat))/_score",
+                    "source": "(Math.log(Math.abs((int)((List)doc.population).get(0)) + 1) + (double)(doc.location.lon) * (double)(doc.location.lat))/_score",
                     "lang": "painless"
                   }
                 }
@@ -166,7 +166,7 @@
               {
                 "script_score": {
                   "script": {
-                    "inline": "(Math.log(Math.abs(doc['population'].value) + 1) + doc['location'].lon * doc['location'].lat)/_score",
+                    "source": "(Math.log(Math.abs(doc['population'].value) + 1) + doc['location'].lon * doc['location'].lat)/_score",
                     "lang": "painless"
                   }
                 }

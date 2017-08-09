@@ -180,6 +180,7 @@
     {
       "name": "scripts-only",
       "description": "Only runs Painless scripts (static and dynamic). Note that this assumes that a corresponding indexing challenge has been run",
+      "user-info": "This challenge is deprecated and will be removed soon. Use 'append-no-conflicts' instead and define the relevant tasks with '--include-tasks'.",
       "schedule": [
         {
           "operation": "painless_static",
@@ -200,6 +201,7 @@
     {
       "name": "append-no-conflicts-no-large-terms",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
+      "user-info": "This challenge is deprecated and will be removed soon. Use 'append-no-conflicts' instead and define the relevant tasks with '--include-tasks'.",
       "index-settings": {
         "index.number_of_replicas": 0
       },

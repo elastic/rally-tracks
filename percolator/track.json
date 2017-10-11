@@ -1,6 +1,7 @@
 {% import "rally.helpers" as rally with context %}
 
 {
+  "version": 1,
   "short-description": "Percolator benchmark based on 2M AOL queries",
   "description": "This benchmark indexes 2M AOL queries and use the percolate query to match",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/percolator",

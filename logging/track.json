@@ -1,6 +1,7 @@
 {% import "rally.helpers" as rally with context %}
 
 {
+  "version": 1,
   "short-description": "Logging benchmark",
   "description": "This benchmark indexes HTTP server log data from the 1998 world cup.",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/logging",

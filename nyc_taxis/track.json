@@ -1,8 +1,8 @@
 {% import "rally.helpers" as rally with context %}
 
 {
-  "short-description": "Trip records completed in yellow and green taxis in New York in 2015",
-  "description": "This test indexes 165M taxi rides using 8 client threads and 10,000 docs per bulk request against Elasticsearch",
+  "short-description": "Taxi rides in New York in 2015",
+  "description": "Taxi rides in New York in 2015",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/nyc_taxis",
   "indices": [
     {

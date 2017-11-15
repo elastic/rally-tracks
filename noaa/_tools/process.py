@@ -1,28 +1,9 @@
-Dataset containing daily weather measurement from NOAA:
-ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/
+####################################################################
+#
+# process the csv file into Elasticsearch json documents
+#
+####################################################################
 
-Instructions on how to recreate the json documents:
-1) Download the following files:
-* ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2014.csv.gz
-* ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2015.csv.gz
-* ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/2016.csv.gz
-* ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
-* ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-countries.txt
-* ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-states.txt
-2) Decompress measurement files. For example: gunzip 2016.csv.gz
-3) Sort the files by station. For example: sort --field-separator=',' --key=1,2 -o 2016-sorted.csv 2016.csv
-4) Execute a script like is specified at the end of the file to create json doccuments.
-5) Make sure that the ordering of json docs is randomized. (The script orders meansurements of the same station next to each other)
-   Ordering can be randomized by execution: 
-   shuf documents.json > documents1.json 
-6) Compress the documents json file: 
-   bzip2 -9 -c documents1.json > documents.json.bz2
-
-
-
-Python script that process the csv file into Elasticsearch json documents:
-
-----------------------------------------------------------------------------------------------------
 import os
 import csv
 import json
@@ -136,26 +117,26 @@ def processWeatherDoc(currentStationDoc):
         currentStationDoc['WSFI'] = float(currentStationDoc['WSFI']) / 10.0
     if 'WSFM' in currentStationDoc:
         currentStationDoc['WSFM'] = float(currentStationDoc['WSFM']) / 10.0
-        
+
     if 'TMIN' in currentStationDoc and 'TMAX' in currentStationDoc:
         if currentStationDoc['TMIN'] > currentStationDoc['TMAX']:
             tmp = currentStationDoc['TMIN']
             currentStationDoc['TMIN'] = currentStationDoc['TMAX']
             currentStationDoc['TMAX'] = tmp
-        currentStationDoc['TRANGE'] = { 
+        currentStationDoc['TRANGE'] = {
             "gte" : currentStationDoc['TMIN'],
             "lte" : currentStationDoc['TMAX']
-          }
+        }
     if 'MDTN' in currentStationDoc and 'MDTX' in currentStationDoc:
         if currentStationDoc['MDTN'] > currentStationDoc['MDTX']:
             tmp = currentStationDoc['MDTN']
             currentStationDoc['MDTN'] = currentStationDoc['MDTX']
             currentStationDoc['MDTX'] = tmp
-        currentStationDoc['MDTRANGE'] = { 
+        currentStationDoc['MDTRANGE'] = {
             "gte" : currentStationDoc['MDTN'],
             "lte" : currentStationDoc['MDTX']
-          }
-    
+        }
+
     indexDoc = {
         '_op_type': 'create',
         '_index': indexPrefix + '-' + str(currentStationDoc['date'].year),
@@ -203,4 +184,3 @@ with open(outFile, 'w+') as file:
             file.write('\n')
             count = count + 1
 print('Wrote ' + str(count) + ' entries')
-----------------------------------------------------------------------------------------------------

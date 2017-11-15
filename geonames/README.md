@@ -9,6 +9,28 @@ Modifications:
 * The original CSV data have been converted to JSON.
 * We combine the original `longitude` and `latitude` fields to a new `location` field of type [geo_point](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html).
 
+### Example Document
+
+```json
+{
+  "geonameid": 2986043,
+  "name": "Pic de Font Blanca",
+  "asciiname": "Pic de Font Blanca",
+  "alternatenames": "Pic de Font Blanca,Pic du Port",
+  "feature_class": "T",
+  "feature_code": "PK",
+  "country_code": "AD",
+  "admin1_code": "00",
+  "population": 0,
+  "dem": "2860",
+  "timezone": "Europe/Andorra",
+  "location": [
+    1.53335,
+    42.64991
+  ]
+}
+```
+
 ### License
 
 We use the same license for the data as the original data from Geonames:

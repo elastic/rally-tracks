@@ -1,7 +1,6 @@
-Logging Data Set
-================
+## Logging track
 
-Source: http://ita.ee.lbl.gov/html/contrib/WorldCup.html
+This track is based on [Web server logs from the 1998 Football world cup](http://ita.ee.lbl.gov/html/contrib/WorldCup.html). 
 
 Modifications: 
 
@@ -11,7 +10,21 @@ Modifications:
   contained unrecognised / problematic characters and invalid IP addresses like "0";
   around 0.001% of the source data was lost due to this approach)
 
-Original License:
+### Example Document
+
+```json
+{
+  "@timestamp": 898459201,
+  "clientip": "211.11.9.0",
+  "request": "GET /english/index.html HTTP/1.0",
+  "status": 304,
+  "size": 0
+}
+```
+
+### License
+
+Original license text:
 
                Copyright (C) 1997, 1998, 1999 Hewlett-Packard Company
                              ALL RIGHTS RESERVED.

@@ -1,12 +1,12 @@
     {
       "name": "index-append",
       "operation-type": "index",
-      "bulk-size": 500
+      "bulk-size": {{bulk_size | default(500)}}
     },
     {
       "name": "index-update",
       "operation-type": "index",
-      "bulk-size": 500,
+      "bulk-size": {{bulk_size | default(500)}},
       "conflicts": "random"
     },
     {

@@ -22,6 +22,12 @@ Note that the ``body`` content is actually much longer has been shortened here t
 }
 ```
 
+### Parameters
+
+This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
+
+* `bulk_size`
+
 ### License
 
 All articles that are included are licensed as CC-BY (http://creativecommons.org/licenses/by/2.0/)

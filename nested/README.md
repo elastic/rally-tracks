@@ -46,6 +46,12 @@ These scripts are available in the raw_data_prep_scripts.zip file.
 }
 ```
 
+### Parameters
+
+This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
+
+* `bulk_size`
+
 ### License
 
 We use the same license for the data as the original data: [CC-SA-3.0](http://creativecommons.org/licenses/by-sa/3.0/)

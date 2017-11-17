@@ -52,3 +52,9 @@ bzip2 -k documents.json
   "vendor_id": "2"
 }
 ```
+
+### Parameters
+
+This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
+
+* `bulk_size`

@@ -16,6 +16,12 @@ The queries.json.bz2 file contains list of ES queries that has been randomly gen
 }
 ```
 
+### Parameters
+
+This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
+
+* `bulk_size`
+
 ### License
 
 AOL's original README:

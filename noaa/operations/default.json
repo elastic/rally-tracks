@@ -1,7 +1,7 @@
     {
       "name": "index",
       "operation-type": "index",
-      "bulk-size": 5000
+      "bulk-size": {{bulk_size | default(5000)}}
     },
     {
       "name": "force-merge",

@@ -39,3 +39,9 @@ To recreate the document corpus:
   "TMIN": 15.5
 }
 ```
+
+### Parameters
+
+This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
+
+* `bulk_size`

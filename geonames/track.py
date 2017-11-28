@@ -101,8 +101,12 @@ class ProhibitedTermsQueryParamSource(QueryParamSource):
         }
         return result
 
+def refresh(es, params):
+    es.indices.refresh(index=params.get("index", "_all"))
+
 
 def register(registry):
     registry.register_param_source("pure-terms-query-source", PureTermsQueryParamSource)
     registry.register_param_source("filtered-terms-query-source", FilteredTermsQueryParamSource)
     registry.register_param_source("prohibited-terms-query-source", ProhibitedTermsQueryParamSource)
+    registry.register_runner("refresh", refresh)

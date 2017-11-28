@@ -5,6 +5,10 @@
       "bulk-size": {{bulk_size | default(10000)}}
     },
     {
+    "name": "refresh",
+    "operation-type": "refresh"
+    },
+    {
       "name": "default",
       "operation-type": "search",
       "body": {

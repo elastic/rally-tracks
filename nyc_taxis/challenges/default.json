@@ -16,6 +16,11 @@
           "clients": 8
         },
         {
+          "name": "refresh-after-index",
+          "operation": "refresh",
+          "clients": 1
+        },
+        {
           "operation": "default",
           "clients": 1,
           "warmup-iterations": 50,
@@ -53,6 +58,11 @@
           "operation": "index",
           "warmup-time-period": 240,
           "clients": 8
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh",
+          "clients": 1
         }
       ]
     },
@@ -68,6 +78,11 @@
           "operation": "index",
           "warmup-time-period": 240,
           "clients": 8
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh",
+          "clients": 1
         }
       ]
     }

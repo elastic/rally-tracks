@@ -141,8 +141,13 @@ class NestedQueryParamSourceWithInnerHits(QueryParamSource):
         }
         return result
 
+def refresh(es, params):
+    es.indices.refresh(index=params.get("index", "_all"))
+
+
 def register(registry):
     registry.register_param_source("nested-query-source", NestedQueryParamSource)
     registry.register_param_source("nested-query-source-with-inner-hits", NestedQueryParamSourceWithInnerHits)
     registry.register_param_source("term-query-source", TermQueryParamSource)
     registry.register_param_source("sorted-term-query-source", SortedTermQueryParamSource)
+    registry.register_runner("refresh", refresh)

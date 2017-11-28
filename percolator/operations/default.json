@@ -5,6 +5,10 @@
       "bulk-size": {{bulk_size | default(5000)}}
     },
     {
+    "name": "refresh",
+    "operation-type": "refresh"
+    },
+    {
       "name": "force-merge",
       "operation-type": "force-merge"
     },

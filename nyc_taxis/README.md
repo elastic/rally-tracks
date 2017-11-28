@@ -7,13 +7,13 @@ This has only been tested with the December 2015 dump, but this should work with
 Once downloaded, you can generate the mappings with:
 
 ```
-python3 parse.py mappings
+python3 _tools/parse.py mappings
 ```
 
 And the json documents  can be generated with:
 
 ```  
-python3 parse.py json file_name.csv > documents.json
+python3 _tools/parse.py json file_name.csv > documents.json
 ```
 
 Finally the json docs can be compressed with:

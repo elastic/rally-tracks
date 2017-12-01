@@ -41,6 +41,12 @@ then
     git clone https://github.com/elastic/rally-tracks.git "${HOME}/${REPO_TARGET}"
 fi
 
+if [ "${TRACK}" == "logging" ]
+then
+    echo "The track 'logging' is deprecated. Please use 'http_logs' instead."
+    exit 1
+fi
+
 # check if the track actually exists
 if [ ! -d "${HOME}/${REPO_TARGET}/${TRACK}" ]
 then

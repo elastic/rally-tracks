@@ -1,7 +1,4 @@
-**Note: This track is deprecated and may be removed soon. Please use http_logs instead.**
-
-
-## Logging track
+## HTTP logs track
 
 This track is based on [Web server logs from the 1998 Football world cup](http://ita.ee.lbl.gov/html/contrib/WorldCup.html). 
 

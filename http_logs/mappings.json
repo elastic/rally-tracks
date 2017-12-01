@@ -1,0 +1,33 @@
+{
+  "type": {
+    "dynamic": "strict",
+    "_all":       {
+      "enabled": false
+    },
+    "properties": {
+      "@timestamp": {
+        "type": "date",
+        "numeric_resolution": "seconds"
+      },
+      "clientip": {
+        "type": "ip"
+      },
+      "request": {
+        "type": "string",
+        "fields": {
+          "raw": {
+            "ignore_above": 256,
+            "type": "string",
+            "index": "not_analyzed"
+          }
+        }
+      },
+      "status": {
+        "type": "integer"
+      },
+      "size": {
+        "type": "integer"
+      }
+    }
+  }
+}

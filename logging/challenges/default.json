@@ -1,6 +1,7 @@
     {
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
+      "user-info": "The track 'logging' is deprecated. Please upgrade to Rally 0.8.1 or later and use the 'http_logs' track instead.",
       "default": true,
       "index-settings": {
         "index.number_of_replicas": 0
@@ -69,6 +70,7 @@
     {
       "name": "append-no-conflicts-index-only",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
+      "user-info": "The track 'logging' is deprecated. Please upgrade to Rally 0.8.1 or later and use the 'http_logs' track instead.",
       "index-settings": {
         "index.number_of_replicas": 0
       },
@@ -88,6 +90,7 @@
       "#COMMENT": "Temporary workaround for more realistic benchmarks with two nodes",
       "name": "append-no-conflicts-index-only-1-replica",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
+      "user-info": "The track 'logging' is deprecated. Please upgrade to Rally 0.8.1 or later and use the 'http_logs' track instead.",
       "index-settings": {
         "index.number_of_replicas": 1
       },

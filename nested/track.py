@@ -4,8 +4,9 @@ import csv
 
 
 class QueryParamSource:
-    def __init__(self, indices, params):
-        self._indices = indices
+    # We need to stick to the param source API
+    # noinspection PyUnusedLocal
+    def __init__(self, track, params, **kwargs):
         self._params = params
         # here we read the queries data file into arrays which we'll then later use randomly.
         self.tags = []
@@ -19,6 +20,8 @@ class QueryParamSource:
                 self.tags.append(row[0])
                 self.dates.append(row[1])
 
+    # We need to stick to the param source API
+    # noinspection PyUnusedLocal
     def partition(self, partition_index, total_partitions):
         return self
 
@@ -103,6 +106,7 @@ class NestedQueryParamSource(QueryParamSource):
         }
         return result
 
+
 class NestedQueryParamSourceWithInnerHits(QueryParamSource):
     def params(self):
         result = {
@@ -125,15 +129,15 @@ class NestedQueryParamSourceWithInnerHits(QueryParamSource):
                                             }
                                         }
                                     },
-                                    "inner_hits" : {
-                                        "size" : self._params["inner_hits_size"]
+                                    "inner_hits": {
+                                        "size": self._params["inner_hits_size"]
                                     }
                                 }
                             }
                         ]
                     }
                 },
-                "size" : self._params["size"]
+                "size": self._params["size"]
             },
             "index": None,
             "type": None,
@@ -141,13 +145,20 @@ class NestedQueryParamSourceWithInnerHits(QueryParamSource):
         }
         return result
 
+
 def refresh(es, params):
     es.indices.refresh(index=params.get("index", "_all"))
 
 
 def register(registry):
+    try:
+        major, minor, patch, _ = registry.meta_data["rally_version"]
+    except AttributeError:
+        # We must be below Rally 0.8.2 (did not provide version metadata).
+        # register "refresh" for older versions of Rally. Newer versions have support out of the box.
+        registry.register_runner("refresh", refresh)
+
     registry.register_param_source("nested-query-source", NestedQueryParamSource)
     registry.register_param_source("nested-query-source-with-inner-hits", NestedQueryParamSourceWithInnerHits)
     registry.register_param_source("term-query-source", TermQueryParamSource)
     registry.register_param_source("sorted-term-query-source", SortedTermQueryParamSource)
-    registry.register_runner("refresh", refresh)

@@ -1,0 +1,46 @@
+{
+  "mappings": {
+    "question": {
+      "dynamic": "strict",
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "user": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "creationDate": {
+          "type": "date"
+        },
+        "title": {
+          "index": "analyzed",
+          "type": "string"
+        },
+        "qid": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "tag": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "answer_count": {
+          "type": "integer"
+        },
+        "answers": {
+          "type": "nested",
+          "properties": {
+            "user": {
+              "index": "not_analyzed",
+              "type": "string"
+            },
+            "date": {
+              "type": "date"
+            }
+          }
+        }
+      }
+    }
+  }
+}

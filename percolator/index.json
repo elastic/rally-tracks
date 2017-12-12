@@ -1,0 +1,27 @@
+{
+  "mappings": {
+    "content": {
+      "dynamic": "strict",
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "body": {
+          "type": "string",
+          "analyzer": "english"
+        }
+      }
+    },
+    ".percolator": {
+      "dynamic": "strict",
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "query": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@
   "short-description": "POIs from Geonames",
   "description": "POIs from Geonames",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geonames",
+  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "geonames",
@@ -12,8 +13,23 @@
       "types": [
         {
           "name": "type",
+          "#COMMENT": "Newer versions of Rally (0.9.0) and later will ignore *all* of the properties below! These are just provided for backwards compatibility.",
           "mapping": "mappings.json",
           "documents": "documents-2.json.bz2",
+          "document-count": 11396505,
+          "compressed-bytes": 264698741,
+          "uncompressed-bytes": 3547614383
+        }
+      ]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "geonames",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geonames",
+      "documents": [
+        {
+          "source-file": "documents-2.json.bz2",
           "document-count": 11396505,
           "compressed-bytes": 264698741,
           "uncompressed-bytes": 3547614383

@@ -5,6 +5,7 @@
   "short-description": "Global daily weather measurements from NOAA",
   "description": "Global daily weather measurements from NOAA",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/noaa",
+  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "weather-data-2016",
@@ -14,6 +15,20 @@
           "name": "summary",
           "mapping": "mappings.json",
           "documents": "documents.json.bz2",
+          "document-count": 33659481,
+          "compressed-bytes": 993302204,
+          "uncompressed-bytes": 9684262698
+        }
+      ]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "noaa",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/noaa",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
           "document-count": 33659481,
           "compressed-bytes": 993302204,
           "uncompressed-bytes": 9684262698

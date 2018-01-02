@@ -1,9 +1,11 @@
 {% import "rally.helpers" as rally with context %}
 
 {
+  "version": 1,
   "short-description": "Taxi rides in New York in 2015",
   "description": "Taxi rides in New York in 2015",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/nyc_taxis",
+  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "nyc_taxis",
@@ -13,6 +15,20 @@
           "name": "type",
           "mapping": "mappings.json",
           "documents": "documents.json.bz2",
+          "document-count": 165346692,
+          "compressed-bytes": 4812721501,
+          "uncompressed-bytes": 79802445255
+        }
+      ]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "nyc_taxis",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/nyc_taxis",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
           "document-count": 165346692,
           "compressed-bytes": 4812721501,
           "uncompressed-bytes": 79802445255

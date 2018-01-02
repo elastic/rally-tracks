@@ -5,6 +5,7 @@
   "short-description": "Percolator benchmark based on AOL queries",
   "description": "Percolator benchmark based on AOL queries",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/percolator",
+  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "queries",
@@ -21,6 +22,21 @@
         {
           "name": "content",
           "mapping": "document-mapping.json"
+        }
+      ]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "percolator",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/percolator",
+      "documents": [
+        {
+          "source-file": "queries-2.json.bz2",
+          "target-type": ".percolator",
+          "document-count": 2000000,
+          "compressed-bytes": 105192,
+          "uncompressed-bytes": 110039748
         }
       ]
     }

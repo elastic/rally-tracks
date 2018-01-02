@@ -5,6 +5,7 @@
   "short-description": "Point coordinates from PlanetOSM",
   "description": "Point coordinates from PlanetOSM",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geopoint",
+  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "osmgeopoints",
@@ -14,6 +15,20 @@
           "name": "type",
           "mapping": "mappings.json",
           "documents": "documents.json.bz2",
+          "document-count": 60844404,
+          "compressed-bytes": 505295401,
+          "uncompressed-bytes": 2448564579
+        }
+      ]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "geopoint",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geopoint",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
           "document-count": 60844404,
           "compressed-bytes": 505295401,
           "uncompressed-bytes": 2448564579

@@ -5,6 +5,7 @@
   "short-description": "StackOverflow Q&A stored as nested docs",
   "description": "StackOverflow Q&A stored as nested docs",
   "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/nested",
+  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "sonested",
@@ -14,6 +15,20 @@
           "name": "question",
           "mapping": "mappings.json",
           "documents": "documents.json.bz2",
+          "document-count": 11203029,
+          "compressed-bytes": 695293381,
+          "uncompressed-bytes": 3637747670
+        }
+      ]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "nested",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/nested",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
           "document-count": 11203029,
           "compressed-bytes": 695293381,
           "uncompressed-bytes": 3637747670

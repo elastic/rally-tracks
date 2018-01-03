@@ -51,7 +51,9 @@ fi
 # download data (unless it exists locally)
 readonly FILES=$(cat ${HOME}/${REPO_TARGET}/${TRACK}/files.txt)
 for f in ${FILES}; do
-    TARGET_PATH="${ROOT}/data/${TRACK}/${f}"
+    TARGET_ROOT="${ROOT}/data/${TRACK}"
+    TARGET_PATH="${TARGET_ROOT}/${f}"
+    mkdir -p "${TARGET_ROOT}"
     TARGETS[${#TARGETS[*]}]="${TARGET_PATH}"
     if [ ! -f "${HOME}/${TARGET_PATH}" ]
     then

@@ -26,8 +26,9 @@ Note that the ``body`` content is actually much longer has been shortened here t
 
 This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
 
-* `bulk_size`
-* [`default_search_timeout`](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/search.html#global-search-timeout)
+* `bulk_size` (default: 500)
+* `number_of_replicas` (default: 0)
+* [`default_search_timeout`](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/search.html#global-search-timeout) (default: -1)
 
 ### License
 

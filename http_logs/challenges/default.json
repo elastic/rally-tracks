@@ -3,7 +3,7 @@
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "default": true,
       "index-settings": {
-        "index.number_of_replicas": 0
+        "index.number_of_replicas": {{number_of_replicas | default(0)}}
       },
       "schedule": [
         {
@@ -80,7 +80,7 @@
       "name": "append-no-conflicts-index-only",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
       "index-settings": {
-        "index.number_of_replicas": 0
+        "index.number_of_replicas": {{number_of_replicas | default(0)}}
       },
       "schedule": [
         {
@@ -108,8 +108,9 @@
       "#COMMENT": "Temporary workaround for more realistic benchmarks with two nodes",
       "name": "append-no-conflicts-index-only-1-replica",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
+      "user-info": "This challenge is deprecated and will be removed soon. Use 'append-no-conflicts-index-only' instead and set '--track-params=\"number_of_replicas:1\"' (requires Rally 0.8.0 or later).",
       "index-settings": {
-        "index.number_of_replicas": 1
+        "index.number_of_replicas": {{number_of_replicas | default(1)}}
       },
       "schedule": [
         {

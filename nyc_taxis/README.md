@@ -57,4 +57,6 @@ bzip2 -k documents.json
 
 This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
 
-* `bulk_size`
+* `bulk_size` (default: 10000)
+* `number_of_replicas` (default: 0)
+

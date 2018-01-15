@@ -26,7 +26,8 @@ Note that the ``body`` content is actually much longer has been shortened here t
 
 This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
 
-* `bulk_size`
+* `bulk_size` (default: 500)
+* `number_of_replicas` (default: 0)
 
 ### License
 

@@ -35,7 +35,8 @@ Modifications:
 
 This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
 
-* `bulk_size`
+* `bulk_size` (default: 5000)
+* `number_of_replicas` (default: 0)
 
 ### License
 

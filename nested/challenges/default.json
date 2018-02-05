@@ -11,7 +11,7 @@
           "operation": "index-append",
           "warmup-time-period": 120,
           "time-period": 3600,
-          "clients": 4
+          "clients": {{bulk_indexing_clients | default(4)}}
         },
         {
           "name": "refresh-after-index",
@@ -90,7 +90,7 @@
           "operation": "index-append",
           "warmup-time-period": 120,
           "time-period": 3600,
-          "clients": 4
+          "clients": {{bulk_indexing_clients | default(4)}}
         },
         {
         "name": "refresh-after-index",

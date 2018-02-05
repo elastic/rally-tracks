@@ -58,5 +58,6 @@ bzip2 -k documents.json
 This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
 
 * `bulk_size` (default: 10000)
+* `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
 * `number_of_replicas` (default: 0)
 

@@ -12,7 +12,7 @@
         {
           "operation": "index-append",
           "warmup-time-period": 240,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "name": "refresh-after-index",
@@ -96,7 +96,7 @@
         {
           "operation": "index-append",
           "warmup-time-period": 240,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "name": "refresh-after-index",
@@ -126,7 +126,7 @@
         {
           "operation": "index-append",
           "warmup-time-period": 240,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
         "name": "refresh-after-index",
@@ -157,7 +157,7 @@
         {
           "operation": "index-update",
           "warmup-time-period": 240,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "name": "refresh-after-index",

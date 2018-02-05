@@ -13,7 +13,7 @@
         {
           "operation": "index-append",
           "warmup-time-period": 120,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "name": "refresh-after-index",
@@ -139,7 +139,7 @@
         {
           "operation": "index-append",
           "warmup-time-period": 120,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "operation": "force-merge",
@@ -159,7 +159,7 @@
         {
           "operation": "index-append",
           "warmup-time-period": 120,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "operation": "force-merge",
@@ -180,7 +180,7 @@
         {
           "operation": "index-update",
           "warmup-time-period": 45,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "operation": "force-merge",
@@ -220,7 +220,7 @@
         {
           "operation": "index-append",
           "warmup-time-period": 120,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "operation": "force-merge",
@@ -316,7 +316,7 @@
         {
           "operation": "index-append",
           "warmup-time-period": 120,
-          "clients": 8
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "operation": "force-merge",

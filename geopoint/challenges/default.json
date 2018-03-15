@@ -98,36 +98,6 @@
       ]
     },
     {
-      "#COMMENT": "Temporary workaround for more realistic benchmarks with two nodes",
-      "name": "append-no-conflicts-index-only-1-replica",
-      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
-      "user-info": "This challenge is deprecated and will be removed soon. Use 'append-no-conflicts-index-only' instead and set '--track-params=\"number_of_replicas:1\"' (requires Rally 0.8.0 or later).",
-      "index-settings": {
-        "index.number_of_replicas": {{number_of_replicas | default(1)}}
-      },
-      "schedule": [
-        {
-          "operation": "index-append",
-          "warmup-time-period": 120,
-          "clients": {{bulk_indexing_clients | default(8)}}
-        },
-        {
-        "name": "refresh-after-index",
-        "operation": "refresh",
-        "clients": 1
-        },
-        {
-          "operation": "force-merge",
-          "clients": 1
-        },
-        {
-        "name": "refresh-after-force-merge",
-        "operation": "refresh",
-        "clients": 1
-        }
-      ]
-    },
-    {
       "name": "append-fast-with-conflicts",
       "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings. Rally will produce duplicate ids in 25% of all documents (not configurable) so we can simulate a scenario with appends most of the time and some updates in between.",
       "index-settings": {

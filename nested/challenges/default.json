@@ -2,10 +2,10 @@
       "name": "nested-search-challenge",
       "description": "Indexes the document corpus for an hour using Elasticsearch default settings. After that randomized nested queries are run.",
       "default": true,
-      "index-settings": {
+      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
         "index.number_of_shards": 1,
         "index.number_of_replicas": {{number_of_replicas | default(0)}}
-      },
+      }{%- endif %},
       "schedule": [
         {
           "operation": "index-append",
@@ -81,10 +81,10 @@
     {
       "name": "index-only",
       "description": "Indexes the document corpus for an hour using Elasticsearch default settings.",
-      "index-settings": {
+      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
         "index.number_of_shards": 1,
         "index.number_of_replicas": {{number_of_replicas | default(0)}}
-      },
+      }{%- endif %},
       "schedule": [
         {
           "operation": "index-append",

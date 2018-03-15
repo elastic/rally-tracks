@@ -2,13 +2,13 @@
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "default": true,
-      "index-settings": {
+      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
         "index.number_of_shards": 1,
         "index.codec": "best_compression",
         "index.number_of_replicas": {{number_of_replicas | default(0)}},
         "index.refresh_interval": "30s",
         "index.translog.flush_threshold_size": "4g"
-      },
+      }{%- endif %},
       "schedule": [
         {
           "operation": "index",
@@ -46,13 +46,13 @@
     {
       "name": "append-no-conflicts-index-only",
       "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only.",
-      "index-settings": {
+      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
         "index.number_of_shards": 1,
         "index.codec": "best_compression",
         "index.number_of_replicas": {{number_of_replicas | default(0)}},
         "index.refresh_interval": "30s",
         "index.translog.flush_threshold_size": "4g"
-      },
+      }{%- endif %},
       "schedule": [
         {
           "operation": "index",

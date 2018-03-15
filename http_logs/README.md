@@ -29,6 +29,7 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `bulk_size` (default: 5000)
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
 * `number_of_replicas` (default: 0)
+* `index_settings`: A list of index settings. If it is defined, it replaces *all* other index settings (e.g. `number_of_replicas`).
 
 ### License
 

@@ -61,12 +61,12 @@
       "body": {
         "size": 0,
         "aggs": {
-					"dropoffs_over_time": {
-						"auto_date_histogram": {
-							"field": "dropoff_datetime",
-							"buckets": 500
-						}
-					}
+          "dropoffs_over_time": {
+            "auto_date_histogram": {
+              "field": "dropoff_datetime",
+              "buckets": 500
+            }
+          }
         }
       }
     },
@@ -77,12 +77,12 @@
       "body": {
         "size": 0,
         "aggs": {
-					"dropoffs_over_time": {
-						"date_histogram": {
-							"field": "dropoff_datetime",
-							"interval": "day"
-						}
-					}
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "interval": "day"
+            }
+          }
         }
       }
     }

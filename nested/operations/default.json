@@ -1,8 +1,8 @@
     {
       "name": "index-append",
-      "#COMMENT": "This operation-type is called 'bulk' with Rally 0.8.0. This one is only here for backwards-compatibility. Please use 'bulk' in your tracks.",
       "operation-type": "bulk",
-      "bulk-size": {{bulk_size | default(5000)}}
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
       "name": "force-merge",

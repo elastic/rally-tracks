@@ -59,5 +59,6 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 
 * `bulk_size` (default: 10000)
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
+* `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `number_of_replicas` (default: 0)
 * `index_settings`: A list of index settings. If it is defined, it replaces *all* other index settings (e.g. `number_of_replicas`).

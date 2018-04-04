@@ -1,7 +1,7 @@
     {
       "name": "index",
       "#COMMENT": "This operation-type is called 'bulk' with Rally 0.8.0. This one is only here for backwards-compatibility. Please use 'bulk' in your tracks.",
-      "operation-type": "index",
+      "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(5000)}}
     },
     {

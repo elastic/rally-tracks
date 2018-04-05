@@ -1,25 +1,13 @@
 {% import "rally.helpers" as rally with context %}
 
 {
-  "version": 1,
-  "short-description": "StackOverflow Q&A stored as nested docs",
+  "version": 2,
   "description": "StackOverflow Q&A stored as nested docs",
-  "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/nested",
-  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "sonested",
       "body": "index.json",
-      "types": [
-        {
-          "name": "question",
-          "mapping": "mappings.json",
-          "documents": "documents.json.bz2",
-          "document-count": 11203029,
-          "compressed-bytes": 695293381,
-          "uncompressed-bytes": 3637747670
-        }
-      ]
+      "types": ["question"]
     }
   ],
   "corpora": [

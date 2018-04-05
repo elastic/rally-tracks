@@ -2,10 +2,29 @@
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "default": true,
-      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-        "index.number_of_replicas": {{number_of_replicas | default(0)}}
-      }{%- endif %},
       "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+                "index.number_of_replicas": {{number_of_replicas | default(0)}}
+            }{%- endif %}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "logs-*",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
         {
           "operation": "index-append",
           "warmup-time-period": 240,
@@ -79,10 +98,29 @@
     {
       "name": "append-no-conflicts-index-only",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
-      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-        "index.number_of_replicas": {{number_of_replicas | default(0)}}
-      }{%- endif %},
       "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+                "index.number_of_replicas": {{number_of_replicas | default(0)}}
+            }{%- endif %}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "logs-*",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
         {
           "operation": "index-append",
           "warmup-time-period": 240,
@@ -107,12 +145,31 @@
     {
       "name": "append-sorted-no-conflicts",
       "description": "Indexes the whole document corpus in an index sorted by timestamp field in descending order (most recent first) and using a setup that will lead to a larger indexing throughput than the default settings. Document ids are unique so all index operations are append only.",
-      "index-settings": {
-        "index.number_of_replicas": {{number_of_replicas | default(0)}},
-        "index.sort.field": "@timestamp",
-        "index.sort.order": "desc"
-      },
       "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {
+              "index.number_of_replicas": {{number_of_replicas | default(0)}},
+              "index.sort.field": "@timestamp",
+              "index.sort.order": "desc"
+            }
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "logs-*",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
         {
           "operation": "index-append",
           "warmup-time-period": 240,

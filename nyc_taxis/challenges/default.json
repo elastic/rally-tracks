@@ -2,14 +2,33 @@
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "default": true,
-      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-        "index.number_of_shards": 1,
-        "index.codec": "best_compression",
-        "index.number_of_replicas": {{number_of_replicas | default(0)}},
-        "index.refresh_interval": "30s",
-        "index.translog.flush_threshold_size": "4g"
-      }{%- endif %},
       "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              "index.number_of_shards": 1,
+              "index.codec": "best_compression",
+              "index.number_of_replicas": {{number_of_replicas | default(0)}},
+              "index.refresh_interval": "30s",
+              "index.translog.flush_threshold_size": "4g"
+            }{%- endif %}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "nyc_taxis",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
         {
           "operation": "index",
           "warmup-time-period": 240,
@@ -46,14 +65,33 @@
     {
       "name": "append-no-conflicts-index-only",
       "description": "Indexes the whole document corpus using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only.",
-      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-        "index.number_of_shards": 1,
-        "index.codec": "best_compression",
-        "index.number_of_replicas": {{number_of_replicas | default(0)}},
-        "index.refresh_interval": "30s",
-        "index.translog.flush_threshold_size": "4g"
-      }{%- endif %},
       "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              "index.number_of_shards": 1,
+              "index.codec": "best_compression",
+              "index.number_of_replicas": {{number_of_replicas | default(0)}},
+              "index.refresh_interval": "30s",
+              "index.translog.flush_threshold_size": "4g"
+            }{%- endif %}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "nyc_taxis",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
         {
           "operation": "index",
           "warmup-time-period": 240,
@@ -69,16 +107,35 @@
     {
       "name": "append-sorted-no-conflicts-index-only",
       "description": "Indexes the whole document corpus in an index sorted by pickup_datetime field in descending order (most recent first) and using a setup that will lead to a larger indexing throughput than the default settings and produce a smaller index (higher compression rate). Document ids are unique so all index operations are append only.",
-      "index-settings": {
-        "index.number_of_shards": 1,
-        "index.codec": "best_compression",
-        "index.number_of_replicas": {{number_of_replicas | default(0)}},
-        "index.refresh_interval": "30s",
-        "index.translog.flush_threshold_size": "4g",
-        "index.sort.field": "pickup_datetime",
-        "index.sort.order": "desc"
-      },
       "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {
+              "index.number_of_shards": 1,
+              "index.codec": "best_compression",
+              "index.number_of_replicas": {{number_of_replicas | default(0)}},
+              "index.refresh_interval": "30s",
+              "index.translog.flush_threshold_size": "4g",
+              "index.sort.field": "pickup_datetime",
+              "index.sort.order": "desc"
+            }
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "nyc_taxis",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
         {
           "operation": "index",
           "warmup-time-period": 240,

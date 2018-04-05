@@ -1,25 +1,13 @@
 {% import "rally.helpers" as rally with context %}
 
 {
-  "version": 1,
-  "short-description": "Percolator benchmark based on AOL queries",
+  "version": 2,
   "description": "Percolator benchmark based on AOL queries",
-  "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/percolator",
-  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "queries",
       "body": "index.json",
-      "types": [
-        {
-          "name": "content",
-          "mapping": "mapping.json",
-          "documents": "queries-2.json.bz2",
-          "document-count": 2000000,
-          "compressed-bytes": 105192,
-          "uncompressed-bytes": 110039748
-        }
-      ]
+      "types": ["content"]
     }
   ],
   "corpora": [

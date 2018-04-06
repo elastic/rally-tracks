@@ -1,9 +1,5 @@
 def percolate(es, params):
-    es.percolate(
-        index="queries",
-        doc_type="content",
-        body=params["body"]
-    )
+    es.transport.perform_request("GET", "/queries/content/_percolate", body=params["body"])
     return 1, "ops"
 
 

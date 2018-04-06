@@ -1,6 +1,6 @@
 ## NOAA track
 
-This track is based on a [daily weather measurement from NOAA](ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/. 
+This track is based on a [daily weather measurement from NOAA](ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/daily/by_year/).
 
 To recreate the document corpus:
 
@@ -49,3 +49,4 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `number_of_replicas` (default: 0)
 * `index_settings`: A list of index settings. If it is defined, it replaces *all* other index settings (e.g. `number_of_replicas`).
+* `cluster_health` (default: "green"): The minimum required cluster health.

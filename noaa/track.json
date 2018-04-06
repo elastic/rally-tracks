@@ -1,25 +1,13 @@
 {% import "rally.helpers" as rally with context %}
 
 {
-  "version": 1,
-  "short-description": "Global daily weather measurements from NOAA",
+  "version": 2,
   "description": "Global daily weather measurements from NOAA",
-  "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/noaa",
-  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "weather-data-2016",
       "body": "index.json",
-      "types": [
-        {
-          "name": "summary",
-          "mapping": "mappings.json",
-          "documents": "documents.json.bz2",
-          "document-count": 33659481,
-          "compressed-bytes": 993302204,
-          "uncompressed-bytes": 9684262698
-        }
-      ]
+      "types": ["summary"]
     }
   ],
   "corpora": [

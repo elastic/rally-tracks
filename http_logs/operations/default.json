@@ -5,22 +5,6 @@
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
-      "name": "force-merge",
-      "operation-type": "force-merge"
-    },
-    {
-    "name": "refresh",
-    "operation-type": "refresh"
-    },
-    {
-      "name": "index-stats",
-      "operation-type": "index-stats"
-    },
-    {
-      "name": "node-stats",
-      "operation-type": "node-stats"
-    },
-    {
       "name": "default",
       "operation-type": "search",
       "index": "logs-*",

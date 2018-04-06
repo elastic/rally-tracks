@@ -5,10 +5,6 @@
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
-    "name": "refresh",
-    "operation-type": "refresh"
-    },
-    {
       "name": "default",
       "operation-type": "search",
       "body": {

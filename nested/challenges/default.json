@@ -2,12 +2,31 @@
       "name": "nested-search-challenge",
       "description": "Indexes the document corpus for an hour using Elasticsearch default settings. After that randomized nested queries are run.",
       "default": true,
-      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-        "index.number_of_shards": 1,
-        "index.number_of_replicas": {{number_of_replicas | default(0)}}
-      }{%- endif %},
       "schedule": [
         {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              "index.number_of_shards": 1,
+              "index.number_of_replicas": {{number_of_replicas | default(0)}}
+            }{%- endif %}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "sonested",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
+       {
           "operation": "index-append",
           "warmup-time-period": 120,
           "time-period": 3600,
@@ -81,11 +100,30 @@
     {
       "name": "index-only",
       "description": "Indexes the document corpus for an hour using Elasticsearch default settings.",
-      "index-settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-        "index.number_of_shards": 1,
-        "index.number_of_replicas": {{number_of_replicas | default(0)}}
-      }{%- endif %},
       "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              "index.number_of_shards": 1,
+              "index.number_of_replicas": {{number_of_replicas | default(0)}}
+            }{%- endif %}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "sonested",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
         {
           "operation": "index-append",
           "warmup-time-period": 120,

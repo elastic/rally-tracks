@@ -1,25 +1,13 @@
 {% import "rally.helpers" as rally with context %}
 
 {
-  "version": 1,
-  "short-description": "Full text benchmark with academic papers from PMC",
+  "version": 2,
   "description": "Full text benchmark with academic papers from PMC",
-  "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/pmc",
-  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "pmc",
       "body": "index.json",
-      "types": [
-        {
-          "name": "articles",
-          "mapping": "mappings.json",
-          "documents": "documents.json.bz2",
-          "document-count": 574199,
-          "compressed-bytes": 5928712141,
-          "uncompressed-bytes": 23256051757
-        }
-      ]
+      "types": ["articles"]
     }
   ],
   "corpora": [

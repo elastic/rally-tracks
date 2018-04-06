@@ -1,25 +1,13 @@
 {% import "rally.helpers" as rally with context %}
 
 {
-  "version": 1,
-  "short-description": "Point coordinates from PlanetOSM",
+  "version": 2,
   "description": "Point coordinates from PlanetOSM",
-  "data-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geopoint",
-  "#COMMENT": "This index definition uses very outdated syntax for backwards-compatibility. Please check the Rally docs for an more appropriate syntax",
   "indices": [
     {
       "name": "osmgeopoints",
       "body": "index.json",
-      "types": [
-        {
-          "name": "type",
-          "mapping": "mappings.json",
-          "documents": "documents.json.bz2",
-          "document-count": 60844404,
-          "compressed-bytes": 505295401,
-          "uncompressed-bytes": 2448564579
-        }
-      ]
+      "types": ["type"]
     }
   ],
   "corpora": [

@@ -48,20 +48,6 @@
           "clients": 1
         },
         {
-          "operation": "index-stats",
-          "clients": 1,
-          "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
-        },
-        {
-          "operation": "node-stats",
-          "clients": 1,
-          "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
-        },
-        {
           "operation": "default",
           "clients": 1,
           "warmup-iterations": 500,

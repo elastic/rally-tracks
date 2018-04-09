@@ -47,20 +47,6 @@
           "clients": 1
         },
         {
-          "operation": "index-stats",
-          "clients": 1,
-          "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
-        },
-        {
-          "operation": "node-stats",
-          "clients": 1,
-          "warmup-iterations": 100,
-          "iterations": 100,
-          "target-throughput": 50
-        },
-        {
           "operation": "percolator_with_content_president_bush",
           "clients": 1,
           "warmup-iterations": 100,

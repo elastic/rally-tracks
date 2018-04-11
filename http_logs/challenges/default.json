@@ -47,23 +47,23 @@
         {
           "operation": "default",
           "clients": 1,
-          "warmup-iterations": 100,
-          "iterations": 500,
-          "target-throughput": 10
+          "warmup-iterations": 500,
+          "iterations": 100,
+          "target-throughput": 8
         },
         {
           "operation": "term",
           "clients": 1,
-          "warmup-iterations": 100,
-          "iterations": 500,
-          "target-throughput": 60
+          "warmup-iterations": 500,
+          "iterations": 100,
+          "target-throughput": 50
         },
         {
           "operation": "range",
           "clients": 1,
           "warmup-iterations": 100,
-          "iterations": 200,
-          "target-throughput": 2
+          "iterations": 100,
+          "target-throughput": 1.5
         },
         {
           "operation": "hourly_agg",
@@ -77,7 +77,8 @@
           "clients": 1,
           "warmup-iterations": 100,
           "iterations": 200,
-          "target-throughput": 10
+          "#COMMENT": "Throughput is considered per request. So we issue one scroll request per second which will retrieve 25 pages",
+          "target-throughput": 1
         }
       ]
     },

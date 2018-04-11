@@ -72,14 +72,14 @@
           "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
-          "target-throughput": 50
+          "target-throughput": 35
         },
         {
           "operation": "percolator_no_score_with_content_google",
           "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
-          "target-throughput": 500
+          "target-throughput": 100
         },
         {
           "operation": "percolator_with_highlighting",
@@ -91,17 +91,17 @@
         {
           "operation": "percolator_with_content_ignore_me",
           "clients": 1,
-          "warmup-iterations": 100,
+          "warmup-iterations": 10,
           "iterations": 100,
-          "#COMMENT": "Be aware that we specify *target-interval* here! This means we issue one query every 15 seconds",
-          "target-interval": 15
+          "#COMMENT": "Be aware that we specify *target-interval* here! This means we issue one query every 12 seconds",
+          "target-interval": 12
         },
         {
           "operation": "percolator_no_score_with_content_ignore_me",
           "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
-          "target-throughput": 50
+          "target-throughput": 15
         }
       ]
     }

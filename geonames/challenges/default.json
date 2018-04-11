@@ -86,8 +86,8 @@
         {
           "operation": "country_agg_uncached",
           "clients": 1,
-          "warmup-iterations": 500,
-          "iterations": 1000,
+          "warmup-iterations": 200,
+          "iterations": 100,
           "target-throughput": 5
         },
         {
@@ -101,14 +101,15 @@
           "operation": "scroll",
           "clients": 1,
           "warmup-iterations": 200,
-          "iterations": 500,
-          "target-throughput": 25
+          "iterations": 100,
+          "#COMMENT": "Throughput is considered per request. So we issue one scroll request per second which will retrieve 25 pages",
+          "target-throughput": 1
         },
         {
           "operation": "expression",
           "clients": 1,
           "warmup-iterations": 200,
-          "iterations": 200,
+          "iterations": 100,
           "target-throughput": 2
         }
       ]

@@ -1,6 +1,9 @@
 {
   "mappings": {
     "type": {
+      "_source": {
+        "enabled": {{ source_enabled | default(true) | tojson }}
+      },
       "properties": {
         "surcharge": {
           "scaling_factor": 100,

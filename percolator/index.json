@@ -1,6 +1,9 @@
 {
   "mappings": {
     "content": {
+      "_source": {
+        "enabled": {{ source_enabled | default(true) | tojson }}
+      },
       "dynamic": "strict",
       "properties": {
         "body": {

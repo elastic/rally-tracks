@@ -5,6 +5,9 @@
       "_all": {
         "enabled": false
       },
+      "_source": {
+        "enabled": {{ source_enabled | default(true) | tojson }}
+      },
       "properties": {
         "@timestamp": {
           "format": "epoch_second",

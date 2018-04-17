@@ -2,6 +2,9 @@
   "mappings": {
     "summary": {
       "dynamic": "strict",
+      "_source": {
+        "enabled": {{ source_enabled | default(true) | tojson }}
+      },
       "properties": {
         "AWDR": {
           "type": "keyword"

@@ -8,13 +8,13 @@
       "name": "randomized-nested-queries",
       "operation-type": "search",
       "param-source": "nested-query-source",
-      "use_request_cache": false
+      "cache": false
     },
     {
       "name": "randomized-nested-queries-with-inner-hits_default",
       "operation-type": "search",
       "param-source": "nested-query-source-with-inner-hits",
-      "use_request_cache": false,
+      "cache": false,
       "size" : 10,
       "inner_hits_size" : 3
     },
@@ -22,7 +22,7 @@
       "name": "randomized-nested-queries-with-inner-hits_default_big_size",
       "operation-type": "search",
       "param-source": "nested-query-source-with-inner-hits",
-      "use_request_cache": false,
+      "cache": false,
       "size" : 100,
       "inner_hits_size" : 100
     },
@@ -36,7 +36,7 @@
       "name": "randomized-sorted-term-queries",
       "operation-type": "search",
       "param-source": "sorted-term-query-source",
-      "use_request_cache": false
+      "cache": false
     },
     {
       "name": "match-all",
@@ -46,7 +46,7 @@
           "match_all": {}
         }
       },
-      "use_request_cache": false
+      "cache": false
     },
     {
       "name": "nested-date-histo",
@@ -69,5 +69,5 @@
           }
         }
       },
-      "use_request_cache": false
+      "cache": false
     }

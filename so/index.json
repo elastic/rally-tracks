@@ -1,0 +1,39 @@
+{
+  "mappings": {
+    "doc": {
+      "dynamic": "strict",
+      "_source": {
+        "enabled": {{ source_enabled | default(true) | tojson }}
+      },
+      "properties": {
+      	"user": {
+          "type": "keyword"
+        },
+        "creationDate": {
+          "type": "date"
+        },
+        "title": {
+          "type": "text"
+        },
+        "questionId": {
+          "type": "keyword"
+        },
+        "answerId": {
+          "type": "keyword"
+        },
+        "acceptedAnswerId": {
+          "type": "keyword"
+        },
+        "tags": {
+          "type": "keyword"
+        },
+        "body": {
+          "type": "text"
+        },
+        "type": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

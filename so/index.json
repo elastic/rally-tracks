@@ -7,31 +7,37 @@
       },
       "properties": {
       	"user": {
-          "type": "keyword"
+          "index": "not_analyzed",
+          "type": "string"
         },
         "creationDate": {
           "type": "date"
         },
         "title": {
-          "type": "text"
+          "type": "string"
         },
         "questionId": {
-          "type": "keyword"
+          "index": "not_analyzed",
+          "type": "string"
         },
         "answerId": {
-          "type": "keyword"
+          "index": "not_analyzed",
+          "type": "string"
         },
         "acceptedAnswerId": {
-          "type": "keyword"
+          "index": "not_analyzed",
+          "type": "string"
         },
         "tags": {
-          "type": "keyword"
+          "index": "not_analyzed",
+          "type": "string"
         },
         "body": {
-          "type": "text"
+          "type": "string"
         },
         "type": {
-          "type": "keyword"
+          "index": "not_analyzed",
+          "type": "string"
         }
       }
     }

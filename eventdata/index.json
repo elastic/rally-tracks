@@ -7,39 +7,39 @@
       },
       "properties": {
         "@timestamp": { "type": "date" },
-        "message": { "type": "text", "index": false },
-        "agent": { "type": "keyword", "ignore_above": 256 },
+        "message": { "type": "string", "index": "no" },
+        "agent": { "type": "string", "index": "not_analyzed", "ignore_above": 256 },
         "bytes": { "type": "integer" },
         "clientip": { "type": "ip" },
-        "httpversion": { "type": "keyword", "ignore_above": 256 },
+        "httpversion": { "type": "string", "index": "not_analyzed", "ignore_above": 256 },
         "response": { "type": "short" },
-        "verb": { "type": "keyword", "ignore_above": 256 },
-        "tags": { "type": "keyword", "ignore_above": 256 },
+        "verb": { "type": "string", "index": "not_analyzed", "ignore_above": 256 },
+        "tags": { "type": "string", "index": "not_analyzed", "ignore_above": 256 },
         "geoip" : {
           "properties" : {
-            "country_name" : { "type": "keyword" },
+            "country_name" : { "type": "string", "index": "not_analyzed" },
             "location" : { "type": "geo_point" }
           }
         },
         "useragent": {
           "properties": {
-            "name": { "type": "keyword", "ignore_above": 256 },
-            "os": { "type": "keyword", "ignore_above": 256 },
-            "os_name": { "type": "keyword", "ignore_above": 256 }
+            "name": { "type": "string", "index": "not_analyzed", "ignore_above": 256 },
+            "os": { "type": "string", "index": "not_analyzed", "ignore_above": 256 },
+            "os_name": { "type": "string", "index": "not_analyzed", "ignore_above": 256 }
           }
         },
         "request": {
-          "norms": false,
-          "type": "text",
+          "norms": {"enabled": false},
+          "type": "string",
           "fields": {
-            "keyword": { "ignore_above": 256, "type": "keyword" }
+            "keyword": { "ignore_above": 256, "type": "string", "index": "not_analyzed" }
           }
         },
         "referrer": {
-          "norms": false,
-          "type": "text",
+          "norms": {"enabled": false},
+          "type": "string",
           "fields": {
-            "keyword": { "ignore_above": 256, "type": "keyword" }
+            "keyword": { "ignore_above": 256, "type": "string", "index": "not_analyzed" }
           }
         }
       }

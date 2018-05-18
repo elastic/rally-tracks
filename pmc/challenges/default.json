@@ -12,9 +12,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-              "index.number_of_replicas": {{number_of_replicas | default(0)}}
-            }{%- endif %}
+            "settings": {{index_settings | default({}) | tojson}}
           }
         },
         {
@@ -101,9 +99,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-              "index.number_of_replicas": {{number_of_replicas | default(0)}}
-            }{%- endif %}
+            "settings": {{index_settings | default({}) | tojson}}
           }
         },
         {
@@ -149,7 +145,6 @@
           "operation": {
             "operation-type": "create-index",
             "settings": {
-              "index.number_of_replicas": {{number_of_replicas | default(0)}},
               "index.sort.field": "timestamp",
               "index.sort.order": "desc"
             }
@@ -198,7 +193,6 @@
           "operation": {
             "operation-type": "create-index",
             "settings": {
-              "index.number_of_replicas": {{number_of_replicas | default(0)}},
               "index.refresh_interval": "30s",
               "index.number_of_shards": 6,
               "index.translog.flush_threshold_size": "4g"

@@ -10,9 +10,7 @@
           "operation": {
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-              "index.number_of_shards": 1,
               "index.codec": "best_compression",
-              "index.number_of_replicas": {{number_of_replicas | default(0)}},
               "index.refresh_interval": "30s",
               "index.translog.flush_threshold_size": "4g"
             }{%- endif %}
@@ -73,9 +71,7 @@
           "operation": {
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-              "index.number_of_shards": 1,
               "index.codec": "best_compression",
-              "index.number_of_replicas": {{number_of_replicas | default(0)}},
               "index.refresh_interval": "30s",
               "index.translog.flush_threshold_size": "4g"
             }{%- endif %}
@@ -115,9 +111,7 @@
           "operation": {
             "operation-type": "create-index",
             "settings": {
-              "index.number_of_shards": 1,
               "index.codec": "best_compression",
-              "index.number_of_replicas": {{number_of_replicas | default(0)}},
               "index.refresh_interval": "30s",
               "index.translog.flush_threshold_size": "4g",
               "index.sort.field": "pickup_datetime",

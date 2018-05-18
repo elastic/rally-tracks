@@ -1,4 +1,9 @@
 {
+  "settings": {
+    "index.number_of_shards": 1,
+    "index.number_of_replicas": {{number_of_replicas | default(0)}},
+    "index.queries.cache.enabled": false
+  },
   "mappings": {
     "summary": {
       "dynamic": "strict",

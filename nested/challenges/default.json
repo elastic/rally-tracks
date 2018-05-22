@@ -9,10 +9,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-              "index.number_of_shards": 1,
-              "index.number_of_replicas": {{number_of_replicas | default(0)}}
-            }{%- endif %}
+            "settings": {{index_settings | default({}) | tojson}}
           }
         },
         {
@@ -107,10 +104,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-              "index.number_of_shards": 1,
-              "index.number_of_replicas": {{number_of_replicas | default(0)}}
-            }{%- endif %}
+            "settings": {{index_settings | default({}) | tojson}}
           }
         },
         {

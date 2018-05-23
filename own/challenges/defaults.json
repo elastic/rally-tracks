@@ -1,0 +1,44 @@
+{
+  "name": "own",
+  "schedule": [
+    {
+      "name": "delete-index_own",
+      "operation": "delete-index"
+    },
+    {
+      "name": "create-index_own",
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {
+          "index.number_of_shards": 10,
+          "index.number_of_replicas": 0,
+          "index.refresh_interval": "300s",
+          "index.translog.flush_threshold_size": "4g",
+          "index.translog.sync_interval": "300s",
+          "index.translog.durability": "async"
+        }
+      }
+    },
+    {
+      "name": "bulk_own",
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": 5000,
+        "ingest-percentage": 90
+      },
+      "clients": 10
+    },
+    {
+      "name": "refresh_own",
+      "operation": "refresh"
+    },
+    {
+      "name": "force-merge_own",
+      "operation": "force-merge"
+    },
+    {
+      "name": "index-stats_own",
+      "operation": "index-stats"
+    }
+  ]
+}

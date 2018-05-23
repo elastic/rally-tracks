@@ -1,0 +1,37 @@
+{
+  "mappings": {
+    "type": {
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "geonameid": {
+          "type": "long"
+        },
+        "name": {
+          "type": "text",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            }
+          }
+        },
+        "location": {
+          "type": "geo_point"
+        },
+        "latitude" : {
+          "type" : "float"
+        },
+        "longitude" : {
+          "type" : "float"
+        },
+        "country_code": {
+          "type": "keyword"
+        },
+        "population": {
+          "type": "long"
+        }
+      }
+    }
+  }
+}

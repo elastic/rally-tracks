@@ -1,0 +1,30 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "POIs from Geonames",
+  "data-url": "/home/chenfh5/.rally/benchmarks/data/tutorial/documents.json.bz2",
+  "indices": [
+    {
+      "name": "geonames",
+      "body": "index.json",
+      "types": [ "type" ]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "tutorial",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geonames",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 11739200,
+          "compressed-bytes": 140620248,
+          "uncompressed-bytes": 1555427002
+        }
+      ]
+    }
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

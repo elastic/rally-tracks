@@ -9,7 +9,8 @@
       "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(500)}},
       "ingest-percentage": {{ingest_percentage | default(100)}},
-      "conflicts": "random"
+      "conflicts": "random",
+      "conflict-probability": {{conflict_probability | default(25)}}
     },
     {
       "name": "default",

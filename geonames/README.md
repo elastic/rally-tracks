@@ -39,6 +39,7 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `conflict_probability` (default: 25): A number between 0 and 100 that defines the probability of id conflicts. This requires to run the respective challenge.
+* `recency` (default: 0): A number between 0 and 1 that defines whether to bias towards more recent ids when simulating conflicts. See the [Rally docs](http://esrally.readthedocs.io/en/latest/track.html#bulk) for the full definition of this parameter. This requires to run the respective challenge.
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 5)
 * `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index. 

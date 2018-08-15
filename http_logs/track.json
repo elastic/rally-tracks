@@ -97,6 +97,62 @@
           "uncompressed-bytes": 24555905444
         }
       ]
+    },
+    {
+      "name": "http_logs_unparsed",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/http_logs",
+      "target-type": "type",
+      "documents": [
+        {
+          "target-index": "logs-181998",
+          "source-file": "documents-181998.unparsed.json.bz2",
+          "document-count": 2708746,
+          "compressed-bytes": 13064317,
+          "uncompressed-bytes": 303920342
+        },
+        {
+          "target-index": "logs-191998",
+          "source-file": "documents-191998.unparsed.json.bz2",
+          "document-count": 9697882,
+          "compressed-bytes": 47212456,
+          "uncompressed-bytes": 1088378739
+        },
+        {
+          "target-index": "logs-201998",
+          "source-file": "documents-201998.unparsed.json.bz2",
+          "document-count": 13053463,
+          "compressed-bytes": 63175082,
+          "uncompressed-bytes": 1456836091
+        },
+        {
+          "target-index": "logs-211998",
+          "source-file": "documents-211998.unparsed.json.bz2",
+          "document-count": 17647279,
+          "compressed-bytes": 85607190,
+          "uncompressed-bytes": 1975990671
+        },
+        {
+          "target-index": "logs-221998",
+          "source-file": "documents-221998.unparsed.json.bz2",
+          "document-count": 10716760,
+          "compressed-bytes": 53190588,
+          "uncompressed-bytes": 1202551385
+        },
+        {
+          "target-index": "logs-231998",
+          "source-file": "documents-231998.unparsed.json.bz2",
+          "document-count": 11961342,
+          "compressed-bytes": 60705500,
+          "uncompressed-bytes": 1334381146
+        },
+        {
+          "target-index": "logs-241998",
+          "source-file": "documents-241998.unparsed.json.bz2",
+          "document-count": 181463624,
+          "compressed-bytes": 897719968,
+          "uncompressed-bytes": 20563705716
+        }
+      ]
     }
   ],
   "operations": [

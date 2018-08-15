@@ -2,7 +2,16 @@
       "name": "index-append",
       "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(5000)}},
-      "ingest-percentage": {{ingest_percentage | default(100)}}
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "http_logs"
+    },
+    {
+      "name": "index-append-with-ingest-pipeline",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "pipeline": "http-log-pipeline",
+      "corpora": "http_logs_unparsed"
     },
     {
       "name": "default",
@@ -74,5 +83,33 @@
         "query": {
           "match_all": {}
         }
+      }
+    },
+    {
+      "name": "create-http-log-pipeline",
+      "operation-type": "put-pipeline",
+      "id": "http-log-pipeline",
+      "body": {
+        "description": "Process an http log line",
+        "processors": [
+          {
+            "grok": {
+              "field": "message",
+              "patterns": [
+                "%{IPORHOST:clientip} %{HTTPDUSER} %{USER} \\[%{TIMESTAMP_ISO8601:@timestamp}\\] \"(?:%{WORD} %{NOTSPACE:request}(?: HTTP/%{NUMBER})?|%{DATA})\" %{NUMBER:status} (?:%{NUMBER:size}|-)"
+              ]
+            }
+          },
+          {
+            "geoip": {
+               "field": "clientip",
+               "properties": [
+                  "city_name",
+                  "country_name",
+                  "location"
+                ]
+            }
+          }
+        ]
       }
     }

@@ -42,7 +42,7 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `index_settings`: A list of index settings. If it is defined, it replaces *all* other index settings (e.g. `number_of_replicas`).
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `ingest_pipeline`: Only applicable for `--challenge=append-index-only-with-ingest-pipeline`, selects which ingest
-node pipeline to run. Valid options are `grok` (default), `baseline`, and `geoip`. 
+node pipeline to run. Valid options are `'grok'` (default), `'baseline'`, and `'geoip'`. For example: `--challenge=append-index-only-with-ingest-pipeline --track-params="ingest_pipeline:'baseline'" `
 
 ### License
 

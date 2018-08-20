@@ -175,7 +175,7 @@
     },
     {
       "name": "append-index-only-with-ingest-pipeline",
-      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. Runs the documents through an ingest node pipeline to parse the http logs. Requires --elasticsearch-plugins='ingest-geoip' ",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. Runs the documents through an ingest node pipeline to parse the http logs. May require --elasticsearch-plugins='ingest-geoip' ",
       "schedule": [
         {
           "operation": "delete-index"
@@ -198,10 +198,10 @@
           }
         },
         {
-        "operation": "create-http-log-pipeline"
+        "operation": "create-http-log-{{ingest_pipeline | default('grok')}}-pipeline"
         },
         {
-          "operation": "index-append-with-ingest-pipeline",
+          "operation": "index-append-with-ingest-{{ingest_pipeline | default('grok')}}-pipeline",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}}
         },

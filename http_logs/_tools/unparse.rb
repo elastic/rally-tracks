@@ -64,6 +64,7 @@ Dir.glob(File.join(ARGV[0], "*.json")).select do |file|
           data = JSON.parse(line)
           logline = getValue(data,'clientip')  + " - - [" + Time.at(data['@timestamp'].to_i).iso8601 + "] \\\"" + getValue(data,'request') + "\\\" " + getValue(data,'status') + " " + getValue(data,'size')
           json_log_line = "{\"message\" : \"" + logline + "\"}\n"
+          #TODO: validate this is proper JSON. ~15 rows (.02%) were post modified to remove an invalid '\' char in the resultant JSON
           json_file.write(json_log_line)
         rescue => e
           puts e

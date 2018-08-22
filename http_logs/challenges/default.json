@@ -198,10 +198,10 @@
           }
         },
         {
-        "operation": "create-http-log-{{ingest_pipeline | default('grok')}}-pipeline"
+        "operation": "create-http-log-{{ingest_pipeline | default('baseline')}}-pipeline"
         },
         {
-          "operation": "index-append-with-ingest-{{ingest_pipeline | default('grok')}}-pipeline",
+          "operation": "index-append-with-ingest-{{ingest_pipeline | default('baseline')}}-pipeline",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}}
         },

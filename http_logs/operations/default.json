@@ -2,7 +2,32 @@
       "name": "index-append",
       "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(5000)}},
-      "ingest-percentage": {{ingest_percentage | default(100)}}
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "http_logs"
+    },
+    {
+      "name": "index-append-with-ingest-baseline-pipeline",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "pipeline": "http-log-baseline-pipeline",
+      "corpora": "http_logs"
+    },
+    {
+      "name": "index-append-with-ingest-grok-pipeline",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "pipeline": "http-log-grok-pipeline",
+      "corpora": "http_logs_unparsed"
+    },
+    {
+      "name": "index-append-with-ingest-geoip-pipeline",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "pipeline": "http-log-geoip-pipeline",
+      "corpora": "http_logs"
     },
     {
       "name": "default",
@@ -74,5 +99,59 @@
         "query": {
           "match_all": {}
         }
+      }
+    },
+    {
+      "name": "create-http-log-baseline-pipeline",
+      "operation-type": "put-pipeline",
+      "id": "http-log-baseline-pipeline",
+      "body": {
+        "description": "Process an the documents with a processor that does nothing. Baseline for overhead of pipeline.",
+        "processors": [
+          {
+            "uppercase": {
+              "field": "doesnotexist",
+              "ignore_missing": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "create-http-log-grok-pipeline",
+      "operation-type": "put-pipeline",
+      "id": "http-log-grok-pipeline",
+      "body": {
+        "description": "Process an http log line with grok. Requires the `unparsed` data set.",
+        "processors": [
+          {
+            "grok": {
+              "field": "message",
+              "patterns": [
+                "%{IPORHOST:clientip} %{HTTPDUSER} %{USER} \\[%{TIMESTAMP_ISO8601:@timestamp}\\] \"(?:%{WORD} %{NOTSPACE:request}(?: HTTP/%{NUMBER})?|%{DATA})\" %{NUMBER:status} (?:%{NUMBER:size}|-)"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "create-http-log-geoip-pipeline",
+      "operation-type": "put-pipeline",
+      "id": "http-log-geoip-pipeline",
+      "body": {
+        "description": "Enrich the data with the geo-ip filter. Requires --elasticsearch-plugins='ingest-geoip'",
+        "processors": [
+          {
+            "geoip": {
+               "field": "clientip",
+               "properties": [
+                  "city_name",
+                  "country_name",
+                  "location"
+                ]
+            }
+          }
+        ]
       }
     }

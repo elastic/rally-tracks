@@ -14,11 +14,16 @@
       },
       "properties": {
         "@timestamp": {
-          "format": "epoch_second",
+          "format": "strict_date_optional_time||epoch_second",
           "type": "date"
         },
         "clientip": {
           "type": "ip"
+        },
+        "message": {
+          "type": "keyword",
+          "index": false,
+          "doc_values": false
         },
         "request": {
           "type": "text",
@@ -34,6 +39,13 @@
         },
         "size": {
           "type": "integer"
+        },
+        "geoip" : {
+          "properties" : {
+             "country_name": { "type": "keyword" },
+             "city_name": { "type": "keyword" },
+             "location" : { "type" : "geo_point" }
+          }
         }
       }
     }

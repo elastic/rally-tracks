@@ -22,6 +22,13 @@ Modifications:
 }
 ```
 
+Alternatively, an `unparsed` set of documents are also provided. The `unparsed` data set is identical to the standard 
+data set, except the timestamp is ISO8601 and all the fields are unparsed via the `message` field.  For example:
+
+```json
+{"message" : "211.11.9.0 - - [1998-06-21T15:00:01-05:00] \"GET /english/index.html HTTP/1.0\" 304 0"}
+```
+
 ### Parameters
 
 This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
@@ -34,6 +41,8 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index.
 * `index_settings`: A list of index settings. If it is defined, it replaces *all* other index settings (e.g. `number_of_replicas`).
 * `cluster_health` (default: "green"): The minimum required cluster health.
+* `ingest_pipeline`: Only applicable for `--challenge=append-index-only-with-ingest-pipeline`, selects which ingest
+node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'geoip'`. For example: `--challenge=append-index-only-with-ingest-pipeline --track-params="ingest_pipeline:'baseline'" `
 
 ### License
 

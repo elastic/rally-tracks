@@ -124,4 +124,52 @@
           "clients": 1
         }
       ]
+    },
+    {
+      "name": "append-index-only-with-ingest-pipeline",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. Runs the documents through an ingest node pipeline to parse the http logs. May require --elasticsearch-plugins='ingest-geoip' ",
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "logs-*",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
+        {
+        "operation": "create-http-log-{{ingest_pipeline | default('baseline')}}-pipeline"
+        },
+        {
+          "operation": "index-append-with-ingest-{{ingest_pipeline | default('baseline')}}-pipeline",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh",
+          "clients": 1
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh",
+          "clients": 1
+        }
+      ]
     }

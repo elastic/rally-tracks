@@ -13,7 +13,12 @@
         "enabled": {{ source_enabled | default(true) | tojson }}
       },
       "properties": {
+{# workaround for https://github.com/elastic/elasticsearch/issues/21745 #}
+{%- if ingest_pipeline is defined and ingest_pipeline == "grok" %}
+        "timestamp": {
+{%- else %}
         "@timestamp": {
+{%- endif %}
           "format": "strict_date_optional_time||epoch_second",
           "type": "date"
         },

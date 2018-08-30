@@ -10,6 +10,7 @@
       "bulk-size": {{bulk_size | default(500)}},
       "ingest-percentage": {{ingest_percentage | default(100)}},
       "conflicts": "random",
+      "on-conflict": "{{on_conflict | default('index')}}",
       "conflict-probability": {{conflict_probability | default(25)}},
       "recency": {{recency | default(0)}}
     },

@@ -57,6 +57,20 @@
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 2
+        },
+        {
+          "operation": "autohisto_agg",
+          "clients": 1,
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+        {
+          "operation": "date_histogram_agg",
+          "clients": 1,
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 2
         }
       ]
     },

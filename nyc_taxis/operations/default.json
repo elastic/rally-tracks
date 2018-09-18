@@ -49,4 +49,54 @@
           }
         }
       }
+    },
+    {
+      "name": "autohisto_agg",
+      "operation-type": "search",
+      "cache": false,
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "01/01/2015",
+              "lte": "21/01/2015",
+              "format": "dd/MM/yyyy"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "auto_date_histogram": {
+              "field": "dropoff_datetime",
+              "buckets": 20
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_agg",
+      "operation-type": "search",
+      "cache": false,
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+              "dropoff_datetime": {
+              "gte": "01/01/2015",
+              "lte": "21/01/2015",
+              "format": "dd/MM/yyyy"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "interval": "day"
+            }
+          }
+        }
+      }
     }

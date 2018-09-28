@@ -47,4 +47,4 @@ This data set is licensed under the same terms. Please refer to http://creativec
 
 Attribution hint: 
 
-You can download a full list of the author information for each included document from https://benchmarks.elastic.co/corpora/pmc/attribution.txt.bz2 (size: 52.2MB)
+You can download a full list of the author information for each included document from http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/pmc/attribution.txt.bz2 (size: 52.2MB)

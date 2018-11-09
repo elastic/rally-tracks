@@ -5,6 +5,16 @@
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
+      "name": "update",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "conflicts": "random",
+      "on-conflict": "{{on_conflict | default('update')}}",
+      "conflict-probability": {{conflict_probability | default(25)}},
+      "recency": {{recency | default(0)}}
+    },
+    {
       "name": "default",
       "operation-type": "search",
       "body": {

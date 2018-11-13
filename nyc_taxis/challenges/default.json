@@ -129,7 +129,7 @@
         },
         {
           "operation": "update",
-          "warmup-time-period": 240,
+          "warmup-time-period": 1200,
           "clients": {{bulk_indexing_clients | default(8)}}
         },
         {

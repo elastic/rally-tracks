@@ -170,6 +170,116 @@
       }
     },
     {
+      "name": "decay_geo_gauss_function_score",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "function_score": {
+            "query": {
+              "match_all": {}
+            },  
+            "gauss": {
+              "location": {
+                "origin": "52.37, 4.8951",
+                "scale": "500km",
+                "offset": "0km",
+                "decay" : 0.1
+              }
+            }     
+          }
+        }
+      }
+    },
+   {
+      "name": "decay_geo_gauss_script_score",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "script_score": {
+            "query": {
+              "match_all": {}
+            },
+            "script": {
+              "source": "decayGeoGauss(params.origin, params.scale, params.offset, params.decay, doc['location'].value)",
+              "params": {
+                 "origin": "52.37, 4.8951",
+                  "scale": "500km",
+                  "offset": "0km",
+                  "decay" : 0.1 
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "field_value_function_score",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "function_score": {
+            "query": {
+              "match_all": {}
+            },
+            "field_value_factor": {
+              "field": "population",
+              "factor": 1.2,
+              "modifier": "log2p"
+            }  
+          }
+        }
+      }
+    }, 
+    {
+      "name": "field_value_script_score",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "script_score": {
+            "query": {
+              "match_all": {}
+            },
+            "script": {
+              "source": "Math.log10(doc['population'].value * 1.2 + 2)"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "random_function_score",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "function_score": {
+            "query": {
+              "match_all": {}
+            },
+            "random_score": {
+              "seed": 100,
+              "field": "_seq_no"
+            }  
+          }
+        }
+      }
+    },  
+    {
+      "name": "random_script_score",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "script_score": {
+            "query": {
+              "match_all": {}
+            },
+            "script": {
+              "source": "randomReproducible(Long.toString(doc['_seq_no'].value), 100)"
+            }
+          }
+        }
+      }
+    },     
+    {
       "name": "large_terms",
       "operation-type": "search",
       "param-source": "pure-terms-query-source"

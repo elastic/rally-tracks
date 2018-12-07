@@ -112,7 +112,7 @@
             "functions": [
               {
                 "script_score": {
-                  "script": "(ln(abs(doc['population'].value) + 1) + doc['location.lon'].value + doc['location.lat'].value) * _score",
+                  "script": "abs(ln(abs(doc['population'].value) + 1) + doc['location.lon'].value + doc['location.lat'].value) * _score",
                   "lang": "expression"
                 }
               }

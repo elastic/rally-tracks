@@ -1,0 +1,32 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Metricbeat data",
+  "indices": [
+    {
+      "name": "metricbeat",
+      "body": "index.json",
+      "types": ["doc"]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "metricbeat",
+      "base-url": "http://0.0.0.0:8000",
+      "documents": [
+        {
+          "source-file": "documents.json",
+          "document-count": 59015,
+          "compressed-bytes":33885925,
+          "uncompressed-bytes":33885925
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

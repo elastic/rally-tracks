@@ -5,7 +5,7 @@
     "index.queries.cache.enabled": false
   },
   "mappings": {
-    "content": {
+    "_doc": {
       "_source": {
         "enabled": {{ source_enabled | default(true) | tojson }}
       },

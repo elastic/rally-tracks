@@ -6,7 +6,7 @@
     "index.merge.policy.max_merged_segment": "100GB"
   },
   "mappings": {
-    "summary": {
+    "_doc": {
       "dynamic": "strict",
       "_source": {
         "enabled": {{ source_enabled | default(true) | tojson }}

@@ -4,7 +4,7 @@
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
   },
   "mappings": {
-    "question": {
+    "_doc": {
       "dynamic": "strict",
       "_source": {
         "enabled": {{ source_enabled | default(true) | tojson }}

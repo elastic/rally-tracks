@@ -1,0 +1,33 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Shapes from PlanetOSM",
+  "indices": [
+    {
+      "name": "osmgeoshapes",
+      "body": "index.json",
+      "types": ["_doc"]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "geoshape",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geoshape",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 60000000,
+          "compressed-bytes": 12578673499,
+          "uncompressed-bytes": 42928596136
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

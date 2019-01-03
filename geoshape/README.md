@@ -1,4 +1,4 @@
-## Geopoint track
+## Geoshape track
 
 This track is based on [PlanetOSM](http://wiki.openstreetmap.org/wiki/Planet.osm) data.
 

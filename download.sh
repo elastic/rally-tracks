@@ -53,7 +53,7 @@ readonly FILES=$(cat ${HOME}/${REPO_TARGET}/${TRACK}/files.txt)
 for f in ${FILES}; do
     TARGET_ROOT="${ROOT}/data/${TRACK}"
     TARGET_PATH="${TARGET_ROOT}/${f}"
-    mkdir -p "${TARGET_ROOT}"
+    mkdir -p "${HOME}/${TARGET_ROOT}"
     TARGETS[${#TARGETS[*]}]="${TARGET_PATH}"
     if [ ! -f "${HOME}/${TARGET_PATH}" ]
     then

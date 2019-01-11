@@ -24,8 +24,16 @@
           }
         },
         {
-          "operation": "index-append",
+          "operation": "index-append-linestrings",
           "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "operation": "index-append-multilinestrings",
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "operation": "index-append-polygons",
           "clients": {{bulk_indexing_clients | default(8)}}
         },
         {

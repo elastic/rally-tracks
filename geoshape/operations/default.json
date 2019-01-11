@@ -1,8 +1,23 @@
     {
-      "name": "index-append",
+      "name": "index-append-linestrings",
       "operation-type": "bulk",
-      "bulk-size": {{bulk_size | default(5000)}},
-      "ingest-percentage": {{ingest_percentage | default(100)}}
+      "bulk-size": {{bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "linestrings"
+    },
+    {
+      "name": "index-append-multilinestrings",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "multilinestrings"
+    },
+    {
+      "name": "index-append-polygons",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "polygons"
     },
     {
       "name": "polygon",

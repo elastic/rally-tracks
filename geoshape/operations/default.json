@@ -22,6 +22,7 @@
     {
       "name": "polygon",
       "operation-type": "search",
+      "index": "osm*",
       "body": {
         "query": {
           "geo_shape": {
@@ -45,6 +46,7 @@
     {
       "name": "bbox",
       "operation-type": "search",
+      "index": "osm*",
       "body": {
         "query": {
           "geo_shape": {

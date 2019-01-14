@@ -5,7 +5,17 @@
   "description": "Shapes from PlanetOSM",
   "indices": [
     {
-      "name": "osmgeoshapes",
+      "name": "osmlinestrings",
+      "body": "index.json",
+      "types": ["_doc"]
+    },
+    {
+      "name": "osmmultilinestrings",
+      "body": "index.json",
+      "types": ["_doc"]
+    },
+    {
+      "name": "osmpolygons",
       "body": "index.json",
       "types": ["_doc"]
     }
@@ -14,6 +24,8 @@
     {
       "name": "linestrings",
       "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geoshape",
+      "target-index": "osmlinestrings",
+      "target-type": "_doc",
       "documents": [
         {
           "source-file": "linestrings.json.bz2",
@@ -26,6 +38,8 @@
     {
       "name": "multilinestrings",
       "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geoshape",
+      "target-index": "osmmultilinestrings",
+      "target-type": "_doc",
       "documents": [
         {
           "source-file": "multilinestrings.json.bz2",
@@ -38,6 +52,8 @@
     {
       "name": "polygons",
       "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geoshape",
+      "target-index": "osmpolygons",
+      "target-type": "_doc",
       "documents": [
         {
           "source-file": "polygons.json.bz2",

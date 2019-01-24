@@ -1,0 +1,33 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Point coordinates from PlanetOSM indexed as geoshapes",
+  "indices": [
+    {
+      "name": "osmgeopoints",
+      "body": "index.json",
+      "types": ["_doc"]
+    }
+  ],
+  "corpora": [
+    {
+      "name": "geopointshapes",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geopointshape",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 60844404,
+          "compressed-bytes": 493367095,
+          "uncompressed-bytes": 2780550484
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

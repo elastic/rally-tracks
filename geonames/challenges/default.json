@@ -9,7 +9,10 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {{index_settings | default({}) | tojson}}
+            "settings": {{index_settings | default({}) | tojson}},
+            "request-params": {
+              "include_type_name": "true"
+            }
           }
         },
         {
@@ -195,7 +198,10 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {{index_settings | default({}) | tojson}}
+            "settings": {{index_settings | default({}) | tojson}},
+            "request-params": {
+              "include_type_name": "true"
+            }
           }
         },
         {
@@ -233,6 +239,9 @@
             "settings": {
               "index.sort.field": ["country_code.raw", "admin1_code.raw"],
               "index.sort.order": ["asc", "asc"]
+            },
+            "request-params": {
+              "include_type_name": "true"
             }
           }
         },
@@ -272,6 +281,9 @@
               "index.refresh_interval": "30s",
               "index.number_of_shards": 6,
               "index.translog.flush_threshold_size": "4g"
+            },
+            "request-params": {
+              "include_type_name": "true"
             }
           }
         },

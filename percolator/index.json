@@ -5,19 +5,17 @@
     "index.queries.cache.enabled": false
   },
   "mappings": {
-    "_doc": {
-      "_source": {
-        "enabled": {{ source_enabled | default(true) | tojson }}
+    "_source": {
+      "enabled": {{ source_enabled | default(true) | tojson }}
+    },
+    "dynamic": "strict",
+    "properties": {
+      "body": {
+        "type": "text",
+        "analyzer": "english"
       },
-      "dynamic": "strict",
-      "properties": {
-        "body": {
-          "type": "text",
-          "analyzer": "english"
-        },
-        "query": {
-          "type": "percolator"
-        }
+      "query": {
+        "type": "percolator"
       }
     }
   }

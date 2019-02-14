@@ -51,7 +51,6 @@ class SortedTermQueryParamSource(QueryParamSource):
                 ]
             },
             "index": None,
-            "type": None,
             # This is the old name (before Rally 0.10.0). Remove after some grace period.
             "use_request_cache": self._params["cache"],
             "cache": self._params["cache"]
@@ -70,7 +69,6 @@ class TermQueryParamSource(QueryParamSource):
                 }
             },
             "index": None,
-            "type": None,
             # This is the old name (before Rally 0.10.0). Remove after some grace period.
             "use_request_cache": self._params["cache"],
             "cache": self._params["cache"]
@@ -107,7 +105,6 @@ class NestedQueryParamSource(QueryParamSource):
                 }
             },
             "index": None,
-            "type": None,
             # This is the old name (before Rally 0.10.0). Remove after some grace period.
             "use_request_cache": self._params["cache"],
             "cache": self._params["cache"]
@@ -148,7 +145,6 @@ class NestedQueryParamSourceWithInnerHits(QueryParamSource):
                 "size": self._params["size"]
             },
             "index": None,
-            "type": None,
             # This is the old name (before Rally 0.10.0). Remove after some grace period.
             "use_request_cache": self._params["cache"],
             "cache": self._params["cache"]

@@ -7,38 +7,31 @@
   "indices": [
     {
       "name": "logs-181998",
-      "body": "index.json",
-      "types": ["_doc"]
+      "body": "index.json"
     },
     {
       "name": "logs-191998",
-      "body": "index.json",
-      "types": ["_doc"]
+      "body": "index.json"
     },
     {
       "name": "logs-201998",
-      "body": "index.json",
-      "types": ["_doc"]
+      "body": "index.json"
     },
     {
       "name": "logs-211998",
-      "body": "index.json",
-      "types": ["_doc"]
+      "body": "index.json"
     },
     {
       "name": "logs-221998",
-      "body": "index.json",
-      "types": ["_doc"]
+      "body": "index.json"
     },
     {
       "name": "logs-231998",
-      "body": "index.json",
-      "types": ["_doc"]
+      "body": "index.json"
     },
     {
       "name": "logs-241998",
-      "body": "index.json",
-      "types": ["_doc"]
+      "body": "index.json"
     }
   ],
   "corpora": [
@@ -46,7 +39,6 @@
         {
           "name": "http_logs_unparsed",
           "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/http_logs",
-          "target-type": "_doc",
           "documents": [
           {
             "target-index": "logs-181998",
@@ -103,7 +95,6 @@
       {
         "name": "http_logs",
         "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/http_logs",
-        "target-type": "_doc",
         "documents": [
           {
             "target-index": "logs-181998",

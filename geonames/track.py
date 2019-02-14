@@ -35,7 +35,6 @@ class PureTermsQueryParamSource(QueryParamSource):
                 }
             },
             "index": None,
-            "type": None,
             # This is the old name (before Rally 0.10.0). Remove after some grace period.
             "use_request_cache": self._params.get("cache", False),
             "cache": self._params.get("cache", False)
@@ -69,7 +68,6 @@ class FilteredTermsQueryParamSource(QueryParamSource):
                 }
             },
             "index": None,
-            "type": None,
             # This is the old name (before Rally 0.10.0). Remove after some grace period.
             "use_request_cache": self._params.get("cache", False),
             "cache": self._params.get("cache", False)
@@ -103,7 +101,6 @@ class ProhibitedTermsQueryParamSource(QueryParamSource):
                 }
             },
             "index": None,
-            "type": None,
             # This is the old name (before Rally 0.10.0). Remove after some grace period.
             "use_request_cache": self._params.get("cache", False),
             "cache": self._params.get("cache", False)

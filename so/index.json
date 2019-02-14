@@ -4,39 +4,37 @@
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
   },
   "mappings": {
-    "_doc": {
-      "dynamic": "strict",
-      "_source": {
-        "enabled": {{ source_enabled | default(true) | tojson }}
+    "dynamic": "strict",
+    "_source": {
+      "enabled": {{ source_enabled | default(true) | tojson }}
+    },
+    "properties": {
+      "user": {
+        "type": "keyword"
       },
-      "properties": {
-      	"user": {
-          "type": "keyword"
-        },
-        "creationDate": {
-          "type": "date"
-        },
-        "title": {
-          "type": "text"
-        },
-        "questionId": {
-          "type": "keyword"
-        },
-        "answerId": {
-          "type": "keyword"
-        },
-        "acceptedAnswerId": {
-          "type": "keyword"
-        },
-        "tags": {
-          "type": "keyword"
-        },
-        "body": {
-          "type": "text"
-        },
-        "type": {
-          "type": "keyword"
-        }
+      "creationDate": {
+        "type": "date"
+      },
+      "title": {
+        "type": "text"
+      },
+      "questionId": {
+        "type": "keyword"
+      },
+      "answerId": {
+        "type": "keyword"
+      },
+      "acceptedAnswerId": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "body": {
+        "type": "text"
+      },
+      "type": {
+        "type": "keyword"
       }
     }
   }

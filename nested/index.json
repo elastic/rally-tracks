@@ -4,39 +4,37 @@
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
   },
   "mappings": {
-    "_doc": {
-      "dynamic": "strict",
-      "_source": {
-        "enabled": {{ source_enabled | default(true) | tojson }}
+    "dynamic": "strict",
+    "_source": {
+      "enabled": {{ source_enabled | default(true) | tojson }}
+    },
+    "properties": {
+      "user": {
+        "type": "keyword"
       },
-      "properties": {
-        "user": {
-          "type": "keyword"
-        },
-        "creationDate": {
-          "type": "date"
-        },
-        "title": {
-          "type": "text"
-        },
-        "qid": {
-          "type": "keyword"
-        },
-        "tag": {
-          "type": "keyword"
-        },
-        "answer_count": {
-          "type": "integer"
-        },
-        "answers": {
-          "type": "nested",
-          "properties": {
-            "user": {
-              "type": "keyword"
-            },
-            "date": {
-              "type": "date"
-            }
+      "creationDate": {
+        "type": "date"
+      },
+      "title": {
+        "type": "text"
+      },
+      "qid": {
+        "type": "keyword"
+      },
+      "tag": {
+        "type": "keyword"
+      },
+      "answer_count": {
+        "type": "integer"
+      },
+      "answers": {
+        "type": "nested",
+        "properties": {
+          "user": {
+            "type": "keyword"
+          },
+          "date": {
+            "type": "date"
           }
         }
       }

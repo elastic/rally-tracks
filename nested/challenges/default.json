@@ -9,10 +9,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {{index_settings | default({}) | tojson}},
-            "request-params": {
-              "include_type_name": "true"
-            }
+            "settings": {{index_settings | default({}) | tojson}}
           }
         },
         {
@@ -107,10 +104,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {{index_settings | default({}) | tojson}},
-            "request-params": {
-              "include_type_name": "true"
-            }
+            "settings": {{index_settings | default({}) | tojson}}
           }
         },
         {

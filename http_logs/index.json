@@ -4,45 +4,43 @@
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
   },
   "mappings": {
-    "_doc": {
-      "dynamic": "strict",
-      "_source": {
-        "enabled": {{ source_enabled | default(true) | tojson }}
+    "dynamic": "strict",
+    "_source": {
+      "enabled": {{ source_enabled | default(true) | tojson }}
+    },
+    "properties": {
+      "@timestamp": {
+        "format": "strict_date_optional_time||epoch_second",
+        "type": "date"
       },
-      "properties": {
-        "@timestamp": {
-          "format": "strict_date_optional_time||epoch_second",
-          "type": "date"
-        },
-        "clientip": {
-          "type": "ip"
-        },
-        "message": {
-          "type": "keyword",
-          "index": false,
-          "doc_values": false
-        },
-        "request": {
-          "type": "text",
-          "fields": {
-            "raw": {
-              "ignore_above": 256,
-              "type": "keyword"
-            }
+      "clientip": {
+        "type": "ip"
+      },
+      "message": {
+        "type": "keyword",
+        "index": false,
+        "doc_values": false
+      },
+      "request": {
+        "type": "text",
+        "fields": {
+          "raw": {
+            "ignore_above": 256,
+            "type": "keyword"
           }
-        },
-        "status": {
-          "type": "integer"
-        },
-        "size": {
-          "type": "integer"
-        },
-        "geoip" : {
-          "properties" : {
-             "country_name": { "type": "keyword" },
-             "city_name": { "type": "keyword" },
-             "location" : { "type" : "geo_point" }
-          }
+        }
+      },
+      "status": {
+        "type": "integer"
+      },
+      "size": {
+        "type": "integer"
+      },
+      "geoip" : {
+        "properties" : {
+           "country_name": { "type": "keyword" },
+           "city_name": { "type": "keyword" },
+           "location" : { "type" : "geo_point" }
         }
       }
     }

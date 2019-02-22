@@ -13,7 +13,10 @@
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
               "index.translog.flush_threshold_size": "4g"
-            }{%- endif %}
+            }{%- endif %},
+            "request-params": {
+              "include_type_name": "true"
+            }
           }
         },
         {
@@ -88,7 +91,10 @@
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
               "index.translog.flush_threshold_size": "4g"
-            }{%- endif %}
+            }{%- endif %},
+            "request-params": {
+              "include_type_name": "true"
+            }
           }
         },
         {
@@ -130,6 +136,9 @@
               "index.translog.flush_threshold_size": "4g",
               "index.sort.field": "pickup_datetime",
               "index.sort.order": "desc"
+            },
+            "request-params": {
+              "include_type_name": "true"
             }
           }
         },
@@ -169,7 +178,10 @@
               "index.number_of_shards": {{number_of_shards | default(1)}},
               "index.number_of_replicas": {{number_of_replicas | default(0)}},
               "index.store.type": "{{store_type | default('mmapfs')}}"
-            }{%- endif %}
+            }{%- endif %},
+            "request-params": {
+              "include_type_name": "true"
+            }
           }
         },
         {
@@ -220,7 +232,10 @@
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
               "index.translog.flush_threshold_size": "4g"
-            }{%- endif %}
+            }{%- endif %},
+            "request-params": {
+              "include_type_name": "true"
+            }
           }
         },
         {

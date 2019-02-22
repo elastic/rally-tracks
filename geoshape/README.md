@@ -14,7 +14,9 @@ This track is based on [PlanetOSM](http://wiki.openstreetmap.org/wiki/Planet.osm
 
 This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
 
-* `bulk_size` (default: 500)
+* `linestring_bulk_size` (default: 100): The bulk request size for indexing linestrings.
+* `multilinestring_bulk_size` (default: 100): The bulk request size for indexing multilinestrings.
+* `polygon_bulk_size` (default: 100): The bulk request size for indexing polygons.
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `number_of_replicas` (default: 0)

@@ -22,8 +22,8 @@
         "query": {
           "range": {
             "@timestamp": {
-              "gte": "24/10/2018",
-              "lte": "25/10/2018",
+              "gte": "23/02/2019",
+              "lte": "23/02/2019",
               "format": "dd/MM/yyyy"
             }
           }
@@ -32,7 +32,7 @@
           "occurrences_over_time": {
             "auto_date_histogram": {
               "field": "@timestamp",
-              "buckets": 20
+              "buckets": 24
             }
           }
         }
@@ -47,8 +47,8 @@
         "query": {
           "range": {
               "@timestamp": {
-              "gte": "24/10/2018",
-              "lte": "25/10/2018",
+              "gte": "23/02/2019",
+              "lte": "23/02/2019",
               "format": "dd/MM/yyyy"
             }
           }

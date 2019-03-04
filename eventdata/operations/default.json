@@ -3,5 +3,81 @@
       "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(5000)}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+    {
+      "name": "index-append-with-pipeline",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "pipeline": "{{ingest_pipeline_name | default('baseline')}}",
+      "corpora": "eventdata"
+    },
+    {
+      "name": "create-baseline-pipeline",
+      "operation-type": "put-pipeline",
+      "id": "baseline",
+      "body": {
+        "description": "Process the documents with a processor that does nothing. Baseline for overhead of pipeline.",
+        "processors": [
+          {
+            "uppercase": {
+              "field": "doesnotexist",
+              "ignore_missing": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "create-geoip-pipeline",
+      "operation-type": "put-pipeline",
+      "id": "geoip",
+      "body": {
+          "description": "Enrich the data with the geo-ip filter. Requires --elasticsearch-plugins='ingest-geoip'",
+          "processors": [
+              {
+                  "geoip": {
+                      "field": "clientip",
+                      "target_field": "geoip_pipeline"
+                  }
+              }
+          ]
+      }
+    },
+    {
+      "name": "create-useragent-pipeline",
+      "operation-type": "put-pipeline",
+      "id": "useragent",
+      "body": {
+          "description": "Enrich the data with the useragent filter. Requires --elasticsearch-plugins='ingest-user-agent'",
+          "processors": [
+              {
+                  "user_agent": {
+                      "field": "agent",
+                      "target_field": "useragent_pipeline"
+                  }
+              }
+          ]
+      }
+    },
+    {
+      "name": "create-combined-pipeline",
+      "operation-type": "put-pipeline",
+      "id": "combined",
+      "body": {
+          "description": "Enrich the data with the useragent and geo-ip filter. Requires --elasticsearch-plugins='ingest-user-agent,ingest-geoip'",
+          "processors": [
+              {
+                  "geoip":{
+                      "field":"clientip",
+                      "target_field": "geoip_pipeline"
+                  },
+                  "user_agent": {
+                      "field": "agent",
+                      "target_field": "useragent_pipeline"
+                  }
+              }
+          ]
+      }
     }
-    
+

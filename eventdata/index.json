@@ -24,12 +24,37 @@
           "location" : { "type": "geo_point" }
         }
       },
+      "geoip_pipeline" : {
+        "properties" : {
+          "country_name" : { "type": "keyword" },
+          "continent_name": { "type": "keyword" },
+          "country_iso_code": { "type": "keyword" },
+          "region_iso_code": { "type": "keyword" },
+          "region_name": { "type": "keyword" },
+          "city_name": { "type": "keyword" },
+          "location" : { "type": "geo_point" }
+        }
+      },
       "useragent": {
         "properties": {
           "name": { "type": "keyword", "ignore_above": 256 },
           "os": { "type": "keyword", "ignore_above": 256 },
           "os_name": { "type": "keyword", "ignore_above": 256 }
         }
+      },
+      "useragent_pipeline": {
+        "properties": {
+          "name": { "type": "keyword", "ignore_above": 256 },
+          "os": { "type": "keyword", "ignore_above": 256 },
+          "os_name": { "type": "keyword", "ignore_above": 256 },
+          "major": { "type": "keyword", "ignore_above": 256 },
+          "minor": { "type": "keyword", "ignore_above": 256 },
+          "patch": { "type": "keyword", "ignore_above": 256 },
+          "build": { "type": "keyword", "ignore_above": 256 },
+          "os_major": { "type": "keyword", "ignore_above":256 },
+          "os_minor": { "type": "keyword", "ignore_above":256 },
+          "device": { "type": "keyword", "ignore_above":256 }
+         }
       },
       "request": {
         "norms": false,

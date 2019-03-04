@@ -121,6 +121,48 @@
           "target-throughput": 1.5
         },
         {
+          "operation": "decay_geo_gauss_function_score",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1
+        },
+        {
+          "operation": "decay_geo_gauss_script_score",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1
+        },
+        {
+          "operation": "field_value_function_score",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
+          "operation": "field_value_script_score",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
+          "operation": "random_function_score",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
+          "operation": "random_script_score",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
           "operation": "large_terms",
           "clients": 1,
           "warmup-iterations": 200,

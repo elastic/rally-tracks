@@ -1,0 +1,97 @@
+    {
+      "name": "append-no-conflicts",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
+      "default": true,
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "osm*",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
+        {
+          "operation": "index-append-linestrings",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "name": "refresh-after-linestrings-index",
+          "operation": "refresh",
+          "index": "osmlinestrings",
+          "clients": 1
+        },
+        {
+          "name": "force-merge-linestrings",
+          "operation": "force-merge",
+          "index": "osmlinestrings",
+          "clients": 1
+        },
+        {
+          "operation": "index-append-multilinestrings",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "name": "refresh-after-multilinestrings-index",
+          "operation": "refresh",
+          "index": "osmmultilinestrings",
+          "clients": 1
+        },
+        {
+          "name": "force-merge-multilinestrings",
+          "operation": "force-merge",
+          "index": "osmmultilinestrings",
+          "clients": 1
+        },
+        {
+          "operation": "index-append-polygons",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "name": "refresh-after-polygons-index",
+          "operation": "refresh",
+          "index": "osmpolygons",
+          "clients": 1
+        },
+        {
+          "name": "force-merge-polygons",
+          "operation": "force-merge",
+          "index": "osmpolygons",
+          "clients": 1
+        },
+        {
+          "name": "refresh-after-all-indices",
+          "operation": "refresh",
+          "clients": 1
+        },
+        {
+          "operation": "polygon",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 0.3
+        },
+        {
+          "operation": "bbox",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 0.25
+        }
+      ]
+    }

@@ -5,13 +5,13 @@
   "indices": [
     {
       "name": "metricbeat",
-      "body": "index.json",
-      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/metricbeat"
+      "body": "index.json"
     }
   ],
   "corpora": [
     {
       "name": "metricbeat",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/metricbeat",
       "documents": [
         {
           "source-file": "documents.json",

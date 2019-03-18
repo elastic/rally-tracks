@@ -5,7 +5,8 @@
   "indices": [
     {
       "name": "metricbeat",
-      "body": "index.json"
+      "body": "index.json",
+      "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/metricbeat"
     }
   ],
   "corpora": [

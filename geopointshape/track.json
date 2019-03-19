@@ -5,13 +5,13 @@
   "description": "Point coordinates from PlanetOSM indexed as geoshapes",
   "indices": [
     {
-      "name": "osmgeopoints",
+      "name": "osmgeoshapes",
       "body": "index.json"
     }
   ],
   "corpora": [
     {
-      "name": "geopointshapes",
+      "name": "geopointshape",
       "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/geopointshape",
       "documents": [
         {

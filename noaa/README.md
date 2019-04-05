@@ -52,3 +52,7 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index.
 * `index_settings`: A list of index settings. If it is defined, it replaces *all* other index settings (e.g. `number_of_replicas`).
 * `cluster_health` (default: "green"): The minimum required cluster health.
+
+### License
+
+[US Government Work data license](https://www.usa.gov/government-works)

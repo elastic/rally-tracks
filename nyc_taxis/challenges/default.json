@@ -124,13 +124,13 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
               "index.translog.flush_threshold_size": "4g",
               "index.sort.field": "pickup_datetime",
               "index.sort.order": "desc"
-            }
+            }{%- endif %}
           }
         },
         {

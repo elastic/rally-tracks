@@ -135,10 +135,10 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.sort.field": "@timestamp",
               "index.sort.order": "desc"
-            }
+            }{%- endif %}
           }
         },
         {

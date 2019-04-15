@@ -46,7 +46,7 @@
         {
           "operation": "randomized-nested-queries",
           "clients": 2,
-          "target-throughput": 50,
+          "target-throughput": 20,
           "warmup-iterations": 500,
           "iterations": 1000
         },
@@ -61,7 +61,7 @@
           "operation": "randomized-sorted-term-queries",
           "clients": 2,
           "warmup-iterations": 500,
-          "target-throughput": 20,
+          "target-throughput": 18,
           "iterations": 200
         },
         {
@@ -81,14 +81,14 @@
         {
           "operation": "randomized-nested-queries-with-inner-hits_default",
           "clients": 2,
-          "target-throughput": 40,
+          "target-throughput": 18,
           "warmup-iterations": 500,
           "iterations": 1000
         },
         {
           "operation": "randomized-nested-queries-with-inner-hits_default_big_size",
           "clients": 2,
-          "target-throughput": 20,
+          "target-throughput": 16,
           "warmup-iterations": 500,
           "iterations": 1000
         }

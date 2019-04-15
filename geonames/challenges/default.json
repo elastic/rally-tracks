@@ -82,7 +82,7 @@
           "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 5
+          "target-throughput": 4.5
         },
         {
           "operation": "country_agg_cached",
@@ -167,21 +167,21 @@
           "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 2
+          "target-throughput": 1.5
         },
         {
           "operation": "large_filtered_terms",
           "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 2
+          "target-throughput": 1.5
         },
         {
           "operation": "large_prohibited_terms",
           "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 2
+          "target-throughput": 1.5
         }
       ]
     },

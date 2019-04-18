@@ -35,7 +35,7 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 5)
 * `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index.
-* `index_settings`: A list of index settings. If it is defined, it replaces *all* other index settings (e.g. `number_of_replicas`).
+* `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * [`default_search_timeout`](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/search.html#global-search-timeout) (default: -1)
 * `cluster_health` (default: "green"): The minimum required cluster health.
 

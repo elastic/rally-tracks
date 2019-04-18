@@ -127,11 +127,11 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "settings": {
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.refresh_interval": "30s",
-              "index.number_of_shards": 6,
+              "index.number_of_shards": {{number_of_shards | default(6)}},
               "index.translog.flush_threshold_size": "4g"
-            }
+            }{%- endif %}
           }
         },
         {

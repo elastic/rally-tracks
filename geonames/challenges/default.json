@@ -47,14 +47,14 @@
           "clients": 1,
           "warmup-iterations": 500,
           "iterations": 1000,
-          "target-throughput": 100
+          "target-throughput": 90
         },
         {
           "operation": "node-stats",
           "clients": 1,
           "warmup-iterations": 100,
           "iterations": 1000,
-          "target-throughput": 100
+          "target-throughput": 90
         },
         {
           "operation": "default",
@@ -82,7 +82,7 @@
           "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 4.5
+          "target-throughput": 4
         },
         {
           "operation": "country_agg_cached",
@@ -97,7 +97,7 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "#COMMENT": "Throughput is considered per request. So we issue one scroll request per second which will retrieve 25 pages",
-          "target-throughput": 1
+          "target-throughput": 0.8
         },
         {
           "operation": "expression",

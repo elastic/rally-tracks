@@ -16,7 +16,7 @@
           "name": "check-cluster-health",
           "operation": {
             "operation-type": "cluster-health",
-            "index": "logs-*",
+            "index": "eventdata",
             "request-params": {
               "wait_for_status": "{{cluster_health | default('green')}}",
               "wait_for_no_relocating_shards": "true"

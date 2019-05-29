@@ -110,6 +110,7 @@
     {
       "name": "desc_sort_timestamp",
       "operation-type": "search",
+      "index": "logs-*",
       "body": {
         "query": {
           "match_all": {}
@@ -122,6 +123,7 @@
     {
       "name": "asc_sort_timestamp",
       "operation-type": "search",
+      "index": "logs-*",
       "body": {
         "query": {
           "match_all": {}

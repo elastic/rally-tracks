@@ -34,7 +34,11 @@
           "clients": 1
         },
         {
-          "operation": "force-merge",
+          "operation": {
+            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "max-num-segments": {{max_num_segments}}
+             {%- endif %}
+          },
           "clients": 1
         },
         {
@@ -107,7 +111,11 @@
         "clients": 1
         },
         {
-          "operation": "force-merge",
+          "operation": {
+            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "max-num-segments": {{max_num_segments}}
+             {%- endif %}
+          },
           "clients": 1
         },
         {
@@ -156,7 +164,11 @@
         "clients": 1
         },
         {
-          "operation": "force-merge",
+          "operation": {
+            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "max-num-segments": {{max_num_segments}}
+             {%- endif %}
+          },
           "clients": 1
         },
         {

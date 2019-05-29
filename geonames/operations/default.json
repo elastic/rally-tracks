@@ -293,4 +293,52 @@
       "name": "large_prohibited_terms",
       "operation-type": "search",
       "param-source": "prohibited-terms-query-source"
+    },
+    {
+      "name": "desc_sort_population",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"population" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "asc_sort_population",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"population" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "desc_sort_geonameid",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"geonameid" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "asc_sort_geonameid",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"geonameid" : "asc"}
+        ]
+      }
     }

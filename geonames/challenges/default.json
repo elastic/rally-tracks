@@ -182,6 +182,34 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
+        },
+        {
+          "operation": "desc_sort_population",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
+          "operation": "asc_sort_population",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
+          "operation": "desc_sort_geonameid",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
+          "operation": "asc_sort_geonameid",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
         }
       ]
     },
@@ -297,4 +325,3 @@
         }
       ]
     }
-

@@ -77,6 +77,20 @@
           "iterations": 200,
           "#COMMENT": "Throughput is considered per request. So we issue one scroll request per second which will retrieve 25 pages",
           "target-throughput": 1
+        },
+        {
+          "operation": "desc_sort_timestamp",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
+          "operation": "asc_sort_timestamp",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
         }
       ]
     },

@@ -108,6 +108,30 @@
       }
     },
     {
+      "name": "desc_sort_timestamp",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"@timestamp" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "asc_sort_timestamp",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"@timestamp" : "asc"}
+        ]
+      }
+    },
+    {
       "name": "create-http-log-baseline-pipeline",
       "operation-type": "put-pipeline",
       "id": "http-log-baseline-pipeline",

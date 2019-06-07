@@ -3,6 +3,7 @@
     "index.number_of_shards": {{number_of_shards | default(1)}},
     "index.number_of_replicas": {{number_of_replicas | default(0)}},
     "index.queries.cache.enabled": false,
+    "index.requests.cache.enable": false,
     "index.merge.policy.max_merged_segment": "100GB"
   },
   "mappings": {

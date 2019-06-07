@@ -7,7 +7,6 @@
     {
       "name": "autohisto_agg",
       "operation-type": "search",
-      "cache": false,
       "body": {
         "size": 0,
         "query": {
@@ -32,7 +31,6 @@
     {
       "name": "date_histogram_agg",
       "operation-type": "search",
-      "cache": false,
       "body": {
         "size": 0,
         "query": {

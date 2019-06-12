@@ -7,14 +7,12 @@
     {
       "name": "randomized-nested-queries",
       "operation-type": "search",
-      "param-source": "nested-query-source",
-      "cache": false
+      "param-source": "nested-query-source"
     },
     {
       "name": "randomized-nested-queries-with-inner-hits_default",
       "operation-type": "search",
       "param-source": "nested-query-source-with-inner-hits",
-      "cache": false,
       "size" : 10,
       "inner_hits_size" : 3
     },
@@ -22,21 +20,18 @@
       "name": "randomized-nested-queries-with-inner-hits_default_big_size",
       "operation-type": "search",
       "param-source": "nested-query-source-with-inner-hits",
-      "cache": false,
       "size" : 100,
       "inner_hits_size" : 100
     },
     {
       "name": "randomized-term-queries",
       "operation-type": "search",
-      "param-source": "term-query-source",
-      "cache": false
+      "param-source": "term-query-source"
     },
     {
       "name": "randomized-sorted-term-queries",
       "operation-type": "search",
-      "param-source": "sorted-term-query-source",
-      "cache": false
+      "param-source": "sorted-term-query-source"
     },
     {
       "name": "match-all",
@@ -45,8 +40,7 @@
         "query": {
           "match_all": {}
         }
-      },
-      "cache": false
+      }
     },
     {
       "name": "nested-date-histo",
@@ -68,6 +62,5 @@
             }
           }
         }
-      },
-      "cache": false
+      }
     }

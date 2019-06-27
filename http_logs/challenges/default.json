@@ -247,7 +247,7 @@
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.number_of_shards": {{number_of_shards | default(1)}},
               "index.number_of_replicas": {{number_of_replicas | default(0)}},
-              "index.store.type": "{{store_type | default('mmapfs')}}"
+              "index.store.type": "{{store_type | default('fs')}}"
             }{%- endif %}
           }
         },

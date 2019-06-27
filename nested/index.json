@@ -2,7 +2,7 @@
   "settings": {
     "index.number_of_shards": {{number_of_shards | default(1)}},
     "index.number_of_replicas": {{number_of_replicas | default(0)}},
-    "index.store.type": "{{store_type | default('hybridfs')}}",
+    "index.store.type": "{{store_type | default('fs')}}",
     "index.requests.cache.enable": false
   },
   "mappings": {

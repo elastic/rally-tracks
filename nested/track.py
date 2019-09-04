@@ -8,6 +8,7 @@ class QueryParamSource:
     # noinspection PyUnusedLocal
     def __init__(self, track, params, **kwargs):
         self._params = params
+        self.infinite = True
         # here we read the queries data file into arrays which we'll then later use randomly.
         self.tags = []
         self.dates = []
@@ -25,6 +26,7 @@ class QueryParamSource:
     def partition(self, partition_index, total_partitions):
         return self
 
+    # Deprecated - only there for BWC reasons with Rally < 1.4.0
     def size(self):
         return 1
 

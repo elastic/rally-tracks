@@ -7,6 +7,7 @@ class QueryParamSource:
     # noinspection PyUnusedLocal
     def __init__(self, track, params, **kwargs):
         self._params = params
+        self.infinite = True
         cwd = os.path.dirname(__file__)
         # The terms.txt file has been generated with:
         # sed -n '13~250p' [path_to_rally_data]/geonames/documents.json | shuf | sed -e "s/.*name\": \"//;s/\",.*$//" > terms.txt
@@ -18,6 +19,7 @@ class QueryParamSource:
     def partition(self, partition_index, total_partitions):
         return self
 
+    # Deprecated - only there for BWC reasons with Rally < 1.4.0
     def size(self):
         return 1
 

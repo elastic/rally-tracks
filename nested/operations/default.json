@@ -56,7 +56,7 @@
               "date_histo": {
                 "date_histogram": {
                   "field": "answers.date",
-                  "fixed_interval": "month"
+                  "calendar_interval": "month"
                 }
               }
             }

@@ -54,7 +54,7 @@
           "articles_over_time": {
             "date_histogram": {
               "field": "timestamp",
-              "fixed_interval": "month"
+              "calendar_interval": "month"
             }
           }
         }
@@ -70,7 +70,7 @@
           "articles_over_time": {
             "date_histogram": {
               "field": "timestamp",
-              "fixed_interval": "month"
+              "calendar_interval": "month"
             }
           }
         }

@@ -287,7 +287,7 @@
                 "buckets": {
                   "date_histogram": {
                     "field": "pickup_datetime",
-                    "fixed_interval": 3600000,
+                    "fixed_interval": "3600000ms",
                     "offset": 0,
                     "order": {
                       "_key": "asc"

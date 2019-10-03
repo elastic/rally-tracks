@@ -101,7 +101,7 @@
           "dropoffs_over_time": {
             "date_histogram": {
               "field": "dropoff_datetime",
-              "fixed_interval": "day"
+              "calendar_interval": "day"
             }
           }
         }

@@ -89,7 +89,7 @@
           "by_hour": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "1h"
+              "calendar_interval": "hour"
             }
           }
         }

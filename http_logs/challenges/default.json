@@ -96,7 +96,8 @@
           "name": "force-merge-1-seg",
           "operation": {
             "operation-type": "force-merge",
-            "max-num-segments": 1
+            "max-num-segments": 1,
+            "request-timeout": 7200
           },
           "clients": 1
         },

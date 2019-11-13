@@ -91,6 +91,35 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.5
+        },
+        {
+          "name": "force-merge-1-seg",
+          "operation": {
+            "operation-type": "force-merge",
+            "max-num-segments": 1
+          },
+          "clients": 1
+        },
+        {
+          "name": "refresh-after-force-merge-1-seg",
+          "operation": "refresh",
+          "clients": 1
+        },
+        {
+          "name": "desc-sort-timestamp-after-force-merge-1-seg",
+          "operation": "desc_sort_timestamp",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 0.5
+        },
+        {
+          "name": "asc-sort-timestamp-after-force-merge-1-seg",
+          "operation": "asc_sort_timestamp",
+          "clients": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 0.5
         }
       ]
     },

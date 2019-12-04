@@ -2,10 +2,17 @@
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "default": true,
-      "cluster-settings": {
-        "search.default_search_timeout": "{{default_search_timeout | default(-1)}}"
-      },
       "schedule": [
+        {
+          "operation": {
+            "operation-type": "put-settings",
+            "body": {
+              "transient": {
+                  "search.default_search_timeout": "{{default_search_timeout | default(-1)}}"
+              }
+            }
+          }
+        },
         {
           "operation": "delete-index"
         },

@@ -121,22 +121,6 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.5
-        },
-        {
-          "name": "reindex",
-          "operation": {
-            "operation-type": "reindex",
-            "body": {
-              "source": {
-                "index": "logs-*"
-              },
-              "dest": {
-                "index": "reindexed-logs"
-              }
-            },
-            "request_timeout": 7200
-          },
-          "clients": 1
         }
       ]
     },
@@ -331,7 +315,7 @@
     },
     {
       "name": "append-no-conflicts-index-reindex-only",
-      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After indexing, same data are reindexed",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After indexing, same data are reindexed.",
       "schedule": [
         {
           "operation": "delete-index"

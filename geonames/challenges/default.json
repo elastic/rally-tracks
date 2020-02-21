@@ -2,11 +2,18 @@
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "default": true,
-      "#COMMENT": "We set indices.query.bool.max_clause_count in order to allow to run the large_terms queries (default is 1024, we need more than 45.000)",
-      "cluster-settings": {
-        "indices.query.bool.max_clause_count": 50000
-      },
       "schedule": [
+        {
+          "#COMMENT": "We set indices.query.bool.max_clause_count in order to allow to run the large_terms queries (default is 1024, we need more than 45.000)",
+          "operation": {
+            "operation-type": "put-settings",
+            "body": {
+              "transient": {
+                "indices.query.bool.max_clause_count": 50000
+              }
+            }
+          }
+        },
         {
           "operation": "delete-index"
         },

@@ -341,6 +341,37 @@
       }
     },
     {
+      "name": "last_five_max_temp_per_station_top_metrics_10",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "station.elevation": {
+              "gt": 1000
+            }
+          }
+        },
+        "aggs": {
+          "station": {
+            "terms": {
+              "field": "station.id",
+              "size": 10
+            },
+            "aggs": {
+              "last_temp": {
+                "top_metrics": {
+                  "size": 5,
+                  "sort": {"date": "desc"},
+                  "metric": {"field": "TMAX"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "max_temp_per_station_10_depth_first",
       "operation-type": "search",
       "body": {
@@ -577,6 +608,37 @@
             "aggs": {
               "last_temp": {
                 "top_metrics": {
+                  "sort": {"date": "desc"},
+                  "metric": {"field": "TMAX"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "last_five_max_temp_per_station_top_metrics_5000",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "station.elevation": {
+              "gt": 1000
+            }
+          }
+        },
+        "aggs": {
+          "station": {
+            "terms": {
+              "field": "station.id",
+              "size": 5000
+            },
+            "aggs": {
+              "last_temp": {
+                "top_metrics": {
+                  "size": 5,
                   "sort": {"date": "desc"},
                   "metric": {"field": "TMAX"}
                 }

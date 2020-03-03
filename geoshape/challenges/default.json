@@ -31,8 +31,7 @@
         {
           "name": "refresh-after-linestrings-index",
           "operation": "refresh",
-          "index": "osmlinestrings",
-          "clients": 1
+          "index": "osmlinestrings"
         },
         {
           "name": "force-merge-linestrings",
@@ -63,8 +62,7 @@
         {
           "name": "refresh-after-multilinestrings-index",
           "operation": "refresh",
-          "index": "osmmultilinestrings",
-          "clients": 1
+          "index": "osmmultilinestrings"
         },
         {
           "name": "force-merge-multilinestrings",
@@ -95,8 +93,7 @@
         {
           "name": "refresh-after-polygons-index",
           "operation": "refresh",
-          "index": "osmpolygons",
-          "clients": 1
+          "index": "osmpolygons"
         },
         {
           "name": "force-merge-polygons",
@@ -108,8 +105,7 @@
         },
         {
           "name": "refresh-after-all-indices",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-polygon-merges-finish",
@@ -126,14 +122,12 @@
         },
         {
           "operation": "polygon",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.3
         },
         {
           "operation": "bbox",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.25

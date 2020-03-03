@@ -34,40 +34,34 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "operation": "default",
-          "clients": 1,
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 3
         },
         {
           "operation": "range",
-          "clients": 1,
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 1
         },
         {
           "operation": "distance_amount_agg",
-          "clients": 1,
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 2
         },
         {
           "operation": "autohisto_agg",
-          "clients": 1,
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 1.5
         },
         {
           "operation": "date_histogram_agg",
-          "clients": 1,
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 1.5
@@ -109,8 +103,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         }
       ]
     },
@@ -151,8 +144,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         }
       ]
     },
@@ -190,8 +182,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "operation": {
@@ -201,8 +192,7 @@
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",

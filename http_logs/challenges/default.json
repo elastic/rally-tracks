@@ -30,8 +30,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "operation": {
@@ -41,8 +40,7 @@
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
@@ -59,35 +57,30 @@
         },
         {
           "operation": "default",
-          "clients": 1,
           "warmup-iterations": 500,
           "iterations": 100,
           "target-throughput": 8
         },
         {
           "operation": "term",
-          "clients": 1,
           "warmup-iterations": 500,
           "iterations": 100,
           "target-throughput": 50
         },
         {
           "operation": "range",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 1
         },
         {
           "operation": "hourly_agg",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 0.2
         },
         {
           "operation": "scroll",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 200,
           "#COMMENT": "Throughput is considered per request. So we issue one scroll request per second which will retrieve 25 pages",
@@ -95,14 +88,12 @@
         },
         {
           "operation": "desc_sort_timestamp",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.5
         },
         {
           "operation": "asc_sort_timestamp",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.5
@@ -117,8 +108,7 @@
         },
         {
           "name": "refresh-after-force-merge-1-seg",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-merges-1-seg-finish",
@@ -136,7 +126,6 @@
         {
           "name": "desc-sort-timestamp-after-force-merge-1-seg",
           "operation": "desc_sort_timestamp",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
@@ -144,7 +133,6 @@
         {
           "name": "asc-sort-timestamp-after-force-merge-1-seg",
           "operation": "asc_sort_timestamp",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
@@ -182,8 +170,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "operation": {
@@ -193,8 +180,7 @@
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
@@ -245,8 +231,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "operation": {
@@ -256,8 +241,7 @@
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
@@ -308,8 +292,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "operation": {
@@ -319,8 +302,7 @@
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
@@ -371,8 +353,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "operation": {
@@ -382,8 +363,7 @@
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
@@ -431,8 +411,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "operation": {
@@ -442,8 +421,7 @@
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
@@ -471,8 +449,7 @@
               }
             },
             "request_timeout": 7200
-          },
-          "clients": 1
+          }
         }
       ]
     }

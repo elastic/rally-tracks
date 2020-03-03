@@ -30,8 +30,7 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "operation": {
@@ -43,8 +42,7 @@
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
@@ -61,28 +59,24 @@
         },
         {
           "operation": "polygon",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
         },
         {
           "operation": "bbox",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
         },
         {
           "operation": "distance",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 5
         },
         {
           "operation": "distanceRange",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.6
@@ -120,8 +114,7 @@
         },
         {
         "name": "refresh-after-index",
-        "operation": "refresh",
-        "clients": 1
+        "operation": "refresh"
         },
         {
           "operation": {
@@ -133,8 +126,7 @@
         },
         {
         "name": "refresh-after-force-merge",
-        "operation": "refresh",
-        "clients": 1
+        "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
@@ -186,8 +178,7 @@
         },
         {
         "name": "refresh-after-index",
-        "operation": "refresh",
-        "clients": 1
+        "operation": "refresh"
         },
         {
           "operation": {
@@ -199,8 +190,7 @@
         },
         {
         "name": "refresh-after-force-merge",
-        "operation": "refresh",
-        "clients": 1
+        "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",

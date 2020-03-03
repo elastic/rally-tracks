@@ -35,11 +35,11 @@
         },
         {
           "operation": {
-            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if max_num_segments is defined %},
             "max-num-segments": {{max_num_segments}}
              {%- endif %}
-          },
-          "clients": 1
+          }
         },
         {
           "name": "refresh-after-force-merge",
@@ -112,11 +112,11 @@
         },
         {
           "operation": {
-            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if max_num_segments is defined %},
             "max-num-segments": {{max_num_segments}}
              {%- endif %}
-          },
-          "clients": 1
+          }
         },
         {
         "name": "refresh-after-force-merge",
@@ -165,11 +165,11 @@
         },
         {
           "operation": {
-            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if max_num_segments is defined %},
             "max-num-segments": {{max_num_segments}}
              {%- endif %}
-          },
-          "clients": 1
+          }
         },
         {
         "name": "refresh-after-force-merge",

@@ -36,9 +36,11 @@
         },
         {
           "name": "force-merge-linestrings",
-          "operation": "force-merge",
-          "index": "osmlinestrings",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "index": "osmlinestrings",
+            "request-timeout": 7200
+          }
         },
         {
           "operation": "index-append-multilinestrings",
@@ -53,9 +55,11 @@
         },
         {
           "name": "force-merge-multilinestrings",
-          "operation": "force-merge",
-          "index": "osmmultilinestrings",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "index": "osmmultilinestrings",
+            "request-timeout": 7200
+          }
         },
         {
           "operation": "index-append-polygons",
@@ -70,9 +74,11 @@
         },
         {
           "name": "force-merge-polygons",
-          "operation": "force-merge",
-          "index": "osmpolygons",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "index": "osmpolygons",
+            "request-timeout": 7200
+          }
         },
         {
           "name": "refresh-after-all-indices",

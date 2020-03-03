@@ -35,8 +35,10 @@
           "clients": 1
         },
         {
-          "operation": "force-merge",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
         },
         {
           "name": "refresh-after-force-merge",
@@ -137,8 +139,10 @@
           "clients": 1
         },
         {
-          "operation": "force-merge",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
         },
         {
           "name": "refresh-after-force-merge",

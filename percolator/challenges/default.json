@@ -31,63 +31,69 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
-          "operation": "force-merge",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         },
         {
           "operation": "percolator_with_content_president_bush",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 50
         },
         {
           "operation": "percolator_with_content_saddam_hussein",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 50
         },
         {
           "operation": "percolator_with_content_hurricane_katrina",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 50
         },
         {
           "operation": "percolator_with_content_google",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 35
         },
         {
           "operation": "percolator_no_score_with_content_google",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 100
         },
         {
           "operation": "percolator_with_highlighting",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 50
         },
         {
           "operation": "percolator_with_content_ignore_me",
-          "clients": 1,
           "warmup-iterations": 10,
           "iterations": 100,
           "#COMMENT": "Be aware that we specify *target-interval* here! This means we issue one query every 12 seconds",
@@ -95,7 +101,6 @@
         },
         {
           "operation": "percolator_no_score_with_content_ignore_me",
-          "clients": 1,
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 15

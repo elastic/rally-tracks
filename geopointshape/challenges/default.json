@@ -30,28 +30,39 @@
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
         },
         {
-          "operation": "force-merge",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh",
-          "clients": 1
+          "operation": "refresh"
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         },
         {
           "operation": "polygon",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
         },
         {
           "operation": "bbox",
-          "clients": 1,
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
@@ -89,17 +100,30 @@
         },
         {
         "name": "refresh-after-index",
-        "operation": "refresh",
-        "clients": 1
+        "operation": "refresh"
         },
         {
-          "operation": "force-merge",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
         },
         {
         "name": "refresh-after-force-merge",
-        "operation": "refresh",
-        "clients": 1
+        "operation": "refresh"
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         }
       ]
     },
@@ -138,17 +162,30 @@
         },
         {
         "name": "refresh-after-index",
-        "operation": "refresh",
-        "clients": 1
+        "operation": "refresh"
         },
         {
-          "operation": "force-merge",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
         },
         {
         "name": "refresh-after-force-merge",
-        "operation": "refresh",
-        "clients": 1
+        "operation": "refresh"
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         }
       ]
     }

@@ -35,13 +35,28 @@
           "clients": 1
         },
         {
-          "operation": "force-merge",
-          "clients": 1
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
         },
         {
           "name": "refresh-after-force-merge",
           "operation": "refresh",
           "clients": 1
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         },
         {
           "operation": "percolator_with_content_president_bush",

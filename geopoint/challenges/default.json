@@ -35,16 +35,29 @@
         },
         {
           "operation": {
-            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if max_num_segments is defined %},
             "max-num-segments": {{max_num_segments}}
              {%- endif %}
-          },
-          "clients": 1
+          }
         },
         {
           "name": "refresh-after-force-merge",
           "operation": "refresh",
           "clients": 1
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         },
         {
           "operation": "polygon",
@@ -112,16 +125,29 @@
         },
         {
           "operation": {
-            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if max_num_segments is defined %},
             "max-num-segments": {{max_num_segments}}
              {%- endif %}
-          },
-          "clients": 1
+          }
         },
         {
         "name": "refresh-after-force-merge",
         "operation": "refresh",
         "clients": 1
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         }
       ]
     },
@@ -165,16 +191,29 @@
         },
         {
           "operation": {
-            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if max_num_segments is defined %},
             "max-num-segments": {{max_num_segments}}
              {%- endif %}
-          },
-          "clients": 1
+          }
         },
         {
         "name": "refresh-after-force-merge",
         "operation": "refresh",
         "clients": 1
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         }
       ]
     }

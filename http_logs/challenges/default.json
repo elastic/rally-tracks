@@ -45,6 +45,19 @@
           "clients": 1
         },
         {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
           "operation": "default",
           "clients": 1,
           "warmup-iterations": 500,
@@ -108,6 +121,19 @@
           "clients": 1
         },
         {
+          "name": "wait-until-merges-1-seg-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
           "name": "desc-sort-timestamp-after-force-merge-1-seg",
           "operation": "desc_sort_timestamp",
           "clients": 1,
@@ -169,6 +195,19 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh",
           "clients": 1
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         }
       ]
     },
@@ -219,6 +258,19 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh",
           "clients": 1
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         }
       ]
     },
@@ -269,6 +321,19 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh",
           "clients": 1
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         }
       ]
     },
@@ -319,6 +384,19 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh",
           "clients": 1
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         }
       ]
     },
@@ -366,6 +444,19 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh",
           "clients": 1
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         },
         {
           "name": "reindex",

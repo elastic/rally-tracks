@@ -43,6 +43,19 @@
           }
         },
         {
+          "name": "wait-until-linestrings-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
           "operation": "index-append-multilinestrings",
           "warmup-time-period": 120,
           "clients": {{bulk_indexing_clients | default(8)}}
@@ -59,6 +72,19 @@
             "operation-type": "force-merge",
             "index": "osmmultilinestrings",
             "request-timeout": 7200
+          }
+        },
+        {
+          "name": "wait-until-multilinestrings-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
           }
         },
         {
@@ -84,6 +110,19 @@
           "name": "refresh-after-all-indices",
           "operation": "refresh",
           "clients": 1
+        },
+        {
+          "name": "wait-until-polygon-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
         },
         {
           "operation": "polygon",

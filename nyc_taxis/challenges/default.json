@@ -383,4 +383,67 @@
           }
         }
       ]
+    },
+    {
+      "name": "date-histogram",
+      "description": "Tests date_histogram.",
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              "index.codec": "best_compression",
+              "index.refresh_interval": "30s",
+              "index.translog.flush_threshold_size": "4g"
+            }{%- endif %}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "nyc_taxis",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
+        {
+          "operation": "index",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh"
+        },
+        {
+          "operation": "date_histogram_all_calendar_interval",
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 10
+        },
+        {
+          "operation": "date_histogram_all_calendar_interval_with_tz",
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 12
+        },
+        {
+          "operation": "date_histogram_all_fixed_interval",
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 10
+        },
+        {
+          "operation": "date_histogram_all_fixed_interval_with_tz",
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 70
+        }
+      ]
     }

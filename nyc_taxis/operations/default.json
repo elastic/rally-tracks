@@ -106,4 +106,66 @@
           }
         }
       }
+    },
+    {
+      "name": "date_histogram_all_calendar_interval",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "calendar_interval": "month"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_all_calendar_interval_with_tz",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "calendar_interval": "month",
+              "time_zone": "America/New_York"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_all_fixed_interval",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "fixed_interval": "60d"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_all_fixed_interval_with_tz",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "fixed_interval": "60d",
+              "time_zone": "America/New_York"
+            }
+          }
+        }
+      }
     }

@@ -17,6 +17,8 @@
     {
       "name": "default",
       "operation-type": "search",
+      "#COMMENT": "Large responses cause overhead on the client when decompressing the response. Disable to avoid the overhead",
+      "response-compression-enabled": false,
       "body": {
         "query": {
           "match_all": {}
@@ -26,6 +28,8 @@
     {
       "name": "term",
       "operation-type": "search",
+      "#COMMENT": "Large responses cause overhead on the client when decompressing the response. Disable to avoid the overhead",
+      "response-compression-enabled": false,
       "body": {
         "query": {
           "term": {
@@ -37,6 +41,8 @@
     {
       "name": "phrase",
       "operation-type": "search",
+      "#COMMENT": "Large responses cause overhead on the client when decompressing the response. Disable to avoid the overhead",
+      "response-compression-enabled": false,
       "body": {
         "query": {
           "match_phrase": {
@@ -48,6 +54,8 @@
     {
       "name": "articles_monthly_agg_uncached",
       "operation-type": "search",
+      "#COMMENT": "Large responses cause overhead on the client when decompressing the response. Disable to avoid the overhead",
+      "response-compression-enabled": false,
       "body": {
         "size": 0,
         "aggs": {
@@ -64,6 +72,8 @@
       "name": "articles_monthly_agg_cached",
       "operation-type": "search",
       "cache": true,
+      "#COMMENT": "Large responses cause overhead on the client when decompressing the response. Disable to avoid the overhead",
+      "response-compression-enabled": false,
       "body": {
         "size": 0,
         "aggs": {

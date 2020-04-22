@@ -19,10 +19,6 @@ class QueryParamSource:
     def partition(self, partition_index, total_partitions):
         return self
 
-    # Deprecated - only there for BWC reasons with Rally < 1.4.0
-    def size(self):
-        return 1
-
 
 class PureTermsQueryParamSource(QueryParamSource):
     def params(self):

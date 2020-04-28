@@ -337,4 +337,72 @@
           "target-throughput": 1
         }
       ]
+    },
+    {
+      "name": "terms",
+      "description": "Checks the performance of terms aggregations",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "weather-data-2016",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
+        {
+          "operation": "index",
+          "#COMMENT": "This is an incredibly short warmup time period but it is necessary to get also measurement samples. As this benchmark is rather about search than indexing this is ok.",
+          "warmup-time-period": 10,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh",
+          "clients": 1
+        },
+        {
+          "operation": "force-merge",
+          "clients": 1
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh",
+          "clients": 1
+        },
+        {
+          "operation": "keyword_terms_numeric_terms",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 4
+        },
+        {
+          "operation": "numeric_terms_numeric_terms",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 3
+        },
+        {
+          "operation": "date_histo_numeric_terms",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 5
+        }
+      ]
     }

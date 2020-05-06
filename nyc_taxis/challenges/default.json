@@ -250,11 +250,116 @@
               "description": "NYC Taxis (count)",
               "analysis_config": {
                 "bucket_span": "1h",
-                "summary_count_field_name": "doc_count",
+                "influencers": [
+                  "rate_code_id",
+                  "vendor_id",
+                  "store_and_fwd_flag",
+                  "payment_type",
+                  "trip_type",
+                  "passenger_count"
+                ],
                 "detectors": [
                   {
+                    "detector_description": "metric(trip_distance)",
+                    "function": "metric",
+                    "field_name": "trip_distance",
+                    "partition_field_name": "passenger_count",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "metric(total_amount)",
+                    "function": "metric",
+                    "field_name": "total_amount",
+                    "partition_field_name": "passenger_count",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "varp(trip_distance)",
+                    "function": "varp",
+                    "field_name": "trip_distance",
+                    "partition_field_name": "passenger_count",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "varp(total_amount)",
+                    "function": "varp",
+                    "field_name": "total_amount",
+                    "partition_field_name": "passenger_count",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "metric(trip_distance)",
+                    "function": "metric",
+                    "field_name": "trip_distance",
+                    "partition_field_name": "trip_type",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "metric(total_amount)",
+                    "function": "metric",
+                    "field_name": "total_amount",
+                    "partition_field_name": "trip_type",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "varp(trip_distance)",
+                    "function": "varp",
+                    "field_name": "trip_distance",
+                    "partition_field_name": "trip_type",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "varp(total_amount)",
+                    "function": "varp",
+                    "field_name": "total_amount",
+                    "partition_field_name": "trip_type",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "metric(trip_distance)",
+                    "function": "metric",
+                    "field_name": "trip_distance",
+                    "partition_field_name": "payment_type",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "metric(total_amount)",
+                    "function": "metric",
+                    "field_name": "total_amount",
+                    "partition_field_name": "payment_type",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "varp(trip_distance)",
+                    "function": "varp",
+                    "field_name": "trip_distance",
+                    "partition_field_name": "payment_type",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "varp(total_amount)",
+                    "function": "varp",
+                    "field_name": "total_amount",
+                    "partition_field_name": "payment_type",
+                    "use_null": true
+                  },
+                  {
                     "detector_description": "count",
-                    "function": "count"
+                    "function": "count",
+                    "partition_field_name": "passenger_count",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "count",
+                    "function": "count",
+                    "partition_field_name": "payment_type",
+                    "use_null": true
+                  },
+                  {
+                    "detector_description": "count",
+                    "function": "count",
+                    "partition_field_name": "trip_type",
+                    "use_null": true
                   }
                 ]
               },
@@ -263,7 +368,7 @@
                 "time_format": "epoch_ms"
               },
               "model_plot_config": {
-                "enabled": true
+                "enabled": false
               }
             }
           }
@@ -283,36 +388,9 @@
               "indices": [
                 "nyc_taxis"
               ],
-              "query": {
-                "match_all": {
-                  "boost": 1
-                }
-              },
-              "aggregations": {
-                "buckets": {
-                  "date_histogram": {
-                    "field": "pickup_datetime",
-                    "fixed_interval": "3600000ms",
-                    "offset": 0,
-                    "order": {
-                      "_key": "asc"
-                    },
-                    "keyed": false,
-                    "min_doc_count": 0
-                  },
-                  "aggregations": {
-                    "pickup_datetime": {
-                      "max": {
-                        "field": "pickup_datetime"
-                      }
-                    }
-                  }
-                }
-              },
-              "scroll_size": 1000,
+              "scroll_size": 10000,
               "chunking_config": {
-                "mode": "manual",
-                "time_span": "3600000000ms"
+                "mode": "auto"
               }
             }
           }
@@ -360,13 +438,11 @@
             "include-in-reporting": false
           }
         },
-	    {
+        {
           "operation": {
             "operation-type": "start-ml-datafeed",
             "datafeed-id": "{{ml_feed_id}}",
-            "body": {
-              "end": "now"
-            }
+            "end": "now"
           }
         },
         {

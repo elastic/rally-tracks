@@ -108,7 +108,7 @@
       }
     },
     {
-      "name": "date_histogram_all_calendar_interval",
+      "name": "date_histogram_calendar_interval",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -123,7 +123,7 @@
       }
     },
     {
-      "name": "date_histogram_all_calendar_interval_with_tz",
+      "name": "date_histogram_calendar_interval_with_tz",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -139,7 +139,7 @@
       }
     },
     {
-      "name": "date_histogram_all_fixed_interval",
+      "name": "date_histogram_fixed_interval",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -154,7 +154,7 @@
       }
     },
     {
-      "name": "date_histogram_all_fixed_interval_with_tz",
+      "name": "date_histogram_fixed_interval_with_tz",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -163,6 +163,37 @@
             "date_histogram": {
               "field": "dropoff_datetime",
               "fixed_interval": "60d",
+              "time_zone": "America/New_York"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "auto_date_histogram",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "dropoffs_over_time": {
+            "auto_date_histogram": {
+              "field": "dropoff_datetime",
+              "buckets": "30"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "auto_date_histogram_with_tz",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "dropoffs_over_time": {
+            "auto_date_histogram": {
+              "field": "dropoff_datetime",
+              "buckets": "30",
               "time_zone": "America/New_York"
             }
           }

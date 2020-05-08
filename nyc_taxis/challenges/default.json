@@ -422,28 +422,40 @@
           "operation": "refresh"
         },
         {
-          "operation": "date_histogram_all_calendar_interval",
+          "operation": "date_histogram_calendar_interval",
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 10
         },
         {
-          "operation": "date_histogram_all_calendar_interval_with_tz",
+          "operation": "date_histogram_calendar_interval_with_tz",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 12
+          "target-interval": 15
         },
         {
-          "operation": "date_histogram_all_fixed_interval",
+          "operation": "date_histogram_fixed_interval",
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 10
         },
         {
-          "operation": "date_histogram_all_fixed_interval_with_tz",
+          "operation": "date_histogram_fixed_interval_with_tz",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 70
+          "target-interval": 15
+        },
+        {
+          "operation": "auto_date_histogram",
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 15
+        },
+        {
+          "operation": "auto_date_histogram_with_tz",
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 17
         }
       ]
     }

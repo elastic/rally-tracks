@@ -162,19 +162,19 @@
           "operation": "large_terms",
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 1.5
+          "target-throughput": 1.1
         },
         {
           "operation": "large_filtered_terms",
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 1.5
+          "target-throughput": 1.1
         },
         {
           "operation": "large_prohibited_terms",
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 1.5
+          "target-throughput": 1.1
         },
         {
           "operation": "desc_sort_population",

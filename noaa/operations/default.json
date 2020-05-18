@@ -792,7 +792,7 @@
       "body": {
         "size": 0,
         "aggs": {
-          "date": {
+          "tmax": {
             "range": {
               "field": "TMAX",
               "ranges": [
@@ -805,9 +805,72 @@
               ]
             },
             "aggs": {
-              "tavg": {
+              "date": {
                 "significant_terms": {
                   "field": "date"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "histo_date_histo",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "tmax": {
+            "histogram": {
+              "field": "TMAX",
+              "interval": 4
+            },
+            "aggs": {
+              "date": {
+                "date_histogram": {
+                  "field": "date",
+                  "calendar_interval": "1w"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "histo_date_histo_with_metrics",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "tmax": {
+            "histogram": {
+              "field": "TMAX",
+              "interval": 4
+            },
+            "aggs": {
+              "date": {
+                "date_histogram": {
+                  "field": "date",
+                  "calendar_interval": "1w"
+                },
+                "aggs": {
+                  "tmin": {
+                    "min": {
+                      "field": "TMIN"
+                    }
+                  },
+                  "tavg": {
+                    "avg": {
+                      "field": "TAVG"
+                    }
+                  },
+                  "tmax": {
+                    "max": {
+                      "field": "TMAX"
+                    }
+                  }
                 }
               }
             }

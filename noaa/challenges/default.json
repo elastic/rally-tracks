@@ -339,8 +339,8 @@
       ]
     },
     {
-      "name": "terms",
-      "description": "Checks the performance of terms aggregations",
+      "name": "sub-bucket-aggs",
+      "description": "Checks the performance of bucket aggregations under bucket aggregations",
       "default": false,
       "schedule": [
         {
@@ -410,6 +410,20 @@
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 18
+        },
+        {
+          "operation": "histo_date_histo",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 4
+        },
+        {
+          "operation": "histo_date_histo_with_metrics",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 6
         }
       ]
     }

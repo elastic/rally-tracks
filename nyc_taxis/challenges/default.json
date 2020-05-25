@@ -522,6 +522,12 @@
           "target-interval": 15
         },
         {
+          "operation": "date_histogram_fixed_interval_with_metrics",
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 50
+        },
+        {
           "operation": "auto_date_histogram",
           "warmup-iterations": 10,
           "iterations": 50,
@@ -532,6 +538,12 @@
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 17
+        },
+        {
+          "operation": "auto_date_histogram_with_metrics",
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 50
         }
       ]
     }

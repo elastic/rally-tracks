@@ -170,6 +170,26 @@
       }
     },
     {
+      "name": "date_histogram_fixed_interval_with_metrics",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "fixed_interval": "60d"
+            },
+            "aggs": {
+              "total_amount": { "stats": { "field": "total_amount" } },
+              "tip_amount": { "stats": { "field": "tip_amount" } },
+              "trip_distance": { "stats": { "field": "trip_distance" } }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "auto_date_histogram",
       "operation-type": "search",
       "body": {
@@ -195,6 +215,26 @@
               "field": "dropoff_datetime",
               "buckets": "30",
               "time_zone": "America/New_York"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "auto_date_histogram_with_metrics",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "dropoffs_over_time": {
+            "auto_date_histogram": {
+              "field": "dropoff_datetime",
+              "buckets": "30"
+            },
+            "aggs": {
+              "total_amount": { "stats": { "field": "total_amount" } },
+              "tip_amount": { "stats": { "field": "tip_amount" } },
+              "trip_distance": { "stats": { "field": "trip_distance" } }
             }
           }
         }

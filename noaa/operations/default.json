@@ -816,15 +816,22 @@
       }
     },
     {
-      "name": "histo_date_histo",
+      "name": "range_date_histo",
       "operation-type": "search",
       "body": {
         "size": 0,
         "aggs": {
           "tmax": {
-            "histogram": {
+            "range": {
               "field": "TMAX",
-              "interval": 4
+              "ranges": [
+                {"to":   -10},
+                {"from": -10, "to":  0},
+                {"from":   0, "to": 10},
+                {"from":  10, "to": 20},
+                {"from":  20, "to": 30},
+                {"from":  30}
+              ]
             },
             "aggs": {
               "date": {
@@ -839,15 +846,22 @@
       }
     },
     {
-      "name": "histo_date_histo_with_metrics",
+      "name": "range_date_histo_with_metrics",
       "operation-type": "search",
       "body": {
         "size": 0,
         "aggs": {
           "tmax": {
-            "histogram": {
+            "range": {
               "field": "TMAX",
-              "interval": 4
+              "ranges": [
+                {"to":   -10},
+                {"from": -10, "to":  0},
+                {"from":   0, "to": 10},
+                {"from":  10, "to": 20},
+                {"from":  20, "to": 30},
+                {"from":  30}
+              ]
             },
             "aggs": {
               "date": {
@@ -871,6 +885,114 @@
                       "field": "TMAX"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range_auto_date_histo",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "tmax": {
+            "range": {
+              "field": "TMAX",
+              "ranges": [
+                {"to":   -10},
+                {"from": -10, "to":  0},
+                {"from":   0, "to": 10},
+                {"from":  10, "to": 20},
+                {"from":  20, "to": 30},
+                {"from":  30}
+              ]
+            },
+            "aggs": {
+              "date": {
+                "auto_date_histogram": {
+                  "field": "date",
+                  "buckets": 20
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range_auto_date_histo_with_metrics",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "tmax": {
+            "range": {
+              "field": "TMAX",
+              "ranges": [
+                {"to":   -10},
+                {"from": -10, "to":  0},
+                {"from":   0, "to": 10},
+                {"from":  10, "to": 20},
+                {"from":  20, "to": 30},
+                {"from":  30}
+              ]
+            },
+            "aggs": {
+              "date": {
+                "auto_date_histogram": {
+                  "field": "date",
+                  "buckets": 20
+                },
+                "aggs": {
+                  "tmin": {
+                    "min": {
+                      "field": "TMIN"
+                    }
+                  },
+                  "tavg": {
+                    "avg": {
+                      "field": "TAVG"
+                    }
+                  },
+                  "tmax": {
+                    "max": {
+                      "field": "TMAX"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range_auto_date_histo_with_time_zone",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "tmax": {
+            "range": {
+              "field": "TMAX",
+              "ranges": [
+                {"to":   -10},
+                {"from": -10, "to":  0},
+                {"from":   0, "to": 10},
+                {"from":  10, "to": 20},
+                {"from":  20, "to": 30},
+                {"from":  30}
+              ]
+            },
+            "aggs": {
+              "date": {
+                "auto_date_histogram": {
+                  "field": "date",
+                  "buckets": 20,
+                  "time_zone": "America/New_York"
                 }
               }
             }

@@ -388,7 +388,7 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 4
+          "target-interval": 5
         },
         {
           "operation": "numeric_terms_numeric_terms",
@@ -402,28 +402,49 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 5
+          "target-interval": 3
         },
         {
           "operation": "range_numeric_significant_terms",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 18
+          "target-interval": 16
         },
         {
-          "operation": "histo_date_histo",
+          "operation": "range_date_histo",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 4
+          "target-interval": 3
         },
         {
-          "operation": "histo_date_histo_with_metrics",
+          "operation": "range_date_histo_with_metrics",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 6
+        },
+        {
+          "operation": "range_auto_date_histo",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 3
+        },
+        {
+          "operation": "range_auto_date_histo_with_metrics",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 6
+        },
+        {
+          "operation": "range_auto_date_histo_with_time_zone",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 7
         }
       ]
     }

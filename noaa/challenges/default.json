@@ -26,7 +26,7 @@
         {
           "operation": "index",
           "#COMMENT": "This is an incredibly short warmup time period but it is necessary to get also measurement samples. As this benchmark is rather about search than indexing this is ok.",
-          "warmup-time-period": 10,
+          "warmup-time-period": 70,
           "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
@@ -133,7 +133,7 @@
         {
           "operation": "index",
           "#COMMENT": "This is an incredibly short warmup time period but it is necessary to get also measurement samples. As this benchmark is rather about search than indexing this is ok.",
-          "warmup-time-period": 10,
+          "warmup-time-period": 70,
           "clients": {{bulk_indexing_clients | default(8)}}
         },
         {

@@ -405,6 +405,13 @@
           "target-interval": 3
         },
         {
+          "operation": "date_histo_histo",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 3
+        },
+        {
           "operation": "range_numeric_significant_terms",
           "clients": 1,
           "warmup-iterations": 10,

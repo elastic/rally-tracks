@@ -787,6 +787,29 @@
       }
     },
     {
+      "name": "date_histo_histo",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "tavg": {
+                "histogram": {
+                  "field": "TAVG",
+                  "interval": 10
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "range_numeric_significant_terms",
       "operation-type": "search",
       "body": {

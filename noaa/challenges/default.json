@@ -384,70 +384,70 @@
           "clients": 1
         },
         {
-          "operation": "keyword_terms_numeric_terms",
+          "operation": "keyword-terms-numeric-terms",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 5
         },
         {
-          "operation": "numeric_terms_numeric_terms",
+          "operation": "numeric-terms-numeric-terms",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 3
         },
         {
-          "operation": "date_histo_numeric_terms",
+          "operation": "date-histo-numeric-terms",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 3
         },
         {
-          "operation": "date_histo_histo",
+          "operation": "date-histo-histo",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 3
         },
         {
-          "operation": "range_numeric_significant_terms",
+          "operation": "range-numeric-significant-terms",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 16
         },
         {
-          "operation": "range_date_histo",
+          "operation": "range-date-histo",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 3
         },
         {
-          "operation": "range_date_histo_with_metrics",
+          "operation": "range-date-histo-with-metrics",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 6
         },
         {
-          "operation": "range_auto_date_histo",
+          "operation": "range-auto-date-histo",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 3
         },
         {
-          "operation": "range_auto_date_histo_with_metrics",
+          "operation": "range-auto-date-histo-with-metrics",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
           "target-interval": 6
         },
         {
-          "operation": "range_auto_date_histo_with_time_zone",
+          "operation": "range-auto-date-histo-with-time-zone",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,

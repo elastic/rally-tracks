@@ -507,7 +507,7 @@
           "operation": "date_histogram_calendar_interval_with_tz",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 15
+          "target-interval": 13
         },
         {
           "operation": "date_histogram_fixed_interval",
@@ -519,31 +519,31 @@
           "operation": "date_histogram_fixed_interval_with_tz",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 15
+          "target-interval": 13
         },
         {
           "operation": "date_histogram_fixed_interval_with_metrics",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 50
+          "target-interval": 36
         },
         {
           "operation": "auto_date_histogram",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 15
+          "target-interval": 10
         },
         {
           "operation": "auto_date_histogram_with_tz",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 17
+          "target-interval": 14
         },
         {
           "operation": "auto_date_histogram_with_metrics",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 50
+          "target-interval": 42
         }
       ]
     }

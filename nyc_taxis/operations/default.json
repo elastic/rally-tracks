@@ -110,6 +110,14 @@
     {
       "name": "date_histogram_calendar_interval",
       "operation-type": "search",
+      "query": {
+        "range": {
+          "dropoff_datetime": {
+            "gte": "2015-01-01 00:00:00",
+            "lt": "2016-01-01 00:00:00"
+          }
+        }
+      },
       "body": {
         "size": 0,
         "aggs": {
@@ -127,6 +135,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "dropoffs_over_time": {
             "date_histogram": {
@@ -143,6 +159,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "dropoffs_over_time": {
             "date_histogram": {
@@ -158,6 +182,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "dropoffs_over_time": {
             "date_histogram": {
@@ -174,6 +206,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "dropoffs_over_time": {
             "date_histogram": {
@@ -194,11 +234,19 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "dropoffs_over_time": {
             "auto_date_histogram": {
               "field": "dropoff_datetime",
-              "buckets": "30"
+              "buckets": "12"
             }
           }
         }
@@ -209,11 +257,19 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "dropoffs_over_time": {
             "auto_date_histogram": {
               "field": "dropoff_datetime",
-              "buckets": "30",
+              "buckets": "12",
               "time_zone": "America/New_York"
             }
           }
@@ -225,11 +281,19 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "dropoffs_over_time": {
             "auto_date_histogram": {
               "field": "dropoff_datetime",
-              "buckets": "30"
+              "buckets": "12"
             },
             "aggs": {
               "total_amount": { "stats": { "field": "total_amount" } },

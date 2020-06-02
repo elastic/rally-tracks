@@ -531,19 +531,19 @@
           "operation": "auto_date_histogram",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 10
+          "target-interval": 12
         },
         {
           "operation": "auto_date_histogram_with_tz",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 14
+          "target-interval": 20
         },
         {
           "operation": "auto_date_histogram_with_metrics",
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 42
+          "target-interval": 46
         }
       ]
     }

@@ -412,6 +412,20 @@
           "target-interval": 3
         },
         {
+          "operation": "date-histo-geohash-grid",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 4
+        },
+        {
+          "operation": "date-histo-geotile-grid",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 4
+        },
+        {
           "operation": "range-numeric-significant-terms",
           "clients": 1,
           "warmup-iterations": 10,

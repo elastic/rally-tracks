@@ -810,6 +810,68 @@
       }
     },
     {
+      "name": "date-histo-geohash-grid",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_bounding_box": {
+            "station.location": {
+              "top_left": "c",
+              "bottom_right": "9"
+            }
+          }
+        },
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "location": {
+                "geohash_grid": {
+                  "field": "station.location",
+                  "precision": 2
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-geotile-grid",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_bounding_box": {
+            "station.location": {
+              "top_left": "c",
+              "bottom_right": "9"
+            }
+          }
+        },
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "location": {
+                "geotile_grid": {
+                  "field": "station.location",
+                  "precision": 2
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "range-numeric-significant-terms",
       "operation-type": "search",
       "body": {

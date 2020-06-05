@@ -787,6 +787,142 @@
       }
     },
     {
+      "name": "date-histo-string-terms-via-map",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "country": {
+                "terms": {
+                  "field": "station.country",
+                  "execution_hint": "map"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-string-terms-via-global-ords",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "country": {
+                "terms": {
+                  "field": "station.country",
+                  "execution_hint": "global_ordinals"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-string-terms-via-default-strategy",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "country": {
+                "terms": {
+                  "field": "station.country"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-string-significant-terms-via-map",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "country": {
+                "significant_terms": {
+                  "field": "station.country",
+                  "execution_hint": "map"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-string-significant-terms-via-global-ords",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "country": {
+                "significant_terms": {
+                  "field": "station.country",
+                  "execution_hint": "global_ordinals"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-string-significant-terms-via-default-strategy",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "country": {
+                "significant_terms": {
+                  "field": "station.country"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "date-histo-histo",
       "operation-type": "search",
       "body": {

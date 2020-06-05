@@ -405,6 +405,48 @@
           "target-interval": 3
         },
         {
+          "operation": "date-histo-string-terms-via-map",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 17
+        },
+        {
+          "operation": "date-histo-string-terms-via-global-ords",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 6
+        },
+        {
+          "operation": "date-histo-string-terms-via-default-strategy",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 6
+        },
+        {
+          "operation": "date-histo-string-significant-terms-via-map",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 30
+        },
+        {
+          "operation": "date-histo-string-significant-terms-via-global-ords",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 15
+        },
+        {
+          "operation": "date-histo-string-significant-terms-via-default-strategy",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 15
+        },
+        {
           "operation": "date-histo-histo",
           "clients": 1,
           "warmup-iterations": 10,

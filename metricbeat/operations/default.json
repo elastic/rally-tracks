@@ -5,7 +5,7 @@
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
-      "name": "autohisto_agg",
+      "name": "auto-date-histogram",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -29,7 +29,32 @@
       }
     },
     {
-      "name": "date_histogram_agg",
+      "name": "auto-date-histogram-with-tz",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "23/02/2019",
+              "lte": "23/02/2019",
+              "format": "dd/MM/yyyy"
+            }
+          }
+        },
+        "aggs": {
+          "occurrences_over_time": {
+            "auto_date_histogram": {
+              "field": "@timestamp",
+              "buckets": 24,
+              "time_zone": "America/New_York"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histogram",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -47,6 +72,31 @@
             "date_histogram": {
               "field": "@timestamp",
               "calendar_interval": "hour"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histogram-with-tz",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+              "@timestamp": {
+              "gte": "23/02/2019",
+              "lte": "23/02/2019",
+              "format": "dd/MM/yyyy"
+            }
+          }
+        },
+        "aggs": {
+          "occurrences_over_time": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "calendar_interval": "hour",
+              "time_zone": "America/New_York"
             }
           }
         }

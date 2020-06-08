@@ -56,13 +56,25 @@
           }
         },
         {
-          "operation": "autohisto_agg",
+          "operation": "auto-date-histogram",
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 2
         },
         {
-          "operation": "date_histogram_agg",
+          "operation": "auto-date-histogram-with-tz",
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+        {
+          "operation": "date-histogram",
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+        {
+          "operation": "date-histogram-with-tz",
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 2

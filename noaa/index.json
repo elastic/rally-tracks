@@ -13,258 +13,426 @@
     },
     "properties": {
       "AWDR": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "AWND": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "DAPR": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "DASF": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "DATN": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "DATX": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "DWPR": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "EVAP": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "MDPR": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "MDSF": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "MDTN": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "MDTRANGE": {
-        "type": "double_range"
+        "type": "double_range",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "MDTX": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "MNPN": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "MXPN": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "PGTM": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "PRCP": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "PSUN": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN31": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN32": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN33": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN35": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN36": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN51": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN52": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN53": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN55": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN56": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SN57": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SNOW": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SNWD": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX31": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX32": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX33": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX35": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX36": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX51": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX52": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX53": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX55": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX56": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "SX57": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "TAVG": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "THIC": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "TMAX": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "TMIN": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "TOBS": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "TRANGE": {
-        "type": "double_range"
+        "type": "double_range",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "TSUN": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WDF2": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WDF5": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WDFG": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WDMV": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WESD": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WESF": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WSF2": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WSF5": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WSFG": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WSFI": {
-        "type": "float"
+        "type": "float",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT01": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT02": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT03": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT04": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT05": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT06": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT07": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT08": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT09": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT10": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT11": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT17": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "WT18": {
-        "type": "keyword"
+        "type": "keyword",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
       },
       "date": {
-        "type": "date"
+        "type": "date",
+        "doc_values": {{ timestamp_doc_values | default(true) | tojson }},
+        "index": {{ timestamp_index | default(true) | tojson }}
       },
       "station": {
         "properties": {
           "country": {
-            "type": "keyword"
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "country_code": {
-            "type": "keyword"
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "elevation": {
-            "type": "float"
+            "type": "float",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "gsn_flag": {
-            "type": "keyword"
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "hcn_crn_flag": {
-            "type": "keyword"
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "id": {
-            "type": "keyword"
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "location": {
-            "type": "geo_point"
+            "type": "geo_point",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "name": {
-            "type": "keyword"
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "state": {
-            "type": "keyword"
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "state_code": {
-            "type": "keyword"
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           },
           "wmo_id": {
-            "type": "keyword"
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
           }
         }
       }

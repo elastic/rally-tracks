@@ -30,6 +30,14 @@
       "corpora": "http_logs"
     },
     {
+      "name": "index-append-with-runtime-grok",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "pipeline": "timestamp-pipeline",
+      "corpora": "http_logs_unparsed"
+    },
+    {
       "name": "update",
       "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(5000)}},
@@ -75,6 +83,58 @@
               "gte": "now-{{'15-05-1998' | days_ago(now)}}d/d",
               "lt": "now/d"
             }
+          }
+        }
+      }
+    },
+    {
+      "name": "200s-in-range",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "gte": "1998-05-01T00:00:00Z",
+                    "lt": "1998-05-02T00:00:00Z"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "status": "200"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "400s-in-range",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "gte": "1998-05-01T00:00:00Z",
+                    "lt": "1998-05-02T00:00:00Z"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "status": "400"
+                }
+              }
+            ]
           }
         }
       }
@@ -182,6 +242,24 @@
                   "country_name",
                   "location"
                 ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "create-timestamp-pipeline",
+      "operation-type": "put-pipeline",
+      "id": "timestamp-pipeline",
+      "body": {
+        "description": "Process the timestamp out of an http log line with grok. Requires the `unparsed` data set.",
+        "processors": [
+          {
+            "grok": {
+              "field": "message",
+              "patterns": [
+                "%{IPORHOST} %{HTTPDUSER} %{USER} \\[%{TIMESTAMP_ISO8601:@timestamp}\\] \"(?:%{WORD} %{NOTSPACE}(?: HTTP/%{NUMBER})?|%{DATA})\" %{NUMBER} (?:%{NUMBER}|-)"
+              ]
             }
           }
         ]

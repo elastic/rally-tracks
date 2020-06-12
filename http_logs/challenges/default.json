@@ -74,6 +74,18 @@
           "target-throughput": 1
         },
         {
+          "operation": "200s-in-range",
+          "warmup-iterations": 500,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
+          "operation": "400s-in-range",
+          "warmup-iterations": 500,
+          "iterations": 100,
+          "target-throughput": 50
+        },
+        {
           "operation": "hourly_agg",
           "warmup-iterations": 100,
           "iterations": 100,
@@ -316,6 +328,79 @@
             "retry-until-success": true,
             "include-in-reporting": false
           }
+        }
+      ]
+    },
+    {
+      "name": "append-runtime-grok",
+      "description": "Index the \"unparsed\" documents so we can test runtime fields.",
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "logs-*",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            }
+          }
+        },
+        {
+          "operation": "create-timestamp-pipeline"
+        },
+        {
+          "operation": "index-append-with-runtime-grok",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh"
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh"
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "operation": "200s-in-range",
+          "warmup-iterations": 500,
+          "iterations": 100,
+          "target-throughput": 20
+        },
+        {
+          "operation": "400s-in-range",
+          "warmup-iterations": 50,
+          "iterations": 10,
+          "target-throughput": 1
         }
       ]
     },

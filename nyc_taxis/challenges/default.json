@@ -35,7 +35,26 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
+        },{%- if force_merge is defined or force_merge_max_num_segments is defined %}
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+            {%- endif %}
+          },
+          "include-in-reporting": true
         },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh",
+          "include-in-reporting": true
+        },
+        {
+          "operation": "wait-until-merges-finish",
+          "retry-until-success": true,
+          "include-in-reporting": true
+        },{%- endif %}
         {
           "operation": "default",
           "warmup-iterations": 50,
@@ -104,7 +123,26 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
-        }
+        }{%- if force_merge is defined or force_merge_max_num_segments is defined %},
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+            {%- endif %}
+          },
+          "include-in-reporting": true
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh",
+          "include-in-reporting": true
+        },
+        {
+          "operation": "wait-until-merges-finish",
+          "retry-until-success": true,
+          "include-in-reporting": true
+        }{%- endif %}
       ]
     },
     {
@@ -145,7 +183,26 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
-        }
+        }{%- if force_merge is defined or force_merge_max_num_segments is defined %},
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+            {%- endif %}
+          },
+          "include-in-reporting": true
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh",
+          "include-in-reporting": true
+        },
+        {
+          "operation": "wait-until-merges-finish",
+          "retry-until-success": true,
+          "include-in-reporting": true
+        }{%- endif %}
       ]
     },
     {
@@ -187,7 +244,9 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "request-timeout": 7200
+            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+            {%- endif %}
           }
         },
         {
@@ -195,17 +254,9 @@
           "operation": "refresh"
         },
         {
-          "name": "wait-until-merges-finish",
-          "operation": {
-            "operation-type": "index-stats",
-            "index": "_all",
-            "condition": {
-              "path": "_all.total.merges.current",
-              "expected-value": 0
-            },
-            "retry-until-success": true,
-            "include-in-reporting": false
-          }
+          "operation": "wait-until-merges-finish",
+          "retry-until-success": true,
+          "include-in-reporting": false
         }
       ]
     },
@@ -418,7 +469,9 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "request-timeout": 7200
+            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+            {%- endif %}
           }
         },
         {
@@ -426,17 +479,9 @@
           "operation": "refresh"
         },
         {
-          "name": "wait-until-merges-finish",
-          "operation": {
-            "operation-type": "index-stats",
-            "index": "_all",
-            "condition": {
-              "path": "_all.total.merges.current",
-              "expected-value": 0
-            },
-            "retry-until-success": true,
-            "include-in-reporting": false
-          }
+          "operation": "wait-until-merges-finish",
+          "retry-until-success": true,
+          "include-in-reporting": false
         },
         {
           "operation": {

@@ -35,15 +35,14 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
-        },{%- if force_merge is defined or force_merge_max_num_segments is defined %}
+        },
         {
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
-          },
-          "include-in-reporting": true
+          }
         },
         {
           "name": "refresh-after-force-merge",
@@ -53,7 +52,7 @@
         {
           "operation": "wait-until-merges-finish",
           "include-in-reporting": true
-        },{%- endif %}
+        },
         {
           "operation": "default",
           "warmup-iterations": 50,
@@ -122,20 +121,18 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
-        }{%- if force_merge is defined or force_merge_max_num_segments is defined %},
+        },
         {
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
-          },
-          "include-in-reporting": true
+          }
         },
         {
           "name": "refresh-after-force-merge",
           "operation": "refresh",
-          "include-in-reporting": true
         },
         {
           "operation": "wait-until-merges-finish",
@@ -181,20 +178,18 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
-        }{%- if force_merge is defined or force_merge_max_num_segments is defined %},
+        },
         {
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
-          },
-          "include-in-reporting": true
+          }
         },
         {
           "name": "refresh-after-force-merge",
           "operation": "refresh",
-          "include-in-reporting": true
         },
         {
           "operation": "wait-until-merges-finish",

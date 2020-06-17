@@ -67,8 +67,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
 * `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index.
-* `force_merge` (default: false): A boolean defining whether a force-merge operation should be run after refresh. Only applies to the `append-no-conflicts`, `append-no-conflicts-index-only` and `append-sorted-no-conflicts-index-only` challenges. 
-* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only applies to the `append-no-conflicts`, `append-no-conflicts-index-only`, `append-sorted-no-conflicts-index-only`, `update` and `append-ml` challenges. Use of this parameter implies `force_merge:true`.
+* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 

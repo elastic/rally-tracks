@@ -50,8 +50,7 @@
           "include-in-reporting": true
         },
         {
-          "operation": "wait-until-merges-finish",
-          "include-in-reporting": true
+          "operation": "wait-until-merges-finish"
         },
         {
           "operation": "default",
@@ -135,9 +134,8 @@
           "operation": "refresh",
         },
         {
-          "operation": "wait-until-merges-finish",
-          "include-in-reporting": true
-        }{%- endif %}
+          "operation": "wait-until-merges-finish"
+        }
       ]
     },
     {
@@ -192,9 +190,8 @@
           "operation": "refresh",
         },
         {
-          "operation": "wait-until-merges-finish",
-          "include-in-reporting": true
-        }{%- endif %}
+          "operation": "wait-until-merges-finish"
+        }
       ]
     },
     {
@@ -246,8 +243,7 @@
           "operation": "refresh"
         },
         {
-          "operation": "wait-until-merges-finish",
-          "include-in-reporting": false
+          "operation": "wait-until-merges-finish"
         }
       ]
     },
@@ -471,7 +467,6 @@
         },
         {
           "operation": "wait-until-merges-finish",
-          "include-in-reporting": false
         },
         {
           "operation": {

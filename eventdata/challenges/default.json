@@ -233,7 +233,13 @@
         },
         {
           "operation": {
-            "operation-type": "execute-transform",
+            "operation-type": "start-transform",
+            "transform-id": "transform-browser-and-os"
+          }
+        },
+        {
+          "operation": {
+            "operation-type": "stop-transform",
             "transform-id": "transform-browser-and-os",
             "transform-timeout": 1800,
             "timeout": "30m"

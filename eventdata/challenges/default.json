@@ -50,8 +50,8 @@
       ]
     },
     {
-      "name": "transform-browser-and-os",
-      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
+      "name": "transform",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings and run transforms to pivot data by terms, date and geo tiles.",
       "default": false,
       "schedule": [
         {
@@ -99,6 +99,7 @@
           }
         },
         {
+          "name": "delete-transform-browser-and-os",
           "operation": {
             "operation-type": "delete-transform",
             "transform-id": "transform-browser-and-os",
@@ -106,6 +107,7 @@
           }
         },
         {
+          "name": "create-transform-browser-and-os",
           "operation": {
             "operation-type": "create-transform",
             "transform-id": "transform-browser-and-os",
@@ -232,15 +234,219 @@
           }
         },
         {
+          "name": "start-transform-browser-and-os",
           "operation": {
             "operation-type": "start-transform",
             "transform-id": "transform-browser-and-os"
           }
         },
         {
+          "name": "wait-for-transform-browser-and-os",
           "operation": {
             "operation-type": "wait-for-transform",
             "transform-id": "transform-browser-and-os",
+            "transform-timeout": 1800,
+            "timeout": "30m"
+          }
+        },
+        {
+          "name": "delete-transform-geo-tile-aggregate",
+          "operation": {
+            "operation-type": "delete-transform",
+            "transform-id": "transform-geo-tile-aggregate",
+            "force": true
+          }
+        },
+        {
+          "name": "create-transform-geo-tile-aggregate",
+          "operation": {
+            "operation-type": "create-transform",
+            "transform-id": "transform-geo-tile-aggregate",
+            "body": {
+              "source": {
+                "index": "eventdata"
+              },
+              "dest": {
+                "index": "transform-geo-tile-aggregate"
+              },
+              "pivot": {
+                "group_by": {
+                  "tile": {
+                    "geotile_grid": {
+                      "field": "geoip.location",
+                      "precision": 15
+                    }
+                  }
+                },
+                "aggregations": {
+                  "200": {
+                    "filter": {
+                      "term": {
+                        "response": 200
+                      }
+                    }
+                  },
+                  "404": {
+                    "filter": {
+                      "term": {
+                        "response": 404
+                      }
+                    }
+                  },
+                  "count": {
+                    "value_count": {
+                      "field": "@timestamp"
+                    }
+                  },
+                  "clients_dc": {
+                    "cardinality": {
+                      "field": "clientip"
+                    }
+                  },
+                  "browser_dc": {
+                    "cardinality": {
+                      "field": "useragent.name"
+                    }
+                  },
+                  "os_dc": {
+                    "cardinality": {
+                      "field": "useragent.os_name"
+                    }
+                  },
+                  "bytes.avg": {
+                    "avg": {
+                      "field": "bytes"
+                    }
+                  },
+                  "bytes.max": {
+                    "max": {
+                      "field": "bytes"
+                    }
+                  }
+                }
+              },
+              "settings": {
+                "max_page_search_size": {{max_page_search_size | default(500)}}
+              }
+            }
+          }
+        },
+        {
+          "name": "start-transform-geo-tile-aggregate",
+          "operation": {
+            "operation-type": "start-transform",
+            "transform-id": "transform-geo-tile-aggregate"
+          }
+        },
+        {
+          "name": "wait-for-transform-geo-tile-aggregate",
+          "operation": {
+            "operation-type": "wait-for-transform",
+            "transform-id": "transform-geo-tile-aggregate",
+            "transform-timeout": 1800,
+            "timeout": "30m"
+          }
+        },
+        {
+          "name": "delete-transform-by-minute-aggregate",
+          "operation": {
+            "operation-type": "delete-transform",
+            "transform-id": "transform-by-minute-aggregate",
+            "force": true
+          }
+        },
+        {
+          "name": "create-transform-by-minute-aggregate",
+          "operation": {
+            "operation-type": "create-transform",
+            "transform-id": "transform-by-minute-aggregate",
+            "body": {
+              "source": {
+                "index": "eventdata"
+              },
+              "dest": {
+                "index": "transform-by-minute-aggregate"
+              },
+              "pivot": {
+                "group_by": {
+                  "date": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "fixed_interval": "1m"
+                    }
+                  }
+                },
+                "aggregations": {
+                  "200": {
+                    "filter": {
+                      "term": {
+                        "response": 200
+                      }
+                    }
+                  },
+                  "404": {
+                    "filter": {
+                      "term": {
+                        "response": 404
+                      }
+                    }
+                  },
+                  "count": {
+                    "value_count": {
+                      "field": "@timestamp"
+                    }
+                  },
+                  "clients_dc": {
+                    "cardinality": {
+                      "field": "clientip"
+                    }
+                  },
+                  "browser_dc": {
+                    "cardinality": {
+                      "field": "useragent.name"
+                    }
+                  },
+                  "os_dc": {
+                    "cardinality": {
+                      "field": "useragent.os_name"
+                    }
+                  },
+                  "bytes.avg": {
+                    "avg": {
+                      "field": "bytes"
+                    }
+                  },
+                  "bytes.max": {
+                    "max": {
+                      "field": "bytes"
+                    }
+                  },
+                  "codes": {
+                    "terms": {
+                      "field": "",
+                      "size": 10
+                    }
+                  }
+                }
+              },
+              "settings": {
+                "max_page_search_size": {{max_page_search_size | default(500)}}
+              }
+            }
+          }
+        },
+        {
+          "name": "start-transform-by-minute-aggregate",
+          "operation": {
+            "operation-type": "start-transform",
+            "transform-id": "transform-by-minute-aggregate"
+          }
+        },
+        {
+          "name": "wait-for-transform-by-minute-aggregate",
+          "operation": {
+            "operation-type": "wait-for-transform",
+            "transform-id": "transform-by-minute-aggregate",
             "transform-timeout": 1800,
             "timeout": "30m"
           }

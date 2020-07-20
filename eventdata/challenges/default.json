@@ -99,18 +99,18 @@
           }
         },
         {
-          "name": "delete-transform-browser-and-os",
+          "name": "delete-transform-group-by-terms",
           "operation": {
             "operation-type": "delete-transform",
-            "transform-id": "transform-browser-and-os",
+            "transform-id": "transform-group-by-terms",
             "force": true
           }
         },
         {
-          "name": "create-transform-browser-and-os",
+          "name": "create-transform-group-by-terms",
           "operation": {
             "operation-type": "create-transform",
-            "transform-id": "transform-browser-and-os",
+            "transform-id": "transform-group-by-terms",
             "body": {
               "source": {
                 "index": "eventdata"
@@ -225,7 +225,7 @@
                 }
               },
               "dest": {
-                "index": "transform-browser-and-os"
+                "index": "transform-group-by-terms"
               },
               "settings": {
                 "max_page_search_size": {{max_page_search_size | default(500)}}
@@ -234,40 +234,40 @@
           }
         },
         {
-          "name": "start-transform-browser-and-os",
+          "name": "start-transform-group-by-terms",
           "operation": {
             "operation-type": "start-transform",
-            "transform-id": "transform-browser-and-os"
+            "transform-id": "transform-group-by-terms"
           }
         },
         {
-          "name": "wait-for-transform-browser-and-os",
+          "name": "wait-for-transform-group-by-terms",
           "operation": {
             "operation-type": "wait-for-transform",
-            "transform-id": "transform-browser-and-os",
+            "transform-id": "transform-group-by-terms",
             "transform-timeout": 1800,
             "timeout": "30m"
           }
         },
         {
-          "name": "delete-transform-geo-tile-aggregate",
+          "name": "delete-transform-group-by-geo-tile",
           "operation": {
             "operation-type": "delete-transform",
-            "transform-id": "transform-geo-tile-aggregate",
+            "transform-id": "transform-group-by-geo-tile",
             "force": true
           }
         },
         {
-          "name": "create-transform-geo-tile-aggregate",
+          "name": "create-transform-group-by-geo-tile",
           "operation": {
             "operation-type": "create-transform",
-            "transform-id": "transform-geo-tile-aggregate",
+            "transform-id": "transform-group-by-geo-tile",
             "body": {
               "source": {
                 "index": "eventdata"
               },
               "dest": {
-                "index": "transform-geo-tile-aggregate"
+                "index": "transform-group-by-geo-tile"
               },
               "pivot": {
                 "group_by": {
@@ -332,40 +332,40 @@
           }
         },
         {
-          "name": "start-transform-geo-tile-aggregate",
+          "name": "start-transform-group-by-geo-tile",
           "operation": {
             "operation-type": "start-transform",
-            "transform-id": "transform-geo-tile-aggregate"
+            "transform-id": "transform-group-by-geo-tile"
           }
         },
         {
-          "name": "wait-for-transform-geo-tile-aggregate",
+          "name": "wait-for-transform-group-by-geo-tile",
           "operation": {
             "operation-type": "wait-for-transform",
-            "transform-id": "transform-geo-tile-aggregate",
+            "transform-id": "transform-group-by-geo-tile",
             "transform-timeout": 1800,
             "timeout": "30m"
           }
         },
         {
-          "name": "delete-transform-by-minute-aggregate",
+          "name": "delete-transform-group-by-minute",
           "operation": {
             "operation-type": "delete-transform",
-            "transform-id": "transform-by-minute-aggregate",
+            "transform-id": "transform-group-by-minute",
             "force": true
           }
         },
         {
-          "name": "create-transform-by-minute-aggregate",
+          "name": "create-transform-group-by-minute",
           "operation": {
             "operation-type": "create-transform",
-            "transform-id": "transform-by-minute-aggregate",
+            "transform-id": "transform-group-by-minute",
             "body": {
               "source": {
                 "index": "eventdata"
               },
               "dest": {
-                "index": "transform-by-minute-aggregate"
+                "index": "transform-group-by-minute"
               },
               "pivot": {
                 "group_by": {
@@ -436,17 +436,17 @@
           }
         },
         {
-          "name": "start-transform-by-minute-aggregate",
+          "name": "start-transform-group-by-minute",
           "operation": {
             "operation-type": "start-transform",
-            "transform-id": "transform-by-minute-aggregate"
+            "transform-id": "transform-group-by-minute"
           }
         },
         {
-          "name": "wait-for-transform-by-minute-aggregate",
+          "name": "wait-for-transform-group-by-minute",
           "operation": {
             "operation-type": "wait-for-transform",
-            "transform-id": "transform-by-minute-aggregate",
+            "transform-id": "transform-group-by-minute",
             "transform-timeout": 1800,
             "timeout": "30m"
           }

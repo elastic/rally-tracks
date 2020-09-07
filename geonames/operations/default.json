@@ -318,6 +318,19 @@
       }
     },
     {
+      "name": "asc_sort_with_after_population",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"population" : "asc"}
+        ],
+        "search_after" : [1000000]
+      }
+    },
+    {
       "name": "desc_sort_geonameid",
       "operation-type": "search",
       "body": {
@@ -330,6 +343,19 @@
       }
     },
     {
+      "name": "desc_sort_with_after_geonameid",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"geonameid" : "desc"}
+        ],
+        "search_after": [5000000]
+      }
+    },
+    {
       "name": "asc_sort_geonameid",
       "operation-type": "search",
       "body": {
@@ -339,5 +365,18 @@
         "sort" : [
           {"geonameid" : "asc"}
         ]
+      }
+    },
+    {
+      "name": "asc_sort_with_after_geonameid",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"geonameid" : "asc"}
+        ],
+        "search_after": [5000000]
       }
     }

@@ -189,13 +189,31 @@
           "target-throughput": 1.5
         },
         {
+          "operation": "asc_sort_with_after_population",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
           "operation": "desc_sort_geonameid",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 6
         },
         {
+          "operation": "desc_sort_with_after_geonameid",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 6
+        },
+        {
           "operation": "asc_sort_geonameid",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 6
+        },
+        {
+          "operation": "asc_sort_with_after_geonameid",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 6

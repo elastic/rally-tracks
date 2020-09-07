@@ -136,6 +136,20 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
+        },
+        {
+          "name": "desc-sort-with-after-timestamp-after-force-merge-1-seg",
+          "operation": "desc_sort_with_after_timestamp",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+        {
+          "name": "asc-sort-with-after-timestamp-after-force-merge-1-seg",
+          "operation": "asc_sort_with_after_timestamp",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 2
         }
       ]
     },

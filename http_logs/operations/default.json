@@ -80,6 +80,32 @@
       }
     },
     {
+      "name": "runtime-field-source",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "match_all": {  }
+        },
+        "docvalue_fields" : ["runtime_request_is_get"],
+        "size" : 10000,
+        "_source": false
+      }
+    },
+    {
+      "name": "search-term-runtime-field",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "term": { "runtime_request_is_get" : true }
+        },
+        "size" : 1000,
+        "track_total_hits": false,
+        "_source": false
+      }
+    },
+    {
       "name": "hourly_agg",
       "operation-type": "search",
       "index": "logs-*",

@@ -74,6 +74,12 @@
           "target-throughput": 1
         },
         {
+          "operation": "runtime-field-source",
+          "warmup-iterations": 100,
+          "iterations": 100,
+          "target-throughput": 1
+        },
+        {
           "operation": "hourly_agg",
           "warmup-iterations": 100,
           "iterations": 100,
@@ -84,6 +90,12 @@
           "warmup-iterations": 100,
           "iterations": 200,
           "#COMMENT": "Throughput is considered per request. So we issue one scroll request per second which will retrieve 25 pages",
+          "target-throughput": 1
+        },
+        {
+          "operation": "search-term-runtime-field",
+          "warmup-iterations": 100,
+          "iterations": 100,
           "target-throughput": 1
         },
         {

@@ -43,6 +43,11 @@
            "city_name": { "type": "keyword" },
            "location" : { "type" : "geo_point" }
         }
+      },
+      "runtime_request_is_get" : {
+	"type" : "runtime",
+        "runtime_type": "boolean",
+        "script" : "emit(params._source.request.startsWith('GET'))"
       }
     }
   }

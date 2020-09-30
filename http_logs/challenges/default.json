@@ -75,8 +75,8 @@
         },
         {
           "operation": "runtime-field-source",
-          "warmup-iterations": 100,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "target-throughput": 1
         },
         {
@@ -94,8 +94,8 @@
         },
         {
           "operation": "search-term-runtime-field",
-          "warmup-iterations": 100,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "target-throughput": 1
         },
         {

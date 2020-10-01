@@ -106,6 +106,29 @@
       }
     },
     {
+      "name": "agg-term-runtime-field",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query" : {
+          "range": {
+            "@timestamp": {
+              "gte": 893967600,
+              "lte": 893968000
+            }
+          }
+        },
+        "aggs": {
+          "isGetAgg": {
+            "terms": {
+              "field": "runtime_request_is_get"
+            }
+          }
+        },
+        "size" : 0
+      }
+    },
+    {
       "name": "hourly_agg",
       "operation-type": "search",
       "index": "logs-*",

@@ -99,6 +99,12 @@
           "target-throughput": 1
         },
         {
+          "operation": "agg-term-runtime-field",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "target-throughput": 1
+        },
+        {
           "operation": "desc_sort_timestamp",
           "warmup-iterations": 200,
           "iterations": 100,

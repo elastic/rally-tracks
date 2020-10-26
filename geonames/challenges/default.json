@@ -147,18 +147,6 @@
           "target-throughput": 1.5
         },
         {
-          "operation": "random_function_score",
-          "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 1.5
-        },
-        {
-          "operation": "random_script_score",
-          "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 1.5
-        },
-        {
           "operation": "large_terms",
           "warmup-iterations": 200,
           "iterations": 100,

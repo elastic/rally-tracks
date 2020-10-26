@@ -246,39 +246,6 @@
       }
     },
     {
-      "name": "random_function_score",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "function_score": {
-            "query": {
-              "match_all": {}
-            },
-            "random_score": {
-              "seed": 100,
-              "field": "_seq_no"
-            }  
-          }
-        }
-      }
-    },  
-    {
-      "name": "random_script_score",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "script_score": {
-            "query": {
-              "match_all": {}
-            },
-            "script": {
-              "source": "randomScore(100, '_seq_no')"
-            }
-          }
-        }
-      }
-    },     
-    {
       "name": "large_terms",
       "operation-type": "search",
       "param-source": "pure-terms-query-source"

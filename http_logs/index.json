@@ -9,6 +9,7 @@
     "_source": {
       "enabled": {{ source_enabled | default(true) | tojson }}
     },
+    {%- if runtime_grok is defined %}
     "properties": {
       "@timestamp": {
         "format": "strict_date_optional_time||epoch_second",
@@ -16,114 +17,131 @@
         "doc_values": {{ timestamp_doc_values | default(true) | tojson }},
         "index": {{ timestamp_index | default(true) | tojson }}
       },
-      {%- if runtime_grok is defined %}
-        "message": {
-          "type": "wildcard",
-          "index": true,
-          "doc_values": true
-        },
-        "extracted": {
-          "type": "runtime",
-          "grok": {
-            "field": "message",
-            "pattern": "%{IPORHOST:clientip} %{HTTPDUSER} %{USER} \\[%{TIMESTAMP_ISO8601}\\] \"(?:%{WORD} %{NOTSPACE:request}(?: HTTP/%{NUMBER})?|%{DATA})\" %{NUMBER:status:long} (?:%{NUMBER:size:long}|-)"
-          }
-        },
-        "clientip": {
-          "type": "alias",
-          "path": "extracted.clientip"
-        },
-        "request": {
-          "type": "alias",
-          "path": "extracted.request"
-        },
-        "status": {
-          "type": "alias",
-          "path": "extracted.status"
-        },
-        "size": {
-          "type": "alias",
-          "path": "extracted.size"
+      "message": {
+        "type": "wildcard",
+        "index": true,
+        "doc_values": true
+      },
+      "clientip": {
+        "type": "alias",
+        "path": "extracted.clientip"
+      },
+      "request": {
+        "type": "alias",
+        "path": "extracted.request"
+      },
+      "status": {
+        "type": "alias",
+        "path": "extracted.status"
+      },
+      "size": {
+        "type": "alias",
+        "path": "extracted.size"
+      }
+    },
+    "runtime": {
+      "extracted": {
+        "type": "grok",
+        "grok": {
+          "field": "message",
+          "pattern": "%{IPORHOST:clientip} %{HTTPDUSER} %{USER} \\[%{TIMESTAMP_ISO8601}\\] \"(?:%{WORD} %{NOTSPACE:request}(?: HTTP/%{NUMBER})?|%{DATA})\" %{NUMBER:status:long} (?:%{NUMBER:size:long}|-)"
         }
-      {%- elif runtime_script_grok is defined %}
-        "message": {
-          "type": "keyword",
-          "index": false,
-          "doc_values": true
-        },
-        "clientip": {
-          "type": "runtime",
-          "runtime_type": "ip",
-          "script": "String m = doc[\"message\"].value; int end = m.indexOf(\" \"); emit(m.substring(0, end));"
-        },
-        "request": {
-          "type": "runtime",
-          "runtime_type": "keyword", {# This should be text with a subtype of keyword #}
-          "script": "String m = doc[\"message\"].value; int start = m.indexOf(\"\\\"\") + 1; int end = m.indexOf(\"\\\"\", start); emit(m.substring(start, end));"
-        },
-        "status": {
-          "type": "runtime",
-          "runtime_type": "long",
-          "script": "String m = doc[\"message\"].value; int end = m.lastIndexOf(\" \"); int start = m.lastIndexOf(\" \", end - 1) + 1; emit(Long.parseLong(m.substring(start, end)));"
-        },
-        "size": {
-          "type": "runtime",
-          "runtime_type": "long",
-          "script": "String m = doc[\"message\"].value; int start = m.lastIndexOf(\" \") + 1; emit(Long.parseLong(m.substring(start)));"
-        }
-      {%- else %}
-        "message": {
-          "type": "keyword",
-          "index": false,
-          "doc_values": false
-        },
-        "clientip": {
-          "type": "ip",
-          "doc_values": {{ doc_values | default(true) | tojson }},
-          "index": {{ index | default(true) | tojson }}
-        },
-        "request": {
-          "type": "text",
-          "index": {{ index | default(true) | tojson }},
-          "fields": {
-            "raw": {
-              "ignore_above": 256,
-              "type": "keyword",
-              "doc_values": {{ doc_values | default(true) | tojson }},
-              "index": {{ index | default(true) | tojson }}
-            }
-          }
-        },
-        "status": {
-          "type": "integer",
-          "doc_values": {{ doc_values | default(true) | tojson }},
-          "index": {{ index | default(true) | tojson }}
-        },
-        "size": {
-          "type": "integer",
-          "doc_values": {{ doc_values | default(true) | tojson }},
-          "index": {{ index | default(true) | tojson }}
-        },
-        "geoip" : {
-          "properties" : {
-            "country_name": {
-              "type": "keyword",
-              "doc_values": {{ doc_values | default(true) | tojson }},
-              "index": {{ index | default(true) | tojson }}
-            },
-            "city_name": {
-              "type": "keyword",
-              "doc_values": {{ doc_values | default(true) | tojson }},
-              "index": {{ index | default(true) | tojson }}
-            },
-            "location" : {
-              "type" : "geo_point",
-              "doc_values": {{ doc_values | default(true) | tojson }},
-              "index": {{ index | default(true) | tojson }}
-            }
-          }
-        }
-      {%- endif %}
+      }
     }
+    {%- elif runtime_script_grok is defined %}
+    "properties": {
+      "@timestamp": {
+        "format": "strict_date_optional_time||epoch_second",
+        "type": "date",
+        "doc_values": {{ timestamp_doc_values | default(true) | tojson }},
+        "index": {{ timestamp_index | default(true) | tojson }}
+      },
+      "message": {
+        "type": "keyword"
+      }
+    },
+    "runtime": {
+      "clientip": {
+        "type": "ip",
+        "script": "String m = doc[\"message\"].value; int end = m.indexOf(\" \"); emit(m.substring(0, end));"
+      },
+      "request": {
+        "type": "keyword",
+        "script": "String m = doc[\"message\"].value; int start = m.indexOf(\"\\\"\") + 1; int end = m.indexOf(\"\\\"\", start); emit(m.substring(start, end));"
+      },
+      "status": {
+        "type": "long",
+        "script": "String m = doc[\"message\"].value; int end = m.lastIndexOf(\" \"); int start = m.lastIndexOf(\" \", end - 1) + 1; emit(Long.parseLong(m.substring(start, end)));"
+      },
+      "size": {
+        "type": "long",
+        "script": "String m = doc[\"message\"].value; int start = m.lastIndexOf(\" \") + 1; emit(Long.parseLong(m.substring(start)));"
+      },
+      "runtime_timestamp": {
+        "type": "date",
+        "script": "String m = doc[\"message\"].value; int start = m.indexOf(\" \"); start = m.indexOf(\" \", start + 1); start = m.indexOf(\" \", start + 1); int end = m.indexOf(\" \", start + 1); emit(parse(m.substring(start + 2, end - 1)));"
+      }
+    }
+    {%- else %}
+    "properties": {
+      "@timestamp": {
+        "format": "strict_date_optional_time||epoch_second",
+        "type": "date",
+        "doc_values": {{ timestamp_doc_values | default(true) | tojson }},
+        "index": {{ timestamp_index | default(true) | tojson }}
+      },
+      "message": {
+        "type": "keyword",
+        "index": false,
+        "doc_values": false
+      },
+      "clientip": {
+        "type": "ip",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
+      },
+      "request": {
+        "type": "text",
+        "index": {{ index | default(true) | tojson }},
+        "fields": {
+          "raw": {
+            "ignore_above": 256,
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
+          }
+        }
+      },
+      "status": {
+        "type": "integer",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
+      },
+      "size": {
+        "type": "integer",
+        "doc_values": {{ doc_values | default(true) | tojson }},
+        "index": {{ index | default(true) | tojson }}
+      },
+      "geoip" : {
+        "properties" : {
+          "country_name": {
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
+          },
+          "city_name": {
+            "type": "keyword",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
+          },
+          "location" : {
+            "type" : "geo_point",
+            "doc_values": {{ doc_values | default(true) | tojson }},
+            "index": {{ index | default(true) | tojson }}
+          }
+        }
+      }
+    }
+    {%- endif %}
   }
 }

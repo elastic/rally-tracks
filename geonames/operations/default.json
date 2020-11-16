@@ -246,39 +246,6 @@
       }
     },
     {
-      "name": "random_function_score",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "function_score": {
-            "query": {
-              "match_all": {}
-            },
-            "random_score": {
-              "seed": 100,
-              "field": "_seq_no"
-            }  
-          }
-        }
-      }
-    },  
-    {
-      "name": "random_script_score",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "script_score": {
-            "query": {
-              "match_all": {}
-            },
-            "script": {
-              "source": "randomScore(100, '_seq_no')"
-            }
-          }
-        }
-      }
-    },     
-    {
       "name": "large_terms",
       "operation-type": "search",
       "param-source": "pure-terms-query-source"
@@ -318,6 +285,19 @@
       }
     },
     {
+      "name": "asc_sort_with_after_population",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"population" : "asc"}
+        ],
+        "search_after" : [1000000]
+      }
+    },
+    {
       "name": "desc_sort_geonameid",
       "operation-type": "search",
       "body": {
@@ -330,6 +310,20 @@
       }
     },
     {
+      "name": "desc_sort_with_after_geonameid",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"geonameid" : "desc"}
+        ],
+        "search_after": [5000000]
+      }
+    },
+    {
       "name": "asc_sort_geonameid",
       "operation-type": "search",
       "body": {
@@ -339,5 +333,19 @@
         "sort" : [
           {"geonameid" : "asc"}
         ]
+      }
+    },
+    {
+      "name": "asc_sort_with_after_geonameid",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"geonameid" : "asc"}
+        ],
+        "search_after": [5000000]
       }
     }

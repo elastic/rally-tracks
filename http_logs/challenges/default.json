@@ -122,6 +122,18 @@
           "target-throughput": 0.5
         },
         {
+          "operation": "desc_sort_with_after_timestamp",
+          "warmup-iterations": 10,
+          "iterations": 100,
+          "target-throughput": 0.5
+        },
+        {
+          "operation": "asc_sort_with_after_timestamp",
+          "warmup-iterations": 10,
+          "iterations": 100,
+          "target-throughput": 0.5
+        },
+        {
           "name": "force-merge-1-seg",
           "operation": {
             "operation-type": "force-merge",
@@ -159,6 +171,20 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
+        },
+        {
+          "name": "desc-sort-with-after-timestamp-after-force-merge-1-seg",
+          "operation": "desc_sort_with_after_timestamp",
+          "warmup-iterations": 10,
+          "iterations": 100,
+          "target-throughput": 0.5
+        },
+        {
+          "name": "asc-sort-with-after-timestamp-after-force-merge-1-seg",
+          "operation": "asc_sort_with_after_timestamp",
+          "warmup-iterations": 10,
+          "iterations": 100,
+          "target-throughput": 0.5
         }
       ]
     },

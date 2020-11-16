@@ -1,0 +1,158 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "EQL benchmarks based on endgame index of SIEM demo cluster",
+  "default": true,
+  "indices": [
+    {
+      "name": "endgame-4.28.2-000001",
+      "body": "endgame-4.28.2-000001.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "endgame-4.28.2-000001",
+      "base-url": "https://rally-tracks.storage.googleapis.com/eql",
+      "documents": [
+        {
+          "target-index": "endgame-4.28.2-000001",
+          "source-file": "endgame-4.28.2-000001-documents.json.bz2",
+          "document-count": 60782211,
+          "compressed-bytes": 4875067116,
+          "uncompressed-bytes": 117268958204
+        }
+      ]
+    }
+  ],
+  "schedule": [
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "endgame-4.28.2-000001",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        }
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(5000)}},
+        "ingest-percentage": {{ingest_percentage | default(100)}}
+      },
+      "clients": {{bulk_indexing_clients | default(8)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "operation": "refresh"
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "operation": {
+        "name": "sequence_2stage_nofilter_fetch1000_size_1000",
+        "operation-type": "eql",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence by source.ip, destination.ip [process where true] [process where true]",
+          "fetch_size": 1000,
+	  "size" : 1000
+        }
+      },
+      "clients": 5,
+      "warmup-iterations": 10,
+      "iterations": 50
+    },
+    {
+      "operation": {
+        "name": "sequence_2stage_equalityFilter_maxspan1m_fetch1000_size500_slow",
+        "operation-type": "eql",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence by source.ip, destination.ip with maxspan=1m [process where user.name != \"SYSTEM\"] [process where user.name == \"SYSTEM\"]",
+          "fetch_size": 1000,
+	  "size" : 500
+        }
+      },
+      "clients": 2,
+      "warmup-iterations": 5,
+      "iterations": 20
+    },
+    {
+      "operation": {
+        "name": "sequence_2stage_nofilter_fetch1000_size1000_tail1000_head200",
+        "operation-type": "eql",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence by source.ip, destination.ip [process where true] [process where true] | tail 1000 | head 200",
+          "fetch_size": 1000,
+	  "size" : 1000
+        }
+      },
+      "clients": 5,
+      "warmup-iterations": 10,
+      "iterations": 50
+    },
+    {
+      "operation": {
+        "name": "sequence_4stage_nofilter_maxspan5m_fetch1000_size100_head100_tail50",
+        "operation-type": "eql",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence by source.ip, destination.ip with maxspan=5m [process where true] [process where true] [process where true] [network where true] |head 100 | tail 50",
+          "fetch_size": 1000,
+	  "size" : 100
+        }
+      },
+      "clients": 5,
+      "warmup-iterations": 10,
+      "iterations": 50
+    },
+    {
+      "operation": {
+        "name": "sequence_3stage_startsWithfilter_maxspan30m_fetch1000_size100_tail100_head50",
+        "operation-type": "eql",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence by host.name with maxspan=30m [process where startsWith(process.name, \"ssh\") == true] by process.ppid [process where startsWith(process.name, \"ssh\") == false] by process.ppid [process where startsWith(process.name, \"ssh\") == true] by process.pid | tail 100 | head 50",
+          "fetch_size": 1000,
+	  "size" : 100
+        }
+      },
+      "clients": 5,
+      "warmup-iterations": 10,
+      "iterations": 50
+    }
+  ]
+}

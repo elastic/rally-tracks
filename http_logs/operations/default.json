@@ -181,6 +181,21 @@
       }
     },
     {
+      "name": "desc_sort_with_after_timestamp",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"@timestamp" : "desc"}
+        ],
+        "search_after": ["1998-06-10"]
+      }
+    },
+    {
       "name": "asc_sort_timestamp",
       "operation-type": "search",
       "index": "logs-*",
@@ -191,6 +206,21 @@
         "sort" : [
           {"@timestamp" : "asc"}
         ]
+      }
+    },
+    {
+      "name": "asc_sort_with_after_timestamp",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"@timestamp" : "asc"}
+        ],
+        "search_after": ["1998-06-10"]
       }
     },
     {

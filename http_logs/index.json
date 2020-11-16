@@ -13,9 +13,7 @@
     "properties": {
       "@timestamp": {
         "format": "strict_date_optional_time||epoch_second",
-        "type": "date",
-        "doc_values": {{ timestamp_doc_values | default(true) | tojson }},
-        "index": {{ timestamp_index | default(true) | tojson }}
+        "type": "date"
       },
       "message": {
         "type": "keyword"
@@ -47,9 +45,7 @@
     "properties": {
       "@timestamp": {
         "format": "strict_date_optional_time||epoch_second",
-        "type": "date",
-        "doc_values": {{ timestamp_doc_values | default(true) | tojson }},
-        "index": {{ timestamp_index | default(true) | tojson }}
+        "type": "date"
       },
       "message": {
         "type": "keyword",
@@ -57,48 +53,33 @@
         "doc_values": false
       },
       "clientip": {
-        "type": "ip",
-        "doc_values": {{ doc_values | default(true) | tojson }},
-        "index": {{ index | default(true) | tojson }}
+        "type": "ip"
       },
       "request": {
         "type": "text",
-        "index": {{ index | default(true) | tojson }},
         "fields": {
           "raw": {
             "ignore_above": 256,
-            "type": "keyword",
-            "doc_values": {{ doc_values | default(true) | tojson }},
-            "index": {{ index | default(true) | tojson }}
+            "type": "keyword"
           }
         }
       },
       "status": {
-        "type": "integer",
-        "doc_values": {{ doc_values | default(true) | tojson }},
-        "index": {{ index | default(true) | tojson }}
+        "type": "integer"
       },
       "size": {
-        "type": "integer",
-        "doc_values": {{ doc_values | default(true) | tojson }},
-        "index": {{ index | default(true) | tojson }}
+        "type": "integer"
       },
       "geoip" : {
         "properties" : {
           "country_name": {
-            "type": "keyword",
-            "doc_values": {{ doc_values | default(true) | tojson }},
-            "index": {{ index | default(true) | tojson }}
+            "type": "keyword"
           },
           "city_name": {
-            "type": "keyword",
-            "doc_values": {{ doc_values | default(true) | tojson }},
-            "index": {{ index | default(true) | tojson }}
+            "type": "keyword"
           },
           "location" : {
-            "type" : "geo_point",
-            "doc_values": {{ doc_values | default(true) | tojson }},
-            "index": {{ index | default(true) | tojson }}
+            "type" : "geo_point"
           }
         }
       }

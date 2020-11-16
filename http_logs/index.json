@@ -37,6 +37,10 @@
       "size": {
         "type": "alias",
         "path": "extracted.size"
+      },
+      "runtime_timestamp": {
+        "type": "alias",
+        "path": "extracted.@timestamp"
       }
     },
     "runtime": {
@@ -44,7 +48,7 @@
         "type": "grok",
         "grok": {
           "field": "message",
-          "pattern": "%{IPORHOST:clientip} %{HTTPDUSER} %{USER} \\[%{TIMESTAMP_ISO8601}\\] \"(?:%{WORD} %{NOTSPACE:request}(?: HTTP/%{NUMBER})?|%{DATA})\" %{NUMBER:status:long} (?:%{NUMBER:size:long}|-)"
+          "pattern": "%{IPORHOST:clientip} %{HTTPDUSER} %{USER} \\[%{TIMESTAMP_ISO8601}:@timestamp\\] \"(?:%{WORD} %{NOTSPACE:request}(?: HTTP/%{NUMBER})?|%{DATA})\" %{NUMBER:status:long} (?:%{NUMBER:size:long}|-)"
         }
       }
     }

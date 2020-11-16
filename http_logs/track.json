@@ -39,7 +39,7 @@
     }
   ],
   "corpora": [
-      {%- if ingest_pipeline is defined and ingest_pipeline == "grok" or runtime_grok is defined or runtime_script_grok is defined %}
+      {%- if ingest_pipeline is defined and ingest_pipeline == "grok" or runtime_script_grok is defined %}
         {
           "name": "http_logs_unparsed",
           "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/http_logs",

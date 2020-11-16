@@ -9,50 +9,7 @@
     "_source": {
       "enabled": {{ source_enabled | default(true) | tojson }}
     },
-    {%- if runtime_grok is defined %}
-    "properties": {
-      "@timestamp": {
-        "format": "strict_date_optional_time||epoch_second",
-        "type": "date",
-        "doc_values": {{ timestamp_doc_values | default(true) | tojson }},
-        "index": {{ timestamp_index | default(true) | tojson }}
-      },
-      "message": {
-        "type": "wildcard",
-        "index": true,
-        "doc_values": true
-      },
-      "clientip": {
-        "type": "alias",
-        "path": "extracted.clientip"
-      },
-      "request": {
-        "type": "alias",
-        "path": "extracted.request"
-      },
-      "status": {
-        "type": "alias",
-        "path": "extracted.status"
-      },
-      "size": {
-        "type": "alias",
-        "path": "extracted.size"
-      },
-      "runtime_timestamp": {
-        "type": "alias",
-        "path": "extracted.@timestamp"
-      }
-    },
-    "runtime": {
-      "extracted": {
-        "type": "grok",
-        "grok": {
-          "field": "message",
-          "pattern": "%{IPORHOST:clientip} %{HTTPDUSER} %{USER} \\[%{TIMESTAMP_ISO8601}:@timestamp\\] \"(?:%{WORD} %{NOTSPACE:request}(?: HTTP/%{NUMBER})?|%{DATA})\" %{NUMBER:status:long} (?:%{NUMBER:size:long}|-)"
-        }
-      }
-    }
-    {%- elif runtime_script_grok is defined %}
+    {%- if runtime_script_grok is defined %}
     "properties": {
       "@timestamp": {
         "format": "strict_date_optional_time||epoch_second",

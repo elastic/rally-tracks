@@ -1,7 +1,8 @@
 ## EQL track
 
 This track contains endgame data from SIEM demo cluster and can be downloaded from: https://rally-tracks.storage.googleapis.com/eql/endgame-4.28.2-000001-documents.json.bz2
-(The 1k test file can be downloaded from https://rally-tracks.storage.googleapis.com/eql/endgame-4.28.2-000001-documents-1k.json.bz2)
+(The 1k test file can be downloaded from https://rally-tracks.storage.googleapis.com/eql/endgame-4.28.2-000001-documents-1k.json.bz2).
+The track should be used for Elasticsearch versions >= 7.10.0.
 
 ### Parameters
 

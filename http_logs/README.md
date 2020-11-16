@@ -45,6 +45,7 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `ingest_pipeline`: Only applicable for `--challenge=append-index-only-with-ingest-pipeline`, selects which ingest
 node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'geoip'`. For example: `--challenge=append-index-only-with-ingest-pipeline --track-params="ingest_pipeline:'baseline'" `
+* `runtime_script_grok`: If defined the challenges load the `unparsed` set of documents, indexing the `@timestamp` and the raw `message` field. All of the other fields are declared as `runtime` fields extracting the value usig a script.
 
 ### License
 

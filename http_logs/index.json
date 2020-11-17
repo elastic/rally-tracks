@@ -9,39 +9,6 @@
     "_source": {
       "enabled": {{ source_enabled | default(true) | tojson }}
     },
-    {%- if runtime_script_grok is defined %}
-    "properties": {
-      "@timestamp": {
-        "format": "strict_date_optional_time||epoch_second",
-        "type": "date"
-      },
-      "message": {
-        "type": "keyword"
-      }
-    },
-    "runtime": {
-      "clientip": {
-        "type": "ip",
-        "script": "String m = doc[\"message\"].value; int end = m.indexOf(\" \"); emit(m.substring(0, end));"
-      },
-      "request": {
-        "type": "keyword",
-        "script": "String m = doc[\"message\"].value; int start = m.indexOf(\"\\\"\") + 1; int end = m.indexOf(\"\\\"\", start); emit(m.substring(start, end));"
-      },
-      "status": {
-        "type": "long",
-        "script": "String m = doc[\"message\"].value; int end = m.lastIndexOf(\" \"); int start = m.lastIndexOf(\" \", end - 1) + 1; emit(Long.parseLong(m.substring(start, end)));"
-      },
-      "size": {
-        "type": "long",
-        "script": "String m = doc[\"message\"].value; int start = m.lastIndexOf(\" \") + 1; emit(Long.parseLong(m.substring(start)));"
-      },
-      "runtime_timestamp": {
-        "type": "date",
-        "script": "String m = doc[\"message\"].value; int start = m.indexOf(\" \"); start = m.indexOf(\" \", start + 1); start = m.indexOf(\" \", start + 1); int end = m.indexOf(\" \", start + 1); emit(parse(m.substring(start + 2, end - 1)));"
-      }
-    }
-    {%- else %}
     "properties": {
       "@timestamp": {
         "format": "strict_date_optional_time||epoch_second",
@@ -78,6 +45,5 @@
         }
       }
     }
-    {%- endif %}
   }
 }

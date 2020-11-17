@@ -1,5 +1,11 @@
 {% import "rally.helpers" as rally with context %}
 
+
+{%- if runtime_script_grok is defined %}
+  {% set index_body = 'index-runtime-grok.json' %}
+{%- else %}
+  {% set index_body = 'index.json' %}
+{%- endif %}
 {
   "version": 2,
   "description": "HTTP server log data",
@@ -7,35 +13,35 @@
   "indices": [
     {
       "name": "logs-181998",
-      "body": "index.json"
+      "body": "{{ index_body }}"
     },
     {
       "name": "logs-191998",
-      "body": "index.json"
+      "body": "{{ index_body }}"
     },
     {
       "name": "logs-201998",
-      "body": "index.json"
+      "body": "{{ index_body }}"
     },
     {
       "name": "logs-211998",
-      "body": "index.json"
+      "body": "{{ index_body }}"
     },
     {
       "name": "logs-221998",
-      "body": "index.json"
+      "body": "{{ index_body }}"
     },
     {
       "name": "logs-231998",
-      "body": "index.json"
+      "body": "{{ index_body }}"
     },
     {
       "name": "logs-241998",
-      "body": "index.json"
+      "body": "{{ index_body }}"
     },
     {
       "name": "reindexed-logs",
-      "body": "index.json"
+      "body": "{{ index_body }}"
     }
   ],
   "corpora": [

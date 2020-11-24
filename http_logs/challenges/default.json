@@ -8,7 +8,7 @@
     },
     {
       "name": "append-runtime-script-grok",
-      "description": "Indexes the whole document corpus using scripts to extract fields.",
+      "description": "Indexes the whole document corpus using scripts to extract fields. Requires specifying the track param runtime_script_grok to true.",
       "schedule": [
         {{ rally.collect(parts="common/default-schedule.json") }}
       ]

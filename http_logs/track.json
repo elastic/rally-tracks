@@ -2,7 +2,11 @@
 
 
 {%- if runtime_script_grok is defined %}
-  {% set index_body = 'index-runtime-grok.json' %}
+  {%- if runtime_source is not defined or runtime_source == "_source" %}
+    {% set index_body = 'index-runtime-grok-source.json' %}
+  {%- else %}
+    {% set index_body = 'index-runtime-grok-doc-values.json' %}
+  {%- endif %}
 {%- else %}
   {% set index_body = 'index.json' %}
 {%- endif %}

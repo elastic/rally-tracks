@@ -13,12 +13,12 @@
       "@timestamp": {
         "format": "strict_date_optional_time||epoch_second",
         "type": "date"
-      },
-      "message": {
-        "type": "keyword"
       }
     },
     "runtime": {
+      "message": {
+        "type": "keyword" {# Loads the field from _source #}
+      },
       "clientip": {
         "type": "ip",
         "script": "String m = doc[\"message\"].value; int end = m.indexOf(\" \"); emit(m.substring(0, end));"

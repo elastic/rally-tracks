@@ -84,7 +84,7 @@
           "operation": "200s-in-range",
           "warmup-iterations": 500,
           "iterations": 100,
-          "target-throughput": {%- if runtime_script_grok is defined %}15{% else %}33{% endif %}
+          "target-throughput": {%- if runtime_script_grok is defined %}5{% else %}33{% endif %}
         },
         {
           "operation": "400s-in-range",

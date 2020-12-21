@@ -23,7 +23,7 @@
         "type": "ip",
         "script": "String m = doc[\"message\"].value; int end = m.indexOf(\" \"); emit(m.substring(0, end));"
       },
-      "request.keyword": {
+      "request.raw": {
         "type": "keyword",
         "script": "String m = doc[\"message\"].value; int start = m.indexOf(\"\\\"\") + 1; int end = m.indexOf(\"\\\"\", start); emit(m.substring(start, end));"
       },

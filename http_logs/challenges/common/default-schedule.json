@@ -72,7 +72,7 @@
           "operation": "term",
           "warmup-iterations": {%- if runtime_script_grok is defined %}50{% else %}500{% endif %},
           "iterations": {%- if runtime_script_grok is defined %}10{% else %}100{% endif %},
-          "target-throughput": {%- if runtime_script_grok is defined %}0.125{% else %}50{% endif %}
+          "target-throughput": {%- if runtime_script_grok is defined %}0.05{% else %}50{% endif %}
         },
         {
           "operation": "range",

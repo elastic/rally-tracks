@@ -31,7 +31,7 @@ To specify the version to check against, add `--distribution-version` when runni
 Example: If you want to benchmark Elasticsearch 5.0.0, run the following command:
 
 ```
-esrally --distribution-version=5.0.0
+esrally race --distribution-version=5.0.0
 ```
 
 How to Contribute
@@ -64,7 +64,7 @@ git checkout 5
 git cherry-pick a7e0937
 
 # test the change now with an Elasticsearch 5.x distribution
-esrally --track=noaa --distribution-version=5.4.3 --test-mode
+esrally race --track=noaa --distribution-version=5.4.3 --test-mode
 
 # push the change
 git push origin 5

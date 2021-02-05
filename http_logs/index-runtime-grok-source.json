@@ -21,23 +21,23 @@
       },
       "clientip": {
         "type": "ip",
-        "script": "String m = doc[\"message\"].value; int end = m.indexOf(\" \"); emit(m.substring(0, end));"
+        "script": "emit(grok('%{IPORHOST:clientip} %{HTTPDUSER:httpduser} %{USER:user} \\\\[%{TIMESTAMP_ISO8601:timestamp}\\\\] \"(?:%{WORD:verb} %{NOTSPACE:path}(?: HTTP/%{NOTSPACE:version})?|%{DATA})\" %{NUMBER:status:int} (?:%{NUMBER:size:long}|-)').extract(doc['message'].value).clientip)"
       },
-      "request.raw": {
+      "path.raw": {
         "type": "keyword",
-        "script": "String m = doc[\"message\"].value; int start = m.indexOf(\"\\\"\") + 1; int end = m.indexOf(\"\\\"\", start); emit(m.substring(start, end));"
+        "script": "emit(grok('%{IPORHOST:clientip} %{HTTPDUSER:httpduser} %{USER:user} \\\\[%{TIMESTAMP_ISO8601:timestamp}\\\\] \"(?:%{WORD:verb} %{NOTSPACE:path}(?: HTTP/%{NOTSPACE:version})?|%{DATA})\" %{NUMBER:status:int} (?:%{NUMBER:size:long}|-)').extract(doc['message'].value).path)"
       },
       "status": {
         "type": "long",
-        "script": "String m = doc[\"message\"].value; int end = m.lastIndexOf(\" \"); int start = m.lastIndexOf(\" \", end - 1) + 1; emit(Long.parseLong(m.substring(start, end)));"
+        "script": "emit(grok('%{IPORHOST:clientip} %{HTTPDUSER:httpduser} %{USER:user} \\\\[%{TIMESTAMP_ISO8601:timestamp}\\\\] \"(?:%{WORD:verb} %{NOTSPACE:path}(?: HTTP/%{NOTSPACE:version})?|%{DATA})\" %{NUMBER:status:int} (?:%{NUMBER:size:long}|-)').extract(doc['message'].value).status)"
       },
       "size": {
         "type": "long",
-        "script": "String m = doc[\"message\"].value; int start = m.lastIndexOf(\" \") + 1; emit(Long.parseLong(m.substring(start)));"
+        "script": "emit(grok('%{IPORHOST:clientip} %{HTTPDUSER:httpduser} %{USER:user} \\\\[%{TIMESTAMP_ISO8601:timestamp}\\\\] \"(?:%{WORD:verb} %{NOTSPACE:path}(?: HTTP/%{NOTSPACE:version})?|%{DATA})\" %{NUMBER:status:int} (?:%{NUMBER:size:long}|-)').extract(doc['message'].value).size)"
       },
       "runtime_timestamp": {
         "type": "date",
-        "script": "String m = doc[\"message\"].value; int start = m.indexOf(\" \"); start = m.indexOf(\" \", start + 1); start = m.indexOf(\" \", start + 1); int end = m.indexOf(\" \", start + 1); emit(parse(m.substring(start + 2, end - 1)));"
+        "script": "emit(parse(grok('%{IPORHOST:clientip} %{HTTPDUSER:httpduser} %{USER:user} \\\\[%{TIMESTAMP_ISO8601:timestamp}\\\\] \"(?:%{WORD:verb} %{NOTSPACE:path}(?: HTTP/%{NOTSPACE:version})?|%{DATA})\" %{NUMBER:status:int} (?:%{NUMBER:size:long}|-)').extract(doc['message'].value).timestamp))"
       }
     }
   }

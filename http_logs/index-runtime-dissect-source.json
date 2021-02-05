@@ -1,0 +1,44 @@
+{
+  "settings": {
+    "index.number_of_shards": {{number_of_shards | default(5)}},
+    "index.number_of_replicas": {{number_of_replicas | default(0)}},
+    "index.requests.cache.enable": false
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "_source": {
+      "enabled": {{ source_enabled | default(true) | tojson }}
+    },
+    "properties": {
+      "@timestamp": {
+        "format": "strict_date_optional_time||epoch_second",
+        "type": "date"
+      }
+    },
+    "runtime": {
+      "message": {
+        "type": "keyword" {# Loads the field from _source #}
+      },
+      "clientip": {
+        "type": "ip",
+        "script": "emit(dissect('%{clientip} %{httpduser} %{user} [%{timestamp}] \"%{verb} %{path} HTTP/%{version}\" %{status} %{size}').extract(doc['message'].value).clientip)"
+      },
+      "path.raw": {
+        "type": "keyword",
+        "script": "emit(dissect('%{clientip} %{httpduser} %{user} [%{timestamp}] \"%{verb} %{path} HTTP/%{version}\" %{status} %{size}').extract(doc['message'].value).path)"
+      },
+      "status": {
+        "type": "long",
+        "script": "emit(Integer.parseInt(dissect('%{clientip} %{httpduser} %{user} [%{timestamp}] \"%{verb} %{path} HTTP/%{version}\" %{status} %{size}').extract(doc['message'].value).status))"
+      },
+      "size": {
+        "type": "long",
+        "script": "emit(Long.parseLong(dissect('%{clientip} %{httpduser} %{user} [%{timestamp}] \"%{verb} %{path} HTTP/%{version}\" %{status} %{size}').extract(doc['message'].value).size))"
+      },
+      "runtime_timestamp": {
+        "type": "date",
+        "script": "emit(parse(dissect('%{clientip} %{httpduser} %{user} [%{timestamp}] \"%{verb} %{path} HTTP/%{version}\" %{status} %{size}').extract(doc['message'].value).status))"
+      }
+    }
+  }
+}

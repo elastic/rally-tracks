@@ -45,8 +45,8 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `ingest_pipeline`: Only applicable for `--challenge=append-index-only-with-ingest-pipeline`, selects which ingest
 node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'geoip'`. For example: `--challenge=append-index-only-with-ingest-pipeline --track-params="ingest_pipeline:'baseline'" `
-* `runtime_script_grok`: If defined the challenge loads the `unparsed` set of documents, indexing the `@timestamp` and the raw `message` field. All of the other fields are declared as `runtime` fields extracting the value using a script.
-* `runtime_source`: Specifies the way that `runtime_script_grok` loads values to grok. The default is `_source` which loads from `_source`. Other options are `wildcard` which loads from a `wildcard` field and `keyword` which loads from a keyword field.
+* `runtime_fields`: If defined the challenge loads the `unparsed` set of documents, indexing the `@timestamp` and the raw `message` field. All of the other fields are declared as `runtime` fields extracting the value. Can be set to `grok`, `dissect`, or `index-of` to specify the implementation of the runtime fields.
+* `runtime_source`: Specifies the way that `runtime_fields` loads values to grok. The default is `_source` which loads from `_source`. Other options are `wildcard` which loads from a `wildcard` field and `keyword` which loads from a keyword field.
 
 ### License
 

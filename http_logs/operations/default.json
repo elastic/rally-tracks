@@ -62,15 +62,31 @@
       "name": "term",
       "operation-type": "search",
       "index": "logs-*",
+      "request-timeout": 7200,
       "body": {
         "query": {
           "term": {
-            "request.raw": {
-              "value": "GET / HTTP/1.0"
-            }
+            {%- if runtime_fields is defined %}
+              {# Runtime fields make a "path.raw" instead of "request.raw" because that is what the canned example of grok and dissect typically do. #}
+              "path.raw": {
+                "value": "/"
+              }
+            {%- else %}
+              "request.raw": {
+                "value": "GET / HTTP/1.0"
+              }
+            {%- endif %}
           }
         }
-      }
+      },
+      "detailed-results": true,
+      "assertions": [
+        {
+          "property": "hits",
+          "condition": "==",
+          "value": 10000
+        }
+      ]
     },
     {
       "name": "range",
@@ -85,7 +101,15 @@
             }
           }
         }
-      }
+      },
+      "detailed-results": true,
+      "assertions": [
+        {
+          "property": "hits",
+          "condition": "==",
+          "value": 10000
+        }
+      ]
     },
     {
       "name": "200s-in-range",
@@ -111,7 +135,15 @@
             ]
           }
         }
-      }
+      },
+      "detailed-results": true,
+      "assertions": [
+        {
+          "property": "hits",
+          "condition": "==",
+          "value": 10000
+        }
+      ]
     },
     {
       "name": "400s-in-range",
@@ -137,7 +169,15 @@
             ]
           }
         }
-      }
+      },
+      "detailed-results": true,
+      "assertions": [
+        {
+          "property": "hits",
+          "condition": "==",
+          "value": 20
+        }
+      ]
     },
     {
       "name": "hourly_agg",

@@ -19,7 +19,7 @@
             "retry-until-success": true
           }
         },
-{%- if runtime_script_grok is defined %}
+{%- if runtime_fields is defined %}
         {
           "operation": "create-timestamp-pipeline"
         },
@@ -70,9 +70,9 @@
         },
         {
           "operation": "term",
-          "warmup-iterations": {%- if runtime_script_grok is defined %}50{% else %}500{% endif %},
-          "iterations": {%- if runtime_script_grok is defined %}10{% else %}100{% endif %},
-          "target-throughput": {%- if runtime_script_grok is defined %}0.05{% else %}50{% endif %}
+          "warmup-iterations": {%- if runtime_fields is defined %}50{% else %}500{% endif %},
+          "iterations": {%- if runtime_fields is defined %}10{% else %}100{% endif %},
+          "target-throughput": {%- if runtime_fields is defined %}0.03{% else %}50{% endif %}
         },
         {
           "operation": "range",
@@ -84,13 +84,13 @@
           "operation": "200s-in-range",
           "warmup-iterations": 500,
           "iterations": 100,
-          "target-throughput": {%- if runtime_script_grok is defined %}5{% else %}33{% endif %}
+          "target-throughput": {%- if runtime_fields is defined %}5{% else %}33{% endif %}
         },
         {
           "operation": "400s-in-range",
           "warmup-iterations": 500,
           "iterations": 100,
-          "target-throughput": {%- if runtime_script_grok is defined %}1{% else %}50{% endif %}
+          "target-throughput": {%- if runtime_fields is defined %}0.8{% else %}50{% endif %}
         },
         {
           "operation": "hourly_agg",

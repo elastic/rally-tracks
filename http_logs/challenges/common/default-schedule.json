@@ -72,7 +72,7 @@
           "operation": "term",
           "warmup-iterations": {%- if runtime_fields is defined %}50{% else %}500{% endif %},
           "iterations": {%- if runtime_fields is defined %}10{% else %}100{% endif %},
-          "target-throughput": {%- if runtime_fields is defined %}0.03{% else %}50{% endif %}
+          "target-throughput": {%- if runtime_fields is defined %}0.01{% else %}50{% endif %}
         },
         {
           "operation": "range",
@@ -90,7 +90,7 @@
           "operation": "400s-in-range",
           "warmup-iterations": 500,
           "iterations": 100,
-          "target-throughput": {%- if runtime_fields is defined %}0.8{% else %}50{% endif %}
+          "target-throughput": {%- if runtime_fields is defined %}0.3{% else %}50{% endif %}
         },
         {
           "operation": "hourly_agg",

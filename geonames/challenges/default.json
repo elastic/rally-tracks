@@ -90,7 +90,7 @@
           "operation": "country_agg_uncached",
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 3.6
+          "target-throughput": 3
         },
         {
           "operation": "country_agg_cached",
@@ -109,7 +109,7 @@
           "operation": "expression",
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 2
+          "target-throughput": 1.5
         },
         {
           "operation": "painless_static",

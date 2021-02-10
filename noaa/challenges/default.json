@@ -342,8 +342,8 @@
       ]
     },
     {
-      "name": "sub-bucket-aggs",
-      "description": "Checks the performance of bucket aggregations under bucket aggregations",
+      "name": "aggs",
+      "description": "Checks the performance of many aggregations",
       "default": false,
       "schedule": [
         {
@@ -386,6 +386,20 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh",
           "clients": 1
+        },
+        {
+          "operation": "keyword-terms",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 2
+        },
+        {
+          "operation": "keyword-terms-low-cardinality",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 0.8
         },
         {
           "operation": "keyword-terms-numeric-terms",

@@ -715,6 +715,36 @@
       }
     },
     {
+      "name": "keyword-terms",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "station": {
+            "terms": {
+              "field": "station.id",
+              "size": 500
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "keyword-terms-low-cardinality",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "station": {
+            "terms": {
+              "field": "station.country",
+              "size": 200
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "keyword-terms-numeric-terms",
       "operation-type": "search",
       "body": {

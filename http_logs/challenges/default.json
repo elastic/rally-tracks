@@ -7,22 +7,8 @@
       ]
     },
     {
-      "name": "append-runtime-grok",
-      "description": "Indexes the whole document corpus using scripts to extract fields. Set the track param `runtime_fields` to `grok`.",
-      "schedule": [
-        {{ rally.collect(parts="common/default-schedule.json") }}
-      ]
-    },
-    {
-      "name": "append-runtime-dissect",
-      "description": "Indexes the whole document corpus using scripts to extract fields. Set the track param `runtime_fields` to `dissect`.",
-      "schedule": [
-        {{ rally.collect(parts="common/default-schedule.json") }}
-      ]
-    },
-    {
-      "name": "append-runtime-index-of",
-      "description": "Indexes the whole document corpus using scripts to extract fields. Set the track param `runtime_fields` to `index-of`.",
+      "name": "runtime-fields",
+      "description": "Indexes the whole document corpus using scripts to extract fields. Set the track param `runtime_fields` to `true`.",
       "schedule": [
         {{ rally.collect(parts="common/default-schedule.json") }}
       ]

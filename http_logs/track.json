@@ -2,26 +2,7 @@
 
 
 {%- if runtime_fields is defined %}
-  {%- if runtime_fields == 'index-of' %}
-    {%- if runtime_source is not defined or runtime_source == "_source" %}
-      {% set index_body = 'index-runtime-index-of-source.json' %}
-    {%- else %}
-      {% set index_body = 'index-runtime-index-of-doc-values.json' %}
-    {%- endif %}
-  {%- elif runtime_fields == 'dissect' %}
-    {%- if runtime_source is not defined or runtime_source == "_source" %}
-      {% set index_body = 'index-runtime-dissect-source.json' %}
-    {%- else %}
-      {% set index_body = 'index-runtime-dissect-doc-values.json' %}
-    {%- endif %}
-  {%- elif runtime_fields == 'grok' %}
-    {%- if runtime_source is not defined or runtime_source == "_source" %}
-      {% set index_body = 'index-runtime-grok-source.json' %}
-    {%- else %}
-      {% set index_body = 'index-runtime-grok-doc-values.json' %}
-    {%- endif %}
-  {%- endif %}
-  {# else error? #}
+  {% set index_body = 'index-runtime-fields.json' %}
 {%- else %}
   {% set index_body = 'index.json' %}
 {%- endif %}

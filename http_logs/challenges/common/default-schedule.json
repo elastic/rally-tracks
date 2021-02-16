@@ -68,18 +68,51 @@
           "iterations": 100,
           "target-throughput": 8
         },
+{%- if runtime_fields is defined %}
+        { "operation": "term", "name": "term-from-source-using-grok",       "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+        { "operation": "term", "name": "term-from-keyword-using-grok",      "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+        { "operation": "term", "name": "term-from-wildcard-using-grok",     "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+        { "operation": "term", "name": "term-from-source-using-dissect",    "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+        { "operation": "term", "name": "term-from-keyword-using-dissect",   "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+        { "operation": "term", "name": "term-from-wildcard-using-dissect",  "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+        { "operation": "term", "name": "term-from-source-using-index-of",   "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+        { "operation": "term", "name": "term-from-keyword-using-index-of",  "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+        { "operation": "term", "name": "term-from-wildcard-using-index-of", "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+{%- else %}
         {
+          "name": "term",
           "operation": "term",
-          "warmup-iterations": {%- if runtime_fields is defined %}50{% else %}500{% endif %},
-          "iterations": {%- if runtime_fields is defined %}10{% else %}100{% endif %},
-          "target-throughput": {%- if runtime_fields is defined %}0.01{% else %}50{% endif %}
+          "warmup-iterations": 500,
+          "iterations": 100,
+          "target-throughput": 50
         },
+{%- endif %}
         {
           "operation": "range",
           "warmup-iterations": 100,
           "iterations": 100,
           "target-throughput": 1
         },
+{%- if runtime_fields is defined %}
+        { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-grok",       "warmup-iterations": 500, "iterations": 100, "target-throughput": 5 },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-grok",      "warmup-iterations": 500, "iterations": 100, "target-throughput": 5 },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-wildcard-using-grok",     "warmup-iterations": 500, "iterations": 100, "target-throughput": 5 },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-dissect",    "warmup-iterations": 500, "iterations": 100, "target-throughput": 5 },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-dissect",   "warmup-iterations": 500, "iterations": 100, "target-throughput": 5 },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-wildcard-using-dissect",  "warmup-iterations": 500, "iterations": 100, "target-throughput": 5 },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-index-of",   "warmup-iterations": 500, "iterations": 100, "target-throughput": 5 },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-index-of",  "warmup-iterations": 500, "iterations": 100, "target-throughput": 5 },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-wildcard-using-index-of", "warmup-iterations": 500, "iterations": 100, "target-throughput": 5 },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-source-using-grok",       "warmup-iterations": 500, "iterations": 100, "target-throughput": 0.3 },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-keyword-using-grok",      "warmup-iterations": 500, "iterations": 100, "target-throughput": 0.3 },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-wildcard-using-grok",     "warmup-iterations": 500, "iterations": 100, "target-throughput": 0.3 },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-source-using-dissect",    "warmup-iterations": 500, "iterations": 100, "target-throughput": 0.3 },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-keyword-using-dissect",   "warmup-iterations": 500, "iterations": 100, "target-throughput": 0.3 },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-wildcard-using-dissect",  "warmup-iterations": 500, "iterations": 100, "target-throughput": 0.3 },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-source-using-index-of",   "warmup-iterations": 500, "iterations": 100, "target-throughput": 0.3 },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-keyword-using-index-of",  "warmup-iterations": 500, "iterations": 100, "target-throughput": 0.3 },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-wildcard-using-index-of", "warmup-iterations": 500, "iterations": 100, "target-throughput": 0.3 },
+{%- else %}
         {
           "operation": "200s-in-range",
           "warmup-iterations": 500,
@@ -92,6 +125,7 @@
           "iterations": 100,
           "target-throughput": {%- if runtime_fields is defined %}0.3{% else %}50{% endif %}
         },
+{%- endif %}
         {
           "operation": "hourly_agg",
           "warmup-iterations": 100,

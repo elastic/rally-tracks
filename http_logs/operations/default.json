@@ -67,8 +67,8 @@
         "query": {
           "term": {
             {%- if runtime_fields is defined %}
-              {# Runtime fields make a "path.raw" instead of "request.raw" because that is what the canned example of grok and dissect typically do. #}
-              "path.raw": {
+              {# Runtime fields make a "path" instead of "request.raw" because that is what the canned example of grok and dissect typically do. #}
+              "path": {
                 "value": "/"
               }
             {%- else %}

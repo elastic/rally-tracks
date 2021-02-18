@@ -69,15 +69,15 @@
           "target-throughput": 8
         },
 {%- if runtime_fields is defined %}
-        { "operation": "term", "name": "term-from-source-using-grok",       "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
-        { "operation": "term", "name": "term-from-keyword-using-grok",      "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
-        { "operation": "term", "name": "term-from-wildcard-using-grok",     "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
-        { "operation": "term", "name": "term-from-source-using-dissect",    "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
-        { "operation": "term", "name": "term-from-keyword-using-dissect",   "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
-        { "operation": "term", "name": "term-from-wildcard-using-dissect",  "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
-        { "operation": "term", "name": "term-from-source-using-index-of",   "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
-        { "operation": "term", "name": "term-from-keyword-using-index-of",  "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
-        { "operation": "term", "name": "term-from-wildcard-using-index-of", "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01 },
+        { "operation": "term", "name": "term-from-source-using-grok",       "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01, "tags": ["from-source",   "using-grok"] },
+        { "operation": "term", "name": "term-from-keyword-using-grok",      "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01, "tags": ["from-keyword",  "using-grok"] },
+        { "operation": "term", "name": "term-from-wildcard-using-grok",     "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01, "tags": ["from-wildcard", "using-grok"] },
+        { "operation": "term", "name": "term-from-source-using-dissect",    "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01, "tags": ["from-source",   "using-dissect"] },
+        { "operation": "term", "name": "term-from-keyword-using-dissect",   "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01, "tags": ["from-wildcard", "using-dissect"] },
+        { "operation": "term", "name": "term-from-wildcard-using-dissect",  "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01, "tags": ["from-wildcard", "using-dissect"] },
+        { "operation": "term", "name": "term-from-source-using-index-of",   "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01, "tags": ["from-source",   "using-index-of"] },
+        { "operation": "term", "name": "term-from-keyword-using-index-of",  "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01, "tags": ["from-keyword",  "using-index-of"] },
+        { "operation": "term", "name": "term-from-wildcard-using-index-of", "warmup-iterations": 50, "iterations": 10, "target-throughput": 0.01, "tags": ["from-wildcard", "using-index-of"] },
 {%- else %}
         {
           "name": "term",

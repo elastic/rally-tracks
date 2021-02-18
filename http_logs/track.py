@@ -21,10 +21,8 @@ class RuntimeFieldResolver(loader.TrackProcessor):
             for task in challenge.schedule:
                 m = self.PATTERN.match(task.name)
                 if m is not None:
-                    print(f"ASDF {task.name} {task.operation} {task.operation.params}")
                     task.operation = copy(task.operation)
                     task.operation.params = self._replace_field(f"{m[2]}.from_{m[1]}.", task.operation.params)
-                    print(f"ASDF {task.name} {task.operation} {task.operation.params}")
 
     def on_prepare_track(self, track, data_root_dir):
         return True

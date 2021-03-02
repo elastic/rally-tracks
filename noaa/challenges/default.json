@@ -399,7 +399,21 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50,
-          "target-interval": 0.8
+          "target-interval": 0.1
+        },
+        {
+          "operation": "keyword-terms-min",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 3
+        },
+        {
+          "operation": "keyword-terms-low-cardinality-min",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-interval": 3
         },
         {
           "operation": "keyword-terms-numeric-terms",

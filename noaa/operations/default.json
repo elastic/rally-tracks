@@ -735,10 +735,54 @@
       "body": {
         "size": 0,
         "aggs": {
-          "station": {
+          "country": {
             "terms": {
               "field": "station.country",
               "size": 200
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "keyword-terms-min",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "station": {
+            "terms": {
+              "field": "station.id",
+              "size": 500
+            },
+            "aggs": {
+              "tmin": {
+                "min": {
+                  "field": "TMIN"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "keyword-terms-low-cardinality-min",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "country": {
+            "terms": {
+              "field": "station.country",
+              "size": 200
+            },
+            "aggs": {
+              "tmin": {
+                "min": {
+                  "field": "TMIN"
+                }
+              }
             }
           }
         }

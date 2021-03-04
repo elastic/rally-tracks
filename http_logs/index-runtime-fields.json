@@ -47,7 +47,7 @@
         "script": "emit(parse(grok('%{IPORHOST:clientip} %{HTTPDUSER:httpduser} %{USER:user} \\\\[%{TIMESTAMP_ISO8601:timestamp}\\\\] \"(?:%{WORD:verb} %{NOTSPACE:path}(?: HTTP/%{NOTSPACE:version})?|%{DATA})\" %{NUMBER:status:int} (?:%{NUMBER:size:long}|-)').extract(doc['{{field}}'].value).timestamp))"
       },
       {%- endfor %}
-      {%- for name, field in sources %}
+      {%- for source_type, field in sources %}
       "dissect.from_{{source_type}}.clientip": {
         "type": "ip",
         "script": "emit(dissect('%{clientip} %{httpduser} %{user} [%{timestamp}] \"%{verb} %{path} HTTP/%{version}\" %{status} %{size}').extract(doc['{{field}}'].value).clientip)"
@@ -69,7 +69,7 @@
         "script": "emit(parse(dissect('%{clientip} %{httpduser} %{user} [%{timestamp}] \"%{verb} %{path} HTTP/%{version}\" %{status} %{size}').extract(doc['{{field}}'].value).status))"
       },
       {%- endfor %}
-      {%- for name, field in sources %}
+      {%- for source_type, field in sources %}
       "index_of.from_{{source_type}}.clientip": {
         "type": "ip",
         "script": "String m = doc[\"{{field}}\"].value; int end = m.indexOf(\" \"); emit(m.substring(0, end));"

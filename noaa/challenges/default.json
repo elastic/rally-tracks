@@ -338,6 +338,13 @@
           "warmup-iterations": 10,
           "iterations": 50,
           "target-throughput": 1
+        },
+        {
+          "operation": "last_country_code_per_station_top_metrics_5000",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50,
+          "target-throughput": 1
         }
       ]
     },

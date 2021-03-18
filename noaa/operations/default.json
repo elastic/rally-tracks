@@ -715,6 +715,38 @@
       }
     },
     {
+      "name": "last_country_code_per_station_top_metrics_5000",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "station.elevation": {
+              "gt": 1000
+            }
+          }
+        },
+        "aggs": {
+          "station": {
+            "terms": {
+              "field": "station.id",
+              "size": 5000
+            },
+            "aggs": {
+              "last_temp": {
+                "top_metrics": {
+                  "sort": {"date": "desc"},
+                  "metrics": [
+                    {"field": "station.country_code"}
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "keyword-terms",
       "operation-type": "search",
       "body": {

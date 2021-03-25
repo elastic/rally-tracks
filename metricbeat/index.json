@@ -3,10 +3,7 @@
     "index.number_of_shards": {{number_of_shards | default(1)}},
     "index.number_of_replicas": {{number_of_replicas | default(0)}},
     "index.requests.cache.enable": false,
-    "index.mapping.total_fields.limit": 20000,
-    "index.search.slowlog.level" : "debug",
-    "index.search.slowlog.threshold.fetch.debug" : "0s",
-    "index.search.slowlog.threshold.query.debug" : "0s"
+    "index.mapping.total_fields.limit": 20000
   },
   "mappings" : {
     "_meta" : {

@@ -839,6 +839,21 @@
       }
     },
     {
+      "name": "date-histo-entire-range",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "fixed_interval": "2000d"
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "date-histo-numeric-terms",
       "operation-type": "search",
       "body": {

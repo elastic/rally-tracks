@@ -21,7 +21,7 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `on_conflict` (default: "index"): Whether to use an "index" or an "update" action when simulating an id conflict.
 * `recency` (default: 0): A number between 0 and 1 that defines whether to bias towards more recent ids when simulating conflicts. See the [Rally docs](http://esrally.readthedocs.io/en/latest/track.html#bulk) for the full definition of this parameter. This requires to run the respective challenge.
 * `number_of_replicas` (default: 0)
-* `number_of_shards` (default: 5)
+* `number_of_shards` (default: 1)
 * `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index.
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.

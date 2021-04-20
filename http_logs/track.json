@@ -48,7 +48,7 @@
       {%- if ingest_pipeline is defined and ingest_pipeline == "grok" or runtime_fields is defined %}
         {
           "name": "http_logs_unparsed",
-          "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/http_logs",
+          "base-url": "https://rally-tracks.elastic.co/http_logs",
           "documents": [
           {
             "target-index": "logs-181998",
@@ -104,7 +104,7 @@
     {%- else %}
       {
         "name": "http_logs",
-        "base-url": "http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora/http_logs",
+        "base-url": "https://rally-tracks.elastic.co/http_logs",
         "documents": [
           {
             "target-index": "logs-181998",

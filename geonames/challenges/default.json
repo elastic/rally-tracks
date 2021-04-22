@@ -368,4 +368,79 @@
           }
         }
       ]
+    },
+    {
+      "name": "significant-text",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "geonames",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "operation": "significant_text_selective",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 6
+        },
+        {
+          "operation": "significant_text_sampled_selective",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 20
+        },
+        {
+          "operation": "significant_text_unselective",
+          "warmup-iterations": 50,
+          "iterations": 20,
+          "target-throughput": 0.04
+        },
+        {
+          "operation": "significant_text_sampled_unselective",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 6
+        }
+      ]
     }

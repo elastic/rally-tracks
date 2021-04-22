@@ -348,4 +348,94 @@
         ],
         "search_after": [5000000]
       }
+    },
+    {
+      "name": "significant_text_selective",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "match": {
+            "alternatenames": "street"
+          }
+        },
+        "aggs": {
+          "sig": {
+            "significant_text": {
+              "field": "alternatenames"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "significant_text_sampled_selective",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "match": {
+            "alternatenames": "street"
+          }
+        },
+        "aggs": {
+          "s": {
+            "sampler": {
+              "shard_size": 100
+            },
+            "aggs": {
+              "sig": {
+                "significant_text": {
+                  "field": "alternatenames"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "significant_text_unselective",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "match": {
+            "timezone": "America"
+          }
+        },
+        "aggs": {
+          "sig": {
+            "significant_text": {
+              "field": "alternatenames"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "significant_text_sampled_unselective",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "match": {
+            "timezone": "America"
+          }
+        },
+        "aggs": {
+          "s": {
+            "sampler": {
+              "shard_size": 100
+            },
+            "aggs": {
+              "sig": {
+                "significant_text": {
+                  "field": "alternatenames"
+                }
+              }
+            }
+          }
+        }
+      }
     }

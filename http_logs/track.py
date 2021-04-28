@@ -1,8 +1,8 @@
 from copy import copy
 import re
 
+from esrally import exceptions
 from esrally.track import loader
-
 
 def reindex(es, params):
     result = es.reindex(body=params.get("body"), request_timeout=params.get("request_timeout"))
@@ -27,7 +27,7 @@ class RuntimeFieldResolver(loader.TrackProcessor):
                     task.operation.params = self._replace_field(f"{impl}.from_{source}.", task.operation.params)
 
     def on_prepare_track(self, track, data_root_dir):
-        return []
+        return True
 
     def _replace_field(self, field, t):
         if t == 'path' or t == 'status':
@@ -48,4 +48,3 @@ def register(registry):
     else:
         registry.register_runner("reindex", reindex)
     registry.register_track_processor(RuntimeFieldResolver())
-    registry.register_track_processor(loader.DefaultTrackPreparator())

@@ -4,6 +4,7 @@ import re
 from esrally import exceptions
 from esrally.track import loader
 
+
 def reindex(es, params):
     result = es.reindex(body=params.get("body"), request_timeout=params.get("request_timeout"))
     return result["total"], "docs"
@@ -12,6 +13,7 @@ def reindex(es, params):
 async def reindex_async(es, params):
     result = await es.reindex(body=params.get("body"), request_timeout=params.get("request_timeout"))
     return result["total"], "docs"
+
 
 class RuntimeFieldResolver(loader.TrackProcessor):
     PATTERN = re.compile('.+-from-(.+)-using-(.+)')
@@ -27,7 +29,17 @@ class RuntimeFieldResolver(loader.TrackProcessor):
                     task.operation.params = self._replace_field(f"{impl}.from_{source}.", task.operation.params)
 
     def on_prepare_track(self, track, data_root_dir):
-        return True
+        # TODO remove this backwards compatibility hatch after several Rally releases
+        # ref: https://github.com/elastic/rally/pull/1228 and https://github.com/elastic/rally/issues/1166
+        class EmptyTrueList(list):
+            def __bool__(self):
+                return True
+
+            def __eq__(self, other):
+                if isinstance(other, bool):
+                    return True
+
+        return EmptyTrueList()
 
     def _replace_field(self, field, t):
         if t == 'path' or t == 'status':
@@ -41,6 +53,7 @@ class RuntimeFieldResolver(loader.TrackProcessor):
             }
         return t
 
+
 def register(registry):
     async_runner = registry.meta_data.get("async_runner", False)
     if async_runner:
@@ -48,3 +61,10 @@ def register(registry):
     else:
         registry.register_runner("reindex", reindex)
     registry.register_track_processor(RuntimeFieldResolver())
+    try:
+        registry.register_track_processor(loader.DefaultTrackPreparator())
+    except TypeError as e:
+        # TODO remove this backwards compatibility hatch after several Rally releases
+        # ref: https://github.com/elastic/rally/pull/1228 and https://github.com/elastic/rally/issues/1166
+        if e == "__init__() missing 1 required positional argument: 'cfg'":
+            pass

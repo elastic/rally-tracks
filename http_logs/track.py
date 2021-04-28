@@ -61,10 +61,9 @@ def register(registry):
     else:
         registry.register_runner("reindex", reindex)
     registry.register_track_processor(RuntimeFieldResolver())
+    # TODO change this based on https://github.com/elastic/rally/issues/1257
     try:
         registry.register_track_processor(loader.DefaultTrackPreparator())
     except TypeError as e:
-        # TODO remove this backwards compatibility hatch after several Rally releases
-        # ref: https://github.com/elastic/rally/pull/1228 and https://github.com/elastic/rally/issues/1166
         if e == "__init__() missing 1 required positional argument: 'cfg'":
             pass

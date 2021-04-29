@@ -28,7 +28,8 @@
           "operation": "index-append",
           "warmup-time-period": 120,
           "time-period": 3600,
-          "clients": {{bulk_indexing_clients | default(4)}}
+          "clients": {{bulk_indexing_clients | default(4)}},
+          "ignore-response-error-level": "{{error-level | default('non-fatal')}}"
         },
         {
           "name": "refresh-after-index",
@@ -137,7 +138,8 @@
           "operation": "index-append",
           "warmup-time-period": 120,
           "time-period": 3600,
-          "clients": {{bulk_indexing_clients | default(4)}}
+          "clients": {{bulk_indexing_clients | default(4)}},
+          "ignore-response-error-level": "{{error-level | default('non-fatal')}}"
         },
         {
         "name": "refresh-after-index",

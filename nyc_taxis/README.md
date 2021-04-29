@@ -70,7 +70,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
-* `error-level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
+* `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
 
 ### License
 

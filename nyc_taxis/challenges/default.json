@@ -32,7 +32,7 @@
           "operation": "index",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error-level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
           "name": "refresh-after-index",
@@ -118,7 +118,7 @@
           "operation": "index",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error-level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
           "name": "refresh-after-index",
@@ -176,7 +176,7 @@
           "operation": "index",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error-level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
           "name": "refresh-after-index",
@@ -231,7 +231,7 @@
           "operation": "update",
           "warmup-time-period": 1200,
           "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error-level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
           "name": "refresh-after-index",
@@ -456,7 +456,7 @@
           "operation": "index",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error-level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
           "name": "refresh-after-index",
@@ -532,7 +532,7 @@
           "operation": "index",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error-level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
           "name": "refresh-after-index",

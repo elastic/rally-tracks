@@ -10,30 +10,7 @@ You should not need to use this repository directly, except if you want to look 
 Versioning Scheme
 -----------------
 
-From time to time, setting and mapping formats change in Elasticsearch. As we want to be able to support multiple versions of Elasticsearch, we also need to version track specifications. Therefore, this repository contains multiple branches. The following examples should give you an idea how the versioning scheme works:
-
-* `master`: compatible with the latest development version of Elasticsearch
-* `7.0.0-beta1`: compatible with the released version `7.0.0-beta1`.
-* `7.3`: compatible with all ES `7` releases equal or greater than `7.3` (e.g. `7.3.0`, `7.10.2`)
-* `6`: compatible with all Elasticsearch releases with the major release number 6 (e.g. `6.4.0`, `6.8.13`)
-
-As you can see, branches can match exact release numbers but Rally is also lenient in case settings or mapping formats did not change for a few releases. Rally will try to match in the following order:
-
-1. Exact match major.minor.patch-extension_label (e.g. `7.0.0-beta1`)
-2. Exact match major.minor.patch (e.g. `7.10.2`, `6.7.0`)
-3. Exact match major.minor (e.g. `7.10`)
-4. Nearest prior minor branch (e.g. if available branches are `master`, `7`, `7.2` and `7.11` attempting to benchmarking ES `7.10.2` will choose `7.2`, whereas benchmarking ES `7.12.1` will choose the 7.11 branch)
-5. Nearest major branch (e.g. if available branches are `master`, `5`, `6`,`7`, benchmarking ES `7.11` will choose the `7` branch)
-
-Apart from that, the `master` branch is always considered to be compatible with the Elasticsearch `master` branch.
-
-To specify the version to check against, add `--distribution-version` when running Rally. If it is not specified, Rally assumes that you want to benchmark against the Elasticsearch master version.
-
-Example: If you want to benchmark Elasticsearch 7.10.2, run the following command:
-
-```
-esrally race --distribution-version=7.10.2
-```
+Refer to the official [Rally docs](https://esrally.readthedocs.io/en/stable/track.html#custom-track-repositories) for more details.
 
 How to Contribute
 -----------------
@@ -73,7 +50,7 @@ git push origin 5
 
 This particular track uses features that are only available in Elasticsearch 5 and later so we will stop here but the process continues until we've reached the earliest branch. 
 
-Sometimes it is necessary to remove individual operations from a track that are not supported by earlier versions. This graceful fallback is a compromise to allow to run a subset of the track on older versions of Elasticsearch too. If this is necessary then it's best to do these changes in a separate commit. Also, don't forget to cherry-pick this separate commit too to even earlier versions if necessary.  
+Sometimes it is necessary to remove individual operations from a track that are not supported by earlier versions. This graceful fallback is a compromise to allow to run a subset of the track on older versions of Elasticsearch too. If this is necessary then it's best to do these changes in a separate commit. Also, don't forget to cherry-pick this separate commit too to even earlier versions if necessary.
 
  
 License

@@ -334,4 +334,14 @@
           }
         ]
       }
+    },
+    {
+      "name": "terms_enum",
+      "operation-type": "raw-request",
+      "path": "/logs-*/_terms_enum",
+      "method": "GET",
+      "body": {
+        "field": "request.raw",
+        "string": "GET image"
+      }
     }

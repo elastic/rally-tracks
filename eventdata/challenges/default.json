@@ -1,5 +1,6 @@
     {
       "name": "append-no-conflicts",
+      "user-info": "This track is deprecated and will be removed soon. Please use https://github.com/elastic/rally-eventdata-track.",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
       "default": true,
       "schedule": [
@@ -53,6 +54,7 @@
     },
     {
       "name": "transform",
+      "user-info": "This track is deprecated and will be removed soon. Please use https://github.com/elastic/rally-eventdata-track.",
       "description": "Indexes the whole document corpus using Elasticsearch default settings and run transforms to pivot data by terms, date and geo tiles.",
       "default": false,
       "schedule": [

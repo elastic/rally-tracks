@@ -39,6 +39,7 @@
           "name": "force-merge-linestrings",
           "operation": {
             "operation-type": "force-merge",
+            "max-num-segments": 1,
             "index": "osmlinestrings",
             "request-timeout": 7200
           }
@@ -71,6 +72,7 @@
           "name": "force-merge-multilinestrings",
           "operation": {
             "operation-type": "force-merge",
+            "max-num-segments": 1,
             "index": "osmmultilinestrings",
             "request-timeout": 7200
           }
@@ -103,6 +105,7 @@
           "name": "force-merge-polygons",
           "operation": {
             "operation-type": "force-merge",
+            "max-num-segments": 1,
             "index": "osmpolygons",
             "request-timeout": 7200
           }

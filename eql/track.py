@@ -4,8 +4,11 @@ import logging
 async def eql(es, params):
     logger = logging.getLogger(__name__)
     logger.info("Provided params [%s].", params)
+    if cluster := params.get("cluster", ""):
+        cluster += ":"
+
     await es.eql.search(
-            params.get("index"),
+            cluster + params.get("index"),
             body=params.get("body"),
             request_timeout=params.get("request-timeout")
         )

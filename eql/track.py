@@ -4,9 +4,9 @@ import logging
 async def eql(es, params):
     logger = logging.getLogger(__name__)
     logger.info("Provided params [%s].", params)
-    cluster = ""
-    if params.get("cluster"):
-        cluster = params.get("cluster") + ":"
+    if cluster := params.get("cluster", ""):
+        cluster += ":"
+
     await es.eql.search(
             cluster + params.get("index"),
             body=params.get("body"),

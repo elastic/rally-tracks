@@ -79,8 +79,8 @@
         },
         {
           "operation": "date_histogram_agg",
-          "warmup-iterations": 50,
-          "iterations": 100,
+          "warmup-iterations": 500,
+          "iterations": 500,
           "target-throughput": 1.5
         }
       ]

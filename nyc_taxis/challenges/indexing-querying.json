@@ -58,7 +58,7 @@
     },
     {
       "parallel": {
-        "completed-by": "range",
+        "completed-by": "default",
         "tasks": [
           {
             "name": "concurrent-bulk",
@@ -70,22 +70,47 @@
           "clients": {{bulk_indexing_clients | default(8)}}
           },
           {
-            "operation": "default",
-            "warmup-iterations": 50,
-            "iterations": 500,
-            "target-throughput": 3
-          },
-          {
-            "operation": "range",
+            "name": "default",
+            "operation": {
+              "name": "default",
+              "operation-type": "search",
+              "body": {
+                "size": 1000,
+                "query": {
+                  "match_all": {}
+                }
+              }
+            },
             "warmup-iterations": 50,
             "iterations": 500,
             "target-throughput": 1
           },
           {
-            "operation": "distance_amount_agg",
+            "name": "distance_amount_agg",
+            "operation": {
+              "operation-type": "search",
+              "body": {
+                "size": 1000,
+                "aggs": {
+                  "distance_histo": {
+                    "histogram": {
+                      "field": "distance",
+                      "interval": 1
+                    },
+                    "aggs": {
+                      "total_amount_stats": {
+                        "stats": {
+                          "field": "total_amount"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
             "warmup-iterations": 50,
             "iterations": 500,
-            "target-throughput": 2
+            "target-throughput": 1
           },
           {
             "operation": "autohisto_agg",

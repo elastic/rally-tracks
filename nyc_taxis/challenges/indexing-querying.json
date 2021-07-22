@@ -58,7 +58,7 @@
     },
     {
       "parallel": {
-        "completed-by": "concurrent-bulk",
+        "completed-by": "range",
         "tasks": [
           {
             "name": "concurrent-bulk",
@@ -68,36 +68,35 @@
               "ingest-percentage": 50
             },
           "clients": {{bulk_indexing_clients | default(8)}},
-          "target-throughput": 50
           },
           {
             "operation": "default",
             "warmup-iterations": 50,
-            "iterations": 100,
+            "iterations": 500,
             "target-throughput": 3
           },
           {
             "operation": "range",
             "warmup-iterations": 50,
-            "iterations": 100,
-            "target-throughput": 0.7
+            "iterations": 500,
+            "target-throughput": 1
           },
           {
             "operation": "distance_amount_agg",
             "warmup-iterations": 50,
-            "iterations": 100,
+            "iterations": 500,
             "target-throughput": 2
           },
           {
             "operation": "autohisto_agg",
             "warmup-iterations": 50,
-            "iterations": 100,
+            "iterations": 500,
             "target-throughput": 1.5
           },
           {
             "operation": "date_histogram_agg",
             "warmup-iterations": 50,
-            "iterations": 100,
+            "iterations": 500,
             "target-throughput": 1.5
           }
         ]

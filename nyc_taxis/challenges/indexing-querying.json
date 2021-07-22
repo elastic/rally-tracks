@@ -67,7 +67,7 @@
               "bulk-size": {{bulk_size | default(10000)}},
               "ingest-percentage": 50
             },
-          "clients": {{bulk_indexing_clients | default(8)}},
+          "clients": {{bulk_indexing_clients | default(8)}}
           },
           {
             "operation": "default",

@@ -10,12 +10,12 @@
       "operation": {
         "operation-type": "create-index",
         "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-        "index.codec": "best_compression",
-        "index.refresh_interval": "30s",
-        "index.translog.flush_threshold_size": "4g"
-      }{%- endif %}
-    }
-  },
+          "index.codec": "best_compression",
+          "index.refresh_interval": "30s",
+          "index.translog.flush_threshold_size": "4g"
+        }{%- endif %}
+      }
+    },
     {
       "name": "check-cluster-health",
       "operation": {
@@ -44,9 +44,10 @@
     {
       "operation": {
         "operation-type": "force-merge",
-        "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
-    "max-num-segments": {{ force_merge_max_num_segments | tojson }}
-    {%- endif %}
+{%- if force_merge_max_num_segments is defined %}
+        "max-num-segments": {{ force_merge_max_num_segments | tojson }},
+{%- endif %}
+        "request-timeout": 7200
   }
   },
     {
@@ -75,7 +76,7 @@
               "name": "default",
               "operation-type": "search",
               "body": {
-                "size": 1000,
+                "size": 10000,
                 "query": {
                   "match_all": {}
                 }
@@ -90,7 +91,7 @@
             "operation": {
               "operation-type": "search",
               "body": {
-                "size": 1000,
+                "size": 10000,
                 "aggs": {
                   "distance_histo": {
                     "histogram": {

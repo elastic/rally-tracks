@@ -151,7 +151,7 @@
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200{%- if force_merge_max_num_segments is not none %},
-            "max-num-segments": {{force_merge_max_num_segmentss}}
+            "max-num-segments": {{force_merge_max_num_segments}}
              {%- endif %}
           }
         },

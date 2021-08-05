@@ -76,6 +76,17 @@
       "parallel": {
         "tasks": [
           {
+            "name": "concurrent-index-append",
+            "operation": {
+              "operation-type": "bulk",
+              "bulk-size": {{bulk_size | default(500)}},
+              "ingest-percentage": 50
+            },
+            "warmup-time-period": 240,
+            "clients": {{bulk_indexing_clients | default(8)}},
+            "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+          },
+          {
             "operation": "default",
             "warmup-iterations": 500,
             "iterations": 200,

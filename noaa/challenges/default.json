@@ -214,7 +214,9 @@
         },
         {
           "operation": "force-merge",
-          "clients": 1
+          "clients": 1{%- if force_merge_max_num_segments is not none %},
+          "max-num-segments": {{force_merge_max_num_segments}}
+           {%- endif %}
         },
         {
           "name": "refresh-after-force-merge",
@@ -396,7 +398,9 @@
         },
         {
           "operation": "force-merge",
-          "clients": 1
+          "clients": 1{%- if force_merge_max_num_segments is not none %},
+          "max-num-segments": {{force_merge_max_num_segments}}
+           {%- endif %}
         },
         {
           "name": "refresh-after-force-merge",

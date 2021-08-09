@@ -41,7 +41,7 @@
         "bulk-size": {{bulk_size | default(500)}},
         "ingest-percentage": 50
       },
-      "warmup-time-period": 240,
+      "warmup-time-period": 30,
       "clients": {{bulk_indexing_clients | default(8)}},
       "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
     },
@@ -82,7 +82,6 @@
               "bulk-size": {{bulk_size | default(500)}},
               "ingest-percentage": 50
             },
-            "warmup-time-period": 240,
             "clients": {{bulk_indexing_clients | default(8)}},
             "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
           },

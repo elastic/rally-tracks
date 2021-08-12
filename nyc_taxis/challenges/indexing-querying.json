@@ -48,8 +48,8 @@
         "max-num-segments": {{ force_merge_max_num_segments | tojson }},
 {%- endif %}
         "request-timeout": 7200
-  }
-  },
+      }
+    },
     {
       "name": "refresh-after-force-merge",
       "operation": "refresh"

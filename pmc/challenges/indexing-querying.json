@@ -20,8 +20,8 @@
       "operation": {
         "operation-type": "create-index",
         "settings": {{index_settings | default({}) | tojson}}
-  }
-  },
+      }
+    },
     {
       "name": "check-cluster-health",
       "operation": {

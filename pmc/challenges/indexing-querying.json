@@ -52,6 +52,9 @@
     {
       "operation": {
         "operation-type": "force-merge",
+{%- if force_merge_max_num_segments is defined %}
+        "max-num-segments": {{ force_merge_max_num_segments | tojson }},
+{%- endif %}
         "request-timeout": 7200
       }
     },

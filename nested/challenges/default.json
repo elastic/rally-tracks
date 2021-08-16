@@ -1,3 +1,4 @@
+    {% set force_merge_max_num_segments = (max_num_segments | default(1)) %}
     {
       "name": "nested-search-challenge",
       "description": "Indexes the document corpus for an hour using Elasticsearch default settings. After that randomized nested queries are run.",
@@ -38,7 +39,9 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "request-timeout": 7200
+            "request-timeout": 7200{%- if force_merge_max_num_segments is not none %},
+            "max-num-segments": {{force_merge_max_num_segments}}
+             {%- endif %}
           }
         },
         {
@@ -148,7 +151,8 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "request-timeout": 7200
+            "request-timeout": 7200{%- if force_merge_max_num_segments is not none %},
+            "max-num-segments": {{force_merge_max_num_segments}}
           }
         },
         {

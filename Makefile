@@ -66,15 +66,6 @@ format: check-venv
 	@. $(VENV_ACTIVATE_FILE); black --config=black.toml **
 	@. $(VENV_ACTIVATE_FILE); isort **
 
-docs: check-venv
-	@. $(VENV_ACTIVATE_FILE); cd docs && $(MAKE) html
-
-serve-docs: check-venv
-	@. $(VENV_ACTIVATE_FILE); cd docs && $(MAKE) serve
-
-test: check-venv
-	. $(VENV_ACTIVATE_FILE); pytest tests/
-
 precommit: lint
 
 it: check-venv install

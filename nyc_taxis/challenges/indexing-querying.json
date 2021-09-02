@@ -1,6 +1,6 @@
 {
   "name": "indexing-querying",
-  "description": "Indexes half the data for NYC Taxis, then concurrently queries Elasticsearch while indexing the remaining data.",
+  "description": "Indexes half the data for NYC Taxis, then concurrently queries Elasticsearch while indexing again.",
   "default": false,
   "schedule": [
     {
@@ -48,8 +48,8 @@
         "max-num-segments": {{ force_merge_max_num_segments | tojson }},
 {%- endif %}
         "request-timeout": 7200
-  }
-  },
+      }
+    },
     {
       "name": "refresh-after-force-merge",
       "operation": "refresh"

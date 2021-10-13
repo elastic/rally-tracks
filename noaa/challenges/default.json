@@ -1,4 +1,3 @@
-    {% set force_merge_max_num_segments = (max_num_segments | default(1)) %}
     {
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green and we want to ensure that we don't use the query cache. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
@@ -39,8 +38,8 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "request-timeout": 7200{%- if force_merge_max_num_segments is not none %},
-            "max-num-segments": {{force_merge_max_num_segments}}
+            "request-timeout": 7200{%- if max_num_segments is defined %},
+            "max-num-segments": {{max_num_segments}}
              {%- endif %}
           }
         },
@@ -150,8 +149,8 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "request-timeout": 7200{%- if force_merge_max_num_segments is not none %},
-            "max-num-segments": {{force_merge_max_num_segments}}
+            "request-timeout": 7200{%- if max_num_segments is defined %},
+            "max-num-segments": {{max_num_segments}}
              {%- endif %}
           }
         },
@@ -214,8 +213,8 @@
         },
         {
           "operation": "force-merge",
-          "clients": 1{%- if force_merge_max_num_segments is not none %},
-          "max-num-segments": {{force_merge_max_num_segments}}
+          "clients": 1{%- if max_num_segments is defined %},
+          "max-num-segments": {{max_num_segments}}
            {%- endif %}
         },
         {
@@ -398,8 +397,8 @@
         },
         {
           "operation": "force-merge",
-          "clients": 1{%- if force_merge_max_num_segments is not none %},
-          "max-num-segments": {{force_merge_max_num_segments}}
+          "clients": 1{%- if max_num_segments is defined %},
+          "max-num-segments": {{max_num_segments}}
            {%- endif %}
         },
         {

@@ -21,33 +21,8 @@ PYENV_REGEX = .pyenv/shims
 PY_BIN = python3
 # https://github.com/pypa/pip/issues/5599
 PIP_WRAPPER = $(PY_BIN) -m pip
-export PY38 = $(shell jq -r '.python_versions.PY38' .ci/variables.json)
-VENV_NAME ?= .venv
-VENV_ACTIVATE_FILE = $(VENV_NAME)/bin/activate
-VENV_ACTIVATE = . $(VENV_ACTIVATE_FILE)
-VEPYTHON = $(VENV_NAME)/bin/$(PY_BIN)
-VEPYLINT = $(VENV_NAME)/bin/pylint
-PYENV_ERROR = "\033[0;31mIMPORTANT\033[0m: Please install pyenv.\n"
-PYENV_PREREQ_HELP = "\033[0;31mIMPORTANT\033[0m: please type \033[0;31mpyenv init\033[0m, follow the instructions there and restart your terminal before proceeding any further.\n"
-VE_MISSING_HELP = "\033[0;31mIMPORTANT\033[0m: Couldn't find $(PWD)/$(VENV_NAME); have you executed make venv-create?\033[0m\n"
+VENV_ACTIVATE = . rally/.venv/bin/activate
 export TRACK_DIRS = $(shell find -E . -regex ".*/track\.json"|sed -r 's|/[^/]+$$||' | sort -u)
-
-prereq:
-	pyenv install --skip-existing $(PY38)
-	pyenv local $(PY38)
-	@# Ensure all Python versions are registered for this project
-	@ jq -r '.python_versions | [.[] | tostring] | join("\n")' .ci/variables.json > .python-version
-	-@ printf $(PYENV_PREREQ_HELP)
-
-venv-create:
-	@if [[ ! -x $$(command -v pyenv) ]]; then \
-		printf $(PYENV_ERROR); \
-		exit 1; \
-	fi;
-	@if [[ ! -f $(VENV_ACTIVATE_FILE) ]]; then \
-		eval "$$(pyenv init -)" && eval "$$(pyenv init --path)" && $(PY_BIN) -mvenv $(VENV_NAME); \
-		printf "Created python3 venv under $(PWD)/$(VENV_NAME).\n"; \
-	fi;
 
 check-venv:
 	@if [[ ! -f $(VENV_ACTIVATE_FILE) ]]; then \

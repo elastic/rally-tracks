@@ -269,6 +269,7 @@
     {
       "name": "append-sorted-no-conflicts",
       "description": "Indexes the whole document corpus in an index sorted by country_code field in ascending order. Document ids are unique so all index operations are append only.",
+      "user-info": "This challenge is deprecated and will be removed soon. Use the corresponding challenge in http_logs to benchmark sorted indices.",
       "schedule": [
         {
           "operation": "delete-index"

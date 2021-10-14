@@ -101,24 +101,25 @@
           "target-throughput": 25
         },
 {%- if runtime_fields is defined %}
-        { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-grok",       "warmup-iterations": 100, "iterations": 100, "target-throughput": 5.0, "tags": ["200s-in-range", "from-source",   "using-grok"] },
-        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-grok",      "warmup-iterations": 100, "iterations": 100, "target-throughput": 5.0, "tags": ["200s-in-range", "from-keyword",  "using-grok"] },
-        { "operation": "200s-in-range", "name": "200s-in-range-from-wildcard-using-grok",     "warmup-iterations": 100, "iterations": 100, "target-throughput": 5.0, "tags": ["200s-in-range", "from-wildcard", "using-grok"] },
-        { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-dissect",    "warmup-iterations": 100, "iterations": 100, "target-throughput": 5.0, "tags": ["200s-in-range", "from-source",   "using-dissect"] },
-        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-dissect",   "warmup-iterations": 100, "iterations": 100, "target-throughput": 5.0, "tags": ["200s-in-range", "from-wildcard", "using-dissect"] },
-        { "operation": "200s-in-range", "name": "200s-in-range-from-wildcard-using-dissect",  "warmup-iterations": 100, "iterations": 100, "target-throughput": 5.0, "tags": ["200s-in-range", "from-wildcard", "using-dissect"] },
-        { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-index-of",   "warmup-iterations": 100, "iterations": 100, "target-throughput": 5.0, "tags": ["200s-in-range", "from-source",   "using-index-of"] },
-        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-index-of",  "warmup-iterations": 100, "iterations": 100, "target-throughput": 5.0, "tags": ["200s-in-range", "from-keyword",  "using-index-of"] },
-        { "operation": "200s-in-range", "name": "200s-in-range-from-wildcard-using-index-of", "warmup-iterations": 100, "iterations": 100, "target-throughput": 5.0, "tags": ["200s-in-range", "from-wildcard", "using-index-of"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-grok",       "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-source",   "using-grok"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-grok",      "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-keyword",  "using-grok"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-wildcard-using-grok",     "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-wildcard", "using-grok"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-dissect",    "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-source",   "using-dissect"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-dissect",   "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-wildcard", "using-dissect"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-wildcard-using-dissect",  "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-wildcard", "using-dissect"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-index-of",   "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-source",   "using-index-of"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-index-of",  "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-keyword",  "using-index-of"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-keyword-using-index-of",  "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-keyword",  "using-index-of"] },
+        { "operation": "200s-in-range", "name": "200s-in-range-from-wildcard-using-index-of", "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-wildcard", "using-index-of"] },
         { "operation": "400s-in-range", "name": "400s-in-range-from-source-using-grok",       "warmup-iterations": 100, "iterations": 100, "target-throughput": 0.3, "tags": ["400s-in-range", "from-source",   "using-grok"] },
         { "operation": "400s-in-range", "name": "400s-in-range-from-keyword-using-grok",      "warmup-iterations": 100, "iterations": 100, "target-throughput": 0.3, "tags": ["400s-in-range", "from-keyword",  "using-grok"] },
         { "operation": "400s-in-range", "name": "400s-in-range-from-wildcard-using-grok",     "warmup-iterations": 100, "iterations": 100, "target-throughput": 0.3, "tags": ["400s-in-range", "from-wildcard", "using-grok"] },
         { "operation": "400s-in-range", "name": "400s-in-range-from-source-using-dissect",    "warmup-iterations": 100, "iterations": 100, "target-throughput": 0.5, "tags": ["400s-in-range", "from-source",   "using-dissect"] },
-        { "operation": "400s-in-range", "name": "400s-in-range-from-keyword-using-dissect",   "warmup-iterations": 100, "iterations": 100, "target-throughput": 1.0, "tags": ["400s-in-range", "from-wildcard", "using-dissect"] },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-keyword-using-dissect",   "warmup-iterations": 100, "iterations": 100, "target-throughput": 1, "tags": ["400s-in-range", "from-wildcard", "using-dissect"] },
         { "operation": "400s-in-range", "name": "400s-in-range-from-wildcard-using-dissect",  "warmup-iterations": 100, "iterations": 100, "target-throughput": 0.3, "tags": ["400s-in-range", "from-wildcard", "using-dissect"] },
-        { "operation": "400s-in-range", "name": "400s-in-range-from-source-using-index-of",   "warmup-iterations": 100, "iterations": 100, "target-throughput": 1.0, "tags": ["400s-in-range", "from-source",   "using-index-of"] },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-source-using-index-of",   "warmup-iterations": 100, "iterations": 100, "target-throughput": 1,   "tags": ["400s-in-range", "from-source",   "using-index-of"] },
         { "operation": "400s-in-range", "name": "400s-in-range-from-keyword-using-index-of",  "warmup-iterations": 100, "iterations": 100, "target-throughput": 0.3, "tags": ["400s-in-range", "from-keyword",  "using-index-of"] },
-        { "operation": "400s-in-range", "name": "400s-in-range-from-wildcard-using-index-of", "warmup-iterations": 100, "iterations": 100, "target-throughput": 4.0, "tags": ["400s-in-range", "from-wildcard", "using-index-of"] },
+        { "operation": "400s-in-range", "name": "400s-in-range-from-wildcard-using-index-of", "warmup-iterations": 100, "iterations": 100, "target-throughput": 4,   "tags": ["400s-in-range", "from-wildcard", "using-index-of"] },
 {%- else %}
         {
           "operation": "200s-in-range",
@@ -162,7 +163,7 @@
           "operation": "desc_sort_with_after_timestamp",
           "warmup-iterations": 10,
           "iterations": 100,
-          "target-throughput": 1.0
+          "target-throughput": 1
         },
         {
           "operation": "asc_sort_with_after_timestamp",

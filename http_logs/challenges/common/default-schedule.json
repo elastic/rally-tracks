@@ -99,7 +99,7 @@
           "operation": "range",
           "warmup-iterations": 100,
           "iterations": 100,
-          "target-throughput": 25
+          "target-throughput": 1
         },
 {%- if runtime_fields is defined %}
         { "operation": "200s-in-range", "name": "200s-in-range-from-source-using-grok",       "warmup-iterations": 100, "iterations": 100, "target-throughput": 5,   "tags": ["200s-in-range", "from-source",   "using-grok"] },

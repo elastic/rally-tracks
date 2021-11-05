@@ -175,195 +175,124 @@
       "warmup-iterations": 25,
       "iterations": 100
     },
+    {# Basic conditions #}
     {
       "operation": {
-        "name": "sequence_2stages_fewThenFew_noJoinKey",
+        "name": "condition_allMatches",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "sequence [process where process.pid == 910] [process where process.pid == 911]"
+          "query": "any where true"
         }
       },
-      "tags": "new",
+      "tags": ["fast"],
       "target-throughput": 10,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
     },
     {
       "operation": {
-        "name": "sequence_2stages_fewThenMany_noJoinKey",
+        "name": "condition_noMatches",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "sequence [process where process.pid == 910] [process where process.pid > 30000]"
+          "query": "any where false"
         }
       },
-      "tags": "new",
-      "target-throughput": 1,
-      "warmup-iterations": 50,
-      "iterations": 100
-    },
-    {
-      "operation": {
-        "name": "sequence_2stages_manyThenfew_noJoinKey",
-        "operation-type": "eql",
-        "request-timeout": 3600,
-        "cluster" : "{{cluster}}",
-        "index": "endgame-4.28*",
-        "body": {
-          "query": "sequence [process where process.pid > 30000] [process where process.pid == 911]"
-        }
-      },
-      "tags": "new",
-      "target-throughput": 1,
-      "warmup-iterations": 50,
-      "iterations": 100
-    },
-    {
-      "operation": {
-        "name": "sequence_2stages_manyThenMany_noJoinKey",
-        "operation-type": "eql",
-        "request-timeout": 3600,
-        "cluster" : "{{cluster}}",
-        "index": "endgame-4.28*",
-        "body": {
-          "query": "sequence [process where process.pid > 30000] [process where process.pid > 30000]"
-        }
-      },
-      "tags": "new",
+      "tags": ["fast"],
       "target-throughput": 10,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
     },
+    {# Basic Sequence Queries #}
     {
       "operation": {
-        "name": "sequence_2stages_fewThenFew_lowCardJoinKey",
+        "name": "sequence_2stages_baseline",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "sequence by host.name [process where process.pid == 910] [process where process.pid == 911]"
+          "query": "sequence [any where true] [any where true]"
         }
       },
-      "tags": "new",
+      "tags": ["fast"],
       "target-throughput": 10,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
     },
     {
       "operation": {
-        "name": "sequence_2stages_fewThenMany_lowCardJoinKey",
+        "name": "sequence_2stages_headThenTail",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "sequence by host.name [process where process.pid == 910] [process where process.pid > 30000]"
+          "query": "sequence [any where true] [any where true] | head 200 | tail 100"
         }
       },
-      "tags": "new",
-      "target-throughput": 1,
-      "warmup-iterations": 50,
-      "iterations": 100
-    },
-    {
-      "operation": {
-        "name": "sequence_2stages_manyThenfew_lowCardJoinKey",
-        "operation-type": "eql",
-        "request-timeout": 3600,
-        "cluster" : "{{cluster}}",
-        "index": "endgame-4.28*",
-        "body": {
-          "query": "sequence by host.name [process where process.pid > 30000] [process where process.pid == 911]"
-        }
-      },
-      "tags": "new",
-      "target-throughput": 1,
-      "warmup-iterations": 50,
-      "iterations": 100
-    },
-    {
-      "operation": {
-        "name": "sequence_2stages_manyThenMany_lowCardJoinKey",
-        "operation-type": "eql",
-        "request-timeout": 3600,
-        "cluster" : "{{cluster}}",
-        "index": "endgame-4.28*",
-        "body": {
-          "query": "sequence by host.name [process where process.pid > 30000] [process where process.pid > 30000]"
-        }
-      },
-      "tags": "new",
+      "tags": ["fast"],
       "target-throughput": 10,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
     },
     {
       "operation": {
-        "name": "sequence_2stages_fewThenFew_highCardJoinKey",
+        "name": "sequence_2stages_tailThenHead",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "sequence by process.ppid [process where process.pid == 910] [process where process.pid == 911]"
+          "query": "sequence [any where true] [any where true] | tail 200 | head 100"
         }
       },
-      "tags": "new",
-      "target-throughput": 2,
+      "tags": ["fast"],
+      "target-throughput": 10,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
     },
     {
       "operation": {
-        "name": "sequence_2stages_fewThenMany_highCardJoinKey",
+        "name": "sequence_2stages_maxspan1m",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "sequence by process.ppid [process where process.pid == 910] [process where process.pid > 30000]"
+          "query": "sequence with maxspan=1m [any where true] [any where true]"
         }
       },
-      "tags": "new",
-      "target-throughput": 2,
+      "tags": ["fast"],
+      "target-throughput": 10,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
     },
     {
       "operation": {
-        "name": "sequence_2stages_manyThenfew_highCardJoinKey",
+        "name": "sequence_2stages_nullJoin",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "sequence by process.ppid [process where process.pid > 30000] [process where process.pid == 911]"
+          "query": "sequence by ?source.ip [process where true] [process where true]"
         }
       },
-      "tags": "new",
-      "target-throughput": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
-    },
-    {
-      "operation": {
-        "name": "sequence_2stages_manyThenMany_highCardJoinKey",
-        "operation-type": "eql",
-        "request-timeout": 3600,
-        "cluster" : "{{cluster}}",
-        "index": "endgame-4.28*",
-        "body": {
-          "query": "sequence by process.ppid [process where process.pid == 910] [process where process.pid == 911]"
-        }
-      },
-      "tags": "new",
-      "target-throughput": 2,
+      "tags": ["fast"],
+      "target-throughput": 5,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
     },
@@ -378,39 +307,147 @@
           "query": "sequence [process where process.pid == 910] [process where process.pid == 911] [process where process.pid == 912] [process where process.pid == 913] [process where process.pid == 914] [process where process.pid == 915] [process where process.pid == 916] [process where process.pid == 917] [process where process.pid == 918] [process where process.pid == 919]"
         }
       },
-      "tags": "new",
+      "tags": ["fast"],
       "target-throughput": 5,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {# Sequence with varying selectivity, no join key #}
+    {
+      "operation": {
+        "name": "sequence_2stages_fewThenFew_noJoinKey",
+        "operation-type": "eql",
+        "request-timeout": 3600,
+        "cluster" : "{{cluster}}",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence [process where process.pid == 910] [process where process.pid == 911]"
+        }
+      },
+      "tags": ["fast"],
+      "target-throughput": 10,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
     },
     {
       "operation": {
-        "name": "sequence_2stages_headThenTail",
+        "name": "sequence_2stages_fewThenMany_noJoinKey",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "sequence [process where true] [process where true] | head 200 | tail 100"
+          "query": "sequence [process where process.pid == 910] [process where process.pid > 80000]"
         }
       },
-      "tags": "new",
-      "target-throughput": 10,
+      "tags": ["slow"],
+      "target-throughput": 0.3,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
-    },{
+    },
+    {
       "operation": {
-        "name": "sequence_2stages_tailThenHead",
+        "name": "sequence_2stages_manyThenFew_noJoinKey",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "sequence [process where true] [process where true] | tail 200 | head 100"
+          "query": "sequence [process where process.pid > 80000] [process where process.pid == 911]"
         }
       },
-      "tags": "new",
+      "tags": ["slow"],
+      "target-throughput": 0.3,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {
+      "operation": {
+        "name": "sequence_2stages_manyThenMany_noJoinKey",
+        "operation-type": "eql",
+        "request-timeout": 3600,
+        "cluster" : "{{cluster}}",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence [process where process.pid > 80000] [process where process.pid > 80000]"
+        }
+      },
+      "tags": ["fast"],
       "target-throughput": 10,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {# Sequence with varying selectivity, high cardinality join key #}
+    {
+      "operation": {
+        "name": "sequence_2stages_fewThenFew_highCardJoinKey",
+        "operation-type": "eql",
+        "request-timeout": 3600,
+        "cluster" : "{{cluster}}",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence by process.ppid [process where process.pid == 910] [process where process.pid == 911]"
+        }
+      },
+      "tags": ["fast"],
+      "target-throughput": 10,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {
+      "operation": {
+        "name": "sequence_2stages_fewThenMany_highCardJoinKey",
+        "operation-type": "eql",
+        "request-timeout": 3600,
+        "cluster" : "{{cluster}}",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence by process.ppid [process where process.pid == 910] [process where process.pid > 80000]"
+        }
+      },
+      "tags": ["slow"],
+      "target-throughput": 0.3,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {
+      "operation": {
+        "name": "sequence_2stages_manyThenFew_highCardJoinKey",
+        "operation-type": "eql",
+        "request-timeout": 3600,
+        "cluster" : "{{cluster}}",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence by process.ppid [process where process.pid > 80000] [process where process.pid == 911]"
+        }
+      },
+      "tags": ["slow"],
+      "target-throughput": 0.3,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {
+      "operation": {
+        "name": "sequence_2stages_manyThenMany_highCardJoinKey",
+        "operation-type": "eql",
+        "request-timeout": 3600,
+        "cluster" : "{{cluster}}",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence by process.ppid [process where process.pid == 910] [process where process.pid == 911]"
+        }
+      },
+      "tags": ["fast"],
+      "target-throughput": 10,
+      "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100
     }

@@ -210,6 +210,23 @@
       "warmup-iterations": 50,
       "iterations": 100
     },
+    {
+      "operation": {
+        "name": "condition_startsWith",
+        "operation-type": "eql",
+        "request-timeout": 3600,
+        "cluster" : "{{cluster}}",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "process where startsWith(process.name, \"ssh\")"
+        }
+      },
+      "tags": ["fast"],
+      "target-throughput": 10,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
     {# Basic Sequence Queries #}
     {
       "operation": {
@@ -292,6 +309,44 @@
       },
       "tags": ["fast"],
       "target-throughput": 5,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {# 
+      Sequences of varios lengths, sequence_2stages_fewThenFew_noJoinKey is the first query in the progression.
+      Note: each process.pid between 910 and 920 matches roughly the same number of events (400-500).
+    #}
+    {
+      "operation": {
+        "name": "sequence_3stages",
+        "operation-type": "eql",
+        "request-timeout": 3600,
+        "cluster" : "{{cluster}}",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence [process where process.pid == 910] [process where process.pid == 911] [process where process.pid == 912]"
+        }
+      },
+      "tags": ["fast"],
+      "target-throughput": 10,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {
+      "operation": {
+        "name": "sequence_5stages",
+        "operation-type": "eql",
+        "request-timeout": 3600,
+        "cluster" : "{{cluster}}",
+        "index": "endgame-4.28*",
+        "body": {
+          "query": "sequence [process where process.pid == 910] [process where process.pid == 911] [process where process.pid == 912] [process where process.pid == 913] [process where process.pid == 914]"
+        }
+      },
+      "tags": ["fast"],
+      "target-throughput": 10,
       "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100

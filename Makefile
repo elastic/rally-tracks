@@ -21,27 +21,45 @@ PYENV_REGEX = .pyenv/shims
 PY_BIN = python3
 # https://github.com/pypa/pip/issues/5599
 PIP_WRAPPER = $(PY_BIN) -m pip
-VENV_ACTIVATE = . rally/.venv/bin/activate
+RALLY_SUBMODULE = rally
+VENV_ACTIVATE_FILE = $(RALLY_SUBMODULE)/.venv/bin/activate
+VENV_ACTIVATE = . $(VENV_ACTIVATE)
 export TRACK_DIRS = $(shell find -E . -regex ".*/track\.json"|sed -r 's|/[^/]+$$||' | sort -u)
+# Compatible distribution for this branch
+IT_DISTRIBUTION = 7.15.1
 
-check-venv:
-	@if [[ ! -f $(VENV_ACTIVATE_FILE) ]]; then \
-	printf $(VE_MISSING_HELP); \
+checkout-rally:
+	@if [[ ! -d $(RALLY_SUBMODULE) ]]; then \
+	printf "Initializing Rally submodule...\n"; \
+    git submodule update --init; \
 	fi
 
-install: check-venv
-	. $(VENV_ACTIVATE_FILE); $(PIP_WRAPPER) install -r requirements.txt
+init-venv: checkout-rally
+	@if [[ ! -f $(VENV_ACTIVATE_FILE) ]]; then \
+	printf "Initializing virtual environment for Rally submodule...\n"; \
+    cd rally && make venv-create; \
+	fi
 
-lint: check-venv
-	@find ** -name "*.py" -exec $(VEPYLINT) -j0 -rn --rcfile=$(CURDIR)/.pylintrc \{\} +
+# keep development dependencies in sync with Rally
+install: init-venv
+	cd rally && make install
+
+lint: install
+	@. $(VENV_ACTIVATE_FILE); find $(TRACK_DIRS) -name "*.py" -exec pylint -j0 -rn --rcfile=$(CURDIR)/.pylintrc \{\} +
 	@. $(VENV_ACTIVATE_FILE); black --config=black.toml --check **
 	@. $(VENV_ACTIVATE_FILE); isort --check **
 
-format: check-venv
+format: install
 	@. $(VENV_ACTIVATE_FILE); black --config=black.toml **
 	@. $(VENV_ACTIVATE_FILE); isort **
 
 precommit: lint
 
-it: check-venv install
-	. $(VENV_ACTIVATE_FILE); for track_path in $(TRACK_DIRS); do esrally race --track-path="$$track_path" --test-mode; done
+it: install
+	. $(VENV_ACTIVATE_FILE); \
+    for track_path in $(TRACK_DIRS); \
+        do esrally race --track-path="$$track_path" --test-mode --kill-running-processes --distribution-version=$(IT_DISTRIBUTION) \
+        || exit 1;\
+	done
+
+.PHONY: init-venv install lint format precommit it

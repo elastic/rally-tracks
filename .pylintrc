@@ -1,15 +1,16 @@
-# original file generated using `pylint --generate-rcfile >.pylintrc`
-
 [MASTER]
 
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
 # run arbitrary code.
-extension-pkg-whitelist=ujson
+extension-pkg-whitelist=
+
+# Specify a score threshold to be exceeded before program exits with error.
+fail-under=10.0
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
-ignore=.git
+ignore=CVS
 
 # Add files or directories matching the regex patterns to the blacklist. The
 # regex matches against base names, not paths.
@@ -35,9 +36,6 @@ load-plugins=
 # Pickle collected data for later comparisons.
 persistent=yes
 
-# Specify a configuration file.
-#rcfile=
-
 # When enabled, pylint would attempt to guess common misconfiguration and emit
 # user-friendly hints instead of false-positive error messages.
 suggestion-mode=yes
@@ -46,10 +44,6 @@ suggestion-mode=yes
 # active Python interpreter and may run arbitrary code.
 unsafe-load-any-extension=no
 
-# pylint-quotes
-string-quote=double
-triple-quote=double
-docstring-quote=double
 
 [MESSAGES CONTROL]
 
@@ -144,14 +138,7 @@ disable=print-statement,
         xreadlines-attribute,
         deprecated-sys-function,
         exception-escape,
-        comprehension-escape,
-        # custom ignores start here
-        invalid-name,
-        missing-module-docstring,
-        missing-function-docstring,
-        missing-class-docstring,
-        duplicate-code
-
+        comprehension-escape
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -199,8 +186,8 @@ never-returning-functions=sys.exit
 
 [LOGGING]
 
-# Format style used to check logging format string. `old` means using %
-# formatting, `new` is for `{}` formatting,and `fstr` is for f-strings.
+# The type of string formatting that logging methods do. `old` means using %
+# formatting, `new` is for `{}` formatting.
 logging-format-style=old
 
 # Logging modules to check that the string format arguments are in logging
@@ -234,6 +221,9 @@ spelling-store-unknown-words=no
 notes=FIXME,
       XXX,
       TODO
+
+# Regular expression of note tags to take in consideration.
+#notes-rgx=
 
 
 [TYPECHECK]
@@ -337,17 +327,10 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=140
+max-line-length=100
 
 # Maximum number of lines in a module.
 max-module-lines=1000
-
-# List of optional constructs for which whitespace checking is disabled. `dict-
-# separator` is used to allow tabulation in dicts, etc.: {1  : 1,\n222: 2}.
-# `trailing-comma` allows a space between comma and closing bracket: (a, ).
-# `empty-line` allows space-only lines.
-no-space-check=trailing-comma,
-               dict-separator
 
 # Allow the body of a class to be on the same line as the declaration if body
 # contains single statement.
@@ -397,6 +380,10 @@ bad-names=foo,
           tutu,
           tata
 
+# Bad variable names regexes, separated by a comma. If names match any regex,
+# they will always be refused
+bad-names-rgxs=
+
 # Naming style matching correct class attribute names.
 class-attribute-naming-style=any
 
@@ -436,6 +423,10 @@ good-names=i,
            ex,
            Run,
            _
+
+# Good variable names regexes, separated by a comma. If names match any regex,
+# they will always be accepted
+good-names-rgxs=
 
 # Include a hint for the correct naming format with invalid-name.
 include-naming-hint=no
@@ -484,9 +475,12 @@ variable-naming-style=snake_case
 
 [STRING]
 
-# This flag controls whether the implicit-str-concat-in-sequence should
-# generate a warning on implicit string concatenation in sequences defined over
-# several lines.
+# This flag controls whether inconsistent-quotes generates a warning when the
+# character used as a quote delimiter is used inconsistently within a module.
+check-quote-consistency=no
+
+# This flag controls whether the implicit-str-concat should generate a warning
+# on implicit string concatenation in sequences defined over several lines.
 check-str-concat-over-line-jumps=no
 
 

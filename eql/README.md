@@ -23,7 +23,7 @@ The queries have been selected using the following criterias:
 
 * **Isolation**: A query should capture the performance impact of an individual feature or a specific invocation of a feature.
 * **Focus on EQL**: The main focus is to test language features specific to EQL and not features of ES itself.
-* **Runtime**: Queries should not run longer than ~3s to reach a target throughput of at least 0.3qps. Because we aim to have at least 100 iterations of each query per nightly run to get enough statistical information, longer running queries would become too expensive.
+* **Runtime**: Queries should not run longer than ~3s to reach a target throughput of at least 0.3qps. Because we aim to have at least 50 iterations of each query per nightly run to get enough statistical information, longer running queries would become too expensive.
 
 ### Challenge Configuration
 

@@ -1,5 +1,30 @@
 {% import "rally.helpers" as rally with context %}
 {% set cluster = cluster | default('') %}
+
+{% set task_options_10qps %}
+"tags": ["fast"],
+"target-throughput": 10,
+"clients": 2,
+"warmup-iterations": 50,
+"iterations": 100
+{% endset %}
+
+{% set task_options_5qps %}
+"tags": ["fast"],
+"target-throughput": 5,
+"clients": 2,
+"warmup-iterations": 50,
+"iterations": 100
+{% endset %}
+
+{% set task_options_03qps %}
+"tags": ["slow"],
+"target-throughput": 0.3,
+"clients": 2,
+"warmup-iterations": 25,
+"iterations": 50
+{% endset %}
+
 {
   "version": 2,
   "description": "EQL benchmarks based on endgame index of SIEM demo cluster",
@@ -187,11 +212,7 @@
           "query": "any where true"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
@@ -204,28 +225,20 @@
           "query": "any where false"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
-        "name": "condition_startsWith",
+        "name": "condition_scriptFilter",
         "operation-type": "eql",
         "request-timeout": 3600,
         "cluster" : "{{cluster}}",
         "index": "endgame-4.28*",
         "body": {
-          "query": "process where startsWith(process.name, \"ssh\")"
+          "query": "process where startsWith(concat(process.name, \" \", process.pid), \"ssh\")"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {# Basic Sequence Queries #}
     {
@@ -239,11 +252,7 @@
           "query": "sequence [any where true] [any where true]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
@@ -256,11 +265,7 @@
           "query": "sequence [any where true] [any where true] | head 200 | tail 100"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
@@ -273,11 +278,7 @@
           "query": "sequence [any where true] [any where true] | tail 200 | head 100"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
@@ -290,11 +291,7 @@
           "query": "sequence with maxspan=1m [any where true] [any where true]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
@@ -307,11 +304,7 @@
           "query": "sequence by ?source.ip [process where true] [process where true]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 5,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_5qps }}
     },
     {# 
       Sequences of varios lengths, sequence_2stages_fewThenFew_noJoinKey is the first query in the progression.
@@ -328,11 +321,7 @@
           "query": "sequence [process where process.pid == 910] [process where process.pid == 911] [process where process.pid == 912]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
@@ -345,11 +334,7 @@
           "query": "sequence [process where process.pid == 910] [process where process.pid == 911] [process where process.pid == 912] [process where process.pid == 913] [process where process.pid == 914]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
@@ -362,11 +347,7 @@
           "query": "sequence [process where process.pid == 910] [process where process.pid == 911] [process where process.pid == 912] [process where process.pid == 913] [process where process.pid == 914] [process where process.pid == 915] [process where process.pid == 916] [process where process.pid == 917] [process where process.pid == 918] [process where process.pid == 919]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 5,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_5qps }}
     },
     {# Sequence with varying selectivity, no join key #}
     {
@@ -380,11 +361,7 @@
           "query": "sequence [process where process.pid == 910] [process where process.pid == 911]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
@@ -397,11 +374,7 @@
           "query": "sequence [process where process.pid == 910] [process where process.pid > 80000]"
         }
       },
-      "tags": ["slow"],
-      "target-throughput": 0.3,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_03qps }}
     },
     {
       "operation": {
@@ -414,11 +387,7 @@
           "query": "sequence [process where process.pid > 80000] [process where process.pid == 911]"
         }
       },
-      "tags": ["slow"],
-      "target-throughput": 0.3,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_03qps }}
     },
     {
       "operation": {
@@ -431,11 +400,7 @@
           "query": "sequence [process where process.pid > 80000] [process where process.pid > 80000]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {# Sequence with varying selectivity, high cardinality join key #}
     {
@@ -449,11 +414,7 @@
           "query": "sequence by process.ppid [process where process.pid == 910] [process where process.pid == 911]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     },
     {
       "operation": {
@@ -466,11 +427,7 @@
           "query": "sequence by process.ppid [process where process.pid == 910] [process where process.pid > 80000]"
         }
       },
-      "tags": ["slow"],
-      "target-throughput": 0.3,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_03qps }}
     },
     {
       "operation": {
@@ -483,11 +440,7 @@
           "query": "sequence by process.ppid [process where process.pid > 80000] [process where process.pid == 911]"
         }
       },
-      "tags": ["slow"],
-      "target-throughput": 0.3,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_03qps }}
     },
     {
       "operation": {
@@ -500,11 +453,7 @@
           "query": "sequence by process.ppid [process where process.pid == 910] [process where process.pid == 911]"
         }
       },
-      "tags": ["fast"],
-      "target-throughput": 10,
-      "clients": 2,
-      "warmup-iterations": 50,
-      "iterations": 100
+      {{ task_options_10qps }}
     }
   ]
 }

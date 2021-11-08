@@ -59,7 +59,7 @@ it: install
 	. $(VENV_ACTIVATE_FILE); \
     for track_path in $(TRACK_DIRS); \
         do esrally race --track-path="$$track_path" --test-mode --kill-running-processes --distribution-version=$(IT_DISTRIBUTION) \
-        || exit 1;\
-	done
+        || exit 1; \
+    done
 
 .PHONY: init-venv install lint format precommit it

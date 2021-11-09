@@ -1,0 +1,30 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "VECTORS DEEP1B",
+  "indices": [
+    {
+      "name": "vectors_deep1b",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "vectors_deep1b",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 9990000,
+          "compressed-bytes": 7681794023,
+          "uncompressed-bytes": 20884322343
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

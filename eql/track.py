@@ -1,9 +1,6 @@
-import logging
 
 
 async def eql(es, params):
-    logger = logging.getLogger(__name__)
-    logger.info("Provided params [%s].", params)
     if cluster := params.get("cluster", ""):
         cluster += ":"
 

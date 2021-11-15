@@ -1,0 +1,32 @@
+{
+  "settings": {
+    "index.number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "source": {
+        "properties": {
+          "ip": {
+            "type": "ip"
+          },
+          "port": {
+            "type": "long"
+          }
+        }
+      },
+      "destination": {
+        "properties": {
+          "ip": {
+            "type": "ip"
+          },
+          "port": {
+            "type": "long"
+          }
+        }
+      }
+    }
+  }
+}

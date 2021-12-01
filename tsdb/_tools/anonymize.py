@@ -115,93 +115,59 @@ K8S_MESSAGE_PASSTHROUGH = {
   "Updated load balancer with new hosts",
   "Updated Node Allocatable limit across pods",
 }
+K8S_MESSAGE_SNIP = {
+  "event: Deleting": "Deleting node <snip>",
+  "event: Removing Node": "Removing node <snip>",
+  "event: Registered Node": "registered node <snip>",
+  "Created pod: ": "Create pod <snip>",
+  "Successfully assigned": "Successfully assigned <snip>",
+  "Created job": "Created job <snip>",
+  "Scaled up replica set": "Scaled up replica set",
+  "Pulling image": "Pulling image <snip>",
+  "Started container": "Started container <snip>",
+  "Successfully pulled image": "Successfully pulled image <snip>",
+  "Created container": "Created container <snip>",
+  "Cannot determine if job needs to be started": "Cannot determine if job needs to be started <snip>",
+  "Saw completed job": "Saw completed job <snip>",
+  "Deleted job": "Deleted job <snip>",
+  "AttachVolume.Attach succeeded for volume": "AttachVolume.Attach succeeded for volume <snip>",
+  "Scaled down replica set": "Scaled down replica set <snip>",
+  "Stopping container": "Stopping container <snip>",
+  "Deleted pod": "Deleted pod <snip>",
+  "Back-off pulling image": "Back-off pulling image <snip>",
+  "Liveness probe failed": "Liveness probe failed <snip>",
+  "delete Pod": "Delete pod <snip>",
+  "create Pod": "Create pod <snip>",
+  "status is now: NodeNotReady": "Node not ready <snip>",
+  "Readiness probe failed": "Readiness probe failed <snip>",
+  "Readiness probe errored": "Readiness probe errored <snip>",
+  "nodes are available:": "Bad nodes <snip>",
+  "Saw a job that the controller did not create or forgot": "Saw a job that the controller did not create or forgot <snip>",
+  "or sacrifice child": "Brutal murder by oomkiller",
+  "Scale-up": "Scale-up <snip>",
+  "Scale-down": "Scale-down <snip>",
+  "status is now": "<snip> status change <snip>",
+  "failed for volume": "<snip> failed for volume <snip>",
+  "pod triggered scale-up": "pod triggered scale-up <snip>",
+  "Unable to mount volumes for pod": "Unable to mount volumes for pod <snip>",
+  "Volume is already exclusively attached to one node": "Volume is already exclusively attached to one node <snip>",
+  "failed liveness probe, will be restarted": "<snip> failed liveness probe, will be restarted",
+  "Failed create pod sandbox": "Failed create pod sandbox <snip>",
+  "Error: cannot find volume": "Error: cannot find volume <snip>",
+  "Couldn't find key user in": "Couldn't find key user in <snip>",
+}
 def k8s_message(message):
   if message in K8S_MESSAGE_PASSTHROUGH:
     return message
-  if "event: Deleting" in message:
-    return "Deleting node <snip>"
-  if "event: Removing Node" in message:
-    return "Removing node <snip>"
-  if "event: Registered Node" in message:
-    return "registered node <snip>"
-  if "Created pod: " in message:
-    return "Create pod <snip>"
-  if "Successfully assigned" in message:
-    return "Successfully assigned <snip>"
-  if "Created job" in message:
-    return "Created job <snip>"
-  if "Scaled up replica set" in message:
-    return "Scaled up replica set"
-  if "Pulling image" in message:
-    return "Pulling image <snip>"
-  if "Started container" in message:
-    return "Started container <snip>"
-  if "Successfully pulled image" in message:
-    return "Successfully pulled image <snip>"
-  if "Created container" in message:
-    return "Created container <snip>"
-  if "Cannot determine if job needs to be started" in message:
-    return "Cannot determine if job needs to be started <snip>"
-  if "Saw completed job" in message:
-    return "Saw completed job <snip>"
-  if "Deleted job" in message:
-    return "Deleted job <snip>"
-  if "AttachVolume.Attach succeeded for volume" in message:
-    return "AttachVolume.Attach succeeded for volume <snip>"
-  if "Scaled down replica set" in message:
-    return "Scaled down replica set <snip>"
-  if "Stopping container" in message:
-    return "Stopping container <snip>"
-  if "Deleted pod" in message:
-    return "Deleted pod <snip>"
-  if "Back-off pulling image" in message:
-    return "Back-off pulling image <snip>"
-  if "Container image " in message and "already present on machine" in message:
-    return "Container image <snip> already present on machine"
-  if "Liveness probe failed" in message:
-    return "Liveness probe failed <snip>"
-  if "delete Pod" in message:
-    return "Delete pod <snip>"
-  if "create Pod" in message:
-    return "Create pod <snip>"
-  if "status is now: NodeNotReady" in message:
-    return "Node not ready <snip>"
-  if "Readiness probe failed" in message:
-    return "Readiness probe failed <snip>"
-  if "Readiness probe errored" in message:
-    return "Readiness probe errored <snip>"
-  if "nodes are available:" in message:
-    return "Bad nodes <snip>"
-  if "Saw a job that the controller did not create or forgot" in message:
-    return "Saw a job that the controller did not create or forgot <snip>"
-  if "or sacrifice child" in message:
-    return "Brutal murder by oomkiller"
-  if "\"unmanaged\"" in message:
-    return str(uuid.uuid4())
-  if "Scale-up" in message:
-    return "Scale-up <snip>"
-  if "Scale-down" in message:
-    return "Scale-down <snip>"
-  if "status is now" in message:
-    return "<snip> status change <snip>"
-  if "failed for volume" in message:
-    return "<snip> failed for volume <snip>"
-  if "pod triggered scale-up" in message:
-    return "pod triggered scale-up <snip>"
-  if "Unable to mount volumes for pod" in message:
-    return "Unable to mount volumes for pod <snip>"
-  if "Volume is already exclusively attached to one node" in message:
-    return "Volume is already exclusively attached to one node <snip>"
-  if "failed liveness probe, will be restarted" in message:
-    return "<snip> failed liveness probe, will be restarted"
-  if "Failed create pod sandbox" in message:
-    return "Failed create pod sandbox <snip>"
-  if "Error: cannot find volume" in message:
-    return "Error: cannot find volume <snip>"
   if "Error: secret" in message and "not found" in message:
     return "Error: secret <snip> not found"
-  if "Couldn't find key user in" in message:
-    return "Couldn't find key user in <snip>"
+  if "Container image " in message and "already present on machine" in message:
+    return "Container image <snip> already present on machine"
+  if "\"unmanaged\"" in message:
+    return str(uuid.uuid4())
+  for trigger, replacement in K8S_MESSAGE_SNIP.items():
+    if trigger in message:
+      return replacement
   raise ValueError("unsupported k8s.event.message [{0}]".format(message))
 
 def k8s_event_generate_name(v):
@@ -262,21 +228,18 @@ def k8s_event_reason(v):
     return "Deleting <snip> because it does not exist in the cloud provider"
   raise ValueError("unsupported k8s.event.reason [{0}]".format(v))
 
-K8S_EVENT_TYPE_PASSTHROUGH = {"Normal", "Warning"}
 def k8s_event_type(v):
-  if v in K8S_EVENT_TYPE_PASSTHROUGH:
+  if v in {"Normal", "Warning"}:
     return v
   raise ValueError("unsupported k8s.event.type [{0}]".format(v))
 
-K8S_SYSTEM_CONTAINER_PASSTHROUGH = {"kubelet", "pods", "runtime"}
 def k8s_system_container(v):
-  if v in K8S_SYSTEM_CONTAINER_PASSTHROUGH:
+  if v in {"kubelet", "pods", "runtime"}:
     return v
   raise ValueError("unsupported k8s.system.container [{0}]".format(v))
 
-K8S_LABELS_HERITAGE_PASSTHROUGH = {"Helm", "Tiller"}
 def k8s_labels_heritage(v):
-  if v in K8S_LABELS_HERITAGE_PASSTHROUGH:
+  if v in {"Helm", "Tiller"}:
     return v
   raise ValueError("unsupported k8s.labels.heritage [{0}]".format(v))
 
@@ -303,16 +266,14 @@ def k8s_labels_k8s_os(v):
     return v
   raise ValueError("unsupported kubernetes.labels.kubernetes_io/os [{0}]".format(v))
 
-K8S_POD_STATUS_PHASE_PASSTHROUGH = {"failed", "pending", "running", "succeeded"}
 def k8s_pod_status_phase(v):
-  if v in K8S_POD_STATUS_PHASE_PASSTHROUGH:
+  if v in {"failed", "pending", "running", "succeeded"}:
     return v
   raise ValueError("unsupported kubernetes.pod.status.phase [{0}]".format(v))
 
-K8S_LABELS_NAME_PASSTHROUGH = {"glbc", "tiller"}
 k8s_labels_names = numbered("k8s-labels-name-")
 def k8s_labels_name(v):
-  if v in K8S_LABELS_NAME_PASSTHROUGH:
+  if v in {"glbc", "tiller"}:
     return v
   if v == "export-workday-logs-hourly":
     return k8s_labels_names(v)

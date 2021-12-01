@@ -49,10 +49,12 @@ run. We mostly err towards openness here, but with a dash of paranoia.
 
 ### Fetching new data
 
-To fetch new data, grab it from elastic-apps's monitoring cluster with something
+This data comes from a private elastic-apps private k8s cluster. If you have
+access to that cluster's logging then you can update the test data by
+fetching raw, non-anonymized data from it's monitoring cluster with something
 like elastic-dump. You want one document per line.
 
-OK! Now that you have the data, the goal is to get the anonymizer to run on the
+Now that you have the data, the goal is to get the anonymizer to run on the
 entire dump in one go. But, in order to do that, let's slice out parts of the
 file and make sure they can be processed first. Then we'll run them all at once.
 

@@ -53,7 +53,7 @@ def ips():
 def container_runtime(v):
   if v == "docker":
     return v
-  raise ValueError("unexepected service address [{0}]".format(v))
+  raise ValueError("unexpected service address [{0}]".format(v))
 
 def service_type(v):
   if v == "kubernetes":

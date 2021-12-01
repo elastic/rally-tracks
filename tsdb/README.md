@@ -3,8 +3,8 @@
 This data is anonymized monitoring data from elastic-apps designed to test
 our TSDB project. TSDB needs us to be careful how we anonymize. Too much
 randomization and TSDB can no longer do its job identifying time series and
-metrics and rates of change. Too little an everyone knows all the software we
-run. We mostly err towards openness here, but a dash of paranoia.
+metrics and rates of change. Too little and everyone knows all the software we
+run. We mostly err towards openness here, but with a dash of paranoia.
 
 
 ### Example document
@@ -21,7 +21,7 @@ run. We mostly err towards openness here, but a dash of paranoia.
       "fs": {
         "capacity": {"bytes": 7883960320},
         "used": {"bytes": 12288},
-        "inodes": {"used": 9,"free": 1924786,"count": 1924795},
+        "inodes": {"used": 9, "free": 1924786, "count": 1924795},
         "available": {"bytes": 7883948032}
       }
     }
@@ -49,7 +49,7 @@ run. We mostly err towards openness here, but a dash of paranoia.
 
 ### Fetching new data
 
-To fetch new data, grab it from elastic-apps's monitoring cluser with something
+To fetch new data, grab it from elastic-apps's monitoring cluster with something
 like elastic-dump. You want one document per line.
 
 OK! Now that you have the data, the goal is to get the anonymizer to run on the

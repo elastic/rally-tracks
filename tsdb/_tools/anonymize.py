@@ -34,7 +34,7 @@ def numbered(prefix):
     def number_it(v):
         if v not in numbers:
             numbers[v] = len(numbers)
-        return "{0}{1}".format(prefix, numbers[v])
+        return f"{prefix}{numbers[v]}"
 
     return number_it
 
@@ -64,13 +64,13 @@ def ips():
 def container_runtime(v):
     if v == "docker":
         return v
-    raise ValueError("unexpected service address [{0}]".format(v))
+    raise ValueError(f"unexpected service address [{v}]")
 
 
 def service_type(v):
     if v == "kubernetes":
         return v
-    raise ValueError("unexepected service type [{0}]".format(v))
+    raise ValueError(f"unexepected service type [{v}]")
 
 
 container_ids = {}
@@ -85,7 +85,7 @@ def container_id(id):
 def k8s_container_id(id):
     if id.startswith("docker://"):
         return "docker://" + container_id(id[len("docker://") :])
-    raise ValueError("unexepected k8s container prefix [{0}]".format(id))
+    raise ValueError(f"unexepected k8s container prefix [{id}]")
 
 
 K8S_IMAGE_PASSTHROUGH = {
@@ -113,7 +113,7 @@ def k8s_container_image(img):
             img[len("registry.replicated.com/gradleenterprise/") :]
         )
     if "elastic" in img:
-        raise ValueError("unexpected k8s container image [{0}]".format(img))
+        raise ValueError(f"unexpected k8s container image [{img}]")
     return k8s_images_other(img)
 
 
@@ -192,13 +192,13 @@ def k8s_message(message):
     for trigger, replacement in K8S_MESSAGE_SNIP.items():
         if trigger in message:
             return replacement
-    raise ValueError("unsupported k8s.event.message [{0}]".format(message))
+    raise ValueError(f"unsupported k8s.event.message [{message}]")
 
 
 def k8s_event_generate_name(v):
     if v == "":
         return v
-    raise ValueError("unsupported k8s.event.generate_name [{0}]".format(v))
+    raise ValueError(f"unsupported k8s.event.generate_name [{v}]")
 
 
 PASSTHROUGH_REASONS = {
@@ -254,25 +254,25 @@ def k8s_event_reason(v):
         return v
     if "because it does not exist in the cloud provider" in v:
         return "Deleting <snip> because it does not exist in the cloud provider"
-    raise ValueError("unsupported k8s.event.reason [{0}]".format(v))
+    raise ValueError(f"unsupported k8s.event.reason [{v}]")
 
 
 def k8s_event_type(v):
     if v in {"Normal", "Warning"}:
         return v
-    raise ValueError("unsupported k8s.event.type [{0}]".format(v))
+    raise ValueError(f"unsupported k8s.event.type [{v}]")
 
 
 def k8s_system_container(v):
     if v in {"kubelet", "pods", "runtime"}:
         return v
-    raise ValueError("unsupported k8s.system.container [{0}]".format(v))
+    raise ValueError(f"unsupported k8s.system.container [{v}]")
 
 
 def k8s_labels_heritage(v):
     if v in {"Helm", "Tiller"}:
         return v
-    raise ValueError("unsupported k8s.labels.heritage [{0}]".format(v))
+    raise ValueError(f"unsupported k8s.labels.heritage [{v}]")
 
 
 K8S_LABELS_K8S_APP_PASSTHROUGH = {
@@ -288,25 +288,25 @@ K8S_LABELS_K8S_APP_PASSTHROUGH = {
 def k8s_labels_k8s_app(v):
     if v in K8S_LABELS_K8S_APP_PASSTHROUGH:
         return v
-    raise ValueError("unsupported k8s.labels.k8s-app [{0}]".format(v))
+    raise ValueError(f"unsupported k8s.labels.k8s-app [{v}]")
 
 
 def k8s_labels_k8s_arch(v):
     if v == "amd64":
         return v
-    raise ValueError("unsupported kubernetes.labels.kubernetes_io/arch [{0}]".format(v))
+    raise ValueError(f"unsupported kubernetes.labels.kubernetes_io/arch [{v}]")
 
 
 def k8s_labels_k8s_os(v):
     if v == "linux":
         return v
-    raise ValueError("unsupported kubernetes.labels.kubernetes_io/os [{0}]".format(v))
+    raise ValueError(f"unsupported kubernetes.labels.kubernetes_io/os [{v}]")
 
 
 def k8s_pod_status_phase(v):
     if v in {"failed", "pending", "running", "succeeded"}:
         return v
-    raise ValueError("unsupported kubernetes.pod.status.phase [{0}]".format(v))
+    raise ValueError(f"unsupported kubernetes.pod.status.phase [{v}]")
 
 
 k8s_labels_names = numbered("k8s-labels-name-")
@@ -317,14 +317,14 @@ def k8s_labels_name(v):
         return v
     if v == "export-workday-logs-hourly":
         return k8s_labels_names(v)
-    raise ValueError("unsupported kubernetes.labels.name [{0}]".format(v))
+    raise ValueError(f"unsupported kubernetes.labels.name [{v}]")
 
 
 def k8s_labels_app_managed_by(v):
     if v == "Tiller":
         return v
     raise ValueError(
-        "unsupported kubernetes.labels.app_kubernetes_io/managed-by [{0}]".format(v)
+        f"unsupported kubernetes.labels.app_kubernetes_io/managed-by [{v}]"
     )
 
 
@@ -343,7 +343,7 @@ K8S_CONTAINER_STATUS_REASON = {
 def k8s_container_status_reason(v):
     if v in K8S_CONTAINER_STATUS_REASON:
         return v
-    raise ValueError("unsupported k8s.container.status.reason [{0}]".format(v))
+    raise ValueError(f"unsupported k8s.container.status.reason [{v}]")
 
 
 def metricbeat_error_message(message):
@@ -351,7 +351,7 @@ def metricbeat_error_message(message):
         return "Error fetching metrics <snip>"
     if "decoding of metric family failed" in message:
         return "Error fetching metrics <snip>"
-    raise ValueError("unsupported error.message [{0}]".format(message))
+    raise ValueError(f"unsupported error.message [{message}]")
 
 
 strategies = {
@@ -558,7 +558,7 @@ def anon(path, it):
             continue
         strategy = strategies.get(new_path)
         if not strategy:
-            raise KeyError("Unknown key [{0}] with value [{1}]".format(new_path, v))
+            raise KeyError(f"Unknown key [{new_path}] with value [{v}]")
         if strategy == "drop":
             continue
         if isinstance(it, list):
@@ -576,6 +576,6 @@ for line in sys.stdin:
         print(json.dumps(anonymized, separators=(",", ":")))
         count += 1
         if count % 1000 == 0:
-            print("Processed {0:012d} documents".format(count), file=sys.stderr)
+            print(f"Processed {count:012d} documents", file=sys.stderr)
     except Exception as e:
-        raise Exception("Error processing {0}".format(line)) from e
+        raise Exception(f"Error processing {line}") from e

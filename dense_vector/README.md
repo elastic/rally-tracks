@@ -1,8 +1,8 @@
-## VECTORS DEEP1B track
+## Dense vector track
 
-This track is for benchmarking indexing and knn search on indexed vectors introduced from elasticsearch 8.0. 
+This track is for benchmarking indexing and search on dense vector fields.
 
-This track is based on DEEP1B dataset used for image search. This track uses 10 million documents version: "deep10M.fvecs". The dataset can be downloaded from http://sites.skoltech.ru/compvision/noimi.
+This track is based on the DEEP1B image dataset. This track uses 10 million documents version: "deep10M.fvecs". The dataset can be downloaded from http://sites.skoltech.ru/compvision/noimi.
 
 This dataset contains 10M vectors, 9'990'000 of which are used for indexing, and 10'000 are used for search.
 

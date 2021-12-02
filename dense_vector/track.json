@@ -1,16 +1,16 @@
 {% import "rally.helpers" as rally with context %}
 {
   "version": 2,
-  "description": "VECTORS DEEP1B",
+  "description": "Benchmark for dense vector indexing and search",
   "indices": [
     {
-      "name": "vectors_deep1b",
+      "name": "vectors-deep1b",
       "body": "index.json"
     }
   ],
   "corpora": [
     {
-      "name": "vectors_deep1b",
+      "name": "vectors-deep1b",
       "documents": [
         {
           "source-file": "documents.json.bz2",

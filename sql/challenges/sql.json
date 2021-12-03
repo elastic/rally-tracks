@@ -7,7 +7,7 @@
         "body": {
           "query": "{{ query }}",
           {# default page_timeout is not suited for benchmarks as it keeps the scroll contexts open for 45s #}
-          "page_timeout": "100ms",
+          "page_timeout": "1000ms",
           {# ES < 7.16 uses request_timeout as page_timeout. #}
           "request_timeout": "1000ms"
         }
@@ -28,7 +28,7 @@
         "body": {
           "query": "{{ query }}",
           {# default page_timeout is not suited for benchmarks as it keeps the scroll contexts open for 45s #}
-          "page_timeout": "100ms",
+          "page_timeout": "2000ms",
           {# ES < 7.16 uses request_timeout as page_timeout. #}
           "request_timeout": "2000ms"
         }
@@ -50,8 +50,8 @@
           "query": "{{ query }}",
           {# ES < 7.16 uses page_timeout as the timeout for search requests so the usual page_timeout of 100ms might not be enough
             (see https://github.com/elastic/elasticsearch/pull/79360). #}
-          "page_timeout": "500ms",
-          "request_timeout": "10000ms"
+          "page_timeout": "5000ms",
+          "request_timeout": "5000ms"
         }
       },
       "target-throughput": 1,
@@ -64,7 +64,7 @@
 
     {
       "name": "sql",
-      "description": "Checks the performance of SQL",
+      "description": "SQL query performance on NOAA weather data",
       "default": false,
       "schedule": [
         {

@@ -10,6 +10,8 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
+* `max_num_segments` (default: 1)
+* `query_percentage` (default: 100): Factor applied to the number of warmup-iterations and iterations for queries. Useful to run quick experiments but watch out for effects due to the shorter warmup period!
 
 ## Query Selection
 

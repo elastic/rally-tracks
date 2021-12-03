@@ -1,5 +1,9 @@
 {% import "rally.helpers" as rally with context %}
 
+{% macro scale_iterations(iterations) -%}
+{{ (iterations * (query_percentage | default(100)) / 100) | int }}
+{%- endmacro %}
+
 {% macro query_10qps(name, query) -%}
 {
   "operation": {
@@ -16,8 +20,8 @@
   },
   "target-throughput": 10,
   "clients": 2,
-  "warmup-iterations": 50,
-  "iterations": 100,
+  "warmup-iterations": {{ scale_iterations(50) }},
+  "iterations": {{ scale_iterations(100) }},
   "tags": ["query"]
 }
 {%- endmacro %}
@@ -38,8 +42,8 @@
   },
   "target-throughput": 5,
   "clients": 2,
-  "warmup-iterations": 50,
-  "iterations": 100,
+  "warmup-iterations": {{ scale_iterations(50) }},
+  "iterations": {{ scale_iterations(100) }},
   "tags": ["query"]
 }
 {%- endmacro %}
@@ -60,8 +64,8 @@
   },
   "target-throughput": 1,
   "clients": 2,
-  "warmup-iterations": 25,
-  "iterations": 50,
+  "warmup-iterations": {{ scale_iterations(25) }},
+  "iterations": {{ scale_iterations(50) }},
   "tags": ["query"]
 }
 {%- endmacro %}
@@ -137,7 +141,9 @@
         },
         {
           "operation": {
-            "operation-type": "force-merge"
+            "operation-type": "force-merge",
+            {# merge into 1 segment because distribution of data in the segments can influence query performance and cause variability between runs #}
+            "max-num-segments": {{max_num_segments | default(1)}}
           },
           "tags": "setup"
         },

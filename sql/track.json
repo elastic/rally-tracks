@@ -142,6 +142,7 @@
         {
           "operation": {
             "operation-type": "force-merge",
+            "request-timeout": 7200,
             {# merge into 1 segment because distribution of data in the segments can influence query performance and cause variability between runs #}
             "max-num-segments": {{max_num_segments | default(1)}}
           },

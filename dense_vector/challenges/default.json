@@ -1,6 +1,6 @@
 {
-  "name": "index-and-query",
-  "description": "indexes vectors, force merges to a single segment, queries",
+  "name": "index-and-search",
+  "description": "indexes vectors, force merges to a single segment, then searches them",
   "default": true,
   "schedule": [
     {
@@ -50,6 +50,13 @@
         "retry-until-success": true,
         "include-in-reporting": false
       }
+    },
+    {
+      "name": "knn-search",
+      "operation": "knn-search",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 4
     }
   ]
-}  
+}

@@ -1,6 +1,9 @@
 {
   "settings": {
-    "index.number_of_replicas": 0
+    "index": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    }
   },
   "mappings": {
     "dynamic": "strict",
@@ -15,9 +18,9 @@
         "similarity": "dot_product",
         "index_options": {
           "type": "hnsw",
-          "m": 16,
+          "m": 32,
           "ef_construction": 100
-        }  
+        }
       }
     }
   }

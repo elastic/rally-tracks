@@ -4,19 +4,20 @@
   "description": "Benchmark for dense vector indexing and search",
   "indices": [
     {
-      "name": "vectors-deep1b",
+      "name": "vectors",
       "body": "index.json"
     }
   ],
   "corpora": [
     {
-      "name": "vectors-deep1b",
+      "name": "dense-vector",
+      "base-url": "https://rally-tracks.elastic.co/dense_vector",
       "documents": [
         {
           "source-file": "documents.json.bz2",
-          "document-count": 9990000,
-          "compressed-bytes": 7681794023,
-          "uncompressed-bytes": 20884322343
+          "document-count": 10000000,
+          "compressed-bytes": 7689453829,
+          "uncompressed-bytes": 20905226599
         }
       ]
     }

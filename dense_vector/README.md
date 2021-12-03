@@ -2,14 +2,15 @@
 
 This track is for benchmarking indexing and search on dense vector fields.
 
-This track is based on the DEEP1B image dataset. This track uses 10 million documents version: "deep10M.fvecs". The dataset can be downloaded from http://sites.skoltech.ru/compvision/noimi.
+The dataset contains 10 million vectors with 96 dimensions. It is based on the
+Yandex DEEP1B image dataset, which can be downloaded here:
+https://big-ann-benchmarks.com/. The dataset is created from the first 10
+million vectors of the "sample data" file called learn.350M.fbin.
 
-This dataset contains 10M vectors, 9'990'000 of which are used for indexing, and 10'000 are used for search.
-
-To generate json file from deep10M.fvecs run the command:
+To generate the JSON dataset run this command:
 
 ```bash
-python3 _tools/parse.py data/deep10M.fvecs > documents.json
+python3 _tools/parse.py data/learn.350M.fbin > documents.json
 ````
 
 ### Example Document
@@ -20,10 +21,9 @@ python3 _tools/parse.py data/deep10M.fvecs > documents.json
 }
 ```
 
-
 ### Parameters
 
-This track allows to overwrite the following parameters with Rally 0.8.0+ using `--track-params`:
+This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 
 * `bulk_size` (default: 5000)
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.

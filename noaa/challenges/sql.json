@@ -1,26 +1,66 @@
-    {% set task_options_10qps %}
+
+    {% macro query_10qps(name, query) -%}
+    {
+      "operation": {
+        "name": "{{ name }}",
+        "operation-type": "sql",
+        "body": {
+          "query": "{{ query }}",
+          {# default page_timeout is not suited for benchmarks as it keeps the scroll contexts open for 45s #}
+          "page_timeout": "100ms",
+          {# ES < 7.16 uses request_timeout as page_timeout. #}
+          "request_timeout": "1000ms"
+        }
+      },
       "target-throughput": 10,
       "clients": 2,
       "warmup-iterations": 50,
       "iterations": 100,
-      "tags": ["queries"]
-    {% endset %}
+      "tags": ["query"]
+    }
+    {%- endmacro %}
 
-    {% set task_options_5qps %}
-    "target-throughput": 5,
-    "clients": 2,
-    "warmup-iterations": 50,
-    "iterations": 100,
-    "tags": ["queries"]
-    {% endset %}
+    {% macro query_5qps(name, query) -%}
+    {
+      "operation": {
+        "name": "{{ name }}",
+        "operation-type": "sql",
+        "body": {
+          "query": "{{ query }}",
+          {# default page_timeout is not suited for benchmarks as it keeps the scroll contexts open for 45s #}
+          "page_timeout": "100ms",
+          {# ES < 7.16 uses request_timeout as page_timeout. #}
+          "request_timeout": "2000ms"
+        }
+      },
+      "target-throughput": 5,
+      "clients": 2,
+      "warmup-iterations": 50,
+      "iterations": 100,
+      "tags": ["query"]
+    }
+    {%- endmacro %}
 
-    {% set task_options_1qps %}
-    "target-throughput": 1,
-    "clients": 2,
-    "warmup-iterations": 25,
-    "iterations": 50,
-    "tags": ["queries"]
-    {% endset %}
+    {% macro query_1qps(name, query) -%}
+    {
+      "operation": {
+        "name": "{{ name }}",
+        "operation-type": "sql",
+        "body": {
+          "query": "{{ query }}",
+          {# ES < 7.16 uses page_timeout as the timeout for search requests so the usual page_timeout of 100ms might not be enough
+            (see https://github.com/elastic/elasticsearch/pull/79360). #}
+          "page_timeout": "500ms",
+          "request_timeout": "10000ms"
+        }
+      },
+      "target-throughput": 1,
+      "clients": 2,
+      "warmup-iterations": 25,
+      "iterations": 50,
+      "tags": ["query"]
+    }
+    {%- endmacro %}
 
     {
       "name": "sql",
@@ -53,7 +93,6 @@
         },
         {
           "operation": "index",
-          "#COMMENT": "This is an incredibly short warmup time period but it is necessary to get also measurement samples. As this benchmark is rather about search than indexing this is ok.",
           "warmup-time-period": 10,
           "clients": {{bulk_indexing_clients | default(8)}},
           "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
@@ -65,15 +104,30 @@
           "tags": ["setup"]
         },
         {
-          "operation": "force-merge",
-          "tags": ["setup"],
-          "clients": 1{%- if max_num_segments is defined %},
-          "max-num-segments": {{max_num_segments}}
-          {%- endif %}
+          "operation": {
+            "operation-type": "force-merge"{%- if max_num_segments is defined %},
+            "max-num-segments": {{max_num_segments}}
+            {%- endif %}
+          },
+          "tags": "setup"
         },
         {
           "name": "refresh-after-force-merge",
           "operation": "refresh",
+          "tags": ["setup"]
+        },
+        {
+          "operation": {
+            "name": "wait-until-merges-finish",
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          },
           "tags": ["setup"]
         },
         {
@@ -88,186 +142,78 @@
           },
           "tags": ["setup"]
         },
-        {
-          "operation": {
-            "name": "select_const",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT 1"
-            }
-          },
-          {{ task_options_10qps }}
-        },
-        {
-          "operation": {
-            "name": "select_star",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT * FROM \"weather-data-2016\""
-            }
-          },
-          {{ task_options_10qps }}
-        },
-        {
-          "operation": {
-            "name": "select_field",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name FROM \"weather-data-2016\""
-            }
-          },
-          {{ task_options_10qps }}
-        },
-        {
-          "operation": {
-            "name": "select_scriptField",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT LCASE(SUBSTRING(station.name, 0, 2)) FROM \"weather-data-2016\""
-            }
-          },
-          {{ task_options_10qps }}
-        },
-        {
-          "operation": {
-            "name": "select_stringScriptFilter",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name FROM \"weather-data-2016\" WHERE LCASE(SUBSTRING(station.name, 0, 2)) = 'sa' AND station.elevation > 2800"
-            }
-          },
-          {{ task_options_1qps }}
-        },
-        {
-          "operation": {
-            "name": "select_stringScriptFilterWithLimit",
-            {# https://github.com/elastic/elasticsearch/issues/80523 #}
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name FROM \"weather-data-2016\" WHERE LCASE(SUBSTRING(station.name, 0, 2)) = 'sa' AND station.elevation > 2800 LIMIT 10"
-            }
-          },
-          {{ task_options_1qps }}
-        },
-        {
-          "operation": {
-            "name": "select_numericScriptFilter",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name FROM \"weather-data-2016\" WHERE CEIL(TMIN) % 7 = 5 AND station.elevation > 2800"
-            }
-          },
-          {{ task_options_5qps }}
-        },
-        {
-          "operation": {
-            "name": "select_stringScriptSort",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name FROM \"weather-data-2016\" WHERE station.elevation > 2800 ORDER BY LCASE(SUBSTRING(station.name, 0, 2))"
-            }
-          },
-          {{ task_options_1qps }}
-        },
-        {
-          "operation": {
-            "name": "select_numericScriptSort",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name FROM \"weather-data-2016\" WHERE station.elevation > 2800 ORDER BY CEIL(TMIN) % 7 = 5"
-            }
-          },
-          {{ task_options_5qps }}
-        },
-        {
-          "operation": {
-            "name": "aggregate_byStringScript",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT LCASE(SUBSTRING(station.name, 0, 2)) FROM \"weather-data-2016\" WHERE station.elevation > 2800 GROUP BY 1"
-            }
-          },
-          {{ task_options_1qps }}
-        },
-        {
-          "operation": {
-            "name": "aggregate_byNumericScript",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT CEIL(TMIN) % 7 FROM \"weather-data-2016\" WHERE station.elevation > 2800 GROUP BY 1"
-            }
-          },
-          {{ task_options_5qps }}
-        },
-        {
-          "operation": {
-            "name": "aggregate_overStringScript",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name, SUM(LENGTH(SUBSTRING(station.name, 0, 5))) S FROM \"weather-data-2016\" WHERE station.elevation > 2800 GROUP BY 1"
-            }
-          },
-          {{ task_options_1qps }}
-        },
-        {
-          "operation": {
-            "name": "aggregate_overStringScript_sortByAggregate",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name, SUM(LENGTH(SUBSTRING(station.name, 0, 5))) S FROM \"weather-data-2016\" WHERE station.elevation > 2800 GROUP BY 1 ORDER BY S"
-            }
-          },
-          {{ task_options_1qps }}
-        },
-        {
-          "operation": {
-            "name": "aggregate_overStringScript_filterByAggregate",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name, SUM(LENGTH(SUBSTRING(station.name, 0, 5))) S FROM \"weather-data-2016\" WHERE station.elevation > 2800 GROUP BY 1 HAVING S > 1000"
-            }
-          },
-          {{ task_options_1qps }}
-        },
-        {
-          "operation": {
-            "name": "aggregate_overNumericScript",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name, SUM(CEIL(TMIN) % 7) FROM \"weather-data-2016\" WHERE station.elevation > 2800 GROUP BY 1"
-            }
-          },
-          {{ task_options_5qps }}
-        },
-        {
-          "operation": {
-            "name": "aggregate_overNumericScript_sortByAggregate",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name, SUM(CEIL(TMIN) % 7) FROM \"weather-data-2016\" WHERE station.elevation > 2800 GROUP BY 1 ORDER BY 2"
-            }
-          },
-          {{ task_options_5qps }}
-        },
-        {
-          "operation": {
-            "name": "aggregate_overNumericScript_filterByAggregate",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT station.name, SUM(CEIL(TMIN) % 7) S FROM \"weather-data-2016\" WHERE station.elevation > 2800 GROUP BY 1 HAVING S > 0"
-            }
-          },
-          {{ task_options_5qps }}
-        },
-        {
-          "operation": {
-            "name": "pivot",
-            "operation-type": "sql",
-            "body": {
-              "query": "SELECT * FROM (SELECT station.country_code, TMIN FROM \"weather-data-2016\") PIVOT (AVG(TMIN) FOR station.country_code IN ('AS', 'CA'))"
-            }
-          },
-          {{ task_options_1qps }}
-        }
+        {{ query_10qps(
+            "select_const",
+            "SELECT 1"
+        ) }},
+        {{ query_10qps(
+            "select_star",
+            "SELECT * FROM \\\"weather-data-2016\\\""
+        ) }},
+        {{ query_10qps(
+            "select_field",
+            "SELECT station.name FROM \\\"weather-data-2016\\\""
+        ) }},
+        {{ query_10qps(
+            "select_scriptField",
+            "SELECT LCASE(SUBSTRING(station.name, 0, 2)) FROM \\\"weather-data-2016\\\""
+        ) }},
+        {{ query_1qps(
+             "select_stringScriptFilter", 
+             "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE LCASE(SUBSTRING(station.name, 0, 2)) = 'sa' AND station.elevation > 2800"
+        ) }},
+        {# https://github.com/elastic/elasticsearch/issues/80523 #}
+        {{ query_1qps(
+             "select_stringScriptFilterWithLimit", 
+             "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE LCASE(SUBSTRING(station.name, 0, 2)) = 'sa' AND station.elevation > 2800 LIMIT 10"
+        ) }},
+        {{ query_5qps(
+            "select_numericScriptFilter",
+            "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE CEIL(TMIN) % 7 = 5 AND station.elevation > 2800"
+        ) }},
+        {{ query_1qps(
+            "select_stringScriptSort",
+            "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 ORDER BY LCASE(SUBSTRING(station.name, 0, 2))"
+        ) }},
+        {{ query_5qps(
+            "select_numericScriptSort",
+            "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 ORDER BY CEIL(TMIN) % 7 = 5"
+        ) }},
+        {{ query_1qps(
+            "aggregate_byStringScript",
+            "SELECT LCASE(SUBSTRING(station.name, 0, 2)) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1"
+        ) }},
+        {{ query_5qps(
+            "aggregate_byNumericScript",
+            "SELECT CEIL(TMIN) % 7 FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1"
+        ) }},
+        {{ query_1qps(
+            "aggregate_overStringScript",
+            "SELECT station.name, SUM(LENGTH(SUBSTRING(station.name, 0, 5))) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1"
+        ) }},
+        {{ query_1qps(
+            "aggregate_overStringScript_sortByAggregate",
+            "SELECT station.name, SUM(LENGTH(SUBSTRING(station.name, 0, 5))) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 ORDER BY S"
+        ) }},
+        {{ query_1qps(
+            "aggregate_overStringScript_filterByAggregate",
+            "SELECT station.name, SUM(LENGTH(SUBSTRING(station.name, 0, 5))) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 HAVING S > 1000"
+        ) }},
+        {{ query_5qps(
+            "aggregate_overNumericScript",
+            "SELECT station.name, SUM(CEIL(TMIN) % 7) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1"
+        ) }},
+        {{ query_5qps(
+            "aggregate_overNumericScript_sortByAggregate",
+            "SELECT station.name, SUM(CEIL(TMIN) % 7) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 ORDER BY 2"
+        ) }},
+        {{ query_5qps(
+            "aggregate_overNumericScript_filterByAggregate",
+            "SELECT station.name, SUM(CEIL(TMIN) % 7) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 HAVING S > 0"
+        ) }},
+        {{ query_1qps(
+            "pivot",
+            "SELECT * FROM (SELECT station.country_code, TMIN FROM \\\"weather-data-2016\\\") PIVOT (AVG(TMIN) FOR station.country_code IN ('AS', 'CA'))"
+        ) }}
       ]
     }

@@ -1,5 +1,3 @@
-
-
 async def sql(es, params):    
     await es.sql.query(
         body=params["body"]

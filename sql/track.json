@@ -1,0 +1,258 @@
+{% import "rally.helpers" as rally with context %}
+
+{% macro scale_iterations(iterations) -%}
+{{ (iterations * (query_percentage | default(100)) / 100) | int }}
+{%- endmacro %}
+
+{% macro query_10qps(name, query) -%}
+{
+  "operation": {
+    "name": "{{ name }}",
+    "operation-type": "sql",
+    "body": {
+      "query": "{{ query }}",
+      {# default page_timeout is not suited for benchmarks as it keeps the scroll contexts open for 45s.
+        Because ES < 7.16 uses `request_timeout` as `page_timeout` the values need to be identical but high enough such that
+        the requests do not time out. #}
+      "page_timeout": "1000ms",
+      "request_timeout": "1000ms"
+    }
+  },
+  "target-throughput": 10,
+  "clients": 2,
+  "warmup-iterations": {{ scale_iterations(50) }},
+  "iterations": {{ scale_iterations(100) }},
+  "tags": ["query"]
+}
+{%- endmacro %}
+
+{% macro query_5qps(name, query) -%}
+{
+  "operation": {
+    "name": "{{ name }}",
+    "operation-type": "sql",
+    "body": {
+      "query": "{{ query }}",
+      {# default page_timeout is not suited for benchmarks as it keeps the scroll contexts open for 45s.
+        Because ES < 7.16 uses `request_timeout` as `page_timeout` the values need to be identical but high enough such that
+        the requests do not time out. #}
+      "page_timeout": "2000ms",
+      "request_timeout": "2000ms"
+    }
+  },
+  "target-throughput": 5,
+  "clients": 2,
+  "warmup-iterations": {{ scale_iterations(50) }},
+  "iterations": {{ scale_iterations(100) }},
+  "tags": ["query"]
+}
+{%- endmacro %}
+
+{% macro query_1qps(name, query) -%}
+{
+  "operation": {
+    "name": "{{ name }}",
+    "operation-type": "sql",
+    "body": {
+      "query": "{{ query }}",
+      {# default page_timeout is not suited for benchmarks as it keeps the scroll contexts open for 45s.
+        Because ES < 7.16 uses `request_timeout` as `page_timeout` the values need to be identical but high enough such that
+        the requests do not time out. #}
+      "page_timeout": "5000ms",
+      "request_timeout": "5000ms"
+    }
+  },
+  "target-throughput": 1,
+  "clients": 2,
+  "warmup-iterations": {{ scale_iterations(25) }},
+  "iterations": {{ scale_iterations(50) }},
+  "tags": ["query"]
+}
+{%- endmacro %}
+
+{
+  "version": 2,
+  "description": "SQL query performance based on NOAA Weather data",
+  "indices": [
+    {
+      "name": "weather-data-2016",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "noaa",
+      "base-url": "https://rally-tracks.elastic.co/noaa-sql",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 33659481,
+          "compressed-bytes": 995480468,
+          "uncompressed-bytes": 9684262698
+        }
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "name": "sql",
+      "description": "SQL query performance on NOAA weather data",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "delete-index",
+          "tags": ["setup"]
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "weather-data-2016",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "index",
+          "operation": {
+            "operation-type": "bulk",
+            "bulk-size": 5000,
+            "ingest-percentage": {{ingest_percentage | default(100)}},
+            "warmup-time-period": 10,
+            "clients": 8
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh",
+          "tags": ["setup"]
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200,
+            {# merge into 1 segment because distribution of data in the segments can influence query performance and cause variability between runs #}
+            "max-num-segments": {{max_num_segments | default(1)}}
+          },
+          "tags": "setup"
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh",
+          "tags": ["setup"]
+        },
+        {
+          "operation": {
+            "name": "wait-until-merges-finish",
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          },
+          "tags": ["setup"]
+        },
+        {
+          "operation": {
+            "name": "increase-max-open-scoll-context",
+            "operation-type": "put-settings",
+            "body": {
+              "transient" : {
+                  "search.max_open_scroll_context" : "2000"
+              }
+            }
+          },
+          "tags": ["setup"]
+        },
+        {{ query_10qps(
+            "select_const",
+            "SELECT 1"
+        ) }},
+        {{ query_10qps(
+            "select_star",
+            "SELECT * FROM \\\"weather-data-2016\\\""
+        ) }},
+        {{ query_10qps(
+            "select_field",
+            "SELECT station.name FROM \\\"weather-data-2016\\\""
+        ) }},
+        {{ query_10qps(
+            "select_scriptField",
+            "SELECT LCASE(SUBSTRING(station.name, 0, 2)) FROM \\\"weather-data-2016\\\""
+        ) }},
+        {{ query_1qps(
+             "select_stringScriptFilter", 
+             "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE LCASE(SUBSTRING(station.name, 0, 2)) = 'sa' AND station.elevation > 2800"
+        ) }},
+        {# https://github.com/elastic/elasticsearch/issues/80523 #}
+        {{ query_1qps(
+             "select_stringScriptFilterWithLimit", 
+             "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE LCASE(SUBSTRING(station.name, 0, 2)) = 'sa' AND station.elevation > 2800 LIMIT 10"
+        ) }},
+        {{ query_5qps(
+            "select_numericScriptFilter",
+            "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE CEIL(TMIN) % 7 = 5 AND station.elevation > 2800"
+        ) }},
+        {{ query_1qps(
+            "select_stringScriptSort",
+            "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 ORDER BY LCASE(SUBSTRING(station.name, 0, 2))"
+        ) }},
+        {{ query_5qps(
+            "select_numericScriptSort",
+            "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 ORDER BY CEIL(TMIN) % 7 = 5"
+        ) }},
+        {{ query_1qps(
+            "aggregate_byStringScript",
+            "SELECT LCASE(SUBSTRING(station.name, 0, 2)) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1"
+        ) }},
+        {{ query_5qps(
+            "aggregate_byNumericScript",
+            "SELECT CEIL(TMIN) % 7 FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1"
+        ) }},
+        {{ query_1qps(
+            "aggregate_overStringScript",
+            "SELECT station.name, SUM(LENGTH(SUBSTRING(station.name, 0, 5))) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1"
+        ) }},
+        {{ query_1qps(
+            "aggregate_overStringScript_sortByAggregate",
+            "SELECT station.name, SUM(LENGTH(SUBSTRING(station.name, 0, 5))) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 ORDER BY S"
+        ) }},
+        {{ query_1qps(
+            "aggregate_overStringScript_filterByAggregate",
+            "SELECT station.name, SUM(LENGTH(SUBSTRING(station.name, 0, 5))) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 HAVING S > 1000"
+        ) }},
+        {{ query_5qps(
+            "aggregate_overNumericScript",
+            "SELECT station.name, SUM(CEIL(TMIN) % 7) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1"
+        ) }},
+        {{ query_5qps(
+            "aggregate_overNumericScript_sortByAggregate",
+            "SELECT station.name, SUM(CEIL(TMIN) % 7) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 ORDER BY 2"
+        ) }},
+        {{ query_5qps(
+            "aggregate_overNumericScript_filterByAggregate",
+            "SELECT station.name, SUM(CEIL(TMIN) % 7) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 HAVING S > 0"
+        ) }},
+        {{ query_1qps(
+            "pivot",
+            "SELECT * FROM (SELECT station.country_code, TMIN FROM \\\"weather-data-2016\\\") PIVOT (AVG(TMIN) FOR station.country_code IN ('AS', 'CA'))"
+        ) }}
+      ]
+    }
+  ]
+}

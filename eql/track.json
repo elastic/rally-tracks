@@ -17,6 +17,14 @@
 "iterations": 100
 {% endset %}
 
+{% set task_options_3qps %}
+"tags": ["fast"],
+"target-throughput": 3,
+"clients": 2,
+"warmup-iterations": 50,
+"iterations": 100
+{% endset %}
+
 {% set task_options_03qps %}
 "tags": ["slow"],
 "target-throughput": 0.3,
@@ -238,7 +246,7 @@
           "query": "process where startsWith(concat(process.name, \" \", process.pid), \"ssh\")"
         }
       },
-      {{ task_options_10qps }}
+      {{ task_options_3qps }}
     },
     {# Basic Sequence Queries #}
     {
@@ -304,7 +312,7 @@
           "query": "sequence by ?source.ip [process where true] [process where true]"
         }
       },
-      {{ task_options_5qps }}
+      {{ task_options_3qps }}
     },
     {# 
       Sequences of varios lengths, sequence_2stages_fewThenFew_noJoinKey is the first query in the progression.

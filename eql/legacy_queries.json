@@ -1,0 +1,86 @@
+  {# queries to be phased out once the new queries in queries.json have been stabilized #}
+  {
+    "operation": {
+      "name": "sequence_2stage_nofilter_fetch1000_size_1000",
+      "operation-type": "eql",
+      "request-timeout": 3600,
+      "cluster" : "{{cluster}}",
+      "index": "endgame-4.28*",
+      "body": {
+        "query": "sequence by source.ip, destination.ip [process where true] [process where true]",
+        "fetch_size": 1000,
+      "size" : 1000
+      }
+    },
+    "clients": 5,
+    "warmup-iterations": 20,
+    "iterations": 50
+  },
+  {
+    "operation": {
+      "name": "sequence_2stage_equalityFilter_maxspan1m_fetch1000_size500_slow",
+      "operation-type": "eql",
+      "request-timeout": 3600,
+      "cluster" : "{{cluster}}",
+      "index": "endgame-4.28*",
+      "body": {
+        "query": "sequence by source.ip, destination.ip with maxspan=1m [process where user.name != \"SYSTEM\"] [process where user.name == \"SYSTEM\"]",
+        "fetch_size": 1000,
+      "size" : 500
+      }
+    },
+    "clients": 2,
+    "warmup-iterations": 5,
+    "iterations": 20
+  },
+  {
+    "operation": {
+      "name": "sequence_2stage_nofilter_fetch1000_size1000_tail1000_head200",
+      "operation-type": "eql",
+      "request-timeout": 3600,
+      "cluster" : "{{cluster}}",
+      "index": "endgame-4.28*",
+      "body": {
+        "query": "sequence by source.ip, destination.ip [process where true] [process where true] | tail 1000 | head 200",
+        "fetch_size": 1000,
+      "size" : 1000
+      }
+    },
+    "clients": 5,
+    "warmup-iterations": 25,
+    "iterations": 100
+  },
+  {
+    "operation": {
+      "name": "sequence_4stage_nofilter_maxspan5m_fetch1000_size100_head100_tail50",
+      "operation-type": "eql",
+      "request-timeout": 3600,
+      "cluster" : "{{cluster}}",
+      "index": "endgame-4.28*",
+      "body": {
+        "query": "sequence by source.ip, destination.ip with maxspan=5m [process where true] [process where true] [process where true] [network where true] |head 100 | tail 50",
+        "fetch_size": 1000,
+      "size" : 100
+      }
+    },
+    "clients": 5,
+    "warmup-iterations": 20,
+    "iterations": 50
+  },
+  {
+    "operation": {
+      "name": "sequence_3stage_startsWithfilter_maxspan30m_fetch1000_size100_tail100_head50",
+      "operation-type": "eql",
+      "request-timeout": 3600,
+      "cluster" : "{{cluster}}",
+      "index": "endgame-4.28*",
+      "body": {
+        "query": "sequence by host.name with maxspan=30m [process where startsWith(process.name, \"ssh\") == true] by process.ppid [process where startsWith(process.name, \"ssh\") == false] by process.ppid [process where startsWith(process.name, \"ssh\") == true] by process.pid | tail 100 | head 50",
+        "fetch_size": 1000,
+      "size" : 100
+      }
+    },
+    "clients": 5,
+    "warmup-iterations": 25,
+    "iterations": 100
+  }

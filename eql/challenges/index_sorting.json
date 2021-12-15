@@ -1,0 +1,75 @@
+{
+  "default": false,
+  "name": "index-sorting",
+  "schedule": [
+    {
+      "operation": "delete-index",
+      "tags": "setup"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": { 
+          "index.sort.field": "@timestamp",
+          "index.sort.order": "desc"
+        }
+      },
+      "tags": "setup"
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "endgame-4.28.2-000001",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      },
+      "tags": "setup"
+    },
+    {
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(5000)}},
+        "ingest-percentage": {{ingest_percentage | default(100)}}
+      },
+      "clients": {{bulk_indexing_clients | default(8)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "tags": "setup"
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh",
+      "tags": "setup"
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "request-timeout": 7200,
+        "max-num-segments": 1
+      },
+      "tags": "setup"
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "operation": "refresh",
+      "tags": "setup"
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      },
+      "tags": "setup"
+    },
+    {% include 'queries.json' %}
+  ]
+}

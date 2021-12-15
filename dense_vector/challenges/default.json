@@ -25,7 +25,7 @@
     {
       "operation": "index-append",
       "warmup-time-period": {{ bulk_warmup | default(40) | int }},
-      "clients": {{bulk_indexing_clients | default(8)}}
+      "clients": {{bulk_indexing_clients | default(1)}}
     },
     {
       "operation": {

@@ -1,0 +1,31 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark for dense vector indexing and search",
+  "indices": [
+    {
+      "name": "vectors",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "dense-vector",
+      "base-url": "https://rally-tracks.elastic.co/dense_vector",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 10000000,
+          "compressed-bytes": 7689453829,
+          "uncompressed-bytes": 20905226599
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

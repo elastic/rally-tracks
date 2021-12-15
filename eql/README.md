@@ -27,6 +27,6 @@ The queries have been selected using the following criterias:
 
 ### Challenge Configuration
 
-The newer challenges in this track aim to measure the request latency and not the maximal throughput. This assumes that the main access pattern for EQL is interactive where one or more users issue successive requests (as opposed to a batch process that maximizes query throughput). Hence, they use the `target-throughput` property to avoid congestion. The `target-throughput` should be chosen low enough such that it can be met by the benchmark (check whether it matches the Max Throughput statistic in the report).
+The newer tasks in this track aim to measure the request latency and not the maximal throughput. This assumes that the main access pattern for EQL is interactive where one or more users issue successive requests (as opposed to a batch process that maximizes query throughput). Hence, they use the `target-throughput` property to avoid congestion. The `target-throughput` should be chosen low enough such that it can be met by the benchmark (check whether it matches the Max Throughput statistic in the report).
 
 The `warmup-iterations` property has been chosen such that the measurement phase sees stable response times. This can be verified by analyzing the reported measurements in the `rally-metrics-*` index (or by checking that the 95th percentile is close to the median).

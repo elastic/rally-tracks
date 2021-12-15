@@ -24,7 +24,7 @@
     },
     {
       "operation": "index-append",
-      "warmup-time-period": {{ bulk_warmup | default(240) | int }},
+      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
       "clients": {{bulk_indexing_clients | default(8)}}
     },
     {
@@ -54,21 +54,21 @@
     {
       "name": "knn-search-10-500",
       "operation": "knn-search-10-500",
-      "warmup-iterations": 100,
+      "warmup-iterations": 50,
       "iterations": 100,
       "clients": 1
     },
     {
       "name": "knn-search-10-1000",
       "operation": "knn-search-10-1000",
-      "warmup-iterations": 100,
+      "warmup-iterations": 50,
       "iterations": 100,
       "clients": 1
     },
     {
       "name": "knn-search-100-1000",
       "operation": "knn-search-100-1000",
-      "warmup-iterations": 100,
+      "warmup-iterations": 50,
       "iterations": 100,
       "clients": 1
     },

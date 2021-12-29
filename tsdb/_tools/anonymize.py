@@ -369,7 +369,7 @@ strategies = {
     "event.duration": passthrough,
     "event.module": passthrough,
     "fields.cluster": passthrough,
-    "host.name": numbered("gke-apps-host-name"),
+    "host.name": numbered("gke-apps-host-name-"),
     "kubernetes.container.cpu.limit.cores": passthrough,
     "kubernetes.container.cpu.request.cores": passthrough,
     "kubernetes.container.cpu.usage.core.ns": passthrough,

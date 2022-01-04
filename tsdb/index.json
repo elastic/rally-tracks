@@ -5,7 +5,7 @@
       "number_of_replicas": {{number_of_replicas | default(0)}},
       "mapping.total_fields.limit": 10000,
       "codec": "{{codec | default('default')}}",
-      "mode": "{{index_mode | default('standard')}}",
+      "mode": "{{index_mode | default('time_series')}}",
       {% if index_mode is equalto 'time_series' %}
       "routing_path": [
         "metricset.name",

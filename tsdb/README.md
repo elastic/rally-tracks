@@ -1,10 +1,14 @@
 ## TSDB Track
 
 This data is anonymized monitoring data from elastic-apps designed to test
-our TSDB project. TSDB needs us to be careful how we anonymize. Too much
-randomization and TSDB can no longer do its job identifying time series and
-metrics and rates of change. Too little and everyone knows all the software we
-run. We mostly err towards openness here, but with a dash of paranoia.
+our TSDB project. TSDB support's only been added to Elasticsearch 8.0, and
+under a feature flag.
+
+
+TSDB needs us to be careful how we anonymize. Too much randomization and TSDB
+can no longer do its job identifying time series and metrics and rates of
+change. Too little and everyone knows all the software we run. We mostly err
+towards openness here, but with a dash of paranoia.
 
 
 ### Example document
@@ -117,5 +121,5 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
-* `index_mode` (default: standard): Whether to make a standard index (`standard`) or time series index (`time_series`)
+* `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.

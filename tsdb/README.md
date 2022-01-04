@@ -1,9 +1,9 @@
 ## TSDB Track
 
 This data is anonymized monitoring data from elastic-apps designed to test
-our TSDB project. TSDB support's only been added to Elasticsearch 8.0, and
-under a feature flag.
-
+our TSDB project. TSDB support is being actively developed in Elasticsearch
+right now so it's best to run this track only against Elasticsearch's
+master branch.
 
 TSDB needs us to be careful how we anonymize. Too much randomization and TSDB
 can no longer do its job identifying time series and metrics and rates of

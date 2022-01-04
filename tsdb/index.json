@@ -6,7 +6,7 @@
       "mapping.total_fields.limit": 10000,
       "codec": "{{codec | default('default')}}",
       "mode": "{{index_mode | default('time_series')}}",
-      {% if index_mode is equalto 'time_series' %}
+      {% if index_mode | default('time_series') is equalto 'time_series' %}
       "routing_path": [
         "metricset.name",
         "kubernetes.event.involved_object.uid",

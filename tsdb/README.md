@@ -123,3 +123,9 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.
+
+### License
+
+All articles that are included are licensed as CC-BY-NC-ND (https://creativecommons.org/licenses/by-nc-nd/4.0/)
+
+This data set is licensed under the same terms. Please refer to https://creativecommons.org/licenses/by-nc-nd/4.0/ for details.

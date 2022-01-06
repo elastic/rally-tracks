@@ -1,0 +1,32 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "metricbeat information for elastic-app k8s cluster",
+  "indices": [
+    {
+      "name": "tsdb",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "tsdb",
+      "base-url": "https://benchmarks-elasticsearch-org.s3.us-west-2.amazonaws.com/corpora/tsdb/",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 122613113,
+          "compressed-bytes": 11502047679,
+          "uncompressed-bytes": 138721940450
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

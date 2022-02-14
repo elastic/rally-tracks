@@ -26,7 +26,8 @@
         {
           "operation": "index-append-with-timestamp-pipeline",
           "warmup-time-period": 240,
-          "clients": {{bulk_indexing_clients | default(8)}}
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
 {%- else %}
         {

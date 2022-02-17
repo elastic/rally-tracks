@@ -12,6 +12,17 @@
     "properties": {
       "shape": {
         "type": "geo_shape"
+      },
+      "size": {
+        "type": "double",
+        "script": {
+        "source": """
+          ScriptDocValues.Geometry geometry = doc["location"];
+          double w = geometry.getMercatorWidth();
+          double h = geometry.getMercatorHeight();
+          emit(h * h + w * w);
+        """
+        }
       }
     }
   }

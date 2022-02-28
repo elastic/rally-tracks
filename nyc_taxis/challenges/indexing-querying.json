@@ -95,7 +95,7 @@
                 "aggs": {
                   "distance_histo": {
                     "histogram": {
-                      "field": "distance",
+                      "field": "trip_distance",
                       "interval": 1
                     },
                     "aggs": {

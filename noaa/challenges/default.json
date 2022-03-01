@@ -455,7 +455,13 @@
           "iterations": 50
         },
         {
-          "operation": "date-histo-string-terms-via-map",
+          "operation": "date-histo-string-terms-via-map-subset",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "date-histo-string-terms-via-global-ords-subset",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -473,7 +479,13 @@
           "iterations": 50
         },
         {
-          "operation": "date-histo-string-significant-terms-via-map",
+          "operation": "date-histo-string-significant-terms-via-map-subset",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "date-histo-string-significant-terms-via-global-ords-subset",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50

@@ -4,7 +4,7 @@
 {{ (iterations * (query_percentage | default(100)) / 100) | int }}
 {%- endmacro %}
 
-{% macro query_10qps(name, query) -%}
+{% macro query_10qps(name, query, pages=1, fetch_size=1000) -%}
 {
   "operation": {
     "name": "{{ name }}",
@@ -15,8 +15,10 @@
         Because ES < 7.16 uses `request_timeout` as `page_timeout` the values need to be identical but high enough such that
         the requests do not time out. #}
       "page_timeout": "1000ms",
-      "request_timeout": "1000ms"
-    }
+      "request_timeout": "1000ms",
+      "fetch_size": {{ fetch_size }}
+    },
+    "pages": {{ pages }}
   },
   "target-throughput": 10,
   "clients": 2,
@@ -26,7 +28,7 @@
 }
 {%- endmacro %}
 
-{% macro query_5qps(name, query) -%}
+{% macro query_5qps(name, query, pages=1, fetch_size=1000) -%}
 {
   "operation": {
     "name": "{{ name }}",
@@ -37,8 +39,10 @@
         Because ES < 7.16 uses `request_timeout` as `page_timeout` the values need to be identical but high enough such that
         the requests do not time out. #}
       "page_timeout": "2000ms",
-      "request_timeout": "2000ms"
-    }
+      "request_timeout": "2000ms",
+      "fetch_size": {{ fetch_size }}
+    },
+    "pages": {{ pages }}
   },
   "target-throughput": 5,
   "clients": 2,
@@ -48,7 +52,7 @@
 }
 {%- endmacro %}
 
-{% macro query_1qps(name, query) -%}
+{% macro query_1qps(name, query, pages=1, fetch_size=1000) -%}
 {
   "operation": {
     "name": "{{ name }}",
@@ -59,8 +63,10 @@
         Because ES < 7.16 uses `request_timeout` as `page_timeout` the values need to be identical but high enough such that
         the requests do not time out. #}
       "page_timeout": "5000ms",
-      "request_timeout": "5000ms"
-    }
+      "request_timeout": "5000ms",
+      "fetch_size": {{ fetch_size }}
+    },
+    "pages": {{ pages }}
   },
   "target-throughput": 1,
   "clients": 2,
@@ -180,6 +186,16 @@
           "tags": ["setup"]
         },
         {{ query_10qps(
+            "describe",
+            "DESCRIBE \\\"weather-data-2016\\\""
+        ) }},
+        {{ query_10qps(
+            "describe_5pages",
+            "DESCRIBE \\\"weather-data-2016\\\"",
+            5,
+            10
+        ) }},
+        {{ query_10qps(
             "select_const",
             "SELECT 1"
         ) }},
@@ -216,6 +232,11 @@
             "select_numericScriptSort",
             "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 ORDER BY CEIL(TMIN) % 7 = 5"
         ) }},
+        {{ query_10qps(
+            "select_5pages",
+            "SELECT station.name FROM \\\"weather-data-2016\\\"",
+            5
+        ) }},
         {{ query_1qps(
             "aggregate_byStringScript",
             "SELECT LCASE(SUBSTRING(station.name, 0, 2)) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1"
@@ -248,9 +269,24 @@
             "aggregate_overNumericScript_filterByAggregate",
             "SELECT station.name, SUM(CEIL(TMIN) % 7) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 HAVING S > 0"
         ) }},
+        {{ query_5qps(
+            "aggregate_5pages",
+            "SELECT station.name, COUNT(*) FROM \\\"weather-data-2016\\\" GROUP BY station.name",
+            5
+        ) }},
+        {{ query_5qps(
+            "aggregate_sortByAggregate_5pages",
+            "SELECT station.name, COUNT(*) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 1400 GROUP BY 1 ORDER BY 2",
+            5
+        ) }},
         {{ query_1qps(
             "pivot",
             "SELECT * FROM (SELECT station.country_code, TMIN FROM \\\"weather-data-2016\\\") PIVOT (AVG(TMIN) FOR station.country_code IN ('AS', 'CA'))"
+        ) }},
+        {{ query_5qps(
+            "pivot_5pages",
+            "SELECT * FROM (SELECT station.name, station.country_code FROM \\\"weather-data-2016\\\") PIVOT (COUNT(*) FOR station.country_code IN ('US', 'AS'))",
+            5
         ) }}
       ]
     }

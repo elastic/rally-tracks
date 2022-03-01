@@ -88,10 +88,10 @@
       "body": {
         "_source": false,
          "size" : 10000,
-         "fields": [{"field": "location", "format" : "mvt(9/255/341)"}],
+         "fields": [{"field": "shape", "format" : "mvt(9/255/341)"}],
          "query": {
            "geo_bounding_box": {
-             "location": {
+             "shape": {
                "top_left": [-0.703129, 51.618014],
                "bottom_right": [0, 51.179343]
              }
@@ -113,7 +113,7 @@
     "size" : 0,
     "query": {
     "geo_bounding_box": {
-      "location": {
+      "shape": {
         "top_left": [-0.703129, 51.618014],
         "bottom_right": [0, 51.179343]
        }

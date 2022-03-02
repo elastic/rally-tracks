@@ -407,6 +407,7 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh",
           "clients": 1
-        }
+        },
+        {% include 'aggs-tasks.json' %}
       ]
     }

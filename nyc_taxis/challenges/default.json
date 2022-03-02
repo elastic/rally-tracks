@@ -60,34 +60,16 @@
           "target-throughput": 3
         },
         {
-          "operation": "range",
-          "warmup-iterations": 50,
-          "iterations": 100,
-          "target-throughput": 0.7
-        },
-        {
-          "operation": "distance_amount_agg",
-          "warmup-iterations": 50,
-          "iterations": 100,
-          "target-throughput": 2
-        },
-        {
-          "operation": "autohisto_agg",
-          "warmup-iterations": 50,
-          "iterations": 100,
-          "target-throughput": 1.5
-        },
-        {
-          "operation": "date_histogram_agg",
-          "warmup-iterations": 500,
-          "iterations": 500,
-          "target-throughput": 1.5
-        },
-        {
           "name": "default_no_target",
           "operation": "default",
           "warmup-iterations": 50,
           "iterations": 100
+        },
+        {
+          "operation": "range",
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 0.7
         },
         {
           "name": "range_no_target",
@@ -96,16 +78,34 @@
           "iterations": 100
         },
         {
+          "operation": "distance_amount_agg",
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+        {
           "name": "distance_amount_agg_no_target",
           "operation": "distance_amount_agg",
           "warmup-iterations": 50,
           "iterations": 100
         },
         {
+          "operation": "autohisto_agg",
+          "warmup-iterations": 50,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
           "name": "autohisto_agg_no_target",
           "operation": "autohisto_agg",
           "warmup-iterations": 50,
           "iterations": 100
+        },
+        {
+          "operation": "date_histogram_agg",
+          "warmup-iterations": 500,
+          "iterations": 500,
+          "target-throughput": 1.5
         },
         {
           "name": "date_histogram_agg_no_target",

@@ -111,6 +111,25 @@ Once that finishes you need to generate `documents-1k.json` for easy testing:
 head -n 1000 documents.json > documents-1k.json
 ```
 
+Now you'll need to make the `-sorted` variant. First install https://github.com/winebarrel/jlsort .
+Then:
+```
+mkdir tmp
+TMPDIR=tmp ~/Downloads/jlsort/target/release/jlsort -k '@timestamp' documents.json > documents-sorted.json
+rm -rf tmp
+head -n 1000 documents-sorted.json > documents-sorted-1k.json
+```
+
+Now zip everything up:
+```
+pbzip2 documents-1k.json
+pbzip2 documents-sorted-1k.json
+pbzip2 documents.json
+pbzip2 documents-sorted.json
+```
+
+Now upload all of that to the AWS location from `track.json`.
+
 ### Parameters
 
 This track allows to overwrite the following parameters using `--track-params`:
@@ -123,6 +142,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.
+* `ingest_order` (default: jumbled): Should the data be loaded in `sorted` order or a more `jumbled`, mostly random order.
 
 ### License
 

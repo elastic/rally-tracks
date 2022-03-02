@@ -908,10 +908,18 @@
       }
     },
     {
-      "name": "date-histo-string-terms-via-map",
+      "name": "date-histo-string-terms-via-map-subset",
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "date": {
+              "gte": "2015-12-31T00:00:00.000Z",
+              "lte": "2016-03-31T00:00:00.000Z"
+            }
+          }
+        },
         "aggs": {
           "date": {
             "date_histogram": {
@@ -923,6 +931,37 @@
                 "terms": {
                   "field": "station.country",
                   "execution_hint": "map"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-string-terms-via-global-ords-subset",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "date": {
+              "gte": "2015-12-31T00:00:00.000Z",
+              "lte": "2016-03-31T00:00:00.000Z"
+            }
+          }
+        },
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "country": {
+                "terms": {
+                  "field": "station.country",
+                  "execution_hint": "global_ordinals"
                 }
               }
             }
@@ -976,10 +1015,18 @@
       }
     },
     {
-      "name": "date-histo-string-significant-terms-via-map",
+      "name": "date-histo-string-significant-terms-via-map-subset",
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "date": {
+              "gte": "2015-12-31T00:00:00.000Z",
+              "lte": "2016-03-31T00:00:00.000Z"
+            }
+          }
+        },
         "aggs": {
           "date": {
             "date_histogram": {
@@ -991,6 +1038,37 @@
                 "significant_terms": {
                   "field": "station.country",
                   "execution_hint": "map"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-string-significant-terms-via-global-ords-subset",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "date": {
+              "gte": "2015-12-31T00:00:00.000Z",
+              "lte": "2016-03-31T00:00:00.000Z"
+            }
+          }
+        },
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "date",
+              "calendar_interval": "1w"
+            },
+            "aggs": {
+              "country": {
+                "significant_terms": {
+                  "field": "station.country",
+                  "execution_hint": "global_ordinals"
                 }
               }
             }

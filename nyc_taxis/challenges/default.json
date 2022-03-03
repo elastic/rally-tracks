@@ -54,14 +54,20 @@
           "operation": "wait-until-merges-finish"
         },
         {
+          "name": "default_no_target",
+          "operation": "default",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
           "operation": "default",
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 3
         },
         {
-          "name": "default_no_target",
-          "operation": "default",
+          "name": "range_no_target",
+          "operation": "range",
           "warmup-iterations": 50,
           "iterations": 100
         },
@@ -72,8 +78,8 @@
           "target-throughput": 0.7
         },
         {
-          "name": "range_no_target",
-          "operation": "range",
+          "name": "distance_amount_agg_no_target",
+          "operation": "distance_amount_agg",
           "warmup-iterations": 50,
           "iterations": 100
         },
@@ -84,8 +90,8 @@
           "target-throughput": 2
         },
         {
-          "name": "distance_amount_agg_no_target",
-          "operation": "distance_amount_agg",
+          "name": "autohisto_agg_no_target",
+          "operation": "autohisto_agg",
           "warmup-iterations": 50,
           "iterations": 100
         },
@@ -96,22 +102,16 @@
           "target-throughput": 1.5
         },
         {
-          "name": "autohisto_agg_no_target",
-          "operation": "autohisto_agg",
-          "warmup-iterations": 50,
-          "iterations": 100
+          "name": "date_histogram_agg_no_target",
+          "operation": "date_histogram_agg",
+          "warmup-iterations": 500,
+          "iterations": 500
         },
         {
           "operation": "date_histogram_agg",
           "warmup-iterations": 500,
           "iterations": 500,
           "target-throughput": 1.5
-        },
-        {
-          "name": "date_histogram_agg_no_target",
-          "operation": "date_histogram_agg",
-          "warmup-iterations": 500,
-          "iterations": 500
         }
       ]
     },

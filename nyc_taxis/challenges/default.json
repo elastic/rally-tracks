@@ -69,7 +69,7 @@
           "operation": "distance_amount_agg",
           "warmup-iterations": 50,
           "iterations": 100,
-          "target-throughput": 2
+          "target-interval": 20
         },
         {
           "operation": "autohisto_agg",

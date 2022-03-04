@@ -27,6 +27,9 @@
       "beat": "metricbeat",
       "version": "7.6.2"
     },
+    "_source": {
+      "enabled": {{ source_enabled | default(true) | tojson }}
+    },
     "dynamic_templates": [
       {
         "labels": {

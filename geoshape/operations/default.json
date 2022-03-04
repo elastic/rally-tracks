@@ -20,26 +20,26 @@
       "corpora": "polygons"
     },
     {
-    "name": "index-append-linestrings",
-    "operation-type": "bulk",
-    "bulk-size": {{linestring_bulk_size | default(100)}},
-    "ingest-percentage": {{ingest_percentage | default(100)}},
-    "corpora": "default-linestrings"
+      "name": "index-append-linestrings",
+      "operation-type": "bulk",
+      "bulk-size": {{linestring_bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "default-linestrings"
     },
     {
-    "name": "index-append-multilinestrings",
-    "operation-type": "bulk",
-    "bulk-size": {{multilinestring_bulk_size | default(100)}},
-    "ingest-percentage": {{ingest_percentage | default(100)}},
-    "corpora": "default-multilinestrings"
+      "name": "index-append-multilinestrings",
+      "operation-type": "bulk",
+      "bulk-size": {{multilinestring_bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "default-multilinestrings"
     },
     {
-    "name": "index-append-polygons",
-    "operation-type": "bulk",
-    "bulk-size": {{polygon_bulk_size | default(100)}},
-    "ingest-percentage": {{ingest_percentage | default(100)}},
-    "corpora": "default-polygons"
-    },            
+      "name": "index-append-polygons",
+      "operation-type": "bulk",
+      "bulk-size": {{polygon_bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "default-polygons"
+    },
     {
       "name": "polygon",
       "operation-type": "search",
@@ -48,16 +48,16 @@
         "query": {
           "geo_shape": {
             "shape": {
-               "shape": {
-                  "type": "polygon",
-                  "coordinates" : [[
-                    [-0.1, 49.0],
-                    [5.0, 48.0],
-                    [15.0, 49.0],
-                    [14.0, 60.0],
-                    [-0.1, 61.0],
-                    [-0.1, 49.0]
-                  ]]
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
               }
             }
           }
@@ -73,8 +73,8 @@
           "geo_shape": {
             "shape": {
                "shape": {
-                  "type": "envelope",
-                  "coordinates" : [[-0.1, 61.0], [15.0, 48.0]]
+                 "type": "envelope",
+                 "coordinates" : [[-0.1, 61.0], [15.0, 48.0]]
               }
             }
           }
@@ -87,51 +87,51 @@
       "index": "osm*",
       "body": {
         "_source": false,
-         "size" : 10000,
-         "fields": [{"field": "shape", "format" : "mvt(9/255/341)"}],
-         "query": {
-           "geo_bounding_box": {
-             "shape": {
-               "top_left": [-0.703129, 51.618014],
-               "bottom_right": [0, 51.179343]
-             }
+        "size" : 10000,
+        "fields": [{"field": "shape", "format" : "mvt(9/255/341)"}],
+        "query": {
+          "geo_bounding_box": {
+            "shape": {
+              "top_left": [-0.703129, 51.618014],
+              "bottom_right": [0, 51.179343]
+            }
           }
-     },
-    "sort": [
-      {
-        "size": {
-        "order": "desc"
-        }
-      }
-    ]
-   },
-   {
-   "name": "mvt-grid",
-   "operation-type": "search",
-    "index": "osm*",
-    "body": {
-    "size" : 0,
-    "query": {
-    "geo_bounding_box": {
-      "shape": {
-        "top_left": [-0.703129, 51.618014],
-        "bottom_right": [0, 51.179343]
-       }
+        },
+        "sort": [
+          {
+            "size": {
+              "order": "desc"
+            }
+          }
+        ]
       }
     },
-    "aggs": {
-       "grid" : {
-          "geotile_grid" : {
-              "field": "shape"    
+    {
+      "name": "mvt-grid",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size" : 0,
+        "query": {
+          "geo_bounding_box": {
+            "shape": {
+              "top_left": [-0.703129, 51.618014],
+              "bottom_right": [0, 51.179343]
+            }
+          }
+        },
+        "aggs": {
+          "grid" : {
+            "geotile_grid" : {
+              "field": "shape",
               "precision" : 17,
               "size" : 65536,
               "bounds": {
                  "top_left": [-0.703129, 51.618014],
                  "bottom_right": [0, 51.179343]
-               }        
-           }
-         }
-       }
+              }
+            }
+          }
+        }
       }
-    } 
-  }
+    }

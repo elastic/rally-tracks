@@ -13,10 +13,6 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `max_num_segments` (default: 1)
 * `query_percentage` (default: 100): Factor applied to the number of warmup-iterations and iterations for queries. Useful to run quick experiments but watch out for effects due to the shorter warmup period!
 
-## Testing
-
-Because some of the pagination queries expect more than 1k records to work, `--test-mode` is not supported for this track. Instead, the `ingest_percentage` and `query_percentage` track parameters can be used to test the track: `--track-params="ingest_percentage:1,query_percentage:2"`
-
 ## Query Selection
 
 The queries have been selected using the following criterias:

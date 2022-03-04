@@ -68,7 +68,7 @@
         {
           "operation": "distance_amount_agg",
           "warmup-iterations": 50,
-          "iterations": 100,
+          "iterations": 50,
           "target-interval": 20
         },
         {
@@ -99,7 +99,7 @@
           "name": "distance_amount_agg_no_target",
           "operation": "distance_amount_agg",
           "warmup-iterations": 50,
-          "iterations": 100
+          "iterations": 50
         },
         {
           "name": "autohisto_agg_no_target",

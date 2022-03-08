@@ -54,6 +54,7 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
 * `max_num_segments` (default: not set): An integer specifying the max amount of segments the force-merge operation should use.
+* `include_aggs` (default: false): A boolean defining whether the 'aggs' specific tasks will be executed when running the `default` challenge.
 
 ### License
 

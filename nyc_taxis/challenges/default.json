@@ -610,6 +610,11 @@
           "iterations": 50
         },
         {
+          "operation": "auto_date_histogram",
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
           "operation": "auto_date_histogram_with_tz",
           "warmup-iterations": 10,
           "iterations": 50

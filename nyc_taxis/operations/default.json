@@ -241,6 +241,96 @@
       }
     },
     {
+      "name": "date_histogram_rate_hourly",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "calendar_interval": "hour"
+            },
+            "aggs": {
+              "hourly_rate": {
+                "rate": {
+                  "unit": "hour"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_rate_daily",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "calendar_interval": "hour"
+            },
+            "aggs": {
+              "hourly_rate": {
+                "rate": {
+                  "unit": "day"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_rate_weekly",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2016-01-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "calendar_interval": "hour"
+            },
+            "aggs": {
+              "hourly_rate": {
+                "rate": {
+                  "unit": "week"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "auto_date_histogram",
       "operation-type": "search",
       "body": {
@@ -310,6 +400,326 @@
               "total_amount": { "stats": { "field": "total_amount" } },
               "tip_amount": { "stats": { "field": "tip_amount" } },
               "trip_distance": { "stats": { "field": "trip_distance" } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-terms",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                { "vendor_id": { "terms": { "field": "vendor_id", "order": "desc" }}},
+                { "payment_type": { "terms": { "field": "payment_type", "order": "asc" }}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-histogram",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "histo": { "histogram": { "field": "total_amount", "interval": 5 } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-date_histogram-daily",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "date": { "date_histogram": { "field": "pickup_datetime", "calendar_interval": "day" } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-date_histogram-weekly",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "date": { "date_histogram": { "field": "pickup_datetime", "calendar_interval": "week" } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-date_histogram-monthly",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "date": { "date_histogram": { "field": "pickup_datetime", "calendar_interval": "month" } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-geotile_grid-precision-8",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "tile": { "geotile_grid": { "field": "pickup_location", "precision": 8 } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-geotile_grid-precision-12",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "tile": { "geotile_grid": { "field": "pickup_location", "precision": 12 } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-geotile_grid-precision-15",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "tile": { "geotile_grid": { "field": "pickup_location", "precision": 15 } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sampler-keyword",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "sample": {
+            "sampler": {
+              "shard_size": 50
+            },
+            "aggs": {
+              "vendors": {
+                "terms": {
+                  "field": "vendor_id",
+                  "size": 100
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sampler-numeric",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "sample": {
+            "sampler": {
+              "shard_size": 50
+            },
+            "aggs": {
+              "vendors": {
+                "terms": {
+                  "field": "passenger_count",
+                  "size": 100
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percentiles-tdigest-compression-default",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "trip_distance_percentiles": {
+            "percentiles": {
+              "field": "trip_distance"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percentiles-tdigest-compression-200",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "trip_distance_percentiles": {
+            "percentiles": {
+              "field": "trip_distance",
+              "tdigest": {
+                "compression": 200
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percentiles-hdr-3-digits",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "trip_distance_percentiles": {
+            "percentiles": {
+              "field": "trip_distance",
+              "hdr": {
+                "number_of_significant_value_digits": 3
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "derivative-date_histogram-daily",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "pickup_week": {
+            "date_histogram": {
+              "field": "pickup_datetime",
+              "calendar_interval": "day"
+            },
+            "aggs": {
+              "passenger_count_by_day": {
+                "sum": {
+                  "field": "passenger_count"
+                }
+              },
+              "passenger_count_derivative": {
+                "derivative": {
+                "buckets_path": "passenger_count_by_day"
+               }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "derivative-date_histogram-weekly",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "pickup_week": {
+            "date_histogram": {
+              "field": "pickup_datetime",
+              "calendar_interval": "week"
+            },
+            "aggs": {
+              "passenger_count_by_week": {
+                "sum": {
+                  "field": "passenger_count"
+                }
+              },
+              "passenger_count_derivative": {
+                "derivative": {
+                "buckets_path": "passenger_count_by_week"
+               }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "derivative-date_histogram-monthly",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "pickup_week": {
+            "date_histogram": {
+              "field": "pickup_datetime",
+              "calendar_interval": "month"
+            },
+            "aggs": {
+              "passenger_count_by_month": {
+                "sum": {
+                  "field": "passenger_count"
+                }
+              },
+              "passenger_count_derivative": {
+                "derivative": {
+                "buckets_path": "passenger_count_by_month"
+               }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "multi_terms-keyword",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "trip_type_payment_type_vendor_id": {
+            "multi_terms": {
+              "terms": [
+                { "field": "trip_type" },
+                { "field": "payment_type" },
+                { "field": "vendor_id" }
+              ]
             }
           }
         }

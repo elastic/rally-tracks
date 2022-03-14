@@ -9,6 +9,8 @@
       {% if index_mode | default('time_series') is equalto 'time_series' %}
       "routing_path": [
         "metricset.name",
+        "host.name",
+        "kubernetes.container.name",
         "kubernetes.event.involved_object.uid",
         "kubernetes.node.name",
         "kubernetes.system.container.id",
@@ -6563,7 +6565,7 @@
           },
           "name": {
             "type": "keyword",
-            "ignore_above": 1024
+            "time_series_dimension": true
           },
           "os": {
             "properties": {
@@ -7816,7 +7818,7 @@
               },
               "name": {
                 "type": "keyword",
-                "ignore_above": 1024
+                "time_series_dimension": true
               },
               "rootfs": {
                 "properties": {

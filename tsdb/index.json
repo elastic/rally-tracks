@@ -6565,7 +6565,7 @@
           },
           "name": {
             "type": "keyword",
-            "time_series_dimension": true
+            "ignore_above": 1024
           },
           "os": {
             "properties": {

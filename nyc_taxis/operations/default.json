@@ -537,60 +537,6 @@
       }
     },
     {
-      "name": "derivative-date_histogram-daily",
-      "operation-type": "search",
-      "body": {
-        "size": 0,
-        "aggs": {
-          "pickup_week": {
-            "date_histogram": {
-              "field": "pickup_datetime",
-              "calendar_interval": "day"
-            },
-            "aggs": {
-              "passenger_count_by_day": {
-                "sum": {
-                  "field": "passenger_count"
-                }
-              },
-              "passenger_count_derivative": {
-                "derivative": {
-                "buckets_path": "passenger_count_by_day"
-               }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "derivative-date_histogram-weekly",
-      "operation-type": "search",
-      "body": {
-        "size": 0,
-        "aggs": {
-          "pickup_week": {
-            "date_histogram": {
-              "field": "pickup_datetime",
-              "calendar_interval": "week"
-            },
-            "aggs": {
-              "passenger_count_by_week": {
-                "sum": {
-                  "field": "passenger_count"
-                }
-              },
-              "passenger_count_derivative": {
-                "derivative": {
-                "buckets_path": "passenger_count_by_week"
-               }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
       "name": "derivative-date_histogram-monthly",
       "operation-type": "search",
       "body": {

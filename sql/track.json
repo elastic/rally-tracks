@@ -190,9 +190,9 @@
             "DESCRIBE \\\"weather-data-2016\\\""
         ) }},
         {{ query_10qps(
-            "describe_5pages",
+            "describe_3pages",
             "DESCRIBE \\\"weather-data-2016\\\"",
-            5,
+            3,
             10
         ) }},
         {{ query_10qps(
@@ -233,9 +233,9 @@
             "SELECT station.name FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 ORDER BY CEIL(TMIN) % 7 = 5"
         ) }},
         {{ query_10qps(
-            "select_5pages",
+            "select_3pages",
             "SELECT station.name FROM \\\"weather-data-2016\\\"",
-            5
+            3
         ) }},
         {{ query_1qps(
             "aggregate_byStringScript",
@@ -270,23 +270,23 @@
             "SELECT station.name, SUM(CEIL(TMIN) % 7) S FROM \\\"weather-data-2016\\\" WHERE station.elevation > 2800 GROUP BY 1 HAVING S > 0"
         ) }},
         {{ query_5qps(
-            "aggregate_5pages",
-            "SELECT station.name, COUNT(*) FROM \\\"weather-data-2016\\\" GROUP BY station.name",
-            5
+            "aggregate_3pages",
+            "SELECT station.name, COUNT(*) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 1600 GROUP BY station.name",
+            3
         ) }},
-        {{ query_5qps(
-            "aggregate_sortByAggregate_5pages",
-            "SELECT station.name, COUNT(*) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 1400 GROUP BY 1 ORDER BY 2",
-            5
+        {{ query_1qps(
+            "aggregate_sortByAggregate_3pages",
+            "SELECT station.name, COUNT(*) FROM \\\"weather-data-2016\\\" WHERE station.elevation > 1600 GROUP BY 1 ORDER BY 2",
+            3
         ) }},
         {{ query_1qps(
             "pivot",
             "SELECT * FROM (SELECT station.country_code, TMIN FROM \\\"weather-data-2016\\\") PIVOT (AVG(TMIN) FOR station.country_code IN ('AS', 'CA'))"
         ) }},
-        {{ query_5qps(
-            "pivot_5pages",
-            "SELECT * FROM (SELECT station.name, station.country_code FROM \\\"weather-data-2016\\\") PIVOT (COUNT(*) FOR station.country_code IN ('US', 'AS'))",
-            5
+        {{ query_1qps(
+            "pivot_3pages",
+            "SELECT * FROM (SELECT station.name, station.country_code FROM \\\"weather-data-2016\\\" WHERE station.elevation > 1600) PIVOT (COUNT(*) FOR station.country_code IN ('US', 'AS'))",
+            3
         ) }}
       ]
     }

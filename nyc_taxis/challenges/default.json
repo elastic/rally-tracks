@@ -595,21 +595,6 @@
           "iterations": 50
         },
         {
-          "operation": "date_histogram_rate_hourly",
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "date_histogram_rate_daily",
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "date_histogram_rate_weekly",
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
           "operation": "auto_date_histogram",
           "warmup-iterations": 10,
           "iterations": 50

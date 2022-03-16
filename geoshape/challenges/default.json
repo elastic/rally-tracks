@@ -130,62 +130,52 @@
         {
           "operation": "polygon-intersects",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 3.3
+          "iterations": 100
         },
         {
           "operation": "polygon-contains",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 3.3
+          "iterations": 100
         },
         {
           "operation": "polygon-disjoint",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 3.3
+          "iterations": 100
         },
         {
           "operation": "polygon-within",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 0.9
+          "iterations": 100
         },
         {
           "operation": "bbox-intersects",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 3.7
+          "iterations": 100
         },
         {
           "operation": "bbox-contains",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 3
+          "iterations": 100
         },
         {
           "operation": "bbox-disjoint",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 4
+          "iterations": 100
         },
         {
           "operation": "bbox-within",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 1
+          "iterations": 100
         },  
         {
           "operation": "mvt-hits",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 0.5
+          "iterations": 100
         },
         {
           "operation": "mvt-grid",
           "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 1
+          "iterations": 100
         }
       ]
     },

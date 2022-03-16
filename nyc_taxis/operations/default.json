@@ -520,7 +520,7 @@
       }
     },
     {
-      "name": "percentiles-hdr-3-digits",
+      "name": "percentiles-hdr-1-digits",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -529,7 +529,7 @@
             "percentiles": {
               "field": "trip_distance",
               "hdr": {
-                "number_of_significant_value_digits": 3
+                "number_of_significant_value_digits": 1
               }
             }
           }

@@ -688,12 +688,6 @@
           "iterations": 50
         },
         {
-          "operation": "derivative-date_histogram-daily",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
           "operation": "multi_terms-keyword",
           "clients": 1,
           "warmup-iterations": 10,

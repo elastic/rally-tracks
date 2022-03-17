@@ -496,7 +496,7 @@
         "aggs": {
           "trip_distance_percentiles": {
             "percentiles": {
-              "field": "trip_distance"
+              "field": "total_amount"
             }
           }
         }
@@ -510,7 +510,7 @@
         "aggs": {
           "trip_distance_percentiles": {
             "percentiles": {
-              "field": "trip_distance",
+              "field": "total_amount",
               "tdigest": {
                 "compression": 200
               }
@@ -527,7 +527,7 @@
         "aggs": {
           "trip_distance_percentiles": {
             "percentiles": {
-              "field": "trip_distance",
+              "field": "total_amount",
               "hdr": {
                 "number_of_significant_value_digits": 3
               }

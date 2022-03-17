@@ -90,7 +90,7 @@
         "query": "sequence [any where true] [any where true]"
       }
     },
-    {{ task_options_1qps }}
+    {{ task_options_10qps }}
   },
   {
     "operation": {
@@ -116,7 +116,7 @@
         "query": "sequence [any where true] [any where true] | tail 200 | head 100"
       }
     },
-    {{ task_options_1qps }}
+    {{ task_options_10qps }}
   },
   {
     "operation": {
@@ -129,7 +129,7 @@
         "query": "sequence with maxspan=1m [any where true] [any where true]"
       }
     },
-    {{ task_options_1qps }}
+    {{ task_options_10qps }}
   },
   {
     "operation": {

@@ -537,33 +537,6 @@
       }
     },
     {
-      "name": "derivative-date_histogram-monthly",
-      "operation-type": "search",
-      "body": {
-        "size": 0,
-        "aggs": {
-          "pickup_week": {
-            "date_histogram": {
-              "field": "pickup_datetime",
-              "calendar_interval": "month"
-            },
-            "aggs": {
-              "passenger_count_by_month": {
-                "sum": {
-                  "field": "passenger_count"
-                }
-              },
-              "passenger_count_derivative": {
-                "derivative": {
-                "buckets_path": "passenger_count_by_month"
-               }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
       "name": "multi_terms-keyword",
       "operation-type": "search",
       "body": {

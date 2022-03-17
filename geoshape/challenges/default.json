@@ -128,13 +128,206 @@
           }
         },
         {
-          "operation": "polygon",
+          "operation": "polygon-intersects",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "polygon-contains",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "polygon-disjoint",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "polygon-within",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "bbox-intersects",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "bbox-contains",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "bbox-disjoint",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "bbox-within",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },  
+        {
+          "operation": "mvt-hits",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "mvt-grid",
+          "warmup-iterations": 200,
+          "iterations": 100
+        }
+      ]
+    },
+    {
+      "name": "append-no-conflicts-big",
+      "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "osm*",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "index-append-linestrings-big",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "refresh-after-linestrings-index",
+          "operation": "refresh",
+          "index": "osmlinestrings"
+        },
+        {
+          "name": "force-merge-linestrings",
+          "operation": {
+            "operation-type": "force-merge",
+            "max-num-segments": 1,
+            "index": "osmlinestrings",
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "wait-until-linestrings-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "operation": "index-append-multilinestrings-big",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "refresh-after-multilinestrings-index",
+          "operation": "refresh",
+          "index": "osmmultilinestrings"
+        },
+        {
+          "name": "force-merge-multilinestrings",
+          "operation": {
+            "operation-type": "force-merge",
+            "max-num-segments": 1,
+            "index": "osmmultilinestrings",
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "wait-until-multilinestrings-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "operation": "index-append-polygons-big",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "refresh-after-polygons-index",
+          "operation": "refresh",
+          "index": "osmpolygons"
+        },
+        {
+          "name": "force-merge-polygons",
+          "operation": {
+            "operation-type": "force-merge",
+            "max-num-segments": 1,
+            "index": "osmpolygons",
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "refresh-after-all-indices",
+          "operation": "refresh"
+        },
+        {
+          "name": "wait-until-polygon-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "operation": "polygon-intersects",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.3
         },
         {
-          "operation": "bbox",
+          "operation": "bbox-intersects",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 0.25
+        },
+        {
+          "operation": "mvt-hits",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 0.25
+        },
+        {
+          "operation": "mvt-grid",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.25

@@ -56,7 +56,46 @@
           "uncompressed-bytes": 30178820325
         }
       ]
-    }
+    },
+    {
+      "name": "default-linestrings",
+      "base-url": "https://rally-tracks.elastic.co/geoshape",
+      "target-index": "osmlinestrings",
+       "documents": [
+        {
+          "source-file": "default-linestrings.json.bz2",
+          "document-count": 10266018,
+          "compressed-bytes": 1890945556,
+          "uncompressed-bytes": 6786928379
+        }
+      ]
+    },
+    {
+      "name": "default-multilinestrings",
+      "base-url": "https://rally-tracks.elastic.co/geoshape",
+      "target-index": "osmmultilinestrings",
+      "documents": [
+        {
+          "source-file": "default-multilinestrings.json.bz2",
+          "document-count": 266018,
+          "compressed-bytes": 940086544,
+          "uncompressed-bytes": 3110257383
+        }
+      ]
+    },
+    {
+      "name": "default-polygons",
+      "base-url": "https://rally-tracks.elastic.co/geoshape",
+      "target-index": "osmpolygons",
+      "documents": [
+        {
+          "source-file": "default-polygons.json.bz2",
+          "document-count": 13165248,
+          "compressed-bytes": 1063380825,
+          "uncompressed-bytes": 4369059087
+        }
+      ]
+    }    
   ],
   "operations": [
     {{ rally.collect(parts="operations/*.json") }}

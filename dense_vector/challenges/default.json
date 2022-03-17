@@ -45,6 +45,59 @@
       }
     },
     {
+      "name": "knn-search-10-50-before-force-merge",
+      "operation": "knn-search-10-50",
+      "warmup-iterations": 50,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-100-before-force-merge",
+      "operation": "knn-search-10-100",
+      "warmup-iterations": 50,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-100-1000-before-force-merge",
+      "operation": "knn-search-100-1000",
+      "warmup-iterations": 50,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "script-score-query-before-force-merge",
+      "operation": "script-score-query",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": 1,
+        "request-timeout": 7200,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "operation": "refresh"
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
       "name": "knn-search-10-50",
       "operation": "knn-search-10-50",
       "warmup-iterations": 50,
@@ -67,59 +120,6 @@
     },
     {
       "name": "script-score-query",
-      "operation": "script-score-query",
-      "warmup-iterations": 100,
-      "iterations": 100,
-      "clients": 1
-    },
-    {
-      "operation": {
-        "operation-type": "force-merge",
-        "max-num-segments": 1,
-        "request-timeout": 7200,
-        "include-in-reporting": true
-      }
-    },
-    {
-      "name": "refresh-after-force-merge",
-      "operation": "refresh"
-    },
-    {
-      "name": "wait-until-merges-finish-after-force-merge",
-      "operation": {
-        "operation-type": "index-stats",
-        "index": "_all",
-        "condition": {
-          "path": "_all.total.merges.current",
-          "expected-value": 0
-        },
-        "retry-until-success": true,
-        "include-in-reporting": false
-      }
-    },
-    {
-      "name": "knn-search-10-50-after-force-merge",
-      "operation": "knn-search-10-50",
-      "warmup-iterations": 50,
-      "iterations": 100,
-      "clients": 1
-    },
-    {
-      "name": "knn-search-10-100-after-force-merge",
-      "operation": "knn-search-10-100",
-      "warmup-iterations": 50,
-      "iterations": 100,
-      "clients": 1
-    },
-    {
-      "name": "knn-search-100-1000-after-force-merge",
-      "operation": "knn-search-100-1000",
-      "warmup-iterations": 50,
-      "iterations": 100,
-      "clients": 1
-    },
-    {
-      "name": "script-score-query-after-force-merge",
       "operation": "script-score-query",
       "warmup-iterations": 100,
       "iterations": 100,

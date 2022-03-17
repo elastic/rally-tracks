@@ -520,23 +520,6 @@
       }
     },
     {
-      "name": "percentiles-hdr-3-digits",
-      "operation-type": "search",
-      "body": {
-        "size": 0,
-        "aggs": {
-          "trip_distance_percentiles": {
-            "percentiles": {
-              "field": "total_amount",
-              "hdr": {
-                "number_of_significant_value_digits": 3
-              }
-            }
-          }
-        }
-      }
-    },
-    {
       "name": "multi_terms-keyword",
       "operation-type": "search",
       "body": {

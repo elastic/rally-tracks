@@ -1,42 +1,155 @@
     {
-      "name": "index-append-linestrings",
+      "name": "index-append-linestrings-big",
       "operation-type": "bulk",
       "bulk-size": {{linestring_bulk_size | default(100)}},
       "ingest-percentage": {{ingest_percentage | default(100)}},
       "corpora": "linestrings"
     },
     {
-      "name": "index-append-multilinestrings",
+      "name": "index-append-multilinestrings-big",
       "operation-type": "bulk",
       "bulk-size": {{multilinestring_bulk_size | default(100)}},
       "ingest-percentage": {{ingest_percentage | default(100)}},
       "corpora": "multilinestrings"
     },
     {
-      "name": "index-append-polygons",
+      "name": "index-append-polygons-big",
       "operation-type": "bulk",
       "bulk-size": {{polygon_bulk_size | default(100)}},
       "ingest-percentage": {{ingest_percentage | default(100)}},
       "corpora": "polygons"
     },
     {
-      "name": "polygon",
+      "name": "index-append-linestrings",
+      "operation-type": "bulk",
+      "bulk-size": {{linestring_bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "default-linestrings"
+    },
+    {
+      "name": "index-append-multilinestrings",
+      "operation-type": "bulk",
+      "bulk-size": {{multilinestring_bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "default-multilinestrings"
+    },
+    {
+      "name": "index-append-polygons",
+      "operation-type": "bulk",
+      "bulk-size": {{polygon_bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "corpora": "default-polygons"
+    },            
+    {
+      "name": "polygon-intersects",
       "operation-type": "search",
       "index": "osm*",
       "body": {
         "query": {
           "geo_shape": {
             "shape": {
-               "shape": {
-                  "type": "polygon",
-                  "coordinates" : [[
-                    [-0.1, 49.0],
-                    [5.0, 48.0],
-                    [15.0, 49.0],
-                    [14.0, 60.0],
-                    [-0.1, 61.0],
-                    [-0.1, 49.0]
-                  ]]
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              }
+            }
+          }
+        }
+      }
+    }, 
+    {
+      "name": "polygon-contains",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "contains"
+            }
+          }
+        }
+      }
+    },      
+     {
+      "name": "polygon-disjoint",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "disjoint"
+            }
+          }
+        }
+      }
+    },   
+                          {
+      "name": "polygon-within",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "within"
+            }
+          }
+        }
+      }
+    },   
+    {
+      "name": "bbox-intersects",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "envelope",
+                "coordinates" : [[-0.1, 61.0], [15.0, 48.0]]
               }
             }
           }
@@ -44,17 +157,108 @@
       }
     },
     {
-      "name": "bbox",
+      "name": "bbox-contains", 
       "operation-type": "search",
       "index": "osm*",
       "body": {
         "query": {
           "geo_shape": {
             "shape": {
-               "shape": {
-                  "type": "envelope",
-                  "coordinates" : [[-0.1, 61.0], [15.0, 48.0]]
+              "shape": {
+                "type": "envelope",
+                "coordinates" : [[-0.1, 61.0], [15.0, 48.0]]
+              },
+              "relation": "contains"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "bbox-disjoint",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "envelope",
+                "coordinates" : [[-0.1, 61.0], [15.0, 48.0]]
+              }, 
+              "relation": "disjoint"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "bbox-within",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "envelope",
+                "coordinates" : [[-0.1, 61.0], [15.0, 48.0]]
+              },
+              "relation": "within"
+            }
+          }
+        }
+      }
+    },            
+    {
+      "name": "mvt-hits",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "_source": false,
+        "size": 10000,
+        "fields": [{"field": "shape", "format": "mvt(9/255/341)"}],
+        "query": {
+          "geo_bounding_box": {
+              "shape": {
+                "top_left": [-0.703129, 51.618014],
+                "bottom_right": [0, 51.179343]
               }
+          }
+        },
+        "sort": [
+          {
+            "size": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "mvt-grid",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size" : 0,
+        "query": {
+          "geo_bounding_box": {
+            "shape": {
+              "top_left": [-0.703129, 51.618014],
+              "bottom_right": [0, 51.179343]
+            }
+          }
+        },
+        "aggregations": {
+          "grid" : {
+            "geotile_grid" : {
+              "field": "shape",    
+              "precision" : 17,
+              "size" : 65536,
+              "bounds": {
+                 "top_left": [-0.703129, 51.618014],
+                 "bottom_right": [0, 51.179343]
+              }        
             }
           }
         }

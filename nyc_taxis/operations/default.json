@@ -174,7 +174,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },
@@ -182,7 +182,7 @@
           "dropoffs_over_time": {
             "date_histogram": {
               "field": "dropoff_datetime",
-              "fixed_interval": "60d"
+              "fixed_interval": "10d"
             }
           }
         }
@@ -197,7 +197,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },
@@ -205,7 +205,7 @@
           "dropoffs_over_time": {
             "date_histogram": {
               "field": "dropoff_datetime",
-              "fixed_interval": "60d",
+              "fixed_interval": "10d",
               "time_zone": "America/New_York"
             }
           }
@@ -221,7 +221,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },
@@ -229,7 +229,7 @@
           "dropoffs_over_time": {
             "date_histogram": {
               "field": "dropoff_datetime",
-              "fixed_interval": "60d"
+              "fixed_interval": "10d"
             },
             "aggs": {
               "total_amount": { "stats": { "field": "total_amount" } },
@@ -249,7 +249,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },
@@ -257,7 +257,7 @@
           "dropoffs_over_time": {
             "auto_date_histogram": {
               "field": "dropoff_datetime",
-              "buckets": "12"
+              "buckets": "10"
             }
           }
         }
@@ -272,7 +272,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },
@@ -280,7 +280,7 @@
           "dropoffs_over_time": {
             "auto_date_histogram": {
               "field": "dropoff_datetime",
-              "buckets": "13",
+              "buckets": "10",
               "time_zone": "America/New_York"
             }
           }
@@ -296,7 +296,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },
@@ -304,7 +304,7 @@
           "dropoffs_over_time": {
             "auto_date_histogram": {
               "field": "dropoff_datetime",
-              "buckets": "12"
+              "buckets": "10"
             },
             "aggs": {
               "total_amount": { "stats": { "field": "total_amount" } },
@@ -445,7 +445,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },
@@ -469,7 +469,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },
@@ -493,7 +493,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },
@@ -561,7 +561,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-02-01 00:00:00"
+              "lt": "2015-01-15 00:00:00"
             }
           }
         },
@@ -583,7 +583,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-02-01 00:00:00"
+              "lt": "2015-01-15 00:00:00"
             }
           }
         },
@@ -608,7 +608,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-04-01 00:00:00"
+              "lt": "2015-03-01 00:00:00"
             }
           }
         },

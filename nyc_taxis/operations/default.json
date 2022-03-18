@@ -320,6 +320,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "vedor_payment": {
             "composite": {
@@ -337,6 +345,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "vedor_payment": {
             "composite": {
@@ -353,6 +369,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "vedor_payment": {
             "composite": {
@@ -369,6 +393,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "vedor_payment": {
             "composite": {
@@ -385,6 +417,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "vedor_payment": {
             "composite": {
@@ -401,6 +441,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "vedor_payment": {
             "composite": {
@@ -417,6 +465,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "vedor_payment": {
             "composite": {
@@ -433,6 +489,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "vedor_payment": {
             "composite": {
@@ -493,6 +557,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "trip_distance_percentiles": {
             "percentiles": {
@@ -507,6 +579,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "trip_distance_percentiles": {
             "percentiles": {
@@ -524,6 +604,14 @@
       "operation-type": "search",
       "body": {
         "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-04-01 00:00:00"
+            }
+          }
+        },
         "aggs": {
           "trip_type_payment_type_vendor_id": {
             "multi_terms": {

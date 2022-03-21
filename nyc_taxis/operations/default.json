@@ -257,7 +257,8 @@
           "dropoffs_over_time": {
             "auto_date_histogram": {
               "field": "dropoff_datetime",
-              "buckets": "10"
+              "buckets": "10",
+              "minimum_interval": "day"
             }
           }
         }
@@ -281,7 +282,8 @@
             "auto_date_histogram": {
               "field": "dropoff_datetime",
               "buckets": "10",
-              "time_zone": "America/New_York"
+              "time_zone": "America/New_York",
+              "minimum_interval": "day"
             }
           }
         }
@@ -304,7 +306,8 @@
           "dropoffs_over_time": {
             "auto_date_histogram": {
               "field": "dropoff_datetime",
-              "buckets": "10"
+              "buckets": "10",
+              "minimum_interval": "day"
             },
             "aggs": {
               "total_amount": { "stats": { "field": "total_amount" } },
@@ -324,7 +327,7 @@
           "range": {
             "dropoff_datetime": {
               "gte": "2015-01-01 00:00:00",
-              "lt": "2015-03-01 00:00:00"
+              "lt": "2015-02-01 00:00:00"
             }
           }
         },

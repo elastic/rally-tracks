@@ -29,7 +29,10 @@
     },
     {
       "name": "refresh-after-index",
-      "operation": "refresh"
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000
+      }
     },
     {
       "name": "wait-until-merges-finish-after-index",

@@ -147,4 +147,118 @@
     "clients": 1,
     "warmup-iterations": 10,
     "iterations": 50
+  },
+  {
+    "operation": "max_temp",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_max_temp_top_hits",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_max_temp_top_metrics",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "max_temp_per_station_10",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_max_temp_per_station_top_hits_10",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_max_temp_per_station_top_metrics_10",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_min_and_max_temp_per_station_top_metrics_10",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_five_max_temp_per_station_top_metrics_10",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "max_temp_per_station_10_depth_first",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_max_temp_per_station_top_hits_10_depth_first",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_max_temp_per_station_top_metrics_10_depth_first",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_max_temp_per_station_top_metrics_10_sort_by",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "max_temp_per_station_5000",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 100
+  },
+  {
+    "operation": "last_max_temp_per_station_top_hits_5000",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
+  },
+  {
+    "operation": "last_max_temp_per_station_top_hits_5000_via_source",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
+  },
+  {
+    "operation": "last_max_temp_per_station_top_metrics_5000",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
+  },
+  {
+    "operation": "last_min_and_max_temp_per_station_top_metrics_5000",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
+  },
+  {
+    "operation": "last_five_max_temp_per_station_top_metrics_5000",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
+  },
+  {
+    "operation": "last_country_code_per_station_top_metrics_5000",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
   }

@@ -1,6 +1,6 @@
 {
   "name": "index-and-search",
-  "description": "indexes vectors, force merges to a single segment, then searches them",
+  "description": "Indexes half of the dataset, then indexes another half with concurrent searches",
   "default": true,
   "schedule": [
     {
@@ -23,10 +23,52 @@
       }
     },
     {
-      "operation": "index-append",
+      "name": "index-append",
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(5000)}},
+        "ingest-percentage": 10
+      },
       "warmup-time-period": {{ bulk_warmup | default(40) | int }},
       "clients": {{bulk_indexing_clients | default(1)}}
     },
+    {
+      "parallel": {
+        "tasks": [
+          {
+            "name": "index-append-concurrent-with-searches",
+            "operation": {
+              "operation-type": "bulk",
+              "bulk-size": {{bulk_size | default(5000)}},
+              "ingest-percentage": 10
+            },
+            "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+            "clients": {{bulk_indexing_clients | default(1)}}
+          },
+          {
+            "name": "knn-search-10-50-concurrent-with-indexing",
+            "operation": "knn-search-10-50",
+            "warmup-iterations": 50,
+            "iterations": 100,
+            "clients": 1
+          },
+          {
+            "name": "knn-search-10-100-concurrent-with-indexing",
+            "operation": "knn-search-10-100",
+            "warmup-iterations": 50,
+            "iterations": 100,
+            "clients": 1
+          },
+          {
+            "name": "knn-search-100-1000-concurrent-with-indexing",
+            "operation": "knn-search-100-1000",
+            "warmup-iterations": 50,
+            "iterations": 100,
+            "clients": 1
+          }
+        ]
+      }  
+    },      
     {
       "name": "refresh-after-index",
       "operation": {

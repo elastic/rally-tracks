@@ -62,26 +62,22 @@
         {
           "operation": "range",
           "warmup-iterations": 50,
-          "iterations": 100,
-          "target-throughput": 0.7
+          "iterations": 100
         },
         {
           "operation": "distance_amount_agg",
           "warmup-iterations": 50,
-          "iterations": 50,
-          "target-interval": 20
+          "iterations": 50
         },
         {
           "operation": "autohisto_agg",
           "warmup-iterations": 50,
-          "iterations": 100,
-          "target-throughput": 1.5
+          "iterations": 100
         },
         {
           "operation": "date_histogram_agg",
           "warmup-iterations": 500,
-          "iterations": 500,
-          "target-throughput": 1.5
+          "iterations": 500
         }
       ]
     },

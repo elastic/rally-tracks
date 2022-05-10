@@ -27,48 +27,11 @@
       "operation": {
         "operation-type": "bulk",
         "bulk-size": {{bulk_size | default(5000)}},
-        "ingest-percentage": 10
+        "ingest-percentage": 20
       },
       "warmup-time-period": {{ bulk_warmup | default(40) | int }},
       "clients": {{bulk_indexing_clients | default(1)}}
     },
-    {
-      "parallel": {
-        "tasks": [
-          {
-            "name": "index-append-concurrent-with-searches",
-            "operation": {
-              "operation-type": "bulk",
-              "bulk-size": {{bulk_size | default(5000)}},
-              "ingest-percentage": 10
-            },
-            "warmup-time-period": {{ bulk_warmup | default(40) | int }},
-            "clients": {{bulk_indexing_clients | default(1)}}
-          },
-          {
-            "name": "knn-search-10-50-concurrent-with-indexing",
-            "operation": "knn-search-10-50",
-            "warmup-iterations": 50,
-            "iterations": 100,
-            "clients": 1
-          },
-          {
-            "name": "knn-search-10-100-concurrent-with-indexing",
-            "operation": "knn-search-10-100",
-            "warmup-iterations": 50,
-            "iterations": 100,
-            "clients": 1
-          },
-          {
-            "name": "knn-search-100-1000-concurrent-with-indexing",
-            "operation": "knn-search-100-1000",
-            "warmup-iterations": 50,
-            "iterations": 100,
-            "clients": 1
-          }
-        ]
-      }  
-    },      
     {
       "name": "refresh-after-index",
       "operation": {
@@ -87,6 +50,36 @@
         },
         "retry-until-success": true,
         "include-in-reporting": false
+      }
+    },
+    {
+      "parallel": {
+        "warmup-time-period": 10,
+        "completed-by": "index-update-concurrent-with-searches",
+        "tasks": [
+          {
+            "name": "index-update-concurrent-with-searches",
+            "operation": {
+              "operation-type": "bulk",
+              "bulk-size": 5000,
+              "ingest-percentage": 5,
+              "refresh" : "wait_for"
+            },
+            "clients": 1
+          },
+          {
+            "name": "knn-search-100-1000-concurrent-with-indexing",
+            "operation": "knn-search-100-1000",
+            "clients": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "refresh-after-update",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000
       }
     },
     {

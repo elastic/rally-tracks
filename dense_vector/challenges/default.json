@@ -1,6 +1,6 @@
 {
   "name": "index-and-search",
-  "description": "Indexes half of the dataset, then indexes another half with concurrent searches",
+  "description": "Indexes vectors, then executes searches under various conditions",
   "default": true,
   "schedule": [
     {
@@ -64,13 +64,11 @@
               "bulk-size": 5000,
               "ingest-percentage": 5,
               "refresh" : "wait_for"
-            },
-            "clients": 1
+            }
           },
           {
             "name": "knn-search-100-1000-concurrent-with-indexing",
-            "operation": "knn-search-100-1000",
-            "clients": 1
+            "operation": "knn-search-100-1000"
           }
         ]
       }

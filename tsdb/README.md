@@ -144,7 +144,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.
 * `ingest_order` (default: jumbled): Should the data be loaded in `sorted` order or a more `jumbled`, mostly random order.
-* `synthetic_source` (default: false): Should we enable `synethetic` _source to save space?.
+* `synthetic_source` (default: false): Should we enable `synethetic` _source to save space?
 
 ### License
 

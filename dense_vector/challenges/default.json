@@ -1,6 +1,6 @@
 {
   "name": "index-and-search",
-  "description": "indexes vectors, force merges to a single segment, then searches them",
+  "description": "Indexes vectors, then executes searches under various conditions",
   "default": true,
   "schedule": [
     {
@@ -23,7 +23,12 @@
       }
     },
     {
-      "operation": "index-append",
+      "name": "index-append",
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(5000)}},
+        "ingest-percentage": 20
+      },
       "warmup-time-period": {{ bulk_warmup | default(40) | int }},
       "clients": {{bulk_indexing_clients | default(1)}}
     },
@@ -45,6 +50,33 @@
         },
         "retry-until-success": true,
         "include-in-reporting": false
+      }
+    },
+    {
+      "parallel": {
+        "warmup-time-period": 10,
+        "completed-by": "index-update-concurrent-with-searches",
+        "tasks": [
+          {
+            "name": "index-update-concurrent-with-searches",
+            "operation": {
+              "operation-type": "bulk",
+              "bulk-size": 5000,
+              "ingest-percentage": 5
+            }
+          },
+          {
+            "name": "knn-search-100-1000-concurrent-with-indexing",
+            "operation": "knn-search-100-1000"
+          }
+        ]
+      }
+    },
+    {
+      "name": "refresh-after-update",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000
       }
     },
     {

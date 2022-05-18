@@ -27,4 +27,4 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 
 * `bulk_size` (default: 5000)
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
-* `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
+

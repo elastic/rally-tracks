@@ -58,6 +58,16 @@
         {
           "name": "refresh-after-force-merge",
           "operation": "refresh"
+        },
+        {
+          "operation": "default",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
+          "operation": "default_1k",
+          "warmup-iterations": 50,
+          "iterations": 100
         }
       ]
     }

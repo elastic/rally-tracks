@@ -35,6 +35,16 @@
       }
     },
     {
+      "name": "default_1k",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "size": 1000
+      }
+    },
+    {
       "name": "range",
       "operation-type": "search",
       "body": {

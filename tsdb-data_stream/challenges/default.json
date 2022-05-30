@@ -13,6 +13,21 @@
           }
         },
         {
+          "name": "put-timestamp-pipeline",
+          "operation-type": "put-pipeline",
+          "id": "timestamp_pipeline",
+          "body": {
+            "description": "Sets @timestamp field to current time",
+            "processors": [
+              {
+                "script": {
+                  "source": "ctx['@timestamp'] = DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.systemDefault()));"
+                }
+              }
+            ]
+          }
+        },
+        {
           "name": "check-cluster-health",
           "operation": {
             "operation-type": "cluster-health",

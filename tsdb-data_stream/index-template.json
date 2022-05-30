@@ -11,7 +11,7 @@
         "mode": "{{index_mode | default('time_series')}}",
         "requests.cache.enable": false,
         "lifecycle.name": "7-days-default",
-        "index.default_pipeline": "timestamp_pipeline"
+        "default_pipeline": "timestamp_pipeline"
       }
     },
     "mappings": {

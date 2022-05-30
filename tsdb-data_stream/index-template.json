@@ -10,7 +10,8 @@
         "codec": "{{codec | default('default')}}",
         "mode": "{{index_mode | default('time_series')}}",
         "requests.cache.enable": false,
-        "lifecycle.name": "7-days-default"
+        "lifecycle.name": "7-days-default",
+        "index.default_pipeline": "timestamp_pipeline"
       }
     },
     "mappings": {

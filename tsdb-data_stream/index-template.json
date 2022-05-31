@@ -8,7 +8,7 @@
         "number_of_replicas": {{number_of_replicas | default(0)}},
         "mapping.total_fields.limit": 10000,
         "codec": "{{codec | default('default')}}",
-        "mode": "{{index_mode | default('time_series')}}",
+        "mode": "time_series",
         "requests.cache.enable": false,
         "lifecycle.name": "7-days-default",
         "default_pipeline": "timestamp_pipeline"

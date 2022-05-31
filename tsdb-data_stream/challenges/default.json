@@ -13,7 +13,7 @@
               "processors": [
                 {
                   "script": {
-                    "source": "ctx['@timestamp'] = DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), ZoneId.systemDefault()));"
+                    "source": "ZonedDateTime fixed = ZonedDateTime.parse('2021-04-28T17:18:23.410Z');long delta = System.currentTimeMillis() - fixed.toInstant().toEpochMilli();ctx['@timestamp'] = ZonedDateTime.parse(ctx['@timestamp']).plus(delta, ChronoUnit.MILLIS).toString();"
                   }
                 }
               ]

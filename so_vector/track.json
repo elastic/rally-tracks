@@ -1,0 +1,29 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark for vector search with StackOverflow data",
+  "indices": [
+    {
+      "name": "vectors",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "so-vector",
+      "documents": [
+        {
+          "source-file": "documents.json",
+          "document-count": 1012426,
+          "uncompressed-bytes": 17487683546
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

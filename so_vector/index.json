@@ -1,0 +1,36 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 2,
+      "number_of_replicas": 0
+    }
+  },
+  "mappings": {
+    "_source": {
+      "enabled": false
+    },
+    "properties": {
+      "userId": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "questionId": {
+        "type": "keyword"
+      },
+      "creationDate": {
+        "type": "date"
+      },
+      "title": {
+        "type": "text"
+      },
+      "title_vector": {
+        "type": "dense_vector",
+        "dims" : 768,
+        "index" : true,
+        "similarity": "dot_product"
+      }
+    }
+  }
+}

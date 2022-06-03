@@ -10,7 +10,7 @@
         "codec": "{{codec | default('default')}}",
         "mode": "time_series",
         "requests.cache.enable": false,
-        "lifecycle.name": "7-days-default",
+        "lifecycle.name": "7-days-tsdb",
         "default_pipeline": "timestamp_pipeline"
       }
     },

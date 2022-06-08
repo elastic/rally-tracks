@@ -4,7 +4,7 @@ import time
 
 def wait_for_ml_lookback(es, params):
     while True:
-        response = es.xpack.ml.get_datafeed_stats(datafeed_id=params["datafeed-id"])
+        response = es.ml.get_datafeed_stats(datafeed_id=params["datafeed-id"])
         if response["datafeeds"][0]["state"] == "stopped":
             break
         time.sleep(5)
@@ -12,7 +12,7 @@ def wait_for_ml_lookback(es, params):
 
 async def wait_for_ml_lookback_async(es, params):
     while True:
-        response = await es.xpack.ml.get_datafeed_stats(datafeed_id=params["datafeed-id"])
+        response = await es.ml.get_datafeed_stats(datafeed_id=params["datafeed-id"])
         if response["datafeeds"][0]["state"] == "stopped":
             break
         await asyncio.sleep(5)

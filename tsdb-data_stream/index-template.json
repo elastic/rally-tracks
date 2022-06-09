@@ -11,7 +11,8 @@
         "mode": "time_series",
         "requests.cache.enable": false,
         "lifecycle.name": "7-days-tsdb",
-        "default_pipeline": "timestamp_pipeline"
+        "default_pipeline": "timestamp_pipeline",
+        "index.look_ahead_time": "5m"
       }
     },
     "mappings": {

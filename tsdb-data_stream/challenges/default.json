@@ -9,15 +9,25 @@
             "operation-type": "put-pipeline",
             "id": "timestamp_pipeline",
             "body": {
-              "description": "Sets @timestamp field to current time",
               "processors": [
-                {
-                  "script": {
-                    "source": "ZonedDateTime fixed = ZonedDateTime.parse('2021-04-28T17:18:23.410Z');long delta = System.currentTimeMillis() - fixed.toInstant().toEpochMilli();ctx['@timestamp'] = ZonedDateTime.parse(ctx['@timestamp']).plus(delta, ChronoUnit.MILLIS).toString();"
+                  {
+                      "set": {
+                          "field": "temp",
+                          "value": {{'"{{_ingest.timestamp}}"'}}
+                      }
+                  },
+                  {
+                      "script": {
+                          "source": "ZonedDateTime timestamp = ZonedDateTime.parse(ctx['temp']);ctx['@timestamp']=timestamp.truncatedTo(ChronoUnit.MILLIS).toString();"
+                      }
+                  },
+                  {
+                      "remove": {
+                          "field": "temp"
+                      }
                   }
-                }
               ]
-            }
+          }
           }
         },
         {

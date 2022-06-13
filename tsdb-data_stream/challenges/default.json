@@ -18,7 +18,7 @@
                   },
                   {
                       "script": {
-                          "source": "ZonedDateTime now = ZonedDateTime.parse(ctx['now']);ZonedDateTime timestamp = ZonedDateTime.parse(ctx['@timestamp']);ctx['@timestamp']=now.with(ChronoField.MILLI_OF_SECOND, timestamp.get(ChronoField.MILLI_OF_SECOND)).truncatedTo(ChronoUnit.MILLIS).toString();"
+                          "source": "ZonedDateTime now = ZonedDateTime.parse(ctx['now']);ZonedDateTime timestamp = ZonedDateTime.parse(ctx['@timestamp']);ctx['@timestamp']=now.with(ChronoField.SECOND_OF_MINUTE, timestamp.get(ChronoField.SECOND_OF_MINUTE)).with(ChronoField.MILLI_OF_SECOND, timestamp.get(ChronoField.MILLI_OF_SECOND)).truncatedTo(ChronoUnit.MILLIS).toString();"
                       }
                   },
                   {

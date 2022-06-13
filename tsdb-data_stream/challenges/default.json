@@ -12,18 +12,18 @@
               "processors": [
                   {
                       "set": {
-                          "field": "temp",
+                          "field": "now",
                           "value": {{'"{{_ingest.timestamp}}"'}}
                       }
                   },
                   {
                       "script": {
-                          "source": "ZonedDateTime timestamp = ZonedDateTime.parse(ctx['temp']);ctx['@timestamp']=timestamp.truncatedTo(ChronoUnit.MILLIS).toString();"
+                          "source": "ZonedDateTime now = ZonedDateTime.parse(ctx['now']);ZonedDateTime timestamp = ZonedDateTime.parse(ctx['@timestamp']);ctx['@timestamp']=now.with(ChronoField.MILLI_OF_SECOND, timestamp.get(ChronoField.MILLI_OF_SECOND)).truncatedTo(ChronoUnit.MILLIS).toString();"
                       }
                   },
                   {
                       "remove": {
-                          "field": "temp"
+                          "field": "now"
                       }
                   }
               ]

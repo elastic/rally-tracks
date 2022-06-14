@@ -15,6 +15,16 @@
         "kubernetes.system.container.id",
         "kubernetes.volume.name"
       ],
+      "routing_path" : [
+        "kubernetes.event.involved_object.uid",
+        "kubernetes.container.name",
+        "kubernetes.container.id",
+        "metricset.name",
+        "kubernetes.pod.name",
+        "kubernetes.node.name",
+        "kubernetes.system.container",
+        "kubernetes.volume.name"
+      ],
       "time_series": {
         "start_time": "2000-01-01T00:00:00.000Z",
         "end_time": "9999-01-01T00:00:00.000Z"

@@ -10,17 +10,8 @@
         "codec": "{{codec | default('default')}}",
         "mode": "time_series",
         "requests.cache.enable": false,
-        "lifecycle.name": "7-days-tsdb",
         "default_pipeline": "timestamp_pipeline",
-        "look_ahead_time": "2m",
-        "routing_path": [
-          "metricset.name",
-          "kubernetes.container.name",
-          "kubernetes.event.involved_object.uid",
-          "kubernetes.node.name",
-          "kubernetes.system.container.id",
-          "kubernetes.volume.name"
-        ]
+        "look_ahead_time": "2d"
       }
     },
     "mappings": {

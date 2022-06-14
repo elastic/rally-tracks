@@ -18,7 +18,7 @@
                   },
                   {
                       "script": {
-                          "source": "ZonedDateTime now = ZonedDateTime.parse(ctx['now']);ZonedDateTime timestamp = ZonedDateTime.parse(ctx['@timestamp']);ctx['@timestamp']=now.with(ChronoField.SECOND_OF_MINUTE, timestamp.get(ChronoField.SECOND_OF_MINUTE)).with(ChronoField.MILLI_OF_SECOND, timestamp.get(ChronoField.MILLI_OF_SECOND)).truncatedTo(ChronoUnit.MILLIS).toString();"
+                          "source": "ZonedDateTime base = ZonedDateTime.parse('2021-04-28T17:18:23.410Z');Duration time = Duration.between(base, ZonedDateTime.parse(ctx['now']));ZonedDateTime timestamp = ZonedDateTime.parse(ctx['@timestamp']);ctx['@timestamp']=timestamp.plus(time).truncatedTo(ChronoUnit.MILLIS).toString();"
                       }
                   },
                   {
@@ -28,44 +28,6 @@
                   }
               ]
           }
-          }
-        },
-        {
-          "name": "create-ilm-policy",
-          "operation": {
-            "operation-type": "create-ilm-policy",
-            "policy-name": "7-days-tsdb",
-            "body": {
-              "policy": {
-                "phases": {
-                  "hot": {
-                    "actions": {
-                      "rollover": {
-                        "max_primary_shard_size": "1gb",
-                        "max_age": "1d"
-                      }
-                    }
-                  },
-                  "warm": {
-                    "min_age": "1h",
-                    "actions": {
-                      "shrink": {
-                        "number_of_shards": 1
-                      },
-                      "forcemerge": {
-                        "max_num_segments": 1
-                      }
-                    }
-                  },
-                  "delete": {
-                    "min_age": "7d",
-                    "actions":{
-                      "delete": {}
-                    }
-                  }
-                }
-              }              
-            }
           }
         },
         {
@@ -97,6 +59,41 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+            {%- endif %}
+          }
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh"
+        },
+        {
+          "operation": "default",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
+          "operation": "default_1k",
+          "warmup-iterations": 50,
+          "iterations": 100
         }
       ]
     }

@@ -8,7 +8,7 @@ set -u
 set -o pipefail
 
 readonly ROOT=".rally/benchmarks"
-readonly URL="http://benchmarks.elasticsearch.org.s3.amazonaws.com/corpora"
+readonly URL="https://rally-tracks.elastic.co"
 
 
 # see http://stackoverflow.com/a/246128
@@ -57,7 +57,7 @@ for f in ${FILES}; do
     TARGETS[${#TARGETS[*]}]="${TARGET_PATH}"
     if [ ! -f "${HOME}/${TARGET_PATH}" ]
     then
-        curl -o "${HOME}/${TARGET_PATH}" "${URL}/${TRACK}/${f}"
+        curl -o "${HOME}/${TARGET_PATH}" -L "${URL}/${TRACK}/${f}"
     fi
 done
 

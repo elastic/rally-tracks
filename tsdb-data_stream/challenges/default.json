@@ -18,7 +18,7 @@
                   },
                   {
                       "script": {
-                          "source": "ZonedDateTime base = ZonedDateTime.parse('2021-04-28T17:18:23.410Z');Duration time = Duration.between(base, ZonedDateTime.parse(ctx['now']));ZonedDateTime timestamp = ZonedDateTime.parse(ctx['@timestamp']);ctx['@timestamp']=timestamp.plus(time).truncatedTo(ChronoUnit.MILLIS).toString();"
+                          "source": "ZonedDateTime base = ZonedDateTime.parse('2021-04-28T17:18:23.410Z');long numDays = Duration.between(base, ZonedDateTime.parse(ctx['now'])).toDays();ZonedDateTime timestamp = ZonedDateTime.parse(ctx['@timestamp']);ctx['@timestamp']=timestamp.plusDays(numDays).truncatedTo(ChronoUnit.MILLIS).toString();"
                       }
                   },
                   {

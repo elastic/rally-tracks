@@ -8,7 +8,7 @@ set -u
 set -o pipefail
 
 readonly ROOT=".rally/benchmarks"
-readonly URL="http://rally-tracks.elastic.co"
+readonly URL="https://rally-tracks.elastic.co"
 
 
 # see http://stackoverflow.com/a/246128

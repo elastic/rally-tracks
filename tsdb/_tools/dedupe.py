@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
 
+####################################################################
+#
+# A tool that dedupes a sorted anonymized metricbeat dump.
+#
+####################################################################
+#
+# Expects sorted anonymized metricbeat dump as input via standard
+# in and returns a deduped sorted anonymized metric beat output via
+# standard out. Also seperately generates 'dupes-' prefixed files 
+# per metric set name containing the dupes for manual inspection.
+#
+####################################################################
+
 import json
 import sys
 

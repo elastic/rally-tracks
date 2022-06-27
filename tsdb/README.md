@@ -120,12 +120,31 @@ rm -rf tmp
 head -n 1000 documents-sorted.json > documents-sorted-1k.json
 ```
 
+Finally you'll also need a deduped version of the data in order to to support the `ingest_mode` that benchmarks ingesting into a tsdb data stream (`data_stream`). Use the `dedupe.py` tool in the `_tools` directory. This tool needs `documents-sorted.json` as input via standard in and generates a deduped
+varians via standard out.
+
+```
+cat documents-sorted.json | dedupe.py > documents-sorted-deduped.json
+```
+
+The `dedupe.py` tool also generates other files started with `dupes-` prefix.
+These files contain the duplicates that are filtered out of the lines being
+redirected to standard out. These files can optionally be manually checked for
+whether these files contain lines that are truely duplicates.
+
+Also generate a `documents-sorted-deduped-1k.json` file for easy testing:
+```
+head -n 1000 documents-sorted-deduped.json > documents-sorted-deduped-1k.json
+```
+
 Now zip everything up:
 ```
 pbzip2 documents-1k.json
 pbzip2 documents-sorted-1k.json
 pbzip2 documents.json
 pbzip2 documents-sorted.json
+documents-sorted-deduped.json
+documents-sorted-deduped-1k.json
 ```
 
 Now upload all of that to the AWS location from `track.json`.
@@ -145,6 +164,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.
 * `ingest_order` (default: jumbled): Should the data be loaded in `sorted` order or a more `jumbled`, mostly random order.
 * `synthetic_source` (default: false): Should we enable `synthetic` _source to save space?
+* `ingest_mode` (default: index) Should be `data_stream` to benchmark ingesting into a tsdb data stream.
 
 ### License
 

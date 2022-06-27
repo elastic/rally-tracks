@@ -3,14 +3,6 @@
 import json
 import sys
 
-def safeget(dct, *keys):
-    for key in keys:
-        try:
-            dct = dct[key]
-        except KeyError:
-            return None
-    return dct
-
 def generate_event_key(parsed_line):
     return parsed_line['kubernetes']['event']['involved_object']['uid']
 
@@ -18,7 +10,7 @@ def generate_state_container_key(parsed_line):
     key = parsed_line['kubernetes']['container']['name']
     key += parsed_line['kubernetes']['pod']['name']
     key += parsed_line['kubernetes']['node']['name']
-    container_id = safeget(parsed_line, 'kubernetes', 'container', 'id')
+    container_id = parsed_line.get('kubernetes',{}).get('container', {}).get('id')
     if (container_id is not None):
         key += container_id
     return key
@@ -71,7 +63,7 @@ with open('error_lines.json', 'a') as error_file:
             parsed = json.loads(line)
             line_timestamp = parsed['@timestamp']
             metric_set_name = parsed['metricset']['name']
-            if safeget(parsed, 'error') is not None:
+            if parsed.get('error') is not None:
                 error_count += 1
                 print(line, file=error_file)
                 continue
@@ -81,7 +73,7 @@ with open('error_lines.json', 'a') as error_file:
             if (current_timestamp == line_timestamp):
                 if key in keys:
                     dupe_file_name = f"dupes-{metric_set_name}.json"
-                    dupe_file = safeget(dupe_files, dupe_file_name)
+                    dupe_file = dupe_files.get(dupe_file_name)
                     if dupe_file is None:
                         dupe_file = open(dupe_file_name, 'a')
                         dupe_files[dupe_file_name] = dupe_file

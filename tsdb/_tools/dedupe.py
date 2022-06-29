@@ -29,25 +29,25 @@ def generate_state_container_key(parsed_line):
     return key
 
 def generate_state_pod_key(parsed_line):
-    return parsed_line['kubernetes']['pod']['name'] + parsed_line['kubernetes']['node']['name']
+    return parsed_line['kubernetes']['pod']['name'] + generate_node_key(parsed_line)
 
 def generate_container_key(parsed_line):
-    return parsed_line['kubernetes']['container']['name'] + parsed_line['kubernetes']['pod']['name'] + parsed_line['kubernetes']['node']['name']
+    return parsed_line['kubernetes']['container']['name'] + parsed_line['kubernetes']['pod']['name'] + generate_node_key(parsed_line)
 
 def generate_volume_key(parsed_line):
-    return parsed_line['kubernetes']['volume']['name'] + parsed_line['kubernetes']['pod']['name'] + parsed_line['kubernetes']['node']['name']
+    return parsed_line['kubernetes']['volume']['name'] + parsed_line['kubernetes']['pod']['name'] + generate_node_key(parsed_line)
 
 def generate_pod_key(parsed_line):
-    return parsed_line['kubernetes']['pod']['name'] + parsed_line['kubernetes']['node']['name']
+    return parsed_line['kubernetes']['pod']['name'] + generate_node_key(parsed_line)
 
 def generate_node_key(parsed_line):
     return parsed_line['kubernetes']['node']['name']
 
 def generate_system_key(parsed_line):
-    return parsed_line['kubernetes']['node']['name'] + parsed_line['kubernetes']['system']['container']
+    return generate_node_key(parsed_line) + parsed_line['kubernetes']['system']['container']
 
 def generate_state_node_key(parsed_line):
-    return parsed_line['kubernetes']['node']['name']
+    return generate_node_key(parsed_line)
 
 generate_key_functions = {
     'event': generate_event_key,

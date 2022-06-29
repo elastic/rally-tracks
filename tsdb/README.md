@@ -120,8 +120,10 @@ rm -rf tmp
 head -n 1000 documents-sorted.json > documents-sorted-1k.json
 ```
 
-Finally you'll also need a deduped version of the data in order to to support the `ingest_mode` that benchmarks ingesting into a tsdb data stream (`data_stream`). Use the `dedupe.py` tool in the `_tools` directory. This tool needs `documents-sorted.json` as input via standard in and generates a deduped
-varians via standard out.
+Finally you'll also need a deduped version of the data in order to to support the `ingest_mode` that 
+benchmarks ingesting into a tsdb data stream (`data_stream`). Use the `dedupe.py` tool in the 
+`_tools` directory. This tool needs `documents-sorted.json` as input via standard in and generates a 
+deduped variant via standard out.
 
 ```
 cat documents-sorted.json | dedupe.py > documents-sorted-deduped.json

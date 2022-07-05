@@ -1,33 +1,24 @@
+{
+  "name": "append-no-conflicts",
+  "description": "Indexes the whole document corpus.",
+  "default": true,
+  "schedule": [
     {
-      "name": "append-no-conflicts",
-      "description": "Indexes the whole document corpus.",
-      "default": true,
-      "schedule": [
-        {
-          "operation": "delete-index"
-        },
-        {
-          "name": "create-index"
-        },
-        {
-          "name": "index" 
-        },
-        {
-          "name": "check-cluster-health"
-        },
-        {
-          "name": "refresh-after-force-merge",
-          "operation": "refresh"
-        },
-        {
-          "operation": "default",
-          "warmup-iterations": 50,
-          "iterations": 100
-        },
-        {
-          "operation": "default_1k",
-          "warmup-iterations": 50,
-          "iterations": 100
-        }
-      ]
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "operation": "check-cluster-health"
+    },
+    {
+      "operation": "default_1k",
+      "warmup-iterations": 50,
+      "iterations": 100
     }
+  ]
+}

@@ -1,0 +1,588 @@
+{
+    "mappings": {
+        "_data_stream_timestamp": {
+            "enabled": true
+        },
+        "date_detection": false,
+        "dynamic_templates": [
+            {
+                "match_ip": {
+                    "mapping": {
+                        "type": "ip"
+                    },
+                    "match": "ip",
+                    "match_mapping_type": "string"
+                }
+            },
+            {
+                "match_message": {
+                    "mapping": {
+                        "type": "match_only_text"
+                    },
+                    "match": "message",
+                    "match_mapping_type": "string"
+                }
+            },
+            {
+                "strings_as_keyword": {
+                    "mapping": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "match_mapping_type": "string"
+                }
+            }
+        ],
+        "properties": {
+            "@timestamp": {
+                "type": "date"
+            },
+            "agent": {
+                "properties": {
+                    "ephemeral_id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "type": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "cloud": {
+                "properties": {
+                    "account": {
+                        "properties": {
+                            "id": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "availability_zone": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "instance": {
+                        "properties": {
+                            "id": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "machine": {
+                        "properties": {
+                            "type": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "project": {
+                        "properties": {
+                            "id": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "provider": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "service": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "data_stream": {
+                "properties": {
+                    "dataset": {
+                        "type": "constant_keyword",
+                        "value": "kubernetes.apiserver"
+                    },
+                    "namespace": {
+                        "type": "constant_keyword",
+                        "value": "default"
+                    },
+                    "type": {
+                        "type": "constant_keyword",
+                        "value": "metrics"
+                    }
+                }
+            },
+            "ecs": {
+                "properties": {
+                    "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "elastic_agent": {
+                "properties": {
+                    "id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "snapshot": {
+                        "type": "boolean"
+                    },
+                    "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "event": {
+                "properties": {
+                    "dataset": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "duration": {
+                        "type": "long"
+                    },
+                    "module": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "host": {
+                "properties": {
+                    "architecture": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "containerized": {
+                        "type": "boolean"
+                    },
+                    "hostname": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "ip": {
+                        "type": "ip"
+                    },
+                    "mac": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "os": {
+                        "properties": {
+                            "codename": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "family": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "kernel": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "platform": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "type": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "kubernetes": {
+                "properties": {
+                    "apiserver": {
+                        "properties": {
+                            "audit": {
+                                "properties": {
+                                    "event": {
+                                        "properties": {
+                                            "count": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    },
+                                    "rejected": {
+                                        "properties": {
+                                            "count": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "client": {
+                                "properties": {
+                                    "request": {
+                                        "properties": {
+                                            "count": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "etcd": {
+                                "properties": {
+                                    "object": {
+                                        "properties": {
+                                            "count": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "process": {
+                                "properties": {
+                                    "cpu": {
+                                        "properties": {
+                                            "sec": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    },
+                                    "fds": {
+                                        "properties": {
+                                            "open": {
+                                                "properties": {
+                                                    "count": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "memory": {
+                                        "properties": {
+                                            "resident": {
+                                                "properties": {
+                                                    "bytes": {
+                                                        "type": "float"
+                                                    }
+                                                }
+                                            },
+                                            "virtual": {
+                                                "properties": {
+                                                    "bytes": {
+                                                        "type": "float"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "started": {
+                                        "properties": {
+                                            "sec": {
+                                                "type": "float"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "request": {
+                                "properties": {
+                                    "code": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "component": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "count": {
+                                        "type": "long"
+                                    },
+                                    "current": {
+                                        "properties": {
+                                            "count": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    },
+                                    "dry_run": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "duration": {
+                                        "properties": {
+                                            "us": {
+                                                "properties": {
+                                                    "bucket": {
+                                                        "properties": {
+                                                            "+Inf": {
+                                                                "type": "long"
+                                                            },
+                                                            "100000": {
+                                                                "type": "long"
+                                                            },
+                                                            "1000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "10000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "1250000": {
+                                                                "type": "long"
+                                                            },
+                                                            "150000": {
+                                                                "type": "long"
+                                                            },
+                                                            "1500000": {
+                                                                "type": "long"
+                                                            },
+                                                            "15000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "1750000": {
+                                                                "type": "long"
+                                                            },
+                                                            "200000": {
+                                                                "type": "long"
+                                                            },
+                                                            "2000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "20000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "250000": {
+                                                                "type": "long"
+                                                            },
+                                                            "2500000": {
+                                                                "type": "long"
+                                                            },
+                                                            "25000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "300000": {
+                                                                "type": "long"
+                                                            },
+                                                            "3000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "30000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "350000": {
+                                                                "type": "long"
+                                                            },
+                                                            "3500000": {
+                                                                "type": "long"
+                                                            },
+                                                            "400000": {
+                                                                "type": "long"
+                                                            },
+                                                            "4000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "40000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "450000": {
+                                                                "type": "long"
+                                                            },
+                                                            "4500000": {
+                                                                "type": "long"
+                                                            },
+                                                            "50000": {
+                                                                "type": "long"
+                                                            },
+                                                            "500000": {
+                                                                "type": "long"
+                                                            },
+                                                            "5000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "50000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "600000": {
+                                                                "type": "long"
+                                                            },
+                                                            "6000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "60000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "700000": {
+                                                                "type": "long"
+                                                            },
+                                                            "7000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "800000": {
+                                                                "type": "long"
+                                                            },
+                                                            "8000000": {
+                                                                "type": "long"
+                                                            },
+                                                            "900000": {
+                                                                "type": "long"
+                                                            },
+                                                            "9000000": {
+                                                                "type": "long"
+                                                            }
+                                                        }
+                                                    },
+                                                    "count": {
+                                                        "type": "long"
+                                                    },
+                                                    "sum": {
+                                                        "type": "float"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "group": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "host": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "longrunning": {
+                                        "properties": {
+                                            "count": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    },
+                                    "method": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "resource": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "scope": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "subresource": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "verb": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "version": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "metricset": {
+                "properties": {
+                    "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "period": {
+                        "type": "long"
+                    }
+                }
+            },
+            "orchestrator": {
+                "properties": {
+                    "cluster": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "url": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "service": {
+                "properties": {
+                    "address": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "type": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            }
+        }
+    },
+    "settings": {
+        "index": {
+            "codec": "best_compression",
+            "hidden": "true",
+            "lifecycle": {
+                "name": "metrics"
+            },
+            "number_of_replicas": "{{number_of_replicas | default(1)}}",
+            "number_of_shards": "{{number_of_shards | default(1)}}",
+            "query": {
+                "default_field": [
+                    "message"
+                ]
+            },
+            "routing": {
+                "allocation": {
+                    "include": {
+                        "_tier_preference": "data_hot"
+                    }
+                }
+            }
+        }
+    }
+}

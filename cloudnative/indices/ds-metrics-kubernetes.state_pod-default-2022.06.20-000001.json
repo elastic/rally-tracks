@@ -1,0 +1,650 @@
+{
+    "mappings": {
+        "_data_stream_timestamp": {
+            "enabled": true
+        },
+        "date_detection": false,
+        "dynamic_templates": [
+            {
+                "match_ip": {
+                    "mapping": {
+                        "type": "ip"
+                    },
+                    "match": "ip",
+                    "match_mapping_type": "string"
+                }
+            },
+            {
+                "match_message": {
+                    "mapping": {
+                        "type": "match_only_text"
+                    },
+                    "match": "message",
+                    "match_mapping_type": "string"
+                }
+            },
+            {
+                "strings_as_keyword": {
+                    "mapping": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "match_mapping_type": "string"
+                }
+            }
+        ],
+        "properties": {
+            "@timestamp": {
+                "type": "date"
+            },
+            "agent": {
+                "properties": {
+                    "ephemeral_id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "type": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "cloud": {
+                "properties": {
+                    "account": {
+                        "properties": {
+                            "id": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "availability_zone": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "instance": {
+                        "properties": {
+                            "id": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "machine": {
+                        "properties": {
+                            "type": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "project": {
+                        "properties": {
+                            "id": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "provider": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "service": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "data_stream": {
+                "properties": {
+                    "dataset": {
+                        "type": "constant_keyword",
+                        "value": "kubernetes.state_pod"
+                    },
+                    "namespace": {
+                        "type": "constant_keyword",
+                        "value": "default"
+                    },
+                    "type": {
+                        "type": "constant_keyword",
+                        "value": "metrics"
+                    }
+                }
+            },
+            "ecs": {
+                "properties": {
+                    "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "elastic_agent": {
+                "properties": {
+                    "id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "snapshot": {
+                        "type": "boolean"
+                    },
+                    "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "error": {
+                "properties": {
+                    "message": {
+                        "type": "match_only_text"
+                    }
+                }
+            },
+            "event": {
+                "properties": {
+                    "dataset": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "duration": {
+                        "type": "long"
+                    },
+                    "module": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "host": {
+                "properties": {
+                    "architecture": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "containerized": {
+                        "type": "boolean"
+                    },
+                    "hostname": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "ip": {
+                        "type": "ip"
+                    },
+                    "mac": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "os": {
+                        "properties": {
+                            "codename": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "family": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "kernel": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "platform": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "type": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "kubernetes": {
+                "properties": {
+                    "daemonset": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "deployment": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "labels": {
+                        "properties": {
+                            "app": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "app-1": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "app-2": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "app-3": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "app-4": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "app_kubernetes_io/instance": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "app_kubernetes_io/name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "chart": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "common_k8s_elastic_co/type": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "component": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "control-plane": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "controller-revision-hash": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/cluster-name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/http-scheme": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-data": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-data_cold": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-data_content": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-data_frozen": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-data_hot": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-data_warm": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-ingest": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-master": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-ml": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-remote_cluster_client": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-transform": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/node-voting_only": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/statefulset-name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "elasticsearch_k8s_elastic_co/version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "heritage": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "k8s-app": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "kibana_k8s_elastic_co/name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "kibana_k8s_elastic_co/version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "kubernetes_io/cluster-service": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "pod-template-generation": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "pod-template-hash": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "release": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "statefulset_kubernetes_io/pod-name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "tier": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "namespace": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "namespace_labels": {
+                        "properties": {
+                            "kubernetes_io/metadata_name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "namespace_uid": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "node": {
+                        "properties": {
+                            "hostname": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "labels": {
+                                "properties": {
+                                    "beta_kubernetes_io/arch": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "beta_kubernetes_io/instance-type": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "beta_kubernetes_io/os": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "cloud_google_com/gke-boot-disk": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "cloud_google_com/gke-container-runtime": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "cloud_google_com/gke-nodepool": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "cloud_google_com/gke-os-distribution": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "cloud_google_com/machine-family": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "env": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "failure-domain_beta_kubernetes_io/region": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "failure-domain_beta_kubernetes_io/zone": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "kubernetes_io/arch": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "kubernetes_io/hostname": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "kubernetes_io/os": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "node_kubernetes_io/instance-type": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "topology_gke_io/zone": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "topology_kubernetes_io/region": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "topology_kubernetes_io/zone": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    }
+                                }
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "uid": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "pod": {
+                        "properties": {
+                            "host_ip": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "ip": {
+                                "type": "ip"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "status": {
+                                "properties": {
+                                    "phase": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "ready": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "scheduled": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    }
+                                }
+                            },
+                            "uid": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "replicaset": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "statefulset": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "metricset": {
+                "properties": {
+                    "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "period": {
+                        "type": "long"
+                    }
+                }
+            },
+            "orchestrator": {
+                "properties": {
+                    "cluster": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "url": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "service": {
+                "properties": {
+                    "address": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "type": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            }
+        }
+    },
+    "settings": {
+        "index": {
+            "codec": "best_compression",
+            "hidden": "true",
+            "lifecycle": {
+                "name": "metrics"
+            },
+            "number_of_replicas": "{{number_of_replicas | default(1)}}",
+            "number_of_shards": "{{number_of_shards | default(1)}}",
+            "query": {
+                "default_field": [
+                    "message"
+                ]
+            },
+            "routing": {
+                "allocation": {
+                    "include": {
+                        "_tier_preference": "data_hot"
+                    }
+                }
+            }
+        }
+    }
+}

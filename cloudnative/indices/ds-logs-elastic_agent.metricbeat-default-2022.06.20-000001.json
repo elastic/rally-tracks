@@ -1,0 +1,1173 @@
+{
+    "mappings": {
+        "_data_stream_timestamp": {
+            "enabled": true
+        },
+        "date_detection": false,
+        "dynamic_templates": [
+            {
+                "match_ip": {
+                    "mapping": {
+                        "type": "ip"
+                    },
+                    "match": "ip",
+                    "match_mapping_type": "string"
+                }
+            },
+            {
+                "match_message": {
+                    "mapping": {
+                        "type": "match_only_text"
+                    },
+                    "match": "message",
+                    "match_mapping_type": "string"
+                }
+            },
+            {
+                "strings_as_keyword": {
+                    "mapping": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "match_mapping_type": "string"
+                }
+            }
+        ],
+        "properties": {
+            "@timestamp": {
+                "type": "date"
+            },
+            "address": {
+                "ignore_above": 1024,
+                "type": "keyword"
+            },
+            "agent": {
+                "properties": {
+                    "ephemeral_id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "type": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "cloud": {
+                "properties": {
+                    "account": {
+                        "properties": {
+                            "id": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "availability_zone": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "instance": {
+                        "properties": {
+                            "id": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "machine": {
+                        "properties": {
+                            "type": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "project": {
+                        "properties": {
+                            "id": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "provider": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "service": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "data_stream": {
+                "properties": {
+                    "dataset": {
+                        "type": "constant_keyword",
+                        "value": "elastic_agent.metricbeat"
+                    },
+                    "namespace": {
+                        "type": "constant_keyword",
+                        "value": "default"
+                    },
+                    "type": {
+                        "type": "constant_keyword",
+                        "value": "logs"
+                    }
+                }
+            },
+            "ecs": {
+                "properties": {
+                    "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "elastic_agent": {
+                "properties": {
+                    "id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "snapshot": {
+                        "type": "boolean"
+                    },
+                    "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "event": {
+                "properties": {
+                    "dataset": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "host": {
+                "properties": {
+                    "architecture": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "containerized": {
+                        "type": "boolean"
+                    },
+                    "hostname": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "ip": {
+                        "type": "ip"
+                    },
+                    "mac": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "os": {
+                        "properties": {
+                            "codename": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "family": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "kernel": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "platform": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "type": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "input": {
+                "properties": {
+                    "type": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "libbeat": {
+                "properties": {
+                    "processor": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "log": {
+                "properties": {
+                    "file": {
+                        "properties": {
+                            "path": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "level": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "logger": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    },
+                    "offset": {
+                        "type": "long"
+                    },
+                    "origin": {
+                        "properties": {
+                            "file": {
+                                "properties": {
+                                    "line": {
+                                        "type": "long"
+                                    },
+                                    "name": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "message": {
+                "type": "match_only_text"
+            },
+            "monitoring": {
+                "properties": {
+                    "ecs": {
+                        "properties": {
+                            "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "metrics": {
+                        "properties": {
+                            "beat": {
+                                "properties": {
+                                    "cgroup": {
+                                        "properties": {
+                                            "cpu": {
+                                                "properties": {
+                                                    "cfs": {
+                                                        "properties": {
+                                                            "period": {
+                                                                "properties": {
+                                                                    "us": {
+                                                                        "type": "long"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "quota": {
+                                                                "properties": {
+                                                                    "us": {
+                                                                        "type": "long"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "id": {
+                                                        "ignore_above": 1024,
+                                                        "type": "keyword"
+                                                    },
+                                                    "stats": {
+                                                        "properties": {
+                                                            "periods": {
+                                                                "type": "long"
+                                                            },
+                                                            "throttled": {
+                                                                "properties": {
+                                                                    "ns": {
+                                                                        "type": "long"
+                                                                    },
+                                                                    "periods": {
+                                                                        "type": "long"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "cpuacct": {
+                                                "properties": {
+                                                    "id": {
+                                                        "ignore_above": 1024,
+                                                        "type": "keyword"
+                                                    },
+                                                    "total": {
+                                                        "properties": {
+                                                            "ns": {
+                                                                "type": "long"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "memory": {
+                                                "properties": {
+                                                    "id": {
+                                                        "ignore_above": 1024,
+                                                        "type": "keyword"
+                                                    },
+                                                    "mem": {
+                                                        "properties": {
+                                                            "limit": {
+                                                                "properties": {
+                                                                    "bytes": {
+                                                                        "type": "long"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "usage": {
+                                                                "properties": {
+                                                                    "bytes": {
+                                                                        "type": "long"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "cpu": {
+                                        "properties": {
+                                            "system": {
+                                                "properties": {
+                                                    "ticks": {
+                                                        "type": "long"
+                                                    },
+                                                    "time": {
+                                                        "properties": {
+                                                            "ms": {
+                                                                "type": "long"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "total": {
+                                                "properties": {
+                                                    "ticks": {
+                                                        "type": "long"
+                                                    },
+                                                    "time": {
+                                                        "properties": {
+                                                            "ms": {
+                                                                "type": "long"
+                                                            }
+                                                        }
+                                                    },
+                                                    "value": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "user": {
+                                                "properties": {
+                                                    "ticks": {
+                                                        "type": "long"
+                                                    },
+                                                    "time": {
+                                                        "properties": {
+                                                            "ms": {
+                                                                "type": "long"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "info": {
+                                        "properties": {
+                                            "ephemeral_id": {
+                                                "ignore_above": 1024,
+                                                "type": "keyword"
+                                            },
+                                            "name": {
+                                                "ignore_above": 1024,
+                                                "type": "keyword"
+                                            },
+                                            "uptime": {
+                                                "properties": {
+                                                    "ms": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "version": {
+                                                "ignore_above": 1024,
+                                                "type": "keyword"
+                                            }
+                                        }
+                                    },
+                                    "memstats": {
+                                        "properties": {
+                                            "gc_next": {
+                                                "type": "long"
+                                            },
+                                            "memory_alloc": {
+                                                "type": "long"
+                                            },
+                                            "memory_sys": {
+                                                "type": "long"
+                                            },
+                                            "memory_total": {
+                                                "type": "long"
+                                            },
+                                            "rss": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    },
+                                    "runtime": {
+                                        "properties": {
+                                            "goroutines": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "libbeat": {
+                                "properties": {
+                                    "config": {
+                                        "properties": {
+                                            "module": {
+                                                "properties": {
+                                                    "running": {
+                                                        "type": "long"
+                                                    },
+                                                    "starts": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "output": {
+                                        "properties": {
+                                            "events": {
+                                                "properties": {
+                                                    "acked": {
+                                                        "type": "long"
+                                                    },
+                                                    "active": {
+                                                        "type": "long"
+                                                    },
+                                                    "batches": {
+                                                        "type": "long"
+                                                    },
+                                                    "dropped": {
+                                                        "type": "long"
+                                                    },
+                                                    "total": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "read": {
+                                                "properties": {
+                                                    "bytes": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "type": {
+                                                "ignore_above": 1024,
+                                                "type": "keyword"
+                                            },
+                                            "write": {
+                                                "properties": {
+                                                    "bytes": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "pipeline": {
+                                        "properties": {
+                                            "clients": {
+                                                "type": "long"
+                                            },
+                                            "events": {
+                                                "properties": {
+                                                    "active": {
+                                                        "type": "long"
+                                                    },
+                                                    "published": {
+                                                        "type": "long"
+                                                    },
+                                                    "retry": {
+                                                        "type": "long"
+                                                    },
+                                                    "total": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "queue": {
+                                                "properties": {
+                                                    "acked": {
+                                                        "type": "long"
+                                                    },
+                                                    "max_events": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "metricbeat": {
+                                "properties": {
+                                    "kubernetes": {
+                                        "properties": {
+                                            "apiserver": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "container": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "event": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "node": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "pod": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "proxy": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_container": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_cronjob": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_deployment": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_job": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_node": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_pod": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_replicaset": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_resourcequota": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_service": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_statefulset": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "state_storageclass": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "failures": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "system": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "volume": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "system": {
+                                        "properties": {
+                                            "core": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "cpu": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "diskio": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "filesystem": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "fsstat": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "load": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "memory": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "network": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "process": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "process_summary": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "socket_summary": {
+                                                "properties": {
+                                                    "events": {
+                                                        "type": "long"
+                                                    },
+                                                    "success": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "system": {
+                                "properties": {
+                                    "cpu": {
+                                        "properties": {
+                                            "cores": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    },
+                                    "handles": {
+                                        "properties": {
+                                            "limit": {
+                                                "properties": {
+                                                    "hard": {
+                                                        "type": "long"
+                                                    },
+                                                    "soft": {
+                                                        "type": "long"
+                                                    }
+                                                }
+                                            },
+                                            "open": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    },
+                                    "load": {
+                                        "properties": {
+                                            "1": {
+                                                "type": "float"
+                                            },
+                                            "15": {
+                                                "type": "float"
+                                            },
+                                            "5": {
+                                                "type": "float"
+                                            },
+                                            "norm": {
+                                                "properties": {
+                                                    "1": {
+                                                        "type": "float"
+                                                    },
+                                                    "15": {
+                                                        "type": "float"
+                                                    },
+                                                    "5": {
+                                                        "type": "float"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "network": {
+                "ignore_above": 1024,
+                "type": "keyword"
+            },
+            "orchestrator": {
+                "properties": {
+                    "cluster": {
+                        "properties": {
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "url": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "service": {
+                "properties": {
+                    "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                    }
+                }
+            },
+            "system_info": {
+                "properties": {
+                    "beat": {
+                        "properties": {
+                            "path": {
+                                "properties": {
+                                    "config": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "data": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "home": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "logs": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    }
+                                }
+                            },
+                            "type": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "uuid": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "build": {
+                        "properties": {
+                            "commit": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "libbeat": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "time": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "ecs": {
+                        "properties": {
+                            "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "go": {
+                        "properties": {
+                            "arch": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "max_procs": {
+                                "type": "long"
+                            },
+                            "os": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    },
+                    "process": {
+                        "properties": {
+                            "capabilities": {
+                                "properties": {
+                                    "bounding": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "effective": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "inheritable": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "permitted": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    }
+                                }
+                            },
+                            "cwd": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "exe": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "name": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            },
+                            "pid": {
+                                "type": "long"
+                            },
+                            "ppid": {
+                                "type": "long"
+                            },
+                            "seccomp": {
+                                "properties": {
+                                    "mode": {
+                                        "ignore_above": 1024,
+                                        "type": "keyword"
+                                    },
+                                    "no_new_privs": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            },
+                            "start_time": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "settings": {
+        "index": {
+            "codec": "best_compression",
+            "hidden": "true",
+            "lifecycle": {
+                "name": "logs"
+            },
+            "number_of_replicas": "{{number_of_replicas | default(1)}}",
+            "number_of_shards": "{{number_of_shards | default(1)}}",
+            "query": {
+                "default_field": [
+                    "message"
+                ]
+            },
+            "routing": {
+                "allocation": {
+                    "include": {
+                        "_tier_preference": "data_hot"
+                    }
+                }
+            }
+        }
+    }
+}

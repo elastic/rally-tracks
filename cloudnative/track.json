@@ -1,0 +1,646 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Track generated from kubernetes cluster data ",
+  "indices": [
+    {
+      "name": ".ds-metrics-elastic_agent.elastic_agent-default-2022.06.20-000001",
+      "body": ".ds-metrics-elastic_agent.elastic_agent-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-elastic_agent.filebeat-default-2022.06.20-000001",
+      "body": ".ds-metrics-elastic_agent.filebeat-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001",
+      "body": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.apiserver-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.apiserver-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.container-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.container-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.event-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.event-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.node-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.node-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.pod-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.pod-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.proxy-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.proxy-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_container-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_container-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_job-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_job-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_node-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_node-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_pod-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_pod-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_service-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_service-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.system-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.system-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.volume-default-2022.06.20-000001",
+      "body": ".ds-metrics-kubernetes.volume-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.core-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.core-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.cpu-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.cpu-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.diskio-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.diskio-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.filesystem-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.filesystem-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.fsstat-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.fsstat-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.load-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.load-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.memory-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.memory-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.network-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.network-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.process-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.process-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.process_summary-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.process_summary-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-metrics-system.socket_summary-default-2022.06.20-000001",
+      "body": ".ds-metrics-system.socket_summary-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-logs-elastic_agent-default-2022.06.20-000001",
+      "body": ".ds-logs-elastic_agent-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-logs-elastic_agent.filebeat-default-2022.06.20-000001",
+      "body": ".ds-logs-elastic_agent.filebeat-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-logs-elastic_agent.metricbeat-default-2022.06.20-000001",
+      "body": ".ds-logs-elastic_agent.metricbeat-default-2022.06.20-000001.json"
+    }, 
+    {
+      "name": ".ds-logs-kubernetes.container_logs-default-2022.06.20-000001",
+      "body": ".ds-logs-kubernetes.container_logs-default-2022.06.20-000001.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": ".ds-metrics-elastic_agent.elastic_agent-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-elastic_agent.elastic_agent-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-elastic_agent.elastic_agent-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 257181,
+          "compressed-bytes": 17914156,
+          "uncompressed-bytes": 484571911
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-elastic_agent.filebeat-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-elastic_agent.filebeat-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-elastic_agent.filebeat-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 171454,
+          "compressed-bytes": 17668010,
+          "uncompressed-bytes": 428656833
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 171454,
+          "compressed-bytes": 18602544,
+          "uncompressed-bytes": 431620019
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.apiserver-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.apiserver-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.apiserver-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 1522057,
+          "compressed-bytes": 77790478,
+          "uncompressed-bytes": 2648699483
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.container-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.container-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.container-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 3912418,
+          "compressed-bytes": 836875710,
+          "uncompressed-bytes": 14752408548
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.event-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.event-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.event-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 1194,
+          "compressed-bytes": 96740,
+          "uncompressed-bytes": 2393679
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.node-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.node-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.node-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 85727,
+          "compressed-bytes": 9939249,
+          "uncompressed-bytes": 247617500
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.pod-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.pod-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.pod-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 3626673,
+          "compressed-bytes": 556922761,
+          "uncompressed-bytes": 12330067415
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.proxy-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.proxy-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.proxy-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 85727,
+          "compressed-bytes": 2255006,
+          "uncompressed-bytes": 131097990
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_container-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_container-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_container-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 3912277,
+          "compressed-bytes": 573860730,
+          "uncompressed-bytes": 12600775365
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 3,
+          "compressed-bytes": 1183,
+          "uncompressed-bytes": 4571
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 270629,
+          "compressed-bytes": 6888012,
+          "uncompressed-bytes": 435674026
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_job-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_job-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_job-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 3,
+          "compressed-bytes": 1173,
+          "uncompressed-bytes": 4533
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_node-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_node-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_node-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 85719,
+          "compressed-bytes": 3733203,
+          "uncompressed-bytes": 218596618
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_pod-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_pod-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_pod-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 3626768,
+          "compressed-bytes": 317758663,
+          "uncompressed-bytes": 10650838005
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 299203,
+          "compressed-bytes": 8320303,
+          "uncompressed-bytes": 509737067
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 2391262,
+          "compressed-bytes": 52845415,
+          "uncompressed-bytes": 3662861792
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_service-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_service-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_service-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 228579,
+          "compressed-bytes": 7062797,
+          "uncompressed-bytes": 461448852
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 100005,
+          "compressed-bytes": 2589026,
+          "uncompressed-bytes": 177707652
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 57147,
+          "compressed-bytes": 1281945,
+          "uncompressed-bytes": 94544481
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.system-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.system-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.system-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 257181,
+          "compressed-bytes": 14371399,
+          "uncompressed-bytes": 446467704
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-kubernetes.volume-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-kubernetes.volume-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-kubernetes.volume-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 5698230,
+          "compressed-bytes": 254047634,
+          "uncompressed-bytes": 10133114092
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.core-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.core-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-system.core-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 257184,
+          "compressed-bytes": 11553536,
+          "uncompressed-bytes": 410996542
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.cpu-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.cpu-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-system.cpu-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 85728,
+          "compressed-bytes": 4914199,
+          "uncompressed-bytes": 146836079
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.diskio-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.diskio-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-system.diskio-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 1414506,
+          "compressed-bytes": 49314518,
+          "uncompressed-bytes": 2037844446
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.filesystem-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.filesystem-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-system.filesystem-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 14291,
+          "compressed-bytes": 684123,
+          "uncompressed-bytes": 22459607
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.fsstat-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.fsstat-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-system.fsstat-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 14291,
+          "compressed-bytes": 507501,
+          "uncompressed-bytes": 20288627
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.load-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.load-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-system.load-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 85728,
+          "compressed-bytes": 2930980,
+          "uncompressed-bytes": 118610652
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.memory-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.memory-default-2022.06.20-000001",
+          "base-url": "https://rally-tracks.elastic.co/cloudnative",
+          "source-file": ".ds-metrics-system.memory-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 85728,
+          "compressed-bytes": 4706187,
+          "uncompressed-bytes": 131221819
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.network-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.network-default-2022.06.20-000001",
+          "base-url": "https://rally-tracks.elastic.co/cloudnative",
+          "source-file": ".ds-metrics-system.network-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 257178,
+          "compressed-bytes": 10471054,
+          "uncompressed-bytes": 369613271
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.process-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.process-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-system.process-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 516949,
+          "compressed-bytes": 41083309,
+          "uncompressed-bytes": 1688684975
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.process_summary-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.process_summary-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-system.process_summary-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 85728,
+          "compressed-bytes": 2411265,
+          "uncompressed-bytes": 119700431
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-metrics-system.socket_summary-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-metrics-system.socket_summary-default-2022.06.20-000001",
+          "source-file": ".ds-metrics-system.socket_summary-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 85728,
+          "compressed-bytes": 3556583,
+          "uncompressed-bytes": 138531486
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-logs-elastic_agent-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-logs-elastic_agent-default-2022.06.20-000001",
+          "source-file": ".ds-logs-elastic_agent-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 908119,
+          "compressed-bytes": 27347613,
+          "uncompressed-bytes": 1349012684
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-logs-elastic_agent.filebeat-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-logs-elastic_agent.filebeat-default-2022.06.20-000001",
+          "source-file": ".ds-logs-elastic_agent.filebeat-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 38495,
+          "compressed-bytes": 3799598,
+          "uncompressed-bytes": 89280911
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-logs-elastic_agent.metricbeat-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-logs-elastic_agent.metricbeat-default-2022.06.20-000001",
+          "source-file": ".ds-logs-elastic_agent.metricbeat-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 114938,
+          "compressed-bytes": 7662354,
+          "uncompressed-bytes": 236046405
+        }
+      ]
+    }, 
+    {
+      "name": ".ds-logs-kubernetes.container_logs-default-2022.06.20-000001",
+      "base-url": "https://rally-tracks.elastic.co/cloudnative",
+      "documents": [
+        {
+          "target-index": ".ds-logs-kubernetes.container_logs-default-2022.06.20-000001",
+          "source-file": ".ds-logs-kubernetes.container_logs-default-2022.06.20-000001-documents.json.bz2",
+          "document-count": 919563,
+          "compressed-bytes": 66281408,
+          "uncompressed-bytes": 3144329797
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

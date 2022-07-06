@@ -26,45 +26,17 @@
   ],
   {%- endif %}
   "corpora": [
-    {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
     {
       "name": "tsdb",
       "base-url": "https://rally-tracks.elastic.co/tsdb",
       "documents": [
         {
-          "source-file": "documents-sorted-deduped.json.bz2",
+          "source-file": "documents.json.bz2",
           "document-count": 116633698,
           "uncompressed-bytes": 132046338827
         }
       ]
     }
-    {%- elif ingest_order is defined and ingest_order == "sorted" %}
-      {
-        "name": "tsdb",
-        "base-url": "https://benchmarks-elasticsearch-org.s3.us-west-2.amazonaws.com/corpora/tsdb/",
-        "documents": [
-          {
-            "source-file": "documents-sorted.json.bz2",
-            "document-count": 122613113,
-            "compressed-bytes": 10890215370,
-            "uncompressed-bytes": 138721940450
-          }
-        ]
-      }
-    {%- else %}
-      {
-        "name": "tsdb",
-        "base-url": "https://benchmarks-elasticsearch-org.s3.us-west-2.amazonaws.com/corpora/tsdb/",
-        "documents": [
-          {
-            "source-file": "documents.json.bz2",
-            "document-count": 122613113,
-            "compressed-bytes": 11502047679,
-            "uncompressed-bytes": 138721940450
-          }
-        ]
-      }
-    {%- endif %}
   ],
   "operations": [
     {{ rally.collect(parts="operations/*.json") }}

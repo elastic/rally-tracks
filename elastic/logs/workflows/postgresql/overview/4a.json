@@ -1,0 +1,90 @@
+{
+  "id": "Create new visual - part a",
+  "name": "POST /api/metrics/vis/data",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 1.466489
+        },
+        {
+          "name": "Elasticsearch: POST /traces-apm*,apm-*,logs-apm*,apm-*,metrics-apm*,apm-*/_async_search - postgresql/overview - 4a.1",
+          "operation-type": "search",
+          "index": "traces-apm*,apm-*,logs-apm*,apm-*,metrics-apm*,apm-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true"
+          },
+          "body": {
+            "size": 0,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "gte": "2022-04-20T19:54:15.767Z",
+                        "lte": "2022-04-20T20:54:15.767Z",
+                        "format": "strict_date_optional_time"
+                      }
+                    }
+                  }
+                ],
+                "filter": [
+                  {
+                    "match_phrase": {
+                      "log.level": "ERROR"
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            },
+            "aggs": {
+              "timeseries": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "min_doc_count": 0,
+                  "time_zone": "UTC",
+                  "extended_bounds": {
+                    "min": 1650484455767,
+                    "max": 1650488055767
+                  },
+                  "fixed_interval": "60s"
+                },
+                "aggs": {
+                  "0ea734ec-b1ce-4025-9174-162c0683e1f5": {
+                    "bucket_script": {
+                      "buckets_path": {
+                        "count": "_count"
+                      },
+                      "script": {
+                        "source": "count * 1",
+                        "lang": "expression"
+                      },
+                      "gap_policy": "skip"
+                    }
+                  }
+                },
+                "meta": {
+                  "timeField": "@timestamp",
+                  "panelId": "bbe7ca99-504a-44e1-a5fa-f4dc60bd455d",
+                  "seriesId": "fb3acf3b-5fa2-4d5f-9e6b-196b321afa39",
+                  "intervalString": "60s",
+                  "index": "apm_static_index_pattern_id"
+                }
+              }
+            },
+            "runtime_mappings": {},
+            "timeout": "30000ms"
+          }
+        }
+      ]
+    }
+  ]
+}

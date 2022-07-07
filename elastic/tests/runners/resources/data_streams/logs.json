@@ -1,0 +1,320 @@
+{
+  "data_streams" : [
+    {
+      "name" : "logs-apache.access-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-apache.access-default-2021.02.25-000001",
+          "index_uuid" : "Oh8Yh_7ARn6674A7WwC4yg"
+        },
+        {
+          "index_name" : ".ds-logs-apache.access-default-2021.02.25-000002",
+          "index_uuid" : "0jjNPyfSTJCgZ-JZo-FjDQ"
+        }
+      ],
+      "generation" : 2,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "apache"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs-apache.access",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-apache.error-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-apache.error-default-2021.02.25-000001",
+          "index_uuid" : "5sYrbXO6TbK9ifl-Hxq79w"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "apache"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-k8-application.log-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-k8-application.log-default-2021.02.25-000001",
+          "index_uuid" : "nC77drotSci5OWlioNHfYg"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "nginx"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-kafka.log-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-kafka.log-default-2021.02.25-000001",
+          "index_uuid" : "ftcoR4A1QkSdLyZeR5SFOA"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "kafka"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-mysql.error-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-mysql.error-default-2021.02.25-000001",
+          "index_uuid" : "O1LakHEVRymAg6e9aMXMnA"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "mysql"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-mysql.slowlog-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-mysql.slowlog-default-2021.02.25-000001",
+          "index_uuid" : "7DlWz44sTx6jx4gzL11anQ"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "mysql"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-nginx.access-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-nginx.access-default-2021.02.25-000001",
+          "index_uuid" : "RLKy_ilsTISxRdwHQ_WMrQ"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "nginx"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-nginx.error-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-nginx.error-default-2021.02.25-000001",
+          "index_uuid" : "bZoKACd4TY2eZkKjL-S9lw"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "nginx"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-postgresql.log-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-postgresql.log-default-2021.02.25-000001",
+          "index_uuid" : "doGad3ijShSEh1K7kxBBaQ"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "postgresql"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-redis.log-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-redis.log-default-2021.02.25-000001",
+          "index_uuid" : "OjUroQRPQuOyi5ZE8X7iSA"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "redis"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-redis.slowlog-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-redis.slowlog-default-2021.02.25-000001",
+          "index_uuid" : "eL64F0hVT5GTXHl8mxJcKw"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "redis"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-system.auth-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-system.auth-default-2021.02.25-000001",
+          "index_uuid" : "OtzmEtaYTPSZ18PNXg3KFQ"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "system"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    },
+    {
+      "name" : "logs-system.syslog-default",
+      "timestamp_field" : {
+        "name" : "@timestamp"
+      },
+      "indices" : [
+        {
+          "index_name" : ".ds-logs-system.syslog-default-2021.02.25-000001",
+          "index_uuid" : "8OCiQGPjQGaIQwhqidWW-A"
+        }
+      ],
+      "generation" : 1,
+      "_meta" : {
+        "managed_by" : "ingest-manager",
+        "managed" : true,
+        "package" : {
+          "name" : "system"
+        }
+      },
+      "status" : "GREEN",
+      "template" : "logs",
+      "ilm_policy" : "logs",
+      "hidden" : false
+    }
+  ]
+}

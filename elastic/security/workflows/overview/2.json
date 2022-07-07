@@ -1,0 +1,679 @@
+{
+  "name": "POST /api/detection_engine/signals/search",
+  "id": "Set the time range to `now-24hr` to `now`",
+  "requests": [
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.17430199999999998
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - overview - 2.1",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "aggregations": {
+                  "alertsGroup": {
+                    "terms": {
+                      "field": "event.module",
+                      "missing": "All others",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 10
+                    },
+                    "aggs": {
+                      "alerts": {
+                        "date_histogram": {
+                          "field": "@timestamp",
+                          "fixed_interval": "2700000ms",
+                          "min_doc_count": 0,
+                          "extended_bounds": {
+                            "min": 1643904000000,
+                            "max": 1643990400000
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "match": {
+                                      "event.kind": "alert"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-03T16:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.175039
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - overview - 2.2",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "aggregations": {
+                  "eventActionGroup": {
+                    "terms": {
+                      "field": "event.dataset",
+                      "missing": "All others",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 10
+                    },
+                    "aggs": {
+                      "events": {
+                        "date_histogram": {
+                          "field": "@timestamp",
+                          "fixed_interval": "2700000ms",
+                          "min_doc_count": 0,
+                          "extended_bounds": {
+                            "min": 1643904000000,
+                            "max": 1643990400000
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-03T16:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.175417
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - overview - 2.3",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "aggregations": {
+                  "auditd_count": {
+                    "filter": {
+                      "term": {
+                        "event.module": "auditd"
+                      }
+                    }
+                  },
+                  "endgame_module": {
+                    "filter": {
+                      "bool": {
+                        "should": [
+                          {
+                            "term": {
+                              "event.module": "endpoint"
+                            }
+                          },
+                          {
+                            "term": {
+                              "event.module": "endgame"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "aggs": {
+                      "dns_event_count": {
+                        "filter": {
+                          "bool": {
+                            "should": [
+                              {
+                                "bool": {
+                                  "filter": [
+                                    {
+                                      "term": {
+                                        "network.protocol": "dns"
+                                      }
+                                    },
+                                    {
+                                      "term": {
+                                        "event.category": "network"
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              {
+                                "term": {
+                                  "endgame.event_type_full": "dns_event"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "file_event_count": {
+                        "filter": {
+                          "bool": {
+                            "should": [
+                              {
+                                "term": {
+                                  "event.category": "file"
+                                }
+                              },
+                              {
+                                "term": {
+                                  "endgame.event_type_full": "file_event"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "image_load_event_count": {
+                        "filter": {
+                          "bool": {
+                            "should": [
+                              {
+                                "bool": {
+                                  "should": [
+                                    {
+                                      "term": {
+                                        "event.category": "library"
+                                      }
+                                    },
+                                    {
+                                      "term": {
+                                        "event.category": "driver"
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              {
+                                "term": {
+                                  "endgame.event_type_full": "image_load_event"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "network_event_count": {
+                        "filter": {
+                          "bool": {
+                            "should": [
+                              {
+                                "bool": {
+                                  "filter": [
+                                    {
+                                      "bool": {
+                                        "must_not": {
+                                          "term": {
+                                            "network.protocol": "dns"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "term": {
+                                        "event.category": "network"
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              {
+                                "term": {
+                                  "endgame.event_type_full": "network_event"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "process_event_count": {
+                        "filter": {
+                          "bool": {
+                            "should": [
+                              {
+                                "term": {
+                                  "event.category": "process"
+                                }
+                              },
+                              {
+                                "term": {
+                                  "endgame.event_type_full": "process_event"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "registry_event": {
+                        "filter": {
+                          "bool": {
+                            "should": [
+                              {
+                                "term": {
+                                  "event.category": "registry"
+                                }
+                              },
+                              {
+                                "term": {
+                                  "endgame.event_type_full": "registry_event"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "security_event_count": {
+                        "filter": {
+                          "bool": {
+                            "should": [
+                              {
+                                "bool": {
+                                  "filter": [
+                                    {
+                                      "term": {
+                                        "event.category": "session"
+                                      }
+                                    },
+                                    {
+                                      "term": {
+                                        "event.category": "authentication"
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              {
+                                "term": {
+                                  "endgame.event_type_full": "security_event"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "fim_count": {
+                    "filter": {
+                      "term": {
+                        "event.module": "file_integrity"
+                      }
+                    }
+                  },
+                  "winlog_module": {
+                    "filter": {
+                      "term": {
+                        "agent.type": "winlogbeat"
+                      }
+                    },
+                    "aggs": {
+                      "mwsysmon_operational_event_count": {
+                        "filter": {
+                          "term": {
+                            "winlog.channel": "Microsoft-Windows-Sysmon/Operational"
+                          }
+                        }
+                      },
+                      "security_event_count": {
+                        "filter": {
+                          "term": {
+                            "winlog.channel": "Security"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "system_module": {
+                    "filter": {
+                      "term": {
+                        "event.module": "system"
+                      }
+                    },
+                    "aggs": {
+                      "login_count": {
+                        "filter": {
+                          "term": {
+                            "event.dataset": "login"
+                          }
+                        }
+                      },
+                      "package_count": {
+                        "filter": {
+                          "term": {
+                            "event.dataset": "package"
+                          }
+                        }
+                      },
+                      "process_count": {
+                        "filter": {
+                          "term": {
+                            "event.dataset": "process"
+                          }
+                        }
+                      },
+                      "user_count": {
+                        "filter": {
+                          "term": {
+                            "event.dataset": "user"
+                          }
+                        }
+                      },
+                      "filebeat_count": {
+                        "filter": {
+                          "term": {
+                            "agent.type": "filebeat"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [
+                            {
+                              "bool": {
+                                "filter": [
+                                  {
+                                    "bool": {
+                                      "should": [
+                                        {
+                                          "exists": {
+                                            "field": "host.name"
+                                          }
+                                        }
+                                      ],
+                                      "minimum_should_match": 1
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-03T16:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.175824
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - overview - 2.4",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "aggregations": {
+                  "unique_flow_count": {
+                    "filter": {
+                      "term": {
+                        "type": "flow"
+                      }
+                    }
+                  },
+                  "unique_dns_count": {
+                    "filter": {
+                      "term": {
+                        "type": "dns"
+                      }
+                    }
+                  },
+                  "unique_suricata_count": {
+                    "filter": {
+                      "term": {
+                        "service.type": "suricata"
+                      }
+                    }
+                  },
+                  "unique_zeek_count": {
+                    "filter": {
+                      "term": {
+                        "service.type": "zeek"
+                      }
+                    }
+                  },
+                  "unique_socket_count": {
+                    "filter": {
+                      "term": {
+                        "event.dataset": "socket"
+                      }
+                    }
+                  },
+                  "unique_filebeat_count": {
+                    "filter": {
+                      "term": {
+                        "agent.type": "filebeat"
+                      }
+                    },
+                    "aggs": {
+                      "unique_netflow_count": {
+                        "filter": {
+                          "term": {
+                            "input.type": "netflow"
+                          }
+                        }
+                      },
+                      "unique_panw_count": {
+                        "filter": {
+                          "term": {
+                            "event.module": "panw"
+                          }
+                        }
+                      },
+                      "unique_cisco_count": {
+                        "filter": {
+                          "term": {
+                            "event.module": "cisco"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "unique_packetbeat_count": {
+                    "filter": {
+                      "term": {
+                        "agent.type": "packetbeat"
+                      }
+                    },
+                    "aggs": {
+                      "unique_tls_count": {
+                        "filter": {
+                          "term": {
+                            "network.protocol": "tls"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [
+                            {
+                              "bool": {
+                                "filter": [
+                                  {
+                                    "bool": {
+                                      "should": [
+                                        {
+                                          "bool": {
+                                            "should": [
+                                              {
+                                                "exists": {
+                                                  "field": "source.ip"
+                                                }
+                                              }
+                                            ],
+                                            "minimum_should_match": 1
+                                          }
+                                        },
+                                        {
+                                          "bool": {
+                                            "should": [
+                                              {
+                                                "exists": {
+                                                  "field": "destination.ip"
+                                                }
+                                              }
+                                            ],
+                                            "minimum_should_match": 1
+                                          }
+                                        }
+                                      ],
+                                      "minimum_should_match": 1
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-03T16:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-disk-usage",
+  "description": "Indexes logs unthrottled for a specified raw volume with the aim of reporting disk usage.",
+  "parameters": {
+    {# Custom ratios here as we want as much of each dataset as possible #}
+    "integration-ratios": {
+      "kafka": {
+        "corpora": {
+          "kafka-logs": 0.05
+        }
+      },
+      "nginx": {
+        "corpora": {
+          "nginx-access-logs": 0.05,
+          "nginx-access-logs-2": 0.05,
+          "nginx-error-logs": 0.05,
+          "nginx-error-logs-2": 0.05
+        }
+      },
+      "application-logs": {
+        "corpora": {
+          "application-logs-1": 0.1,
+          "application-logs-2": 0.1
+        }
+      },
+      "mysql": {
+        "corpora": {
+          "mysql-error-logs": 0.05,
+          "mysql-slowlog-logs": 0.05
+        }
+      },
+      "system": {
+        "corpora": {
+          "system-auth-logs": 0.05,
+          "system-syslog-logs": 0.05,
+          "system-auth-logs-2": 0.05,
+          "system-syslog-logs-2": 0.05
+        }
+      },
+      "postgresql": {
+        "corpora": {
+          "postgresql-logs": 0.05
+        }
+      },
+      "apache": {
+        "corpora": {
+          "apache-access-logs": 0.05,
+          "apache-error-logs": 0.05
+        }
+      },
+      "redis": {
+        "corpora": {
+          "redis-app-logs": 0.05,
+          "redis-app-slowlogs": 0.05
+        }
+      }
+    }
+  },
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "bulk-size": {{ p_bulk_size }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients }},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    {
+      "name": "compression-stats",
+      "operation": {
+        "operation-type": "compression-statistics",
+        "param-source": "create-datastream-source"
+      }
+    },
+    {
+      "name": "force-merge-datastreams",
+      "operation": {
+        "operation-type": "force-merge",
+        "mode": "polling",
+        "max-num-segments": 1,
+        "request-timeout": 60
+      }
+    },
+    {
+      "name": "compression-stats-after-merge",
+      "operation": {
+        "operation-type": "compression-statistics",
+        "param-source": "create-datastream-source"
+      }
+    }
+  ]
+}

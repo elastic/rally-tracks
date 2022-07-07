@@ -1,0 +1,69 @@
+{
+  "id": "Sum of redis.slowlog.duration.us - part b",
+  "name": "POST /api/lens/stats",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.31691
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - redis - 9b.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650497833296"
+          },
+          "body": {
+            "aggs": {
+              "0": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "30m",
+                  "time_zone": "UTC"
+                },
+                "aggs": {
+                  "1": {
+                    "sum": {
+                      "field": "redis.slowlog.duration.us"
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-19T23:42:11.152Z",
+                        "lte": "2022-04-20T23:42:11.152Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

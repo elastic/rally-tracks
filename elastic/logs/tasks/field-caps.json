@@ -1,0 +1,10 @@
+{
+  "name": "field-caps",
+  "operation": {
+     "operation-type": "field-caps",
+     "index": "auditbeat*"
+  },
+  "iterations": 200,
+  "warmup-iterations": 10,
+  "clients": 2
+}

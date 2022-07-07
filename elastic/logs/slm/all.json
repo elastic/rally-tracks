@@ -1,0 +1,13 @@
+{
+  "schedule": "0 0/15 * * * ?",
+  "name": "<nightly-snap-{now{yyyy.MM.dd.hh.mm}}>",
+  "repository": "many-shards",
+  "config": {
+    "indices": ["*"]
+  },
+  "retention": {
+    "expire_after": "1d",
+    "min_count": 5,
+    "max_count": 10
+  }
+}

@@ -1,0 +1,200 @@
+{"create": {"_index": "apache-access-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 0, "message": "10.12.9.197 - brownantonio [_RALLYTS023<%d/%b/%Y:%H:%M:%S +0000>] \"GET / HTTP/1.1\" 200 1203 \"-\" \"Elastic-Heartbeat/7.8.0 (linux; amd64; f79387d32717d79f689d94fda1ec80b2cf285d30; 2020-06-14 17:31:16 +0000 UTC)\"", "rally": {"message_size": 6, "doc_size": 120, "markers": "000000005c0000000010000000002800000001340000000135"}}
+{"create": {"_index": "apache-error-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 1, "message": "[_RALLYTS020<%a %b %d %H:%M:%S %Y>] [core:info] [pid 994682:tid 677381] [client 10.12.9.220:35782] AH00128: File does not exist: /var/www/html/wp-login.ph, referer: shopify.com", "rally": {"message_size": 6, "doc_size": 20, "markers": "000000004100000000100000000028000000010d000000010e"}}
+{"create": {"_index": "application-logs-1"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 2, "message": "82.36.71.189 - [82.36.71.189] - elasticsearch-ci [07/Sep/2020:10:28:35 +0000] \"GET /cache/c2d427d5ecd9155176c39090541beb49 HTTP/1.1\" 200 2412 \"-\" \"Gradle/6.6.1 (Linux;4.12.14-lp151.28.63-default;amd64) (Oracle Corporation;14.0.2;14.0.2+12-46)\" 409 0.008 [elasticsearch-gradle-proxy-80] 82.36.71.189:9080 2412 0.008 200", "rally": {"message_size": 6, "doc_size": 20, "markers": "-0000000010000000010000000002800000001a100000001a2"}}
+{"create": {"_index": "application-logs-2"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 3, "message": "\u001b[0mGET / \u001b[32m200 \u001b[0m0.592 ms - 2410\u001b[0m", "rally": {"message_size": 6, "doc_size": 20, "markers": "-00000000100000000100000000028000000009b000000009c"}}
+{"create": {"_index": "kafka-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 4, "message": "_RALLYTS017<%Y-%m-%d %H:%M:%S>,544. DEBUG [ReplicaFetcher replicaId=2, leaderId=1, fetcherId=0]: Built incremental fetch (sessionId=998038420, epoch=3028672) for node 1. Added 0 partition(s), altered 0 partition(s), removed 0 partition(s) out of 24 partition(s) (org.apache.kafka.clients.FetchSessionHandler)", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000400000000010000000002800000001910000000192"}}
+{"create": {"_index": "mysql-error-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 5, "message": "_RALLYTS017<%Y-%m-%d %H:%M:%S> 3328971 [Note] Access denied for user 'root'@'10.12.6.38' (using password: YES)", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000400000000010000000002800000000cb00000000cc"}}
+{"create": {"_index": "mysql-slowlog-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 6, "message": "# User@Host: stevenssandra[root] @  [10.12.7.63]  Id: 4756535\n# Query_time: 0.00061  Lock_time: 0.000057 Rows_sent: 99 Rows_examined: 99   \nSET timestamp=_RALLYTS002<%s>;\nSELECT intcol1,intcol2,intcol3,intcol4,intcol5,intcol6,intcol7,charcol1,charcol2,charcol3,charcol4,charcol5,charcol6,charcol7 FROM t1\u0000;", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000dc0000000010000000002800000001970000000198"}}
+{"create": {"_index": "nginx-access-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 7, "message": "134.68.249.190 - danielle15 [_RALLYTS023<%d/%b/%Y:%H:%M:%S +0000>] \"GET / HTTP/1.1\" 200 649 \"\" \"Elastic-Heartbeat/7.8.0 (linux; amd64; f79387d32717d79f689d94fda1ec80b2cf285d30; 2020-06-14 17:31:16 +0000 UTC)\"", "rally": {"message_size": 6, "doc_size": 20, "markers": "000000005d0000000010000000002800000001330000000134"}}
+{"create": {"_index": "nginx-access-logs-2"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 8, "message": "93.191.78.166 - wendy13 [_RALLYTS023<%d/%b/%Y:%H:%M:%S +0000>] \"GET /whoAmI/ HTTP/1.1\" 200 6927 \"-\" \"GoogleHC/1.0\"", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000590000000010000000002800000000d500000000d6"}}
+{"create": {"_index": "nginx-error-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 9, "message": "_RALLYTS017<%Y/%m/%d %H:%M:%S> [info] 18#18: *6831822 [lua] ip_blacklist.lua:15: Loading REDIS Cache, client: 106.172.245.114, server: green.demo.elastic.co, request: \"GET /status HTTP/1.1\", host: \"demo.elastic.co\"", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000400000000010000000002800000001370000000138"}}
+{"create": {"_index": "nginx-error-logs-2"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 10, "message": "_RALLYTS017<%Y/%m/%d %H:%M:%S> [error] 26284#26284: *244030 limiting requests, dry run, excess: 50.256 by zone \"jenkins_global\", client: 211.174.195.82, server: kibana-ci.elastic.co, request: \"GET /static/4ffe5b59/descriptor/hudson.plugins.gradle.GradleOutcomeNote/style.css HTTP/1.1\", host: \"kibana-ci.elastic.co\"", "rally": {"message_size": 6, "doc_size": 20, "markers": "000000004100000000100000000028000000019e000000019f"}}
+{"create": {"_index": "postgresql-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 11, "message": "_RALLYTS017<%Y-%m-%d %H:%M:%S>.870 UTC [3894076] elastic@opbeans LOG:  duration: 0.236 ms  statement <unnamed>: SELECT \"opbeans_orderline\".\"id\", \"opbeans_orderline\".\"order_id\", \"opbeans_orderline\".\"product_id\", \"opbeans_orderline\".\"amount\", \"opbeans_product\".\"id\", \"opbeans_product\".\"sku\", \"opbeans_product\".\"name\", \"opbeans_product\".\"description\", \"opbeans_product\".\"product_type_id\", \"opbeans_product\".\"stock\", \"opbeans_product\".\"cost\", \"opbeans_product\".\"selling_price\" FROM \"opbeans_orderline\" INNER JOIN \"opbeans_product\" ON (\"opbeans_orderline\".\"product_id\" = \"opbeans_product\".\"id\") WHERE \"opbeans_orderline\".\"order_id\" = 74649", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000410000000010000000002800000003180000000319"}}
+{"create": {"_index": "redis-app-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 12, "message": "1:M _RALLYTS014<%d %b %H:%M:%S>.464 - Accepted 10.12.9.203:40122", "rally": {"message_size": 6, "doc_size": 20, "markers": "000000004500000000100000000028000000009e000000009f"}}
+{"create": {"_index": "redis-app-slowlogs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 13, "message": "ZREVRANGEBYSCORE ip_blacklist 9223372036854775807 -1 WITHSCORES", "rally": {"message_size": 6, "doc_size": 20, "markers": "-00000000100000000100000000028000000009d000000009e"}}
+{"create": {"_index": "system-auth-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 14, "message": "_RALLYTS017<%Y-%m-%dT%H:%M:%S>.775113Z packer-5f3c21c5-cff2-f924-ed7a-0beb9d7363cc sudo: pam_unix(sudo:session): session closed for user root", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000410000000010000000002800000000eb00000000ec"}}
+{"create": {"_index": "system-auth-logs-2"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 15, "message": "_RALLYTS017<%Y-%m-%dT%H:%M:%S>.775113Z server-02 sshd[8252]: Received disconnect from 175.158.50.75 port 31759:11: Bye Bye [preauth]", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000410000000010000000002800000000e200000000e3"}}
+{"create": {"_index": "system-syslog-logs"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 16, "message": "_RALLYTS017<%Y-%m-%dT%H:%M:%S>.775113Z packer-5f3c21c5-cff2-f924-ed7a-0beb9d7363cc systemd[1]: Stopped Execute cloud user/final scripts.", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000410000000010000000002800000000e600000000e7"}}
+{"create": {"_index": "system-syslog-logs-2"}}
+{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 17, "message": "_RALLYTS017<%Y-%m-%dT%H:%M:%S>.775113Z workstation-03 systemd: Started Docker Cleanup.", "rally": {"message_size": 6, "doc_size": 20, "markers": "00000000410000000010000000002800000000b400000000b5"}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}
+{"create":  {_index": "test-index}}
+{"@timestamp": "2121-21-21T21:21:21.212Z", "rally": {"message_size": 6, "doc_size": 20}}

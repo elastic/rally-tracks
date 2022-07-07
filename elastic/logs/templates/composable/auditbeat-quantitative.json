@@ -1,0 +1,13 @@
+{
+  "index_patterns": [
+    "auditbeatquantitative-*"
+  ],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "auditbeat-quantitative"
+    }
+  },
+  "composed_of" : ["auditbeat-mappings"],
+  "priority": 1,
+  "data_stream" : { }
+}

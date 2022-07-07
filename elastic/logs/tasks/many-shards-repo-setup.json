@@ -1,0 +1,12 @@
+{% set upd=p_snapshot_repo_settings.update({"base_path":"many-shards-"+((now|int)|string)}) %}
+{
+  "name": "register-snapshot-repository",
+  "operation": {
+    "operation-type": "create-snapshot-repository",
+    "repository": "many-shards",
+    "body": {
+      "type": {{ p_snapshot_repo_type | tojson }},
+      "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+    }
+  }
+}

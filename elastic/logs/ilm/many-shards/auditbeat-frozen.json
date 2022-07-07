@@ -1,0 +1,23 @@
+{
+  "policy" : {
+    "phases" : {
+      "hot" : {
+        "min_age" : "0ms",
+        "actions" : {
+          "rollover" : {
+            "max_age": "2h",
+            "max_size" : "100gb"
+          }
+        }
+      },
+      "frozen" : {
+        "min_age" : "0ms",
+        "actions": {
+          "searchable_snapshot" : {
+            "snapshot_repository" : "many-shards"
+          }
+        }
+      }
+    }
+  }
+}

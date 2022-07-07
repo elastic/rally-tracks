@@ -1,0 +1,106 @@
+{
+  "id": "5",
+  "requests": [
+      {
+        "stream": [
+          {
+            "name": "stream-1a",
+            "operation-type": "search",
+            "body": {
+              "query": {
+                "bool": {
+                  "must": [
+                    {
+                      "range": {
+                        "@timestamp": {
+                          "gte": "2020-11-30T12:16:59.340Z",
+                          "lte": "2020-12-01T12:16:59.340Z",
+                          "format": "strict_date_optional_time"
+                        }
+                      }
+                    },
+                    {
+                      "term": {
+                        "code": {
+                          "value": "500"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "aggs": {
+                "log_level": {
+                  "terms": {
+                    "field": "log.level",
+                    "order": {
+                      "_count": "desc"
+                    }
+                  },
+                  "aggs": {
+                    "timeseries": {
+                      "date_histogram": {
+                        "field": "@timestamp",
+                        "min_doc_count": 0,
+                        "time_zone": "UTC",
+                        "extended_bounds": {
+                          "min": 1606738619340,
+                          "max": 1606825019340
+                        },
+                        "fixed_interval": "10s"
+                      },
+                      "aggs": {
+                        "bucket_counter": {
+                          "bucket_script": {
+                            "buckets_path": {
+                              "count": "_count"
+                            },
+                            "script": {
+                              "source": "count * 1",
+                              "lang": "expression"
+                            },
+                            "gap_policy": "skip"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "stream": [
+          {
+            "name": "stream-2a",
+            "operation-type": "search",
+            "body": {
+              "query": {
+                "term": {
+                  "country": "AT"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "stream-3a",
+        "operation-type": "search",
+        "body": {
+          "query": {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-11-30T11:16:59.340Z",
+                "lte": "2020-12-01T11:16:59.340Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        }
+      }
+  ]
+}
+

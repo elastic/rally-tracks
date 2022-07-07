@@ -1,6 +1,6 @@
 {
-  "name": "append-no-conflicts",
-  "description": "Indexes the whole document corpus.",
+  "name": "append-no-conflicts-index-only",
+  "description": "Indexes the whole document corpus and returns basic statistics",
   "default": true,
   "schedule": [
     {
@@ -16,9 +16,39 @@
       "operation": "check-cluster-health"
     },
     {
-      "operation": "default_1k",
-      "warmup-iterations": 50,
-      "iterations": 100
+      "operation": "index-stats",
+      "warmup-iterations": 500,
+      "iterations": 1000,
+      "target-throughput": 90
+    },
+    {
+      "operation": "index-append",
+      "warmup-time-period": 120,
+      "clients": {{bulk_indexing_clients | default(8)}}
+    },
+    {
+      "operation": "index-update",
+      "warmup-time-period": 45,
+      "clients": {{bulk_indexing_clients | default(8)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    {
+      "operation": "node-stats",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "target-throughput": 90
+    },
+    {
+      "operation": "query_all",
+      "warmup-iterations": 500,
+      "iterations": 1000,
+      "target-throughput": 50
+    },
+    {
+      "operation": "query_aggregation",
+      "warmup-iterations": 500,
+      "iterations": 1000,
+      "target-throughput": 50
     }
   ]
 }

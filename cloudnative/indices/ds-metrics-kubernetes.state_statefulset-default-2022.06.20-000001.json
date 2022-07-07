@@ -354,7 +354,7 @@
             "lifecycle": {
                 "name": "metrics"
             },
-            "number_of_replicas": "{{number_of_replicas | default(1)}}",
+            "number_of_replicas": "{{number_of_replicas | default(0)}}",
             "number_of_shards": "{{number_of_shards | default(1)}}",
             "query": {
                 "default_field": [

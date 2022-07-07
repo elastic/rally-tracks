@@ -9,12 +9,125 @@
         "retry-until-success": true
     },
     {
-      "name": "default_1k",
+      "name": "index-append",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+    {
+      "name": "index-update",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(5000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "conflicts": "{{conflicts | default('random')}}",
+      "on-conflict": "{{on_conflict | default('index')}}",
+      "conflict-probability": {{conflict_probability | default(25)}},
+      "recency": {{recency | default(0)}}
+    },
+    {
+      "name": "query_all",
       "operation-type": "search",
+      "index": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001,.ds-metrics-kubernetes.apiserver-default-2022.06.20-000001,.ds-metrics-kubernetes.container-default-2022.06.20-000001,.ds-metrics-kubernetes.event-default-2022.06.20-000001,.ds-metrics-kubernetes.node-default-2022.06.20-000001,.ds-metrics-kubernetes.pod-default-2022.06.20-000001,.ds-metrics-kubernetes.proxy-default-2022.06.20-000001,.ds-metrics-kubernetes.state_container-default-2022.06.20-000001,.ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001,.ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001,.ds-metrics-kubernetes.state_job-default-2022.06.20-000001,.ds-metrics-kubernetes.state_node-default-2022.06.20-000001,.ds-metrics-kubernetes.state_pod-default-2022.06.20-000001,.ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001,.ds-metrics-kubernetes.state_service-default-2022.06.20-000001,.ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001,.ds-metrics-kubernetes.system-default-2022.06.20-000001,.ds-metrics-kubernetes.volume-default-2022.06.20-000001", 
       "body": {
         "query": {
           "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "query_aggregation",
+      "operation-type": "search",
+      "index": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001,.ds-metrics-kubernetes.apiserver-default-2022.06.20-000001,.ds-metrics-kubernetes.container-default-2022.06.20-000001,.ds-metrics-kubernetes.event-default-2022.06.20-000001,.ds-metrics-kubernetes.node-default-2022.06.20-000001,.ds-metrics-kubernetes.pod-default-2022.06.20-000001,.ds-metrics-kubernetes.proxy-default-2022.06.20-000001,.ds-metrics-kubernetes.state_container-default-2022.06.20-000001,.ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001,.ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001,.ds-metrics-kubernetes.state_job-default-2022.06.20-000001,.ds-metrics-kubernetes.state_node-default-2022.06.20-000001,.ds-metrics-kubernetes.state_pod-default-2022.06.20-000001,.ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001,.ds-metrics-kubernetes.state_service-default-2022.06.20-000001,.ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001,.ds-metrics-kubernetes.system-default-2022.06.20-000001,.ds-metrics-kubernetes.volume-default-2022.06.20-000001", 
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "gte": "2022-04-22T07:00:00.886Z",
+                    "lte": "2022-11-22T07:00:33.886Z",
+                    "format": "strict_date_optional_time"
+                  }
+                }
+              },
+              {
+                "bool": {
+                  "must": [
+                    {
+                      "query_string": {
+                        "query": "event.module:kubernetes AND metricset.name:container",
+                        "analyze_wildcard": true
+                      }
+                    }
+                  ],
+                  "filter": [],
+                  "should": [],
+                  "must_not": []
+                }
+              }
+            ],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
         },
-        "size": 1000
+        "aggs": {
+          "5d3692a1-2bfc-11e7-859b-f78b612cde28": {
+            "terms": {
+              "field": "kubernetes.pod.name",
+              "order": {
+                "5d3692a2-2bfc-11e7-859b-f78b612cde28-SORT": "desc"
+              }
+            },
+            "aggs": {
+              "5d3692a2-2bfc-11e7-859b-f78b612cde28-SORT": {
+                "max": {
+                  "field": "kubernetes.container.cpu.usage.core.ns"
+                }
+              },
+              "timeseries": {
+                "auto_date_histogram": {
+                  "field": "@timestamp"
+                },
+                "aggs": {
+                  "5d3692a2-2bfc-11e7-859b-f78b612cde28": {
+                    "max": {
+                      "field": "kubernetes.container.cpu.usage.core.ns"
+                    }
+                  },
+                  "6c905240-2bfc-11e7-859b-f78b612cde28": {
+                    "derivative": {
+                      "buckets_path": "5d3692a2-2bfc-11e7-859b-f78b612cde28",
+                      "gap_policy": "skip",
+                      "unit": "1s"
+                    }
+                  },
+                  "9a51f710-359d-11e7-aa4a-8313a0c92a88": {
+                    "bucket_script": {
+                      "buckets_path": {
+                        "value": "6c905240-2bfc-11e7-859b-f78b612cde28[normalized_value]"
+                      },
+                      "script": {
+                        "source": "params.value > 0.0 ? params.value : 0.0",
+                        "lang": "painless"
+                      },
+                      "gap_policy": "skip"
+                    }
+                  }
+                }
+              }
+            },
+            "meta": {
+              "timeField": "@timestamp",
+              "panelId": "5d3692a0-2bfc-11e7-859b-f78b612cde28",
+              "seriesId": "5d3692a1-2bfc-11e7-859b-f78b612cde28",
+              "intervalString": "10s",
+              "indexPatternString": "metricbeat-*"
+            }
+          }
+        }
       }
     }
+
+    

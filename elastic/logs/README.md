@@ -411,7 +411,7 @@ For snapshot integration tests, specify a target S3 bucket which contains the de
 
 	See question (2)
 
-4. Can data be indexed more than once? Do i need to think about duplication?
+4. Can data be indexed more than once? Do I need to think about duplication?
 	
 	Duplication in data has the potential to cause higher levels of index compression in Elasticsearch than would be experienced in real world cases. To ensure testing is as accurate as possible we aim to minimise this effect but incorrect track usage can cause it to occur.
 	 

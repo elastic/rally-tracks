@@ -421,7 +421,7 @@ For snapshot integration tests, specify a target S3 bucket which contains the de
 	
 	- Users can limit the size of the generated file using the parameter `max_generated_corpus_size`, in order to conserve disk space. Should this value be less than the required data needing indexing, the track will reuse the generated data - looping over it and inturn causing data duplication in Elasticsearch. The duplication caused by this behaviour converges to 0 as `max_generated_corpus_size` approaches approximately `raw_data_volume_per_day * (end_date - start_date) * 10` (assuming default corpus ratios).
 	
-5. How do i create a scenario where data is bulk loaded, and once sufficient volume is available, before querying and indexing occurs concurrently?
+5. How do I create a scenario where data is bulk loaded, and once sufficient volume is available, before querying and indexing occurs concurrently?
 
 
 ## License

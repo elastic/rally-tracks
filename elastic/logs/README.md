@@ -411,7 +411,7 @@ For snapshot integration tests, specify a target S3 bucket which contains the de
 
 	See question (2)
 
-4. Can data be indexed more than once? Do i need to think about duplication?
+4. Can data be indexed more than once? Do I need to think about duplication?
 	
 	Duplication in data has the potential to cause higher levels of index compression in Elasticsearch than would be experienced in real world cases. To ensure testing is as accurate as possible we aim to minimise this effect but incorrect track usage can cause it to occur.
 	 
@@ -421,7 +421,7 @@ For snapshot integration tests, specify a target S3 bucket which contains the de
 	
 	- Users can limit the size of the generated file using the parameter `max_generated_corpus_size`, in order to conserve disk space. Should this value be less than the required data needing indexing, the track will reuse the generated data - looping over it and inturn causing data duplication in Elasticsearch. The duplication caused by this behaviour converges to 0 as `max_generated_corpus_size` approaches approximately `raw_data_volume_per_day * (end_date - start_date) * 10` (assuming default corpus ratios).
 	
-5. How do i create a scenario where data is bulk loaded, and once sufficient volume is available, before querying and indexing occurs concurrently?
+5. How do I create a scenario where data is bulk loaded, and once sufficient volume is available, before querying and indexing occurs concurrently?
 
 
 ## License

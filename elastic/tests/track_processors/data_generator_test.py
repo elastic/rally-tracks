@@ -480,30 +480,6 @@ def test_invalid_corpus(tmp_path):
     )
 
 
-def test_invalid_integration_ratios(tmp_path):
-    with pytest.raises(RallyAssertionError) as rally_assertion_error:
-        track_id = "test_data_errors"
-        test_track = StaticTrack(
-            parameters={
-                "integration-ratios": {
-                    "system": {"corpora": {"system-logs": 0.3}},
-                    "agent": {"corpora": {"agent-logs": 0.5}},
-                },
-                "raw-data-volume-per-day": "24MB",
-                "max-generated-corpus-size": "24MB",
-                "track-id": track_id,
-                "generator-batch-size": 10000,
-                "data-generation-clients": 1,
-            }
-        )
-        generate(test_track, tmp_path)
-
-    assert (
-        rally_assertion_error.value.message
-        == "Corpora ratios must total 1.0 - total is [0.8]"
-    )
-
-
 def test_missing_track_id(tmp_path):
     with pytest.raises(KeyError):
         test_track = StaticTrack(
@@ -770,9 +746,9 @@ def test_json_processor(tmp_path):
     assert (
         json.dumps(processed_doc)
         == '{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 1, "rally": '
-        '{"message_size": 0, '
-        '"doc_size": 48, "doc_size_with_meta": 113, '
-        '"markers": "-00000000100000000100000000028000000004e000000004f"}}'
+        '{"message_size": 48, '
+        '"doc_size": 48, "doc_size_with_meta": 114, '
+        '"markers": "-00000000100000000100000000028000000004e0000000050"}}'
     )
 
 

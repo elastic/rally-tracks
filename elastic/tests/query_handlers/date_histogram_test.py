@@ -206,27 +206,6 @@ def test_pass_through_if_no_bounds():
     assert "extended_bounds" not in date_histogram_agg
 
 
-# error if not UTC timezone
-def test_not_utc():
-    with pytest.raises(TrackConfigError) as rae:
-        DateHistogramHandler(
-            {
-                "field": "@timestamp",
-                "min_doc_count": 0,
-                "time_zone": "-08:00",
-                "extended_bounds": {"min": 1607344057565, "max": 1607344957565},
-                "fixed_interval": "10s",
-            }
-        ).process(DateTimeValues(min_date=None, max_date=start, duration=None))
-    assert (
-        rae.value.message
-        == '"time_zone" is required with "UTC" value in Date Histogram aggregation '
-        "- [{'field': '@timestamp', 'min_doc_count': 0, 'time_zone': '-08:00', "
-        "'extended_bounds': {'min': 1607344057565, 'max': 1607344957565}, "
-        "'fixed_interval': '10s'}]"
-    )
-
-
 def test_get_time_interval():
     date_histogram_agg = {
         "field": "@timestamp",

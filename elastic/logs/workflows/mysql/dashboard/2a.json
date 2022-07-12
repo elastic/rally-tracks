@@ -1,0 +1,417 @@
+{
+  "id": "Search for mysql.slowlog.query: UPDATE* - part a",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.301157
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 2a.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "mysql.slowlog.query",
+                  "order": {
+                    "1": "desc"
+                  },
+                  "size": 5
+                },
+                "aggs": {
+                  "1": {
+                    "max": {
+                      "field": "event.duration"
+                    }
+                  },
+                  "3": {
+                    "terms": {
+                      "field": "user.name",
+                      "order": {
+                        "1": "desc"
+                      },
+                      "size": 5
+                    },
+                    "aggs": {
+                      "1": {
+                        "max": {
+                          "field": "event.duration"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "fields": [
+                              "mysql.slowlog.query"
+                            ],
+                            "query": "UPDATE*"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.slowlog"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:48:47.026Z",
+                        "lte": "2022-04-19T17:48:47.026Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.301481
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 2a.2",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "30m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "fields": [
+                              "mysql.slowlog.query"
+                            ],
+                            "query": "UPDATE*"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.slowlog"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:48:47.026Z",
+                        "lte": "2022-04-19T17:48:47.026Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.301721
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 2a.3",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "30m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "fields": [
+                              "mysql.slowlog.query"
+                            ],
+                            "query": "UPDATE*"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.error"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:48:47.026Z",
+                        "lte": "2022-04-19T17:48:47.026Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.301947
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 2a.4",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "log.level",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "fields": [
+                              "mysql.slowlog.query"
+                            ],
+                            "query": "UPDATE*"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.error"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:48:47.026Z",
+                        "lte": "2022-04-19T17:48:47.026Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.30218
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 2a.5",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "mysql.slowlog.query",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "fields": [
+                              "mysql.slowlog.query"
+                            ],
+                            "query": "UPDATE*"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.slowlog"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:48:47.026Z",
+                        "lte": "2022-04-19T17:48:47.026Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

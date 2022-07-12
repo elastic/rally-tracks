@@ -1,0 +1,76 @@
+{
+  "id": "Split on redis.slowlog.key - part b",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "name": "sleep",
+      "operation-type": "sleep",
+      "duration": 0.314543
+    },
+    {
+      "name": "Elasticsearch: POST /logs-*/_async_search - redis - 10b.1",
+      "operation-type": "search",
+      "index": "logs-*",
+      "request-params": {
+        "batched_reduce_size": "64",
+        "ignore_unavailable": "true",
+        "track_total_hits": "true",
+        "enable_fields_emulation": "true",
+        "preference": "1650497833296"
+      },
+      "body": {
+        "aggs": {
+          "0": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "30m",
+              "time_zone": "UTC"
+            },
+            "aggs": {
+              "1": {
+                "terms": {
+                  "field": "redis.slowlog.key",
+                  "order": {
+                    "2": "desc"
+                  },
+                  "size": 3
+                },
+                "aggs": {
+                  "2": {
+                    "sum": {
+                      "field": "redis.slowlog.duration.us"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "size": 0,
+        "script_fields": {},
+        "stored_fields": [
+          "*"
+        ],
+        "runtime_mappings": {},
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "2022-04-19T23:42:11.152Z",
+                    "lte": "2022-04-20T23:42:11.152Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        }
+      }
+    }
+  ]
+}

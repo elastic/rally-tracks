@@ -1,0 +1,376 @@
+{
+  "id": "Add phrase filter - part a",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.306726
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - postgresql/duration - 4a.1",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650485109312"
+              },
+              "body": {
+                "version": true,
+                "size": 500,
+                "sort": [
+                  {
+                    "@timestamp": {
+                      "order": "desc",
+                      "unmapped_type": "boolean"
+                    }
+                  }
+                ],
+                "fields": [
+                  {
+                    "field": "*",
+                    "include_unmapped": "true"
+                  },
+                  {
+                    "field": "@timestamp",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "eden.created_at",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.end",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.ingested",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.accessed",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.ctime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.mtime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "postgresql.log.session_start_time",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.parent.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.start",
+                    "format": "strict_date_optional_time"
+                  }
+                ],
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "_source": false,
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "range": {
+                                "event.duration": {
+                                  "gt": "30000000"
+                                }
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "postgresql.log.query"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "event.duration": {
+                                        "gte": "200000000"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "must_not": {
+                                  "multi_match": {
+                                    "type": "phrase",
+                                    "query": "copy pgbench_accounts from stdin",
+                                    "lenient": true
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-19T20:13:05.675Z",
+                            "lte": "2022-04-20T20:13:05.675Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "highlight": {
+                  "pre_tags": [
+                    "@kibana-highlighted-field@"
+                  ],
+                  "post_tags": [
+                    "@/kibana-highlighted-field@"
+                  ],
+                  "fields": {
+                    "*": {}
+                  },
+                  "fragment_size": 2147483647
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.307075
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - postgresql/duration - 4a.2",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650485109312"
+              },
+              "body": {
+                "version": true,
+                "size": 500,
+                "sort": [
+                  {
+                    "@timestamp": {
+                      "order": "desc",
+                      "unmapped_type": "boolean"
+                    }
+                  }
+                ],
+                "fields": [
+                  {
+                    "field": "*",
+                    "include_unmapped": "true"
+                  },
+                  {
+                    "field": "@timestamp",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "eden.created_at",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.end",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.ingested",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.accessed",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.ctime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.mtime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "postgresql.log.session_start_time",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.parent.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.start",
+                    "format": "strict_date_optional_time"
+                  }
+                ],
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "_source": false,
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "event.duration"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "postgresql.log.query"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "event.duration": {
+                                        "gte": "200000000"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "must_not": {
+                                  "multi_match": {
+                                    "type": "phrase",
+                                    "query": "copy pgbench_accounts from stdin",
+                                    "lenient": true
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-19T20:13:05.675Z",
+                            "lte": "2022-04-20T20:13:05.675Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "highlight": {
+                  "pre_tags": [
+                    "@kibana-highlighted-field@"
+                  ],
+                  "post_tags": [
+                    "@/kibana-highlighted-field@"
+                  ],
+                  "fields": {
+                    "*": {}
+                  },
+                  "fragment_size": 2147483647
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

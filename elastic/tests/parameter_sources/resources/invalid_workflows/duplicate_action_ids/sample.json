@@ -1,0 +1,24 @@
+{
+  "id": "1",
+  "requests": [
+      {
+        "stream": [
+          {
+            "name": "stream-1a",
+            "operation-type": "query",
+            "body": {
+              "query": {
+                "range": {
+                  "@timestamp": {
+                    "gte": "2020-11-30T12:16:59.340Z",
+                    "lte": "2020-12-01T12:16:59.340Z",
+                    "format": "strict_date_optional_time"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+  ]
+}

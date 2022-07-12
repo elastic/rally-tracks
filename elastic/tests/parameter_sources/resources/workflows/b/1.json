@@ -1,0 +1,172 @@
+{
+  "id": "1",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "stream-1a",
+          "operation-type": "search",
+          "body": {
+            "size": 0,
+            "query": {
+              "bool": {
+                "filter": [
+                  {
+                    "match_all": {
+                      "boost": 1
+                    }
+                  },
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "match": {
+                            "data_stream.dataset": {
+                              "query": "apache.access",
+                              "operator": "OR",
+                              "prefix_length": 0,
+                              "max_expansions": 50,
+                              "fuzzy_transpositions": true,
+                              "lenient": false,
+                              "zero_terms_query": "NONE",
+                              "auto_generate_synonyms_phrase_query": true,
+                              "boost": 1
+                            }
+                          }
+                        }
+                      ],
+                      "adjust_pure_negative": true,
+                      "minimum_should_match": "1",
+                      "boost": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "gte": "2020-12-07T04:11:48.427Z",
+                        "lte": "2020-12-07T16:11:48.427Z",
+                        "format": "strict_date_optional_time"
+                      }
+                    }
+                  }
+                ],
+                "adjust_pure_negative": true,
+                "boost": 1
+              }
+            },
+            "_source": {
+              "includes": [],
+              "excludes": []
+            },
+            "stored_fields": "*",
+            "fields": [
+              {
+                "field": "@timestamp",
+                "format": "date_time"
+              },
+              {
+                "field": "eden.created_at",
+                "format": "date_time"
+              },
+              {
+                "field": "event.end",
+                "format": "date_time"
+              },
+              {
+                "field": "event.ingested",
+                "format": "date_time"
+              },
+              {
+                "field": "event.start",
+                "format": "date_time"
+              },
+              {
+                "field": "file.accessed",
+                "format": "date_time"
+              },
+              {
+                "field": "file.created",
+                "format": "date_time"
+              },
+              {
+                "field": "file.ctime",
+                "format": "date_time"
+              },
+              {
+                "field": "file.mtime",
+                "format": "date_time"
+              },
+              {
+                "field": "process.parent.start",
+                "format": "date_time"
+              },
+              {
+                "field": "process.start",
+                "format": "date_time"
+              }
+            ],
+            "script_fields": {},
+            "track_total_hits": 2147483647,
+            "aggregations": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "time_zone": "UTC",
+                  "fixed_interval": "10m",
+                  "offset": 0,
+                  "order": {
+                    "_key": "asc"
+                  },
+                  "keyed": false,
+                  "min_doc_count": 1
+                },
+                "aggregations": {
+                  "3": {
+                    "terms": {
+                      "field": "http.response.status_code",
+                      "size": 5,
+                      "min_doc_count": 1,
+                      "shard_min_doc_count": 0,
+                      "show_term_doc_count_error": false,
+                      "order": [
+                        {
+                          "_count": "desc"
+                        },
+                        {
+                          "_key": "asc"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "stream-1b",
+          "operation-type": "search",
+          "request-params": {
+            "track_total_hits": 1000,
+            "track_scores": false
+          },
+          "body": {
+            "query": {
+              "match_all": {}
+            }
+          }
+        },
+        {
+          "name": "stream-1c",
+          "operation-type": "search",
+          "request-params": null,
+          "body": {
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

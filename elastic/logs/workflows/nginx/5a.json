@@ -1,0 +1,1049 @@
+{
+  "id": "Add filter on user_agent.version - part a",
+  "name": "POST /api/metrics/vis/data",
+  "requests": [
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 1.680827
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 5a.1",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true"
+              },
+              "body": {
+                "size": 0,
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-04-19T19:09:23.173Z",
+                            "lte": "2022-04-20T19:09:23.173Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      },
+                      {
+                        "bool": {
+                          "must": [
+                            {
+                              "query_string": {
+                                "query": "data_stream.dataset:nginx.access",
+                                "analyze_wildcard": true
+                              }
+                            }
+                          ],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      }
+                    ],
+                    "filter": [
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "gte": "400"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "lte": "500"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "source.geo.continent_name": "North America"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "user_agent.version": "68.0"
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "aggs": {
+                  "61ca57f1-469d-11e7-af02-69e470af7417": {
+                    "filters": {
+                      "filters": {
+                        "5acdc750-a29d-11e7-a062-a1c3587f4874": {
+                          "bool": {
+                            "must": [
+                              {
+                                "query_string": {
+                                  "query": "http.response.status_code:[200 TO 299]",
+                                  "analyze_wildcard": true
+                                }
+                              }
+                            ],
+                            "filter": [],
+                            "should": [],
+                            "must_not": []
+                          }
+                        },
+                        "6efd2ae0-a29d-11e7-a062-a1c3587f4874": {
+                          "bool": {
+                            "must": [
+                              {
+                                "query_string": {
+                                  "query": "http.response.status_code:[300 TO 399]",
+                                  "analyze_wildcard": true
+                                }
+                              }
+                            ],
+                            "filter": [],
+                            "should": [],
+                            "must_not": []
+                          }
+                        },
+                        "76089a90-a29d-11e7-a062-a1c3587f4874": {
+                          "bool": {
+                            "must": [
+                              {
+                                "query_string": {
+                                  "query": "http.response.status_code:[400 TO 499]",
+                                  "analyze_wildcard": true
+                                }
+                              }
+                            ],
+                            "filter": [],
+                            "should": [],
+                            "must_not": []
+                          }
+                        },
+                        "7c7929d0-a29d-11e7-a062-a1c3587f4874": {
+                          "bool": {
+                            "must": [
+                              {
+                                "query_string": {
+                                  "query": "http.response.status_code:[500 TO 599]",
+                                  "analyze_wildcard": true
+                                }
+                              }
+                            ],
+                            "filter": [],
+                            "should": [],
+                            "must_not": []
+                          }
+                        }
+                      }
+                    },
+                    "aggs": {
+                      "timeseries": {
+                        "date_histogram": {
+                          "field": "@timestamp",
+                          "min_doc_count": 0,
+                          "time_zone": "UTC",
+                          "extended_bounds": {
+                            "min": 1650395363173,
+                            "max": 1650481763173
+                          },
+                          "fixed_interval": "600s"
+                        },
+                        "aggs": {
+                          "61ca57f2-469d-11e7-af02-69e470af7417": {
+                            "bucket_script": {
+                              "buckets_path": {
+                                "count": "_count"
+                              },
+                              "script": {
+                                "source": "count * 1",
+                                "lang": "expression"
+                              },
+                              "gap_policy": "skip"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "timeField": "@timestamp",
+                      "panelId": "61ca57f0-469d-11e7-af02-69e470af7417",
+                      "seriesId": "61ca57f1-469d-11e7-af02-69e470af7417",
+                      "intervalString": "600s"
+                    }
+                  }
+                },
+                "runtime_mappings": {},
+                "timeout": "30000ms"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 1.6608900000000002
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 5a.2",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true"
+              },
+              "body": {
+                "size": 0,
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-04-19T19:09:23.173Z",
+                            "lte": "2022-04-20T19:09:23.173Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      },
+                      {
+                        "bool": {
+                          "must": [
+                            {
+                              "query_string": {
+                                "query": "data_stream.dataset:nginx.error",
+                                "analyze_wildcard": true
+                              }
+                            }
+                          ],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      }
+                    ],
+                    "filter": [
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "gte": "400"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "lte": "500"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "source.geo.continent_name": "North America"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "user_agent.version": "68.0"
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "aggs": {
+                  "61ca57f1-469d-11e7-af02-69e470af7417": {
+                    "terms": {
+                      "field": "log.level",
+                      "order": {
+                        "_count": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "timeseries": {
+                        "date_histogram": {
+                          "field": "@timestamp",
+                          "min_doc_count": 0,
+                          "time_zone": "UTC",
+                          "extended_bounds": {
+                            "min": 1650395363173,
+                            "max": 1650481763173
+                          },
+                          "fixed_interval": "600s"
+                        },
+                        "aggs": {
+                          "61ca57f2-469d-11e7-af02-69e470af7417": {
+                            "bucket_script": {
+                              "buckets_path": {
+                                "count": "_count"
+                              },
+                              "script": {
+                                "source": "count * 1",
+                                "lang": "expression"
+                              },
+                              "gap_policy": "skip"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "timeField": "@timestamp",
+                      "panelId": "61ca57f0-469d-11e7-af02-69e470af7417",
+                      "seriesId": "61ca57f1-469d-11e7-af02-69e470af7417",
+                      "intervalString": "600s"
+                    }
+                  }
+                },
+                "runtime_mappings": {},
+                "timeout": "30000ms"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 1.640333
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 5a.3",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true"
+              },
+              "body": {
+                "size": 0,
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-04-19T19:09:23.173Z",
+                            "lte": "2022-04-20T19:09:23.173Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      },
+                      {
+                        "bool": {
+                          "must": [
+                            {
+                              "query_string": {
+                                "query": "data_stream.dataset:nginx.access",
+                                "analyze_wildcard": true
+                              }
+                            }
+                          ],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      }
+                    ],
+                    "filter": [
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "gte": "400"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "lte": "500"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "source.geo.continent_name": "North America"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "user_agent.version": "68.0"
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "aggs": {
+                  "61ca57f1-469d-11e7-af02-69e470af7417": {
+                    "terms": {
+                      "field": "url.original",
+                      "order": {
+                        "_count": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "timeseries": {
+                        "date_histogram": {
+                          "field": "@timestamp",
+                          "min_doc_count": 0,
+                          "time_zone": "UTC",
+                          "extended_bounds": {
+                            "min": 1650395363173,
+                            "max": 1650481763173
+                          },
+                          "fixed_interval": "600s"
+                        },
+                        "aggs": {
+                          "61ca57f2-469d-11e7-af02-69e470af7417": {
+                            "bucket_script": {
+                              "buckets_path": {
+                                "count": "_count"
+                              },
+                              "script": {
+                                "source": "count * 1",
+                                "lang": "expression"
+                              },
+                              "gap_policy": "skip"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "timeField": "@timestamp",
+                      "panelId": "61ca57f0-469d-11e7-af02-69e470af7417",
+                      "seriesId": "61ca57f1-469d-11e7-af02-69e470af7417",
+                      "intervalString": "600s"
+                    }
+                  }
+                },
+                "runtime_mappings": {},
+                "timeout": "30000ms"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 1.704383
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 5a.4",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true"
+              },
+              "body": {
+                "size": 0,
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-04-19T19:09:23.173Z",
+                            "lte": "2022-04-20T19:09:23.173Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      },
+                      {
+                        "bool": {
+                          "must": [
+                            {
+                              "query_string": {
+                                "query": "data_stream.dataset:nginx.access",
+                                "analyze_wildcard": true
+                              }
+                            }
+                          ],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      }
+                    ],
+                    "filter": [
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "gte": "400"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "lte": "500"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "source.geo.continent_name": "North America"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "user_agent.version": "68.0"
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "aggs": {
+                  "timeseries": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "min_doc_count": 0,
+                      "time_zone": "UTC",
+                      "extended_bounds": {
+                        "min": 1650395363173,
+                        "max": 1650481763173
+                      },
+                      "fixed_interval": "600s"
+                    },
+                    "aggs": {
+                      "61ca57f2-469d-11e7-af02-69e470af7417": {
+                        "sum": {
+                          "field": "http.response.body.bytes"
+                        }
+                      }
+                    },
+                    "meta": {
+                      "timeField": "@timestamp",
+                      "panelId": "61ca57f0-469d-11e7-af02-69e470af7417",
+                      "seriesId": "61ca57f1-469d-11e7-af02-69e470af7417",
+                      "intervalString": "600s"
+                    }
+                  }
+                },
+                "runtime_mappings": {},
+                "timeout": "30000ms"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.319669
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 5a.5",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650481298419"
+              },
+              "body": {
+                "aggs": {
+                  "2": {
+                    "terms": {
+                      "field": "user_agent.name",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    },
+                    "aggs": {
+                      "3": {
+                        "terms": {
+                          "field": "user_agent.version",
+                          "order": {
+                            "_count": "desc"
+                          },
+                          "size": 5
+                        }
+                      }
+                    }
+                  }
+                },
+                "size": 0,
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "gte": "400"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "lte": "500"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "source.geo.continent_name": "North America"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "user_agent.version": "68.0"
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-19T19:09:23.173Z",
+                            "lte": "2022-04-20T19:09:23.173Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.32000599999999996
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 5a.6",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650481298419"
+              },
+              "body": {
+                "aggs": {
+                  "2": {
+                    "terms": {
+                      "field": "user_agent.os.name",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    },
+                    "aggs": {
+                      "3": {
+                        "terms": {
+                          "field": "user_agent.os.version",
+                          "order": {
+                            "_count": "desc"
+                          },
+                          "size": 5
+                        }
+                      }
+                    }
+                  }
+                },
+                "size": 0,
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "gte": "400"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "range": {
+                                      "http.response.status_code": {
+                                        "lte": "500"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "source.geo.continent_name": "North America"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "user_agent.version": "68.0"
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-19T19:09:23.173Z",
+                            "lte": "2022-04-20T19:09:23.173Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.32114299999999996
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 5a.7",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650481298419"
+          },
+          "body": {
+            "aggs": {
+              "filter_agg": {
+                "filter": {
+                  "geo_bounding_box": {
+                    "ignore_unmapped": true,
+                    "source.geo.location": {
+                      "top_left": {
+                        "lat": 90,
+                        "lon": -180
+                      },
+                      "bottom_right": {
+                        "lat": -90,
+                        "lon": 180
+                      }
+                    }
+                  }
+                },
+                "aggs": {
+                  "2": {
+                    "geohash_grid": {
+                      "field": "source.geo.location",
+                      "precision": 2
+                    },
+                    "aggs": {
+                      "3": {
+                        "geo_centroid": {
+                          "field": "source.geo.location"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "filter": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "range": {
+                                  "http.response.status_code": {
+                                    "gte": "400"
+                                  }
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        },
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "range": {
+                                  "http.response.status_code": {
+                                    "lte": "500"
+                                  }
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match": {
+                                  "data_stream.dataset": "nginx.access"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        },
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match": {
+                                  "data_stream.dataset": "nginx.error"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        },
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match": {
+                                  "data_stream.dataset": "nginx.ingress_controller"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "source.geo.continent_name": "North America"
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "user_agent.version": "68.0"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-19T19:09:23.173Z",
+                        "lte": "2022-04-20T19:09:23.173Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

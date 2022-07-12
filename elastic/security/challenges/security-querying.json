@@ -1,0 +1,34 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "security-querying",
+  "description": "Applies a query workload. Ensures data streams exist so queries can be run, but does not remove existing data.",
+  "default": true,
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {
+      "name": "security-queries",
+      "parallel": {
+        "time-period": {{ query_time_period | default(900) }},
+        "warmup-time-period": {{ query_warmup_time_period | default(120) }},
+        "tasks": [
+          {% for workflow in p_query_workflows %}
+            {
+              "name": {{workflow | tojson }},
+              "operation": {
+                "operation-type": "composite",
+                "param-source": "workflow-selector",
+                "workflow": {{workflow | tojson }},
+                "task-offset": {{ loop.index }},
+                "request-params": {{ query_request_params | default({}) | tojson(indent=2) }}
+              },
+              "think-time-interval": {{ think_time_interval | default(4) }},
+              "workflow-interval": {{ p_user_workflow_time }},
+              "clients": 1,
+              "schedule": "workflow-scheduler"
+            }{{ ", " if not loop.last else "" }}
+          {% endfor %}
+        ]
+      }
+    }
+  ]
+}

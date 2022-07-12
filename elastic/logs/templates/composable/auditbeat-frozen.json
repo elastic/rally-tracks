@@ -1,0 +1,13 @@
+{
+  "index_patterns": [
+    "auditbeatfrozen-*"
+  ],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "auditbeat-frozen"
+    }
+  },
+  "composed_of" : ["auditbeat-mappings"],
+  "priority": 1,
+  "data_stream" : { }
+}

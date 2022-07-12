@@ -1,0 +1,377 @@
+{
+  "id": "Edit visualization - Error logs over time [Logs MySQL]",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.31001
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 6.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "mysql.slowlog.query",
+                  "order": {
+                    "1": "desc"
+                  },
+                  "size": 5
+                },
+                "aggs": {
+                  "1": {
+                    "max": {
+                      "field": "event.duration"
+                    }
+                  },
+                  "3": {
+                    "terms": {
+                      "field": "user.name",
+                      "order": {
+                        "1": "desc"
+                      },
+                      "size": 5
+                    },
+                    "aggs": {
+                      "1": {
+                        "max": {
+                          "field": "event.duration"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "multi_match": {
+                      "type": "phrase",
+                      "query": "",
+                      "lenient": true
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.slowlog"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:50:08.200Z",
+                        "lte": "2022-04-19T17:50:08.200Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.31035700000000005
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 6.2",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "30m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "multi_match": {
+                      "type": "phrase",
+                      "query": "",
+                      "lenient": true
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.slowlog"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:50:08.200Z",
+                        "lte": "2022-04-19T17:50:08.200Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.31061700000000003
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 6.3",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "30m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "multi_match": {
+                      "type": "phrase",
+                      "query": "",
+                      "lenient": true
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.error"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:50:08.200Z",
+                        "lte": "2022-04-19T17:50:08.200Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.310873
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 6.4",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "log.level",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "multi_match": {
+                      "type": "phrase",
+                      "query": "",
+                      "lenient": true
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.error"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:50:08.200Z",
+                        "lte": "2022-04-19T17:50:08.200Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.311124
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 6.5",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "mysql.slowlog.query",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "multi_match": {
+                      "type": "phrase",
+                      "query": "",
+                      "lenient": true
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.slowlog"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:50:08.200Z",
+                        "lte": "2022-04-19T17:50:08.200Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

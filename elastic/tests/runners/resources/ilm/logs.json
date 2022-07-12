@@ -1,0 +1,17 @@
+{
+  "version" : 1,
+  "modified_date" : "2020-09-01T10:20:12.321Z",
+  "policy" : {
+    "phases" : {
+      "hot" : {
+        "min_age" : "0ms",
+        "actions" : {
+          "rollover" : {
+            "max_size" : "50gb",
+            "max_age" : "30d"
+          }
+        }
+      }
+    }
+  }
+}

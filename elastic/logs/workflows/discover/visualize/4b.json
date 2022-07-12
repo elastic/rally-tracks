@@ -1,0 +1,122 @@
+{
+  "id": "Discover/visualize: increase top values - part b",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "name": "sleep",
+      "operation-type": "sleep",
+      "duration": 0.317156
+    },
+    {
+      "name": "Elasticsearch: POST /logs-*/_async_search - discover/visualize - 4b.1",
+      "operation-type": "search",
+      "index": "logs-*",
+      "request-params": {
+        "batched_reduce_size": "64",
+        "ignore_unavailable": "true",
+        "track_total_hits": "true",
+        "enable_fields_emulation": "true",
+        "preference": "1650317360945"
+      },
+      "body": {
+        "aggs": {
+          "other-filter": {
+            "filters": {
+              "filters": {
+                "": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "exists": {
+                          "field": "host.name"
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": [
+                      {
+                        "match_phrase": {
+                          "host.name": "filebeat-demo-green-l6sb5"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "host.name": "filebeat-demo-green-mqvn6"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "host.name": "filebeat-demo-green-6lcdw"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "host.name": "filebeat-demo-green-hdkld"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "host.name": "vagrant-VirtualBox"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "host.name": "filebeat-demo-green-lq2mz"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "host.name": "localhost"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "host.name": "worker-426635.build.fsn1-dc10.hetzner.elasticnet.co"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "host.name": "packer-5f4ff1df-f6fb-7f13-2dd3-0ed66bb93b40"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "host.name": "packer-5f4ff210-da78-4185-74ef-6e7c791d38c5"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "size": 0,
+        "script_fields": {},
+        "stored_fields": [
+          "*"
+        ],
+        "runtime_mappings": {},
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "2022-04-17T21:34:09.566Z",
+                    "lte": "2022-04-18T21:34:09.566Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        }
+      }
+    }
+  ]
+}

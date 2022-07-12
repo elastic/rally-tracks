@@ -20,6 +20,10 @@ jobs:
             track: noaa
             flags: --test-mode --challenge=append-no-conflicts
             stack-version: "8.3.2"
+          - name: elastic/endpoint
+            track: elastic/endpoint
+            flags:
+            stack-version: "8.3.2"
 
     steps:
       - name: Checkout code

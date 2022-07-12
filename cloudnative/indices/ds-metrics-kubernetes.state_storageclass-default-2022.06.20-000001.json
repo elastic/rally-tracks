@@ -4,6 +4,11 @@
             "enabled": true
         },
         "date_detection": false,
+        "_source": {
+            "enabled": {{ source_enabled | default(false) | tojson }}{% if synthetic_source | default(False) | string | lower == "true" %},
+            "synthetic": true
+            {% endif %}
+        },
         "dynamic_templates": [
             {
                 "match_ip": {

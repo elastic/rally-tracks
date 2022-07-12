@@ -125,6 +125,8 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `on_conflict` (default: "index"): Whether to use an "index" or an "update" action when simulating an id conflict.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
+* `synthetic_source` (default: false): Boolean to enable synthetic _source
+* `source_enabled` (default: false): A boolean defining whether the _source field is stored in the index.
 
 
 ### License

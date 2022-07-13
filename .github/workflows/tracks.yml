@@ -11,12 +11,17 @@ jobs:
     name: Run `${{ matrix.track }}` on stack ${{ matrix.stack-version }}
     runs-on: ubuntu-latest
 
+    env:
+      STACK_VERSION: latest
+
     strategy:
-      matrix:
-        stack-version: ["8.3.2"]
-        track:
-          - noaa
       fail-fast: false
+
+      matrix:
+        include:
+          - track: noaa
+            challenge: default
+            flags: --test-mode
 
     steps:
       - name: Checkout code
@@ -33,7 +38,8 @@ jobs:
       - name: Run race
         run: |
           esrally race \
-            --distribution-version=${{ matrix.stack-version }} \
+            --distribution-version=$STACK_VERSION \
             --track-path=${{ matrix.track }} \
+            --challenge=${{ matrix.challenge }} \
             --runtime-jdk=bundled \
-            --test-mode
+            ${{ matrix.flags }}

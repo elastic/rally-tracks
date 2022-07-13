@@ -15,8 +15,14 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from endpoint.track_processors.assets_loader import AssetsLoader
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def register(registry):
-    registry.register_track_processor(AssetsLoader())
+class AssetsLoader:
+    def on_after_load_track(self, track):
+        from elastic.package import assets
+
+    def on_prepare_track(self, track, data_root_dir):
+        return []

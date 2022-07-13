@@ -12,14 +12,15 @@ from esrally.track import (
 )
 from shared.track_processors.data_generator import LazyMetadataDocuments
 
+cwd = os.path.dirname(__file__)
 
-class StaticTrack:
+
+class EmptyTrack:
     def __init__(
         self,
         name="test_track",
         parameters=None,
         challenge_parameters=None,
-        generated_document_paths=None,
     ):
         self.name = name
         if challenge_parameters is None:
@@ -30,8 +31,24 @@ class StaticTrack:
             "test-challenge", parameters={**parameters, **challenge_parameters}
         )
         self.selected_challenge_or_default = self.selected_challenge
+        self.data_streams = []
+        self.component_templates = []
+        self.composable_templates = []
+        # test file references are relative from root elastic/ folder
+        self.root = os.path.join(cwd, "..", "..")
+
+
+class StaticTrack:
+    def __init__(
+        self,
+        name="test_track",
+        parameters=None,
+        challenge_parameters=None,
+        generated_document_paths=None,
+    ):
+        super(StaticTrack, self).__init__(name, parameters, challenge_parameters)
+
         system_corpora = DocumentCorpus(name="system-logs")
-        cwd = os.path.dirname(__file__)
         system_corpora.documents.append(
             Documents(
                 target_data_stream="logs-system.test",
@@ -65,8 +82,6 @@ class StaticTrack:
             )
         )
 
-        self.component_templates = []
-        self.composable_templates = []
         with open(
             os.path.join(
                 cwd, "resources", "templates", "logs-endpoint.events.process.json"
@@ -111,8 +126,6 @@ class StaticTrack:
             Index("logs-elastic.agent-default"),
             Index("logs-elastic.kafka-default"),
         ]
-        # test file references are relative from root elastic/ folder
-        self.root = os.path.join(cwd, "..", "..")
 
 
 class InvalidTrack:

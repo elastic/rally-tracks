@@ -33,7 +33,7 @@ jobs:
           python-version: "3.8"
 
       - name: Install dependencies
-        run: python3 -m pip install "https://github.com/DJRickyB/rally/archive/libs-fix.tar.gz"
+        run: python3 -m pip install "https://github.com/elastic/rally/archive/master.tar.gz"
 
       - name: Run race
         run: |

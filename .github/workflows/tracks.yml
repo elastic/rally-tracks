@@ -1,0 +1,39 @@
+name: Tracks
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  race:
+    name: Run `${{ matrix.track }}` on stack ${{ matrix.stack-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        stack-version: ["8.3.2"]
+        track:
+          - noaa
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Install dependencies
+        run: python3 -m pip install "https://github.com/DJRickyB/rally/archive/libs-fix.tar.gz"
+
+      - name: Run race
+        run: |
+          esrally race \
+            --distribution-version=${{ matrix.stack-version }} \
+            --track-path=${{ matrix.track }} \
+            --runtime-jdk=bundled \
+            --test-mode

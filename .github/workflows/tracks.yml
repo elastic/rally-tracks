@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      STACK_VERSION: latest
+      STACK_REVISION: latest
 
     strategy:
       fail-fast: false
@@ -38,8 +38,8 @@ jobs:
       - name: Run race
         run: |
           esrally race \
-            --distribution-version=$STACK_VERSION \
             --track-path=${{ matrix.track }} \
             --challenge=${{ matrix.challenge }} \
+            --revision=$STACK_REVISION \
             --runtime-jdk=bundled \
             ${{ matrix.flags }}

@@ -1,0 +1,42 @@
+name: Tracks
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  race:
+    name: Run `${{ matrix.track }}` on stack ${{ matrix.stack-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        include:
+          - name: noaa (append-no-conflicts)
+            track: noaa
+            flags: --test-mode --challenge=append-no-conflicts
+            stack-version: "8.3.2"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Install dependencies
+        run: python3 -m pip install "https://github.com/elastic/rally/archive/master.tar.gz"
+
+      - name: Run race
+        run: |
+          esrally race \
+            --track-path=${{ matrix.track }} \
+            --distribution-version=${{ matrix.stack-version }} \
+            --runtime-jdk=bundled \
+            ${{ matrix.flags }}

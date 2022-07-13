@@ -19,9 +19,9 @@ jobs:
 
       matrix:
         include:
-          - track: noaa
-            challenge: default
-            flags: --test-mode
+          - name: noaa (append-no-conflicts)
+            track: noaa
+            flags: --test-mode --challenge=append-no-conflicts
 
     steps:
       - name: Checkout code
@@ -39,7 +39,6 @@ jobs:
         run: |
           esrally race \
             --track-path=${{ matrix.track }} \
-            --challenge=${{ matrix.challenge }} \
             --revision=$STACK_REVISION \
             --runtime-jdk=bundled \
             ${{ matrix.flags }}

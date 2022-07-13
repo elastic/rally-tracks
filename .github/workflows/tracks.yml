@@ -11,9 +11,6 @@ jobs:
     name: Run `${{ matrix.track }}` on stack ${{ matrix.stack-version }}
     runs-on: ubuntu-latest
 
-    env:
-      STACK_REVISION: latest
-
     strategy:
       fail-fast: false
 
@@ -22,6 +19,7 @@ jobs:
           - name: noaa (append-no-conflicts)
             track: noaa
             flags: --test-mode --challenge=append-no-conflicts
+            stack-version: "8.3.2"
 
     steps:
       - name: Checkout code
@@ -39,6 +37,6 @@ jobs:
         run: |
           esrally race \
             --track-path=${{ matrix.track }} \
-            --revision=$STACK_REVISION \
+            --distribution-version=${{ matrix.stack-version }} \
             --runtime-jdk=bundled \
             ${{ matrix.flags }}

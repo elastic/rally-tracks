@@ -108,17 +108,51 @@ Modifications:
 
 This data comes from a real cluster that has been deployed with Terraform of [k8s-integration-infra](https://github.com/elastic/k8s-integration-infra/tree/main/infra)
 
+### Running Track for diffrent senarios
+
+#### For TSDB 
+This track can not be used as it is to evaluate the TSDB feature. Initial extraction was done on a cluster where TSDB was not configured. Data need to be extracted from a pre-configured Kubernetes cluster where TSDB feature will be enabled  before hand.
+
+#### For _Source:
+Run Track as follows:
+```
+esrally race --distribution-version=8.3.0 --track-path=/Users/andreasgkizas/.rally/benchmarks/tracks/cloudnative --runtime-jdk=bundled --kill-running-processes --track-params="synthetic_source:false,source_enabled:true"
+```
+
+We also advise to use `--telemetry disk-usage-stats` to evaluate the disk usage performance
+
+#### For synthetics
+
+Add the 8.4.0 image where Syntetics feature is added in the 
+
+Edit `~/.rally/rally.ini`
+```
+[distributions]
+in_house_snapshot.url = https://snapshots.elastic.co/8.4.0-0384b1d2/downloads/elasticsearch/elasticsearch-8.4.0-SNAPSHOT-darwin-x86_64.tar.gz
+in_house_snapshot.cache = true
+```
+
+> Find appropriate image for your test machine in https://artifacts-api.elastic.co/v1/versions/8.4-SNAPSHOT/builds/latest
+
+Run Track as follows:
+```
+esrally race --distribution-repository=in_house_snapshot --distribution-version=8.4.0-SNAPSHOT --track-path=/Users/andreasgkizas/.rally/benchmarks/tracks/cloudnative --kill-running-processes --track-params="synthetic_source:true,source_enabled:true"
+```
+
+We also advise to use `--telemetry disk-usage-stats` to evaluate the disk usage performance
+
+
 ### Parameters
 
 This track allows to overwrite the following parameters using `--track-params`:
 
-* `bulk_size` (default: 10000)
-* `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
+* `bulk_size` (default: 1000)
+* `bulk_indexing_clients` (default: 5): Number of clients that issue bulk indexing requests.
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `index_settings` (default{}): A list of index settings. Index settings defined elsewhere (e.g. number_of_replicas) need to be overridden explicitly.
 * `recency `(default: 0): A number between 0 and 1 that defines whether to bias towards more recent ids when simulating conflicts. See the Rally docs for the full definition of this parameter. This requires to run the respective challenge.
 * `number_of_replicas` (default: 0)
-* `number_of_shards` (default: 5)
+* `number_of_shards` (default: 1)
 * `ingest_percentage `(default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `conflicts` (default: "random"): Type of id conflicts to simulate. Valid values are: 'sequential' (A document id is replaced with a document id with a sequentially increasing id), 'random' (A document id is replaced with a document id with a random other id).
 * `conflict_probability` (default: 25): A number between 0 and 100 that defines the probability of id conflicts. This requires to run the respective challenge. Combining conflicts=sequential and conflict-probability=0 makes Rally generate index ids by itself, instead of relying on Elasticsearch's automatic id generation <https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html#_automatic_id_generation>_.

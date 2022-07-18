@@ -5,9 +5,7 @@
         },
         "date_detection": false,
         "_source": {
-            "enabled": {{ source_enabled | default(false) | tojson }}{% if synthetic_source | default(False) | string | lower == "true" %},
-            "synthetic": true
-            {% endif %}
+            "enabled": {{ source_enabled | default(false) | tojson }}
         },
         "dynamic_templates": [
             {

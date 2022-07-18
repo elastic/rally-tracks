@@ -16,25 +16,26 @@
       "operation": "check-cluster-health"
     },
     {
+      "operation": "index-append",
+      "warmup-time-period": 150,
+      "clients": {{bulk_indexing_clients | default(5)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    {
+      "operation": "index-update",
+      "warmup-time-period": 150,
+      "clients": {{bulk_indexing_clients | default(5)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    {
       "operation": "index-stats",
       "warmup-iterations": 500,
       "iterations": 1000,
       "target-throughput": 90
     },
     {
-      "operation": "index-append",
-      "warmup-time-period": 120,
-      "clients": {{bulk_indexing_clients | default(8)}}
-    },
-    {
-      "operation": "index-update",
-      "warmup-time-period": 45,
-      "clients": {{bulk_indexing_clients | default(8)}},
-      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
-    },
-    {
       "operation": "node-stats",
-      "warmup-iterations": 100,
+      "warmup-iterations": 500,
       "iterations": 1000,
       "target-throughput": 90
     },

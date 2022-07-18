@@ -5,7 +5,9 @@
         },
         "date_detection": false,
         "_source": {
-            "enabled": {{ source_enabled | default(false) | tojson }}
+            "enabled": {{ source_enabled | default(false) | tojson }}{% if synthetic_source | default(False) | string | lower == "true" %},
+            "synthetic": true
+            {% endif %}
         },
         "dynamic_templates": [
             {
@@ -29,7 +31,7 @@
             {
                 "strings_as_keyword": {
                     "mapping": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "match_mapping_type": "string"
@@ -41,29 +43,29 @@
                 "type": "date"
             },
             "address": {
-                "ignore_above": 1024,
+                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                 "type": "keyword"
             },
             "agent": {
                 "properties": {
                     "ephemeral_id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "type": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -73,23 +75,23 @@
                     "account": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "availability_zone": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "instance": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -97,7 +99,7 @@
                     "machine": {
                         "properties": {
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -105,25 +107,26 @@
                     "project": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "provider": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "service": {
                         "properties": {
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     }
                 }
             },
+            {% if synthetic_source | string | lower == "false" %}
             "data_stream": {
                 "properties": {
                     "dataset": {
@@ -140,10 +143,11 @@
                     }
                 }
             },
+            {% endif %}
             "ecs": {
                 "properties": {
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -151,14 +155,14 @@
             "elastic_agent": {
                 "properties": {
                     "id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "snapshot": {
                         "type": "boolean"
                     },
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -166,7 +170,7 @@
             "event": {
                 "properties": {
                     "dataset": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -174,55 +178,55 @@
             "host": {
                 "properties": {
                     "architecture": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "containerized": {
                         "type": "boolean"
                     },
                     "hostname": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "ip": {
                         "type": "ip"
                     },
                     "mac": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "os": {
                         "properties": {
                             "codename": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "family": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kernel": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "platform": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -232,7 +236,7 @@
             "input": {
                 "properties": {
                     "type": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -240,7 +244,7 @@
             "libbeat": {
                 "properties": {
                     "processor": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -250,17 +254,17 @@
                     "file": {
                         "properties": {
                             "path": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "level": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "logger": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "offset": {
@@ -274,7 +278,7 @@
                                         "type": "long"
                                     },
                                     "name": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     }
                                 }
@@ -283,15 +287,17 @@
                     }
                 }
             },
+            {% if synthetic_source | string | lower == "false" %}
             "message": {
                 "type": "match_only_text"
             },
+            {% endif %}
             "monitoring": {
                 "properties": {
                     "ecs": {
                         "properties": {
                             "version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -323,7 +329,7 @@
                                                         }
                                                     },
                                                     "id": {
-                                                        "ignore_above": 1024,
+                                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                                         "type": "keyword"
                                                     },
                                                     "stats": {
@@ -348,7 +354,7 @@
                                             "cpuacct": {
                                                 "properties": {
                                                     "id": {
-                                                        "ignore_above": 1024,
+                                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                                         "type": "keyword"
                                                     },
                                                     "total": {
@@ -363,7 +369,7 @@
                                             "memory": {
                                                 "properties": {
                                                     "id": {
-                                                        "ignore_above": 1024,
+                                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                                         "type": "keyword"
                                                     },
                                                     "mem": {
@@ -440,11 +446,11 @@
                                     "info": {
                                         "properties": {
                                             "ephemeral_id": {
-                                                "ignore_above": 1024,
+                                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                                 "type": "keyword"
                                             },
                                             "name": {
-                                                "ignore_above": 1024,
+                                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                                 "type": "keyword"
                                             },
                                             "uptime": {
@@ -455,7 +461,7 @@
                                                 }
                                             },
                                             "version": {
-                                                "ignore_above": 1024,
+                                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                                 "type": "keyword"
                                             }
                                         }
@@ -533,7 +539,7 @@
                                                 }
                                             },
                                             "type": {
-                                                "ignore_above": 1024,
+                                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                                 "type": "keyword"
                                             },
                                             "write": {
@@ -981,7 +987,7 @@
                 }
             },
             "network": {
-                "ignore_above": 1024,
+                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                 "type": "keyword"
             },
             "orchestrator": {
@@ -989,11 +995,11 @@
                     "cluster": {
                         "properties": {
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "url": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -1003,7 +1009,7 @@
             "service": {
                 "properties": {
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -1015,29 +1021,29 @@
                             "path": {
                                 "properties": {
                                     "config": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "data": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "home": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "logs": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     }
                                 }
                             },
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "uuid": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -1045,19 +1051,19 @@
                     "build": {
                         "properties": {
                             "commit": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "libbeat": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "time": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -1065,7 +1071,7 @@
                     "ecs": {
                         "properties": {
                             "version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -1073,18 +1079,18 @@
                     "go": {
                         "properties": {
                             "arch": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "max_procs": {
                                 "type": "long"
                             },
                             "os": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -1094,33 +1100,33 @@
                             "capabilities": {
                                 "properties": {
                                     "bounding": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "effective": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "inheritable": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "permitted": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     }
                                 }
                             },
                             "cwd": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "exe": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "pid": {
@@ -1132,7 +1138,7 @@
                             "seccomp": {
                                 "properties": {
                                     "mode": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "no_new_privs": {
@@ -1141,7 +1147,7 @@
                                 }
                             },
                             "start_time": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }

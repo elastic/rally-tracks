@@ -31,7 +31,7 @@
             {
                 "strings_as_keyword": {
                     "mapping": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "match_mapping_type": "string"
@@ -45,23 +45,23 @@
             "agent": {
                 "properties": {
                     "ephemeral_id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "type": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -71,23 +71,23 @@
                     "account": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "availability_zone": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "instance": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -95,7 +95,7 @@
                     "machine": {
                         "properties": {
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -103,25 +103,26 @@
                     "project": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "provider": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "service": {
                         "properties": {
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     }
                 }
             },
+            {% if synthetic_source | string | lower == "false" %}
             "data_stream": {
                 "properties": {
                     "dataset": {
@@ -138,10 +139,11 @@
                     }
                 }
             },
+            {% endif %}
             "ecs": {
                 "properties": {
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -149,14 +151,14 @@
             "elastic_agent": {
                 "properties": {
                     "id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "snapshot": {
                         "type": "boolean"
                     },
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -164,11 +166,11 @@
             "event": {
                 "properties": {
                     "dataset": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "module": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -176,55 +178,55 @@
             "host": {
                 "properties": {
                     "architecture": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "containerized": {
                         "type": "boolean"
                     },
                     "hostname": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "ip": {
                         "type": "ip"
                     },
                     "mac": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "os": {
                         "properties": {
                             "codename": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "family": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kernel": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "platform": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -241,78 +243,80 @@
                             "involved_object": {
                                 "properties": {
                                     "api_version": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "kind": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "name": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "resource_version": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "uid": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     }
                                 }
                             },
+                            {% if synthetic_source | string | lower == "false" %}
                             "message": {
                                 "type": "match_only_text"
                             },
+                            {% endif %}
                             "metadata": {
                                 "properties": {
                                     "generate_name": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "name": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "namespace": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "resource_version": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "self_link": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "timestamp": {
                                         "properties": {
                                             "created": {
-                                                "ignore_above": 1024,
+                                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                                 "type": "keyword"
                                             }
                                         }
                                     },
                                     "uid": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     }
                                 }
                             },
                             "reason": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "source": {
                                 "properties": {
                                     "component": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "host": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     }
                                 }
@@ -320,17 +324,17 @@
                             "timestamp": {
                                 "properties": {
                                     "first_occurrence": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     },
                                     "last_occurrence": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     }
                                 }
                             },
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -340,7 +344,7 @@
             "metricset": {
                 "properties": {
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -350,11 +354,11 @@
                     "cluster": {
                         "properties": {
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "url": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -364,7 +368,7 @@
             "service": {
                 "properties": {
                     "type": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }

@@ -31,7 +31,7 @@
             {
                 "strings_as_keyword": {
                     "mapping": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "match_mapping_type": "string"
@@ -45,23 +45,23 @@
             "agent": {
                 "properties": {
                     "ephemeral_id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "type": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -71,23 +71,23 @@
                     "account": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "availability_zone": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "instance": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -95,7 +95,7 @@
                     "machine": {
                         "properties": {
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -103,25 +103,26 @@
                     "project": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "provider": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "service": {
                         "properties": {
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     }
                 }
             },
+            {% if synthetic_source | string | lower == "false" %}
             "data_stream": {
                 "properties": {
                     "dataset": {
@@ -138,10 +139,11 @@
                     }
                 }
             },
+            {% endif %}
             "ecs": {
                 "properties": {
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -149,18 +151,19 @@
             "elastic_agent": {
                 "properties": {
                     "id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "snapshot": {
                         "type": "boolean"
                     },
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
             },
+            {% if synthetic_source | string | lower == "false" %}
             "error": {
                 "properties": {
                     "message": {
@@ -168,17 +171,18 @@
                     }
                 }
             },
+            {% endif %}
             "event": {
                 "properties": {
                     "dataset": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "duration": {
                         "type": "long"
                     },
                     "module": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -186,55 +190,55 @@
             "host": {
                 "properties": {
                     "architecture": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "containerized": {
                         "type": "boolean"
                     },
                     "hostname": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "ip": {
                         "type": "ip"
                     },
                     "mac": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "os": {
                         "properties": {
                             "codename": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "family": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kernel": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "platform": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -246,179 +250,179 @@
                     "labels": {
                         "properties": {
                             "addonmanager_kubernetes_io/mode": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "addonmanager_kubernetes_io_mode": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "app_kubernetes_io/instance": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "app_kubernetes_io/managed-by": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "app_kubernetes_io/name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "app_kubernetes_io/version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "app_kubernetes_io_instance": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "app_kubernetes_io_managed_by": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "app_kubernetes_io_name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "app_kubernetes_io_version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "common_k8s_elastic_co/type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "common_k8s_elastic_co_type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "component": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "control-plane": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "control_plane": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "elasticsearch_k8s_elastic_co/cluster-name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "elasticsearch_k8s_elastic_co/statefulset-name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "elasticsearch_k8s_elastic_co_cluster_name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "elasticsearch_k8s_elastic_co_statefulset_name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "helm_sh/chart": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "helm_sh_chart": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "k8s-app": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "k8s_app": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kibana_k8s_elastic_co/name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kibana_k8s_elastic_co_name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kubernetes_io/cluster-service": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kubernetes_io/name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kubernetes_io_cluster_service": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kubernetes_io_name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "provider": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "namespace": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "namespace_labels": {
                         "properties": {
                             "kubernetes_io/metadata_name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "namespace_uid": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "selectors": {
                         "properties": {
                             "app_kubernetes_io/instance": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "app_kubernetes_io/name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "common_k8s_elastic_co/type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "control-plane": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "elasticsearch_k8s_elastic_co/cluster-name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "elasticsearch_k8s_elastic_co/statefulset-name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "k8s-app": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kibana_k8s_elastic_co/name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -426,23 +430,23 @@
                     "service": {
                         "properties": {
                             "cluster_ip": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "created": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "ingress_ip": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -452,7 +456,7 @@
             "metricset": {
                 "properties": {
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "period": {
@@ -465,11 +469,11 @@
                     "cluster": {
                         "properties": {
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "url": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -479,11 +483,11 @@
             "service": {
                 "properties": {
                     "address": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "type": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }

@@ -5,7 +5,9 @@
         },
         "date_detection": false,
         "_source": {
-            "enabled": {{ source_enabled | default(false) | tojson }}
+            "enabled": {{ source_enabled | default(false) | tojson }}{% if synthetic_source | default(False) | string | lower == "true" %},
+            "synthetic": true
+            {% endif %}
         },
         "dynamic_templates": [
             {
@@ -29,7 +31,7 @@
             {
                 "strings_as_keyword": {
                     "mapping": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "match_mapping_type": "string"
@@ -45,33 +47,33 @@
                     "console": {
                         "properties": {
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}{% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}{% endif %}
                                 "type": "keyword"
                             },
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "ephemeral_id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "type": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -81,23 +83,23 @@
                     "account": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "availability_zone": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "instance": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -105,7 +107,7 @@
                     "machine": {
                         "properties": {
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -113,25 +115,26 @@
                     "project": {
                         "properties": {
                             "id": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "provider": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "service": {
                         "properties": {
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     }
                 }
             },
+            {% if synthetic_source | string | lower == "false" %}
             "data_stream": {
                 "properties": {
                     "dataset": {
@@ -148,10 +151,11 @@
                     }
                 }
             },
+            {% endif %}
             "ecs": {
                 "properties": {
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -159,14 +163,14 @@
             "elastic_agent": {
                 "properties": {
                     "id": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "snapshot": {
                         "type": "boolean"
                     },
                     "version": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -174,7 +178,7 @@
             "event": {
                 "properties": {
                     "dataset": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -182,55 +186,55 @@
             "host": {
                 "properties": {
                     "architecture": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "containerized": {
                         "type": "boolean"
                     },
                     "hostname": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "ip": {
                         "type": "ip"
                     },
                     "mac": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "name": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "os": {
                         "properties": {
                             "codename": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "family": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "kernel": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "platform": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "type": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "version": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
@@ -240,7 +244,7 @@
             "input": {
                 "properties": {
                     "type": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     }
                 }
@@ -250,17 +254,17 @@
                     "file": {
                         "properties": {
                             "path": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }
                     },
                     "level": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "logger": {
-                        "ignore_above": 1024,
+                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                         "type": "keyword"
                     },
                     "offset": {
@@ -274,7 +278,7 @@
                                         "type": "long"
                                     },
                                     "name": {
-                                        "ignore_above": 1024,
+                                        {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                         "type": "keyword"
                                     }
                                 }
@@ -283,19 +287,21 @@
                     }
                 }
             },
+            {% if synthetic_source | string | lower == "false" %}
             "message": {
                 "type": "match_only_text"
             },
+            {% endif %}
             "orchestrator": {
                 "properties": {
                     "cluster": {
                         "properties": {
                             "name": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             },
                             "url": {
-                                "ignore_above": 1024,
+                                {% if synthetic_source | string | lower == "false" %}"ignore_above": 1024,{% endif %}
                                 "type": "keyword"
                             }
                         }

@@ -1,7 +1,7 @@
 ## Cloudnative Track
 
-This data is extracted from a real Kubernetes cluster which was configured to send logs and metrics to Elastic Cloud.
-System and kubernetes integration was enabled and elastic agent was used to send data to Elastic Cloud.
+This track is extracted from a real Kubernetes cluster which was configured to send logs and metrics to Elastic Cloud.
+System and kubernetes integrations were enabled and elastic agent used to send data to Elastic Cloud.
 
 Extraction of data-streams and indexes from line Elastic Cloud was done with the help of rally `create-index`
 
@@ -108,10 +108,15 @@ Modifications:
 
 This data comes from a real cluster that has been deployed with Terraform of [k8s-integration-infra](https://github.com/elastic/k8s-integration-infra/tree/main/infra)
 
-### Running Track for diffrent senarios
+#### Extraction of data and mappings
 
-#### For TSDB 
-This track can not be used as it is to evaluate the TSDB feature. Initial extraction was done on a cluster where TSDB was not configured. Data need to be extracted from a pre-configured Kubernetes cluster where TSDB feature will be enabled  before hand.
+Corpora data of the specific data with their respective mappings were extracted with following command:
+
+```bash
+esrally create-track --track=test --target-hosts=test.rally.gizas.elastic-observability-ocp.elastic.dev:9200 --client-options="use_ssl:true,verify_certs:false,ca_certs:false,basic_auth_user:'elastic',basic_auth_password:'C7GfaRy9E83E950v74IwPZq6'" --datastreams="metrics-*, logs-*" --output-path=~/tracks
+```
+
+### Running Track for different scenarios
 
 #### For _Source:
 Run Track as follows:
@@ -126,7 +131,8 @@ We also advise to use `--telemetry disk-usage-stats` to evaluate the disk usage 
 Add the 8.4.0 image where Syntetics feature is added in the 
 
 Edit `~/.rally/rally.ini`
-```
+
+```bash
 [distributions]
 in_house_snapshot.url = https://snapshots.elastic.co/8.4.0-0384b1d2/downloads/elasticsearch/elasticsearch-8.4.0-SNAPSHOT-darwin-x86_64.tar.gz
 in_house_snapshot.cache = true
@@ -135,12 +141,15 @@ in_house_snapshot.cache = true
 > Find appropriate image for your test machine in https://artifacts-api.elastic.co/v1/versions/8.4-SNAPSHOT/builds/latest
 
 Run Track as follows:
-```
+
+```bash
 esrally race --distribution-repository=in_house_snapshot --distribution-version=8.4.0-SNAPSHOT --track-path=/Users/andreasgkizas/.rally/benchmarks/tracks/cloudnative --kill-running-processes --track-params="synthetic_source:true,source_enabled:true"
 ```
 
 We also advise to use `--telemetry disk-usage-stats` to evaluate the disk usage performance
 
+#### For TSDB 
+This track can not be used as it is to evaluate the TSDB feature. Initial extraction was done on a cluster where TSDB was not configured. Data need to be extracted from a pre-configured Kubernetes cluster where TSDB feature will be enabled  before hand.
 
 ### Parameters
 

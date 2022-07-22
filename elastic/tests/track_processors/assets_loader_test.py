@@ -30,6 +30,7 @@ def assets_loader():
 def parameters():
     return {
         "assets": {
+            "repository": "file://./tests/track_processors/resources/assets",
             "packages": [
                 "endpoint/8.3.0"
             ]
@@ -84,6 +85,7 @@ def test_empty_packages(assets_loader):
 def test_invalid_packages(assets_loader):
     parameters = {
         "assets": {
+            "repository": "file://./tests/track_processors/resources/assets",
             "packages": [
                 "invalid/a.b.c"
             ]

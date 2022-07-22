@@ -90,6 +90,27 @@ def load_from_github(track, packages, repo_path):
         logger.info(f"Loaded [{count}] assets")
 
 
+def load_from_path(track, packages, path):
+    from elastic.package import assets
+
+    for package in packages:
+        logger.info(f"Loading assets of [{package}] from [{path}]")
+
+        count = 0
+        for path, content in assets.get_local_assets(package, path):
+            path_parts = os.path.split(path[len(package) + 1:])
+
+            if not path_parts[0]:
+                continue
+            if path_parts[0] in asset_loaders:
+                asset_loaders[path_parts[0]](track, json.loads(content))
+                count += 1
+            else:
+                logger.warning(f"Skipping unknown asset type: {path_parts[0]}")
+
+        logger.info(f"Loaded [{count}] assets")
+
+
 class AssetsLoader:
     def on_after_load_track(self, track):
 
@@ -100,6 +121,12 @@ class AssetsLoader:
         repo_parts = urlparse(repository)
         if repo_parts.scheme.startswith("http") and repo_parts.netloc == "github.com":
             load_from_github(track, packages, repo_parts.path[1:])
+        elif repo_parts.scheme == "file":
+            if repo_parts.netloc == '.':
+                path = os.path.join(track.root, "." + repo_parts.path)
+            else:
+                path = repo_parts.path
+            load_from_path(track, packages, path)
         else:
             raise ValueError(f"Unsupported repository: {repository}")
 

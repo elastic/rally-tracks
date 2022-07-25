@@ -21,11 +21,26 @@ import logging
 
 from urllib.parse import urlparse
 
+from esrally.track import (
+    Index,
+    IndexTemplate,
+)
+
 logger = logging.getLogger(__name__)
 
 
-def load_index_template(track, asset_content):
-    pass
+def load_index_template(track, asset_content, kibana_space="default"):
+    index_name = asset_content["name"]
+
+    track.composable_templates += [
+        IndexTemplate(
+            index_name,
+            index_pattern,
+            asset_content,
+        )
+        for index_pattern in asset_content["index_template"]["index_patterns"]
+    ]
+    track.data_streams.append(Index(f"{index_name}-{kibana_space}"))
 
 
 def load_component_template(track, asset_content):

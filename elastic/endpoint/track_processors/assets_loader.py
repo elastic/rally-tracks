@@ -24,6 +24,7 @@ from urllib.parse import urlparse
 from esrally.track import (
     Index,
     IndexTemplate,
+    ComponentTemplate,
 )
 
 logger = logging.getLogger(__name__)
@@ -44,7 +45,12 @@ def load_index_template(track, asset_content, kibana_space="default"):
 
 
 def load_component_template(track, asset_content):
-    pass
+    track.component_templates.append(
+        ComponentTemplate(
+            asset_content["name"],
+            asset_content["component_template"],
+        )
+    )
 
 
 def load_ingest_pipeline(track, asset_content):

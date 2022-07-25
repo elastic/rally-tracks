@@ -50,4 +50,72 @@
           }
         }
       ]
+    },
+    {
+      "name": "frequent-items",
+      "description": "Checks the performance of the frequent item aggregation",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+                {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "logs-*",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "operation": "frequent_items_all_100",
+          "warmup-iterations": 3,
+          "iterations": 10
+        },
+        {
+          "operation": "frequent_items_python_10",
+          "warmup-iterations": 3,
+          "iterations": 10
+        },
+        {
+          "operation": "frequent_items_java_1000",
+          "warmup-iterations": 3,
+          "iterations": 10
+        }
+      ]
     }

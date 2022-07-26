@@ -17,6 +17,7 @@
 
 import os
 import json
+import shutil
 import logging
 
 from urllib.parse import urlparse
@@ -69,7 +70,7 @@ asset_loaders = {
 }
 
 
-def load_from_github(track, packages, repo_path):
+def download_from_github(track, packages, repo_path, assets_root):
     from elastic.package import assets
     from github import Github
 
@@ -81,17 +82,23 @@ def load_from_github(track, packages, repo_path):
         logger.info(f"Downloading assets of [{package}] from [{repo.html_url}]")
         entries = assets.get_remote_assets(package, repo)
 
+        dest_package_path = os.path.join(assets_root, package)
+        if os.path.exists(dest_package_path):
+            shutil.rmtree(dest_package_path)
+
         count = 0
         for path, content in assets.download_assets(entries):
-            path_parts = os.path.split(path[len(package) + 1:])
+            asset_path = os.path.join(assets_root, path)
+            os.makedirs(os.path.dirname(asset_path), exist_ok=True)
+            with open(asset_path, "wb") as f:
+                f.write(content)
 
+            path_parts = os.path.split(path[len(package) + 1:])
             if not path_parts[0]:
                 continue
             if path_parts[0] in asset_loaders:
                 asset_loaders[path_parts[0]](track, json.loads(content))
                 count += 1
-            else:
-                logger.warning(f"Skipping unknown asset type: {path_parts[0]}")
 
         logger.info(f"Loaded [{count}] assets")
 
@@ -105,14 +112,11 @@ def load_from_path(track, packages, path):
         count = 0
         for path, content in assets.get_local_assets(package, path):
             path_parts = os.path.split(path[len(package) + 1:])
-
             if not path_parts[0]:
                 continue
             if path_parts[0] in asset_loaders:
                 asset_loaders[path_parts[0]](track, json.loads(content))
                 count += 1
-            else:
-                logger.warning(f"Skipping unknown asset type: {path_parts[0]}")
 
         logger.info(f"Loaded [{count}] assets")
 
@@ -126,15 +130,19 @@ class AssetsLoader:
 
         repo_parts = urlparse(repository)
         if repo_parts.scheme.startswith("http") and repo_parts.netloc == "github.com":
-            load_from_github(track, packages, repo_parts.path[1:])
+            assets_root = os.path.join(track.root, "assets", repo_parts.path[1:])
+            download_from_github(track, packages, repo_parts.path[1:], assets_root)
         elif repo_parts.scheme == "file":
             if repo_parts.netloc == '.':
-                path = os.path.join(track.root, "." + repo_parts.path)
+                assets_root = os.path.join(track.root, "." + repo_parts.path)
             else:
-                path = repo_parts.path
-            load_from_path(track, packages, path)
+                assets_root = repo_parts.path
+            load_from_path(track, packages, assets_root)
         else:
             raise ValueError(f"Unsupported repository: {repository}")
+
+        params["path"] = os.path.abspath(assets_root)
+        logger.info(f"Assets path is [{params['path']}]")
 
     def on_prepare_track(self, track, data_root_dir):
         return []

@@ -54,10 +54,6 @@ jobs:
             track: elastic/logs
             flags: --test-mode --track-params="number_of_replicas:0" --challenge=logging-querying
             stack-version: "8.3.2"
-          - name: elastic/logs (logging-snapshot-restore)
-            track: elastic/logs
-            flags: --test-mode --track-params="number_of_replicas:0" --challenge=logging-snapshot-restore
-            stack-version: "8.3.2"
           - name: elastic/logs (logging-snapshot)
             track: elastic/logs
             flags: --test-mode --track-params="number_of_replicas:0" --challenge=logging-snapshot

@@ -8,7 +8,7 @@ on:
 
 jobs:
   race:
-    name: Run `${{ matrix.track }}` on stack ${{ matrix.stack-version }}
+    name: ${{ matrix.name }} on stack ${{ matrix.stack-version }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -20,9 +20,60 @@ jobs:
             track: noaa
             flags: --test-mode --challenge=append-no-conflicts
             stack-version: "8.3.2"
+
           - name: elastic/endpoint
             track: elastic/endpoint
             flags:
+            stack-version: "8.3.2"
+
+          - name: elastic/security (index-alert-source-events)
+            track: elastic/security
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=index-alert-source-events
+            stack-version: "8.3.2"
+          - name: elastic/security (security-indexing-querying)
+            track: elastic/security
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=security-indexing-querying
+            stack-version: "8.3.2"
+          - name: elastic/security (security-indexing)
+            track: elastic/security
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=security-indexing
+            stack-version: "8.3.2"
+          - name: elastic/security (security-querying)
+            track: elastic/security
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=security-querying
+            stack-version: "8.3.2"
+
+          - name: elastic/logs (logging-disk-usage)
+            track: elastic/logs
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=logging-disk-usage
+            stack-version: "8.3.2"
+          - name: elastic/logs (logging-indexing-querying)
+            track: elastic/logs
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=logging-indexing-querying
+            stack-version: "8.3.2"
+          - name: elastic/logs (logging-indexing)
+            track: elastic/logs
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=logging-indexing
+            stack-version: "8.3.2"
+          - name: elastic/logs (logging-querying)
+            track: elastic/logs
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=logging-querying
+            stack-version: "8.3.2"
+          - name: elastic/logs (logging-snapshot)
+            track: elastic/logs
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=logging-snapshot
+            stack-version: "8.3.2"
+          - name: elastic/logs (many-shards-base)
+            track: elastic/logs
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=many-shards-base
+            stack-version: "8.3.2"
+          - name: elastic/logs (many-shards-full)
+            track: elastic/logs
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=many-shards-full
+            stack-version: "8.3.2"
+          - name: elastic/logs (many-shards-quantitative)
+            track: elastic/logs
+            flags: --test-mode --track-params="number_of_replicas:0" --challenge=many-shards-quantitative
             stack-version: "8.3.2"
 
     steps:

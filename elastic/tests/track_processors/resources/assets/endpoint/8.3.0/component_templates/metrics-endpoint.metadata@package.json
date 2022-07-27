@@ -1,0 +1,339 @@
+{
+  "name": "metrics-endpoint.metadata@package",
+  "component_template": {
+    "template": {
+      "settings": {
+        "index": {
+          "lifecycle": {
+            "name": "metrics"
+          },
+          "codec": "best_compression",
+          "mapping": {
+            "total_fields": {
+              "limit": "10000"
+            }
+          },
+          "sort": {
+            "field": [
+              "@timestamp",
+              "agent.id"
+            ],
+            "order": [
+              "desc",
+              "asc"
+            ]
+          },
+          "query": {
+            "default_field": [
+              "Endpoint.capabilities",
+              "Endpoint.policy.applied.id",
+              "Endpoint.policy.applied.name",
+              "Endpoint.policy.applied.status",
+              "Endpoint.status",
+              "agent.id",
+              "agent.name",
+              "agent.type",
+              "agent.version",
+              "ecs.version",
+              "elastic.agent.id",
+              "event.action",
+              "event.category",
+              "event.code",
+              "event.dataset",
+              "event.hash",
+              "event.id",
+              "event.kind",
+              "event.module",
+              "event.outcome",
+              "event.provider",
+              "event.type",
+              "host.architecture",
+              "host.domain",
+              "host.hostname",
+              "host.id",
+              "host.mac",
+              "host.name",
+              "host.os.Ext.variant",
+              "host.os.family",
+              "host.os.full",
+              "host.os.kernel",
+              "host.os.name",
+              "host.os.platform",
+              "host.os.version",
+              "host.type"
+            ]
+          }
+        }
+      },
+      "mappings": {
+        "dynamic": false,
+        "properties": {
+          "agent": {
+            "properties": {
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "@timestamp": {
+            "type": "date"
+          },
+          "Endpoint": {
+            "properties": {
+              "capabilities": {
+                "ignore_above": 128,
+                "type": "keyword",
+                "doc_values": false
+              },
+              "configuration": {
+                "properties": {
+                  "isolation": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "state": {
+                "properties": {
+                  "isolation": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "policy": {
+                "properties": {
+                  "applied": {
+                    "properties": {
+                      "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "status": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  }
+                }
+              },
+              "status": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "ecs": {
+            "properties": {
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "data_stream": {
+            "properties": {
+              "namespace": {
+                "type": "constant_keyword"
+              },
+              "type": {
+                "type": "constant_keyword"
+              },
+              "dataset": {
+                "type": "constant_keyword"
+              }
+            }
+          },
+          "elastic": {
+            "properties": {
+              "agent": {
+                "properties": {
+                  "id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
+          },
+          "host": {
+            "properties": {
+              "hostname": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "os": {
+                "properties": {
+                  "Ext": {
+                    "properties": {
+                      "variant": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "kernel": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "caseless": {
+                        "normalizer": "lowercase",
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "text": {
+                        "type": "text"
+                      }
+                    }
+                  },
+                  "family": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "version": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "platform": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "full": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "caseless": {
+                        "normalizer": "lowercase",
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "text": {
+                        "type": "text"
+                      }
+                    }
+                  }
+                }
+              },
+              "domain": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "ip": {
+                "type": "ip"
+              },
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "mac": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "architecture": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "uptime": {
+                "type": "long"
+              }
+            }
+          },
+          "event": {
+            "properties": {
+              "severity": {
+                "type": "long"
+              },
+              "code": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "created": {
+                "type": "date"
+              },
+              "kind": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "module": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "sequence": {
+                "type": "long"
+              },
+              "ingested": {
+                "type": "date"
+              },
+              "provider": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "action": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "category": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "dataset": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "hash": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "outcome": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    },
+    "_meta": {
+      "package": {
+        "name": "endpoint"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    }
+  }
+}

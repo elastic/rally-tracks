@@ -19,3 +19,15 @@ def add_track_path(track, params, **kwargs):
     """
     params["track-path"] = track.root
     return params
+
+
+def add_asset_paths(track, params, **kwargs):
+    """
+    transparently appends the asset paths to provided params in operation
+    """
+    params["asset-paths"] = [
+        os.path.join(assets_group["path"], package)
+        for assets_group in track.selected_challenge_or_default.parameters.get("assets", [])
+        for package in assets_group["packages"]
+    ]
+    return params

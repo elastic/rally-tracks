@@ -15,31 +15,20 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import json
-import os
-from pathlib import Path
+from shared import parameter_sources
+from shared.runners.ilm import create_ilm
+from shared.runners.pipelines import create_pipeline
+
+from endpoint.track_processors.assets_loader import AssetsLoader
 
 
-async def create_pipeline(es, params):
-    pipeline_num = 0
+def register(registry):
+    registry.register_param_source(
+        "add-asset-paths", parameter_sources.add_asset_paths
+    )
 
-    paths = []
-    if "track-path" in params:
-        paths += [
-            Path(os.path.join(params["track-path"], params.get("pipelines", "pipelines")))
-        ]
-    if "asset-paths" in params:
-        paths += [
-            Path(os.path.join(path, "ingest_pipelines"))
-            for path in params["asset-paths"]
-        ]
+    registry.register_runner("create-ilm", create_ilm, async_runner=True)
 
-    for path in paths:
-        for p in path.rglob("*.json"):
-            name = os.path.splitext(os.path.basename(p))[0]
-            with open(p, "r") as f:
-                pipeline = json.load(f)
-            await es.ingest.put_pipeline(name, body=pipeline)
-            pipeline_num += 1
+    registry.register_runner("create-pipeline", create_pipeline, async_runner=True)
 
-    return pipeline_num, "ops"
+    registry.register_track_processor(AssetsLoader())

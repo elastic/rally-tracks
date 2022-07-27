@@ -1,0 +1,610 @@
+{
+  "name": "metrics-endpoint.policy@package",
+  "component_template": {
+    "template": {
+      "settings": {
+        "index": {
+          "lifecycle": {
+            "name": "metrics"
+          },
+          "codec": "best_compression",
+          "mapping": {
+            "total_fields": {
+              "limit": "10000"
+            }
+          },
+          "query": {
+            "default_field": [
+              "message",
+              "Endpoint.policy.applied.actions.message",
+              "Endpoint.policy.applied.actions.name",
+              "Endpoint.policy.applied.actions.status",
+              "Endpoint.policy.applied.artifacts.global.identifiers.name",
+              "Endpoint.policy.applied.artifacts.global.identifiers.sha256",
+              "Endpoint.policy.applied.artifacts.global.version",
+              "Endpoint.policy.applied.artifacts.user.identifiers.name",
+              "Endpoint.policy.applied.artifacts.user.identifiers.sha256",
+              "Endpoint.policy.applied.artifacts.user.version",
+              "Endpoint.policy.applied.endpoint_policy_version",
+              "Endpoint.policy.applied.id",
+              "Endpoint.policy.applied.name",
+              "Endpoint.policy.applied.response.configurations.antivirus_registration.concerned_actions",
+              "Endpoint.policy.applied.response.configurations.antivirus_registration.status",
+              "Endpoint.policy.applied.response.configurations.behavior_protection.concerned_actions",
+              "Endpoint.policy.applied.response.configurations.behavior_protection.status",
+              "Endpoint.policy.applied.response.configurations.events.concerned_actions",
+              "Endpoint.policy.applied.response.configurations.events.status",
+              "Endpoint.policy.applied.response.configurations.host_isolation.concerned_actions",
+              "Endpoint.policy.applied.response.configurations.host_isolation.status",
+              "Endpoint.policy.applied.response.configurations.logging.concerned_actions",
+              "Endpoint.policy.applied.response.configurations.logging.status",
+              "Endpoint.policy.applied.response.configurations.malware.concerned_actions",
+              "Endpoint.policy.applied.response.configurations.malware.status",
+              "Endpoint.policy.applied.response.configurations.memory_protection.concerned_actions",
+              "Endpoint.policy.applied.response.configurations.memory_protection.status",
+              "Endpoint.policy.applied.response.configurations.ransomware.concerned_actions",
+              "Endpoint.policy.applied.response.configurations.ransomware.status",
+              "Endpoint.policy.applied.response.configurations.streaming.concerned_actions",
+              "Endpoint.policy.applied.response.configurations.streaming.status",
+              "Endpoint.policy.applied.response.diagnostic.behavior_protection.concerned_actions",
+              "Endpoint.policy.applied.response.diagnostic.behavior_protection.status",
+              "Endpoint.policy.applied.response.diagnostic.credential_protection.concerned_actions",
+              "Endpoint.policy.applied.response.diagnostic.credential_protection.status",
+              "Endpoint.policy.applied.response.diagnostic.malware.concerned_actions",
+              "Endpoint.policy.applied.response.diagnostic.malware.status",
+              "Endpoint.policy.applied.response.diagnostic.memory_protection.concerned_actions",
+              "Endpoint.policy.applied.response.diagnostic.memory_protection.status",
+              "Endpoint.policy.applied.response.diagnostic.memory_scan.concerned_actions",
+              "Endpoint.policy.applied.response.diagnostic.memory_scan.status",
+              "Endpoint.policy.applied.response.diagnostic.ransomware.concerned_actions",
+              "Endpoint.policy.applied.response.diagnostic.ransomware.status",
+              "Endpoint.policy.applied.status",
+              "Endpoint.policy.applied.version",
+              "agent.build.original",
+              "agent.id",
+              "agent.type",
+              "agent.version",
+              "ecs.version",
+              "event.action",
+              "event.category",
+              "event.code",
+              "event.dataset",
+              "event.hash",
+              "event.id",
+              "event.kind",
+              "event.module",
+              "event.outcome",
+              "event.provider",
+              "event.type",
+              "host.architecture",
+              "host.hostname",
+              "host.id",
+              "host.mac",
+              "host.name",
+              "host.os.Ext.variant",
+              "host.os.family",
+              "host.os.full",
+              "host.os.kernel",
+              "host.os.name",
+              "host.os.platform",
+              "host.os.version"
+            ]
+          }
+        }
+      },
+      "mappings": {
+        "dynamic": false,
+        "properties": {
+          "agent": {
+            "properties": {
+              "build": {
+                "properties": {
+                  "original": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "@timestamp": {
+            "type": "date"
+          },
+          "Endpoint": {
+            "properties": {
+              "configuration": {
+                "properties": {
+                  "isolation": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "state": {
+                "properties": {
+                  "isolation": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "policy": {
+                "properties": {
+                  "applied": {
+                    "properties": {
+                      "response": {
+                        "properties": {
+                          "configurations": {
+                            "properties": {
+                              "behavior_protection": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "streaming": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "malware": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "logging": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "antivirus_registration": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                },
+                                "enabled": false
+                              },
+                              "host_isolation": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "events": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "ransomware": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "memory_protection": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              }
+                            },
+                            "enabled": false
+                          },
+                          "diagnostic": {
+                            "properties": {
+                              "behavior_protection": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "malware": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "credential_protection": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "memory_scan": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "ransomware": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "memory_protection": {
+                                "properties": {
+                                  "concerned_actions": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "status": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              }
+                            },
+                            "enabled": false
+                          }
+                        },
+                        "enabled": false
+                      },
+                      "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "actions": {
+                        "type": "nested",
+                        "properties": {
+                          "name": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "message": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "status": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          }
+                        },
+                        "enabled": false
+                      },
+                      "endpoint_policy_version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "artifacts": {
+                        "properties": {
+                          "global": {
+                            "properties": {
+                              "identifiers": {
+                                "type": "nested",
+                                "properties": {
+                                  "sha256": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "name": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                              }
+                            }
+                          },
+                          "user": {
+                            "properties": {
+                              "identifiers": {
+                                "type": "nested",
+                                "properties": {
+                                  "sha256": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  },
+                                  "name": {
+                                    "ignore_above": 1024,
+                                    "type": "keyword"
+                                  }
+                                }
+                              },
+                              "version": {
+                                "ignore_above": 1024,
+                                "type": "keyword"
+                              }
+                            }
+                          }
+                        },
+                        "enabled": false
+                      },
+                      "status": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "ecs": {
+            "properties": {
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "data_stream": {
+            "properties": {
+              "namespace": {
+                "type": "constant_keyword"
+              },
+              "type": {
+                "type": "constant_keyword"
+              },
+              "dataset": {
+                "type": "constant_keyword"
+              }
+            }
+          },
+          "host": {
+            "properties": {
+              "hostname": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "os": {
+                "properties": {
+                  "Ext": {
+                    "properties": {
+                      "variant": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "kernel": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "caseless": {
+                        "normalizer": "lowercase",
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "text": {
+                        "type": "text"
+                      }
+                    }
+                  },
+                  "family": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "version": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "platform": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "full": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "caseless": {
+                        "normalizer": "lowercase",
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "text": {
+                        "type": "text"
+                      }
+                    }
+                  }
+                }
+              },
+              "ip": {
+                "type": "ip"
+              },
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "mac": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "architecture": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "message": {
+            "type": "match_only_text"
+          },
+          "event": {
+            "properties": {
+              "severity": {
+                "type": "long"
+              },
+              "code": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "created": {
+                "type": "date"
+              },
+              "kind": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "module": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "sequence": {
+                "type": "long"
+              },
+              "ingested": {
+                "type": "date"
+              },
+              "provider": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "action": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "category": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "dataset": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "hash": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "outcome": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    },
+    "_meta": {
+      "package": {
+        "name": "endpoint"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    }
+  }
+}

@@ -21,6 +21,11 @@ jobs:
             flags: --test-mode --challenge=append-no-conflicts
             stack-version: "8.3.2"
 
+          - name: elastic/endpoint
+            track: elastic/endpoint
+            flags:
+            stack-version: "8.3.2"
+
           - name: elastic/security (index-alert-source-events)
             track: elastic/security
             flags: --test-mode --track-params="number_of_replicas:0" --challenge=index-alert-source-events

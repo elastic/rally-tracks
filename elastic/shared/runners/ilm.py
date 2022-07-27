@@ -14,19 +14,32 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-import glob
+
 import json
 import os
+from pathlib import Path
 
 
 async def create_ilm(es, params):
     policy_num = 0
-    for policy_path in glob.glob(
-        os.path.join(params.get("track-path"), params.get("policies", "ilm"), "*.json")
-    ):
-        policy_name = os.path.splitext(os.path.basename(policy_path))[0]
-        with open(policy_path, "r") as policy_file:
-            policy = json.load(policy_file)
-            await es.ilm.put_lifecycle(policy_name, body=policy)
+
+    paths = []
+    if "track-path" in params:
+        paths += [
+            Path(os.path.join(params["track-path"], params.get("policies", "ilm")))
+        ]
+    if "asset-paths" in params:
+        paths += [
+            Path(os.path.join(path, "ilm_policies"))
+            for path in params["asset-paths"]
+        ]
+
+    for path in paths:
+        for p in path.rglob("*.json"):
+            name = os.path.splitext(os.path.basename(p))[0]
+            with open(p, "r") as f:
+                policy = {"policy": json.load(f)["policy"]}  # only `policy` is allowed
+            await es.ilm.put_lifecycle(name, body=policy)
             policy_num += 1
+
     return policy_num, "ops"

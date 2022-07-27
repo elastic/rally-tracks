@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "modified_date": "2022-07-11T16:32:10.360Z",
+  "policy": {
+    "phases": {
+      "hot": {
+        "min_age": "0ms",
+        "actions": {
+          "rollover": {
+            "max_size": "1gb",
+            "max_age": "7d",
+            "max_docs": 10000
+          }
+        }
+      },
+      "delete": {
+        "min_age": "10m",
+        "actions": {
+          "delete": {
+            "delete_searchable_snapshot": true
+          }
+        }
+      }
+    },
+    "_meta": {
+      "package": {
+        "name": "endpoint"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    }
+  },
+  "in_use_by": {
+    "indices": [],
+    "data_streams": [],
+    "composable_templates": [
+      ".logs-endpoint.diagnostic.collection"
+    ]
+  }
+}

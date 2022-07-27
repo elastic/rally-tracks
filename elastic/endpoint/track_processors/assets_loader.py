@@ -74,9 +74,11 @@ def download_from_github(track, packages, repo_path, assets_root):
     from elastic.package import assets
     from github import Github
 
-    if packages:
-        github = Github(os.getenv("ASSETS_AUTH_TOKEN") or None)
-        repo = github.get_repo(repo_path)
+    if not packages:
+        raise ValueError("Required param 'packages' is empty or not configured")
+
+    github = Github(os.getenv("ASSETS_AUTH_TOKEN") or None)
+    repo = github.get_repo(repo_path)
 
     for package in packages:
         logger.info(f"Downloading assets of [{package}] from [{repo.html_url}]")
@@ -106,6 +108,9 @@ def download_from_github(track, packages, repo_path, assets_root):
 def load_from_path(track, packages, path):
     from elastic.package import assets
 
+    if not packages:
+        raise ValueError("Required param 'packages' is empty or not configured")
+
     for package in packages:
         logger.info(f"Loading assets of [{package}] from [{path}]")
 
@@ -124,25 +129,27 @@ def load_from_path(track, packages, path):
 class AssetsLoader:
     def on_after_load_track(self, track):
 
-        params = track.selected_challenge_or_default.parameters.get("assets", {})
-        repository = params.get("repository", "https://github.com/elastic/package-assets")
-        packages = params.get("packages", [])
+        asset_groups = track.selected_challenge_or_default.parameters.get("assets", [])
 
-        repo_parts = urlparse(repository)
-        if repo_parts.scheme.startswith("http") and repo_parts.netloc == "github.com":
-            assets_root = os.path.join(track.root, "assets", repo_parts.path[1:])
-            download_from_github(track, packages, repo_parts.path[1:], assets_root)
-        elif repo_parts.scheme == "file":
-            if repo_parts.netloc == '.':
-                assets_root = os.path.join(track.root, "." + repo_parts.path)
+        for assets_group in asset_groups:
+            repository = assets_group.get("repository", "https://github.com/elastic/package-assets")
+            packages = assets_group.get("packages", [])
+
+            repo_parts = urlparse(repository)
+            if repo_parts.scheme.startswith("http") and repo_parts.netloc == "github.com":
+                assets_root = os.path.join(track.root, "assets", repo_parts.path[1:])
+                download_from_github(track, packages, repo_parts.path[1:], assets_root)
+            elif repo_parts.scheme == "file":
+                if repo_parts.netloc == '.':
+                    assets_root = os.path.join(track.root, "." + repo_parts.path)
+                else:
+                    assets_root = repo_parts.path
+                load_from_path(track, packages, assets_root)
             else:
-                assets_root = repo_parts.path
-            load_from_path(track, packages, assets_root)
-        else:
-            raise ValueError(f"Unsupported repository: {repository}")
+                raise ValueError(f"Unsupported repository: {repository}")
 
-        params["path"] = os.path.abspath(assets_root)
-        logger.info(f"Assets path is [{params['path']}]")
+            assets_group["path"] = os.path.abspath(assets_root)
+            logger.info(f"Assets group path is [{assets_group['path']}]")
 
     def on_prepare_track(self, track, data_root_dir):
         return []

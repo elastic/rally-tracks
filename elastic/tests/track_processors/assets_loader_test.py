@@ -29,12 +29,14 @@ def assets_loader():
 @pytest.fixture
 def parameters():
     return {
-        "assets": {
-            "repository": "file://./tests/track_processors/resources/assets",
-            "packages": [
-                "endpoint/8.3.0"
-            ]
-        }
+        "assets": [
+            {
+                "repository": "file://./tests/track_processors/resources/assets",
+                "packages": [
+                    "endpoint/8.3.0",
+                ],
+            },
+        ],
     }
 
 
@@ -56,8 +58,7 @@ def test_no_assets(assets_loader):
 
 def test_empty_assets(assets_loader):
     parameters = {
-        "assets": {
-        }
+        "assets": [],
     }
     track = EmptyTrack(parameters=parameters)
     assets_loader.on_after_load_track(track)
@@ -69,13 +70,17 @@ def test_empty_assets(assets_loader):
 
 def test_empty_packages(assets_loader):
     parameters = {
-        "assets": {
-            "packages": [
-            ]
-        }
+        "assets": [
+            {
+                "packages": [],
+            },
+        ],
     }
     track = EmptyTrack(parameters=parameters)
-    assets_loader.on_after_load_track(track)
+
+    with pytest.raises(ValueError) as exc:
+        assets_loader.on_after_load_track(track)
+    assert str(exc.value) == "Required param 'packages' is empty or not configured"
 
     assert track.data_streams == []
     assert track.component_templates == []
@@ -84,25 +89,29 @@ def test_empty_packages(assets_loader):
 
 def test_invalid_packages(assets_loader):
     parameters = {
-        "assets": {
-            "repository": "file://./tests/track_processors/resources/assets",
-            "packages": [
-                "invalid/a.b.c"
-            ]
-        }
+        "assets": [
+            {
+                "repository": "file://./tests/track_processors/resources/assets",
+                "packages": [
+                    "invalid/a.b.c"
+                ],
+            },
+        ],
     }
     track = EmptyTrack(parameters=parameters)
     with pytest.raises(ValueError) as exc:
         assets_loader.on_after_load_track(track)
-    assert str(exc.value) == f"Package not found: {parameters['assets']['packages'][0]}"
+    assert str(exc.value) == f"Package not found: {parameters['assets'][0]['packages'][0]}"
 
 
 def test_invalid_repo(assets_loader):
     for repo in ["git@github.com:elastic/package-assets", "https://gitlab.com/elastic/package-assets"]:
         parameters = {
-            "assets": {
-                "repository": repo
-            }
+            "assets": [
+                {
+                    "repository": repo,
+                },
+            ],
         }
         track = EmptyTrack(parameters=parameters)
 

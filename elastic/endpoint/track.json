@@ -5,11 +5,13 @@
     "https://github.com/elastic/package-assets/archive/main.tar.gz"
   ],
   "parameters": {
-    "assets": {
-      "packages": [
-        "endpoint/8.3.0"
-      ]
-    }
+    "assets": [
+      {
+        "packages": [
+          "endpoint/8.3.0"
+        ]
+      }
+    ]
   },
   "schedule": [
     {

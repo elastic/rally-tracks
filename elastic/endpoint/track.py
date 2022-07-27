@@ -15,8 +15,17 @@
 # specific language governing permissions and limitations
 # under the License.
 
+from shared import parameter_sources
+from shared.runners.pipelines import create_pipeline
+
 from endpoint.track_processors.assets_loader import AssetsLoader
 
 
 def register(registry):
+    registry.register_param_source(
+        "add-asset-paths", parameter_sources.add_asset_paths
+    )
+
+    registry.register_runner("create-pipeline", create_pipeline, async_runner=True)
+
     registry.register_track_processor(AssetsLoader())

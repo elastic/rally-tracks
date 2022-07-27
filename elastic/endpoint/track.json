@@ -24,6 +24,13 @@
         },
         "retry-until-success": true
       }
+    },
+    {
+      "operation": {
+        "name":"insert-pipelines",
+        "operation-type": "create-pipeline",
+        "param-source": "add-asset-paths"
+      }
     }
   ]
 }

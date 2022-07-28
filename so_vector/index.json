@@ -7,7 +7,7 @@
   },
   "mappings": {
     "_source": {
-      "enabled": false
+      "excludes": ["titleVector"]
     },
     "properties": {
       "userId": {
@@ -30,6 +30,12 @@
         "dims" : 768,
         "index" : true,
         "similarity": "dot_product"
+      },
+      "acceptedAnswerId": {
+        "type": "keyword"
+      },
+      "body": {
+        "type": "text"
       }
     }
   }

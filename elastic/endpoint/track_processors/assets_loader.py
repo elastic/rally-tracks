@@ -128,6 +128,11 @@ def load_from_path(track, packages, path):
 
 class AssetsLoader:
     def on_after_load_track(self, track):
+        try:
+            from elastic.package import assets  # noqa: F401
+        except ModuleNotFoundError:
+            logger.warning("Cannot import module [elastic.package.assets], assets are not loaded")
+            return
 
         asset_groups = track.selected_challenge_or_default.parameters.get("assets", [])
 

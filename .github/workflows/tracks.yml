@@ -7,6 +7,33 @@ on:
     branches: ["*"]
 
 jobs:
+  list-track:
+    name: List track ${{ matrix.track }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        track:
+          - elastic/endpoint
+          - elastic/logs
+          - elastic/security
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Install dependencies
+        run: python3 -m pip install "https://github.com/elastic/rally/archive/master.tar.gz"
+
+      - name: List track
+        run: esrally list tracks --track-path=${{ matrix.track }}
+
   race:
     name: ${{ matrix.name }} on stack ${{ matrix.stack-version }}
     runs-on: ubuntu-latest

@@ -151,10 +151,9 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
-* `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index.
+* `source_mode` (default: stored): Should the `_source` be `stored` to disk exactly as sent (the default), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
 * `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.
-* `synthetic_source` (default: false): Should we enable `synthetic` _source to save space?
 * `ingest_mode` (default: index) Should be `data_stream` to benchmark ingesting into a tsdb data stream.
 
 ### License

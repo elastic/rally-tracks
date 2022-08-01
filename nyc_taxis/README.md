@@ -66,12 +66,11 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `recency` (default: 0): A number between 0 and 1 that defines whether to bias towards more recent ids when simulating conflicts. See the [Rally docs](http://esrally.readthedocs.io/en/latest/track.html#bulk) for the full definition of this parameter. Only used by the `update` challenge.
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
-* `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index.
+* `source_mode` (default: stored): Should the `_source` be `stored` to disk exactly as sent (the default), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
-* `synthetic_source` (default: false): Should we enable `synthetic` _source to save space?
 
 ### License
 

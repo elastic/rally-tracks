@@ -6,9 +6,8 @@
   },
   "mappings": {
     "_source": {
-      "enabled": {{ source_enabled | default(true) | tojson }}{% if synthetic_source | default(False) | string | lower == "true" %},
-      "synthetic": true
-      {% endif %}
+      "mode": {{ source_mode | default("stored") | tojson }}
+
     },
     "properties": {
       "surcharge": {
@@ -76,7 +75,7 @@
         "type": "geo_point"
       },
       "vendor_name": {
-        "type": "text"{% if synthetic_source | default(False) | string | lower == "true" %},
+        "type": "text"{% if source_mode == "synthetic" %},
         "fields": {
           "raw": {
             "type": "keyword"

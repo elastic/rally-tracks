@@ -4,28 +4,39 @@ This track benchmarks advanced searches on dense vector fields. Unlike the
 `dense_vector` track, each document contains other fields besides vectors to
 support testing features like ANN with filtering and hybrid search.
 
-The dataset is derived from this dump of StackOverflow posts: <TODO add link here>
+The dataset is derived from a dump of StackOverflow posts downloaded on April, 21st 2022 : 
+[stackoverflow.com-Posts.7z](https://archive.org/download/stackexchange/stackoverflow.com-Posts.7z) (17GB).
+
+Licence for this dataset is [cc-by-sa 4.0](https://creativecommons.org/licenses/by-sa/4.0/), more details can be found on [this page](https://archive.org/details/stackexchange).
 
 It only contains question documents -- all documents representing answers have
 been removed. Each question title was encoded into a vector using the sentence
 transformer model
 [multi-qa-mpnet-base-cos-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-cos-v1).
 
-Each question and answer have formatted into a JSON document with the following fields:
+Each post are formatted into a JSON document with the following fields:
 
 	questionId:	      a unique ID
 	acceptedAnswerId: the unique ID of the answer accepted for question
-	title:	          a free-text field with the question title
-  titleVector:      the question title encoded as a vector
+	title:	          a free-text field with the question title  
+	titleVector:      the question title encoded as a vector
 	creationDate:	    the date the question was asked
 	user:	            the user's unique ID
 	tags:	            an array of tags describing the topics
-  body:             field containing the text of the question or answer
+    body:             field containing the text of the question or answer
 
 Fields that do not have values have been left out. The body text was extracted
 formatted to fit into JSON documents.
 
-Run this command to generate the JSON dataset: <TODO add a script and fill in this section>
+Run this command to generate the JSON dataset (output format is json lines): 
+```bash
+python _tools/parse_embed.py <path_to_xml_file>
+```
+
+You will need to install packages specified in `_tools/requirements.txt`.
+
+> Please note that due to the large size of the XML dataset (~100GB unzipped), this can take a very long time to run (~ 10 days on a 2021 M1 Max Macbook Pro). 
+We recommend monitoring the script and stopping it once the output file has reached a satisfying size.
 
 ### Example Document
 

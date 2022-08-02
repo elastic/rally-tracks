@@ -1,0 +1,32 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "GitHub timeline from gharchive.org",
+  "indices": [
+    {
+      "name": "github-archive",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "github_archive",
+      "base-url": "https://storage.googleapis.com/rally-tracks/github_archive",
+      "documents": [
+        {
+          "target-index": "github-archive",
+          "source-file": "documents-2022-07-01.json.bz2",
+          "document-count": 3300828,
+          "compressed-bytes": 1294427848,
+          "uncompressed-bytes": 14516682656
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

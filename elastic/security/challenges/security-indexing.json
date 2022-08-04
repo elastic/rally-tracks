@@ -1,0 +1,21 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "security-indexing",
+  "description": "Indexes security data, either throttled or un-throttled, for a specified time period and volume per day",
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "detailed-results": true,
+        "bulk-size": {{ (bulk_size | default(50)) }}
+      },
+      "ingest-percentage": {{ ingest_percentage | default(100) }},
+      "clients": {{ p_bulk_indexing_clients }}
+    }
+  ]
+}

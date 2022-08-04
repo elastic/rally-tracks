@@ -1,0 +1,145 @@
+{
+  "id": "Expand time range to 12 hrs",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.31368
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - apache - 2.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1649970499917"
+          },
+          "body": {
+            "highlight": {
+              "fields": {
+                "*": {}
+              },
+              "fragment_size": 2147483647,
+              "post_tags": [
+                "@/kibana-highlighted-field@"
+              ],
+              "pre_tags": [
+                "@kibana-highlighted-field@"
+              ],
+              "require_field_match": false
+            },
+            "size": 500,
+            "sort": [
+              {
+                "@timestamp": {
+                  "order": "desc",
+                  "unmapped_type": "boolean"
+                }
+              }
+            ],
+            "fields": [
+              {
+                "field": "*",
+                "include_unmapped": "true"
+              },
+              {
+                "field": "@timestamp",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "eden.created_at",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.created",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.end",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.ingested",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.start",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.accessed",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.created",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.ctime",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.mtime",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "postgresql.log.session_start_time",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "process.parent.start",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "process.start",
+                "format": "strict_date_optional_time"
+              }
+            ],
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "_source": false,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "match": {
+                            "data_stream.dataset": "apache.error"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-14T09:09:19.779Z",
+                        "lte": "2022-04-14T21:09:19.779Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

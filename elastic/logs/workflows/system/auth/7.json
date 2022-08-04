@@ -1,0 +1,561 @@
+{
+  "id": "Zoom into Shanghai, apply filter",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.31288499999999997
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 7.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "5m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "system.auth.ssh.method",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "match": {
+                            "system.auth.ssh.event": "Accepted"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "system.auth.ssh.event": "Failed"
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "source.geo.country_iso_code": "CN"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:34:49.059Z",
+                        "lte": "2022-04-21T00:34:49.059Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.313249
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 7.2",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "5m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "system.auth.ssh.event",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "match_phrase": {
+                      "system.auth.ssh.event": "Failed"
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "source.geo.country_iso_code": "CN"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:34:49.059Z",
+                        "lte": "2022-04-21T00:34:49.059Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.313531
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 7.3",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "user.name",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 50
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match": {
+                                  "system.auth.ssh.event": "Failed"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        },
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match": {
+                                  "system.auth.ssh.event": "Invalid"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "system.auth.ssh.event": "Failed"
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "source.geo.country_iso_code": "CN"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:34:49.059Z",
+                        "lte": "2022-04-21T00:34:49.059Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.313818
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 7.4",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "filter_agg": {
+                "filter": {
+                  "geo_bounding_box": {
+                    "ignore_unmapped": true,
+                    "source.geo.location": {
+                      "top_left": {
+                        "lat": 90,
+                        "lon": -180
+                      },
+                      "bottom_right": {
+                        "lat": -72.550135,
+                        "lon": 180
+                      }
+                    }
+                  }
+                },
+                "aggs": {
+                  "2": {
+                    "geohash_grid": {
+                      "field": "source.geo.location",
+                      "precision": 2
+                    },
+                    "aggs": {
+                      "3": {
+                        "geo_centroid": {
+                          "field": "source.geo.location"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match": {
+                                  "system.auth.ssh.event": "Failed"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        },
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match": {
+                                  "system.auth.ssh.event": "Invalid"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "system.auth.ssh.event": "Failed"
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "source.geo.country_iso_code": "CN"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:34:49.059Z",
+                        "lte": "2022-04-21T00:34:49.059Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.31410000000000005
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 7.5",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "size": 500,
+            "sort": [
+              {
+                "@timestamp": {
+                  "order": "desc",
+                  "unmapped_type": "boolean"
+                }
+              }
+            ],
+            "fields": [
+              {
+                "field": "*",
+                "include_unmapped": "true"
+              },
+              {
+                "field": "@timestamp",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "eden.created_at",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.created",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.end",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.ingested",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.start",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.accessed",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.created",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.ctime",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.mtime",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "postgresql.log.session_start_time",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "process.parent.start",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "process.start",
+                "format": "strict_date_optional_time"
+              }
+            ],
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "_source": false,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "filter": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match": {
+                                  "data_stream.dataset": "system.auth"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        },
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "exists": {
+                                  "field": "system.auth.ssh.event"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "system.auth.ssh.event": "Failed"
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "source.geo.country_iso_code": "CN"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:34:49.059Z",
+                        "lte": "2022-04-21T00:34:49.059Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            },
+            "highlight": {
+              "pre_tags": [
+                "@kibana-highlighted-field@"
+              ],
+              "post_tags": [
+                "@/kibana-highlighted-field@"
+              ],
+              "fields": {
+                "*": {}
+              },
+              "fragment_size": 2147483647
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": "61",
+  "requests": [
+      {
+        "stream": [
+          {
+            "name": "stream-1a",
+            "operation-type": "search",
+            "body": {
+              "query": {
+                "match_all": {}
+              }
+            }
+          }
+        ]
+      },
+      {
+        "stream": [
+          {
+            "name": "stream-2a",
+            "operation-type": "search",
+            "body": {
+              "query": {
+                "term": {
+                  "country": "AT"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "stream-3a",
+        "operation-type": "search",
+        "body": {
+          "query": {
+            "match_all": {}
+          }
+        }
+      }
+  ]
+}

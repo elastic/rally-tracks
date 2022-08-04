@@ -1,0 +1,167 @@
+{
+  "id": "Expand the timeframe to the last 24 hrs - part a",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.310837
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/syslog/dashboard - 2a.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "30m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "host.hostname",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "match": {
+                            "data_stream.dataset": "system.syslog"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T00:40:53.967Z",
+                        "lte": "2022-04-21T00:40:53.967Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.31120299999999995
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/syslog/dashboard - 2a.2",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "host.hostname",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "process.name",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "match": {
+                            "data_stream.dataset": "system.syslog"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T00:40:53.967Z",
+                        "lte": "2022-04-21T00:40:53.967Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

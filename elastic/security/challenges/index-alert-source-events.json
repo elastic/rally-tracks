@@ -1,0 +1,24 @@
+{
+  "name": "index-alert-source-events",
+  "description": "Indexes source events generated for detection rules",
+  "schedule": [
+    {
+      "name": "generate-events",
+      "operation": {
+        "operation-type": "emit-events",
+        "param-source": "events-emitter-source",
+        "rules": {
+          "uri": "https://github.com/elastic/detection-rules/archive/refs/tags/v7.16.0.tar.gz",
+          "path": "rules/**/*.toml",
+          "tags": ["Linux", "Windows"]
+        },
+        "schema": {
+          "uri": "https://github.com/elastic/ecs/archive/refs/tags/v1.12.2.tar.gz",
+          "path": "generated/ecs/ecs_flat.yml"
+        },
+        "number-of-alerts": 5000
+      },
+      "iterations": 1
+    }
+  ]
+}

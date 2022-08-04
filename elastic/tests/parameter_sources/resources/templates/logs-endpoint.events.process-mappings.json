@@ -1,0 +1,18 @@
+{
+  "template": {
+    "mappings": {
+      "dynamic": false,
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        }
+      }
+    },
+    "settings": {
+      "index": {
+        "final_pipeline": "logs-endpoint.events.process-0.13.1",
+        "number_of_routing_shards": "30"
+      }
+    }
+  }
+}

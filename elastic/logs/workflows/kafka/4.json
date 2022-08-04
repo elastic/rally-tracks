@@ -1,0 +1,490 @@
+{
+  "id": "Search for IP",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.310047
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - kafka - 4.1",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650317360945"
+              },
+              "body": {
+                "version": true,
+                "size": 500,
+                "sort": [
+                  {
+                    "@timestamp": {
+                      "order": "desc",
+                      "unmapped_type": "boolean"
+                    }
+                  }
+                ],
+                "fields": [
+                  {
+                    "field": "*",
+                    "include_unmapped": "true"
+                  },
+                  {
+                    "field": "@timestamp",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "eden.created_at",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.end",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.ingested",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.accessed",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.ctime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.mtime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "postgresql.log.session_start_time",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.parent.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.start",
+                    "format": "strict_date_optional_time"
+                  }
+                ],
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "_source": false,
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "kafka.log.trace.class"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "multi_match": {
+                          "type": "best_fields",
+                          "query": "10.12.9.219",
+                          "lenient": true
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "kafka.log.trace.class": "java.io.IOException"
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-17T21:55:52.038Z",
+                            "lte": "2022-04-18T21:55:52.038Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "highlight": {
+                  "pre_tags": [
+                    "@kibana-highlighted-field@"
+                  ],
+                  "post_tags": [
+                    "@/kibana-highlighted-field@"
+                  ],
+                  "fields": {
+                    "*": {}
+                  },
+                  "fragment_size": 2147483647
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.31048200000000004
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - kafka - 4.2",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650317360945"
+              },
+              "body": {
+                "version": true,
+                "size": 500,
+                "sort": [
+                  {
+                    "@timestamp": {
+                      "order": "desc",
+                      "unmapped_type": "boolean"
+                    }
+                  }
+                ],
+                "fields": [
+                  {
+                    "field": "*",
+                    "include_unmapped": "true"
+                  },
+                  {
+                    "field": "@timestamp",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "eden.created_at",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.end",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.ingested",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.accessed",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.ctime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.mtime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "postgresql.log.session_start_time",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.parent.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.start",
+                    "format": "strict_date_optional_time"
+                  }
+                ],
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "_source": false,
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "multi_match": {
+                          "type": "best_fields",
+                          "query": "10.12.9.219",
+                          "lenient": true
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "data_stream.dataset": {
+                            "query": "kafka.log"
+                          }
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "kafka.log.trace.class": "java.io.IOException"
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-17T21:55:52.038Z",
+                            "lte": "2022-04-18T21:55:52.038Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "highlight": {
+                  "pre_tags": [
+                    "@kibana-highlighted-field@"
+                  ],
+                  "post_tags": [
+                    "@/kibana-highlighted-field@"
+                  ],
+                  "fields": {
+                    "*": {}
+                  },
+                  "fragment_size": 2147483647
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.312229
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - kafka - 4.3",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650317360945"
+              },
+              "body": {
+                "aggs": {
+                  "2": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "fixed_interval": "12h",
+                      "time_zone": "UTC",
+                      "min_doc_count": 1
+                    },
+                    "aggs": {
+                      "3": {
+                        "terms": {
+                          "field": "kafka.log.trace.class",
+                          "order": {
+                            "_count": "desc"
+                          },
+                          "size": 10
+                        }
+                      }
+                    }
+                  }
+                },
+                "size": 0,
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "multi_match": {
+                          "type": "best_fields",
+                          "query": "10.12.9.219",
+                          "lenient": true
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "kafka.log.trace.class"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "kafka.log.trace.class": "java.io.IOException"
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-17T21:55:52.038Z",
+                            "lte": "2022-04-18T21:55:52.038Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.312767
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - kafka - 4.4",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650317360945"
+              },
+              "body": {
+                "aggs": {
+                  "2": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "fixed_interval": "12h",
+                      "time_zone": "UTC",
+                      "min_doc_count": 1
+                    },
+                    "aggs": {
+                      "3": {
+                        "terms": {
+                          "field": "log.level",
+                          "order": {
+                            "_count": "desc"
+                          },
+                          "size": 5
+                        }
+                      }
+                    }
+                  }
+                },
+                "size": 0,
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "multi_match": {
+                          "type": "best_fields",
+                          "query": "10.12.9.219",
+                          "lenient": true
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "kafka.log.trace.class": "java.io.IOException"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "data_stream.dataset": {
+                            "query": "kafka.log"
+                          }
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-17T21:55:52.038Z",
+                            "lte": "2022-04-18T21:55:52.038Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

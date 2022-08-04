@@ -1,0 +1,66 @@
+{
+  "id": "51",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "stream-1a",
+          "operation-type": "search",
+          "body": {
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "stream-2a",
+          "operation-type": "search",
+          "body": {
+            "query": {
+              "range": {
+                "@timestamp": {
+                  "gte": "2020-11-30T12:16:59.340Z",
+                  "lte": "2020-12-01T12:16:59.340Z",
+                  "format": "strict_date_optional_time"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "stream-3a",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "gte": "2020-11-30T12:16:59.340Z",
+                    "lte": "2020-12-01T12:16:59.340Z",
+                    "format": "strict_date_optional_time"
+                  }
+                }
+              },
+              {
+                "term": {
+                  "code": {
+                    "value": "500"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
+

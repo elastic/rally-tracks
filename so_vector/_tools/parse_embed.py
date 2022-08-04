@@ -45,25 +45,14 @@ class PostsHandler(xml.sax.ContentHandler):
                     if "Title" in attrs:
                         record["title"] = attrs["Title"].replace(
                             "\n", " ").replace("\r", " ")
-                        record["embedding_title"] = embedding_model.encode(
+                        record["titleVector"] = embedding_model.encode(
                             record["title"], normalize_embeddings=True).tolist()
                     if "AcceptedAnswerId" in attrs:
                         record["acceptedAnswerId"] = attrs["AcceptedAnswerId"]
                     record["type"] = "question"
-                if postType == 2:
-                    if "CreationDate" in attrs:
-                        record["creationDate"] = attrs["CreationDate"]
-                    if "Id" in attrs:
-                        record["answerId"] = attrs["Id"]
-                    record["type"] = "answer"
-                if "Body" in attrs:
-                    soup = BeautifulSoup(attrs["Body"], "html.parser")
-                    body = soup.get_text().replace("\n", " ").replace("\r", "")
-                    body = re.sub("\s+", " ", body)
-                    record["body"] = body
 
                 myjsonfile.write(json.dumps(record, separators=(",", ":")))
-                myjsonfile.write(",\n")
+                myjsonfile.write("\n")
 
 
 if __name__ == "__main__":

@@ -4,17 +4,19 @@ This track benchmarks advanced searches on dense vector fields. Unlike the
 `dense_vector` track, each document contains other fields besides vectors to
 support testing features like ANN with filtering and hybrid search.
 
-The dataset is derived from a dump of StackOverflow posts downloaded on April, 21st 2022 : 
+The dataset is derived from the dump of StackOverflow posts downloaded on April, 21st 2022 : 
 [stackoverflow.com-Posts.7z](https://archive.org/download/stackexchange/stackoverflow.com-Posts.7z) (17GB).
+
+It is stored on a GCP bucket and can is available for  **[download here](gs://ml-data-nlp-enriched/stack-overflow-posts/enrichment-sentence-transformers-multi-qa-mpnet-base-cos-v1/so_2M_embeddedquestions.jsonl)**. (32GB)
 
 Licence for this dataset is [cc-by-sa 4.0](https://creativecommons.org/licenses/by-sa/4.0/), more details can be found on [this page](https://archive.org/details/stackexchange).
 
 It only contains question documents -- all documents representing answers have
 been removed. Each question title was encoded into a vector using the sentence
 transformer model
-[multi-qa-mpnet-base-cos-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-cos-v1).
+[multi-qa-mpnet-base-cos-v1](https://huggingface.co/sentence-transformers/multi-qa-mpnet-base-cos-v1). There 2 Million encoded questions in this dataset.
 
-Each post are formatted into a JSON document with the following fields:
+Each post is formatted into a JSON document with the following fields:
 
 	questionId:	      a unique ID
 	acceptedAnswerId: the unique ID of the answer accepted for question
@@ -28,12 +30,19 @@ Each post are formatted into a JSON document with the following fields:
 Fields that do not have values have been left out. The body text was extracted
 formatted to fit into JSON documents.
 
-Run this command to generate the JSON dataset (output format is json lines): 
+
+----
+### Instructions to generate a new dataset :
+
+Download and unzip a post archive from StackExchange dumps from this [link](https://archive.org/download/stackexchange/stackoverflow.com-Posts.7z) (17GB).
+
+Run this command  (output format is json lines): 
 ```bash
 python _tools/parse_embed.py <path_to_xml_file>
 ```
 
-You will need to install packages specified in `_tools/requirements.txt`.
+You will need to install the packages specified in `_tools/requirements.txt`.
+
 
 > Please note that due to the large size of the XML dataset (~100GB unzipped), this can take a very long time to run (~ 10 days on a 2021 M1 Max Macbook Pro). 
 We recommend monitoring the script and stopping it once the output file has reached a satisfying size.

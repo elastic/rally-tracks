@@ -17,7 +17,8 @@ class PostsHandler(xml.sax.ContentHandler):
     def startElement(self, name, attrs):
         if name == "row":
             postType = int(attrs["PostTypeId"])
-            if postType <= 2:
+            # only keep questions, dropping the answer posts
+            if postType == 1:
                 record = {}
                 # In some questions e.g. 10030718 the ownerID is missing and we have OwnerDisplayName instead
                 ownerDisplayName = ""
@@ -34,22 +35,23 @@ class PostsHandler(xml.sax.ContentHandler):
                     tags = re.split("[<>]+", attrs["Tags"])
                     record["tags"] = [x for x in tags if len(x) > 0]
 
+                record["type"] = "question"
                 record["questionId"] = attrs["Id"]
-                if postType == 2:
-                    # Answer posts have an ParentId that link to question post
-                    record["questionId"] = attrs["ParentId"]
 
-                if postType == 1:
-                    if "CreationDate" in attrs:
-                        record["creationDate"] = attrs["CreationDate"]
-                    if "Title" in attrs:
-                        record["title"] = attrs["Title"].replace(
-                            "\n", " ").replace("\r", " ")
-                        record["titleVector"] = embedding_model.encode(
-                            record["title"], normalize_embeddings=True).tolist()
-                    if "AcceptedAnswerId" in attrs:
-                        record["acceptedAnswerId"] = attrs["AcceptedAnswerId"]
-                    record["type"] = "question"
+                if "CreationDate" in attrs:
+                    record["creationDate"] = attrs["CreationDate"]
+                if "Title" in attrs:
+                    record["title"] = attrs["Title"].replace(
+                        "\n", " ").replace("\r", " ")
+                    record["titleVector"] = embedding_model.encode(
+                        record["title"], normalize_embeddings=True).tolist()
+                if "AcceptedAnswerId" in attrs:
+                    record["acceptedAnswerId"] = attrs["AcceptedAnswerId"]
+                if "Body" in attrs:
+                    soup = BeautifulSoup(attrs["Body"], "html.parser")
+                    body = soup.get_text().replace("\n"," ").replace("\r","")
+                    body = re.sub("\s+", " ", body)
+                    record['body'] = body
 
                 myjsonfile.write(json.dumps(record, separators=(",", ":")))
                 myjsonfile.write("\n")
@@ -67,7 +69,7 @@ if __name__ == "__main__":
     output = p.with_suffix('.json')
     parser = xml.sax.make_parser()
     print("Preprocessing stack overflow posts")
-    
+
     with open(output, "w") as myjsonfile:
         parser.setContentHandler(PostsHandler())
         parser.parse(open(posts_filename, "r"))

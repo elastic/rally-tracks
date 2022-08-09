@@ -11,7 +11,6 @@ The track supports the following functionality:
 
 Depending on the parameters provided, the data set can become very large, in the order of several hundred GB. By default, the data are stored in [Rally's benchmark data directory](https://esrally.readthedocs.io/en/stable/configuration.html#benchmarks). Ensure that you have enough free disk space to store the data in this directory.
 
-
 ## Key Concepts & Methodology
 
 ### Indexing
@@ -20,35 +19,25 @@ Indexing consists of 3 key stages performed in sequence:
 
 #### 1. Data Download
 
-Corpora datasets are downloaded. Each corpus represents an [Elasticsearch integration](https://www.elastic.co/integrations).  The selected corpus are configured by the parameter [integration_ratios](#ratios).
+Corpora datasets are downloaded. Each corpus represents an [Elasticsearch integration](https://www.elastic.co/integrations).  The selected corpus are configured by the parameter `integrations` and include: 
+```
+auditbeat 
+filebeat
+metricbeat
+packetbeat
+winlogbeat
+logs-endpoint
+```
+The default integrations downloaded are `auditbeat, filebeat, metricbeat, packetbeat, winlogbeat`.
 
-The default integrations downloaded are `auditbeat, filebeat, metricbeat, packetbeat, winlogbeat` to match the `Legacy Beats` scenario under [Security Scale Build Scenarios#Data Source Mix](https://docs.google.com/spreadsheets/d/18HxQJbFTRSS8WPSl8lAF6-aqiV-UmtgWWijAWTJMTV0/edit#gid=104824771).
-
-Security endpoint events with types `file, library, network, process, registry and security` are included in the `logs-endpoint` integration represent a dataset extracted from the security endpoint.
+Security endpoint events with types `file, library, network, process, registry and security` are included in the `logs-endpoint` integration represent a dataset extracted from the security endpoint.  These can be included using the run-time parameter:
+`--integrations=["logs-endpoint"]`
 
 #### 2. Data Generation
 
-Prior to any indexing, a data generation stage is performed. This considers all of the corpora available, and generates a dataset according to configured ratios. These [ratios](#ratios) are configurable, although it is anticipated that defaults should be appropriate in all but exceptional circumstances.
-
-The only currently supported generation mode is `Raw`. This simulates traffic as sent by the Elastic agent and assumes Elasticsearch ingestion pipelines will be used to enrich data according to the source. This is currently the only supported mode.
-
-**Important Note**: When specifying corpus ratios, we use the document size for the security use case which differs from the logging use case.
-
-The volume of data to index is controlled through the parameter `raw_data_volume_per_day` and the time span between via `start_date` and `end_date` - see [Data Indexing](#3-data-indexing). As described above, `raw_data_volume_per_day` represents the volume of original data to index and not the total JSON e.g. for logging this represents the volume of raw log files on disk to simulate.
-		
-Whilst the volume of data generated is inferred by the volume per day and time range specified, a limit can also be placed on the [maximum data](#data-generation-parameters) generated in this stage. This specifies an upper limit on the volume of disk space to use for file generation - corpus ratios will still be respected within this limit. Additionally, the [number of threads](#data-generation-parameters) used for data generation is configurable and can be used to improve speed of generation assuming sufficient I/O is available.
-		
-Note: By default, downloaded and generated data is re-used on subsequent runs if the data exists on disk and track parameters which influence data generation have not changed. This saves unnecessary computation which can be expensive for tests involving larger data volumes. The current parameters which impact data generation are:
-
-- raw_data_volume_per_day
-- max_generated_corpus_size
-- data_generation_clients
-- max_total_download_gb
-- start_date
-- end_date
-- integration_ratios
-
-Should any of the above be changed between runs, data will be re-generated.
+Currently documents are read directly from the downloaded corpora datasets, skipping the data generation step.  This means the dataset used is the full downloaded corpus without adjustment.  In the future, the ratios of data from each corpus being included in the dataset will be configurable during the data generation step.
+	
+Note: By default, downloaded and generated data is re-used on subsequent runs if the data exists on disk and track parameters which influence data generation have not changed. This saves unnecessary computation which can be expensive for tests involving larger data volumes.
 
 #### 3. Data Indexing
 
@@ -56,7 +45,7 @@ The dataset is indexed with each event being sent to the appropriate [data strea
 
 The [number of indexing threads](#indexing-parameters) can be configured as can the [number of primary and replica shards](#indexing-parameters). If changing the number of primary or replica shards, be aware this will change the setting for all data streams.
 
-### 4.  Querying
+### Querying
 
 Querying is exposed through the concept of workflows. A workflow represents a linear series of user actions in Kibana e.g. a "Network Dashboard" workflow might consist of the following 4 actions:
 
@@ -83,15 +72,6 @@ The following parameters are available:
 
 * `wait_for_status` (default: `green`) - The track creates Data Streams prior to indexing. All created Data Streams must at least reach this status before indexing commences. Reduce to `yellow` for clusters where green isn't possible e.g. single node.
 * `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
-
-### Data Generation Parameters
-
-* `data_generation_clients` (default: `2`) - The number of concurrent clients used for data generation. Increase to speed up data generation assuming sufficient IO.
-* `max_generated_corpus_size` (default: `2GB`) - Sets an upper limit for the size of the generated corpus, allowing the user to limit disk space usage. Accepts units `M`, `MB`, `G`, `GB`, `T`, `TB`, `P`, `PB`.
-* `force_data_generation` (default: `false`) - If set to `true`, file generation always takes place. If `false` and generated files exist in `{file_cache_dir}/{unique_id}` they are re-used and generation is skipped. The `unique_id` here will be a hash of the parameters which effect data generation - see [Data Generation](#2-data-generation).
-* `random_seed` (default: 13) - Files are generated through random sampling of the source corpora. This pseudo random selection process is seeded to ensure multiple runs of the track generate the same data - thus ensuring tests are repeatable. Changing this value or `data_generation_clients` will cause the generation of a different dataset. Must be an integer.
-* `integration_ratios` - A dictionary containing a key per integration. Each integration in turn has a configuration object. This object includes a `corpora` dictionary, containing the ratios of the source corpora to use for this integration in the generated corpus. The keys represent the corpus names and the values the ratios - ratios across all integrations must add up to 1. See [Ratios](#ratios) for further details.
-
 
 ### Indexing Parameters
 
@@ -134,83 +114,6 @@ Users of this track may use this challenge to execute queries on an existing ind
 
 This challenge executes indexing and querying sequentially. Queries will be issued concurrently until `query_time_period` has elapsed.
 
-### Ratios
-
-By default, the track generates a dataset by sampling the source corpora randomly according to defined ratios. These ratios can be changed through the parameter `integration_ratios`. 
-
-This parameter must be passed as a dictionary where the top level keys represent the integration names. Each integration in turn has its own dictionary with a `corpora` object.  This object describes the corpora associated with the integration as well as the ratios to use when generating the dataset. The ratios values are recalculated to a percentage of the total data generated. Changing this value requires the user to understand which corpora are associated with which integrations - this thus represents an advanced use case.
-
-As an example, the following includes integrations for `auditbeat`, `filebeat`, `metricbeat`, `winlogbeat` and `logs-endpoint`:
-```
-{
-  "auditbeat": {
-     "corpora": {
-        "auditbeat-security": 1.0
-     }
-  },
-  "filebeat": {
-     "corpora": {
-        "filebeat-security": 1.0
-     }
-  },
-  "metricbeat": {
-     "corpora": {
-        "metricbeat-security": 1.0
-     }
-  },
-  "winlogbeat": {
-     "corpora": {
-        "winlogbeat-security": 1.0
-     }
-  },
-  "logs-endpoint": {
-     "corpora": {
-        "endpoint-events-file": 0.2,
-        "endpoint-events-library": 0.1,
-        "endpoint-events-network": 0.2,
-        "endpoint-events-process": 0.3,
-        "endpoint-events-registry": 0.1,
-        "endpoint-events-security": 0.1
-     }
-  }
-}
-```
-
-The parameter `integration_ratios` is best set via a track parameter file as described here [here](https://esrally.readthedocs.io/en/stable/command_line_reference.html#track-params). 
-
-
-## Integrations
-
-Benchmarking in real world conditions requires keeping in sync with index mappings, templates, pipelines, etc. Currently this is a manual effort involving the [integration packages](https://github.com/elastic/integrations) as external dependency.
-
-These are the integrations in use:
-
-- endpoint (package at [endpoint-package](https://github.com/elastic/endpoint-package))
-
-### Upgrading the integrations
-
-You need to load the integrations into a running Kibana instance and then copy their assets to the track. The following instructions use `elastic-package`, which requires that each integration is packaged, with the wanted version already published to the [Elastic Package Registry](https://epr.elastic.co/search).
-
-#### Steps for loading the integration
-
-- Install elastic-package, see the [README](https://github.com/elastic/elastic-package/#readme)
-- Download the integration source, ie: `wget https://github.com/elastic/endpoint-package/archive/refs/tags/v8.2.0.tar.gz`
-- Start the stack, ie: `elastic-package stack up --version 8.2.0`
-- Load the integration, ie: `cd endpoint-package-8.2.0/package/endpoint && elastic-package install endpoint`
-
-#### Steps for updating the assets
-
-- Dump the integration's assets, ie: `elastic-package dump installed-objects -p endpoint -o endpoint-assets`
-- Copy the relevant files, ie:
-  ```
-  cp endpoint-assets/component_templates/logs-* rally-tracks/elastic/security/templates/component
-  cp endpoint-assets/component_templates/.fleet_* rally-tracks/elastic/security/templates/component
-  cp endpoint-assets/index_templates/logs-* rally-tracks/elastic/security/templates/composable
-  cp endpoint-assets/index_templates/.logs-* rally-tracks/elastic/security/templates/composable
-  cp endpoing-assets/ingest_pipelines/logs-* rally-tracks/elastic/security/pipelines
-  cp endpoint-assets/ingest_pipelines/.fleet_final_pipeline-*.json rally-tracks/elastic/security/pipelines
-  ```
-- **Some of the assets are versioned, cautiously add the new files and remove the old. Some files might just be new in the package, consider adding them also in the track.**
 
 ## Elasticsearch Compatibility
 

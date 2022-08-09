@@ -37,6 +37,7 @@ from shared.schedulers.indexing import TimestampThrottler
 from shared.schedulers.query import WorkflowScheduler
 from shared.track_processors.track_id_generator import TrackIdGenerator
 from shared.track_processors import data_generator
+from shared.runners.remote_cluster import ConfigureRemoteCluster, FollowIndexRunner
 
 def register(registry):
     registry.register_param_source("initial-indices-source", InitialIndicesParamSource)
@@ -85,3 +86,6 @@ def register(registry):
 
     registry.register_track_processor(TrackIdGenerator())
     registry.register_track_processor(data_generator.DataGenerator())
+
+    registry.register_runner("configure-remote-cluster", ConfigureRemoteCluster(), async_runner=True)
+    registry.register_runner("follow-index", FollowIndexRunner(), async_runner=True)

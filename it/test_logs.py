@@ -17,6 +17,8 @@
 
 import pytest
 
+pytest_rally = pytest.importorskip("pytest_rally")
+
 BASE_PARAMS = {
     "start_date": "2021-01-01T00-00-00Z",
     "end_date": "2021-01-01T00-00-02Z",

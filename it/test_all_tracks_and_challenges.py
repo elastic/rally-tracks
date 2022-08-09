@@ -17,6 +17,8 @@
 
 import pytest
 
+pytest_rally = pytest.importorskip("pytest_rally")
+
 class TestTrackRepository:
     skip_tracks = ["elastic/logs", "elastic/security", "sql"]
     disable_assertions = {"http_logs": ["append-no-conflicts", "runtime-fields"]}

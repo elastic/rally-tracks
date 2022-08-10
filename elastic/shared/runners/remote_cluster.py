@@ -36,6 +36,15 @@ class ConfigureRemoteCluster(Runner):
         local_es = multi_es[params["local-cluster"]]
         await local_es.cluster.put_settings(body=settings_body)
 
+        self.logger.info(f"checking that cluster [{params['local-cluster']}] is connected to cluster [{params['remote-cluster']}]")
+        remote_info = await local_es.cluster.remote_info()
+        if not remote_info.get(remote_cluster, {}).get("connected"):
+            self.logger.error(f"Unable to connect [{params['local-cluster']}] to cluster [{params['remote-cluster']}]")
+            raise BaseException(
+                f"Unable to connect [{params['local-cluster']}] to cluster [{params['remote-cluster']}]."
+                f"Check each cluster's logs for more information on why the connection failed."
+            )
+
     def __repr__(self, *args, **kwargs):
         return "configure-remote-cluster"
 
@@ -54,20 +63,33 @@ class FollowIndexRunner(Runner):
 
     async def __call__(self, multi_es, params):
         end_request_timeout = time.process_time() + params.get("request-timeout", 7200)
-
+        required_licenses = ["trial", "platinum", "enterprise"]
         def request_timeout():
             return math.ceil(end_request_timeout - time.process_time())
 
-        # fetch the indices from the remote cluster
         remote_es = multi_es[params["remote-cluster"]]
-        remote_indices = await remote_es.indices.get_settings(index=params["index"],
-                                                              request_timeout=request_timeout())
         local_es = multi_es[params["local-cluster"]]
+
         if "remote-connection-name" in params:
             remote_cluster = params["remote-connection-name"]
         else:
             remote_info_resp = await remote_es.info()
             remote_cluster = remote_info_resp["cluster_name"]
+
+        remote_license = await remote_es.license.get()
+        local_license = await local_es.license.get()
+        local_license_type = local_license.get("license", {}).get("type")
+        remote_license_type = remote_license.get("license", {}).get("type")
+
+        if local_license_type not in required_licenses or remote_license_type not in required_licenses:
+            raise BaseException(
+                f"Cannot use license type(s) [{local_license_type}, {remote_license_type}] "
+                f"for CCR features. All clusters must use one of [{required_licenses}]]"
+            )
+
+        # fetch the indices from the remote cluster
+        remote_indices = await remote_es.indices.get_settings(index=params["index"],
+                                                              request_timeout=request_timeout())
 
         self.logger.info(f"remote cluster [{remote_cluster}]; indices [{repr(list(remote_indices))}]")
         for index, settings in remote_indices.items():
@@ -77,7 +99,6 @@ class FollowIndexRunner(Runner):
                                           wait_if_ongoing=True,
                                           request_timeout=request_timeout())
             self.logger.info(f"start following index [{index}] from [{remote_cluster}]")
-
             number_of_replicas = settings["settings"]["index"]["number_of_replicas"]
             follow_body = {
                 "leader_index": index,
@@ -96,7 +117,7 @@ class FollowIndexRunner(Runner):
             await local_es.cluster.health(index=index,
                                           wait_for_no_initializing_shards=True,
                                           wait_for_status="green",
-                                          timeout="{}s".format(request_timeout()),
+                                          timeout=f"{request_timeout()}s",
                                           request_timeout=request_timeout())
 
     def __repr__(self, *args, **kwargs):

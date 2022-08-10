@@ -36,7 +36,7 @@
       }
     },
     {# Issue <snapshot_counts> number of back to back snapshots and wait until all have completed #}
-      {% for snap_iter in range(snapshot_counts) %}
+      {% for snap_iter in range(snapshot_counts | default(100)) %}
       {
         "name": "create-snapshot-{{ snap_iter }}",
         "operation": {

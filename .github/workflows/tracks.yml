@@ -102,6 +102,10 @@ jobs:
             track: elastic/logs
             flags: --test-mode --track-params="number_of_replicas:0" --challenge=many-shards-quantitative
             stack-version: "8.3.2"
+          - name: elastic/logs (many-shards-snapshots)
+            track: elastic/logs
+            flags: --test-mode --track-params="number_of_replicas:0,snapshot_counts:1" --challenge=many-shards-snapshots
+            stack-version: "8.3.2"
 
     steps:
       - name: Checkout code

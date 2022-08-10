@@ -1,0 +1,55 @@
+{
+  "id": "Set time range to now-24h",
+  "name": "POST /api/lens/existing_fields/logs-*",
+  "requests": [
+    {
+      "name": "sleep",
+      "operation-type": "sleep",
+      "duration": 0.8470850000000001
+    },
+    {
+      "name": "Elasticsearch: POST /logs-*/_search - syslog/lens - 3.1",
+      "operation-type": "search",
+      "index": null,
+      "request-params": {},
+      "body": {
+        "size": 500,
+        "query": {
+          "bool": {
+            "filter": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "gte": "2022-04-20T18:30:43.135Z",
+                    "lte": "2022-04-21T18:30:43.135Z"
+                  }
+                }
+              },
+              {
+                "bool": {
+                  "must": [],
+                  "filter": [],
+                  "should": [],
+                  "must_not": []
+                }
+              }
+            ]
+          }
+        },
+        "sort": [
+          {
+            "@timestamp": "desc"
+          }
+        ],
+        "fields": [
+          "*"
+        ],
+        "_source": false,
+        "runtime_mappings": {},
+        "script_fields": {},
+        "track_total_hits": false,
+        "timeout": "4500ms"
+      }
+    }
+  ]
+}

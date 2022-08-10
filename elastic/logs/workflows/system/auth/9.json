@@ -1,0 +1,534 @@
+{
+  "id": "Switch to the dashboard `[Logs System] New users and groups",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.317319
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 9.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "host.hostname",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "user.name",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    },
+                    "aggs": {
+                      "4": {
+                        "terms": {
+                          "field": "user.id",
+                          "order": {
+                            "_count": "desc"
+                          },
+                          "size": 5
+                        },
+                        "aggs": {
+                          "5": {
+                            "terms": {
+                              "field": "group.id",
+                              "order": {
+                                "_count": "desc"
+                              },
+                              "size": 5
+                            },
+                            "aggs": {
+                              "6": {
+                                "terms": {
+                                  "field": "system.auth.useradd.home",
+                                  "order": {
+                                    "_count": "desc"
+                                  },
+                                  "size": 5
+                                },
+                                "aggs": {
+                                  "7": {
+                                    "terms": {
+                                      "field": "system.auth.useradd.shell",
+                                      "order": {
+                                        "_count": "desc"
+                                      },
+                                      "size": 5
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "exists": {
+                            "field": "system.auth.useradd"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:35:10.431Z",
+                        "lte": "2022-04-21T00:35:10.431Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.317805
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 9.2",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "5m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "user.name",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "exists": {
+                            "field": "system.auth.useradd"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:35:10.431Z",
+                        "lte": "2022-04-21T00:35:10.431Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.318227
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 9.3",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "system.auth.useradd.shell",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "user.name",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "exists": {
+                            "field": "system.auth.useradd"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:35:10.431Z",
+                        "lte": "2022-04-21T00:35:10.431Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.318567
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 9.4",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "system.auth.useradd.home",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "user.name",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "exists": {
+                            "field": "system.auth.useradd"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:35:10.431Z",
+                        "lte": "2022-04-21T00:35:10.431Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.318906
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 9.5",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "terms": {
+                  "field": "group.name",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "group.id",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "exists": {
+                            "field": "system.auth.groupadd"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:35:10.431Z",
+                        "lte": "2022-04-21T00:35:10.431Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.319217
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 9.6",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650499337336"
+          },
+          "body": {
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "5m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                },
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "group.name",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "exists": {
+                            "field": "system.auth.groupadd"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-20T18:35:10.431Z",
+                        "lte": "2022-04-21T00:35:10.431Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-snapshot-restore",
+  "description": "Restores snapshots specified by the user prior to testing",
+  "parameters": {
+    "generate-data": false
+  },
+  "default": false,
+  "schedule": [
+    {
+      "name":"insert-pipelines",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "create-pipeline",
+        "param-source": "add-track-path"
+      }
+    },
+    {
+      "name": "insert-ilm",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "create-ilm",
+        "param-source": "add-track-path"
+      }
+    },
+    {
+      "name": "delete-all-datastreams",
+      "tags": ["setup"],
+      "operation": "delete-data-stream"
+    },
+    {
+      "name": "delete-all-composable-templates",
+      "tags": ["setup"],
+      "operation": "delete-composable-template"
+    },
+    {
+      "name": "delete-all-component-templates",
+      "tags": ["setup"],
+      "operation": "delete-component-template"
+    },
+    {
+      "name": "create-all-component-templates",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "create-component-template",
+        "param-source": "component-template-source",
+        "remove-routing-shards": true,
+        "remove-pipelines": false
+      }
+    },
+    {
+      "name": "create-all-composable-templates",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "create-composable-template",
+        "param-source": "composable-template-source",
+        "remove-routing-shards": true,
+        "remove-pipelines": false
+      }
+    },
+    {
+      "name": "tune-recovery-settings",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/_cluster/settings",
+        "body": {
+          "transient": {
+            "indices.recovery.max_bytes_per_sec": {{ p_recovery_max_bytes_per_sec | tojson}},
+            "cluster.routing.allocation.node_concurrent_recoveries": {{ p_node_concurrent_recoveries | tojson }}
+          }
+        }
+      }
+    },
+    {
+      "name": "register-snapshot-repository",
+      "operation": {
+        "operation-type": "create-snapshot-repository",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "body": {
+          "type": {{ p_snapshot_repo_type | tojson }},
+          "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+        }
+      }
+    },
+    {
+      "name": "recover-snapshot-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "restore-snapshot",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": false,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "rename_pattern": "(.+)",
+          "rename_replacement": "$1{{ p_snapshot_rename_suffix }}"
+        }
+      }
+    },
+    {
+      "name": "wait-for-snapshot-recovery-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "wait-for-recovery",
+        "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+      }
+    },
+    {
+      "name": "reset-recovery-settings-to-defaults",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/_cluster/settings",
+        "body": {
+          "transient": {
+            "indices.recovery.max_bytes_per_sec": null,
+            "cluster.routing.allocation.node_concurrent_recoveries": null
+          }
+        }
+      }
+    },
+    {
+      "name": "set-shards-data-streams",
+      "operation": {
+        "operation-type": "set-shards-datastream",
+        "number-of-replicas": "{{ number_of_replicas | default(1) }}",
+        "param-source": "datastream-source",
+        "data-stream": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+      }
+    },
+    {
+      "name": "wait-for-recovered-data-streams",
+      "operation": {
+        "operation-type": "check-datastream",
+        "param-source": "datastream-source",
+        "data-stream": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+      }
+    },
+    {% if p_snapshot_rename_suffix == "" %}
+      {# Only rollover if we don't rename data streams when restoring. In the latter case, the data streams will have
+      names that will ensure they won't receive new documents. Their rename also makes rolling them over challenging. A datastream
+      that has not been renamed will be rolled over to ensure it receives no further documents. #}
+      {
+        "name": "rollover-data-streams",
+        "operation": {
+          "operation-type": "rollover-datastream",
+          "param-source": "datastream-source",
+          "data-stream": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+        }
+      },
+    {% endif %}
+    {
+      "name": "create-required-data-streams",
+      "operation": {
+        "operation-type": "create-datastream",
+        "param-source": "create-datastream-source",
+        "ignore-existing": true
+      }
+    },
+    {
+      "name": "wait-for-data-streams",
+      "operation": {
+        "operation-type": "check-datastream",
+        "param-source": "datastream-source",
+        "data-stream": "logs-*"
+      }
+    }
+  ]
+}

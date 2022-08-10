@@ -1,0 +1,62 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-snapshot",
+  "description": "Performs a snapshots of the cluster",
+  "parameters": {
+    "generate-data": false
+  },
+  "default": false,
+  "schedule": [
+    {
+      "name": "wait-for-data-streams",
+      "operation": {
+        "operation-type": "check-datastream",
+        "param-source": "datastream-source",
+        "data-stream": {{ p_restore_data_streams | tojson }}
+      }
+    },
+    {
+      "name": "force-merge-data-streams",
+      "operation": {
+        "operation-type": "force-merge",
+        "mode": "polling",
+        "max-num-segments": 1,
+        "request-timeout": 60
+      }
+    },
+    {
+      "name": "register-snapshot-repository",
+      "operation": {
+        "operation-type": "create-snapshot-repository",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "body": {
+          "type": {{ p_snapshot_repo_type | tojson }},
+          "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+        }
+      }
+    },
+    {
+      "name": "create-snapshot-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "create-snapshot",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": false,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "metadata": {{ p_snapshot_metadata | tojson }}
+        }
+      }
+    },
+    {
+      "name": "wait-for-snapshot-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "wait-for-snapshot-create",
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "repository": {{ p_snapshot_repo_name | tojson }}
+      }
+    }
+  ]
+}

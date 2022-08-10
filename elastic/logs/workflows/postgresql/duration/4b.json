@@ -1,0 +1,121 @@
+{
+  "id": "Add phrase filter - part b",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "name": "sleep",
+      "operation-type": "sleep",
+      "duration": 0.303476
+    },
+    {
+      "name": "Elasticsearch: POST /logs-*/_async_search - postgresql/duration - 4b.1",
+      "operation-type": "search",
+      "index": "logs-*",
+      "request-params": {
+        "batched_reduce_size": "64",
+        "ignore_unavailable": "true",
+        "track_total_hits": "true",
+        "enable_fields_emulation": "true",
+        "preference": "1650485109312"
+      },
+      "body": {
+        "aggs": {
+          "3": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "30m",
+              "time_zone": "UTC",
+              "min_doc_count": 1
+            },
+            "aggs": {
+              "2": {
+                "sum": {
+                  "field": "event.duration"
+                }
+              }
+            }
+          }
+        },
+        "size": 0,
+        "script_fields": {},
+        "stored_fields": [
+          "*"
+        ],
+        "runtime_mappings": {},
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "bool": {
+                  "filter": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "exists": {
+                              "field": "postgresql.log.query"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    },
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "range": {
+                              "event.duration": {
+                                "gte": "200000000"
+                              }
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    },
+                    {
+                      "bool": {
+                        "must_not": {
+                          "multi_match": {
+                            "type": "phrase",
+                            "query": "copy pgbench_accounts from stdin",
+                            "lenient": true
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "exists": {
+                        "field": "event.duration"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "2022-04-19T20:13:05.675Z",
+                    "lte": "2022-04-20T20:13:05.675Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        }
+      }
+    }
+  ]
+}

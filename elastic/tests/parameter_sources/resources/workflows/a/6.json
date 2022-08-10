@@ -1,0 +1,48 @@
+{
+  "id": "6",
+  "requests": [
+      {
+        "stream": [
+          {
+            "name": "stream-1a",
+            "operation-type": "search",
+            "body": {
+              "query": {
+                "match_all": {}
+              }
+            }
+          }
+        ]
+      },
+      {
+        "stream": [
+          {
+            "name": "stream-2a",
+            "operation-type": "search",
+            "body": {
+              "query": {
+                "term": {
+                  "country": "AT"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "stream-3a",
+        "operation-type": "search",
+        "body": {
+          "query": {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-11-30T11:16:59.340Z",
+                "lte": "2020-12-01T11:16:59.340Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        }
+      }
+  ]
+}

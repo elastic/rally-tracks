@@ -1,0 +1,114 @@
+{
+  "id": "Switch to [Logs System] SSH login attempts dashboard - part a",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "name": "sleep",
+      "operation-type": "sleep",
+      "duration": 0.321548
+    },
+    {
+      "name": "Elasticsearch: POST /logs-*/_async_search - system/auth - 4a.1",
+      "operation-type": "search",
+      "index": "logs-*",
+      "request-params": {
+        "batched_reduce_size": "64",
+        "ignore_unavailable": "true",
+        "track_total_hits": "true",
+        "enable_fields_emulation": "true",
+        "preference": "1650499337336"
+      },
+      "body": {
+        "aggs": {
+          "filter_agg": {
+            "filter": {
+              "geo_bounding_box": {
+                "ignore_unmapped": true,
+                "source.geo.location": {
+                  "top_left": {
+                    "lat": 90,
+                    "lon": -180
+                  },
+                  "bottom_right": {
+                    "lat": -72.550135,
+                    "lon": 180
+                  }
+                }
+              }
+            },
+            "aggs": {
+              "2": {
+                "geohash_grid": {
+                  "field": "source.geo.location",
+                  "precision": 2
+                },
+                "aggs": {
+                  "3": {
+                    "geo_centroid": {
+                      "field": "source.geo.location"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "size": 0,
+        "script_fields": {},
+        "stored_fields": [
+          "*"
+        ],
+        "runtime_mappings": {},
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "match": {
+                              "system.auth.ssh.event": "Failed"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    },
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "match": {
+                              "system.auth.ssh.event": "Invalid"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "2022-04-20T00:33:24.690Z",
+                    "lte": "2022-04-21T00:33:24.690Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        }
+      }
+    }
+  ]
+}

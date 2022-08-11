@@ -19,14 +19,14 @@ SHELL = /bin/bash
 RALLY_VARS_URL = "https://raw.githubusercontent.com/elastic/rally/master/.ci/variables.json"
 PYENV_REGEX = .pyenv/shims
 PY38 = $(shell curl -L -s $(RALLY_VARS_URL) | jq -r '.python_versions.PY38')
-VENV_NAME ?= .venv
-VENV_ACTIVATE_FILE = $(VENV_NAME)/bin/activate
+VIRTUAL_ENV ?= .venv
+VENV_ACTIVATE_FILE = $(VIRTUAL_ENV)/bin/activate
 VENV_ACTIVATE = . $(VENV_ACTIVATE_FILE)
-VEPYTHON = $(VENV_NAME)/bin/python3
+VEPYTHON = $(VIRTUAL_ENV)/bin/python3
 PYENV_ERROR = "\033[0;31mIMPORTANT\033[0m: Please install pyenv.\n"
 PYENV_PATH_ERROR = "\033[0;31mIMPORTANT\033[0m: Please add $(HOME)/$(PYENV_REGEX) to your PATH env.\n"
 PYENV_PREREQ_HELP = "\033[0;31mIMPORTANT\033[0m: please add \033[0;31meval \"\$$(pyenv init -)\"\033[0m to your bash profile and restart your terminal before proceeding any further.\n"
-VE_MISSING_HELP = "\033[0;31mIMPORTANT\033[0m: Couldn't find $(PWD)/$(VENV_NAME); have you executed make venv-create?\033[0m\n"
+VE_MISSING_HELP = "\033[0;31mIMPORTANT\033[0m: Couldn't find $(PWD)/$(VIRTUAL_ENV); have you executed make venv-create?\033[0m\n"
 
 prereq:
 	pyenv install --skip-existing $(PY38)
@@ -45,8 +45,8 @@ venv-create:
 		exit 1; \
 	fi;
 	@if [[ ! -f $(VENV_ACTIVATE_FILE) ]]; then \
-		eval "$$(pyenv init -)" && python3 -mvenv $(VENV_NAME); \
-		printf "Created python3 venv under $(PWD)/$(VENV_NAME).\n"; \
+		eval "$$(pyenv init -)" && python3 -mvenv $(VIRTUAL_ENV); \
+		printf "Created python3 venv under $(PWD)/$(VIRTUAL_ENV).\n"; \
 	fi;
 
 check-venv:

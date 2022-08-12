@@ -1,6 +1,5 @@
 import time
 import math
-import logging
 
 from esrally.driver.runner import Runner
 

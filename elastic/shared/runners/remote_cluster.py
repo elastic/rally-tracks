@@ -1,5 +1,6 @@
 import time
 import math
+import logging
 
 from esrally.driver.runner import Runner
 
@@ -17,6 +18,9 @@ class ConfigureRemoteCluster(Runner):
     *                           defaults to the name of the remote cluster
     """
     multi_cluster = True
+
+    def __init__(self):
+        super().__init__()
 
     async def __call__(self, multi_es, params):
         # retrieve seed nodes from the remote cluster
@@ -37,11 +41,11 @@ class ConfigureRemoteCluster(Runner):
         await local_es.cluster.put_settings(body=settings_body)
 
         self.logger.info(f"checking that cluster [{params['local-cluster']}] is connected to cluster [{params['remote-cluster']}]")
-        remote_info = await local_es.cluster.remote_info()
-        if not remote_info.get(remote_cluster, {}).get("connected"):
+        local_info = await local_es.cluster.remote_info()
+        if not local_info.get(remote_cluster, {}).get("connected"):
             self.logger.error(f"Unable to connect [{params['local-cluster']}] to cluster [{params['remote-cluster']}]")
             raise BaseException(
-                f"Unable to connect [{params['local-cluster']}] to cluster [{params['remote-cluster']}]."
+                f"Unable to connect [{params['local-cluster']}] to cluster [{remote_cluster}]. "
                 f"Check each cluster's logs for more information on why the connection failed."
             )
 
@@ -60,6 +64,9 @@ class FollowIndexRunner(Runner):
     *                           defaults to the name of the remote cluster
     """
     multi_cluster = True
+
+    def __init__(self):
+        super().__init__()
 
     async def __call__(self, multi_es, params):
         end_request_timeout = time.process_time() + params.get("request-timeout", 7200)

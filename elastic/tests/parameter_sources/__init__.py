@@ -38,7 +38,7 @@ class EmptyTrack:
         self.root = os.path.join(cwd, "..", "..")
 
 
-class StaticTrack:
+class StaticTrack(EmptyTrack):
     def __init__(
         self,
         name="test_track",

@@ -15,6 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import glob
 import json
 import os
 from pathlib import Path
@@ -35,7 +36,7 @@ async def create_ilm(es, params):
         ]
 
     for path in paths:
-        for p in path.rglob("*.json"):
+        for p in glob.glob(os.path.join(path, "*.json")):
             name = os.path.splitext(os.path.basename(p))[0]
             with open(p, "r") as f:
                 policy = {"policy": json.load(f)["policy"]}  # only `policy` is allowed

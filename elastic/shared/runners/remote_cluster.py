@@ -2,6 +2,7 @@ import time
 import math
 
 from esrally.driver.runner import Runner
+from elasticsearch import ElasticsearchException
 
 """
 Runners for benchmarking multi-clusters. Once these runners are stable, we can move them to Rally.
@@ -114,10 +115,16 @@ class FollowIndexRunner(Runner):
                     "index.number_of_replicas": number_of_replicas
                 }
             }
-            await local_es.ccr.follow(index=index,
+
+            try:
+                await local_es.ccr.follow(index=index,
                                       wait_for_active_shards="1",
                                       body=follow_body,
                                       request_timeout=request_timeout())
+            except ElasticsearchException as e:
+                msg = f"Failed to follow index [{index}]; [{e}]"
+                raise BaseException(msg)
+
             self.logger.info(f"index [{index}] was replicated from [{remote_cluster}]")
 
             await local_es.cluster.health(index=index,

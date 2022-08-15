@@ -1,9 +1,7 @@
 {
   "settings": {
-    "index": {
-      "number_of_shards": 2,
-      "number_of_replicas": 0
-    }
+    "index.number_of_shards": {{number_of_shards | default(2)}},
+    "index.number_of_replicas": {{number_of_replicas | default(0)}}
   },
   "mappings": {
     "_source": {

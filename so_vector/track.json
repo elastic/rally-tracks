@@ -11,10 +11,12 @@
   "corpora": [
     {
       "name": "so-vector",
+      "base-url": "https://rally-tracks.elastic.co/so_vector",
       "documents": [
         {
-          "source-file": "documents.json",
+          "source-file": "documents.json.bz2",
           "document-count": 2000000,
+          "compressed-bytes": 13251386786,
           "uncompressed-bytes": 34615467266
         }
       ]

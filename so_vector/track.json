@@ -1,0 +1,31 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark for vector search with StackOverflow data",
+  "indices": [
+    {
+      "name": "vectors",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "so-vector",
+      "base-url": "https://rally-tracks.elastic.co/so_vector",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 2000000,
+          "compressed-bytes": 13251386786,
+          "uncompressed-bytes": 34615467266
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

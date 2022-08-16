@@ -108,6 +108,21 @@ async def test_workflow_selection():
 
 
 @pytest.mark.asyncio
+async def test_task_level_workflow_target_override():
+    param_source = WorkflowSelectorParamSource(
+        track=StaticTrack(parameters={"random-seed": 13, "number-of-workflows": 1, "workflow-target": "track-level-target:logs-*"}),
+        params={
+            "workflow": "a",
+            "workflow-target": "task-level-target:logs-*",
+            "workflows-folder": "tests/parameter_sources/resources/workflows",
+            "task-offset": 0,
+        },
+    )
+
+    assert param_source._workflow_target == "task-level-target:logs-*"
+
+
+@pytest.mark.asyncio
 async def test_range_query_processing():
     clock = ReproducibleClock(
         start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0)

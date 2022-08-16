@@ -1,7 +1,7 @@
 {% import "rally.helpers" as rally %}
 {
   "name": "many-shards-snapshots",
-  "description": "Indexes logs either, throttled or un-throttled, at a specified raw volume per day whilst concurrently sending queries.",
+  "description": "Indexes a large amount of shards and then sequentially takes a configurable number of snapshots. Used for benchmarks to help identify regressions related to snapshots with high index counts.",
   "schedule": [
     {% include "tasks/many-shards-setup.json" %},
     {

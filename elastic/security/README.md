@@ -22,7 +22,7 @@ Indexing consists of 3 key stages performed in sequence:
 
 Corpora datasets are downloaded. Each corpus represents an [Elasticsearch integration](https://www.elastic.co/integrations).  The selected corpus are configured by the parameter [integration_ratios](#ratios).
 
-The default integrations downloaded are `auditbeat, filebeat, metricbeat, packetbeat, winlogbeat` to match the `Legacy Beats` scenario under [Security Scale Build Scenarios#Data Source Mix](https://docs.google.com/spreadsheets/d/18HxQJbFTRSS8WPSl8lAF6-aqiV-UmtgWWijAWTJMTV0/edit#gid=104824771).
+The default integrations downloaded are `auditbeat, filebeat, metricbeat, packetbeat, winlogbeat`.
 
 Security endpoint events with types `file, library, network, process, registry and security` are included in the `logs-endpoint` integration represent a dataset extracted from the security endpoint.
 

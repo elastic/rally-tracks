@@ -70,7 +70,9 @@ class WorkflowSelectorParamSource:
         self._detailed_results = track.selected_challenge_or_default.parameters.get(
             "detailed-results", False
         )
-        self._workflow_target = track.selected_challenge_or_default.parameters.get("workflow-target")
+        self._workflow_target = params.get(
+            "workflow-target",
+            track.selected_challenge_or_default.parameters.get("workflow-target"))
         self._max_time_interval = timedelta.min
         # sorted to ensure natural sort order that respects numerics
         for action_filename in sorted(

@@ -1,0 +1,214 @@
+{
+  "name": ".logs-endpoint.action.responses@package",
+  "component_template": {
+    "template": {
+      "settings": {
+        "index": {
+          "lifecycle": {
+            "name": "logs"
+          },
+          "codec": "best_compression",
+          "mapping": {
+            "total_fields": {
+              "limit": "10000"
+            }
+          },
+          "query": {
+            "default_field": [
+              "EndpointActions.action_id",
+              "EndpointActions.data.command",
+              "EndpointActions.data.comment",
+              "EndpointActions.status",
+              "agent.id",
+              "ecs.version",
+              "error.code",
+              "error.id",
+              "error.message",
+              "error.stack_trace",
+              "error.type",
+              "event.action",
+              "event.category",
+              "event.hash",
+              "event.id",
+              "event.outcome",
+              "event.type"
+            ]
+          }
+        }
+      },
+      "mappings": {
+        "dynamic": false,
+        "properties": {
+          "EndpointActions": {
+            "properties": {
+              "completed_at": {
+                "type": "date"
+              },
+              "data": {
+                "properties": {
+                  "comment": {
+                    "type": "text"
+                  },
+                  "command": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "action_id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "started_at": {
+                "type": "date"
+              },
+              "status": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "agent": {
+            "properties": {
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "agent_id": {
+            "path": "agent.id",
+            "type": "alias"
+          },
+          "data": {
+            "properties": {
+              "comment": {
+                "path": "EndpointActions.data.comment",
+                "type": "alias"
+              },
+              "command": {
+                "path": "EndpointActions.data.command",
+                "type": "alias"
+              }
+            }
+          },
+          "error": {
+            "properties": {
+              "code": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "stack_trace": {
+                "ignore_above": 1024,
+                "type": "wildcard",
+                "fields": {
+                  "text": {
+                    "type": "match_only_text"
+                  }
+                }
+              },
+              "message": {
+                "type": "match_only_text"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "completed_at": {
+            "path": "EndpointActions.completed_at",
+            "type": "alias"
+          },
+          "@timestamp": {
+            "type": "date"
+          },
+          "ecs": {
+            "properties": {
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "action_id": {
+            "path": "EndpointActions.action_id",
+            "type": "alias"
+          },
+          "data_stream": {
+            "properties": {
+              "namespace": {
+                "type": "constant_keyword"
+              },
+              "type": {
+                "type": "constant_keyword"
+              },
+              "dataset": {
+                "type": "constant_keyword"
+              }
+            }
+          },
+          "started_at": {
+            "path": "EndpointActions.started_at",
+            "type": "alias"
+          },
+          "event": {
+            "properties": {
+              "ingested": {
+                "type": "date"
+              },
+              "created": {
+                "type": "date"
+              },
+              "start": {
+                "type": "date"
+              },
+              "action": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "end": {
+                "type": "date"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "category": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "hash": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "outcome": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "status": {
+            "path": "EndpointActions.status",
+            "type": "alias"
+          }
+        }
+      }
+    },
+    "_meta": {
+      "package": {
+        "name": "endpoint"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    }
+  }
+}

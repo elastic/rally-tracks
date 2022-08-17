@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "description": "Endpoint track",
+  "dependencies": [
+    "https://github.com/elastic/package-assets/archive/main.tar.gz"
+  ],
+  "parameters": {
+    "assets": [
+      {
+        "packages": [
+          "endpoint/8.3.0"
+        ]
+      }
+    ]
+  },
+  "schedule": [
+    {
+      "operation": {
+        "name": "check-cluster-green",
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "green",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": {
+        "name":"insert-pipelines",
+        "operation-type": "create-pipeline",
+        "param-source": "add-asset-paths"
+      }
+    },
+    {
+      "operation": {
+        "name": "insert-ilm",
+        "operation-type": "create-ilm",
+        "param-source": "add-asset-paths"
+      }
+    }
+  ]
+}

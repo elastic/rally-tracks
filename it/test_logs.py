@@ -65,7 +65,12 @@ class TestLogs:
         assert ret == 0
 
     def test_logs_querying(self, rally, es_cluster):
-        custom = {'query_warmup_time_period': '30', 'query_time_period': '60'}
+        custom = {
+            'query_warmup_time_period': '1',
+            'query_time_period': '1',
+            'workflow_time_interval': '1',
+            'think_time_interval': '1'
+        }
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-querying",
@@ -76,8 +81,10 @@ class TestLogs:
 
     def test_logs_indexing_querying_unthrottled(self, es_cluster, rally):
         custom = {
-            'query_warmup_time_period': '30',
-            'query_time_period': '60'
+            'query_warmup_time_period': '1',
+            'query_time_period': '1',
+            'workflow_time_interval': '1',
+            'think_time_interval': '1'
         }
         ret = rally.race(
             track="elastic/logs",
@@ -98,9 +105,11 @@ class TestLogs:
 
     def test_logs_indexing_querying_throttled(self, es_cluster, rally):
         custom = {
-            'query_warmup_time_period': '30',
-            'query_time_period': '60',
-            'throttle_indexing': 'true'
+            'query_warmup_time_period': '1',
+            'query_time_period': '1',
+            'workflow_time_interval': '1',
+            'think_time_interval': '1',
+            'throttle_indexing': 'true',
         }
         ret = rally.race(
             track="elastic/logs",
@@ -114,8 +123,10 @@ class TestLogs:
         custom = {
             'bulk_start_date': '2020-09-30T00-00-00Z',
             'bulk_end_date': '2020-09-30T00-00-02Z',
-            'query_warmup_time_period': '30',
-            'query_time_period': '60'
+            'query_warmup_time_period': '1',
+            'query_time_period': '1',
+            'workflow_time_interval': '1',
+            'think_time_interval': '1'
         }
         ret = rally.race(
             track="elastic/logs",

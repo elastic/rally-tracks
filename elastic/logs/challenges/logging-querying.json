@@ -22,14 +22,14 @@
         "clients": {{ p_bulk_indexing_clients }},
         "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
       },
+      {
+        "name": "compression-stats",
+        "operation": {
+          "operation-type": "compression-statistics",
+          "param-source": "create-datastream-source"
+        }
+      },
     {% endif %}
-    {
-      "name": "compression-stats",
-      "operation": {
-        "operation-type": "compression-statistics",
-        "param-source": "create-datastream-source"
-      }
-    },
     {
       "name": "logging-queries",
       "parallel": {

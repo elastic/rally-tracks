@@ -29,6 +29,7 @@ from shared.parameter_sources.templates import (
     ComposableTemplateParamSource,
 )
 from shared.runners import datastream
+from shared.runners import snapshot
 from shared.runners.bulk import RawBulkIndex
 from shared.runners.ilm import create_ilm
 from shared.runners.slm import create_slm
@@ -76,6 +77,8 @@ def register(registry):
     registry.register_runner("create-pipeline", create_pipeline, async_runner=True)
 
     registry.register_runner("raw-bulk", RawBulkIndex(), async_runner=True)
+
+    registry.register_runner("mount-searchable-snapshot", snapshot.mount, async_runner=True)
 
     registry.register_scheduler("workflow-scheduler", WorkflowScheduler)
     registry.register_scheduler("timestamp-throttler", TimestampThrottler)

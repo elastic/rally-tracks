@@ -90,14 +90,6 @@ jobs:
             track: elastic/logs
             flags: --test-mode --track-params="number_of_replicas:0" --challenge=logging-snapshot
             stack-version: "8.3.2"
-          - name: elastic/logs (many-shards-base)
-            track: elastic/logs
-            flags: --test-mode --track-params="number_of_replicas:0" --challenge=many-shards-base
-            stack-version: "8.3.2"
-          - name: elastic/logs (many-shards-full)
-            track: elastic/logs
-            flags: --test-mode --track-params="number_of_replicas:0" --challenge=many-shards-full
-            stack-version: "8.3.2"
           - name: elastic/logs (many-shards-quantitative)
             track: elastic/logs
             flags: --test-mode --track-params="number_of_replicas:0" --challenge=many-shards-quantitative

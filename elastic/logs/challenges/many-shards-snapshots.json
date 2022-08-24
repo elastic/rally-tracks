@@ -24,14 +24,16 @@
       },
       "clients": {{ p_bulk_indexing_clients }}
     },
+    {# randomize base path to avoid clashes when running concurrent benchmarks #}
+      {% set updated_snapshot_repo_settings=p_snapshot_repo_settings.update({"base_path":"many-shards-"+((now|int)|string)}) %}
     {
       "name": "register-snapshot-repository",
       "operation": {
         "operation-type": "create-snapshot-repository",
-        "repository": {{ p_snapshot_repo_name | tojson }},
+        "repository": "many-shards",
         "body": {
           "type": {{ p_snapshot_repo_type | tojson }},
-          "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+          "settings": {{ updated_snapshot_repo_settings | tojson(indent=2)}}
         }
       }
     },

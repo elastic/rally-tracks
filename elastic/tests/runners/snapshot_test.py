@@ -29,7 +29,7 @@ async def test_mount_snapshot(es):
         {
             "snapshots": [
                 {
-                    "snapshot": "eventdata-snapshot",
+                    "snapshot": "logging-snapshot",
                     "uuid": "mWJnRABaSh-gdHF3-pexbw",
                     "indices": [
                         "elasticlogs-2018-05-03",
@@ -47,27 +47,27 @@ async def test_mount_snapshot(es):
     ]
 
     params = {
-        "repository": "eventdata",
-        "snapshot": "eventdata-snapshot",
+        "repository": "logging",
+        "snapshot": "logging-snapshot",
         "index_pattern": "elasticlogs-2018-05-*",
         "ignore_index_settings": ["index.hidden"],
     }
 
     await snapshot.mount(es, params=params)
 
-    es.snapshot.get.assert_called_once_with("eventdata", "eventdata-snapshot")
+    es.snapshot.get.assert_called_once_with("logging", "logging-snapshot")
     es.searchable_snapshots.mount.assert_has_calls(
         [
             mock.call(
-                repository="eventdata",
-                snapshot="eventdata-snapshot",
+                repository="logging",
+                snapshot="logging-snapshot",
                 body={"index": "elasticlogs-2018-05-03", "ignore_index_settings": ["index.hidden"],},
                 storage=None,
                 wait_for_completion=True,
             ),
             mock.call(
-                repository="eventdata",
-                snapshot="eventdata-snapshot",
+                repository="logging",
+                snapshot="logging-snapshot",
                 body={"index": "elasticlogs-2018-05-04", "ignore_index_settings": ["index.hidden"],},
                 storage=None,
                 wait_for_completion=True,
@@ -83,7 +83,7 @@ async def test_mount_snapshot_frozen(es):
         {
             "snapshots": [
                 {
-                    "snapshot": "eventdata-snapshot",
+                    "snapshot": "logging-snapshot",
                     "uuid": "mWJnRABaSh-gdHF3-pexbw",
                     "indices": [
                         "elasticlogs-2018-05-03",
@@ -102,33 +102,33 @@ async def test_mount_snapshot_frozen(es):
     ]
 
     params = {
-        "repository": "eventdata",
-        "snapshot": "eventdata-snapshot",
+        "repository": "logging",
+        "snapshot": "logging-snapshot",
         "storage": "shared_cache",
     }
 
     await snapshot.mount(es, params=params)
 
-    es.snapshot.get.assert_called_once_with("eventdata", "eventdata-snapshot")
+    es.snapshot.get.assert_called_once_with("logging", "logging-snapshot")
     es.searchable_snapshots.mount.assert_has_calls(
         [
             mock.call(
-                repository="eventdata",
-                snapshot="eventdata-snapshot",
+                repository="logging",
+                snapshot="logging-snapshot",
                 body={"index": "elasticlogs-2018-05-03"},
                 storage="shared_cache",
                 wait_for_completion=True,
             ),
             mock.call(
-                repository="eventdata",
-                snapshot="eventdata-snapshot",
+                repository="logging",
+                snapshot="logging-snapshot",
                 body={"index": "elasticlogs-2018-05-04"},
                 storage="shared_cache",
                 wait_for_completion=True,
             ),
             mock.call(
-                repository="eventdata",
-                snapshot="eventdata-snapshot",
+                repository="logging",
+                snapshot="logging-snapshot",
                 body={"index": "elasticlogs-2018-05-05"},
                 storage="shared_cache",
                 wait_for_completion=True,
@@ -144,7 +144,7 @@ async def test_mount_snapshot_with_renames(es):
         {
             "snapshots": [
                 {
-                    "snapshot": "eventdata-snapshot",
+                    "snapshot": "logging-snapshot",
                     "uuid": "mWJnRABaSh-gdHF3-pexbw",
                     "indices": [
                         "elasticlogs-2018-05-03",
@@ -162,8 +162,8 @@ async def test_mount_snapshot_with_renames(es):
     ]
 
     params = {
-        "repository": "eventdata",
-        "snapshot": "eventdata-snapshot",
+        "repository": "logging",
+        "snapshot": "logging-snapshot",
         "index_pattern": "elasticlogs-2018-05-*",
         "rename_pattern": "elasticlogs-(.*)",
         "rename_replacement": "renamed-logs-\\1",
@@ -171,12 +171,12 @@ async def test_mount_snapshot_with_renames(es):
 
     await snapshot.mount(es, params=params)
 
-    es.snapshot.get.assert_called_once_with("eventdata", "eventdata-snapshot")
+    es.snapshot.get.assert_called_once_with("logging", "logging-snapshot")
     es.searchable_snapshots.mount.assert_has_calls(
         [
             mock.call(
-                repository="eventdata",
-                snapshot="eventdata-snapshot",
+                repository="logging",
+                snapshot="logging-snapshot",
                 body={
                     "index": "elasticlogs-2018-05-03",
                     "renamed_index": "renamed-logs-2018-05-03",
@@ -185,8 +185,8 @@ async def test_mount_snapshot_with_renames(es):
                 wait_for_completion=True,
             ),
             mock.call(
-                repository="eventdata",
-                snapshot="eventdata-snapshot",
+                repository="logging",
+                snapshot="logging-snapshot",
                 body={
                     "index": "elasticlogs-2018-05-04",
                     "renamed_index": "renamed-logs-2018-05-04",

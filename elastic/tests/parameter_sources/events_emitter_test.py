@@ -15,11 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import pytest
 from itertools import chain
 
-from tests.parameter_sources import StaticTrack
+import pytest
 from security.parameter_sources.events_emitter import EventsEmitterParamSource
+from tests.parameter_sources import StaticTrack
 
 
 def test_missing_params():
@@ -55,7 +55,7 @@ def test_missing_params():
                 "number-of-alerts": 0,
                 "queries": [],
             },
-            _test_schema={}
+            _test_schema={},
         )
     assert str(exc_info.value) == "Param 'queries' requires param 'index' to be configured"
 
@@ -67,7 +67,7 @@ def test_missing_params():
                 "queries": [],
                 "index": "test_index",
             },
-            _test_schema={}
+            _test_schema={},
         )
     assert str(exc_info.value) == "No valid rules or queries were loaded"
 
@@ -82,7 +82,7 @@ def test_one_query():
             ],
             "index": "test_index",
         },
-        _test_schema={"process.pid": { "type": "long"}},
+        _test_schema={"process.pid": {"type": "long"}},
     )
     params = param_source.params()
     assert params["request-timeout"] == None

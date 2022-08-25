@@ -1,5 +1,5 @@
-import random
 import os
+import random
 
 
 class QueryParamSource:
@@ -25,14 +25,8 @@ class PureTermsQueryParamSource(QueryParamSource):
         query_terms = list(self.terms)  # copy
         query_terms.append(str(random.randint(1, 100)))  # avoid caching
         result = {
-            "body": {
-                "query": {
-                    "terms": {
-                        "name.raw": query_terms
-                    }
-                }
-            },
-            "index": None
+            "body": {"query": {"terms": {"name.raw": query_terms}}},
+            "index": None,
         }
         if "cache" in self._params:
             result["cache"] = self._params["cache"]
@@ -48,24 +42,12 @@ class FilteredTermsQueryParamSource(QueryParamSource):
             "body": {
                 "query": {
                     "bool": {
-                        "must": [
-                            {
-                                "match": {
-                                    "feature_class.raw": "T"
-                                }
-                            }
-                        ],
-                        "filter": [
-                            {
-                                "terms": {
-                                    "name.raw": query_terms
-                                }
-                            }
-                        ]
+                        "must": [{"match": {"feature_class.raw": "T"}}],
+                        "filter": [{"terms": {"name.raw": query_terms}}],
                     }
                 }
             },
-            "index": None
+            "index": None,
         }
         if "cache" in self._params:
             result["cache"] = self._params["cache"]
@@ -81,24 +63,12 @@ class ProhibitedTermsQueryParamSource(QueryParamSource):
             "body": {
                 "query": {
                     "bool": {
-                        "must": [
-                            {
-                                "match": {
-                                    "feature_class.raw": "A"
-                                }
-                            }
-                        ],
-                        "must_not": [
-                            {
-                                "terms": {
-                                    "name.raw": query_terms
-                                }
-                            }
-                        ]
+                        "must": [{"match": {"feature_class.raw": "A"}}],
+                        "must_not": [{"terms": {"name.raw": query_terms}}],
                     }
                 }
             },
-            "index": None
+            "index": None,
         }
         if "cache" in self._params:
             result["cache"] = self._params["cache"]

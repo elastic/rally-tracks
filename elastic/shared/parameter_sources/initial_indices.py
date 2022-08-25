@@ -24,9 +24,7 @@ class InitialIndicesParamSource:
         new_params = copy.deepcopy(self._params)
         new_params["client_index"] = partition_index
         new_params["client_count"] = total_partitions
-        return InitialIndicesParamSource(
-            self._orig_args[0], new_params, **self._orig_args[2]
-        )
+        return InitialIndicesParamSource(self._orig_args[0], new_params, **self._orig_args[2])
 
     def params(self):
         if self.current_index == 0:
@@ -35,9 +33,7 @@ class InitialIndicesParamSource:
             if self._client_count <= 0:
                 self._complete = True
                 raise StopIteration
-            self.indices_per_client = (
-                self._params["initial_indices_count"] / self._client_count
-            )
+            self.indices_per_client = self._params["initial_indices_count"] / self._client_count
         self.current_index += 1
         if self.current_index > self.indices_per_client:
             self._complete = True
@@ -45,10 +41,7 @@ class InitialIndicesParamSource:
         lines = []
         client_index = self._client_index
         for i in range(100):
-            lines.append(
-                '{"create":{"_index":"%s-%d-%d"}}\n'
-                % (self._params["name"], client_index, self.current_index)
-            )
+            lines.append('{"create":{"_index":"%s-%d-%d"}}\n' % (self._params["name"], client_index, self.current_index))
             lines.append('{"@timestamp":"2%03d-01-01T12:10:30Z"}\n' % i)
 
         params = self._params.copy()

@@ -1,6 +1,6 @@
-import random
-import os
 import csv
+import os
+import random
 
 
 class QueryParamSource:
@@ -31,24 +31,18 @@ class SortedTermQueryParamSource(QueryParamSource):
     def params(self):
         result = {
             "body": {
-                "query": {
-                    "match": {
-                        "tag": "%s" % random.choice(self.tags)
-                    }
-                },
+                "query": {"match": {"tag": "%s" % random.choice(self.tags)}},
                 "sort": [
                     {
                         "answers.date": {
                             "mode": "max",
                             "order": "desc",
-                            "nested": {
-                                "path": "answers"
-                            }
+                            "nested": {"path": "answers"},
                         }
                     }
-                ]
+                ],
             },
-            "index": None
+            "index": None,
         }
         if "cache" in self._params:
             result["cache"] = self._params["cache"]
@@ -59,14 +53,8 @@ class SortedTermQueryParamSource(QueryParamSource):
 class TermQueryParamSource(QueryParamSource):
     def params(self):
         result = {
-            "body": {
-                "query": {
-                    "match": {
-                        "tag": "%s" % random.choice(self.tags)
-                    }
-                }
-            },
-            "index": None
+            "body": {"query": {"match": {"tag": "%s" % random.choice(self.tags)}}},
+            "index": None,
         }
         if "cache" in self._params:
             result["cache"] = self._params["cache"]
@@ -81,28 +69,18 @@ class NestedQueryParamSource(QueryParamSource):
                 "query": {
                     "bool": {
                         "must": [
-                            {
-                                "match": {
-                                    "tag": "%s" % random.choice(self.tags)
-                                }
-                            },
+                            {"match": {"tag": "%s" % random.choice(self.tags)}},
                             {
                                 "nested": {
                                     "path": "answers",
-                                    "query": {
-                                        "range": {
-                                            "answers.date": {
-                                                "lte": "%s" % random.choice(self.dates)
-                                            }
-                                        }
-                                    }
+                                    "query": {"range": {"answers.date": {"lte": "%s" % random.choice(self.dates)}}},
                                 }
-                            }
+                            },
                         ]
                     }
                 }
             },
-            "index": None
+            "index": None,
         }
         if "cache" in self._params:
             result["cache"] = self._params["cache"]
@@ -117,32 +95,20 @@ class NestedQueryParamSourceWithInnerHits(QueryParamSource):
                 "query": {
                     "bool": {
                         "must": [
-                            {
-                                "match": {
-                                    "tag": "%s" % random.choice(self.tags)
-                                }
-                            },
+                            {"match": {"tag": "%s" % random.choice(self.tags)}},
                             {
                                 "nested": {
                                     "path": "answers",
-                                    "query": {
-                                        "range": {
-                                            "answers.date": {
-                                                "lte": "%s" % random.choice(self.dates)
-                                            }
-                                        }
-                                    },
-                                    "inner_hits": {
-                                        "size": self._params["inner_hits_size"]
-                                    }
+                                    "query": {"range": {"answers.date": {"lte": "%s" % random.choice(self.dates)}}},
+                                    "inner_hits": {"size": self._params["inner_hits_size"]},
                                 }
-                            }
+                            },
                         ]
                     }
                 },
-                "size": self._params["size"]
+                "size": self._params["size"],
             },
-            "index": None
+            "index": None,
         }
         if "cache" in self._params:
             result["cache"] = self._params["cache"]

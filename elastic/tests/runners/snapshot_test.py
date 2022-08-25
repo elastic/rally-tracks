@@ -61,14 +61,20 @@ async def test_mount_snapshot(es):
             mock.call(
                 repository="logging",
                 snapshot="logging-snapshot",
-                body={"index": "elasticlogs-2018-05-03", "ignore_index_settings": ["index.hidden"],},
+                body={
+                    "index": "elasticlogs-2018-05-03",
+                    "ignore_index_settings": ["index.hidden"],
+                },
                 storage=None,
                 wait_for_completion=True,
             ),
             mock.call(
                 repository="logging",
                 snapshot="logging-snapshot",
-                body={"index": "elasticlogs-2018-05-04", "ignore_index_settings": ["index.hidden"],},
+                body={
+                    "index": "elasticlogs-2018-05-04",
+                    "ignore_index_settings": ["index.hidden"],
+                },
                 storage=None,
                 wait_for_completion=True,
             ),

@@ -16,8 +16,8 @@
 # under the License.
 
 from enum import Enum
-from esrally import exceptions
 
+from esrally import exceptions
 from shared.query_handlers.date_histogram import DateHistogramHandler
 from shared.query_handlers.range_query import RangeQueryHandler
 

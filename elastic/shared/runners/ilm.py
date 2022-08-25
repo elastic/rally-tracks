@@ -26,14 +26,9 @@ async def create_ilm(es, params):
 
     paths = []
     if "track-path" in params:
-        paths += [
-            Path(os.path.join(params["track-path"], params.get("policies", "ilm")))
-        ]
+        paths += [Path(os.path.join(params["track-path"], params.get("policies", "ilm")))]
     if "asset-paths" in params:
-        paths += [
-            Path(os.path.join(path, "ilm_policies"))
-            for path in params["asset-paths"]
-        ]
+        paths += [Path(os.path.join(path, "ilm_policies")) for path in params["asset-paths"]]
 
     for path in paths:
         for p in glob.glob(os.path.join(path, "*.json")):

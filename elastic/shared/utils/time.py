@@ -14,12 +14,12 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
 import random
 import re
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from functools import cached_property
-from typing import Callable, Optional, Any
+from typing import Any, Callable, Optional
 
 from esrally import exceptions
 
@@ -47,9 +47,7 @@ class TimestampStructGenerator:
         return self._starting_point
 
 
-def random_duration_for_max(
-    average_duration: int, min_seconds: int, max_seconds: int
-) -> Optional[int]:
+def random_duration_for_max(average_duration: int, min_seconds: int, max_seconds: int) -> Optional[int]:
     if average_duration:
         result = int(random.expovariate(1 / average_duration.total_seconds()))
         # enforce minimum delta for realistic workloads
@@ -79,9 +77,7 @@ def parse_interval(offset: str) -> Optional[timedelta]:
         raise TimeParsingError(f"Invalid offset: {offset}")
 
 
-def parse_date_time(
-    point: str, utcnow: Callable[..., datetime] = datetime.utcnow
-) -> Optional[datetime]:
+def parse_date_time(point: str, utcnow: Callable[..., datetime] = datetime.utcnow) -> Optional[datetime]:
     now = "now"
     if not point:
         return None
@@ -143,8 +139,7 @@ class DateTimeValues:
         """
         if self.min_date and self.min_date > self.max_date:
             raise exceptions.TrackConfigError(
-                f"query-min-date {self.min_date} "
-                f"cannot be larger than effective query-max-date {self.max_date}"
+                f"query-min-date {self.min_date} " f"cannot be larger than effective query-max-date {self.max_date}"
             )
         if not self.duration:
             self.duration = upper_bound - lower_bound

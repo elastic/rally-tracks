@@ -17,8 +17,9 @@
 import json
 import os
 from unittest import mock
+
 import pytest
-from shared.runners.datastream import compression_stats, rollover, create
+from shared.runners.datastream import compression_stats, create, rollover
 from tests import as_future
 
 
@@ -96,9 +97,7 @@ def count(index, body={}):
 @pytest.mark.asyncio
 async def test_data_stream_rollover(es):
     cwd = os.path.dirname(__file__)
-    with open(
-        os.path.join(cwd, "resources", "data_streams", "logs.json")
-    ) as data_stream_file:
+    with open(os.path.join(cwd, "resources", "data_streams", "logs.json")) as data_stream_file:
         es.indices.get_data_stream.return_value = as_future(json.load(data_stream_file))
     es.indices.rollover.return_value = as_future(
         {
@@ -111,9 +110,7 @@ async def test_data_stream_rollover(es):
             "conditions": {"[max_docs: 0]": True},
         }
     )
-    result = await rollover(
-        es, {"conditions": {"max_docs": 0}, "data-stream": "logs-*"}
-    )
+    result = await rollover(es, {"conditions": {"max_docs": 0}, "data-stream": "logs-*"})
     assert result[0] == 13
 
 
@@ -121,22 +118,14 @@ async def test_data_stream_rollover(es):
 @pytest.mark.asyncio
 async def test_data_stream_create(es):
     cwd = os.path.dirname(__file__)
-    with open(
-        os.path.join(cwd, "resources", "data_streams", "logs.json")
-    ) as data_stream_file:
+    with open(os.path.join(cwd, "resources", "data_streams", "logs.json")) as data_stream_file:
         es.indices.get_data_stream.return_value = as_future(json.load(data_stream_file))
     es.indices.create_data_stream.return_value = as_future({"acknowledged": True})
-    result = await create(
-        es, {"data-stream": "logs-kafka.log-default", "ignore-existing": True}
-    )
+    result = await create(es, {"data-stream": "logs-kafka.log-default", "ignore-existing": True})
     assert result[0] == 0
-    result = await create(
-        es, {"data-stream": "logs-mongo.log-default", "ignore-existing": True}
-    )
+    result = await create(es, {"data-stream": "logs-mongo.log-default", "ignore-existing": True})
     assert result[0] == 1
-    result = await create(
-        es, {"data-stream": "logs-kafka.log-default", "ignore-existing": False}
-    )
+    result = await create(es, {"data-stream": "logs-kafka.log-default", "ignore-existing": False})
     assert result[0] == 1
 
 

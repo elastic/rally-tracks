@@ -15,7 +15,6 @@
 # specific language governing permissions and limitations
 # under the License.
 from esrally import exceptions
-
 from shared.utils.time import parse_date_optional_time
 
 
@@ -33,10 +32,7 @@ class RangeQueryHandler:
         if len(fields) == 1:
             self.query_range = self.request_body[fields[0]]
             # we require date queries to use strict_date_optional_time vs trying to figure out the format
-            if (
-                "format" in self.query_range
-                and self.query_range["format"] == "strict_date_optional_time"
-            ):
+            if "format" in self.query_range and self.query_range["format"] == "strict_date_optional_time":
                 if "gte" in self.query_range:
                     self.lower_bound = parse_date_optional_time(self.query_range["gte"])
                 elif "gt" in self.query_range:
@@ -49,27 +45,18 @@ class RangeQueryHandler:
                     self.upper_inclusive = False
                 if not self.upper_bound or not self.lower_bound:
                     raise exceptions.TrackConfigError(
-                        f'Range query for date does not have both "gte" or "gt" '
-                        f'and "lte" or "lt" key - [{self.request_body}]'
+                        f'Range query for date does not have both "gte" or "gt" ' f'and "lte" or "lt" key - [{self.request_body}]'
                     )
         else:
-            raise exceptions.TrackConfigError(
-                f"More than one field in range query [{fields}]"
-            )
+            raise exceptions.TrackConfigError(f"More than one field in range query [{fields}]")
 
     # limited currently to date ranges using strict_date_optional_time that have both a gte **and** lte.
     # If either is missing we error. We let other range types pass through unaffected
     def process(self, date_data):
         if self.upper_bound and self.lower_bound:
-            new_lower, new_upper = date_data.generate_new_bounds(
-                self.lower_bound, self.upper_bound
-            )
-            self.query_range[
-                "gte" if self.lower_inclusive else "gt"
-            ] = f"{new_lower.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]}Z"
-            self.query_range[
-                "lte" if self.upper_inclusive else "lt"
-            ] = f"{new_upper.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]}Z"
+            new_lower, new_upper = date_data.generate_new_bounds(self.lower_bound, self.upper_bound)
+            self.query_range["gte" if self.lower_inclusive else "gt"] = f"{new_lower.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]}Z"
+            self.query_range["lte" if self.upper_inclusive else "lt"] = f"{new_upper.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]}Z"
 
     def get_time_interval(self):
         if self.upper_bound and self.lower_bound:

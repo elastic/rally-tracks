@@ -37,12 +37,8 @@ class DataStreamParamSource:
             for data_stream in track.data_streams:
                 data_stream_definitions.append(data_stream.name)
         else:
-            raise exceptions.InvalidSyntax(
-                f"{params.get('operation-type')} operation targets no data streams"
-            )
-        self._wait_for_status = track.selected_challenge_or_default.parameters.get(
-            "wait-for-status", None
-        )
+            raise exceptions.InvalidSyntax(f"{params.get('operation-type')} operation targets no data streams")
+        self._wait_for_status = track.selected_challenge_or_default.parameters.get("wait-for-status", None)
         self._target_data_stream = iter(data_stream_definitions)
 
     def partition(self, partition_index, total_partitions):
@@ -66,27 +62,17 @@ class CreateDataStreamParamSource:
     def __init__(self, track, params, **kwargs):
         self._params = params
         self.infinite = False
-        integration_ratios = track.selected_challenge_or_default.parameters.get(
-            "integration-ratios", None
-        )
+        integration_ratios = track.selected_challenge_or_default.parameters.get("integration-ratios", None)
         listed_corpora = [
             corpus
             for integration_name, integration in integration_ratios.items()
             for corpus, ratio in integration["corpora"].items()
             if ratio > 0
         ]
-        targeted_corpora = [
-            corpus for corpus in track.corpora if corpus.name in listed_corpora
-        ]
+        targeted_corpora = [corpus for corpus in track.corpora if corpus.name in listed_corpora]
         # we de-duplicate the list of data streams as more than 1 corpus can use the same data stream
         target_data_stream = list(
-            dict.fromkeys(
-                [
-                    corpus.documents[0].target_data_stream
-                    for corpus in targeted_corpora
-                    if len(corpus.documents) > 0
-                ]
-            )
+            dict.fromkeys([corpus.documents[0].target_data_stream for corpus in targeted_corpora if len(corpus.documents) > 0])
         )
         self._target_data_stream = iter(target_data_stream)
 

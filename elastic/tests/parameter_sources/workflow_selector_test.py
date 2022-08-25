@@ -20,8 +20,7 @@ import re
 from math import ceil
 
 import pytest
-from esrally.exceptions import TrackConfigError, DataError
-
+from esrally.exceptions import DataError, TrackConfigError
 from shared.parameter_sources import DEFAULT_MAX_DATE
 from shared.parameter_sources.workflow_selector import WorkflowSelectorParamSource
 from shared.utils.time import parse_date_optional_time
@@ -110,7 +109,13 @@ async def test_workflow_selection():
 @pytest.mark.asyncio
 async def test_task_level_workflow_target_override():
     param_source = WorkflowSelectorParamSource(
-        track=StaticTrack(parameters={"random-seed": 13, "number-of-workflows": 1, "workflow-target": "track-level-target:logs-*"}),
+        track=StaticTrack(
+            parameters={
+                "random-seed": 13,
+                "number-of-workflows": 1,
+                "workflow-target": "track-level-target:logs-*",
+            }
+        ),
         params={
             "workflow": "a",
             "workflow-target": "task-level-target:logs-*",
@@ -124,9 +129,7 @@ async def test_task_level_workflow_target_override():
 
 @pytest.mark.asyncio
 async def test_range_query_processing():
-    clock = ReproducibleClock(
-        start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0)
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0))
     param_source = WorkflowSelectorParamSource(
         track=StaticTrack(
             parameters={
@@ -187,41 +190,27 @@ async def test_range_query_processing():
         # just check they are changed and difference is the same
         if action_id == "5":
             # test the RangeQueryHandler
-            upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"][
-                "must"
-            ][0]["range"]["@timestamp"]["lte"]
+            upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["must"][0]["range"]["@timestamp"]["lte"]
             assert upper_bound == "2020-09-30T00:00:10.000Z"
-            lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"][
-                "must"
-            ][0]["range"]["@timestamp"]["gte"]
+            lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["must"][0]["range"]["@timestamp"]["gte"]
             assert lower_bound == "2020-09-29T00:00:10.000Z"
-            query_upper_bound = parse_date_optional_time(upper_bound).replace(
-                tzinfo=datetime.timezone.utc
-            )
-            delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(
-                tzinfo=datetime.timezone.utc
-            )
+            query_upper_bound = parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc)
+            delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
             assert delta.total_seconds() == 86400
 
-            upper_bound = action["requests"][2]["body"]["query"]["range"]["@timestamp"][
-                "lte"
-            ]
+            upper_bound = action["requests"][2]["body"]["query"]["range"]["@timestamp"]["lte"]
             assert upper_bound == "2020-09-30T00:00:10.000Z"
-            lower_bound = action["requests"][2]["body"]["query"]["range"]["@timestamp"][
-                "gte"
-            ]
+            lower_bound = action["requests"][2]["body"]["query"]["range"]["@timestamp"]["gte"]
             assert lower_bound == "2020-09-29T00:00:10.000Z"
-            delta = parse_date_optional_time(upper_bound) - parse_date_optional_time(
-                lower_bound
-            )
+            delta = parse_date_optional_time(upper_bound) - parse_date_optional_time(lower_bound)
             assert delta.total_seconds() == 86400
             # test the DateHistogram Handler
-            upper_bound = action["requests"][0]["stream"][0]["body"]["aggs"][
-                "log_level"
-            ]["aggs"]["timeseries"]["date_histogram"]["extended_bounds"]["max"]
-            lower_bound = action["requests"][0]["stream"][0]["body"]["aggs"][
-                "log_level"
-            ]["aggs"]["timeseries"]["date_histogram"]["extended_bounds"]["min"]
+            upper_bound = action["requests"][0]["stream"][0]["body"]["aggs"]["log_level"]["aggs"]["timeseries"]["date_histogram"][
+                "extended_bounds"
+            ]["max"]
+            lower_bound = action["requests"][0]["stream"][0]["body"]["aggs"]["log_level"]["aggs"]["timeseries"]["date_histogram"][
+                "extended_bounds"
+            ]["min"]
             assert lower_bound == 1601337610000
             assert upper_bound - lower_bound == 86400000
             # query_upper_bound should be the same as our upper bound
@@ -230,9 +219,7 @@ async def test_range_query_processing():
 
 @pytest.mark.asyncio
 async def test_complex_query():
-    clock = ReproducibleClock(
-        start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0)
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0))
     param_source = WorkflowSelectorParamSource(
         track=StaticTrack(
             parameters={
@@ -256,20 +243,12 @@ async def test_complex_query():
     assert len(param_source.workflow_handlers["1"]) == 2
     # we do not set a workflow-target in track params, so there should not be an index in the query operations
     assert "index" not in param_source.workflows[0][1]["requests"][0]["stream"][0]
-    upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][
-        2
-    ]["range"]["@timestamp"]["lte"]
+    upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][2]["range"]["@timestamp"]["lte"]
     assert upper_bound == "2020-09-30T00:00:00.000Z"
-    lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][
-        2
-    ]["range"]["@timestamp"]["gte"]
+    lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][2]["range"]["@timestamp"]["gte"]
     assert lower_bound == "2020-09-29T12:00:00.000Z"
-    query_upper_bound = parse_date_optional_time(upper_bound).replace(
-        tzinfo=datetime.timezone.utc
-    )
-    delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(
-        tzinfo=datetime.timezone.utc
-    )
+    query_upper_bound = parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc)
+    delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
     assert delta.total_seconds() == 43200
     clock.increment(seconds=10)
     action = param_source.params()
@@ -279,9 +258,7 @@ async def test_complex_query():
 
 @pytest.mark.asyncio
 async def test_complex_query_with_intervals():
-    clock = ReproducibleClock(
-        start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0)
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0))
     param_source = WorkflowSelectorParamSource(
         track=StaticTrack(
             parameters={
@@ -307,29 +284,19 @@ async def test_complex_query_with_intervals():
     action = param_source.params()
     assert action["id"] == "1"
     assert len(param_source.workflow_handlers["1"]) == 2
-    upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][
-        2
-    ]["range"]["@timestamp"]["lte"]
+    upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][2]["range"]["@timestamp"]["lte"]
     assert upper_bound == "2021-03-02T00:00:00.000Z"
-    lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][
-        2
-    ]["range"]["@timestamp"]["gte"]
+    lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][2]["range"]["@timestamp"]["gte"]
     assert lower_bound >= "2021-03-01T00:00:00.000Z"
-    query_upper_bound = parse_date_optional_time(upper_bound).replace(
-        tzinfo=datetime.timezone.utc
-    )
-    delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(
-        tzinfo=datetime.timezone.utc
-    )
+    query_upper_bound = parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc)
+    delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
     # expect minimum delta to be enforced
     assert delta.total_seconds() >= 15 * 60
 
 
 @pytest.mark.asyncio
 async def test_average_query_duration_is_roughly_correct():
-    clock = ReproducibleClock(
-        start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0)
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0))
     deltas = []
     for _ in range(1000):
         param_source = WorkflowSelectorParamSource(
@@ -357,47 +324,29 @@ async def test_average_query_duration_is_roughly_correct():
         action = param_source.params()
         assert action["id"] == "1"
         assert len(param_source.workflow_handlers["1"]) == 2
-        upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"][
-            "filter"
-        ][2]["range"]["@timestamp"]["lte"]
+        upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][2]["range"]["@timestamp"]["lte"]
         assert upper_bound == "2021-03-02T00:00:00.000Z"
-        lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"][
-            "filter"
-        ][2]["range"]["@timestamp"]["gte"]
+        lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][2]["range"]["@timestamp"]["gte"]
         assert lower_bound >= "2021-03-01T00:00:00.000Z"
-        query_upper_bound = parse_date_optional_time(upper_bound).replace(
-            tzinfo=datetime.timezone.utc
-        )
-        delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(
-            tzinfo=datetime.timezone.utc
-        )
+        query_upper_bound = parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc)
+        delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
         deltas.append(delta)
         action = param_source.params()
         # check a 2nd call produces the same value as only 2 queries with same range
-        upper_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"][
-            "lte"
-        ]
-        lower_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"][
-            "gte"
-        ]
-        assert delta == parse_date_optional_time(upper_bound).replace(
-            tzinfo=datetime.timezone.utc
-        ) - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
+        upper_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"]["lte"]
+        lower_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"]["gte"]
+        assert delta == parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc) - parse_date_optional_time(
+            lower_bound
+        ).replace(tzinfo=datetime.timezone.utc)
     # check override is intact
     assert min(deltas) < datetime.timedelta(minutes=15)
     # check rough average
     avg_actual_duration = sum([d.total_seconds() for d in deltas]) / len(deltas)
-    assert (
-        datetime.timedelta(minutes=55)
-        < datetime.timedelta(seconds=avg_actual_duration)
-        < datetime.timedelta(minutes=65)
-    )
+    assert datetime.timedelta(minutes=55) < datetime.timedelta(seconds=avg_actual_duration) < datetime.timedelta(minutes=65)
 
 
 def test_average_query_durations_are_scaled_to_max():
-    clock = ReproducibleClock(
-        start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0)
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0))
     # loop to increase randomness and cover more date permutations
     for i in range(1000):
         param_source = WorkflowSelectorParamSource(
@@ -424,87 +373,57 @@ def test_average_query_durations_are_scaled_to_max():
         action = param_source.params()
         assert action["id"] == "2"
         assert len(param_source.workflow_handlers["2"]) == 3
-        upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"][
-            "must"
-        ][0]["range"]["@timestamp"]["lte"]
-        lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"][
-            "must"
-        ][0]["range"]["@timestamp"]["gte"]
-        duration = parse_date_optional_time(upper_bound).replace(
-            tzinfo=datetime.timezone.utc
-        ) - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
+        upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["must"][0]["range"]["@timestamp"]["lte"]
+        lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["must"][0]["range"]["@timestamp"]["gte"]
+        duration = parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc) - parse_date_optional_time(
+            lower_bound
+        ).replace(tzinfo=datetime.timezone.utc)
         # first query represents the max
         max_duration = duration.total_seconds()
         assert max_duration == param_source.max_query_duration
-        upper_bound = action["requests"][0]["stream"][0]["body"]["aggs"]["log_level"][
-            "aggs"
-        ]["timeseries"]["date_histogram"]["extended_bounds"]["max"]
-        lower_bound = action["requests"][0]["stream"][0]["body"]["aggs"]["log_level"][
-            "aggs"
-        ]["timeseries"]["date_histogram"]["extended_bounds"]["min"]
+        upper_bound = action["requests"][0]["stream"][0]["body"]["aggs"]["log_level"]["aggs"]["timeseries"]["date_histogram"][
+            "extended_bounds"
+        ]["max"]
+        lower_bound = action["requests"][0]["stream"][0]["body"]["aggs"]["log_level"]["aggs"]["timeseries"]["date_histogram"][
+            "extended_bounds"
+        ]["min"]
         duration = (upper_bound - lower_bound) / 1000
         assert duration == max_duration
-        upper_bound = action["requests"][2]["body"]["query"]["range"]["@timestamp"][
-            "lte"
-        ]
-        lower_bound = action["requests"][2]["body"]["query"]["range"]["@timestamp"][
-            "gte"
-        ]
-        duration = parse_date_optional_time(upper_bound).replace(
-            tzinfo=datetime.timezone.utc
-        ) - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
-        assert duration.total_seconds() == max(
-            ceil(max_duration * 0.75), param_source._min_query_duration
-        )
+        upper_bound = action["requests"][2]["body"]["query"]["range"]["@timestamp"]["lte"]
+        lower_bound = action["requests"][2]["body"]["query"]["range"]["@timestamp"]["gte"]
+        duration = parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc) - parse_date_optional_time(
+            lower_bound
+        ).replace(tzinfo=datetime.timezone.utc)
+        assert duration.total_seconds() == max(ceil(max_duration * 0.75), param_source._min_query_duration)
         # action 3
         action = param_source.params()
         assert action["id"] == "3"
         assert len(param_source.workflow_handlers["3"]) == 1
-        upper_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"][
-            "lte"
-        ]
-        lower_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"][
-            "gte"
-        ]
-        duration = parse_date_optional_time(upper_bound).replace(
-            tzinfo=datetime.timezone.utc
-        ) - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
-        assert duration.total_seconds() == max(
-            ceil(max_duration * 0.5), param_source._min_query_duration
-        )
+        upper_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"]["lte"]
+        lower_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"]["gte"]
+        duration = parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc) - parse_date_optional_time(
+            lower_bound
+        ).replace(tzinfo=datetime.timezone.utc)
+        assert duration.total_seconds() == max(ceil(max_duration * 0.5), param_source._min_query_duration)
         # action 4
         action = param_source.params()
         assert action["id"] == "4"
         assert len(param_source.workflow_handlers["4"]) == 2
-        upper_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"][
-            "lte"
-        ]
-        lower_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"][
-            "gte"
-        ]
-        duration = parse_date_optional_time(upper_bound).replace(
-            tzinfo=datetime.timezone.utc
-        ) - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
-        assert duration.total_seconds() == max(
-            ceil(max_duration * 0.25), param_source._min_query_duration
-        )
-        upper_bound = action["requests"][0]["body"]["aggs"]["log_level"]["aggs"][
-            "timeseries"
-        ]["date_histogram"]["extended_bounds"]["max"]
-        lower_bound = action["requests"][0]["body"]["aggs"]["log_level"]["aggs"][
-            "timeseries"
-        ]["date_histogram"]["extended_bounds"]["min"]
+        upper_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"]["lte"]
+        lower_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"]["gte"]
+        duration = parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc) - parse_date_optional_time(
+            lower_bound
+        ).replace(tzinfo=datetime.timezone.utc)
+        assert duration.total_seconds() == max(ceil(max_duration * 0.25), param_source._min_query_duration)
+        upper_bound = action["requests"][0]["body"]["aggs"]["log_level"]["aggs"]["timeseries"]["date_histogram"]["extended_bounds"]["max"]
+        lower_bound = action["requests"][0]["body"]["aggs"]["log_level"]["aggs"]["timeseries"]["date_histogram"]["extended_bounds"]["min"]
         duration = (upper_bound - lower_bound) / 1000
-        assert duration == max(
-            ceil(max_duration * 0.25), param_source._min_query_duration
-        )
+        assert duration == max(ceil(max_duration * 0.25), param_source._min_query_duration)
 
 
 @pytest.mark.asyncio
 async def test_default_query_bounds_and_avg_interval():
-    clock = ReproducibleClock(
-        start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0)
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0))
     deltas = []
     for _ in range(1000):
         # this workflow has 1 query. It will always get the same value every time params() is called - since we scale
@@ -532,49 +451,29 @@ async def test_default_query_bounds_and_avg_interval():
         action = param_source.params()
         assert action["id"] == "1"
         assert len(param_source.workflow_handlers["1"]) == 2
-        upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"][
-            "filter"
-        ][2]["range"]["@timestamp"]["lte"]
-        assert parse_date_optional_time(upper_bound) == parse_date_optional_time(
-            DEFAULT_MAX_DATE
-        )
-        lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"][
-            "filter"
-        ][2]["range"]["@timestamp"]["gte"]
-        query_upper_bound = parse_date_optional_time(upper_bound).replace(
-            tzinfo=datetime.timezone.utc
-        )
-        delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(
-            tzinfo=datetime.timezone.utc
-        )
+        upper_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][2]["range"]["@timestamp"]["lte"]
+        assert parse_date_optional_time(upper_bound) == parse_date_optional_time(DEFAULT_MAX_DATE)
+        lower_bound = action["requests"][0]["stream"][0]["body"]["query"]["bool"]["filter"][2]["range"]["@timestamp"]["gte"]
+        query_upper_bound = parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc)
+        delta = query_upper_bound - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
         deltas.append(delta)
         action = param_source.params()
         # check a 2nd call produces the same value as only 2 queries with same range
-        upper_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"][
-            "lte"
-        ]
-        lower_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"][
-            "gte"
-        ]
-        assert delta == parse_date_optional_time(upper_bound).replace(
-            tzinfo=datetime.timezone.utc
-        ) - parse_date_optional_time(lower_bound).replace(tzinfo=datetime.timezone.utc)
+        upper_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"]["lte"]
+        lower_bound = action["requests"][0]["body"]["query"]["range"]["@timestamp"]["gte"]
+        assert delta == parse_date_optional_time(upper_bound).replace(tzinfo=datetime.timezone.utc) - parse_date_optional_time(
+            lower_bound
+        ).replace(tzinfo=datetime.timezone.utc)
     # check override is intact
     assert min(deltas) < datetime.timedelta(minutes=15)
     # check rough average
     avg_actual_duration = sum([d.total_seconds() for d in deltas]) / len(deltas)
-    assert (
-        datetime.timedelta(hours=22)
-        < datetime.timedelta(seconds=avg_actual_duration)
-        < datetime.timedelta(hours=26)
-    )
+    assert datetime.timedelta(hours=22) < datetime.timedelta(seconds=avg_actual_duration) < datetime.timedelta(hours=26)
 
 
 @pytest.mark.asyncio
 async def test_invalid_min_max():
-    clock = ReproducibleClock(
-        start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0)
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0))
     param_source = WorkflowSelectorParamSource(
         track=StaticTrack(
             parameters={
@@ -594,17 +493,14 @@ async def test_invalid_min_max():
     with pytest.raises(TrackConfigError) as err:
         param_source.params()
     assert (
-        err.value.message
-        == "query-min-date 2020-01-02 00:00:00+00:00 cannot be larger than effective "
+        err.value.message == "query-min-date 2020-01-02 00:00:00+00:00 cannot be larger than effective "
         "query-max-date 2020-01-01 00:00:00+00:00"
     )
 
 
 @pytest.mark.asyncio
 async def test_invalid_min_max():
-    clock = ReproducibleClock(
-        start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0)
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2021, month=1, day=2, hour=12, minute=00, second=0))
     param_source = WorkflowSelectorParamSource(
         track=StaticTrack(
             parameters={
@@ -626,8 +522,7 @@ async def test_invalid_min_max():
     with pytest.raises(TrackConfigError) as err:
         param_source.params()
     assert (
-        err.value.message
-        == "query-min-date 2020-01-02 00:00:00+00:00 cannot be larger than effective "
+        err.value.message == "query-min-date 2020-01-02 00:00:00+00:00 cannot be larger than effective "
         "query-max-date 2020-01-01 00:00:00+00:00"
     )
 
@@ -642,10 +537,7 @@ async def test_no_workflows():
                 "workflows-folder": "./workflows-2",
             },
         )
-    assert (
-        rae.value.message
-        == "No actions loaded. [./workflows-2] contains no action files"
-    )
+    assert rae.value.message == "No actions loaded. [./workflows-2] contains no action files"
 
 
 @pytest.mark.asyncio
@@ -695,10 +587,7 @@ async def test_duplicate_action_id():
                 "task-offset": 0,
             },
         )
-    assert (
-        rae.value.message
-        == "Action id [1] for [duplicate_action_ids] is duplicated. This must be unique"
-    )
+    assert rae.value.message == "Action id [1] for [duplicate_action_ids] is duplicated. This must be unique"
 
 
 @pytest.mark.asyncio
@@ -709,8 +598,7 @@ async def test_no_workflows():
             params={"workflows": "../tests/parameter_sources/resources/request_sets"},
         )
     assert (
-        rae.value.message
-        == "Parameter source for operation 'composite' did not provide the mandatory parameter "
+        rae.value.message == "Parameter source for operation 'composite' did not provide the mandatory parameter "
         "'workflow'. Add it to your parameter source and try again."
     )
 
@@ -726,17 +614,11 @@ async def test_detailed_results():
         },
     )
     assert param_source.workflows[0][0] == "5"
-    assert (
-        "detailed-results" in param_source.workflows[0][1]["requests"][0]["stream"][0]
-    )
+    assert "detailed-results" in param_source.workflows[0][1]["requests"][0]["stream"][0]
     # all workflows in workflows/a are identical
     for i in range(5):
-        assert param_source.workflows[i][1]["requests"][0]["stream"][0][
-            "detailed-results"
-        ]
-        assert param_source.workflows[i][1]["requests"][1]["stream"][0][
-            "detailed-results"
-        ]
+        assert param_source.workflows[i][1]["requests"][0]["stream"][0]["detailed-results"]
+        assert param_source.workflows[i][1]["requests"][1]["stream"][0]["detailed-results"]
         assert param_source.workflows[i][1]["requests"][2]["detailed-results"]
 
 
@@ -764,9 +646,7 @@ def test_seeding():
 
 def test_request_params():
     param_source = WorkflowSelectorParamSource(
-        track=StaticTrack(
-            parameters={"query-average-interval": "1d", "random-seed": 13}
-        ),
+        track=StaticTrack(parameters={"query-average-interval": "1d", "random-seed": 13}),
         params={
             "seed": 13,
             "workflow": "b",
@@ -777,32 +657,13 @@ def test_request_params():
         min_query_duration=0,
     )
     assert param_source.workflows[0][0] == "1"
-    assert param_source.workflows[0][1]["requests"][0]["stream"][0]["request-params"][
-        "request_cache"
-    ]
-    assert (
-        len(param_source.workflows[0][1]["requests"][0]["stream"][0]["request-params"])
-        == 1
-    )
-    assert (
-        len(param_source.workflows[0][1]["requests"][0]["stream"][1]["request-params"])
-        == 3
-    )
-    assert (
-        param_source.workflows[0][1]["requests"][0]["stream"][1]["request-params"][
-            "track_total_hits"
-        ]
-        == 1000
-    )
-    assert not param_source.workflows[0][1]["requests"][0]["stream"][1][
-        "request-params"
-    ]["track_scores"]
-    assert param_source.workflows[0][1]["requests"][0]["stream"][1]["request-params"][
-        "request_cache"
-    ]
-    assert param_source.workflows[0][1]["requests"][0]["stream"][2][
-        "request-params"
-    ] == {"request_cache": "true"}
+    assert param_source.workflows[0][1]["requests"][0]["stream"][0]["request-params"]["request_cache"]
+    assert len(param_source.workflows[0][1]["requests"][0]["stream"][0]["request-params"]) == 1
+    assert len(param_source.workflows[0][1]["requests"][0]["stream"][1]["request-params"]) == 3
+    assert param_source.workflows[0][1]["requests"][0]["stream"][1]["request-params"]["track_total_hits"] == 1000
+    assert not param_source.workflows[0][1]["requests"][0]["stream"][1]["request-params"]["track_scores"]
+    assert param_source.workflows[0][1]["requests"][0]["stream"][1]["request-params"]["request_cache"]
+    assert param_source.workflows[0][1]["requests"][0]["stream"][2]["request-params"] == {"request_cache": "true"}
 
 
 def test_stringify_bool():

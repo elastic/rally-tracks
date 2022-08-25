@@ -17,9 +17,10 @@
 
 import os
 from unittest import mock
+
 import pytest
-from tests import as_future
 from shared.runners.pipelines import create_pipeline
+from tests import as_future
 
 
 @mock.patch("elasticsearch.Elasticsearch")
@@ -29,9 +30,7 @@ async def test_pipeline(es):
     # simulate "track-path" as added by param source and "pipelines" set by the user
     params = {
         "track-path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "logs"),
-        "pipelines": "../tests/runners/resources/pipelines"
+        "pipelines": "../tests/runners/resources/pipelines",
     }
-    ops, _ = await create_pipeline(
-        es, params
-    )
+    ops, _ = await create_pipeline(es, params)
     assert ops == 1

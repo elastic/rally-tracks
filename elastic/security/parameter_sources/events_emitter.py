@@ -15,16 +15,16 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import logging
 import os
 import shutil
-import logging
-from glob import glob
-from fnmatch import fnmatch
-from urllib.parse import urlparse
-from itertools import chain, islice
 from contextlib import contextmanager
-from types import SimpleNamespace
+from fnmatch import fnmatch
+from glob import glob
+from itertools import chain, islice
 from tempfile import mkdtemp
+from types import SimpleNamespace
+from urllib.parse import urlparse
 
 import esrally
 
@@ -45,7 +45,7 @@ def resource(track, uri):
         local_file = os.path.join(tmpdir, uri_file)
         esrally.utils.net.download_http(uri, local_file)
     elif uri_parts.scheme == "file":
-        if uri_parts.netloc == '.':
+        if uri_parts.netloc == ".":
             local_file = os.path.join(track.root, "." + uri_parts.path)
         else:
             local_file = uri_parts.path
@@ -78,6 +78,7 @@ def load_schema(track, params):
         logger.info(f"schema: {files[0]}")
         with open(files[0]) as f:
             import yaml
+
             return yaml.safe_load(f)
 
 
@@ -101,7 +102,10 @@ def load_rules(track, params):
                 logger.error(f"[{e}] while loading from [{filename}]")
                 continue
 
-            if rule["type"] not in ("eql", "query") or rule["language"] not in ("eql", "kuery"):
+            if rule["type"] not in ("eql", "query") or rule["language"] not in (
+                "eql",
+                "kuery",
+            ):
                 continue
             if tags and not (tags & set_to_lower(rule.get("tags", []))):
                 continue

@@ -15,6 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 import datetime
+
 from esrally import exceptions
 
 
@@ -32,12 +33,8 @@ class DateHistogramHandler:
             self.request_body["time_zone"] = "UTC"
             if "min" in self.extended_bounds and "max" in self.extended_bounds:
                 try:
-                    self.max_bound = datetime.datetime.utcfromtimestamp(
-                        int(self.extended_bounds["max"]) / 1000
-                    )
-                    self.min_bound = datetime.datetime.utcfromtimestamp(
-                        int(self.extended_bounds["min"]) / 1000
-                    )
+                    self.max_bound = datetime.datetime.utcfromtimestamp(int(self.extended_bounds["max"]) / 1000)
+                    self.min_bound = datetime.datetime.utcfromtimestamp(int(self.extended_bounds["min"]) / 1000)
                 except ValueError:
                     raise exceptions.TrackConfigError(
                         f"Date Histogram aggregation requires epoch milliseconds for its "
@@ -45,21 +42,17 @@ class DateHistogramHandler:
                     )
                 if self.min_bound >= self.max_bound:
                     raise exceptions.TrackConfigError(
-                        f'"min" extended bounds of Date Histogram aggregation cannot be greater than "max" '
-                        f"- [{self.request_body}]"
+                        f'"min" extended bounds of Date Histogram aggregation cannot be greater than "max" ' f"- [{self.request_body}]"
                     )
             else:
                 raise exceptions.TrackConfigError(
-                    f'Date Histogram aggregation does not have both "min" and "max" '
-                    f"for its extended bounds- [{self.request_body}]"
+                    f'Date Histogram aggregation does not have both "min" and "max" ' f"for its extended bounds- [{self.request_body}]"
                 )
 
     # limited currently to epoch times in extended bounds
     def process(self, date_data):
         if self.max_bound and self.min_bound:
-            new_min, new_max = date_data.generate_new_bounds(
-                self.min_bound, self.max_bound
-            )
+            new_min, new_max = date_data.generate_new_bounds(self.min_bound, self.max_bound)
             self.extended_bounds["max"] = int(new_max.timestamp() * 1000)
             self.extended_bounds["min"] = int(new_min.timestamp() * 1000)
         # interval customizations are provided on best-effort basis; only if generate_new_bounds was invoked previously

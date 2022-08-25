@@ -39,72 +39,40 @@ def test_composable_template_load():
 
 
 def test_removal_of_default_pipeline():
-    component_template_source = ComponentTemplateParamSource(
-        StaticTrack(), params={"remove-pipelines": True}
-    )
+    component_template_source = ComponentTemplateParamSource(StaticTrack(), params={"remove-pipelines": True})
     params = component_template_source.params()
     assert len(params["templates"]) == 1
     assert params["templates"][0][0] == "logs-endpoint.events.process-mappings"
-    assert (
-        "default_pipeline"
-        not in params["templates"][0][1]["template"]["settings"]["index"]
-    )
-    composable_template_source = ComposableTemplateParamSource(
-        StaticTrack(), params={"remove-pipelines": True}
-    )
+    assert "default_pipeline" not in params["templates"][0][1]["template"]["settings"]["index"]
+    composable_template_source = ComposableTemplateParamSource(StaticTrack(), params={"remove-pipelines": True})
     params = composable_template_source.params()
     assert len(params["templates"]) == 1
     assert params["templates"][0][0] == "logs-endpoint.events.process"
-    assert (
-        "default_pipeline"
-        not in params["templates"][0][1]["template"]["settings"]["index"]
-    )
+    assert "default_pipeline" not in params["templates"][0][1]["template"]["settings"]["index"]
 
 
 def test_removal_of_routing_shards():
-    component_template_source = ComponentTemplateParamSource(
-        StaticTrack(), params={"remove-routing-shards": True}
-    )
+    component_template_source = ComponentTemplateParamSource(StaticTrack(), params={"remove-routing-shards": True})
     params = component_template_source.params()
     assert len(params["templates"]) == 1
     assert params["templates"][0][0] == "logs-endpoint.events.process-mappings"
-    assert (
-        "number_of_routing_shards"
-        not in params["templates"][0][1]["template"]["settings"]["index"]
-    )
-    composable_template_source = ComposableTemplateParamSource(
-        StaticTrack(), params={"remove-routing-shards": True}
-    )
+    assert "number_of_routing_shards" not in params["templates"][0][1]["template"]["settings"]["index"]
+    composable_template_source = ComposableTemplateParamSource(StaticTrack(), params={"remove-routing-shards": True})
     params = composable_template_source.params()
     assert len(params["templates"]) == 1
     assert params["templates"][0][0] == "logs-endpoint.events.process"
-    assert (
-        "number_of_routing_shards"
-        not in params["templates"][0][1]["template"]["settings"]["index"]
-    )
+    assert "number_of_routing_shards" not in params["templates"][0][1]["template"]["settings"]["index"]
 
 
 def test_remove_pipelines():
     content = remove_pipelines(
-        {
-            "template": {
-                "settings": {
-                    "index": {"default_pipeline": "test", "final_pipeline": "test"}
-                }
-            }
-        },
+        {"template": {"settings": {"index": {"default_pipeline": "test", "final_pipeline": "test"}}}},
         False,
     )
     assert content["template"]["settings"]["index"]["default_pipeline"] == "test"
     assert content["template"]["settings"]["index"]["final_pipeline"] == "test"
     content = remove_pipelines(
-        {
-            "template": {
-                "settings": {
-                    "index": {"default_pipeline": "test", "final_pipeline": "test"}
-                }
-            }
-        },
+        {"template": {"settings": {"index": {"default_pipeline": "test", "final_pipeline": "test"}}}},
         True,
     )
     assert "default_pipeline" not in content["template"]["settings"]["index"]
@@ -112,11 +80,7 @@ def test_remove_pipelines():
 
 
 def test_remove_routing_shards():
-    content = remove_pipelines(
-        {"template": {"settings": {"index": {"number_of_routing_shards": 30}}}}, False
-    )
+    content = remove_pipelines({"template": {"settings": {"index": {"number_of_routing_shards": 30}}}}, False)
     assert content["template"]["settings"]["index"]["number_of_routing_shards"] == 30
-    content = remove_routing_shards(
-        {"template": {"settings": {"index": {"number_of_routing_shards": 30}}}}, True
-    )
+    content = remove_routing_shards({"template": {"settings": {"index": {"number_of_routing_shards": 30}}}}, True)
     assert "number_of_routing_shards" not in content["template"]["settings"]["index"]

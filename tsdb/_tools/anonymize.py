@@ -109,9 +109,7 @@ def k8s_container_image(img):
     if img.startswith("elastic/"):
         return k8s_images_docker_es_co(img[len("elastic/") :])
     if img.startswith("registry.replicated.com/gradleenterprise/"):
-        return k8s_images_gradle(
-            img[len("registry.replicated.com/gradleenterprise/") :]
-        )
+        return k8s_images_gradle(img[len("registry.replicated.com/gradleenterprise/") :])
     if "elastic" in img:
         raise ValueError(f"unexpected k8s container image [{img}]")
     return k8s_images_other(img)
@@ -323,9 +321,7 @@ def k8s_labels_name(v):
 def k8s_labels_app_managed_by(v):
     if v == "Tiller":
         return v
-    raise ValueError(
-        f"unsupported kubernetes.labels.app_kubernetes_io/managed-by [{v}]"
-    )
+    raise ValueError(f"unsupported kubernetes.labels.app_kubernetes_io/managed-by [{v}]")
 
 
 K8S_CONTAINER_STATUS_REASON = {
@@ -423,19 +419,13 @@ strategies = {
     "kubernetes.event.timestamp.last_occurrence": passthrough,
     "kubernetes.event.type": k8s_event_type,
     "kubernetes.labels.app": numbered("label-app-"),
-    "kubernetes.labels.app_kubernetes_io/component": numbered(
-        "app_kubernetes_io/component-"
-    ),
-    "kubernetes.labels.app_kubernetes_io/instance": numbered(
-        "app_kubernetes_io/instance-"
-    ),
+    "kubernetes.labels.app_kubernetes_io/component": numbered("app_kubernetes_io/component-"),
+    "kubernetes.labels.app_kubernetes_io/instance": numbered("app_kubernetes_io/instance-"),
     "kubernetes.labels.app_kubernetes_io/managed-by": k8s_labels_app_managed_by,
     "kubernetes.labels.app_kubernetes_io/name": numbered("app_kubernetes_io/name-"),
     "kubernetes.labels.beta_kubernetes_io/arch": k8s_labels_k8s_arch,
     "kubernetes.labels.beta_kubernetes_io/fluentd-ds-ready": "drop",
-    "kubernetes.labels.beta_kubernetes_io/instance-type": numbered(
-        "beta_kubernetes_io/instance-type-"
-    ),
+    "kubernetes.labels.beta_kubernetes_io/instance-type": numbered("beta_kubernetes_io/instance-type-"),
     "kubernetes.labels.beta_kubernetes_io/os": k8s_labels_k8s_os,
     "kubernetes.labels.chart": numbered("chart-"),
     "kubernetes.labels.cloud_google_com/gke-nodepool": "drop",
@@ -444,9 +434,7 @@ strategies = {
     "kubernetes.labels.failure-domain_beta_kubernetes_io/region": "drop",
     "kubernetes.labels.failure-domain_beta_kubernetes_io/zone": "drop",
     "kubernetes.labels.component": numbered("label-component-"),
-    "kubernetes.labels.controller-revision-hash": numbered(
-        "label-controller-revision-hash-"
-    ),
+    "kubernetes.labels.controller-revision-hash": numbered("label-controller-revision-hash-"),
     "kubernetes.labels.controller-uid": uids(),
     "kubernetes.labels.github_account": numbered("github-account-"),
     "kubernetes.labels.helm_sh/chart": numbered("chart-"),
@@ -463,9 +451,7 @@ strategies = {
     "kubernetes.labels.pod-template-generation": passthrough,
     "kubernetes.labels.pod-template-hash": numbered("label-pod-template-hash-"),
     "kubernetes.labels.release": numbered("release-"),
-    "kubernetes.labels.statefulset_kubernetes_io/pod-name": numbered(
-        "statefulset_kubernetes_io/pod-name-"
-    ),
+    "kubernetes.labels.statefulset_kubernetes_io/pod-name": numbered("statefulset_kubernetes_io/pod-name-"),
     "kubernetes.labels.tier": numbered("tier-"),
     "kubernetes.labels.watcher": "drop",
     "kubernetes.labels.version": "drop",

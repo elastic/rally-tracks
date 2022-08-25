@@ -17,15 +17,14 @@
 import glob
 import json
 import os
+
 from elasticsearch.client import SlmClient
 
 
 async def create_slm(es, params):
     slm = SlmClient(es)
     policy_num = 0
-    for policy_path in glob.glob(
-        os.path.join(params.get("track-path"), params.get("policies", "slm"), "*.json")
-    ):
+    for policy_path in glob.glob(os.path.join(params.get("track-path"), params.get("policies", "slm"), "*.json")):
         policy_name = os.path.splitext(os.path.basename(policy_path))[0]
         with open(policy_path, "r") as policy_file:
             policy = json.load(policy_file)

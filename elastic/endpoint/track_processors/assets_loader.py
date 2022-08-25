@@ -15,18 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import os
 import json
-import shutil
 import logging
-
+import os
+import shutil
 from urllib.parse import urlparse
 
-from esrally.track import (
-    Index,
-    IndexTemplate,
-    ComponentTemplate,
-)
+from esrally.track import ComponentTemplate, Index, IndexTemplate
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +90,7 @@ def download_from_github(track, packages, repo_path, assets_root):
             with open(asset_path, "wb") as f:
                 f.write(content)
 
-            path_parts = os.path.split(path[len(package) + 1:])
+            path_parts = os.path.split(path[len(package) + 1 :])
             if not path_parts[0]:
                 continue
             if path_parts[0] in asset_loaders:
@@ -116,7 +111,7 @@ def load_from_path(track, packages, path):
 
         count = 0
         for path, content in assets.get_local_assets(package, path):
-            path_parts = os.path.split(path[len(package) + 1:])
+            path_parts = os.path.split(path[len(package) + 1 :])
             if not path_parts[0]:
                 continue
             if path_parts[0] in asset_loaders:
@@ -145,7 +140,7 @@ class AssetsLoader:
                 assets_root = os.path.join(track.root, "assets", repo_parts.path[1:])
                 download_from_github(track, packages, repo_parts.path[1:], assets_root)
             elif repo_parts.scheme == "file":
-                if repo_parts.netloc == '.':
+                if repo_parts.netloc == ".":
                     assets_root = os.path.join(track.root, "." + repo_parts.path)
                 else:
                     assets_root = repo_parts.path

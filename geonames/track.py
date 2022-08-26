@@ -25,7 +25,11 @@ class PureTermsQueryParamSource(QueryParamSource):
         query_terms = list(self.terms)  # copy
         query_terms.append(str(random.randint(1, 100)))  # avoid caching
         result = {
-            "body": {"query": {"terms": {"name.raw": query_terms}}},
+            "body": {
+                "query": {
+                    "terms": {"name.raw": query_terms},
+                }
+            },
             "index": None,
         }
         if "cache" in self._params:
@@ -42,8 +46,12 @@ class FilteredTermsQueryParamSource(QueryParamSource):
             "body": {
                 "query": {
                     "bool": {
-                        "must": [{"match": {"feature_class.raw": "T"}}],
-                        "filter": [{"terms": {"name.raw": query_terms}}],
+                        "must": [
+                            {"match": {"feature_class.raw": "T"}},
+                        ],
+                        "filter": [
+                            {"terms": {"name.raw": query_terms}},
+                        ],
                     }
                 }
             },
@@ -63,8 +71,12 @@ class ProhibitedTermsQueryParamSource(QueryParamSource):
             "body": {
                 "query": {
                     "bool": {
-                        "must": [{"match": {"feature_class.raw": "A"}}],
-                        "must_not": [{"terms": {"name.raw": query_terms}}],
+                        "must": [
+                            {"match": {"feature_class.raw": "A"}},
+                        ],
+                        "must_not": [
+                            {"terms": {"name.raw": query_terms}},
+                        ],
                     }
                 }
             },

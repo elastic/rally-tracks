@@ -27,7 +27,10 @@ class EmptyTrack:
             challenge_parameters = {}
         if parameters is None:
             parameters = {}
-        self.selected_challenge = Challenge("test-challenge", parameters={**parameters, **challenge_parameters})
+        self.selected_challenge = Challenge(
+            "test-challenge",
+            parameters={**parameters, **challenge_parameters},
+        )
         self.selected_challenge_or_default = self.selected_challenge
         self.data_streams = []
         self.component_templates = []

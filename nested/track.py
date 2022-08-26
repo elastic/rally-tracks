@@ -31,7 +31,11 @@ class SortedTermQueryParamSource(QueryParamSource):
     def params(self):
         result = {
             "body": {
-                "query": {"match": {"tag": "%s" % random.choice(self.tags)}},
+                "query": {
+                    "match": {
+                        "tag": "%s" % random.choice(self.tags),
+                    },
+                },
                 "sort": [
                     {
                         "answers.date": {
@@ -53,7 +57,13 @@ class SortedTermQueryParamSource(QueryParamSource):
 class TermQueryParamSource(QueryParamSource):
     def params(self):
         result = {
-            "body": {"query": {"match": {"tag": "%s" % random.choice(self.tags)}}},
+            "body": {
+                "query": {
+                    "match": {
+                        "tag": "%s" % random.choice(self.tags),
+                    },
+                }
+            },
             "index": None,
         }
         if "cache" in self._params:
@@ -69,11 +79,21 @@ class NestedQueryParamSource(QueryParamSource):
                 "query": {
                     "bool": {
                         "must": [
-                            {"match": {"tag": "%s" % random.choice(self.tags)}},
+                            {
+                                "match": {
+                                    "tag": "%s" % random.choice(self.tags),
+                                }
+                            },
                             {
                                 "nested": {
                                     "path": "answers",
-                                    "query": {"range": {"answers.date": {"lte": "%s" % random.choice(self.dates)}}},
+                                    "query": {
+                                        "range": {
+                                            "answers.date": {
+                                                "lte": "%s" % random.choice(self.dates),
+                                            },
+                                        }
+                                    },
                                 }
                             },
                         ]
@@ -95,12 +115,24 @@ class NestedQueryParamSourceWithInnerHits(QueryParamSource):
                 "query": {
                     "bool": {
                         "must": [
-                            {"match": {"tag": "%s" % random.choice(self.tags)}},
+                            {
+                                "match": {
+                                    "tag": "%s" % random.choice(self.tags),
+                                }
+                            },
                             {
                                 "nested": {
                                     "path": "answers",
-                                    "query": {"range": {"answers.date": {"lte": "%s" % random.choice(self.dates)}}},
-                                    "inner_hits": {"size": self._params["inner_hits_size"]},
+                                    "query": {
+                                        "range": {
+                                            "answers.date": {
+                                                "lte": "%s" % random.choice(self.dates),
+                                            }
+                                        }
+                                    },
+                                    "inner_hits": {
+                                        "size": self._params["inner_hits_size"],
+                                    },
                                 }
                             },
                         ]

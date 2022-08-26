@@ -34,7 +34,11 @@ class ConfigureRemoteCluster(Runner):
         remote_cluster = params.get("remote-connection-name", remote_nodes_resp["cluster_name"])
 
         # put the cluster setting to the local cluster
-        settings_body = {"persistent": {f"cluster.remote.{remote_cluster}.seeds": remote_seed_nodes}}
+        settings_body = {
+            "persistent": {
+                f"cluster.remote.{remote_cluster}.seeds": remote_seed_nodes,
+            }
+        }
         self.logger.info(f"put cluster settings [{repr(settings_body)}] to the local cluster [{params['local-cluster']}]")
         local_es = multi_es[params["local-cluster"]]
         await local_es.cluster.put_settings(body=settings_body)
@@ -109,7 +113,9 @@ class FollowIndexRunner(Runner):
                 "leader_index": index,
                 "remote_cluster": remote_cluster,
                 "read_poll_timeout": "5m",  # large value to reduce the traffic between clusters
-                "settings": {"index.number_of_replicas": number_of_replicas},
+                "settings": {
+                    "index.number_of_replicas": number_of_replicas,
+                },
             }
 
             try:

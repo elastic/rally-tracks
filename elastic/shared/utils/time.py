@@ -139,7 +139,7 @@ class DateTimeValues:
         """
         if self.min_date and self.min_date > self.max_date:
             raise exceptions.TrackConfigError(
-                f"query-min-date {self.min_date} " f"cannot be larger than effective query-max-date {self.max_date}"
+                f"query-min-date {self.min_date} cannot be larger than effective query-max-date {self.max_date}"
             )
         if not self.duration:
             self.duration = upper_bound - lower_bound

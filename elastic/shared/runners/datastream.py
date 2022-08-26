@@ -89,7 +89,10 @@ async def rollover(es, params):
 async def shards(es, params):
     number_of_replicas = mandatory(params, "number-of-replicas", "set-data-stream-shards")
     data_stream = mandatory(params, "data-stream", "set-shards-datastream")
-    await es.indices.put_settings({"number_of_replicas": number_of_replicas}, index=data_stream)
+    await es.indices.put_settings(
+        {"number_of_replicas": number_of_replicas},
+        index=data_stream,
+    )
     return 1, "ops"
 
 
@@ -108,7 +111,9 @@ async def compression_stats(es, params):
         response = await es.search(
             index=data_stream,
             body={
-                "aggs": {"total_doc_size": {"sum": {"field": "rally.doc_size"}}},
+                "aggs": {
+                    "total_doc_size": {"sum": {"field": "rally.doc_size"}},
+                },
                 "size": 0,
             },
         )
@@ -133,7 +138,9 @@ async def compression_stats(es, params):
             response = await es.search(
                 index=data_stream,
                 body={
-                    "aggs": {"total_msg_size": {"sum": {"field": "rally.message_size"}}},
+                    "aggs": {
+                        "total_msg_size": {"sum": {"field": "rally.message_size"}},
+                    },
                     "size": 0,
                 },
             )

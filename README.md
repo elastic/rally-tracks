@@ -5,7 +5,7 @@ This repository contains the default track specifications for the Elasticsearch 
 
 Tracks are used to describe benchmarks in Rally. For each track, the README.md file documents the data used, explains its parameters and provides an example document.
 
-You can also [create your own track](hhttps://esrally.readthedocs.io/en/latest/adding_tracks.html) to ensure your benchmarks will be as realistic as possible.
+You can also [create your own track](https://esrally.readthedocs.io/en/latest/adding_tracks.html) to ensure your benchmarks will be as realistic as possible.
 
 Versioning Scheme
 -----------------

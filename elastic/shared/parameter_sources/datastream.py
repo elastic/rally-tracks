@@ -17,7 +17,7 @@
 from esrally import exceptions
 
 """
-Provides a param source for use on the data stream runner. This is a temporary workaround until we have native 
+Provides a param source for use on the data stream runner. This is a temporary workaround until we have native
 data stream support in Rally.
 """
 

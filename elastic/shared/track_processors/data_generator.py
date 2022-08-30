@@ -100,7 +100,11 @@ class DataGenerator:
         documents = []
         for client_id in range(client_count):
             # only use a relative path; the absolute path will be set by Rally on the target machine
-            documents.append(LazyMetadataDocuments(document_file=os.path.join("generated", track_id, f"{client_id}.json")))
+            documents.append(
+                LazyMetadataDocuments(
+                    document_file=os.path.join("generated", track_id, f"{client_id}.json"),
+                )
+            )
 
         # keep this corpus, as well as other corpora below the track directory by name it like the track
         generated_corpus = DocumentCorpus(name=track.name, documents=documents, meta_data={"generated": True})

@@ -319,6 +319,4 @@ class TestFollowIndexRunner:
         with pytest.raises(BaseException) as e:
             await follow_index(setup_es, setup_params)
 
-        assert "Cannot use license type(s) [basic, basic] for CCR features. " f"All clusters must use one of [{required_licenses}]" in str(
-            e
-        )
+        assert f"Cannot use license type(s) [basic, basic] for CCR features. All clusters must use one of [{required_licenses}]" in str(e)

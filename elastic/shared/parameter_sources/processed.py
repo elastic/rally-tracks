@@ -136,7 +136,10 @@ class ProcessedCorpusParamSource:
             raise exceptions.InvalidSyntax('Mandatory parameter "bulk-size" is missing')
         except ValueError:
             raise exceptions.InvalidSyntax('"bulk-size" must be numeric')
-        self.corpus = next((c for c in track.corpora if c.meta_data.get("generated", False)), None)
+        self.corpus = next(
+            (c for c in track.corpora if c.meta_data.get("generated", False)),
+            None,
+        )
         self._reset_timestamps()
         # TODO: Validate this exists and has files
         self.current_docs = 0
@@ -179,10 +182,7 @@ class ProcessedCorpusParamSource:
         if rallyts_start_pos != -1:
             # doc["message"] contains _RALLYTS with timestamp format specification (most of integrations)
 
-            rallyts_len = int(
-                doc[rallyts_start_pos + MagicNumbers.RALLYTS_LEN : rallyts_start_pos + MagicNumbers.RALLYTSDATA_LEN_END],
-                10,
-            )
+            rallyts_len = int(doc[rallyts_start_pos + MagicNumbers.RALLYTS_LEN : rallyts_start_pos + MagicNumbers.RALLYTSDATA_LEN_END], 10)
 
             ts_format = doc[
                 rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN : rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len

@@ -66,13 +66,23 @@ def test_removal_of_routing_shards():
 
 def test_remove_pipelines():
     content = remove_pipelines(
-        {"template": {"settings": {"index": {"default_pipeline": "test", "final_pipeline": "test"}}}},
+        {
+            "template": {
+                "settings": {
+                    "index": {"default_pipeline": "test", "final_pipeline": "test"},
+                }
+            }
+        },
         False,
     )
     assert content["template"]["settings"]["index"]["default_pipeline"] == "test"
     assert content["template"]["settings"]["index"]["final_pipeline"] == "test"
     content = remove_pipelines(
-        {"template": {"settings": {"index": {"default_pipeline": "test", "final_pipeline": "test"}}}},
+        {
+            "template": {
+                "settings": {"index": {"default_pipeline": "test", "final_pipeline": "test"}},
+            }
+        },
         True,
     )
     assert "default_pipeline" not in content["template"]["settings"]["index"]
@@ -80,7 +90,21 @@ def test_remove_pipelines():
 
 
 def test_remove_routing_shards():
-    content = remove_pipelines({"template": {"settings": {"index": {"number_of_routing_shards": 30}}}}, False)
+    content = remove_pipelines(
+        {
+            "template": {
+                "settings": {"index": {"number_of_routing_shards": 30}},
+            }
+        },
+        False,
+    )
     assert content["template"]["settings"]["index"]["number_of_routing_shards"] == 30
-    content = remove_routing_shards({"template": {"settings": {"index": {"number_of_routing_shards": 30}}}}, True)
+    content = remove_routing_shards(
+        {
+            "template": {
+                "settings": {"index": {"number_of_routing_shards": 30}},
+            }
+        },
+        True,
+    )
     assert "number_of_routing_shards" not in content["template"]["settings"]["index"]

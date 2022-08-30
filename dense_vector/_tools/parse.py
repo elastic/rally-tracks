@@ -8,10 +8,7 @@ try:
 
     iterate = lambda i: tqdm(range(i))
 except ModuleNotFoundError:
-    print(
-        "Warning: [tqdm] package is not available and you won't be able to see progress.",
-        file=sys.stderr,
-    )
+    print("Warning: [tqdm] package is not available and you won't be able to see progress.", file=sys.stderr)
     iterate = range
 
 dims = 96

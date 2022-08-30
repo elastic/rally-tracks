@@ -102,10 +102,7 @@ def load_rules(track, params):
                 logger.error(f"[{e}] while loading from [{filename}]")
                 continue
 
-            if rule["type"] not in ("eql", "query") or rule["language"] not in (
-                "eql",
-                "kuery",
-            ):
+            if rule["type"] not in ("eql", "query") or rule["language"] not in ("eql", "kuery"):
                 continue
             if tags and not (tags & set_to_lower(rule.get("tags", []))):
                 continue

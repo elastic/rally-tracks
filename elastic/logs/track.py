@@ -37,6 +37,7 @@ from shared.runners.slm import create_slm
 from shared.schedulers.indexing import TimestampThrottler
 from shared.schedulers.query import WorkflowScheduler
 from shared.track_processors import data_generator
+from shared.track_processors.assets_loader import AssetsLoader
 from shared.track_processors.track_id_generator import TrackIdGenerator
 
 
@@ -73,8 +74,14 @@ def register(registry):
 
     registry.register_param_source("track-params-source", TrackParamSource)
 
+    registry.register_param_source(
+        "add-asset-paths", parameter_sources.add_asset_paths
+    )
+
     registry.register_track_processor(TrackIdGenerator())
     registry.register_track_processor(data_generator.DataGenerator())
 
     registry.register_runner("configure-remote-cluster", ConfigureRemoteCluster(), async_runner=True)
     registry.register_runner("follow-index", FollowIndexRunner(), async_runner=True)
+
+    registry.register_track_processor(AssetsLoader())

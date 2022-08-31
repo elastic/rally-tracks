@@ -27,16 +27,18 @@ logger = logging.getLogger(__name__)
 
 
 def load_index_template(track, asset_content, kibana_space="default"):
-    index_name = asset_content["name"]
+    index_name = asset_content.pop("name")
+    index_template = asset_content.pop("index_template")
+    index_patterns = index_template["index_patterns"]
 
-    track.composable_templates += [
+    track.composable_templates.append(
         IndexTemplate(
             index_name,
-            index_pattern,
-            asset_content,
+            index_patterns,
+            index_template,
         )
-        for index_pattern in asset_content["index_template"]["index_patterns"]
-    ]
+    )
+
     track.data_streams.append(Index(f"{index_name}-{kibana_space}"))
 
 
@@ -48,6 +50,9 @@ def load_component_template(track, asset_content):
         )
     )
 
+def load_composable_template(track, asset_content):
+    pass
+
 
 def load_ingest_pipeline(track, asset_content):
     pass
@@ -58,6 +63,7 @@ def load_ilm_policy(track, asset_content):
 
 
 asset_loaders = {
+    "composable_templates": load_composable_template,
     "component_templates": load_component_template,
     "index_templates": load_index_template,
     "ingest_pipelines": load_ingest_pipeline,
@@ -110,11 +116,12 @@ def load_from_path(track, packages, path):
         logger.info(f"Loading assets of [{package}] from [{path}]")
 
         count = 0
-        for path, content in assets.get_local_assets(package, path):
-            path_parts = os.path.split(path[len(package) + 1 :])
+        for asset_path, content in assets.get_local_assets(package, path):
+            path_parts = os.path.split(asset_path[len(package) + 1 :])
             if not path_parts[0]:
                 continue
             if path_parts[0] in asset_loaders:
+                logger.info(f"Loading [{asset_path}]")
                 asset_loaders[path_parts[0]](track, json.loads(content))
                 count += 1
 

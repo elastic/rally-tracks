@@ -16,7 +16,8 @@
 # under the License.
 
 import pytest
-from endpoint.track_processors.assets_loader import AssetsLoader
+
+from shared.track_processors.assets_loader import AssetsLoader
 from tests.parameter_sources import EmptyTrack
 
 

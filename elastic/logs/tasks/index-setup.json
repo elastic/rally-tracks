@@ -1,5 +1,5 @@
 {
-  "name":"insert-pipelines",
+  "name":"insert-track-pipelines",
   "tags": ["setup"],
   "operation": {
     "operation-type": "create-pipeline",
@@ -7,11 +7,27 @@
   }
 },
 {
-  "name": "insert-ilm",
+  "name":"insert-package-pipelines",
+  "tags": ["setup"],
+  "operation": {
+    "operation-type": "create-pipeline",
+    "param-source": "add-asset-paths"
+  }
+},
+{
+  "name": "insert-track-ilm-policies",
   "tags": ["setup"],
   "operation": {
     "operation-type": "create-ilm",
     "param-source": "add-track-path"
+  }
+},
+{
+  "name": "insert-package-ilm-policies",
+  "tags": ["setup"],
+  "operation": {
+    "operation-type": "create-ilm",
+    "param-source": "add-asset-paths"
   }
 },
 {

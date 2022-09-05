@@ -51,7 +51,8 @@
             "ignore_unavailable": true,
             "include_global_state": false,
             "metadata": {{ p_snapshot_metadata | tojson }}
-          }
+          },
+          "include-in-reporting": true
         }
       },
       {% endfor %}

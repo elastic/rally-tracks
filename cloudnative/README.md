@@ -113,7 +113,7 @@ This data comes from a real cluster that has been deployed with Terraform of [k8
 Corpora data of the specific data with their respective mappings were extracted with following command:
 
 ```bash
-esrally create-track --track=test --target-hosts=test.rally.gizas.elastic-observability-ocp.elastic.dev:9200 --client-options="use_ssl:true,verify_certs:false,ca_certs:false,basic_auth_user:'elastic',basic_auth_password:'C7GfaRy9E83E950v74IwPZq6'" --datastreams="metrics-*, logs-*" --output-path=~/tracks
+esrally create-track --track=test --target-hosts=test.rally.gizas.elastic-observability-ocp.elastic.dev:9200 --client-options="use_ssl:true,verify_certs:false,ca_certs:false,basic_auth_user:'elastic',basic_auth_password:'C7GfaE950v74IwPZq6'" --datastreams="metrics-*, logs-*" --output-path=~/tracks
 ```
 
 ### Running Track for different scenarios
@@ -127,8 +127,6 @@ esrally race --distribution-version=8.3.0 --track-path=cloudnative --runtime-jdk
 We also advise to use `--telemetry disk-usage-stats` to evaluate the disk usage performance
 
 #### For synthetics
-
-Add the 8.4.0 image where Syntetics feature is added in the 
 
 Edit `~/.rally/rally.ini`
 

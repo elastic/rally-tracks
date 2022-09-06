@@ -5,7 +5,7 @@
   },
   "mappings": {
     "_source": {
-      "excludes": ["titleVector"]
+      "mode": {{ source_mode | default("stored") | tojson }}
     },
     "properties": {
       "userId": {
@@ -22,6 +22,7 @@
       },
       "title": {
         "type": "text"
+        {% if source_mode == "synthetic" %},"store": true{% endif %}
       },
       "titleVector": {
         "type": "dense_vector",
@@ -34,6 +35,7 @@
       },
       "body": {
         "type": "text"
+        {% if source_mode == "synthetic" %},"store": true{% endif %}
       }
     }
   }

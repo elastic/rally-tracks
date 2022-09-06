@@ -38,6 +38,16 @@
       "include-in-reporting": true
     },
     {
+      "operation": "default",
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {
+      "operation": "default_1k",
+      "warmup-iterations": 50,
+      "iterations": 100
+    },
+    {
       "name": "knn-search-10-50-match-all",
       "operation": "knn-search-10-50-match-all",
       "warmup-iterations": 100,

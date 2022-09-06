@@ -1,55 +1,199 @@
-{
-  "name": "append-no-conflicts-index-only",
-  "description": "Indexes the whole document corpus and returns basic statistics",
-  "default": true,
-  "schedule": [
     {
-      "operation": "delete-index"
+        "name": "check-cluster-health",
+        "operation-type": "cluster-health",
+        "index": ".ds-metrics-elastic_agent.elastic_agent-default-2022.06.20-000001,.ds-metrics-elastic_agent.filebeat-default-2022.06.20-000001,.ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001,.ds-metrics-kubernetes.apiserver-default-2022.06.20-000001,.ds-metrics-kubernetes.container-default-2022.06.20-000001,.ds-metrics-kubernetes.event-default-2022.06.20-000001,.ds-metrics-kubernetes.node-default-2022.06.20-000001,.ds-metrics-kubernetes.pod-default-2022.06.20-000001,.ds-metrics-kubernetes.proxy-default-2022.06.20-000001,.ds-metrics-kubernetes.state_container-default-2022.06.20-000001,.ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001,.ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001,.ds-metrics-kubernetes.state_job-default-2022.06.20-000001,.ds-metrics-kubernetes.state_node-default-2022.06.20-000001,.ds-metrics-kubernetes.state_pod-default-2022.06.20-000001,.ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001,.ds-metrics-kubernetes.state_service-default-2022.06.20-000001,.ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001,.ds-metrics-kubernetes.system-default-2022.06.20-000001,.ds-metrics-kubernetes.volume-default-2022.06.20-000001,.ds-metrics-system.core-default-2022.06.20-000001,.ds-metrics-system.cpu-default-2022.06.20-000001,.ds-metrics-system.diskio-default-2022.06.20-000001,.ds-metrics-system.filesystem-default-2022.06.20-000001,.ds-metrics-system.fsstat-default-2022.06.20-000001,.ds-metrics-system.load-default-2022.06.20-000001,.ds-metrics-system.memory-default-2022.06.20-000001,.ds-metrics-system.network-default-2022.06.20-000001,.ds-metrics-system.process-default-2022.06.20-000001,.ds-metrics-system.process_summary-default-2022.06.20-000001,.ds-metrics-system.socket_summary-default-2022.06.20-000001,.ds-logs-elastic_agent-default-2022.06.20-000001,.ds-logs-elastic_agent.filebeat-default-2022.06.20-000001,.ds-logs-elastic_agent.metricbeat-default-2022.06.20-000001,.ds-logs-kubernetes.container_logs-default-2022.06.20-000001",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
     },
     {
-      "operation": {
-        "operation-type": "create-index",
-        "settings": {{index_settings | default({}) | tojson}}
+      "name": "index-update",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(1000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "conflicts": "{{conflicts | default('random')}}",
+      "on-conflict": "{{on_conflict | default('index')}}",
+      "conflict-probability": {{conflict_probability | default(25)}},
+      "recency": {{recency | default(0)}}
+    },
+    {
+      "name": "query_all",
+      "operation-type": "search",
+      "index": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001,.ds-metrics-kubernetes.apiserver-default-2022.06.20-000001,.ds-metrics-kubernetes.container-default-2022.06.20-000001,.ds-metrics-kubernetes.event-default-2022.06.20-000001,.ds-metrics-kubernetes.node-default-2022.06.20-000001,.ds-metrics-kubernetes.pod-default-2022.06.20-000001,.ds-metrics-kubernetes.proxy-default-2022.06.20-000001,.ds-metrics-kubernetes.state_container-default-2022.06.20-000001,.ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001,.ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001,.ds-metrics-kubernetes.state_job-default-2022.06.20-000001,.ds-metrics-kubernetes.state_node-default-2022.06.20-000001,.ds-metrics-kubernetes.state_pod-default-2022.06.20-000001,.ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001,.ds-metrics-kubernetes.state_service-default-2022.06.20-000001,.ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001,.ds-metrics-kubernetes.system-default-2022.06.20-000001,.ds-metrics-kubernetes.volume-default-2022.06.20-000001", 
+      "body": {
+        "query": {
+          "match_all": {}
+        }
       }
     },
     {
-      "operation": "check-cluster-health"
+      "name": "query_kubernetes.pod.cpu.usage.node",
+      "operation-type": "search",
+      "index": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001,.ds-metrics-kubernetes.apiserver-default-2022.06.20-000001,.ds-metrics-kubernetes.container-default-2022.06.20-000001,.ds-metrics-kubernetes.event-default-2022.06.20-000001,.ds-metrics-kubernetes.node-default-2022.06.20-000001,.ds-metrics-kubernetes.pod-default-2022.06.20-000001,.ds-metrics-kubernetes.proxy-default-2022.06.20-000001,.ds-metrics-kubernetes.state_container-default-2022.06.20-000001,.ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001,.ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001,.ds-metrics-kubernetes.state_job-default-2022.06.20-000001,.ds-metrics-kubernetes.state_node-default-2022.06.20-000001,.ds-metrics-kubernetes.state_pod-default-2022.06.20-000001,.ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001,.ds-metrics-kubernetes.state_service-default-2022.06.20-000001,.ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001,.ds-metrics-kubernetes.system-default-2022.06.20-000001,.ds-metrics-kubernetes.volume-default-2022.06.20-000001", 
+      "body": {
+          "query": {
+            "bool": {
+              "must": [
+                {
+                  "bool": {
+                    "must": [
+                      {
+                        "query_string": {
+                          "query": "kubernetes.pod.cpu.usage.node.pct: *",
+                          "analyze_wildcard": true
+                        }
+                      }
+                    ],
+                    "filter": [],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              ]
+            }
+          }
+      }
     },
     {
-      "operation": "index-append",
-      "warmup-time-period": 150,
-      "clients": {{bulk_indexing_clients | default(5)}},
-      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+      "name": "query_state_deployment",
+      "operation-type": "search",
+      "index": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001,.ds-metrics-kubernetes.apiserver-default-2022.06.20-000001,.ds-metrics-kubernetes.container-default-2022.06.20-000001,.ds-metrics-kubernetes.event-default-2022.06.20-000001,.ds-metrics-kubernetes.node-default-2022.06.20-000001,.ds-metrics-kubernetes.pod-default-2022.06.20-000001,.ds-metrics-kubernetes.proxy-default-2022.06.20-000001,.ds-metrics-kubernetes.state_container-default-2022.06.20-000001,.ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001,.ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001,.ds-metrics-kubernetes.state_job-default-2022.06.20-000001,.ds-metrics-kubernetes.state_node-default-2022.06.20-000001,.ds-metrics-kubernetes.state_pod-default-2022.06.20-000001,.ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001,.ds-metrics-kubernetes.state_service-default-2022.06.20-000001,.ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001,.ds-metrics-kubernetes.system-default-2022.06.20-000001,.ds-metrics-kubernetes.volume-default-2022.06.20-000001", 
+      "body": {
+          "query": {
+            "bool": {
+              "must": [
+              {
+                  "bool": {
+                    "must": [
+                      {
+                        "query_string": {
+                          "query": "event.module:kubernetes AND metricset.name:state_deployment",
+                          "analyze_wildcard": true
+                        }
+                      }
+                    ],
+                    "filter": [],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              ],
+              "filter": [],
+              "should": [],
+              "must_not": []
+          }
+        },"aggs": {
+          "timeseries": {
+            "auto_date_histogram": {
+              "field": "@timestamp"
+            },
+            "aggs": {
+              "54cf79a0-30d5-11e7-8df8-6d3604a72912": {
+                "sum": {
+                  "field": "kubernetes.deployment.replicas.desired"
+                }
+              }
+            },
+            "meta": {
+              "timeField": "@timestamp",
+              "panelId": "2fe9d3b0-30d5-11e7-8df8-6d3604a72912",
+              "seriesId": "2fe9d3b1-30d5-11e7-8df8-6d3604a72912",
+              "intervalString": "10s",
+              "indexPatternString": "metrics-*",
+              "normalized": true
+            }
+          }
+        }
+      }
     },
     {
-      "operation": "index-update",
-      "warmup-time-period": 150,
-      "clients": {{bulk_indexing_clients | default(5)}},
-      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
-    },
-    {
-      "operation": "index-stats",
-      "warmup-iterations": 500,
-      "iterations": 1000,
-      "target-throughput": 90
-    },
-    {
-      "operation": "node-stats",
-      "warmup-iterations": 500,
-      "iterations": 1000,
-      "target-throughput": 90
-    },
-    {
-      "operation": "query_all",
-      "warmup-iterations": 500,
-      "iterations": 1000,
-      "target-throughput": 50
-    },
-    {
-      "operation": "query_aggregation",
-      "warmup-iterations": 500,
-      "iterations": 1000,
-      "target-throughput": 50
+      "name": "query_cpu_usage_node",
+      "operation-type": "search",
+      "index": ".ds-metrics-elastic_agent.metricbeat-default-2022.06.20-000001,.ds-metrics-kubernetes.apiserver-default-2022.06.20-000001,.ds-metrics-kubernetes.container-default-2022.06.20-000001,.ds-metrics-kubernetes.event-default-2022.06.20-000001,.ds-metrics-kubernetes.node-default-2022.06.20-000001,.ds-metrics-kubernetes.pod-default-2022.06.20-000001,.ds-metrics-kubernetes.proxy-default-2022.06.20-000001,.ds-metrics-kubernetes.state_container-default-2022.06.20-000001,.ds-metrics-kubernetes.state_cronjob-default-2022.06.20-000001,.ds-metrics-kubernetes.state_deployment-default-2022.06.20-000001,.ds-metrics-kubernetes.state_job-default-2022.06.20-000001,.ds-metrics-kubernetes.state_node-default-2022.06.20-000001,.ds-metrics-kubernetes.state_pod-default-2022.06.20-000001,.ds-metrics-kubernetes.state_replicaset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_resourcequota-default-2022.06.20-000001,.ds-metrics-kubernetes.state_service-default-2022.06.20-000001,.ds-metrics-kubernetes.state_statefulset-default-2022.06.20-000001,.ds-metrics-kubernetes.state_storageclass-default-2022.06.20-000001,.ds-metrics-kubernetes.system-default-2022.06.20-000001,.ds-metrics-kubernetes.volume-default-2022.06.20-000001", 
+      "body": {
+        "query": {
+          "bool": {
+                "must": [
+                {
+              "bool": {
+                "must": [
+                  {
+                    "query_string": {
+                      "query": "event.module:kubernetes AND (metricset.name:container OR metricset.name:state_node)",
+                      "analyze_wildcard": true
+                    }
+                  }
+                ],
+                "filter": [],
+                "should": [],
+                "must_not": []
+              }
+            }
+            ],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "0d5c9220-2bf2-11e7-859b-f78b612cde28": {
+            "terms": {
+              "field": "kubernetes.node.name",
+              "size": "10000",
+              "order": {
+                "0d5c9221-2bf2-11e7-859b-f78b612cde28-SORT": "desc"
+              }
+            },
+            "aggs": {
+              "0d5c9221-2bf2-11e7-859b-f78b612cde28-SORT": {
+                "sum": {
+                  "field": "kubernetes.container.cpu.usage.nanocores"
+                }
+              },
+              "timeseries": {
+                "auto_date_histogram": {
+                  "field": "@timestamp"
+                },
+                "aggs": {
+                  "0d5c9221-2bf2-11e7-859b-f78b612cde28": {
+                    "sum": {
+                      "field": "kubernetes.container.cpu.usage.nanocores"
+                    }
+                  },
+                  "8b346300-bf95-11ea-a07c-851701f0d645": {
+                    "avg": {
+                      "field": "metricset.period"
+                    }
+                  },
+                  "25ae6580-bf95-11ea-a07c-851701f0d645": {
+                    "bucket_script": {
+                      "buckets_path": {
+                        "sum_nanocores": "0d5c9221-2bf2-11e7-859b-f78b612cde28",
+                        "avg_period": "8b346300-bf95-11ea-a07c-851701f0d645"
+                      },
+                      "script": {
+                        "source": "params.sum_nanocores / (params._interval / params.avg_period)",
+                        "lang": "painless",
+                        "params": {
+                          "_interval": 10000
+                        }
+                      },
+                      "gap_policy": "skip"
+                    }
+                  }
+                }
+          }
+        },
+          "meta": {
+            "timeField": "@timestamp",
+            "panelId": "0d5c6b10-2bf2-11e7-859b-f78b612cde28",
+            "seriesId": "0d5c9220-2bf2-11e7-859b-f78b612cde28",
+            "intervalString": "10s",
+            "indexPatternString": "metrics-*"
+            }
+          }
+        }
+      }
     }
-  ]
-}

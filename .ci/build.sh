@@ -25,6 +25,7 @@ set -o pipefail
 set -u
 
 # based on https://gist.github.com/sj26/88e1c6584397bb7c13bd11108a579746?permalink_comment_id=4155247#gistcomment-4155247
+# TODO: Factor this out to limit duplication across repos
 function retry {
   local retries=$1
   shift

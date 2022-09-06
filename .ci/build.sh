@@ -114,6 +114,7 @@ function install {
 function precommit {
   install
   make test
+  make pre-commit
 }
 
 function it {

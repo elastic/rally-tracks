@@ -121,7 +121,7 @@ esrally create-track --track=test --target-hosts=test.rally.gizas.elastic-observ
 #### For _Source:
 Run Track as follows:
 ```
-esrally race --distribution-version=8.3.0 --track-path=/Users/andreasgkizas/.rally/benchmarks/tracks/cloudnative --runtime-jdk=bundled --kill-running-processes --track-params="synthetic_source:false,source_enabled:true"
+esrally race --distribution-version=8.3.0 --track-path=cloudnative --runtime-jdk=bundled --kill-running-processes --track-params="synthetic_source:false,source_enabled:true"
 ```
 
 We also advise to use `--telemetry disk-usage-stats` to evaluate the disk usage performance
@@ -143,7 +143,7 @@ in_house_snapshot.cache = true
 Run Track as follows:
 
 ```bash
-esrally race --distribution-repository=in_house_snapshot --distribution-version=8.4.0-SNAPSHOT --track-path=/Users/andreasgkizas/.rally/benchmarks/tracks/cloudnative --kill-running-processes --track-params="synthetic_source:true,source_enabled:true"
+esrally race --distribution-repository=in_house_snapshot --distribution-version=8.4.0-SNAPSHOT --track-path=cloudnative --kill-running-processes --track-params="synthetic_source:true,source_enabled:true"
 ```
 
 We also advise to use `--telemetry disk-usage-stats` to evaluate the disk usage performance
@@ -162,7 +162,6 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `recency `(default: 0): A number between 0 and 1 that defines whether to bias towards more recent ids when simulating conflicts. See the Rally docs for the full definition of this parameter. This requires to run the respective challenge.
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
-* `ingest_percentage `(default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `conflicts` (default: "random"): Type of id conflicts to simulate. Valid values are: 'sequential' (A document id is replaced with a document id with a sequentially increasing id), 'random' (A document id is replaced with a document id with a random other id).
 * `conflict_probability` (default: 25): A number between 0 and 100 that defines the probability of id conflicts. This requires to run the respective challenge. Combining conflicts=sequential and conflict-probability=0 makes Rally generate index ids by itself, instead of relying on Elasticsearch's automatic id generation <https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html#_automatic_id_generation>_.
 * `on_conflict` (default: "index"): Whether to use an "index" or an "update" action when simulating an id conflict.

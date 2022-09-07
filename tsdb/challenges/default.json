@@ -118,6 +118,21 @@
           "operation": "default_1k",
           "warmup-iterations": 50,
           "iterations": 100
+        },
+        {
+          "operation": "date-histo-entire-range-1m",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
+          "operation": "date-histo-entire-range-1h",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
+          "operation": "date-histo-entire-range-1d",
+          "warmup-iterations": 50,
+          "iterations": 100
         }
       ]
     },

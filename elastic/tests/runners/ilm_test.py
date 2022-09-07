@@ -17,6 +17,7 @@
 
 import os
 from unittest import mock
+
 import pytest
 from shared.runners.ilm import create_ilm
 from tests import as_future
@@ -29,7 +30,7 @@ async def test_ilm(es):
     # simulate "track-path" as added by param source and "policies" set by the user
     params = {
         "track-path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "logs"),
-        "policies": "../tests/runners/resources/ilm"
+        "policies": "../tests/runners/resources/ilm",
     }
     ops, _ = await create_ilm(es, params)
     assert ops == 1

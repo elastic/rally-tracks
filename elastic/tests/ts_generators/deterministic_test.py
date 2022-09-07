@@ -21,40 +21,18 @@ from shared.ts_generators import FixedIntervalGenerator
 
 
 def test_generate_from_now():
-    start_date = datetime.datetime(
-        year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc
-    )
+    start_date = datetime.datetime(year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc)
     random.seed(13)
     generator = FixedIntervalGenerator(8640000, start_date, 1)
-    assert (
-        generator.next_timestamp().isoformat(sep="T", timespec="milliseconds")
-        == "2019-01-05T15:00:00.007+00:00"
-    )
-    assert (
-        generator.next_timestamp().isoformat(sep="T", timespec="milliseconds")
-        == "2019-01-05T15:00:00.017+00:00"
-    )
-    assert (
-        generator.next_timestamp().isoformat(sep="T", timespec="milliseconds")
-        == "2019-01-05T15:00:00.027+00:00"
-    )
+    assert generator.next_timestamp().isoformat(sep="T", timespec="milliseconds") == "2019-01-05T15:00:00.007+00:00"
+    assert generator.next_timestamp().isoformat(sep="T", timespec="milliseconds") == "2019-01-05T15:00:00.017+00:00"
+    assert generator.next_timestamp().isoformat(sep="T", timespec="milliseconds") == "2019-01-05T15:00:00.027+00:00"
 
 
 def test_generate_from_now_multiple_clients():
-    start_date = datetime.datetime(
-        year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc
-    )
+    start_date = datetime.datetime(year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc)
     random.seed(13)
     generator = FixedIntervalGenerator(8640000, start_date, 2)
-    assert (
-        generator.next_timestamp().isoformat(sep="T", timespec="milliseconds")
-        == "2019-01-05T15:00:00.014+00:00"
-    )
-    assert (
-        generator.next_timestamp().isoformat(sep="T", timespec="milliseconds")
-        == "2019-01-05T15:00:00.034+00:00"
-    )
-    assert (
-        generator.next_timestamp().isoformat(sep="T", timespec="milliseconds")
-        == "2019-01-05T15:00:00.054+00:00"
-    )
+    assert generator.next_timestamp().isoformat(sep="T", timespec="milliseconds") == "2019-01-05T15:00:00.014+00:00"
+    assert generator.next_timestamp().isoformat(sep="T", timespec="milliseconds") == "2019-01-05T15:00:00.034+00:00"
+    assert generator.next_timestamp().isoformat(sep="T", timespec="milliseconds") == "2019-01-05T15:00:00.054+00:00"

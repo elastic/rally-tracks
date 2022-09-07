@@ -15,51 +15,35 @@
 # specific language governing permissions and limitations
 # under the License.
 
+from security.parameter_sources.events_emitter import EventsEmitterParamSource
+from security.runners.emit_events import emit_events
 from shared import parameter_sources
 from shared.parameter_sources.processed import ProcessedCorpusParamSource
-from shared.parameter_sources.workflow_selector import WorkflowSelectorParamSource
 from shared.parameter_sources.templates import (
     ComponentTemplateParamSource,
     ComposableTemplateParamSource,
 )
+from shared.parameter_sources.workflow_selector import WorkflowSelectorParamSource
 from shared.runners import datastream
 from shared.runners.bulk import RawBulkIndex
 from shared.runners.ilm import create_ilm
 from shared.runners.pipelines import create_pipeline
 from shared.schedulers.indexing import TimestampThrottler
 from shared.schedulers.query import WorkflowScheduler
-
-from security.parameter_sources.events_emitter import EventsEmitterParamSource
-from security.runners.emit_events import emit_events
-from shared.track_processors.track_id_generator import TrackIdGenerator
 from shared.track_processors import data_generator
+from shared.track_processors.track_id_generator import TrackIdGenerator
+
 
 def register(registry):
-    registry.register_param_source(
-        "add-track-path", parameter_sources.add_track_path
-    )
-    registry.register_param_source(
-        "component-template-source", ComponentTemplateParamSource
-    )
-    registry.register_param_source(
-        "composable-template-source", ComposableTemplateParamSource
-    )
-    registry.register_param_source(
-        "events-emitter-source", EventsEmitterParamSource
-    )
+    registry.register_param_source("add-track-path", parameter_sources.add_track_path)
+    registry.register_param_source("component-template-source", ComponentTemplateParamSource)
+    registry.register_param_source("composable-template-source", ComposableTemplateParamSource)
+    registry.register_param_source("events-emitter-source", EventsEmitterParamSource)
 
-    registry.register_runner(
-        "check-datastream", datastream.check_health, async_runner=True
-    )
-    registry.register_runner(
-        "rollover-datastream", datastream.rollover, async_runner=True
-    )
-    registry.register_runner(
-        "set-shards-datastream", datastream.shards, async_runner=True
-    )
-    registry.register_runner(
-        "emit-events", emit_events, async_runner=True
-    )
+    registry.register_runner("check-datastream", datastream.check_health, async_runner=True)
+    registry.register_runner("rollover-datastream", datastream.rollover, async_runner=True)
+    registry.register_runner("set-shards-datastream", datastream.shards, async_runner=True)
+    registry.register_runner("emit-events", emit_events, async_runner=True)
 
     registry.register_param_source("processed-source", ProcessedCorpusParamSource)
 

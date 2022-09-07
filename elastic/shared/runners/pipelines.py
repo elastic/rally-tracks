@@ -25,14 +25,9 @@ async def create_pipeline(es, params):
 
     paths = []
     if "track-path" in params:
-        paths += [
-            Path(os.path.join(params["track-path"], params.get("pipelines", "pipelines")))
-        ]
+        paths += [Path(os.path.join(params["track-path"], params.get("pipelines", "pipelines")))]
     if "asset-paths" in params:
-        paths += [
-            Path(os.path.join(path, "ingest_pipelines"))
-            for path in params["asset-paths"]
-        ]
+        paths += [Path(os.path.join(path, "ingest_pipelines")) for path in params["asset-paths"]]
 
     for path in paths:
         for p in path.rglob("*.json"):

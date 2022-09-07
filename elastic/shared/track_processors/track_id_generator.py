@@ -15,9 +15,9 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import hashlib
 import json
 import logging
-import hashlib
 
 
 class TrackIdGenerator:
@@ -43,9 +43,7 @@ class TrackIdGenerator:
         hash_parameters = {}
         for hash_param in self.track_id_hash_parameters:
             if hash_param in track.selected_challenge_or_default.parameters:
-                hash_parameters[
-                    hash_param
-                ] = track.selected_challenge_or_default.parameters[hash_param]
+                hash_parameters[hash_param] = track.selected_challenge_or_default.parameters[hash_param]
         track.selected_challenge_or_default.parameters["track-id"] = hashlib.md5(
             json.dumps(hash_parameters, sort_keys=True).encode("utf-8")
         ).hexdigest()

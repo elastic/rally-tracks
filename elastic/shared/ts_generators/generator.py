@@ -16,6 +16,7 @@
 # under the License.
 
 import logging
+
 from shared.utils.time import TimestampStructGenerator
 
 

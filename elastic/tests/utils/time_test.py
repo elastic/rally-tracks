@@ -16,14 +16,14 @@
 # under the License.
 
 import datetime
-import pytest
 
+import pytest
 from shared.utils.time import (
-    TimestampStructGenerator,
-    TimeParsingError,
-    parse_date_time,
     DateTimeValues,
+    TimeParsingError,
+    TimestampStructGenerator,
     parse_date_optional_time,
+    parse_date_time,
 )
 
 
@@ -36,23 +36,15 @@ class ReproducibleClock:
 
 
 def test_generate_from_now():
-    clock = ReproducibleClock(
-        start=datetime.datetime(year=2019, month=1, day=5, hour=15)
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2019, month=1, day=5, hour=15))
 
     g = TimestampStructGenerator(starting_point=clock.now)
 
-    assert g.next(datetime.timedelta(seconds=5)) == datetime.datetime(
-        year=2019, month=1, day=5, hour=15, minute=0, second=5
-    )
+    assert g.next(datetime.timedelta(seconds=5)) == datetime.datetime(year=2019, month=1, day=5, hour=15, minute=0, second=5)
 
-    assert g.next(datetime.timedelta(seconds=10)) == datetime.datetime(
-        year=2019, month=1, day=5, hour=15, minute=0, second=15
-    )
+    assert g.next(datetime.timedelta(seconds=10)) == datetime.datetime(year=2019, month=1, day=5, hour=15, minute=0, second=15)
 
-    assert g.next(datetime.timedelta(seconds=2)) == datetime.datetime(
-        year=2019, month=1, day=5, hour=15, minute=0, second=17
-    )
+    assert g.next(datetime.timedelta(seconds=2)) == datetime.datetime(year=2019, month=1, day=5, hour=15, minute=0, second=17)
 
 
 def test_parse_date_time():
@@ -83,93 +75,49 @@ def test_parse_date_time_no_separator():
 
 def test_parse_date():
     date = parse_date_time("2018-05-01")
-    assert date == datetime.datetime(
-        year=2018, month=5, day=1, hour=0, minute=0, tzinfo=datetime.timezone.utc
-    )
+    assert date == datetime.datetime(year=2018, month=5, day=1, hour=0, minute=0, tzinfo=datetime.timezone.utc)
 
 
 def test_parse_now():
-    clock = ReproducibleClock(
-        start=datetime.datetime(
-            year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc
-        )
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc))
     date = parse_date_time("now", utcnow=clock)
-    assert date == datetime.datetime(
-        year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc
-    )
+    assert date == datetime.datetime(year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc)
 
 
 def test_parse_relative_day():
-    clock = ReproducibleClock(
-        start=datetime.datetime(
-            year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc
-        )
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc))
     date = parse_date_time("now+1d", utcnow=clock)
-    assert date == datetime.datetime(
-        year=2019, month=1, day=6, hour=15, tzinfo=datetime.timezone.utc
-    )
+    assert date == datetime.datetime(year=2019, month=1, day=6, hour=15, tzinfo=datetime.timezone.utc)
 
 
 def test_parse_relative_minus_day():
-    clock = ReproducibleClock(
-        start=datetime.datetime(
-            year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc
-        )
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc))
     date = parse_date_time("now-1d", utcnow=clock)
-    assert date == datetime.datetime(
-        year=2019, month=1, day=4, hour=15, tzinfo=datetime.timezone.utc
-    )
+    assert date == datetime.datetime(year=2019, month=1, day=4, hour=15, tzinfo=datetime.timezone.utc)
 
 
 def test_parse_relative_hour():
-    clock = ReproducibleClock(
-        start=datetime.datetime(
-            year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc
-        )
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc))
     date = parse_date_time("now+1h", utcnow=clock)
-    assert date == datetime.datetime(
-        year=2019, month=1, day=5, hour=16, tzinfo=datetime.timezone.utc
-    )
+    assert date == datetime.datetime(year=2019, month=1, day=5, hour=16, tzinfo=datetime.timezone.utc)
 
 
 def test_parse_relative_minus_hour():
-    clock = ReproducibleClock(
-        start=datetime.datetime(
-            year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc
-        )
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2019, month=1, day=5, hour=15, tzinfo=datetime.timezone.utc))
     date = parse_date_time("now-1h", utcnow=clock)
-    assert date == datetime.datetime(
-        year=2019, month=1, day=5, hour=14, tzinfo=datetime.timezone.utc
-    )
+    assert date == datetime.datetime(year=2019, month=1, day=5, hour=14, tzinfo=datetime.timezone.utc)
 
 
 def test_parse_relative_minute():
-    clock = ReproducibleClock(
-        start=datetime.datetime(
-            year=2019, month=1, day=5, hour=15, minute=30, tzinfo=datetime.timezone.utc
-        )
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2019, month=1, day=5, hour=15, minute=30, tzinfo=datetime.timezone.utc))
     date = parse_date_time("now+30m", utcnow=clock)
-    assert date == datetime.datetime(
-        year=2019, month=1, day=5, hour=16, tzinfo=datetime.timezone.utc
-    )
+    assert date == datetime.datetime(year=2019, month=1, day=5, hour=16, tzinfo=datetime.timezone.utc)
 
 
 def test_parse_relative_minus_minute():
-    clock = ReproducibleClock(
-        start=datetime.datetime(
-            year=2019, month=1, day=5, hour=14, minute=30, tzinfo=datetime.timezone.utc
-        )
-    )
+    clock = ReproducibleClock(start=datetime.datetime(year=2019, month=1, day=5, hour=14, minute=30, tzinfo=datetime.timezone.utc))
     date = parse_date_time("now-30m", utcnow=clock)
-    assert date == datetime.datetime(
-        year=2019, month=1, day=5, hour=14, tzinfo=datetime.timezone.utc
-    )
+    assert date == datetime.datetime(year=2019, month=1, day=5, hour=14, tzinfo=datetime.timezone.utc)
 
 
 def test_parse_invalid_offset():
@@ -206,9 +154,7 @@ def test_generate_new_bounds_replace_interval():
     lower_bound = parse_date_optional_time("2020-01-02T12:00:00.000Z")
 
     utc_now = datetime.datetime.utcnow()
-    date_data = DateTimeValues(
-        min_date=None, max_date=utc_now, duration=datetime.timedelta(minutes=1)
-    )
+    date_data = DateTimeValues(min_date=None, max_date=utc_now, duration=datetime.timedelta(minutes=1))
 
     new_lower, new_upper = date_data.generate_new_bounds(lower_bound, upper_bound)
     assert (new_upper - new_lower) == datetime.timedelta(minutes=1)
@@ -221,9 +167,7 @@ def test_generate_new_bounds_respects_min_and_max_date():
     query_min_date = parse_date_optional_time("2021-01-01T12:00:00.000Z")
     query_max_date = parse_date_optional_time("2021-01-01T12:01:00.000Z")
     interval = datetime.timedelta(minutes=5)
-    date_data = DateTimeValues(
-        min_date=query_min_date, max_date=query_max_date, duration=interval
-    )
+    date_data = DateTimeValues(min_date=query_min_date, max_date=query_max_date, duration=interval)
     new_lower, new_upper = date_data.generate_new_bounds(None, None)
     assert query_min_date == new_lower
     assert query_max_date == new_upper

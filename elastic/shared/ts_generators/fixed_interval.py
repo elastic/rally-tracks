@@ -28,9 +28,7 @@ class FixedIntervalGenerator(Generator):
         super().__init__(mean_docs_per_day, start_date, clients, **kwargs)
         self._doc_per_milli = MILLISECONDS_PER_DAY / (mean_docs_per_day / clients)
         # subtract some uniform variance for the current time so not all clients are aligned
-        self._timestamp_generator.next(
-            timedelta(milliseconds=-random.uniform(0, self._doc_per_milli))
-        )
+        self._timestamp_generator.next(timedelta(milliseconds=-random.uniform(0, self._doc_per_milli)))
         self._wait_time = (clients / mean_docs_per_day) * MILLISECONDS_PER_DAY
 
     def next_timestamp(self):

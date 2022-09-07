@@ -31,6 +31,7 @@ BASE_PARAMS = {
     "number_of_replicas": "0",
 }
 
+
 def params(updates=None):
     base = BASE_PARAMS.copy()
     if updates is None:
@@ -38,99 +39,96 @@ def params(updates=None):
     else:
         return {**base, **updates}
 
+
 class TestLogs:
     def test_logs_default(self, es_cluster, rally):
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-indexing",
-            track_params="number_of_replicas:0"
+            track_params="number_of_replicas:0",
         )
         assert ret == 0
 
     def test_logs_disk_usage(self, es_cluster, rally):
-        custom = {'number_of_shards': 4}
+        custom = {"number_of_shards": 4}
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-disk-usage",
-            track_params=params(updates=custom)
+            track_params=params(updates=custom),
         )
         assert ret == 0
 
     def test_logs_indexing_unthrottled(self, es_cluster, rally):
-        ret = rally.race(
-            track="elastic/logs",
-            challenge="logging-indexing",
-            track_params=params()
-        )
+        ret = rally.race(track="elastic/logs", challenge="logging-indexing", track_params=params())
         assert ret == 0
 
     def test_logs_querying(self, rally, es_cluster):
         custom = {
-            'query_warmup_time_period': '1',
-            'query_time_period': '1',
-            'workflow_time_interval': '1',
-            'think_time_interval': '1'
+            "query_warmup_time_period": "1",
+            "query_time_period": "1",
+            "workflow_time_interval": "1",
+            "think_time_interval": "1",
         }
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-querying",
             track_params=params(updates=custom),
-            exclude_tasks="tag:setup"
+            exclude_tasks="tag:setup",
         )
         assert ret == 0
 
     def test_logs_indexing_querying_unthrottled(self, es_cluster, rally):
         custom = {
-            'query_warmup_time_period': '1',
-            'query_time_period': '1',
-            'workflow_time_interval': '1',
-            'think_time_interval': '1'
+            "query_warmup_time_period": "1",
+            "query_time_period": "1",
+            "workflow_time_interval": "1",
+            "think_time_interval": "1",
         }
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-indexing-querying",
             track_params=params(updates=custom),
-            exclude_tasks="tag:setup"
+            exclude_tasks="tag:setup",
         )
         assert ret == 0
 
     def test_logs_indexing_throttled(self, es_cluster, rally):
-        custom = {'throttle_indexing': 'true'}
+        custom = {"throttle_indexing": "true"}
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-indexing",
-            track_params=params(updates=custom)
+            track_params=params(updates=custom),
         )
         assert ret == 0
 
     def test_logs_indexing_querying_throttled(self, es_cluster, rally):
         custom = {
-            'query_warmup_time_period': '1',
-            'query_time_period': '1',
-            'workflow_time_interval': '1',
-            'think_time_interval': '1',
-            'throttle_indexing': 'true',
+            "query_warmup_time_period": "1",
+            "query_time_period": "1",
+            "workflow_time_interval": "1",
+            "think_time_interval": "1",
+            "throttle_indexing": "true",
         }
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-indexing-querying",
             track_params=params(updates=custom),
-            exclude_tasks="tag:setup"
+            exclude_tasks="tag:setup",
         )
         assert ret == 0
 
     def test_logs_querying_with_preloaded_data(self, es_cluster, rally):
         custom = {
-            'bulk_start_date': '2020-09-30T00-00-00Z',
-            'bulk_end_date': '2020-09-30T00-00-02Z',
-            'query_warmup_time_period': '1',
-            'query_time_period': '1',
-            'workflow_time_interval': '1',
-            'think_time_interval': '1'
+            "bulk_start_date": "2020-09-30T00-00-00Z",
+            "bulk_end_date": "2020-09-30T00-00-02Z",
+            "query_warmup_time_period": "1",
+            "query_time_period": "1",
+            "workflow_time_interval": "1",
+            "think_time_interval": "1",
         }
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-querying",
-            track_params=params(updates=custom)
+            track_params=params(updates=custom),
         )
         assert ret == 0

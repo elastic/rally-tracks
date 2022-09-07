@@ -1,9 +1,9 @@
-import xml.sax
 import argparse
 import json
 import re
-
+import xml.sax
 from pathlib import Path
+
 from bs4 import BeautifulSoup
 from sentence_transformers import SentenceTransformer
 
@@ -41,32 +41,32 @@ class PostsHandler(xml.sax.ContentHandler):
                 if "CreationDate" in attrs:
                     record["creationDate"] = attrs["CreationDate"]
                 if "Title" in attrs:
-                    record["title"] = attrs["Title"].replace(
-                        "\n", " ").replace("\r", " ")
-                    record["titleVector"] = embedding_model.encode(
-                        record["title"], normalize_embeddings=True).tolist()
+                    record["title"] = attrs["Title"].replace("\n", " ").replace("\r", " ")
+                    record["titleVector"] = embedding_model.encode(record["title"], normalize_embeddings=True).tolist()
                 if "AcceptedAnswerId" in attrs:
                     record["acceptedAnswerId"] = attrs["AcceptedAnswerId"]
                 if "Body" in attrs:
                     soup = BeautifulSoup(attrs["Body"], "html.parser")
-                    body = soup.get_text().replace("\n"," ").replace("\r","")
+                    body = soup.get_text().replace("\n", " ").replace("\r", "")
                     body = re.sub("\s+", " ", body)
-                    record['body'] = body
+                    record["body"] = body
 
                 myjsonfile.write(json.dumps(record, separators=(",", ":")))
                 myjsonfile.write("\n")
 
 
 if __name__ == "__main__":
-    arg_parser = argparse.ArgumentParser(description="Script to process stack overflow posts. Filters out non-question type posts and computes vector embedding for Title fields",
-                                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    arg_parser = argparse.ArgumentParser(
+        description="Script to process stack overflow posts. Filters out non-question type posts and computes vector embedding for Title fields",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     arg_parser.add_argument("file", help="Path to XML posts file")
 
     args = arg_parser.parse_args()
 
     posts_filename = args.file
     p = Path(posts_filename)
-    output = p.with_suffix('.json')
+    output = p.with_suffix(".json")
     parser = xml.sax.make_parser()
     print("Preprocessing stack overflow posts")
 

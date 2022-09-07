@@ -2,13 +2,13 @@ import json
 import os
 
 from esrally.track import (
-    DocumentCorpus,
-    Documents,
-    track,
-    IndexTemplate,
-    Index,
     Challenge,
     ComponentTemplate,
+    DocumentCorpus,
+    Documents,
+    Index,
+    IndexTemplate,
+    track,
 )
 from shared.track_processors.data_generator import LazyMetadataDocuments
 
@@ -28,7 +28,8 @@ class EmptyTrack:
         if parameters is None:
             parameters = {}
         self.selected_challenge = Challenge(
-            "test-challenge", parameters={**parameters, **challenge_parameters}
+            "test-challenge",
+            parameters={**parameters, **challenge_parameters},
         )
         self.selected_challenge_or_default = self.selected_challenge
         self.data_streams = []
@@ -53,9 +54,7 @@ class StaticTrack(EmptyTrack):
             Documents(
                 target_data_stream="logs-system.test",
                 source_format=track.Documents.SOURCE_FORMAT_BULK,
-                document_file=os.path.join(
-                    cwd, "resources", "documents", "test-system.json"
-                ),
+                document_file=os.path.join(cwd, "resources", "documents", "test-system.json"),
                 number_of_documents=2,
             )
         )
@@ -64,9 +63,7 @@ class StaticTrack(EmptyTrack):
             Documents(
                 target_data_stream="logs-system.test",
                 source_format=track.Documents.SOURCE_FORMAT_BULK,
-                document_file=os.path.join(
-                    cwd, "resources", "documents", "test-agent.json"
-                ),
+                document_file=os.path.join(cwd, "resources", "documents", "test-agent.json"),
                 number_of_documents=2,
             )
         )
@@ -75,17 +72,13 @@ class StaticTrack(EmptyTrack):
             Documents(
                 target_data_stream="logs-kafka.test",
                 source_format=track.Documents.SOURCE_FORMAT_BULK,
-                document_file=os.path.join(
-                    cwd, "resources", "documents", "test-kafka.json"
-                ),
+                document_file=os.path.join(cwd, "resources", "documents", "test-kafka.json"),
                 number_of_documents=1,
             )
         )
 
         with open(
-            os.path.join(
-                cwd, "resources", "templates", "logs-endpoint.events.process.json"
-            ),
+            os.path.join(cwd, "resources", "templates", "logs-endpoint.events.process.json"),
             "r",
         ) as composable_file:
             self.composable_templates.append(
@@ -104,11 +97,7 @@ class StaticTrack(EmptyTrack):
             ),
             "r",
         ) as component_file:
-            self.component_templates.append(
-                ComponentTemplate(
-                    "logs-endpoint.events.process-mappings", json.load(component_file)
-                )
-            )
+            self.component_templates.append(ComponentTemplate("logs-endpoint.events.process-mappings", json.load(component_file)))
 
         self.corpora = [system_corpora, agent_corpora, kakfa_corpora]
         if generated_document_paths:
@@ -116,9 +105,7 @@ class StaticTrack(EmptyTrack):
             for p in generated_document_paths:
                 docs.append(LazyMetadataDocuments(document_file=p))
 
-            generated_corpus = DocumentCorpus(
-                name="generated", documents=docs, meta_data={"generated": True}
-            )
+            generated_corpus = DocumentCorpus(name="generated", documents=docs, meta_data={"generated": True})
             self.corpora.append(generated_corpus)
 
         self.data_streams = [

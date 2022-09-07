@@ -3,7 +3,6 @@ import unittest
 from unittest import TestCase
 
 from esrally import track
-
 from shared.parameter_sources.workflow_selector import WorkflowSelectorParamSource
 from shared.schedulers.query import WorkflowScheduler
 from tests.parameter_sources import StaticTrack
@@ -15,9 +14,7 @@ class SchedulerTestCase(TestCase):
     ITERATIONS = 10000
 
     # Taken from rally scheduler tests
-    def assertThroughputEquals(
-        self, scheduler, expected_average_throughput, msg="", relative_delta=0.05
-    ):
+    def assertThroughputEquals(self, scheduler, expected_average_throughput, msg="", relative_delta=0.05):
         expected_average_rate = 1 / expected_average_throughput
         sum = 0
         for _ in range(0, self.ITERATIONS):
@@ -33,14 +30,12 @@ class SchedulerTestCase(TestCase):
         self.assertGreaterEqual(
             actual_average_rate,
             expected_lower_bound,
-            f"{msg}: expected target rate to be >= [{expected_lower_bound}] "
-            f"but was [{actual_average_rate}].",
+            f"{msg}: expected target rate to be >= [{expected_lower_bound}] " f"but was [{actual_average_rate}].",
         )
         self.assertLessEqual(
             actual_average_rate,
             expected_upper_bound,
-            f"{msg}: expected target rate to be <= [{expected_upper_bound}] "
-            f"but was [{actual_average_rate}].",
+            f"{msg}: expected target rate to be <= [{expected_upper_bound}] " f"but was [{actual_average_rate}].",
         )
 
 
@@ -138,9 +133,7 @@ class PoissonSchedulerTests(SchedulerTestCase):
             workflow_scheduler.parameter_source = parameter_source
             for _ in range(0, self.ITERATIONS):
                 # check it many times to make sure its consistently large
-                assert workflow_scheduler.next(0) > workflow_interval * (
-                    i / number_of_tasks
-                )
+                assert workflow_scheduler.next(0) > workflow_interval * (i / number_of_tasks)
                 workflow_scheduler.first = True
 
     # tests that schedulers produce different schedules

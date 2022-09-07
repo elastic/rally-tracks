@@ -70,4 +70,20 @@
           }
         }
       }
+    },
+    {
+      "name": "date-histo-entire-range",
+      "operation-type": "search",
+      "index": "tsdb",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "1d"
+            }
+          }
+        }
+      }
     }

@@ -127,7 +127,7 @@
       ]
     },
     {
-      "name": "downsampling",
+      "name": "downsample",
       "description": "Indexes the whole document corpus and executes a few downsampling operations using different interval values",
       "default": false,
       "schedule": [
@@ -196,9 +196,9 @@
           }
         },
         {
-          "name": "downsampling-1m",
+          "name": "downsample-1m",
           "operation": {
-            "operation-type": "downsampling",
+            "operation-type": "downsample",
             "body": {
               "fixed-interval": "1m",
               "source-index": "tsdb",
@@ -207,9 +207,9 @@
           }
         },
         {
-          "name": "downsampling-1h",
+          "name": "downsample-1h",
           "operation": {
-            "operation-type": "downsampling",
+            "operation-type": "downsample",
             "body": {
               "fixed-interval": "1h",
               "source-index": "tsdb",
@@ -218,9 +218,9 @@
           }
         },
         {
-          "name": "downsampling-1d",
+          "name": "downsample-1d",
           "operation": {
-            "operation-type": "downsampling",
+            "operation-type": "downsample",
             "body": {
               "fixed-interval": "1d",
               "source-index": "tsdb",

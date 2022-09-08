@@ -7,9 +7,6 @@ Extraction of data-streams and indexes from line Elastic Cloud was done with the
 
 Modifications:
 * Change number of shard replicas to zero in all indices eg. `"number_of_replicas": "{{number_of_replicas | default(0)}}"`
-*  For the query_aggregation operation we have defined the time limits of the query: 
-   * `"gte" : "2022-04-22T07:00:00.886Z"`: Timestamp that defines the minimum time for task `query_aggregation`. It is aligned with specific corpora data. To be changed in case new data are provided.
-   * `"lte" : "2022-11-22T07:00:33.886Z"`: Timestamp that defines the minimum time for task `query_aggregation`. It is aligned with specific corpora data. To be changed in case new data are provided
 
 ### Example document
 

@@ -4,8 +4,7 @@ This track is extracted from a real Kubernetes cluster which was configured to s
 System and kubernetes integrations were enabled and elastic agent used to send data to Elastic Cloud.
 
 Extraction of data-streams and indexes from Elastic Cloud was done with the help of rally `create-index`
-
-Modifications:
+After auto-extraction with rally tool following modification needed in the indices:
 * Change number of shard replicas to zero in all indices eg. `"number_of_replicas": "{{number_of_replicas | default(0)}}"`
 
 ### Example document
@@ -104,13 +103,15 @@ Modifications:
 ### Fetching new data
 
 This data comes from a real cluster that has been deployed with Terraform of [k8s-integration-infra](https://github.com/elastic/k8s-integration-infra/tree/main/infra)
+>Reach @elastic/obs-cloudnative-monitoring team for access
+
 
 #### Extraction of data and mappings
 
 Corpora data of the specific data with their respective mappings were extracted with following command:
 
 ```bash
-esrally create-track --track=test --target-hosts=test.rally.gizas.elastic-observability-ocp.elastic.dev:9200 --client-options="use_ssl:true,verify_certs:false,ca_certs:false,basic_auth_user:'elastic',basic_auth_password:'C7GfaE950v74IwPZq6'" --datastreams="metrics-*, logs-*" --output-path=~/tracks
+esrally create-track --track=test --target-hosts=<DNS-ELASTIC-STACK>:9200 --client-options="use_ssl:true,verify_certs:false,ca_certs:false,basic_auth_user:'elastic',basic_auth_password:'<REDACTED>'" --datastreams="metrics-*, logs-*" --output-path=~/tracks
 ```
 
 ### Running Track for different scenarios

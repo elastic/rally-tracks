@@ -3,7 +3,7 @@
 This track is extracted from a real Kubernetes cluster which was configured to send logs and metrics to Elastic Cloud.
 System and kubernetes integrations were enabled and elastic agent used to send data to Elastic Cloud.
 
-Extraction of data-streams and indexes from line Elastic Cloud was done with the help of rally `create-index`
+Extraction of data-streams and indexes from Elastic Cloud was done with the help of rally `create-index`
 
 Modifications:
 * Change number of shard replicas to zero in all indices eg. `"number_of_replicas": "{{number_of_replicas | default(0)}}"`

@@ -56,7 +56,7 @@ check-venv:
 	printf $(VE_MISSING_HELP); \
 	fi
 
-install:
+install: venv-create
 	. $(VENV_ACTIVATE_FILE); $(PIP_WRAPPER) install --upgrade hatch==$(HATCH_VERSION) hatchling==$(HATCHLING_VERSION) pip==$(PIP_VERSION) wheel==$(WHEEL_VERSION) pre-commit==$(PRE_COMMIT_VERSION) black==$(BLACK_VERSION) isort==$(ISORT_VERSION)
 
 shell: check-venv

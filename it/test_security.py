@@ -19,15 +19,13 @@ import pytest
 
 pytest_rally = pytest.importorskip("pytest_rally")
 
+
 class TestSecurity:
     def test_security_indexing(self, es_cluster, rally):
-        ret = rally.race(
-            track="elastic/security",
-            challenge="security-indexing",
-            track_params={"number_of_replicas": "0"}
-        )
+        ret = rally.race(track="elastic/security", challenge="security-indexing", track_params={"number_of_replicas": "0"})
         assert ret == 0
 
+    @pytest.mark.xfail(reason="index deletion bug under investigation")
     def test_security_indexing_querying(self, es_cluster, rally):
         ret = rally.race(
             track="elastic/security",
@@ -38,14 +36,10 @@ class TestSecurity:
                 "query_time_period": "1",
                 "workflow_time_interval": "1",
                 "think_time_interval": "1",
-            }
+            },
         )
         assert ret == 0
 
     def test_security_index_alert_source_events(self, es_cluster, rally):
-        ret = rally.race(
-            track="elastic/security",
-            challenge="index-alert-source-events",
-            track_params={"number_of_replicas": "0"}
-        )
+        ret = rally.race(track="elastic/security", challenge="index-alert-source-events", track_params={"number_of_replicas": "0"})
         assert ret == 0

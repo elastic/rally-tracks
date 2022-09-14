@@ -25,7 +25,6 @@ class TestSecurity:
         ret = rally.race(track="elastic/security", challenge="security-indexing", track_params={"number_of_replicas": "0"})
         assert ret == 0
 
-    @pytest.mark.xfail(reason="index deletion bug under investigation")
     def test_security_indexing_querying(self, es_cluster, rally):
         ret = rally.race(
             track="elastic/security",

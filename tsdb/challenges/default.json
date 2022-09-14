@@ -137,7 +137,8 @@
         {
           "operation": {
             "operation-type": "delete-index",
-            "only-if-exists": false
+            "only-if-exists": false,
+            "index": ["tsdb", "tsdb-1m", "tsdb-1h", "tsdb-1d"]
           }
         },
         {

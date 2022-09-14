@@ -3,9 +3,9 @@ rally-tracks
 
 This repository contains the default track specifications for the Elasticsearch benchmarking tool [Rally](https://github.com/elastic/rally).
 
-Tracks are used to describe benchmarks in Rally.
+Tracks are used to describe benchmarks in Rally. For each track, the README.md file documents the data used, explains its parameters and provides an example document.
 
-You should not need to use this repository directly, except if you want to look under the hood or create your own tracks. We have created a [tutorial on how to create your own tracks](https://esrally.readthedocs.io/en/latest/adding_tracks.html).
+You can also [create your own track](https://esrally.readthedocs.io/en/latest/adding_tracks.html) to ensure your benchmarks will be as realistic as possible.
 
 Versioning Scheme
 -----------------

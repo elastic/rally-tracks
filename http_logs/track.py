@@ -1,5 +1,5 @@
-from copy import copy
 import re
+from copy import copy
 
 from esrally import exceptions
 from esrally.track import loader
@@ -16,7 +16,7 @@ async def reindex_async(es, params):
 
 
 class RuntimeFieldResolver(loader.TrackProcessor):
-    PATTERN = re.compile('.+-from-(.+)-using-(.+)')
+    PATTERN = re.compile(".+-from-(.+)-using-(.+)")
 
     def on_after_load_track(self, t):
         for challenge in t.challenges:
@@ -24,7 +24,7 @@ class RuntimeFieldResolver(loader.TrackProcessor):
                 m = self.PATTERN.match(task.name)
                 if m is not None:
                     source = m[1]
-                    impl = m[2].replace('-', '_')
+                    impl = m[2].replace("-", "_")
                     task.operation = copy(task.operation)
                     task.operation.params = self._replace_field(f"{impl}.from_{source}.", task.operation.params)
 
@@ -42,15 +42,12 @@ class RuntimeFieldResolver(loader.TrackProcessor):
         return EmptyTrueList()
 
     def _replace_field(self, field, t):
-        if t == 'path' or t == 'status':
+        if t == "path" or t == "status":
             return field + t
         if isinstance(t, list):
             return [self._replace_field(field, v) for v in t]
         if isinstance(t, dict):
-            return {
-                self._replace_field(field, k): self._replace_field(field, v)
-                for k, v in t.items()
-            }
+            return {self._replace_field(field, k): self._replace_field(field, v) for k, v in t.items()}
         return t
 
 

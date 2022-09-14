@@ -1,0 +1,42 @@
+{
+  "name": "logs-endpoint.events.library",
+  "index_template": {
+    "index_patterns": [
+      "logs-endpoint.events.library-*"
+    ],
+    "template": {
+      "settings": {
+        "index": {
+          "default_pipeline": "logs-endpoint.events.library-8.3.0"
+        }
+      },
+      "mappings": {
+        "_meta": {
+          "package": {
+            "name": "endpoint"
+          },
+          "managed_by": "fleet",
+          "managed": true
+        }
+      }
+    },
+    "composed_of": [
+      "logs-endpoint.events.library@package",
+      "logs-endpoint.events.library@custom",
+      ".fleet_globals-1",
+      ".fleet_agent_id_verification-1"
+    ],
+    "priority": 200,
+    "_meta": {
+      "package": {
+        "name": "endpoint"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    },
+    "data_stream": {
+      "hidden": false,
+      "allow_custom_routing": false
+    }
+  }
+}

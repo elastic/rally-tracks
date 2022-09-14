@@ -1,0 +1,523 @@
+{
+  "name": "metrics-endpoint.metrics@package",
+  "component_template": {
+    "template": {
+      "settings": {
+        "index": {
+          "lifecycle": {
+            "name": "metrics"
+          },
+          "codec": "best_compression",
+          "mapping": {
+            "total_fields": {
+              "limit": "10000"
+            }
+          },
+          "query": {
+            "default_field": [
+              "message",
+              "Endpoint.metrics.disks.device",
+              "Endpoint.metrics.disks.fstype",
+              "Endpoint.metrics.disks.mount",
+              "agent.id",
+              "agent.type",
+              "agent.version",
+              "ecs.version",
+              "event.action",
+              "event.category",
+              "event.code",
+              "event.dataset",
+              "event.hash",
+              "event.id",
+              "event.kind",
+              "event.module",
+              "event.outcome",
+              "event.provider",
+              "event.type",
+              "host.architecture",
+              "host.domain",
+              "host.hostname",
+              "host.id",
+              "host.mac",
+              "host.name",
+              "host.os.Ext.variant",
+              "host.os.family",
+              "host.os.full",
+              "host.os.kernel",
+              "host.os.name",
+              "host.os.platform",
+              "host.os.version",
+              "host.type"
+            ]
+          }
+        }
+      },
+      "mappings": {
+        "dynamic": false,
+        "properties": {
+          "agent": {
+            "properties": {
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "@timestamp": {
+            "type": "date"
+          },
+          "Endpoint": {
+            "properties": {
+              "metrics": {
+                "properties": {
+                  "system_impact": {
+                    "type": "object",
+                    "enabled": false
+                  },
+                  "memory": {
+                    "properties": {
+                      "endpoint": {
+                        "properties": {
+                          "private": {
+                            "properties": {
+                              "mean": {
+                                "type": "long"
+                              },
+                              "latest": {
+                                "type": "long"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "disks": {
+                    "properties": {
+                      "endpoint_drive": {
+                        "type": "boolean"
+                      },
+                      "total": {
+                        "type": "long"
+                      },
+                      "free": {
+                        "type": "long"
+                      },
+                      "device": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "mount": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "fstype": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    },
+                    "enabled": false
+                  },
+                  "documents_volume": {
+                    "properties": {
+                      "alerts": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "file_events": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "security_events": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "library_events": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "process_events": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "registry_events": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "dns_events": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "network_events": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "overall": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "diagnostic_alerts": {
+                        "properties": {
+                          "suppressed_count": {
+                            "type": "long"
+                          },
+                          "suppressed_bytes": {
+                            "type": "long"
+                          },
+                          "sent_count": {
+                            "type": "long"
+                          },
+                          "sent_bytes": {
+                            "type": "long"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "cpu": {
+                    "properties": {
+                      "endpoint": {
+                        "properties": {
+                          "histogram": {
+                            "type": "histogram"
+                          },
+                          "mean": {
+                            "type": "half_float"
+                          },
+                          "latest": {
+                            "type": "half_float"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "threads": {
+                    "type": "object",
+                    "enabled": false
+                  },
+                  "uptime": {
+                    "properties": {
+                      "endpoint": {
+                        "type": "long"
+                      },
+                      "system": {
+                        "type": "long"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "ecs": {
+            "properties": {
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "data_stream": {
+            "properties": {
+              "namespace": {
+                "type": "constant_keyword"
+              },
+              "type": {
+                "type": "constant_keyword"
+              },
+              "dataset": {
+                "type": "constant_keyword"
+              }
+            }
+          },
+          "host": {
+            "properties": {
+              "hostname": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "os": {
+                "properties": {
+                  "Ext": {
+                    "properties": {
+                      "variant": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "kernel": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "caseless": {
+                        "normalizer": "lowercase",
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "text": {
+                        "type": "text"
+                      }
+                    }
+                  },
+                  "family": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "version": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "platform": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "full": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "caseless": {
+                        "normalizer": "lowercase",
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "text": {
+                        "type": "text"
+                      }
+                    }
+                  }
+                }
+              },
+              "domain": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "ip": {
+                "type": "ip"
+              },
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "mac": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "architecture": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "uptime": {
+                "type": "long"
+              }
+            }
+          },
+          "message": {
+            "type": "match_only_text"
+          },
+          "event": {
+            "properties": {
+              "severity": {
+                "type": "long"
+              },
+              "code": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "created": {
+                "type": "date"
+              },
+              "kind": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "module": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "start": {
+                "type": "date"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "sequence": {
+                "type": "long"
+              },
+              "ingested": {
+                "type": "date"
+              },
+              "provider": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "action": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "end": {
+                "type": "date"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "category": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "dataset": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "hash": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "outcome": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    },
+    "_meta": {
+      "package": {
+        "name": "endpoint"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    }
+  }
+}

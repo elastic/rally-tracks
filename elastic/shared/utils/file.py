@@ -49,9 +49,7 @@ class FileReader:
 
 
 class JsonFileReader(FileReader):
-    def __init__(
-        self, data_file, file_source, processor, target_data_stream, corpus_name
-    ):
+    def __init__(self, data_file, file_source, processor, target_data_stream, corpus_name):
         super().__init__(data_file, file_source, processor, corpus_name)
         self.target_data_stream = target_data_stream
 
@@ -81,9 +79,7 @@ class BulkFileReader(FileReader):
 
     def open(self, bulk_size):
         # bulks size must be even or we wont get meta
-        self.file_source.open(
-            self.data_file, "rt", bulk_size + 1 if bulk_size % 2 == 1 else bulk_size
-        )
+        self.file_source.open(self.data_file, "rt", bulk_size + 1 if bulk_size % 2 == 1 else bulk_size)
 
     def __next__(self):
         try:
@@ -215,9 +211,7 @@ class WrappingSlice(Slice):
         if os.path.exists(offset_file_path):
             with open(offset_file_path, mode="rt", encoding="utf-8") as offsets:
                 for line in offsets:
-                    line_number, offset_in_bytes = [
-                        int(i) for i in line.strip().split(";")
-                    ]
+                    line_number, offset_in_bytes = [int(i) for i in line.strip().split(";")]
                     if line_number <= self.offset:
                         bytes_offset = offset_in_bytes
                         self._remaining_lines = self.offset - line_number
@@ -246,9 +240,7 @@ class FileMetadata:
         if message_size is None:
             raise exceptions.DataError("message_size must not be None")
 
-        with open(
-            FileMetadata._meta_data_file_name(output_folder, client_index), "w"
-        ) as f:
+        with open(FileMetadata._meta_data_file_name(output_folder, client_index), "w") as f:
             metadata = {
                 "number-of-documents": number_docs,
                 "message-size": message_size,

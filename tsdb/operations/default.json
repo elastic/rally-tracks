@@ -22,4 +22,68 @@
         },
         "size": 1000
       }
+    },
+    {
+      "name": "date-histo-entire-range-1m",
+      "operation-type": "search",
+      "index": "tsdb-1m",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "1m"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-entire-range-1h",
+      "operation-type": "search",
+      "index": "tsdb-1h",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "1h"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-entire-range-1d",
+      "operation-type": "search",
+      "index": "tsdb-1d",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "1d"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histo-entire-range",
+      "operation-type": "search",
+      "index": "tsdb",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "1d"
+            }
+          }
+        }
+      }
     }

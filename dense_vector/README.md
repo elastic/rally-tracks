@@ -26,5 +26,4 @@ python3 _tools/parse.py data/learn.350M.fbin > documents.json
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 
 * `bulk_size` (default: 5000)
-* `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
-
+* `bulk_indexing_clients` (default: 1): Number of clients that issue bulk indexing requests.

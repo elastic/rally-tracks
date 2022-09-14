@@ -15,8 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 from shared.parameter_sources.datastream import (
-    DataStreamParamSource,
     CreateDataStreamParamSource,
+    DataStreamParamSource,
 )
 from tests.parameter_sources import StaticTrack
 
@@ -41,18 +41,14 @@ def test_read_track_data_streams():
 
 
 def test_read_data_stream():
-    data_stream_source = DataStreamParamSource(
-        StaticTrack(), params={"data-stream": "logs-elastic.agent-default"}
-    )
+    data_stream_source = DataStreamParamSource(StaticTrack(), params={"data-stream": "logs-elastic.agent-default"})
     params = data_stream_source.params()
     assert params["data-stream"] == "logs-elastic.agent-default"
 
 
 def test_read_data_stream_list():
     data_streams = ["test-1", "test-2"]
-    data_stream_source = DataStreamParamSource(
-        StaticTrack(), params={"data-stream": data_streams}
-    )
+    data_stream_source = DataStreamParamSource(StaticTrack(), params={"data-stream": data_streams})
     i = 0
     while True:
         try:
@@ -93,9 +89,7 @@ def test_create_data_stream_list():
 
 
 def test_create_no_data_streams():
-    create_data_stream_source = CreateDataStreamParamSource(
-        StaticTrack(parameters={"integration-ratios": {}}), params={}
-    )
+    create_data_stream_source = CreateDataStreamParamSource(StaticTrack(parameters={"integration-ratios": {}}), params={})
     i = 0
     while True:
         try:

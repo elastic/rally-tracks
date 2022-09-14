@@ -16,10 +16,10 @@
 # under the License.
 import json
 import os
+
 import pytest
 from esrally.utils import io
-
-from shared.utils.file import FileMetadata, WrappingSlice, JsonFileReader, CorpusReader
+from shared.utils.file import CorpusReader, FileMetadata, JsonFileReader, WrappingSlice
 
 cwd = os.path.dirname(__file__)
 
@@ -31,9 +31,7 @@ def test_meta_read():
 
 
 def test_meta_write(tmp_path):
-    FileMetadata.write(
-        output_folder=tmp_path, client_index="0", number_docs=100, message_size=1000
-    )
+    FileMetadata.write(output_folder=tmp_path, client_index="0", number_docs=100, message_size=1000)
     number_docs, message_size = FileMetadata.read(os.path.join(tmp_path, "0"))
     assert number_docs == 100
     assert message_size == 1000

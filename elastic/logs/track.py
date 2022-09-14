@@ -17,56 +17,43 @@
 
 from shared import parameter_sources
 from shared.parameter_sources.datastream import (
-    DataStreamParamSource,
     CreateDataStreamParamSource,
+    DataStreamParamSource,
 )
-from shared.parameter_sources.processed import ProcessedCorpusParamSource
 from shared.parameter_sources.initial_indices import InitialIndicesParamSource
-from shared.parameter_sources.track_params import TrackParamSource
-from shared.parameter_sources.workflow_selector import WorkflowSelectorParamSource
+from shared.parameter_sources.processed import ProcessedCorpusParamSource
 from shared.parameter_sources.templates import (
     ComponentTemplateParamSource,
     ComposableTemplateParamSource,
 )
-from shared.runners import datastream
+from shared.parameter_sources.track_params import TrackParamSource
+from shared.parameter_sources.workflow_selector import WorkflowSelectorParamSource
+from shared.runners import datastream, snapshot
 from shared.runners.bulk import RawBulkIndex
 from shared.runners.ilm import create_ilm
-from shared.runners.slm import create_slm
 from shared.runners.pipelines import create_pipeline
+from shared.runners.remote_cluster import ConfigureRemoteCluster, FollowIndexRunner
+from shared.runners.slm import create_slm
 from shared.schedulers.indexing import TimestampThrottler
 from shared.schedulers.query import WorkflowScheduler
-from shared.track_processors.track_id_generator import TrackIdGenerator
 from shared.track_processors import data_generator
-from shared.runners.remote_cluster import ConfigureRemoteCluster, FollowIndexRunner
+from shared.track_processors.track_id_generator import TrackIdGenerator
+
 
 def register(registry):
     registry.register_param_source("initial-indices-source", InitialIndicesParamSource)
     registry.register_param_source("add-track-path", parameter_sources.add_track_path)
 
-    registry.register_param_source(
-        "component-template-source", ComponentTemplateParamSource
-    )
-    registry.register_param_source(
-        "composable-template-source", ComposableTemplateParamSource
-    )
+    registry.register_param_source("component-template-source", ComponentTemplateParamSource)
+    registry.register_param_source("composable-template-source", ComposableTemplateParamSource)
 
     registry.register_param_source("datastream-source", DataStreamParamSource)
-    registry.register_param_source(
-        "create-datastream-source", CreateDataStreamParamSource
-    )
+    registry.register_param_source("create-datastream-source", CreateDataStreamParamSource)
     registry.register_runner("create-datastream", datastream.create, async_runner=True)
-    registry.register_runner(
-        "compression-statistics", datastream.compression_stats, async_runner=True
-    )
-    registry.register_runner(
-        "check-datastream", datastream.check_health, async_runner=True
-    )
-    registry.register_runner(
-        "rollover-datastream", datastream.rollover, async_runner=True
-    )
-    registry.register_runner(
-        "set-shards-datastream", datastream.shards, async_runner=True
-    )
+    registry.register_runner("compression-statistics", datastream.compression_stats, async_runner=True)
+    registry.register_runner("check-datastream", datastream.check_health, async_runner=True)
+    registry.register_runner("rollover-datastream", datastream.rollover, async_runner=True)
+    registry.register_runner("set-shards-datastream", datastream.shards, async_runner=True)
 
     registry.register_param_source("processed-source", ProcessedCorpusParamSource)
 
@@ -76,6 +63,8 @@ def register(registry):
     registry.register_runner("create-pipeline", create_pipeline, async_runner=True)
 
     registry.register_runner("raw-bulk", RawBulkIndex(), async_runner=True)
+
+    registry.register_runner("mount-searchable-snapshot", snapshot.mount, async_runner=True)
 
     registry.register_scheduler("workflow-scheduler", WorkflowScheduler)
     registry.register_scheduler("timestamp-throttler", TimestampThrottler)

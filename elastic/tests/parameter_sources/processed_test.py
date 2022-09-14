@@ -18,7 +18,7 @@ import json
 import os
 
 import pytest
-from esrally.exceptions import InvalidSyntax, DataError, TrackConfigError
+from esrally.exceptions import DataError, InvalidSyntax, TrackConfigError
 from shared.parameter_sources.processed import ProcessedCorpusParamSource
 from shared.utils.time import TimeParsingError
 from tests.parameter_sources import StaticTrack
@@ -33,11 +33,7 @@ def test_corpus_read():
             "start-date": "2020-08-31:00:00:00",
             "raw-data-volume-per-day": "0.1MB",
         },
-        generated_document_paths=[
-            os.path.join(
-                cwd, "resources", "processed_test", "test_corpus_read", "0.json"
-            )
-        ],
+        generated_document_paths=[os.path.join(cwd, "resources", "processed_test", "test_corpus_read", "0.json")],
     )
 
     param_source = ProcessedCorpusParamSource(
@@ -68,11 +64,7 @@ def test_corpus_read_changing_bulk_size():
             "start-date": "2020-08-31:00:00:00",
             "raw-data-volume-per-day": "0.1MB",
         },
-        generated_document_paths=[
-            os.path.join(
-                cwd, "resources", "processed_test", "test_corpus_read", "0.json"
-            )
-        ],
+        generated_document_paths=[os.path.join(cwd, "resources", "processed_test", "test_corpus_read", "0.json")],
     )
 
     param_source = ProcessedCorpusParamSource(
@@ -102,11 +94,7 @@ def test_raw_corpus_read():
             "start-date": "2020-08-31:00:00:00",
             "raw-data-volume-per-day": "0.1MB",
         },
-        generated_document_paths=[
-            os.path.join(
-                cwd, "resources", "processed_test", "test_corpus_read", "0.json"
-            )
-        ],
+        generated_document_paths=[os.path.join(cwd, "resources", "processed_test", "test_corpus_read", "0.json")],
     )
 
     param_source = ProcessedCorpusParamSource(
@@ -159,9 +147,7 @@ def test_multi_client_corpus_read():
         },
     )
     # 1000 docs in the file, we need 669 in total. 334 in the first, 335 in the second
-    client_1_param_source = param_source.partition(
-        partition_index=0, total_partitions=2
-    )
+    client_1_param_source = param_source.partition(partition_index=0, total_partitions=2)
     total_batches = 0
     total_docs = 0
     while True:
@@ -179,9 +165,7 @@ def test_multi_client_corpus_read():
             break
     assert total_docs == 874
     assert total_batches == 874
-    client_2_param_source = param_source.partition(
-        partition_index=1, total_partitions=2
-    )
+    client_2_param_source = param_source.partition(partition_index=1, total_partitions=2)
     total_batches = 0
     total_docs = 0
     # 1000 docs in the file, 2nd batch starts at 1000 and we need 873 docs
@@ -213,11 +197,7 @@ def test_timestamp_corpus_read():
             "raw-data-volume-per-day": "0.0001MB",
             "random-seed": 13,
         },
-        generated_document_paths=[
-            os.path.join(
-                cwd, "resources", "processed_test", "test_corpus_read", "0.json"
-            )
-        ],
+        generated_document_paths=[os.path.join(cwd, "resources", "processed_test", "test_corpus_read", "0.json")],
     )
 
     param_source = ProcessedCorpusParamSource(
@@ -308,14 +288,8 @@ def test_timespan_corpus_read():
             num_docs += size
             # close to one day
             assert client_param_source.event_time_span == 85906.285764
-            assert (
-                json.loads(docs["body"][1])["message"]
-                == "2020-08-31T00:01:16.123456Z dummy"
-            )
-            assert (
-                json.loads(docs["body"][-1])["message"]
-                == "2020-08-31T23:53:03.123456Z dummy"
-            )
+            assert json.loads(docs["body"][1])["message"] == "2020-08-31T00:01:16.123456Z dummy"
+            assert json.loads(docs["body"][-1])["message"] == "2020-08-31T23:53:03.123456Z dummy"
             batches += 1
         except StopIteration:
             break
@@ -333,11 +307,7 @@ def test_relative_date_range():
             "raw-data-volume-per-day": "0.048MB",
             "random-seed": 13,
         },
-        generated_document_paths=[
-            os.path.join(
-                cwd, "resources", "processed_test", "test_corpus_read", "0.json"
-            )
-        ],
+        generated_document_paths=[os.path.join(cwd, "resources", "processed_test", "test_corpus_read", "0.json")],
     )
 
     param_source = ProcessedCorpusParamSource(
@@ -371,11 +341,7 @@ def test_param_source_stats():
             "raw-data-volume-per-day": "0.024MB",
             "random-seed": 13,
         },
-        generated_document_paths=[
-            os.path.join(
-                cwd, "resources", "processed_test", "test_corpus_read", "0.json"
-            )
-        ],
+        generated_document_paths=[os.path.join(cwd, "resources", "processed_test", "test_corpus_read", "0.json")],
     )
 
     param_source = ProcessedCorpusParamSource(
@@ -413,8 +379,7 @@ def test_missing_bulk_size():
             params={},
         )
     assert (
-        data_error.value.message
-        == "Parameter source for operation 'bulk' did not provide the mandatory parameter "
+        data_error.value.message == "Parameter source for operation 'bulk' did not provide the mandatory parameter "
         "'bulk-size'. Add it to your parameter source and try again."
     )
 
@@ -451,14 +416,11 @@ def test_negative_bulk_size():
 def test_no_data_volume():
     with pytest.raises(DataError) as data_error:
         ProcessedCorpusParamSource(
-            track=StaticTrack(
-                parameters={"bulk-size": 10, "track-id": "test_file_write"}
-            ),
+            track=StaticTrack(parameters={"bulk-size": 10, "track-id": "test_file_write"}),
             params={},
         )
     assert (
-        data_error.value.message
-        == "Parameter source for operation 'bulk' did not provide the mandatory parameter "
+        data_error.value.message == "Parameter source for operation 'bulk' did not provide the mandatory parameter "
         "'raw-data-volume-per-day'. Add it to your parameter source and try again."
     )
 
@@ -553,14 +515,8 @@ def test_undocumented_params():
             num_docs += size
             # close to one day
             assert client_param_source.event_time_span == 85906.285764
-            assert (
-                json.loads(docs["body"][1])["message"]
-                == "2020-08-31T00:01:16.123456Z dummy"
-            )
-            assert (
-                json.loads(docs["body"][-1])["message"]
-                == "2020-08-31T23:53:03.123456Z dummy"
-            )
+            assert json.loads(docs["body"][1])["message"] == "2020-08-31T00:01:16.123456Z dummy"
+            assert json.loads(docs["body"][-1])["message"] == "2020-08-31T23:53:03.123456Z dummy"
             batches += 1
         except StopIteration:
             break
@@ -656,9 +612,7 @@ def test_timestamp_corpus_read_from_multiple_integrations():
     idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "application-logs-2"
     assert idx_name == expected_idx_name
-    assert (
-        doc_message == "\u001b[0mGET / \u001b[32m200 \u001b[0m0.592 ms - 2410\u001b[0m"
-    )
+    assert doc_message == "\u001b[0mGET / \u001b[32m200 \u001b[0m0.592 ms - 2410\u001b[0m"
     assert ts == timestamps[expected_idx_name]
 
     idx_name, doc_message, _ = next_bulk()
@@ -673,11 +627,7 @@ def test_timestamp_corpus_read_from_multiple_integrations():
     idx_name, doc_message, _ = next_bulk()
     expected_idx_name = "mysql-error-logs"
     assert idx_name == expected_idx_name
-    assert (
-        doc_message
-        == timestamps[expected_idx_name]
-        + " 3328971 [Note] Access denied for user 'root'@'10.12.6.38' (using password: YES)"
-    )
+    assert doc_message == timestamps[expected_idx_name] + " 3328971 [Note] Access denied for user 'root'@'10.12.6.38' (using password: YES)"
 
     idx_name, doc_message, _ = next_bulk()
     expected_idx_name = "mysql-slowlog-logs"
@@ -703,10 +653,7 @@ def test_timestamp_corpus_read_from_multiple_integrations():
     expected_idx_name = "nginx-access-logs-2"
     assert idx_name == expected_idx_name
     assert (
-        doc_message
-        == "93.191.78.166 - wendy13 ["
-        + timestamps[expected_idx_name]
-        + '] "GET /whoAmI/ HTTP/1.1" 200 6927 "-" "GoogleHC/1.0"'
+        doc_message == "93.191.78.166 - wendy13 [" + timestamps[expected_idx_name] + '] "GET /whoAmI/ HTTP/1.1" 200 6927 "-" "GoogleHC/1.0"'
     )
 
     idx_name, doc_message, _ = next_bulk()
@@ -739,17 +686,12 @@ def test_timestamp_corpus_read_from_multiple_integrations():
     idx_name, doc_message, _ = next_bulk()
     expected_idx_name = "redis-app-logs"
     assert idx_name == expected_idx_name
-    assert (
-        doc_message
-        == f"1:M {timestamps[expected_idx_name]}.464 - Accepted 10.12.9.203:40122"
-    )
+    assert doc_message == f"1:M {timestamps[expected_idx_name]}.464 - Accepted 10.12.9.203:40122"
 
     idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "redis-app-slowlogs"
     assert idx_name == expected_idx_name
-    assert (
-        doc_message == "ZREVRANGEBYSCORE ip_blacklist 9223372036854775807 -1 WITHSCORES"
-    )
+    assert doc_message == "ZREVRANGEBYSCORE ip_blacklist 9223372036854775807 -1 WITHSCORES"
     assert ts == timestamps[expected_idx_name]
 
     idx_name, doc_message, _ = next_bulk()
@@ -766,8 +708,7 @@ def test_timestamp_corpus_read_from_multiple_integrations():
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == timestamps[expected_idx_name]
-        + " server-02 sshd[8252]: Received disconnect from 175.158.50.75 port 31759:11: Bye Bye [preauth]"
+        == timestamps[expected_idx_name] + " server-02 sshd[8252]: Received disconnect from 175.158.50.75 port 31759:11: Bye Bye [preauth]"
     )
 
     idx_name, doc_message, _ = next_bulk()
@@ -782,8 +723,4 @@ def test_timestamp_corpus_read_from_multiple_integrations():
     idx_name, doc_message, _ = next_bulk()
     expected_idx_name = "system-syslog-logs-2"
     assert idx_name == expected_idx_name
-    assert (
-        doc_message
-        == timestamps[expected_idx_name]
-        + " workstation-03 systemd: Started Docker Cleanup."
-    )
+    assert doc_message == timestamps[expected_idx_name] + " workstation-03 systemd: Started Docker Cleanup."

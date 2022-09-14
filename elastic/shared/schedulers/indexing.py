@@ -16,6 +16,7 @@
 # under the License.
 
 import logging
+
 from shared.utils.track import mandatory
 
 
@@ -99,9 +100,7 @@ class TimestampThrottler:
     def __init__(self, task):
         self.logger = logging.getLogger(__name__)
         self.max_delay = task.params.get("max-delay-secs", 1)
-        self.max_bulk_size = mandatory(
-            task.operation.params, "bulk-size", task.operation.type
-        )
+        self.max_bulk_size = mandatory(task.operation.params, "bulk-size", task.operation.type)
         self.weight = self.max_bulk_size * self.WEIGHT_RATIO
         self.rate = 0
         self.parameter_source = None
@@ -119,9 +118,7 @@ class TimestampThrottler:
             self.last_state,
             -self.weight,
         )
-        self.divisor = (self.ALPHA * self.divisor) + (
-            self.BETA * abs(self.last_state + self.weight)
-        )
+        self.divisor = (self.ALPHA * self.divisor) + (self.BETA * abs(self.last_state + self.weight))
         self.logger.debug("Divisor is [%s]", self.divisor)
         if self.rate < self.max_delay:
             rate_increment = self.max_delay / (1 + self.divisor)
@@ -135,9 +132,7 @@ class TimestampThrottler:
             bulk_size_increment = self.max_bulk_size / (1 + self.divisor)
             new_bulk_size = weight - bulk_size_increment
             new_bulk_size = int(new_bulk_size if new_bulk_size > 1 else 1)
-            self.logger.debug(
-                "Adjusting bulk size from [%s] to [%s]", weight, new_bulk_size
-            )
+            self.logger.debug("Adjusting bulk size from [%s] to [%s]", weight, new_bulk_size)
             self.parameter_source.set_bulk_size(new_bulk_size)
         self.last_state = self.weight * -1
 
@@ -149,22 +144,14 @@ class TimestampThrottler:
             self.last_state,
             self.weight,
         )
-        self.divisor = (self.ALPHA * self.divisor) + (
-            self.BETA * abs(self.last_state - self.weight)
-        )
+        self.divisor = (self.ALPHA * self.divisor) + (self.BETA * abs(self.last_state - self.weight))
         self.logger.debug("Divisor is [%s]", self.divisor)
         if weight < self.max_bulk_size:
             # increase the bulk to the max first
             bulk_size_increment = self.max_bulk_size / (1 + self.divisor)
             new_bulk_size = weight + bulk_size_increment
-            new_bulk_size = int(
-                new_bulk_size
-                if new_bulk_size < self.max_bulk_size
-                else self.max_bulk_size
-            )
-            self.logger.debug(
-                "Adjusting bulk size from [%s] to [%s]", weight, new_bulk_size
-            )
+            new_bulk_size = int(new_bulk_size if new_bulk_size < self.max_bulk_size else self.max_bulk_size)
+            self.logger.debug("Adjusting bulk size from [%s] to [%s]", weight, new_bulk_size)
             self.parameter_source.set_bulk_size(new_bulk_size)
         else:
             # can't use the bulk size to speed up any more so we use the rate
@@ -178,9 +165,7 @@ class TimestampThrottler:
     def after_request(self, now, weight, unit, request_meta_data):
         since_start = now - self.start_time
         error = since_start - self.parameter_source.event_time_span
-        self.logger.debug(
-            "Error is [%s]s, Last Error was [%s]s", error, self.last_error
-        )
+        self.logger.debug("Error is [%s]s, Last Error was [%s]s", error, self.last_error)
         new_bulk_size = weight
         change_in_error = abs(error) - abs(self.last_error)
         self.logger.debug("Change in error is [%s]", change_in_error)

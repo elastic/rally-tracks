@@ -20,10 +20,9 @@ import os
 import random
 
 import pytest
-from esrally.exceptions import TrackConfigError, RallyAssertionError, DataError
-
-from shared.track_processors.data_generator import DataGenerator, CorpusGenerator
-from shared.parameter_sources.processed import ProcessedCorpusParamSource, MagicNumbers
+from esrally.exceptions import DataError, RallyAssertionError, TrackConfigError
+from shared.parameter_sources.processed import MagicNumbers, ProcessedCorpusParamSource
+from shared.track_processors.data_generator import CorpusGenerator, DataGenerator
 from shared.utils.time import TimeParsingError
 from tests.parameter_sources import StaticTrack
 
@@ -55,18 +54,12 @@ def set_absolute_data_path(track, data_root_path):
     generated_corpus = find_generated_corpus(track)
     if generated_corpus:
         for doc_set in generated_corpus.documents:
-            doc_set.document_file = os.path.join(
-                data_root_path, track.name, doc_set.document_file
-            )
+            doc_set.document_file = os.path.join(data_root_path, track.name, doc_set.document_file)
 
 
 def assert_rally_properties(lines):
     for doc in docs(lines):
-        assert (
-            "rally" in doc
-            and "doc_size" in doc["rally"]
-            and "message_size" in doc["rally"]
-        )
+        assert "rally" in doc and "doc_size" in doc["rally"] and "message_size" in doc["rally"]
 
 
 def find_generated_corpus(track):
@@ -97,9 +90,9 @@ def test_processed_file_read(tmp_path):
     assert len(lines_in_data_file) == 156
     assert generated_corpus.documents[0].number_of_documents == 78
     assert_rally_properties(lines_in_data_file)
-    assert test_track.selected_challenge_or_default.parameters[
-        "output-folder"
-    ] == os.path.join(tmp_path, test_track.name, "generated", track_id)
+    assert test_track.selected_challenge_or_default.parameters["output-folder"] == os.path.join(
+        tmp_path, test_track.name, "generated", track_id
+    )
     assert os.path.exists(f"{generated_corpus.documents[0].document_file}.offset")
 
 
@@ -152,10 +145,7 @@ def test_invalid_offset_generation(tmp_path):
             }
         )
         generate(test_track, tmp_path)
-    assert (
-        assertion_error.value.message
-        == "generator-batch-size [100] cannot be greater than offset-increment [10]"
-    )
+    assert assertion_error.value.message == "generator-batch-size [100] cannot be greater than offset-increment [10]"
 
 
 def test_processed_file_read_with_no_limit(tmp_path):
@@ -262,12 +252,8 @@ def test_cache_usage(tmp_path):
     cached = generate(test_track_2, tmp_path)
     assert cached
 
-    lines_in_data_track_1 = read_file(
-        find_generated_corpus(test_track_1).documents[0].document_file
-    )
-    lines_in_data_track_2 = read_file(
-        find_generated_corpus(test_track_2).documents[0].document_file
-    )
+    lines_in_data_track_1 = read_file(find_generated_corpus(test_track_1).documents[0].document_file)
+    lines_in_data_track_2 = read_file(find_generated_corpus(test_track_2).documents[0].document_file)
     assert lines_in_data_track_1 == lines_in_data_track_2
 
 
@@ -296,12 +282,8 @@ def test_cache_override(tmp_path):
     # we forced regenerating data
     assert not cached
 
-    lines_in_data_track_1 = read_file(
-        find_generated_corpus(test_track_1).documents[0].document_file
-    )
-    lines_in_data_track_2 = read_file(
-        find_generated_corpus(test_track_2).documents[0].document_file
-    )
+    lines_in_data_track_1 = read_file(find_generated_corpus(test_track_1).documents[0].document_file)
+    lines_in_data_track_2 = read_file(find_generated_corpus(test_track_2).documents[0].document_file)
     assert lines_in_data_track_1 == lines_in_data_track_2
 
 
@@ -361,9 +343,7 @@ def test_hr_date_ranges(tmp_path):
     assert generated_corpus.documents[0].number_of_documents == 1388
     assert_rally_properties(lines_in_data_file)
 
-    message_size = sum(
-        [doc["rally"]["message_size"] for doc in docs(lines_in_data_file)]
-    )
+    message_size = sum([doc["rally"]["message_size"] for doc in docs(lines_in_data_file)])
     assert round(message_size / 1024 / 1024, 1) == 0.1
 
 
@@ -427,9 +407,7 @@ def test_minute_date_ranges(tmp_path):
     assert generated_corpus.documents[0].number_of_documents == 1388
     assert_rally_properties(lines_in_data_file)
 
-    message_size = sum(
-        [doc["rally"]["message_size"] for doc in docs(lines_in_data_file)]
-    )
+    message_size = sum([doc["rally"]["message_size"] for doc in docs(lines_in_data_file)])
     assert round(message_size / 1024 / 1024, 1) == 0.1
 
 
@@ -449,8 +427,7 @@ def test_no_integration_ratios(tmp_path):
         generate(test_track, tmp_path)
 
     assert (
-        data_error.value.message
-        == "Parameter source for operation 'generate-data' did not provide the mandatory "
+        data_error.value.message == "Parameter source for operation 'generate-data' did not provide the mandatory "
         "parameter 'integration-ratios'. Add it to your parameter source and try again."
     )
 
@@ -474,8 +451,7 @@ def test_invalid_corpus(tmp_path):
         generate(test_track, tmp_path)
 
     assert (
-        rally_assertion_error.value.message
-        == "Corpus [does-not-exist-logs] is defined for data generation in "
+        rally_assertion_error.value.message == "Corpus [does-not-exist-logs] is defined for data generation in "
         "integration [does-not-exist] but is not present in track"
     )
 
@@ -515,8 +491,7 @@ def test_missing_max_raw_data_volume_per_day(tmp_path):
         generate(test_track, tmp_path)
 
     assert (
-        data_error.value.message
-        == "Parameter source for operation 'generate-data' did not provide the mandatory "
+        data_error.value.message == "Parameter source for operation 'generate-data' did not provide the mandatory "
         "parameter 'raw-data-volume-per-day'. Add it to your parameter source and try "
         "again."
     )
@@ -540,8 +515,7 @@ def test_missing_max_generated_corpus_size(tmp_path):
         generate(test_track, tmp_path)
 
     assert (
-        data_error.value.message
-        == "Parameter source for operation 'generate-data' did not provide the mandatory "
+        data_error.value.message == "Parameter source for operation 'generate-data' did not provide the mandatory "
         "parameter 'max-generated-corpus-size'. Add it to your parameter source and "
         "try again."
     )
@@ -669,9 +643,7 @@ def test_undocumented_params(tmp_path):
 
     lines_in_data_file = read_file(generated_corpus.documents[0].document_file)
     assert len(lines_in_data_file) == 5552
-    message_size = sum(
-        [doc["rally"]["message_size"] for doc in docs(lines_in_data_file)]
-    )
+    message_size = sum([doc["rally"]["message_size"] for doc in docs(lines_in_data_file)])
     assert round(message_size / 1024 / 1024, 1) == 0.2
 
 
@@ -732,20 +704,16 @@ def test_json_processor(tmp_path):
     processed_doc, message_size = generator._json_processor(doc, 0, "test-corpus")
     assert message_size == 5
     assert (
-        json.dumps(processed_doc)
-        == '{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 1, "message": "dummy", "rally":'
+        json.dumps(processed_doc) == '{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 1, "message": "dummy", "rally":'
         ' {"message_size": 5, "doc_size": 66,'
         ' "doc_size_with_meta": 131, '
         '"markers": "-0000000010000000010000000002800000000620000000063"}}'
     )
 
-    doc = json.dumps({"@timestamp": "2020-09-03T15:16:17.406Z", "id": 1}).encode(
-        "utf-8"
-    )
+    doc = json.dumps({"@timestamp": "2020-09-03T15:16:17.406Z", "id": 1}).encode("utf-8")
     processed_doc, message_size = generator._json_processor(doc, 0, "test-corpus")
     assert (
-        json.dumps(processed_doc)
-        == '{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 1, "rally": '
+        json.dumps(processed_doc) == '{"@timestamp": "2020-09-03T15:16:17.406Z", "id": 1, "rally": '
         '{"message_size": 48, '
         '"doc_size": 48, "doc_size_with_meta": 114, '
         '"markers": "-00000000100000000100000000028000000004e0000000050"}}'
@@ -780,16 +748,11 @@ def test_serialized_doc_markers():
 
         CorpusGenerator._append_doc_markers(doc)
         new_raw_doc = json.dumps(doc)
-        assert (
-            json.dumps(doc)
-            == raw_doc[:-2] + f', "markers": ' + f'"{data["expected_marker"]}"' + "}}"
-        )
+        assert json.dumps(doc) == raw_doc[:-2] + f', "markers": ' + f'"{data["expected_marker"]}"' + "}}"
 
         assert doc["rally"]["markers"] == data["expected_marker"]
 
-        msglen_value_start_pos = int(
-            new_raw_doc[MagicNumbers.MSGLEN_BEGIN_IDX : MagicNumbers.MSGLEN_END_IDX], 16
-        )
+        msglen_value_start_pos = int(new_raw_doc[MagicNumbers.MSGLEN_BEGIN_IDX : MagicNumbers.MSGLEN_END_IDX], 16)
         msglen_value_end_pos = int(
             new_raw_doc[MagicNumbers.MSGLEN_END_IDX : MagicNumbers.MSGLEN_END_IDX + 10],
             16,
@@ -804,35 +767,19 @@ def test_serialized_doc_markers():
                 16,
             )
             rallyts_len = int(
-                new_raw_doc[
-                    rallyts_start_pos
-                    + MagicNumbers.RALLYTS_LEN : rallyts_start_pos
-                    + MagicNumbers.RALLYTSDATA_LEN_END
-                ],
+                new_raw_doc[rallyts_start_pos + MagicNumbers.RALLYTS_LEN : rallyts_start_pos + MagicNumbers.RALLYTSDATA_LEN_END],
                 10,
             )
             ts_format = new_raw_doc[
-                rallyts_start_pos
-                + MagicNumbers.RALLYTS_FORMAT_BEGIN : rallyts_start_pos
-                + MagicNumbers.RALLYTS_FORMAT_BEGIN
-                + rallyts_len
+                rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN : rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len
             ]
-            whole_rallyts = new_raw_doc[
-                rallyts_start_pos : rallyts_start_pos
-                + MagicNumbers.RALLYTS_FORMAT_BEGIN
-                + rallyts_len
-                + 1
-            ]
+            whole_rallyts = new_raw_doc[rallyts_start_pos : rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len + 1]
 
             assert whole_rallyts == data["whole_rallyts"]
             assert ts_format == data["rallyts"]
         else:
-            ts_value_start_pos = int(
-                new_raw_doc[MagicNumbers.TS_BEGIN_IDX : MagicNumbers.TS_END_IDX], 16
-            )
-            ts_value_end_pos = int(
-                new_raw_doc[MagicNumbers.TS_END_IDX : MagicNumbers.MSGLEN_BEGIN_IDX], 16
-            )
+            ts_value_start_pos = int(new_raw_doc[MagicNumbers.TS_BEGIN_IDX : MagicNumbers.TS_END_IDX], 16)
+            ts_value_end_pos = int(new_raw_doc[MagicNumbers.TS_END_IDX : MagicNumbers.MSGLEN_BEGIN_IDX], 16)
 
             timestamp = new_raw_doc[ts_value_start_pos:ts_value_end_pos]
             assert timestamp == data["@timestamp"]

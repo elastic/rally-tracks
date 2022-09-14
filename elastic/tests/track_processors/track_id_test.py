@@ -41,22 +41,13 @@ def test_generate_id():
     }
     static_track = StaticTrack(parameters=parameters)
     track_generator.on_after_load_track(static_track)
-    assert (
-        static_track.selected_challenge.parameters["track-id"]
-        == "46bf445bdccc86dc4816bd49316e1fc9"
-    )
+    assert static_track.selected_challenge.parameters["track-id"] == "46bf445bdccc86dc4816bd49316e1fc9"
     parameters["not-considered-in-hash"] = "random-2"
     static_track_2 = StaticTrack(parameters=copy.deepcopy(parameters))
     track_generator.on_after_load_track(static_track_2)
-    assert (
-        static_track.selected_challenge.parameters["track-id"]
-        == static_track_2.selected_challenge.parameters["track-id"]
-    )
+    assert static_track.selected_challenge.parameters["track-id"] == static_track_2.selected_challenge.parameters["track-id"]
     parameters["raw-data-volume-per-day"] = "2GB"
     parameters["not-considered-in-hash"] = "random"
     static_track_3 = StaticTrack(parameters=copy.deepcopy(parameters))
     track_generator.on_after_load_track(static_track_3)
-    assert (
-        static_track.selected_challenge.parameters["track-id"]
-        != static_track_3.selected_challenge.parameters["track-id"]
-    )
+    assert static_track.selected_challenge.parameters["track-id"] != static_track_3.selected_challenge.parameters["track-id"]

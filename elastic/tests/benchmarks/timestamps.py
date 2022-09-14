@@ -17,6 +17,7 @@
 
 import time
 from datetime import datetime
+
 import pytest
 
 # This benchmark was used to test implementations of time formatting in ProcessedCorpusParamSource._json_processor() after it was determined

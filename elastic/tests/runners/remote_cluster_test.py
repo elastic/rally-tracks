@@ -17,13 +17,13 @@
 
 import copy
 from unittest import mock
+
 import pytest
 from shared.runners.remote_cluster import ConfigureRemoteCluster, FollowIndexRunner
 from tests import as_future
 
 
 class TestConfigureRemoteCluster:
-
     @pytest.fixture
     @mock.patch("elasticsearch.Elasticsearch")
     def setup_es(self, es):
@@ -38,10 +38,7 @@ class TestConfigureRemoteCluster:
 
     @pytest.fixture
     def setup_params(self):
-        params = {
-            "remote-cluster": "remote-cluster",
-            "local-cluster": "local-cluster"
-        }
+        params = {"remote-cluster": "remote-cluster", "local-cluster": "local-cluster"}
         return params
 
     @pytest.mark.asyncio
@@ -56,8 +53,8 @@ class TestConfigureRemoteCluster:
                     },
                     "ZrKjLJ1cT6eXblbjwMkkFb": {
                         "transport_address": "127.0.0.2:39320",
-                    }
-                }
+                    },
+                },
             }
         )
 
@@ -71,7 +68,7 @@ class TestConfigureRemoteCluster:
                     "num_nodes_connected": 1,
                     "max_connections_per_cluster": 3,
                     "initial_connect_timeout": "30s",
-                    "skip_unavailable": False
+                    "skip_unavailable": False,
                 }
             }
         )
@@ -80,8 +77,12 @@ class TestConfigureRemoteCluster:
         await cfg_remote_cluster(setup_es, setup_params)
 
         setup_es["local-cluster"].cluster.put_settings.assert_called_with(
-            body={"persistent": {
-                    "cluster.remote.remote_test_cluster.seeds": ["127.0.0.1:39320", "127.0.0.2:39320"]
+            body={
+                "persistent": {
+                    "cluster.remote.remote_test_cluster.seeds": [
+                        "127.0.0.1:39320",
+                        "127.0.0.2:39320",
+                    ]
                 }
             }
         )
@@ -94,12 +95,12 @@ class TestConfigureRemoteCluster:
                 "cluster_name": "remote_test_cluster",
                 "nodes": {
                     "ZrKjLJ1cT6eXblbjwMkkFA": {
-                    "transport_address": "127.0.0.1:39320",
+                        "transport_address": "127.0.0.1:39320",
                     },
                     "ZrKjLJ1cT6eXblbjwMkkFB": {
-                    "transport_address": "127.0.0.2:39320",
-                    }
-                }
+                        "transport_address": "127.0.0.2:39320",
+                    },
+                },
             }
         )
 
@@ -113,7 +114,7 @@ class TestConfigureRemoteCluster:
                     "num_nodes_connected": 1,
                     "max_connections_per_cluster": 3,
                     "initial_connect_timeout": "30s",
-                    "skip_unavailable": False
+                    "skip_unavailable": False,
                 }
             }
         )
@@ -122,14 +123,13 @@ class TestConfigureRemoteCluster:
         with pytest.raises(BaseException) as e:
             await cfg_remote_cluster(setup_es, setup_params)
 
-        assert(
+        assert (
             "Unable to connect [local-cluster] to cluster [remote_test_cluster]. Check each cluster's "
             "logs for more information on why the connection failed." in str(e)
         )
 
 
 class TestFollowIndexRunner:
-
     @pytest.fixture
     @mock.patch("elasticsearch.Elasticsearch")
     def setup_es(self, es):
@@ -147,7 +147,7 @@ class TestFollowIndexRunner:
         params = {
             "remote-cluster": "remote-cluster",
             "local-cluster": "local-cluster",
-            "index": "logs-*"
+            "index": "logs-*",
         }
         return params
 
@@ -159,12 +159,12 @@ class TestFollowIndexRunner:
                 "cluster_name": "remote_test_cluster",
                 "nodes": {
                     "ZrKjLJ1cT6eXblbjwMkkFA": {
-                    "transport_address": "127.0.0.1:39320",
+                        "transport_address": "127.0.0.1:39320",
                     },
                     "ZrKjLJ1cT6eXblbjwMkkFB": {
-                    "transport_address": "127.0.0.2:39320",
-                    }
-                }
+                        "transport_address": "127.0.0.2:39320",
+                    },
+                },
             }
         )
 
@@ -180,7 +180,7 @@ class TestFollowIndexRunner:
                 "max_nodes": 1000,
                 "issued_to": "cluster-1",
                 "issuer": "elasticsearch",
-                "start_date_in_millis": -1
+                "start_date_in_millis": -1,
             }
         }
 
@@ -202,7 +202,7 @@ class TestFollowIndexRunner:
                             "number_of_replicas": "1",
                         }
                     }
-                }
+                },
             }
         )
 
@@ -216,7 +216,7 @@ class TestFollowIndexRunner:
                     "num_nodes_connected": 1,
                     "max_connections_per_cluster": 3,
                     "initial_connect_timeout": "30s",
-                    "skip_unavailable": False
+                    "skip_unavailable": False,
                 }
             }
         )
@@ -241,7 +241,6 @@ class TestFollowIndexRunner:
                     request_timeout=7200,
                 ),
             ]
-
         )
 
         setup_es["local-cluster"].ccr.follow.assert_has_calls(
@@ -253,11 +252,9 @@ class TestFollowIndexRunner:
                         "leader_index": ".ds-logs-apache.error-default-2022.08.12-000001",
                         "remote_cluster": "remote_test_cluster",
                         "read_poll_timeout": "5m",
-                        "settings": {
-                            "index.number_of_replicas": "0"
-                        },
+                        "settings": {"index.number_of_replicas": "0"},
                     },
-                    request_timeout=7200
+                    request_timeout=7200,
                 ),
                 mock.call(
                     index=".ds-logs-nginx.error-default-2022.08.12-000001",
@@ -266,11 +263,9 @@ class TestFollowIndexRunner:
                         "leader_index": ".ds-logs-nginx.error-default-2022.08.12-000001",
                         "remote_cluster": "remote_test_cluster",
                         "read_poll_timeout": "5m",
-                        "settings": {
-                            "index.number_of_replicas": "1"
-                        },
+                        "settings": {"index.number_of_replicas": "1"},
                     },
-                    request_timeout=7200
+                    request_timeout=7200,
                 ),
             ]
         )
@@ -278,19 +273,17 @@ class TestFollowIndexRunner:
     @pytest.mark.asyncio
     async def test_follow_index_invalid_license(self, setup_es, setup_params):
 
-
-
         setup_es["remote-cluster"].info.return_value = as_future(
             {
                 "cluster_name": "remote_test_cluster",
                 "nodes": {
                     "ZrKjLJ1cT6eXblbjwMkkFA": {
-                    "transport_address": "127.0.0.1:39320",
+                        "transport_address": "127.0.0.1:39320",
                     },
                     "ZrKjLJ1cT6eXblbjwMkkFB": {
-                    "transport_address": "127.0.0.2:39320",
-                    }
-                }
+                        "transport_address": "127.0.0.2:39320",
+                    },
+                },
             }
         )
 
@@ -306,7 +299,7 @@ class TestFollowIndexRunner:
                 "max_nodes": 1000,
                 "issued_to": "cluster-1",
                 "issuer": "elasticsearch",
-                "start_date_in_millis": -1
+                "start_date_in_millis": -1,
             }
         }
 
@@ -326,8 +319,4 @@ class TestFollowIndexRunner:
         with pytest.raises(BaseException) as e:
             await follow_index(setup_es, setup_params)
 
-        assert (
-            "Cannot use license type(s) [basic, basic] for CCR features. "
-            f"All clusters must use one of [{required_licenses}]" in str(e)
-        )
-
+        assert f"Cannot use license type(s) [basic, basic] for CCR features. All clusters must use one of [{required_licenses}]" in str(e)

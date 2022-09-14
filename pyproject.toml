@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.version]
+source = "vcs"
+
+[project]
+name = "rally-tracks"
+readme = "README.md"
+dynamic = ["version"]
+requires-python = ">=3.8"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.github",
+  "/.ci",
+]
+
+[tool.hatch.envs.default]
+dependencies = [
+    "esrally[develop] @ git+https://github.com/elastic/rally.git@master",
+    "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main",
+]
+
+[tool.hatch.envs.unit]
+extra-dependencies = [
+    "geneve==0.0.3",
+    "elastic-package-assets @ git+https://github.com/elastic/package-assets.git@main"
+]
+
+[tool.hatch.envs.unit.scripts]
+test = "pytest"
+
+[tool.hatch.envs.it.scripts]
+test = "pytest it --log-cli-level=INFO"
+
+[tool.pytest.ini_options]
+# set to true for more verbose output of tests
+log_cli = false
+addopts = "--verbose --color=yes --ignore=it"
+junit_family = "xunit2"
+junit_logging = "all"
+asyncio_mode = "strict"
+
+[tool.black]
+line-length = 140
+target-version = ['py38']
+
+[tool.isort]
+profile = 'black'

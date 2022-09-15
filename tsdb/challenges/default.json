@@ -232,14 +232,8 @@
           "operation": {
             "operation-type": "downsample",
             "fixed-interval": "1d",
-            "source-index": "tsdb",
             "target-index": "tsdb-1d"
           }
-        },
-        {
-          "operation": "date-histo-entire-range-1s",
-          "warmup-iterations": 50,
-          "iterations": 100
         },
         {
           "operation": "date-histo-entire-range-1m",

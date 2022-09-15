@@ -202,32 +202,28 @@
           "name": "downsample-1s",
           "operation": {
             "operation-type": "downsample",
-            "fixed-interval": "1s",
-            "target-index": "tsdb-1s"
+            "fixed-interval": "1s"
           }
         },
         {
           "name": "downsample-1m",
           "operation": {
             "operation-type": "downsample",
-            "fixed-interval": "1m",
-            "target-index": "tsdb-1m"
+            "fixed-interval": "1m"
           }
         },
         {
           "name": "downsample-1h",
           "operation": {
             "operation-type": "downsample",
-            "fixed-interval": "1h",
-            "target-index": "tsdb-1h"
+            "fixed-interval": "1h"
           }
         },
         {
           "name": "downsample-1d",
           "operation": {
             "operation-type": "downsample",
-            "fixed-interval": "1d",
-            "target-index": "tsdb-1d"
+            "fixed-interval": "1d"
           }
         },
         {

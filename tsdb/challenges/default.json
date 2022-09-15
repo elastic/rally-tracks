@@ -53,9 +53,7 @@
         },
         {%- else %}
         {
-          "operation": {
-            "operation-type": "delete-index"
-          }
+          "operation": "delete-index"
         },
         {
           "operation": {

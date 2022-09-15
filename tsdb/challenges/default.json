@@ -205,7 +205,6 @@
           "operation": {
             "operation-type": "downsample",
             "fixed-interval": "1s",
-            "source-index": "tsdb",
             "target-index": "tsdb-1s"
           }
         },
@@ -214,7 +213,6 @@
           "operation": {
             "operation-type": "downsample",
             "fixed-interval": "1m",
-            "source-index": "tsdb",
             "target-index": "tsdb-1m"
           }
         },
@@ -223,7 +221,6 @@
           "operation": {
             "operation-type": "downsample",
             "fixed-interval": "1h",
-            "source-index": "tsdb",
             "target-index": "tsdb-1h"
           }
         },

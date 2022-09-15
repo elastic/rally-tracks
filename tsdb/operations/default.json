@@ -24,6 +24,22 @@
       }
     },
     {
+      "name": "date-histo-entire-range-1s",
+      "operation-type": "search",
+      "index": "tsdb-1s",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "date": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "1s"
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "date-histo-entire-range-1m",
       "operation-type": "search",
       "index": "tsdb-1m",

@@ -667,4 +667,76 @@
           "iterations": 50
         }
       ]
+    },
+    {
+      "name": "compute-engine",
+      "description": "Checks the performance of compute engine",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              "index.codec": "best_compression",
+              "index.refresh_interval": "30s",
+              "index.translog.flush_threshold_size": "4g"
+            }{%- endif %}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "nyc_taxis",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "index",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh"
+        },
+        {
+          "operation": "avg_passenger_count",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_passenger_count_single_compute",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_passenger_count_par_segment_compute",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_passenger_count_par_doc_compute",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_passenger_count_single_search_parallel_compute",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        }
+      ]
     }

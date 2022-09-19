@@ -122,6 +122,7 @@
         },
         {
           "name": "wait-for-transform-group-by-user",
+          "include-in-reporting": true,
           "operation": {
             "operation-type": "wait-for-transform",
             "transform-id": "transform-group-by-user",
@@ -149,6 +150,7 @@
         },
         {
           "name": "wait-for-transform-group-by-hour",
+          "include-in-reporting": true,
           "operation": {
             "operation-type": "wait-for-transform",
             "transform-id": "transform-group-by-hour",

@@ -881,5 +881,213 @@
           }
         }
       }
+    },
+    {
+      "name": "avg_long_passenger_count_single_compute",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_compute",
+      "body": {
+        "plan" : {
+          "aggregation" : {
+            "mode" : "FINAL",
+            "aggs" : {
+              "passenger_count_avg" : {
+                "avg" : {
+                  "field" : "passenger_count",
+                  "type" : "LONG"
+                }
+              }
+            },
+            "source" : {
+              "aggregation" : {
+                "mode" : "PARTIAL",
+                "aggs" : {
+                  "passenger_count_avg" : {
+                    "avg" : {
+                      "field" : "passenger_count",
+                      "type" : "LONG"
+                    }
+                  }
+                },
+                "source" : {
+                  "doc-values" : {
+                    "field" : "passenger_count",
+                    "source" : {
+                      "lucene-source" : {
+                        "indices" : "nyc_taxis",
+                        "query" : "*:*",
+                        "parallelism" : "SINGLE"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "avg_long_passenger_count_par_segment_compute",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_compute",
+      "body": {
+        "plan" : {
+          "aggregation" : {
+            "mode" : "FINAL",
+            "aggs" : {
+              "passenger_count_avg" : {
+                "avg" : {
+                  "field" : "passenger_count",
+                  "type" : "LONG"
+                }
+              }
+            },
+            "source" : {
+              "exchange" : {
+                "type" : "GATHER",
+                "partitioning" : "SINGLE_DISTRIBUTION",
+                "source" : {
+                  "aggregation" : {
+                    "mode" : "PARTIAL",
+                    "aggs" : {
+                      "passenger_count_avg" : {
+                        "avg" : {
+                          "field" : "passenger_count",
+                          "type" : "LONG"
+                        }
+                      }
+                    },
+                    "source" : {
+                      "doc-values" : {
+                        "field" : "passenger_count",
+                        "source" : {
+                          "lucene-source" : {
+                            "indices" : "nyc_taxis",
+                            "query" : "*:*",
+                            "parallelism" : "SEGMENT"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "avg_long_passenger_count_par_doc_compute",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_compute",
+      "body": {
+        "plan" : {
+          "aggregation" : {
+            "mode" : "FINAL",
+            "aggs" : {
+              "passenger_count_avg" : {
+                "avg" : {
+                  "field" : "passenger_count",
+                  "type" : "LONG"
+                }
+              }
+            },
+            "source" : {
+              "exchange" : {
+                "type" : "GATHER",
+                "partitioning" : "SINGLE_DISTRIBUTION",
+                "source" : {
+                  "aggregation" : {
+                    "mode" : "PARTIAL",
+                    "aggs" : {
+                      "passenger_count_avg" : {
+                        "avg" : {
+                          "field" : "passenger_count",
+                          "type" : "LONG"
+                        }
+                      }
+                    },
+                    "source" : {
+                      "doc-values" : {
+                        "field" : "passenger_count",
+                        "source" : {
+                          "lucene-source" : {
+                            "indices" : "nyc_taxis",
+                            "query" : "*:*",
+                            "parallelism" : "DOC"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "avg_long_passenger_count_single_search_parallel_compute",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_compute",
+      "body": {
+                "plan" : {
+          "aggregation" : {
+            "mode" : "FINAL",
+            "aggs" : {
+              "passenger_count_avg" : {
+                "avg" : {
+                  "field" : "passenger_count",
+                  "type" : "LONG"
+                }
+              }
+            },
+            "source" : {
+              "exchange" : {
+                "type" : "GATHER",
+                "partitioning" : "SINGLE_DISTRIBUTION",
+                "source" : {
+                  "aggregation" : {
+                    "mode" : "PARTIAL",
+                    "aggs" : {
+                      "passenger_count_avg" : {
+                        "avg" : {
+                          "field" : "passenger_count",
+                          "type" : "LONG"
+                        }
+                      }
+                    },
+                    "source" : {
+                      "doc-values" : {
+                        "field" : "passenger_count",
+                        "source" : {
+                          "exchange" : {
+                            "type" : "REPARTITION",
+                            "partitioning" : "FIXED_ARBITRARY_DISTRIBUTION",
+                            "source" : {
+                              "lucene-source" : {
+                                "indices" : "nyc_taxis",
+                                "query" : "*:*",
+                                "parallelism" : "SINGLE"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
 

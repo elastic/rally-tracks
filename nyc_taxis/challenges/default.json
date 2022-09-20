@@ -737,6 +737,30 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "avg_long_passenger_count_single_compute",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_long_passenger_count_par_segment_compute",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_long_passenger_count_par_doc_compute",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_long_passenger_count_single_search_parallel_compute",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
         }
       ]
     }

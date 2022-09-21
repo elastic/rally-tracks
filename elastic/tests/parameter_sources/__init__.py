@@ -2,24 +2,25 @@ import json
 import os
 
 from esrally.track import (
-    DocumentCorpus,
-    Documents,
-    track,
-    IndexTemplate,
-    Index,
     Challenge,
     ComponentTemplate,
+    DocumentCorpus,
+    Documents,
+    Index,
+    IndexTemplate,
+    track,
 )
 from shared.track_processors.data_generator import LazyMetadataDocuments
 
+cwd = os.path.dirname(__file__)
 
-class StaticTrack:
+
+class EmptyTrack:
     def __init__(
         self,
         name="test_track",
         parameters=None,
         challenge_parameters=None,
-        generated_document_paths=None,
     ):
         self.name = name
         if challenge_parameters is None:
@@ -27,18 +28,33 @@ class StaticTrack:
         if parameters is None:
             parameters = {}
         self.selected_challenge = Challenge(
-            "test-challenge", parameters={**parameters, **challenge_parameters}
+            "test-challenge",
+            parameters={**parameters, **challenge_parameters},
         )
         self.selected_challenge_or_default = self.selected_challenge
+        self.data_streams = []
+        self.component_templates = []
+        self.composable_templates = []
+        # test file references are relative from root elastic/ folder
+        self.root = os.path.join(cwd, "..", "..")
+
+
+class StaticTrack(EmptyTrack):
+    def __init__(
+        self,
+        name="test_track",
+        parameters=None,
+        challenge_parameters=None,
+        generated_document_paths=None,
+    ):
+        super(StaticTrack, self).__init__(name, parameters, challenge_parameters)
+
         system_corpora = DocumentCorpus(name="system-logs")
-        cwd = os.path.dirname(__file__)
         system_corpora.documents.append(
             Documents(
                 target_data_stream="logs-system.test",
                 source_format=track.Documents.SOURCE_FORMAT_BULK,
-                document_file=os.path.join(
-                    cwd, "resources", "documents", "test-system.json"
-                ),
+                document_file=os.path.join(cwd, "resources", "documents", "test-system.json"),
                 number_of_documents=2,
             )
         )
@@ -47,9 +63,7 @@ class StaticTrack:
             Documents(
                 target_data_stream="logs-system.test",
                 source_format=track.Documents.SOURCE_FORMAT_BULK,
-                document_file=os.path.join(
-                    cwd, "resources", "documents", "test-agent.json"
-                ),
+                document_file=os.path.join(cwd, "resources", "documents", "test-agent.json"),
                 number_of_documents=2,
             )
         )
@@ -58,19 +72,13 @@ class StaticTrack:
             Documents(
                 target_data_stream="logs-kafka.test",
                 source_format=track.Documents.SOURCE_FORMAT_BULK,
-                document_file=os.path.join(
-                    cwd, "resources", "documents", "test-kafka.json"
-                ),
+                document_file=os.path.join(cwd, "resources", "documents", "test-kafka.json"),
                 number_of_documents=1,
             )
         )
 
-        self.component_templates = []
-        self.composable_templates = []
         with open(
-            os.path.join(
-                cwd, "resources", "templates", "logs-endpoint.events.process.json"
-            ),
+            os.path.join(cwd, "resources", "templates", "logs-endpoint.events.process.json"),
             "r",
         ) as composable_file:
             self.composable_templates.append(
@@ -89,11 +97,7 @@ class StaticTrack:
             ),
             "r",
         ) as component_file:
-            self.component_templates.append(
-                ComponentTemplate(
-                    "logs-endpoint.events.process-mappings", json.load(component_file)
-                )
-            )
+            self.component_templates.append(ComponentTemplate("logs-endpoint.events.process-mappings", json.load(component_file)))
 
         self.corpora = [system_corpora, agent_corpora, kakfa_corpora]
         if generated_document_paths:
@@ -101,9 +105,7 @@ class StaticTrack:
             for p in generated_document_paths:
                 docs.append(LazyMetadataDocuments(document_file=p))
 
-            generated_corpus = DocumentCorpus(
-                name="generated", documents=docs, meta_data={"generated": True}
-            )
+            generated_corpus = DocumentCorpus(name="generated", documents=docs, meta_data={"generated": True})
             self.corpora.append(generated_corpus)
 
         self.data_streams = [
@@ -111,8 +113,6 @@ class StaticTrack:
             Index("logs-elastic.agent-default"),
             Index("logs-elastic.kafka-default"),
         ]
-        # test file references are relative from root elastic/ folder
-        self.root = os.path.join(cwd, "..", "..")
 
 
 class InvalidTrack:

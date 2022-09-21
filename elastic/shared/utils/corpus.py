@@ -29,9 +29,7 @@ def calculate_integration_ratios(corpus_counts):
     return corpora_ratios
 
 
-def calculate_corpus_counts(
-    corpus_stats, corpora_ratios, required_raw_volume_gb, max_generation_size_gb=0
-):
+def calculate_corpus_counts(corpus_stats, corpora_ratios, required_raw_volume_gb, max_generation_size_gb=0):
     """
     Calculates the required document counts to satisfy the specified required_raw_volume_gb and specified ratios.
     Scales these document counts to the limit imposed by max_generation_size_gb.
@@ -52,25 +50,17 @@ def calculate_corpus_counts(
     total_generated_volume_bytes = required_raw_volume_gb * 1024 * 1024 * 1024
     required_corpus_bytes = {}
     for corpus_name, ratio in corpora_ratios.items():
-        required_corpus_bytes[corpus_name] = (
-            ratio
-            * total_generated_volume_bytes
-            * corpus_stats[corpus_name]["raw_json_ratio"]
-        )
+        required_corpus_bytes[corpus_name] = ratio * total_generated_volume_bytes * corpus_stats[corpus_name]["raw_json_ratio"]
     total_required_bytes = sum(required_corpus_bytes.values())
     # we don't want to generate more than we need so take the min
     if max_generation_size_gb > 0:
-        actual_generation_size = min(
-            total_required_bytes, max_generation_size_gb * 1024 * 1024 * 1024
-        )
+        actual_generation_size = min(total_required_bytes, max_generation_size_gb * 1024 * 1024 * 1024)
     else:
         actual_generation_size = total_required_bytes
     # we scale to the amount requested or we'd generate a lot more than max_generation_size per day
     for corpus_name, required_bytes in required_corpus_bytes.items():
         actual_bytes = (required_bytes / total_required_bytes) * actual_generation_size
-        corpora_doc_counts[corpus_name] = math.ceil(
-            actual_bytes / corpus_stats[corpus_name]["avg_doc_size_with_meta"]
-        )
+        corpora_doc_counts[corpus_name] = math.ceil(actual_bytes / corpus_stats[corpus_name]["avg_doc_size_with_meta"])
     return corpora_doc_counts
 
 

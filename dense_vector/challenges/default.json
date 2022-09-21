@@ -36,7 +36,8 @@
       "name": "refresh-after-index",
       "operation": {
         "operation-type": "refresh",
-        "request-timeout": 1000
+        "request-timeout": 1000,
+        "include-in-reporting": true
       }
     },
     {
@@ -76,7 +77,8 @@
       "name": "refresh-after-update",
       "operation": {
         "operation-type": "refresh",
-        "request-timeout": 1000
+        "request-timeout": 1000,
+        "include-in-reporting": true
       }
     },
     {

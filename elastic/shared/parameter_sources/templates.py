@@ -16,27 +16,21 @@
 # under the License.
 
 from esrally.track.params import (
-    CreateComposableTemplateParamSource,
     CreateComponentTemplateParamSource,
+    CreateComposableTemplateParamSource,
 )
 
 
 class ComponentTemplateParamSource(CreateComponentTemplateParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
-        self.template_definitions = [
-            (template[0], process_template(template[1], params))
-            for template in self.template_definitions
-        ]
+        self.template_definitions = [(template[0], process_template(template[1], params)) for template in self.template_definitions]
 
 
 class ComposableTemplateParamSource(CreateComposableTemplateParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
-        self.template_definitions = [
-            (template[0], process_template(template[1], params))
-            for template in self.template_definitions
-        ]
+        self.template_definitions = [(template[0], process_template(template[1], params)) for template in self.template_definitions]
 
 
 def process_template(content, params):
@@ -47,11 +41,7 @@ def process_template(content, params):
 def remove_pipelines(content, remove):
     if not remove:
         return content
-    if (
-        "template" in content
-        and "settings" in content["template"]
-        and "index" in content["template"]["settings"]
-    ):
+    if "template" in content and "settings" in content["template"] and "index" in content["template"]["settings"]:
         if "default_pipeline" in content["template"]["settings"]["index"]:
             del content["template"]["settings"]["index"]["default_pipeline"]
         if "final_pipeline" in content["template"]["settings"]["index"]:
@@ -62,11 +52,7 @@ def remove_pipelines(content, remove):
 def remove_routing_shards(content, remove):
     if not remove:
         return content
-    if (
-        "template" in content
-        and "settings" in content["template"]
-        and "index" in content["template"]["settings"]
-    ):
+    if "template" in content and "settings" in content["template"] and "index" in content["template"]["settings"]:
         if "number_of_routing_shards" in content["template"]["settings"]["index"]:
             del content["template"]["settings"]["index"]["number_of_routing_shards"]
     return content

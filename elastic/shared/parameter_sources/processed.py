@@ -15,23 +15,22 @@
 # specific language governing permissions and limitations
 # under the License.
 import copy
-import time
-from typing import Tuple
 import logging
 import math
 import random
+import time
 from datetime import datetime, timezone
+from typing import Tuple
 
-from shared.parameter_sources import DEFAULT_END_DATE, DEFAULT_START_DATE
-from shared.utils.track import mandatory
 from esrally.track import exceptions
 from esrally.track.params import IndexIdConflict
 from esrally.utils import io
-
+from shared.parameter_sources import DEFAULT_END_DATE, DEFAULT_START_DATE
 from shared.ts_generators import get_ts_generator
 from shared.utils.corpus import bounds, convert_to_gib
-from shared.utils.file import BulkFileReader, WrappingSlice, CorpusReader
+from shared.utils.file import BulkFileReader, CorpusReader, WrappingSlice
 from shared.utils.time import parse_date_time
+from shared.utils.track import mandatory
 
 
 class MagicNumbers:
@@ -70,9 +69,7 @@ class ProcessedCorpusParamSource:
         self._params = params
         self.kwargs = kwargs
         self._track_id = track.selected_challenge_or_default.parameters["track-id"]
-        self._random_seed = track.selected_challenge_or_default.parameters.get(
-            "random-seed", None
-        )
+        self._random_seed = track.selected_challenge_or_default.parameters.get("random-seed", None)
         self.logger.info(f"Using track id {self._track_id}")
         raw_volume_per_day = mandatory(
             track.selected_challenge_or_default.parameters,
@@ -91,28 +88,20 @@ class ProcessedCorpusParamSource:
             # this is an undocumented parameter that causes bulk-start-date and bulk-end-date to be used for pre loading
             # datasets in cases where multiple challenges cannot be run
             self._start_date = parse_date_time(
-                track.selected_challenge_or_default.parameters.get(
-                    "bulk-start-date", DEFAULT_START_DATE
-                ),
+                track.selected_challenge_or_default.parameters.get("bulk-start-date", DEFAULT_START_DATE),
                 utcnow=utc_now,
             )
             self._end_date = parse_date_time(
-                track.selected_challenge_or_default.parameters.get(
-                    "bulk-end-date", DEFAULT_END_DATE
-                ),
+                track.selected_challenge_or_default.parameters.get("bulk-end-date", DEFAULT_END_DATE),
                 utcnow=utc_now,
             )
         else:
             self._start_date = parse_date_time(
-                track.selected_challenge_or_default.parameters.get(
-                    "start-date", DEFAULT_START_DATE
-                ),
+                track.selected_challenge_or_default.parameters.get("start-date", DEFAULT_START_DATE),
                 utcnow=utc_now,
             )
             self._end_date = parse_date_time(
-                track.selected_challenge_or_default.parameters.get(
-                    "end-date", DEFAULT_END_DATE
-                ),
+                track.selected_challenge_or_default.parameters.get("end-date", DEFAULT_END_DATE),
                 utcnow=utc_now,
             )
 
@@ -124,12 +113,9 @@ class ProcessedCorpusParamSource:
 
         if self._start_date > self._end_date:
             raise exceptions.TrackConfigError(
-                f'"start-date" cannot be greater than "end-date" for operation '
-                f"\"{self._params.get('operation-type')}\""
+                f'"start-date" cannot be greater than "end-date" for operation ' f"\"{self._params.get('operation-type')}\""
             )
-        self._number_of_days = (
-            self._end_date - self._start_date
-        ).total_seconds() / 86400
+        self._number_of_days = (self._end_date - self._start_date).total_seconds() / 86400
 
         self._time_format = params.get("time-format", "milliseconds")
         self._processor = self._json_processor
@@ -143,9 +129,7 @@ class ProcessedCorpusParamSource:
         try:
             self.bulk_size = int(mandatory(params, "bulk-size", "bulk"))
             if self.bulk_size <= 0:
-                raise exceptions.InvalidSyntax(
-                    f'"bulk-size" must be positive but was {self.bulk_size}'
-                )
+                raise exceptions.InvalidSyntax(f'"bulk-size" must be positive but was {self.bulk_size}')
             # each doc needs consists of meta and doc
             self.lines_per_bulk = self.bulk_size * 2
         except KeyError:
@@ -153,7 +137,8 @@ class ProcessedCorpusParamSource:
         except ValueError:
             raise exceptions.InvalidSyntax('"bulk-size" must be numeric')
         self.corpus = next(
-            (c for c in track.corpora if c.meta_data.get("generated", False)), None
+            (c for c in track.corpora if c.meta_data.get("generated", False)),
+            None,
         )
         self._reset_timestamps()
         # TODO: Validate this exists and has files
@@ -174,9 +159,7 @@ class ProcessedCorpusParamSource:
         new_params = copy.deepcopy(self._params)
         new_params["client_index"] = partition_index
         new_params["client_count"] = total_partitions
-        return ProcessedCorpusParamSource(
-            self._orig_args[0], new_params, **self._orig_args[2]
-        )
+        return ProcessedCorpusParamSource(self._orig_args[0], new_params, **self._orig_args[2])
 
     def _json_processor(self, doc: bytes, line_num: int, _: str) -> Tuple[str, int]:
         doc = doc.decode("utf-8").strip()
@@ -190,24 +173,20 @@ class ProcessedCorpusParamSource:
         self.max_timestamp = timestamp
 
         # see ProcessedCorpusParamSource for more details
-        rallyts_start_pos = int(
-            doc[MagicNumbers.RALLYTS_BEGIN_IDX : MagicNumbers.TS_BEGIN_IDX], 16
-        )
-        msglen_value_start_pos = int(
-            doc[MagicNumbers.MSGLEN_BEGIN_IDX : MagicNumbers.MSGLEN_END_IDX], 16
-        )
-        msglen_value_end_pos = int(
-            doc[MagicNumbers.MSGLEN_END_IDX : MagicNumbers.MSGLEN_END_IDX + 10], 16
-        )
+        rallyts_start_pos = int(doc[MagicNumbers.RALLYTS_BEGIN_IDX : MagicNumbers.TS_BEGIN_IDX], 16)
+        msglen_value_start_pos = int(doc[MagicNumbers.MSGLEN_BEGIN_IDX : MagicNumbers.MSGLEN_END_IDX], 16)
+        msglen_value_end_pos = int(doc[MagicNumbers.MSGLEN_END_IDX : MagicNumbers.MSGLEN_END_IDX + 10], 16)
 
         msgsize = int(doc[msglen_value_start_pos:msglen_value_end_pos], 10)
 
         if rallyts_start_pos != -1:
             # doc["message"] contains _RALLYTS with timestamp format specification (most of integrations)
 
-            rallyts_len = int(doc[rallyts_start_pos+MagicNumbers.RALLYTS_LEN: rallyts_start_pos + MagicNumbers.RALLYTSDATA_LEN_END], 10)
+            rallyts_len = int(doc[rallyts_start_pos + MagicNumbers.RALLYTS_LEN : rallyts_start_pos + MagicNumbers.RALLYTSDATA_LEN_END], 10)
 
-            ts_format = doc[rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN: rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len]
+            ts_format = doc[
+                rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN : rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len
+            ]
 
             # %s is spuriously supported/implemented, depending on the platform's implementation of strftime. Here we specifically implement handling to mean
             # timezone-less interpretation of the epoch
@@ -229,12 +208,8 @@ class ProcessedCorpusParamSource:
             # no timestamp in message field e.g. application-logs, redis-slowlog-log
             # directly copy timestamp in a format compatible with the `date` ES field (`strict_date_optional_time`)
 
-            ts_value_start_pos = int(
-                doc[MagicNumbers.TS_BEGIN_IDX : MagicNumbers.TS_END_IDX], 16
-            )
-            ts_value_end_pos = int(
-                doc[MagicNumbers.TS_END_IDX : MagicNumbers.MSGLEN_BEGIN_IDX], 16
-            )
+            ts_value_start_pos = int(doc[MagicNumbers.TS_BEGIN_IDX : MagicNumbers.TS_END_IDX], 16)
+            ts_value_end_pos = int(doc[MagicNumbers.TS_END_IDX : MagicNumbers.MSGLEN_BEGIN_IDX], 16)
 
             formatted_ts = "%04d-%02d-%02dT%02d:%02d:%02d" % (
                 timestamp.year,
@@ -260,24 +235,19 @@ class ProcessedCorpusParamSource:
 
         return doc, msgsize
 
-    def create_bulk_corpus_reader(
-        self, corpus, bulk_size, processor, num_clients, client_index
-    ):
+    def create_bulk_corpus_reader(self, corpus, bulk_size, processor, num_clients, client_index):
         readers = []
         for docs in corpus.documents:
             # we want even offsets or docs and meta will be separated
             self.logger.debug(
-                "Task-relative clients at index [%d-%d] using [%s] which has [%d] documents from corpus "
-                "name [%s]",
+                "Task-relative clients at index [%d-%d] using [%s] which has [%d] documents from corpus " "name [%s]",
                 client_index,
                 num_clients,
                 docs.document_file,
                 docs.number_of_documents,
                 corpus.name,
             )
-            offset, num_docs = bounds(
-                docs.number_of_documents, client_index, num_clients, ensure_even=True
-            )
+            offset, num_docs = bounds(docs.number_of_documents, client_index, num_clients, ensure_even=True)
             if num_docs > 0:
                 self.logger.debug(
                     "Task-relative clients at index [%d-%d] will read [%d] docs starting from line offset "
@@ -292,9 +262,7 @@ class ProcessedCorpusParamSource:
                 )
                 # multiple offset and num docs by 2 to account for meta lines
                 source = WrappingSlice(io.MmapSource, offset * 2, num_docs * 2)
-                readers.append(
-                    BulkFileReader(docs.document_file, source, processor, corpus.name)
-                )
+                readers.append(BulkFileReader(docs.document_file, source, processor, corpus.name))
             else:
                 self.logger.info(
                     "Task-relative clients at index [%d-%d] skip [%s] (no documents to read).",
@@ -341,9 +309,7 @@ class ProcessedCorpusParamSource:
                 params["unit"] = "docs"
                 params["action-metadata-present"] = True
                 params["bulk-size"] = num_docs
-                self.event_time_span = (
-                    self.max_timestamp - self.min_timestamp
-                ).total_seconds()
+                self.event_time_span = (self.max_timestamp - self.min_timestamp).total_seconds()
                 relative_time = int(time.perf_counter()) - self.start_time
                 params["param-source-stats"] = {
                     "client": client_index,
@@ -351,12 +317,8 @@ class ProcessedCorpusParamSource:
                     "event-time-span": self.event_time_span,
                     "relative-time": relative_time,
                     "index-lag": self.event_time_span - relative_time,
-                    "min-timestamp": self.min_timestamp.isoformat(
-                        sep="T", timespec=self._time_format
-                    ),
-                    "max-timestamp": self.max_timestamp.isoformat(
-                        sep="T", timespec=self._time_format
-                    ),
+                    "min-timestamp": self.min_timestamp.isoformat(sep="T", timespec=self._time_format),
+                    "max-timestamp": self.max_timestamp.isoformat(sep="T", timespec=self._time_format),
                 }
                 yield params
 
@@ -369,25 +331,16 @@ class ProcessedCorpusParamSource:
             self.total_corpus_docs += docs.number_of_documents
             self.total_corpus_bytes += docs.message_size
         self.total_docs_per_day = math.ceil(
-            self.total_corpus_docs
-            * ((self._volume_per_day_gb * 1024 * 1024 * 1024) / self.total_corpus_bytes)
+            self.total_corpus_docs * ((self._volume_per_day_gb * 1024 * 1024 * 1024) / self.total_corpus_bytes)
         )
         self.total_docs = self.total_docs_per_day * self._number_of_days
         if self._client_index == 0:
             self.logger.info(f"Total Docs: [{self.total_docs}]")
             self.logger.info(f"Docs per Day: [{self.total_docs_per_day}]")
-        _, self.docs_per_client = bounds(
-            self.total_docs, self._client_index, self._client_count
-        )
-        self._ts_generator = get_ts_generator(
-            self._profile, self.total_docs_per_day, self._start_date, self._client_count
-        )
-        self.logger.info(
-            f"Docs for client [{self._client_count}]: [{self.docs_per_client}]"
-        )
-        self.logger.info(
-            f"Initializing client [{self._client_index}/{self._client_count}]"
-        )
+        _, self.docs_per_client = bounds(self.total_docs, self._client_index, self._client_count)
+        self._ts_generator = get_ts_generator(self._profile, self.total_docs_per_day, self._start_date, self._client_count)
+        self.logger.info(f"Docs for client [{self._client_count}]: [{self.docs_per_client}]")
+        self.logger.info(f"Initializing client [{self._client_index}/{self._client_count}]")
         self.doc_generator = self._doc_generator(self._client_count, self._client_index)
 
     @property

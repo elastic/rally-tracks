@@ -1,0 +1,158 @@
+{
+  "name": "index-and-search",
+  "description": "Indexes vectors, then executes searches under various conditions",
+  "default": true,
+  "schedule": [
+    {
+      "operation": {
+        "operation-type": "delete-index"
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "create-index"
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "green"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "name": "index-append",
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(500)}},
+        "ingest-percentage": {{ingest_percentage | default(100)}}
+      },
+      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+      "clients": {{bulk_indexing_clients | default(1)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh",
+      "include-in-reporting": true
+    },
+    {
+      "name": "knn-search-10-50-match-all",
+      "operation": "knn-search-10-50-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "script-score-query-match-all",
+      "operation": "script-score-query-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-acceptedAnswerId",
+      "operation": "knn-search-10-50-acceptedAnswerId",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "script-score-query-acceptedAnswerId",
+      "operation": "script-score-query-acceptedAnswerId",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-java",
+      "operation": "knn-search-10-50-java",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "script-score-query-java",
+      "operation": "script-score-query-java",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-css",
+      "operation": "knn-search-10-50-css",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "script-score-query-css",
+      "operation": "script-score-query-css",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-concurrency",
+      "operation": "knn-search-10-50-concurrency",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "script-score-query-concurrency",
+      "operation": "script-score-query-concurrency",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": 1,
+        "request-timeout": 7200,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "operation": "refresh"
+    },
+    {
+      "name": "knn-search-10-50-match-all-force-merge",
+      "operation": "knn-search-10-50-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-acceptedAnswerId-force-merge",
+      "operation": "knn-search-10-50-acceptedAnswerId",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-java-force-merge",
+      "operation": "knn-search-10-50-java",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-css-force-merge",
+      "operation": "knn-search-10-50-css",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-concurrency-force-merge",
+      "operation": "knn-search-10-50-concurrency",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    }
+  ]
+}

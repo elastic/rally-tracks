@@ -1,0 +1,26 @@
+# Synchronize all pushes to 'master' branch with '8.4' branch to reduce backport burden
+name: "Sync 8.4 branch"
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  sync_latest_from_upstream:
+    runs-on: ubuntu-latest
+    name: Sync latest commits from master branch
+
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v2
+        with:
+          ref: 8.4
+
+      - name: Sync upstream changes
+        id: sync
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.0
+        with:
+          target_sync_branch: 8.4
+          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+          upstream_sync_branch: master
+          upstream_sync_repo: elastic/rally-tracks

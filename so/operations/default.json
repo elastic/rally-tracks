@@ -5,135 +5,135 @@
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
-      "name": "frequent_items_all_100",
-      "operation-type": "search",
+      "name": "create-transform-group-by-user",
+      "operation-type": "create-transform",
+      "transform-id": "transform-group-by-user",
       "body": {
-        "query": {
-          "bool": {
-            "must": [
-              {
-                "exists": {
-                  "field": "tags"
-                }
+        "settings": {
+          "max_page_search_size": {{max_page_search_size | default(500)}}
+        },
+        "source": {
+          "index": "so"
+        },
+        "dest": {
+          "index": "so-by-user"
+        },
+        "pivot": {
+          "group_by": {
+            "user": {
+              "terms": {
+                "field": "user"
               }
-            ],
-            "filter": [
-              {
-                "script": {
-                  "script": "doc['tags'].length > 2"
-                }
-              },
-              {
+            }
+          },
+          "aggregations": {
+            "questions": {
+              "filter": {
                 "term": {
                   "type": "question"
                 }
-              }
-            ]
-          }
-        },
-        "size": 0,
-        "aggs": {
-          "fi": {
-            "frequent_items": {
-              "minimum_set_size": 2,
-              "minimum_support": 0.01,
-              "size": 100,
-              "fields": [
-                {
-                  "field": "tags"
-                }
-              ]
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "frequent_items_python_10",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "bool": {
-            "must": [
-              {
-                "exists": {
-                  "field": "tags"
-                }
               },
-              {
-                "term": {
-                  "tags": {
-                    "value": "python"
+              "aggs": {
+                "count": {
+                  "value_count": {
+                    "field": "type"
+                  }
+                },
+                "accepted_answers": {
+                  "value_count": {
+                    "field": "acceptedAnswerId"
                   }
                 }
               }
-            ],
-            "filter": [{
-              "script": {
-                "script": "doc['tags'].length > 2"
+            },
+            "answers": {
+              "filter": {
+                "term": {
+                  "type": "answer"
+                }
+              },
+              "aggs": {
+                "count": {
+                  "value_count": {
+                    "field": "type"
+                  }
+                },
+                "unique_questions": {
+                  "cardinality": {
+                    "field": "questionId"
+                  }
+                }
               }
             },
-            {
-              "term": {
-                "type": "question"
+            "answer-question-ratio": {
+              "bucket_script": {
+                "buckets_path": {
+                  "answers": "answers>count",
+                  "questions": "questions>count"
+                },
+                "script": "if (params.answers > 0 && params.questions > 0) { return params.answers / params.questions;} return -1; "
               }
-            }
-            ]
-          }
-        },
-        "size": 0,
-        "aggs": {
-          "fi": {
-            "frequent_items": {
-              "minimum_set_size": 2,
-              "minimum_support": 0.01,
-              "size": 10,
-              "fields": [
-                {
-                  "field": "tags"
-                }
-              ]
+            },
+            "last_seen": {
+              "max": {
+                "field": "creationDate"
+              }
             }
           }
         }
       }
     },
     {
-      "name": "frequent_items_java_1000",
-      "operation-type": "search",
+      "name": "create-transform-group-by-hour",
+      "operation-type": "create-transform",
+      "transform-id": "transform-group-by-hour",
       "body": {
-        "query": {
-          "bool": {
-            "must": [
-              {
-                "exists": {
-                  "field": "tags"
-                }
+        "settings": {
+          "max_page_search_size": {{max_page_search_size | default(500)}}
+        },
+        "source": {
+          "index": "so"
+        },
+        "dest": {
+          "index": "so-by-hour"
+        },
+        "pivot": {
+          "group_by": {
+            "timestamp": {
+              "date_histogram": {
+                "field": "creationDate",
+                "fixed_interval": "1h"
               }
-            ],
-            "filter": [
-              {
-                "script": {
-                  "script": "doc['tags'].length > 2"
-                }
-              },
-              {
+            }
+          },
+          "aggregations": {
+            "count": {
+              "value_count": {
+                "field": "creationDate"
+              }
+            },
+            "questions": {
+              "filter": {
                 "term": {
                   "type": "question"
                 }
               }
-            ]
+            },
+            "answers": {
+              "filter": {
+                "term": {
+                  "type": "answer"
+                }
+              }
+            },
+            "active_users": {
+              "cardinality": {
+                "field": "user"
+              }
+            }
           }
-        },
-        "size": 0,
-        "aggs": {
-          "fi": {
-            "frequent_items": {
-              "minimum_set_size": 2,
-              "minimum_support": 0.005,
-              "size": 1000,
-              "fields": [
-                {
+        }
+      }
                   "field": "tags"
                 }
               ]

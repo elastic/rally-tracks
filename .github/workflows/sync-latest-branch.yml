@@ -1,5 +1,5 @@
-# Synchronize all pushes to 'master' branch with '8.4' branch to reduce backport burden
-name: "Sync 8.4 branch"
+# Synchronize all pushes to 'master' branch with '8.5' branch to reduce backport burden
+name: "Sync 8.5 branch"
 on:
   push:
     branches:
@@ -14,13 +14,13 @@ jobs:
       - name: Checkout target repo
         uses: actions/checkout@v2
         with:
-          ref: 8.4
+          ref: 8.5
 
       - name: Sync upstream changes
         id: sync
         uses: aormsby/Fork-Sync-With-Upstream-action@v3.0
         with:
-          target_sync_branch: 8.4
+          target_sync_branch: 8.5
           target_repo_token: ${{ secrets.GITHUB_TOKEN }}
           upstream_sync_branch: master
           upstream_sync_repo: elastic/rally-tracks

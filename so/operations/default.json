@@ -3,5 +3,135 @@
       "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(5000)}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+    {
+      "name": "create-transform-group-by-user",
+      "operation-type": "create-transform",
+      "transform-id": "transform-group-by-user",
+      "body": {
+        "settings": {
+          "max_page_search_size": {{max_page_search_size | default(500)}}
+        },
+        "source": {
+          "index": "so"
+        },
+        "dest": {
+          "index": "so-by-user"
+        },
+        "pivot": {
+          "group_by": {
+            "user": {
+              "terms": {
+                "field": "user"
+              }
+            }
+          },
+          "aggregations": {
+            "questions": {
+              "filter": {
+                "term": {
+                  "type": "question"
+                }
+              },
+              "aggs": {
+                "count": {
+                  "value_count": {
+                    "field": "type"
+                  }
+                },
+                "accepted_answers": {
+                  "value_count": {
+                    "field": "acceptedAnswerId"
+                  }
+                }
+              }
+            },
+            "answers": {
+              "filter": {
+                "term": {
+                  "type": "answer"
+                }
+              },
+              "aggs": {
+                "count": {
+                  "value_count": {
+                    "field": "type"
+                  }
+                },
+                "unique_questions": {
+                  "cardinality": {
+                    "field": "questionId"
+                  }
+                }
+              }
+            },
+            "answer-question-ratio": {
+              "bucket_script": {
+                "buckets_path": {
+                  "answers": "answers>count",
+                  "questions": "questions>count"
+                },
+                "script": "if (params.answers > 0 && params.questions > 0) { return params.answers / params.questions;} return -1; "
+              }
+            },
+            "last_seen": {
+              "max": {
+                "field": "creationDate"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "create-transform-group-by-hour",
+      "operation-type": "create-transform",
+      "transform-id": "transform-group-by-hour",
+      "body": {
+        "settings": {
+          "max_page_search_size": {{max_page_search_size | default(500)}}
+        },
+        "source": {
+          "index": "so"
+        },
+        "dest": {
+          "index": "so-by-hour"
+        },
+        "pivot": {
+          "group_by": {
+            "timestamp": {
+              "date_histogram": {
+                "field": "creationDate",
+                "fixed_interval": "1h"
+              }
+            }
+          },
+          "aggregations": {
+            "count": {
+              "value_count": {
+                "field": "creationDate"
+              }
+            },
+            "questions": {
+              "filter": {
+                "term": {
+                  "type": "question"
+                }
+              }
+            },
+            "answers": {
+              "filter": {
+                "term": {
+                  "type": "answer"
+                }
+              }
+            },
+            "active_users": {
+              "cardinality": {
+                "field": "user"
+              }
+            }
+          }
+        }
+      }
     }
-    

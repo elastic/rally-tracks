@@ -134,4 +134,142 @@
           }
         }
       }
+    },
+    {
+      "name": "frequent_items_all_100",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "tags"
+                }
+              }
+            ],
+            "filter": [
+              {
+                "script": {
+                  "script": "doc['tags'].length > 2"
+                }
+              },
+              {
+                "term": {
+                  "type": "question"
+                }
+              }
+            ]
+          }
+        },
+        "size": 0,
+        "aggs": {
+          "fi": {
+            "frequent_items": {
+              "minimum_set_size": 2,
+              "minimum_support": 0.01,
+              "size": 100,
+              "fields": [
+                {
+                  "field": "tags"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "frequent_items_python_10",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "tags"
+                }
+              },
+              {
+                "term": {
+                  "tags": {
+                    "value": "python"
+                  }
+                }
+              }
+            ],
+            "filter": [{
+              "script": {
+                "script": "doc['tags'].length > 2"
+              }
+            },
+            {
+              "term": {
+                "type": "question"
+              }
+            }
+            ]
+          }
+        },
+        "size": 0,
+        "aggs": {
+          "fi": {
+            "frequent_items": {
+              "minimum_set_size": 2,
+              "minimum_support": 0.01,
+              "size": 10,
+              "fields": [
+                {
+                  "field": "tags"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "frequent_items_java_1000",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "exists": {
+                  "field": "tags"
+                }
+              }
+            ],
+            "filter": [
+              {
+                "script": {
+                  "script": "doc['tags'].length > 2"
+                }
+              },
+              {
+                "term": {
+                  "type": "question"
+                }
+              }
+            ]
+          }
+        },
+        "size": 0,
+        "aggs": {
+          "fi": {
+            "frequent_items": {
+              "minimum_set_size": 2,
+              "minimum_support": 0.005,
+              "size": 1000,
+              "fields": [
+                {
+                  "field": "tags"
+                }
+              ]
+            }
+          }
+        }
+      }
     }

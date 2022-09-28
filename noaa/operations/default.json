@@ -1461,7 +1461,36 @@
       }
     },
     {
-      "name": "group-avg-temp-count-us-measurements",
+      "name": "filters-per-10-degrees-interval",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "group-by-temp": {
+            "histogram": {
+              "field": "TAVG",
+              "interval": 10,
+              "min_doc_count": 1
+            },
+            "aggs": {
+              "in-the-us": {
+                "filters": {
+                  "filters": [
+                    {
+                      "match": {
+                        "station.country_code": "US"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "filter-per-10-degrees-interval",
       "operation-type": "search",
       "body": {
         "size": 0,

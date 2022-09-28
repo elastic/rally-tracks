@@ -1524,7 +1524,7 @@
       "body": {
         "size": 0,
         "aggs": {
-          "filter-term-high-cardinality": {
+          "filters-term-high-cardinality": {
             "filters": {
               "filters": [
                 {"match": {"station.country_code": "US"}}

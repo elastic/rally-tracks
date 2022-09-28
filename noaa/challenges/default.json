@@ -224,7 +224,7 @@
           "operation": "refresh",
           "clients": 1
         },
-        {% include 'filter-aggs-tasks.json' %}
+        {% include 'filters-aggs-tasks.json' %}
         {% include 'aggs-tasks.json' %}
       ]
     },
@@ -277,7 +277,7 @@
           "operation": "refresh",
           "clients": 1
         },
-        {% include 'filter-aggs-tasks.json' %}
+        {% include 'filters-aggs-tasks.json' %}
         {
           "operation": "filter-agg-with-high-cardinality-filter",
           "clients": 1,

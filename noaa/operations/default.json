@@ -1504,13 +1504,7 @@
             "aggs": {
               "in-the-us": {
                 "filters": {
-                  "filters": [
-                    {
-                      "match": {
-                        "station.country_code": "US"
-                      }
-                    }
-                  ]
+                  "match": {"station.country_code": "US"}
                 }
               }
             }

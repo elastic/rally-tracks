@@ -224,10 +224,10 @@
           "operation": "refresh",
           "clients": 1
         },
-        {% include 'aggs-tasks.json' %}
         {% include 'filter-aggs-tasks.json' %}
+        {% include 'aggs-tasks.json' %}
       ]
-    }
+    },
     {
       "name": "filter-aggs",
       "description": "Checks the performance of many aggregations",
@@ -277,6 +277,7 @@
           "operation": "refresh",
           "clients": 1
         },
+        {% include 'filter-aggs-tasks.json' %}
         {
           "operation": "filter-agg-with-high-cardinality-filter",
           "clients": 1,
@@ -289,6 +290,5 @@
           "warmup-iterations": 10,
           "iterations": 50
         }
-        {% include 'filter-aggs-tasks.json' %}
       ]
     }

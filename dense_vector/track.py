@@ -15,7 +15,7 @@ def knn_param_source(track, params, **kwargs):
     return {
         "body": {
             "knn": {
-                "field": "image-vector",
+                "field": "vector",
                 "query_vector": params.get("query-vector", [random.uniform(-1.0, 1.0) for _ in range(96)]),
                 "k": params.get("k", 10),
                 "num_candidates": params.get("num-candidates", 100),

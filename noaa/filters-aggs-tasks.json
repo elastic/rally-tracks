@@ -1,0 +1,24 @@
+  {
+    "operation": "filters-agg-with-low-cardinality-filters",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
+  },
+  {
+    "operation": "filters-agg-with-high-cardinality-filters",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
+  },
+  {
+    "operation": "filters-per-10-degrees-interval",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
+  },
+  {
+    "operation": "filters-agg-with-high-cardinality-filter",
+    "clients": 1,
+    "warmup-iterations": 10,
+    "iterations": 50
+  },

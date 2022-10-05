@@ -2,9 +2,10 @@ import random
 
 
 def knn_param_source(track, params, **kwargs):
+    # ensure the sequence of vector queries is the same from run to run
+    random.seed(31)
     # choose a suitable index: if there is only one defined for this track
     # choose that one, but let the user always override index
-    random.seed(31)
     if len(track.indices) == 1:
         default_index = track.indices[0].name
     else:

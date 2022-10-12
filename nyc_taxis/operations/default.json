@@ -669,7 +669,7 @@
       }
     },
     {
-      "name": "avg_passenger_count",
+      "name": "avg_passenger_count_aggregation",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -683,410 +683,51 @@
       }
     },
     {
-      "name": "avg_passenger_count_single_compute",
+      "name": "avg_passenger_count_esql_shard_partitioning",
       "operation-type": "raw-request",
       "method": "POST",
-      "path": "/_compute",
+      "path": "/_esql",
       "body": {
-        "plan" : {
-          "aggregation" : {
-            "mode" : "FINAL",
-            "aggs" : {
-              "passenger_count_avg" : {
-                "avg" : {
-                  "field" : "passenger_count"
-                }
-              }
-            },
-            "source" : {
-              "aggregation" : {
-                "mode" : "PARTIAL",
-                "aggs" : {
-                  "passenger_count_avg" : {
-                    "avg" : {
-                      "field" : "passenger_count"
-                    }
-                  }
-                },
-                "source" : {
-                  "doc-values" : {
-                    "field" : "passenger_count",
-                    "source" : {
-                      "lucene-source" : {
-                        "indices" : "nyc_taxis",
-                        "query" : "*:*",
-                        "parallelism" : "SINGLE"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+        "query" : "from nyc_taxis | stats avg(passenger_count)",
+        "pragma" : {
+          "data_partitioning" : "shard"
         }
       }
     },
     {
-      "name": "avg_passenger_count_par_segment_compute",
+      "name": "avg_passenger_count_esql_segment_partitioning",
       "operation-type": "raw-request",
       "method": "POST",
-      "path": "/_compute",
+      "path": "/_esql",
       "body": {
-        "plan" : {
-          "aggregation" : {
-            "mode" : "FINAL",
-            "aggs" : {
-              "passenger_count_avg" : {
-                "avg" : {
-                  "field" : "passenger_count"
-                }
-              }
-            },
-            "source" : {
-              "exchange" : {
-                "type" : "GATHER",
-                "partitioning" : "SINGLE_DISTRIBUTION",
-                "source" : {
-                  "aggregation" : {
-                    "mode" : "PARTIAL",
-                    "aggs" : {
-                      "passenger_count_avg" : {
-                        "avg" : {
-                          "field" : "passenger_count"
-                        }
-                      }
-                    },
-                    "source" : {
-                      "doc-values" : {
-                        "field" : "passenger_count",
-                        "source" : {
-                          "lucene-source" : {
-                            "indices" : "nyc_taxis",
-                            "query" : "*:*",
-                            "parallelism" : "SEGMENT"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+        "query" : "from nyc_taxis | stats avg(passenger_count)",
+        "pragma" : {
+          "data_partitioning" : "segment"
         }
       }
     },
     {
-      "name": "avg_passenger_count_par_doc_compute",
+      "name": "avg_passenger_count_esql_doc_partitioning",
       "operation-type": "raw-request",
       "method": "POST",
-      "path": "/_compute",
+      "path": "/_esql",
       "body": {
-        "plan" : {
-          "aggregation" : {
-            "mode" : "FINAL",
-            "aggs" : {
-              "passenger_count_avg" : {
-                "avg" : {
-                  "field" : "passenger_count"
-                }
-              }
-            },
-            "source" : {
-              "exchange" : {
-                "type" : "GATHER",
-                "partitioning" : "SINGLE_DISTRIBUTION",
-                "source" : {
-                  "aggregation" : {
-                    "mode" : "PARTIAL",
-                    "aggs" : {
-                      "passenger_count_avg" : {
-                        "avg" : {
-                          "field" : "passenger_count"
-                        }
-                      }
-                    },
-                    "source" : {
-                      "doc-values" : {
-                        "field" : "passenger_count",
-                        "source" : {
-                          "lucene-source" : {
-                            "indices" : "nyc_taxis",
-                            "query" : "*:*",
-                            "parallelism" : "DOC"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+        "query" : "from nyc_taxis | stats avg(passenger_count)",
+        "pragma" : {
+          "data_partitioning" : "doc"
         }
       }
     },
     {
-      "name": "avg_passenger_count_single_search_parallel_compute",
+      "name": "avg_passenger_count_esql_shard_partitioning_with_task_parallelism",
       "operation-type": "raw-request",
       "method": "POST",
-      "path": "/_compute",
+      "path": "/_esql",
       "body": {
-                "plan" : {
-          "aggregation" : {
-            "mode" : "FINAL",
-            "aggs" : {
-              "passenger_count_avg" : {
-                "avg" : {
-                  "field" : "passenger_count"
-                }
-              }
-            },
-            "source" : {
-              "exchange" : {
-                "type" : "GATHER",
-                "partitioning" : "SINGLE_DISTRIBUTION",
-                "source" : {
-                  "aggregation" : {
-                    "mode" : "PARTIAL",
-                    "aggs" : {
-                      "passenger_count_avg" : {
-                        "avg" : {
-                          "field" : "passenger_count"
-                        }
-                      }
-                    },
-                    "source" : {
-                      "doc-values" : {
-                        "field" : "passenger_count",
-                        "source" : {
-                          "exchange" : {
-                            "type" : "REPARTITION",
-                            "partitioning" : "FIXED_ARBITRARY_DISTRIBUTION",
-                            "source" : {
-                              "lucene-source" : {
-                                "indices" : "nyc_taxis",
-                                "query" : "*:*",
-                                "parallelism" : "SINGLE"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "avg_long_passenger_count_single_compute",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_compute",
-      "body": {
-        "plan" : {
-          "aggregation" : {
-            "mode" : "FINAL",
-            "aggs" : {
-              "passenger_count_avg" : {
-                "avg" : {
-                  "field" : "passenger_count",
-                  "type" : "LONG"
-                }
-              }
-            },
-            "source" : {
-              "aggregation" : {
-                "mode" : "PARTIAL",
-                "aggs" : {
-                  "passenger_count_avg" : {
-                    "avg" : {
-                      "field" : "passenger_count",
-                      "type" : "LONG"
-                    }
-                  }
-                },
-                "source" : {
-                  "doc-values" : {
-                    "field" : "passenger_count",
-                    "source" : {
-                      "lucene-source" : {
-                        "indices" : "nyc_taxis",
-                        "query" : "*:*",
-                        "parallelism" : "SINGLE"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "avg_long_passenger_count_par_segment_compute",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_compute",
-      "body": {
-        "plan" : {
-          "aggregation" : {
-            "mode" : "FINAL",
-            "aggs" : {
-              "passenger_count_avg" : {
-                "avg" : {
-                  "field" : "passenger_count",
-                  "type" : "LONG"
-                }
-              }
-            },
-            "source" : {
-              "exchange" : {
-                "type" : "GATHER",
-                "partitioning" : "SINGLE_DISTRIBUTION",
-                "source" : {
-                  "aggregation" : {
-                    "mode" : "PARTIAL",
-                    "aggs" : {
-                      "passenger_count_avg" : {
-                        "avg" : {
-                          "field" : "passenger_count",
-                          "type" : "LONG"
-                        }
-                      }
-                    },
-                    "source" : {
-                      "doc-values" : {
-                        "field" : "passenger_count",
-                        "source" : {
-                          "lucene-source" : {
-                            "indices" : "nyc_taxis",
-                            "query" : "*:*",
-                            "parallelism" : "SEGMENT"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "avg_long_passenger_count_par_doc_compute",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_compute",
-      "body": {
-        "plan" : {
-          "aggregation" : {
-            "mode" : "FINAL",
-            "aggs" : {
-              "passenger_count_avg" : {
-                "avg" : {
-                  "field" : "passenger_count",
-                  "type" : "LONG"
-                }
-              }
-            },
-            "source" : {
-              "exchange" : {
-                "type" : "GATHER",
-                "partitioning" : "SINGLE_DISTRIBUTION",
-                "source" : {
-                  "aggregation" : {
-                    "mode" : "PARTIAL",
-                    "aggs" : {
-                      "passenger_count_avg" : {
-                        "avg" : {
-                          "field" : "passenger_count",
-                          "type" : "LONG"
-                        }
-                      }
-                    },
-                    "source" : {
-                      "doc-values" : {
-                        "field" : "passenger_count",
-                        "source" : {
-                          "lucene-source" : {
-                            "indices" : "nyc_taxis",
-                            "query" : "*:*",
-                            "parallelism" : "DOC"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "avg_long_passenger_count_single_search_parallel_compute",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_compute",
-      "body": {
-                "plan" : {
-          "aggregation" : {
-            "mode" : "FINAL",
-            "aggs" : {
-              "passenger_count_avg" : {
-                "avg" : {
-                  "field" : "passenger_count",
-                  "type" : "LONG"
-                }
-              }
-            },
-            "source" : {
-              "exchange" : {
-                "type" : "GATHER",
-                "partitioning" : "SINGLE_DISTRIBUTION",
-                "source" : {
-                  "aggregation" : {
-                    "mode" : "PARTIAL",
-                    "aggs" : {
-                      "passenger_count_avg" : {
-                        "avg" : {
-                          "field" : "passenger_count",
-                          "type" : "LONG"
-                        }
-                      }
-                    },
-                    "source" : {
-                      "doc-values" : {
-                        "field" : "passenger_count",
-                        "source" : {
-                          "exchange" : {
-                            "type" : "REPARTITION",
-                            "partitioning" : "FIXED_ARBITRARY_DISTRIBUTION",
-                            "source" : {
-                              "lucene-source" : {
-                                "indices" : "nyc_taxis",
-                                "query" : "*:*",
-                                "parallelism" : "SINGLE"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+        "query" : "from nyc_taxis | stats avg(passenger_count)",
+        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
         }
       }
     }

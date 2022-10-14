@@ -131,7 +131,7 @@ class ConfigureCrossClusterReplication(Runner):
             # flush on the source index to speed up the replication as only file-based recovery will occur.
             self.logger.info(f"flushing source index [{index}] on [{source_cluster_name}]")
             await source_cluster_client.indices.flush(index=index, wait_if_ongoing=True, request_timeout=request_timeout)
-            self.logger.info(f"starting to follow index [{index}] from [{source_cluster_name}]")
+            self.logger.info(f"starting to follow index [{index}] from [{source_cluster_name}] on [{following_cluster_name}]")
             number_of_replicas = settings["settings"]["index"]["number_of_replicas"]
             follow_body = {
                 "leader_index": index,
@@ -145,10 +145,10 @@ class ConfigureCrossClusterReplication(Runner):
                     index=index, wait_for_active_shards="1", body=follow_body, request_timeout=request_timeout
                 )
             except ElasticsearchException as e:
-                msg = f"Failed to follow index [{index}]; [{e}]"
+                msg = f"Failed to follow index [{index}] from [{source_cluster_name}] on [{following_cluster_name}]; [{e}]"
                 raise BaseException(msg)
 
-            self.logger.info(f"index [{index}] was replicated from [{source_cluster_name}]")
+            self.logger.info(f"index [{index}] was replicated from [{source_cluster_name}] to [{following_cluster_name}]")
 
             await following_cluster_client.cluster.health(
                 index=index,

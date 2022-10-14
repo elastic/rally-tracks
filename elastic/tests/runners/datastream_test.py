@@ -14,14 +14,19 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-import json
-import os
 import copy
+import json
 import logging
+import os
 from unittest import mock
 
 import pytest
-from shared.runners.datastream import DeleteRemoteDataStream, compression_stats, rollover, create
+from shared.runners.datastream import (
+    DeleteRemoteDataStream,
+    compression_stats,
+    create,
+    rollover,
+)
 from tests import as_future
 
 

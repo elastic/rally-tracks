@@ -1,6 +1,6 @@
-import math
-import copy
 import asyncio
+import copy
+import math
 import time
 
 from elasticsearch import ElasticsearchException

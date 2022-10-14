@@ -19,7 +19,10 @@ import copy
 from unittest import mock
 
 import pytest
-from shared.runners.remote_cluster import ConfigureRemoteClusters, ConfigureCrossClusterReplication
+from shared.runners.remote_cluster import (
+    ConfigureCrossClusterReplication,
+    ConfigureRemoteClusters,
+)
 from tests import as_future
 
 

@@ -32,7 +32,10 @@ from shared.runners import datastream, snapshot
 from shared.runners.bulk import RawBulkIndex
 from shared.runners.ilm import create_ilm
 from shared.runners.pipelines import create_pipeline
-from shared.runners.remote_cluster import ConfigureRemoteClusters, ConfigureCrossClusterReplication
+from shared.runners.remote_cluster import (
+    ConfigureCrossClusterReplication,
+    ConfigureRemoteClusters,
+)
 from shared.runners.slm import create_slm
 from shared.schedulers.indexing import TimestampThrottler
 from shared.schedulers.query import WorkflowScheduler

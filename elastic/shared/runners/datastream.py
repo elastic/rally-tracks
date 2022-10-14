@@ -20,7 +20,6 @@ import logging
 
 import elasticsearch
 from esrally.driver.runner import Runner
-
 from shared.utils.track import mandatory
 
 """

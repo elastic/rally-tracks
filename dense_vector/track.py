@@ -1,6 +1,7 @@
 import json
 import os
 
+
 class KnnParamSource:
     def __init__(self, track, params, **kwargs):
         # choose a suitable index: if there is only one defined for this track
@@ -26,24 +27,20 @@ class KnnParamSource:
         return self
 
     def params(self):
-        result = {
-            "index": self._index_name,
-            "cache": self._params.get("cache", False),
-            "size": self._params.get("k", 10)
-        }
+        result = {"index": self._index_name, "cache": self._params.get("cache", False), "size": self._params.get("k", 10)}
 
         if self._exact_scan:
             result["body"] = {
                 "query": {
                     "script_score": {
-                        "query": { "match_all": {}},
+                        "query": {"match_all": {}},
                         "script": {
                             "source": "cosineSimilarity(params.query, 'vector') + 1.0",
-                            "params": { "query": self._queries[self._iters] }
-                        }
+                            "params": {"query": self._queries[self._iters]},
+                        },
                     }
                 },
-                "_source": False
+                "_source": False,
             }
         else:
             result["body"] = {
@@ -51,9 +48,9 @@ class KnnParamSource:
                     "field": "vector",
                     "query_vector": self._queries[self._iters],
                     "k": self._params.get("k", 10),
-                    "num_candidates": self._params.get("num-candidates", 100)
+                    "num_candidates": self._params.get("num-candidates", 100),
                 },
-                "_source": False
+                "_source": False,
             }
         self._iters += 1
         return result

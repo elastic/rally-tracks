@@ -15,15 +15,15 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from esrally.track import Track, DocumentCorpus, Documents
-from tests.parameter_sources import StaticTrack
+from esrally.track import DocumentCorpus, Documents, Track
 from shared.utils.corpus import (
+    bounds,
     calculate_corpus_counts,
     calculate_integration_ratios,
-    bounds,
     convert_to_gib,
 )
 from shared.utils.track import generate_track_id
+from tests.parameter_sources import StaticTrack
 
 
 def test_generate_track_id():

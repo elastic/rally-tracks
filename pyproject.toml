@@ -45,3 +45,10 @@ addopts = "--verbose --color=yes --ignore=it"
 junit_family = "xunit2"
 junit_logging = "all"
 asyncio_mode = "strict"
+
+[tool.black]
+line-length = 140
+target-version = ['py38']
+
+[tool.isort]
+profile = 'black'

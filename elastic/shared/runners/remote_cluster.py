@@ -1,10 +1,10 @@
-import time
 import math
 import copy
 import asyncio
+import time
 
-from esrally.driver.runner import Runner
 from elasticsearch import ElasticsearchException
+from esrally.driver.runner import Runner
 
 """
 Runners for configuring a typical CCS/CCR architecture, where we have a central 'local' cluster and many 'remote'

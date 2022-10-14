@@ -25,16 +25,20 @@ from esrally import exceptions
 from esrally.track import DocumentCorpus, Documents
 from esrally.track.loader import DocumentSetPreparator
 from esrally.utils import io
-
 from shared.parameter_sources import DEFAULT_END_DATE, DEFAULT_START_DATE, utc_now
 from shared.utils.corpus import (
+    bounds,
     calculate_corpus_counts,
     calculate_integration_ratios,
-    bounds,
     convert_to_gib,
 )
-from shared.utils.file import FileMetadata
-from shared.utils.file import JsonFileReader, WrappingSlice, CorpusReader, CorporaReader
+from shared.utils.file import (
+    CorporaReader,
+    CorpusReader,
+    FileMetadata,
+    JsonFileReader,
+    WrappingSlice,
+)
 from shared.utils.time import parse_date_time
 from shared.utils.track import mandatory
 
@@ -88,36 +92,26 @@ class DataGenerator:
         self.decompressor = None
 
     def on_after_load_track(self, track):
-        if not track.selected_challenge_or_default.parameters.get(
-            "generate-data", True
-        ):
+        if not track.selected_challenge_or_default.parameters.get("generate-data", True):
             return
         # inject a generated corpus
         track_id = track.selected_challenge_or_default.parameters["track-id"]
-        client_count = track.selected_challenge_or_default.parameters.get(
-            "data-generation-clients", 2
-        )
+        client_count = track.selected_challenge_or_default.parameters.get("data-generation-clients", 2)
         documents = []
         for client_id in range(client_count):
             # only use a relative path; the absolute path will be set by Rally on the target machine
             documents.append(
                 LazyMetadataDocuments(
-                    document_file=os.path.join(
-                        "generated", track_id, f"{client_id}.json"
-                    )
+                    document_file=os.path.join("generated", track_id, f"{client_id}.json"),
                 )
             )
 
         # keep this corpus, as well as other corpora below the track directory by name it like the track
-        generated_corpus = DocumentCorpus(
-            name=track.name, documents=documents, meta_data={"generated": True}
-        )
+        generated_corpus = DocumentCorpus(name=track.name, documents=documents, meta_data={"generated": True})
         track.corpora.append(generated_corpus)
 
     def on_prepare_track(self, track, data_root_dir):
-        if not track.selected_challenge_or_default.parameters.get(
-            "generate-data", True
-        ):
+        if not track.selected_challenge_or_default.parameters.get("generate-data", True):
             return []
         track_data_root = os.path.join(data_root_dir, track.name)
         for corpus in track.corpora:
@@ -131,21 +125,15 @@ class DataGenerator:
                 )
                 # only set for real benchmarks, not in unit tests
                 if self.downloader and self.decompressor:
-                    prep = DocumentSetPreparator(
-                        track.name, self.downloader, self.decompressor
-                    )
+                    prep = DocumentSetPreparator(track.name, self.downloader, self.decompressor)
 
                     for document_set in corpus.documents:
                         prep.prepare_document_set(document_set, data_root)
 
         # data is now available locally, proceed with generating data
-        client_count = track.selected_challenge_or_default.parameters.get(
-            "data-generation-clients", 2
-        )
+        client_count = track.selected_challenge_or_default.parameters.get("data-generation-clients", 2)
         track_id = track.selected_challenge_or_default.parameters["track-id"]
-        track.selected_challenge_or_default.parameters["output-folder"] = os.path.join(
-            track_data_root, "generated", track_id
-        )
+        track.selected_challenge_or_default.parameters["output-folder"] = os.path.join(track_data_root, "generated", track_id)
         retval = []
         for client_id in range(client_count):
             generator_params = {
@@ -164,25 +152,17 @@ class CorpusGenerator:
         self.include_doc_size_with_metadata = False
         self.corpora = []
         self.track = track
-        self._random_seed = track.selected_challenge_or_default.parameters.get(
-            "random-seed", None
-        )
+        self._random_seed = track.selected_challenge_or_default.parameters.get("random-seed", None)
         self.track_data_root = track_data_root
         # check if output folder exists and contains files. If it does, we complete early unless force=True
-        self.output_folder = track.selected_challenge_or_default.parameters[
-            "output-folder"
-        ]
+        self.output_folder = track.selected_challenge_or_default.parameters["output-folder"]
         self.logger.info("Using output folder [%s]", self.output_folder)
         self.complete = False
-        if not track.selected_challenge_or_default.parameters.get(
-            "force-data-generation"
-        ):
+        if not track.selected_challenge_or_default.parameters.get("force-data-generation"):
             file_pattern = f"{client_index}.json"
             if len(glob.glob(os.path.join(self.output_folder, file_pattern))) > 0:
                 self.complete = True
-                self.logger.info(
-                    "Skipping data generation as files are present and force-data-generation is set to false."
-                )
+                self.logger.info("Skipping data generation as files are present and force-data-generation is set to false.")
 
         self._client_index = client_index
         self._client_count = client_count
@@ -192,39 +172,25 @@ class CorpusGenerator:
             "integration-ratios",
             "generate-data",
         )
-        self._exclude_properties = track.selected_challenge_or_default.parameters.get(
-            "exclude-properties", {}
-        )
+        self._exclude_properties = track.selected_challenge_or_default.parameters.get("exclude-properties", {})
 
         end_date = parse_date_time(
-            track.selected_challenge_or_default.parameters.get(
-                "end-date", DEFAULT_END_DATE
-            ),
+            track.selected_challenge_or_default.parameters.get("end-date", DEFAULT_END_DATE),
             utcnow=utc_now,
         )
         start_date = parse_date_time(
-            track.selected_challenge_or_default.parameters.get(
-                "start-date", DEFAULT_START_DATE
-            ),
+            track.selected_challenge_or_default.parameters.get("start-date", DEFAULT_START_DATE),
             utcnow=utc_now,
         )
 
         # bulk-end-date and bulk-start-date are undocumented and optional. If specified we generate data for the widest
         # date range possible as it will likely be re-used for incremental load.
-        if bulk_end_date := track.selected_challenge_or_default.parameters.get(
-            "bulk-end-date", None
-        ):
-            if (
-                bulk_end_date := parse_date_time(bulk_end_date, utcnow=utc_now)
-            ) > end_date:
+        if bulk_end_date := track.selected_challenge_or_default.parameters.get("bulk-end-date", None):
+            if (bulk_end_date := parse_date_time(bulk_end_date, utcnow=utc_now)) > end_date:
                 end_date = bulk_end_date
 
-        if bulk_start_date := track.selected_challenge_or_default.parameters.get(
-            "bulk-start-date", None
-        ):
-            if (
-                bulk_start_date := parse_date_time(bulk_start_date, utcnow=utc_now)
-            ) < start_date:
+        if bulk_start_date := track.selected_challenge_or_default.parameters.get("bulk-start-date", None):
+            if (bulk_start_date := parse_date_time(bulk_start_date, utcnow=utc_now)) < start_date:
                 start_date = bulk_start_date
 
         self.logger.info(
@@ -234,9 +200,7 @@ class CorpusGenerator:
         )
 
         if start_date > end_date:
-            raise exceptions.TrackConfigError(
-                f'"start-date" cannot be greater than "end-date" for data generation.'
-            )
+            raise exceptions.TrackConfigError(f'"start-date" cannot be greater than "end-date" for data generation.')
         # number of days to run the test for - used to calculate the amount of data to generate
         number_of_days = (end_date - start_date).total_seconds() / 86400
         self._max_generation_size_gb = convert_to_gib(
@@ -259,9 +223,7 @@ class CorpusGenerator:
         self._processor = self._json_processor
 
         # mainly for unit testing but can be modified and might be worth making this a factor of num clients later
-        self._offset_increment = track.selected_challenge_or_default.parameters.get(
-            "offset-increment", 50000
-        )
+        self._offset_increment = track.selected_challenge_or_default.parameters.get("offset-increment", 50000)
         self._batch_size = mandatory(
             track.selected_challenge_or_default.parameters,
             "generator-batch-size",
@@ -270,15 +232,12 @@ class CorpusGenerator:
         # batch size cannot be greater than the offset increment or we will not generate offsets
         if self._batch_size > self._offset_increment:
             raise exceptions.RallyAssertionError(
-                f"generator-batch-size [{self._batch_size}] cannot be greater than offset-increment "
-                f"[{self._offset_increment}]"
+                f"generator-batch-size [{self._batch_size}] cannot be greater than offset-increment " f"[{self._offset_increment}]"
             )
         ratio_total = 0
         # number of lines to sample from each corpus to identify the raw->json factor each corpus.
         # Principally for testing.
-        self._sample_size = track.selected_challenge_or_default.parameters.get(
-            "sample-size", 10000
-        )
+        self._sample_size = track.selected_challenge_or_default.parameters.get("sample-size", 10000)
         for integration_name, integration in self._integration_ratios.items():
             for corpus_name, ratio in integration["corpora"].items():
                 corpus = next((c for c in track.corpora if c.name == corpus_name), None)
@@ -292,15 +251,11 @@ class CorpusGenerator:
 
         # after ratio_total is calculated, recalculate all integration ratios to total up to 1
         if round(ratio_total, 3) != 1.0:
-            self.logger.info(
-                f"Total corpus ratios {ratio_total} != 1.0, recalculating corpus ratios"
-            )
+            self.logger.info(f"Total corpus ratios {ratio_total} != 1.0, recalculating corpus ratios")
             for integration_name, integration in self._integration_ratios.items():
                 for corpus_name, ratio in integration["corpora"].items():
-                   integration["corpora"][corpus_name] = ratio / ratio_total
-            self.logger.info(
-                f"Corpus ratios recalculated to:\n {self._integration_ratios}"
-            )
+                    integration["corpora"][corpus_name] = ratio / ratio_total
+            self.logger.info(f"Corpus ratios recalculated to:\n {self._integration_ratios}")
 
     def _json_processor(self, doc_bytes, _, corpus_name):
         # add any additional doc work here
@@ -329,9 +284,7 @@ class CorpusGenerator:
         # Note: the doc size is only an estimate. It will often be modified by ingest pipelines so in subject to change.
         if self.include_doc_size_with_metadata:
             doc["rally"]["doc_size_with_meta"] = doc_size
-            doc["rally"]["doc_size_with_meta"] = len(
-                json.dumps(doc, separators=(",", ":")).encode("utf-8")
-            )
+            doc["rally"]["doc_size_with_meta"] = len(json.dumps(doc, separators=(",", ":")).encode("utf-8"))
 
         self._append_doc_markers(doc)
         return doc, doc["rally"]["message_size"]
@@ -372,25 +325,19 @@ class CorpusGenerator:
 
         _msgsize_token = '"rally": {"message_size": '
         _msgsize_start_idx = raw_string.find(_msgsize_token) + len(_msgsize_token)
-        _msgsize_end_idx = _msgsize_start_idx + raw_string[_msgsize_start_idx:].find(
-            ","
-        )
+        _msgsize_end_idx = _msgsize_start_idx + raw_string[_msgsize_start_idx:].find(",")
 
         doc["rally"][
             "markers"
         ] = f"{_rallyts_start_idx:010x}{_ts_start_idx:010x}{_ts_end_idx:010x}{_msgsize_start_idx:010x}{_msgsize_end_idx:010x}"
 
-    def create_corpus_reader(
-        self, corpus, num_clients, client_index, bulk_size, processor
-    ):
+    def create_corpus_reader(self, corpus, num_clients, client_index, bulk_size, processor):
         readers = []
         for docs in corpus.documents:
             # Give each client a designated chunk of the file to use. Note: this will result in out of order delivery.
             # Maybe each client could consume each Nth line, where N = client num.
             # This will likely result in more seeking and less performance.
-            offset, num_docs = bounds(
-                docs.number_of_documents, client_index, num_clients
-            )
+            offset, num_docs = bounds(docs.number_of_documents, client_index, num_clients)
             if num_docs > 0:
                 self.logger.info(
                     "Generator [%d] will read [%d] docs starting from line offset [%d] for [%s] from corpus [%s].",
@@ -403,9 +350,7 @@ class CorpusGenerator:
                 source = WrappingSlice(io.MmapSource, offset, num_docs)
                 readers.append(
                     JsonFileReader(
-                        os.path.join(
-                            self.track_data_root, corpus.name, docs.document_file
-                        ),
+                        os.path.join(self.track_data_root, corpus.name, docs.document_file),
                         source,
                         processor,
                         docs.target_data_stream,
@@ -423,9 +368,7 @@ class CorpusGenerator:
     def _create_readers(self, num_clients, client_index):
         readers = {}
         for corpus in self.corpora:
-            readers[corpus.name] = self.create_corpus_reader(
-                corpus, num_clients, client_index, self._batch_size, self._processor
-            )
+            readers[corpus.name] = self.create_corpus_reader(corpus, num_clients, client_index, self._batch_size, self._processor)
         return readers
 
     def _reader_generator(self, used_corpora, weights):
@@ -457,13 +400,9 @@ class CorpusGenerator:
         output_file = os.path.join(self.output_folder, f"{self._client_index}.json")
         offset_file = f"{output_file}.offset"
         current_increment = self._offset_increment
-        with open(output_file, "wt") as data_file, open(
-            offset_file, mode="wt", encoding="utf-8"
-        ) as offset_file:
+        with open(output_file, "wt") as data_file, open(offset_file, mode="wt", encoding="utf-8") as offset_file:
             with CorporaReader(self.readers.values()):
-                for num_docs, lines, raw_size_in_bytes in self._reader_generator(
-                    used_corpora, weights
-                ):
+                for num_docs, lines, raw_size_in_bytes in self._reader_generator(used_corpora, weights):
                     if current_docs + num_docs >= self.docs_per_client:
                         self.complete = True
                         # we deliberately don't trim the last batch to get the exact number of documents. This would break
@@ -525,16 +464,13 @@ class CorpusGenerator:
                         for doc in docs:
                             if line_num % 2 == 1:
                                 total_doc_size += doc["rally"]["doc_size"]
-                                total_doc_size_with_meta += doc["rally"][
-                                    "doc_size_with_meta"
-                                ]
+                                total_doc_size_with_meta += doc["rally"]["doc_size_with_meta"]
                             line_num += 1
                     corpus_stats[corpus_name] = {
                         "sampled_docs": sampled_docs,
                         "avg_message_size": total_message_size / sampled_docs,
                         "avg_doc_size": total_doc_size / sampled_docs,
-                        "avg_doc_size_with_meta": total_doc_size_with_meta
-                        / sampled_docs,
+                        "avg_doc_size_with_meta": total_doc_size_with_meta / sampled_docs,
                         "raw_json_ratio": total_doc_size / total_message_size,
                     }
                     self.logger.info(
@@ -546,9 +482,7 @@ class CorpusGenerator:
 
     def _init_internal_params(self):
         # avoid zero seeds because of client_index == 0
-        seed = (
-            (self._client_index + 1) * self._random_seed if self._random_seed else None
-        )
+        seed = (self._client_index + 1) * self._random_seed if self._random_seed else None
         random.seed(seed)
         self.logger.info(
             "Initializing generator [%d/%d] with seed [%d].",
@@ -577,14 +511,10 @@ class CorpusGenerator:
         if self._client_index == 0:
             self.logger.info("Total Docs: [%s]", self.total_docs)
             self.logger.info("Corpora Counts: [%s]", json.dumps(corpora_doc_counts))
-            self.logger.info(
-                "Corpora Ratios: [%s]", json.dumps(self._corpora_doc_ratios)
-            )
+            self.logger.info("Corpora Ratios: [%s]", json.dumps(self._corpora_doc_ratios))
 
         # last client gets a little more from bounds function
-        _, self.docs_per_client = bounds(
-            self.total_docs, self._client_index, self._client_count
-        )
+        _, self.docs_per_client = bounds(self.total_docs, self._client_index, self._client_count)
 
 
 def generate(track, track_data_root, client_index=None, client_count=None):

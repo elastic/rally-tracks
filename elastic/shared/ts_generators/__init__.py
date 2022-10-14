@@ -16,8 +16,8 @@
 # under the License.
 
 from enum import Enum
-from esrally import exceptions
 
+from esrally import exceptions
 from shared.ts_generators.fixed_interval import FixedIntervalGenerator
 
 __TS_GENERATORS = {}
@@ -33,13 +33,9 @@ def register_profiles(profiler_type, generator):
 
 def get_ts_generator(profile_type, mean_docs_per_day, start_date, clients, **kwargs):
     if profile_type in __TS_GENERATORS:
-        return __TS_GENERATORS[profile_type](
-            mean_docs_per_day, start_date, clients, **kwargs
-        )
+        return __TS_GENERATORS[profile_type](mean_docs_per_day, start_date, clients, **kwargs)
     else:
-        raise exceptions.TrackConfigError(
-            f"[{profile_type}] is not a registered profile"
-        )
+        raise exceptions.TrackConfigError(f"[{profile_type}] is not a registered profile")
 
 
 register_profiles(ProfileType.Fixed_Interval.name.lower(), FixedIntervalGenerator)

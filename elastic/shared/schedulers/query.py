@@ -42,16 +42,10 @@ class WorkflowScheduler:
 
     def __init__(self, task):
         self.logger = logging.getLogger(__name__)
-        self.workflow_rate = 1 / mandatory(
-            task.params, "workflow-interval", "composite"
-        )
+        self.workflow_rate = 1 / mandatory(task.params, "workflow-interval", "composite")
         self.think_rate = 1 / mandatory(task.params, "think-time-interval", "composite")
-        self.logger.info(
-            f"workflow-scheduler will use workflow rate of [{self.workflow_rate}]/s"
-        )
-        self.logger.info(
-            f"workflow-scheduler will use think rate of [{self.think_rate}]/s"
-        )
+        self.logger.info(f"workflow-scheduler will use workflow rate of [{self.workflow_rate}]/s")
+        self.logger.info(f"workflow-scheduler will use think rate of [{self.think_rate}]/s")
         self.parameter_source = None
         self._random_generator = None
         self.first = True
@@ -72,13 +66,7 @@ class WorkflowScheduler:
             self._random_generator = random.Random(self.parameter_source.random_seed)
             self.first = False
             # we offset the initial task execution
-            current = current + (
-                (
-                    self.parameter_source.task_offset
-                    / self.parameter_source.number_of_tasks
-                )
-                * self.workflow_rate
-            )
+            current = current + ((self.parameter_source.task_offset / self.parameter_source.number_of_tasks) * self.workflow_rate)
         if self.parameter_source.current_index == 0:
             delay = self._random_generator.expovariate(self.workflow_rate)
             self.logger.info(

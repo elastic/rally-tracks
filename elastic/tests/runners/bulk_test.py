@@ -16,6 +16,7 @@
 # under the License.
 
 from unittest import mock
+
 import pytest
 from shared.runners.bulk import RawBulkIndex
 from tests import as_future

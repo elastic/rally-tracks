@@ -1419,4 +1419,124 @@
           }
         }
       }
+    },
+    {
+      "name": "filters-agg-with-low-cardinality-filters",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "filter-terms-low-cardinality": {
+            "filters": {
+              "filters": [
+                {"match": {"station.name": "MARSHALL"}},
+                {"match": {"station.name": "NEWPORT"}},
+                {"match": {"station.name": "JACKSON"}},
+                {"match": {"station.name": "FAIRFIELD"}},
+                {"match": {"station.name": "HILLSBORO"}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "filters-agg-with-high-cardinality-filters",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "filter-terms-high-cardinality": {
+            "filters": {
+              "filters": [
+                {"match": {"station.country_code": "US"}},
+                {"match": {"station.country_code": "AS"}},
+                {"match": {"station.country_code": "CA"}},
+                {"match": {"station.country_code": "SW"}},
+                {"match": {"station.country_code": "RS"}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "filters-per-10-degrees-interval",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "group-by-temp": {
+            "histogram": {
+              "field": "TAVG",
+              "interval": 10,
+              "min_doc_count": 1
+            },
+            "aggs": {
+              "in-the-us": {
+                "filters": {
+                  "filters": [
+                    {
+                      "match": {
+                        "station.country_code": "US"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "filter-per-10-degrees-interval",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "group-by-temp": {
+            "histogram": {
+              "field": "TAVG",
+              "interval": 10,
+              "min_doc_count": 1
+            },
+            "aggs": {
+              "in-the-us": {
+                "filter": {
+                  "match": {"station.country_code": "US"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "filters-agg-with-high-cardinality-filter",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "filters-term-high-cardinality": {
+            "filters": {
+              "filters": [
+                {"match": {"station.country_code": "US"}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "filter-agg-with-high-cardinality-filter",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "filter-term-high-cardinality": {
+            "filter": {"match": {"station.country_code": "US"}}
+          }
+        }
+      }
     }

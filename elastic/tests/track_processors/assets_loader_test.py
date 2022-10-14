@@ -16,7 +16,6 @@
 # under the License.
 
 import pytest
-
 from endpoint.track_processors.assets_loader import AssetsLoader
 from tests.parameter_sources import EmptyTrack
 
@@ -92,9 +91,7 @@ def test_invalid_packages(assets_loader):
         "assets": [
             {
                 "repository": "file://./tests/track_processors/resources/assets",
-                "packages": [
-                    "invalid/a.b.c"
-                ],
+                "packages": ["invalid/a.b.c"],
             },
         ],
     }
@@ -105,7 +102,10 @@ def test_invalid_packages(assets_loader):
 
 
 def test_invalid_repo(assets_loader):
-    for repo in ["git@github.com:elastic/package-assets", "https://gitlab.com/elastic/package-assets"]:
+    for repo in [
+        "git@github.com:elastic/package-assets",
+        "https://gitlab.com/elastic/package-assets",
+    ]:
         parameters = {
             "assets": [
                 {
@@ -165,32 +165,32 @@ def test_composable_templates(assets_loader, track):
 def test_component_templates(assets_loader, track):
     component_template_names = sorted(ct.name for ct in track.component_templates)
     assert component_template_names == [
-        '.fleet_agent_id_verification-1',
-        '.fleet_globals-1',
-        '.logs-endpoint.action.responses@custom',
-        '.logs-endpoint.action.responses@package',
-        '.logs-endpoint.actions@custom',
-        '.logs-endpoint.actions@package',
-        '.logs-endpoint.diagnostic.collection@custom',
-        '.logs-endpoint.diagnostic.collection@package',
-        'logs-endpoint.alerts@custom',
-        'logs-endpoint.alerts@package',
-        'logs-endpoint.events.file@custom',
-        'logs-endpoint.events.file@package',
-        'logs-endpoint.events.library@custom',
-        'logs-endpoint.events.library@package',
-        'logs-endpoint.events.network@custom',
-        'logs-endpoint.events.network@package',
-        'logs-endpoint.events.process@custom',
-        'logs-endpoint.events.process@package',
-        'logs-endpoint.events.registry@custom',
-        'logs-endpoint.events.registry@package',
-        'logs-endpoint.events.security@custom',
-        'logs-endpoint.events.security@package',
-        'metrics-endpoint.metadata@custom',
-        'metrics-endpoint.metadata@package',
-        'metrics-endpoint.metrics@custom',
-        'metrics-endpoint.metrics@package',
-        'metrics-endpoint.policy@custom',
-        'metrics-endpoint.policy@package',
+        ".fleet_agent_id_verification-1",
+        ".fleet_globals-1",
+        ".logs-endpoint.action.responses@custom",
+        ".logs-endpoint.action.responses@package",
+        ".logs-endpoint.actions@custom",
+        ".logs-endpoint.actions@package",
+        ".logs-endpoint.diagnostic.collection@custom",
+        ".logs-endpoint.diagnostic.collection@package",
+        "logs-endpoint.alerts@custom",
+        "logs-endpoint.alerts@package",
+        "logs-endpoint.events.file@custom",
+        "logs-endpoint.events.file@package",
+        "logs-endpoint.events.library@custom",
+        "logs-endpoint.events.library@package",
+        "logs-endpoint.events.network@custom",
+        "logs-endpoint.events.network@package",
+        "logs-endpoint.events.process@custom",
+        "logs-endpoint.events.process@package",
+        "logs-endpoint.events.registry@custom",
+        "logs-endpoint.events.registry@package",
+        "logs-endpoint.events.security@custom",
+        "logs-endpoint.events.security@package",
+        "metrics-endpoint.metadata@custom",
+        "metrics-endpoint.metadata@package",
+        "metrics-endpoint.metrics@custom",
+        "metrics-endpoint.metrics@package",
+        "metrics-endpoint.policy@custom",
+        "metrics-endpoint.policy@package",
     ]

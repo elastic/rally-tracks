@@ -1,32 +1,60 @@
-import random
+import json
+import os
 
 
-def knn_param_source(track, params, **kwargs):
-    # ensure the sequence of vector queries is the same from run to run
-    random.seed(31)
-    # choose a suitable index: if there is only one defined for this track
-    # choose that one, but let the user always override index
-    if len(track.indices) == 1:
-        default_index = track.indices[0].name
-    else:
-        default_index = "_all"
+class KnnParamSource:
+    def __init__(self, track, params, **kwargs):
+        # choose a suitable index: if there is only one defined for this track
+        # choose that one, but let the user always override index
+        if len(track.indices) == 1:
+            default_index = track.indices[0].name
+        else:
+            default_index = "_all"
 
-    index_name = params.get("index", default_index)
+        self._index_name = params.get("index", default_index)
+        self._cache = params.get("cache", False)
+        self._exact_scan = params.get("exact", False)
+        self._params = params
 
-    return {
-        "body": {
-            "knn": {
-                "field": "vector",
-                "query_vector": params.get("query-vector", [random.uniform(-1.0, 1.0) for _ in range(96)]),
-                "k": params.get("k", 10),
-                "num_candidates": params.get("num-candidates", 100),
-            },
-            "_source": False,
-        },
-        "index": index_name,
-        "cache": params.get("cache", False),
-    }
+        cwd = os.path.dirname(__file__)
+        with open(os.path.join(cwd, "queries.json"), "r") as file:
+            lines = file.readlines()
+        self._queries = [json.loads(line) for line in lines]
+        self._iters = 0
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        return self
+
+    def params(self):
+        result = {"index": self._index_name, "cache": self._params.get("cache", False), "size": self._params.get("k", 10)}
+
+        if self._exact_scan:
+            result["body"] = {
+                "query": {
+                    "script_score": {
+                        "query": {"match_all": {}},
+                        "script": {
+                            "source": "cosineSimilarity(params.query, 'vector') + 1.0",
+                            "params": {"query": self._queries[self._iters]},
+                        },
+                    }
+                },
+                "_source": False,
+            }
+        else:
+            result["body"] = {
+                "knn": {
+                    "field": "vector",
+                    "query_vector": self._queries[self._iters],
+                    "k": self._params.get("k", 10),
+                    "num_candidates": self._params.get("num-candidates", 100),
+                },
+                "_source": False,
+            }
+        self._iters += 1
+        return result
 
 
 def register(registry):
-    registry.register_param_source("knn-param-source", knn_param_source)
+    registry.register_param_source("knn-param-source", KnnParamSource)

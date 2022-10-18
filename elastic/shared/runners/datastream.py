@@ -66,7 +66,7 @@ class DeleteRemoteDataStream:
                 await cluster_client.indices.delete_data_stream(name=data_stream)
             except elasticsearch.ElasticsearchException as e:
                 msg = f"Failed to delete datastream [{data_stream}]; [{e}]"
-                self.logger.info("Deleting data stream: [%s] in cluster [%s]", data_stream, cluster_name)
+                self.logger.error("Deleting data stream: [%s] in cluster [%s]", data_stream, cluster_name)
                 raise BaseException(msg, e)
         return ops, "ops"
 

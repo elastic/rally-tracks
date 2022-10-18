@@ -17,6 +17,7 @@
 
 from elasticsearch import ElasticsearchException
 
+
 async def validate_package_assets(es, params):
     packages = params.get("packages", [])
     asset_types = params.get("asset-types", [])
@@ -33,6 +34,6 @@ async def validate_package_assets(es, params):
                     raise e
 
         if len(missing_templates) > 0:
-            raise BaseException(f"Could not get index templates for packages {missing_templates}")
+            raise BaseException(f"Index templates missing for packages: {missing_templates}")
         else:
             return

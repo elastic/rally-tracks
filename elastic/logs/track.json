@@ -1,5 +1,7 @@
 {% import "rally.helpers" as rally with context %}
 
+{% set p_use_static_assets = (use_static_assets | default(true)) %}
+
 {% set p_query_workflows = (query_workflows | default(["discover/search", "discover/visualize", "kafka", "nginx",
 "apache", "system/auth", "system/syslog/dashboard", "system/syslog/lens", "mysql/dashboard", "redis", "mysql/lens",
 "postgresql/overview", "postgresql/duration"])) %}
@@ -139,9 +141,7 @@
     "wait-for-status": "{{ wait_for_status | default('green') }}",
     "force-data-generation": {{ force_data_generation | default(false) | tojson }},
     "detailed-results": {{ detailed_results | default(false) | tojson }},
-    "number-of-workflows": {{ p_num_query_workflows }},
-    "number_of_replicas" : "{{number_of_replicas | default('0')}}",
-    "number_of_shards" : "{{number_of_shards | default('1')}}"
+    "number-of-workflows": {{ p_num_query_workflows }}
   },
   "data-streams": [
     {
@@ -185,14 +185,7 @@
     }
   ],
   "component-templates": [
-    {
-        "name": "track-custom-mappings",
-        "template": "./templates/component/track-custom-mappings.json"
-    },
-    {
-        "name": "auditbeat-mappings",
-        "template": "./templates/component/auditbeat-mappings.json"
-    },
+    {% if p_use_static_assets == true %}
     {
         "name": ".fleet_component_template-1",
         "template": "./templates/component/.fleet_component_template-1.json"
@@ -292,27 +285,19 @@
     {
         "name": "logs-system.syslog@custom",
         "template": "./templates/component/logs-system.syslog@custom.json"
+    },
+    {% endif %}
+    {
+        "name": "track-custom-mappings",
+        "template": "./templates/component/track-custom-mappings.json"
+    },
+    {
+        "name": "auditbeat-mappings",
+        "template": "./templates/component/auditbeat-mappings.json"
     }
   ],
   "composable-templates": [
-    {
-    "name": "auditbeat",
-    "index-pattern": "auditbeat-*",
-    "delete-matching-indices": false,
-    "template": "./templates/composable/auditbeat.json"
-    },
-    {
-    "name": "auditbeat-frozen",
-    "index-pattern": "auditbeatfrozen-*",
-    "delete-matching-indices": false,
-    "template": "./templates/composable/auditbeat-frozen.json"
-    },
-    {
-    "name": "auditbeat-quantitative",
-    "index-pattern": "auditbeatquantitative-*",
-    "delete-matching-indices": false,
-    "template": "./templates/composable/auditbeat-quantitative.json"
-    },
+    {% if p_use_static_assets == true%}
     {
       "name": "logs-kafka.log",
       "index-pattern": "logs-kafka.log-*",
@@ -331,12 +316,7 @@
        "delete-matching-indices": false,
        "template": "./templates/composable/logs-nginx.error.json"
     },
-    {
-      "name": "logs-k8-application.log",
-      "index-pattern": "logs-k8-application.log-*",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs-k8-application.log.json"
-    },
+
     {
       "name": "logs-mysql.slowlog",
       "index-pattern": "logs-mysql.slowlog-*",
@@ -390,6 +370,31 @@
         "index-pattern": "logs-redis.slowlog-*",
         "delete-matching-indices": false,
         "template": "./templates/composable/logs-redis.slowlog.json"
+    },
+    {% endif %}
+    {
+    "name": "auditbeat",
+    "index-pattern": "auditbeat-*",
+    "delete-matching-indices": false,
+    "template": "./templates/composable/auditbeat.json"
+    },
+    {
+    "name": "auditbeat-frozen",
+    "index-pattern": "auditbeatfrozen-*",
+    "delete-matching-indices": false,
+    "template": "./templates/composable/auditbeat-frozen.json"
+    },
+    {
+    "name": "auditbeat-quantitative",
+    "index-pattern": "auditbeatquantitative-*",
+    "delete-matching-indices": false,
+    "template": "./templates/composable/auditbeat-quantitative.json"
+    },
+    {
+      "name": "logs-k8-application.log",
+      "index-pattern": "logs-k8-application.log-*",
+      "delete-matching-indices": false,
+      "template": "./templates/composable/logs-k8-application.log.json"
     }
   ],
   "corpora": [

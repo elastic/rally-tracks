@@ -49,6 +49,7 @@
     "remove-pipelines": false
   }
 },
+{%- if p_use_static_assets == false %}
 {
   "name": "update-custom-templates",
   "tags": ["setup"],
@@ -90,6 +91,7 @@
     }
   }
 },
+{%- endif %}
 {
   "name": "create-required-data-streams",
   "tags": ["setup"],

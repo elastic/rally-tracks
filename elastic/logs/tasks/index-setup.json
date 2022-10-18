@@ -4,13 +4,6 @@
 {% include "tasks/package-asset-setup.json" %}
 {%- endif %}
 {
-  "name": "create-required-data-streams",
-  "tags": ["setup"],
-  "operation": {
-    "operation-type": "create-data-stream"
-  }
-},
-{
   "name": "check-cluster-health",
   "operation": {
     "operation-type": "cluster-health",

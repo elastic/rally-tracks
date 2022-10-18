@@ -730,5 +730,76 @@
           "add_task_parallelism_above_query" : true
         }
       }
+    },
+    {
+      "name": "avg_tip_percent_aggregation",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "runtime_mappings": {
+          "tip_percent": {
+            "type": "double",
+            "script": {
+              "source": "emit(doc['tip_amount'].value / doc['fare_amount'].value)"
+            }
+          }
+        },
+        "aggs": {
+          "avg_tip_percent": {
+            "avg": {
+              "field": "tip_percent"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "avg_tip_percent_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "avg_tip_percent_esql_segment_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
+        "pragma" : {
+          "data_partitioning" : "segment"
+        }
+      }
+    },
+    {
+      "name": "avg_tip_percent_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
+    },
+    {
+      "name": "avg_tip_percent_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
+        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+        }
+      }
     }
 

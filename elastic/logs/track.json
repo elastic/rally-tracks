@@ -139,7 +139,9 @@
     "wait-for-status": "{{ wait_for_status | default('green') }}",
     "force-data-generation": {{ force_data_generation | default(false) | tojson }},
     "detailed-results": {{ detailed_results | default(false) | tojson }},
-    "number-of-workflows": {{ p_num_query_workflows }}
+    "number-of-workflows": {{ p_num_query_workflows }},
+    "number_of_replicas" : "{{number_of_replicas | default('0')}}",
+    "number_of_shards" : "{{number_of_shards | default('1')}}"
   },
   "data-streams": [
     {

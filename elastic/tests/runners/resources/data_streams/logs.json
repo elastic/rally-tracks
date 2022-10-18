@@ -53,30 +53,6 @@
       "hidden" : false
     },
     {
-      "name" : "logs-k8-application.log-default",
-      "timestamp_field" : {
-        "name" : "@timestamp"
-      },
-      "indices" : [
-        {
-          "index_name" : ".ds-logs-k8-application.log-default-2021.02.25-000001",
-          "index_uuid" : "nC77drotSci5OWlioNHfYg"
-        }
-      ],
-      "generation" : 1,
-      "_meta" : {
-        "managed_by" : "ingest-manager",
-        "managed" : true,
-        "package" : {
-          "name" : "nginx"
-        }
-      },
-      "status" : "GREEN",
-      "template" : "logs",
-      "ilm_policy" : "logs",
-      "hidden" : false
-    },
-    {
       "name" : "logs-kafka.log-default",
       "timestamp_field" : {
         "name" : "@timestamp"

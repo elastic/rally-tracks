@@ -1,5 +1,6 @@
 {% import "rally.helpers" as rally with context %}
 
+{% set p_packages = (packages | default(["apache", "kafka", "mysql", "nginx", "postgresql", "redis", "system"] | tojson)) %}
 {% set p_use_static_assets = (use_static_assets | default(true)) %}
 
 {% set p_query_workflows = (query_workflows | default(["discover/search", "discover/visualize", "kafka", "nginx",

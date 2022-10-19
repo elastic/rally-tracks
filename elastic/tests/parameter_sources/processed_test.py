@@ -566,6 +566,8 @@ def test_timestamp_corpus_read_from_multiple_integrations():
     timestamps = {
         "apache-access-logs": "31/Aug/2020:00:12:26 +0000",
         "apache-error-logs": "Mon Aug 31 01:32:26 2020",
+        "application-logs-1": "2020-08-31T02:52:26.435Z",
+        "application-logs-2": "2020-08-31T04:12:26.435Z",
         "kafka-logs": "2020-08-31 05:32:26",
         "mysql-error-logs": "2020-08-31 06:52:26",
         "mysql-slowlog-logs": "1598861546",
@@ -597,6 +599,21 @@ def test_timestamp_corpus_read_from_multiple_integrations():
         doc_message
         == f"[{timestamps[expected_idx_name]}] [core:info] [pid 994682:tid 677381] [client 10.12.9.220:35782] AH00128: File does not exist: /var/www/html/wp-login.ph, referer: shopify.com"
     )
+
+    idx_name, doc_message, ts = next_bulk()
+    expected_idx_name = "application-logs-1"
+    assert idx_name == expected_idx_name
+    assert (
+        doc_message
+        == '82.36.71.189 - [82.36.71.189] - elasticsearch-ci [07/Sep/2020:10:28:35 +0000] "GET /cache/c2d427d5ecd9155176c39090541beb49 HTTP/1.1" 200 2412 "-" "Gradle/6.6.1 (Linux;4.12.14-lp151.28.63-default;amd64) (Oracle Corporation;14.0.2;14.0.2+12-46)" 409 0.008 [elasticsearch-gradle-proxy-80] 82.36.71.189:9080 2412 0.008 200'
+    )
+    assert ts == timestamps[expected_idx_name]
+
+    idx_name, doc_message, ts = next_bulk()
+    expected_idx_name = "application-logs-2"
+    assert idx_name == expected_idx_name
+    assert doc_message == "\u001b[0mGET / \u001b[32m200 \u001b[0m0.592 ms - 2410\u001b[0m"
+    assert ts == timestamps[expected_idx_name]
 
     idx_name, doc_message, _ = next_bulk()
     expected_idx_name = "kafka-logs"

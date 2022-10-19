@@ -15,23 +15,23 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from elasticsearch import ElasticsearchException
-
 
 async def validate_package_assets(es, params):
     packages = params.get("packages", [])
     asset_types = params.get("asset-types", [])
 
     if "index-templates" in asset_types:
-        missing_templates = []
-        for package in packages:
-            try:
-                await es.indices.get_index_template(name=f"*-{package}*")
-            except ElasticsearchException as e:
-                if e.status_code == 404:
-                    missing_templates.append(package)
-                else:
-                    raise e
+        all_templates = await es.indices.get_index_template()
+        package_templates = []
+
+        for template in all_templates["index_templates"]:
+            meta = template["index_template"].get("_meta")
+            if meta is not None:
+                package = meta.get("package", None)
+                if package is not None:
+                    package_templates.append(package["name"])
+
+        missing_templates = [p for p in packages if p not in package_templates]
 
         if len(missing_templates) > 0:
             raise BaseException(f"Index templates missing for packages: {missing_templates}")

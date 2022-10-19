@@ -58,13 +58,15 @@ class TestConfigureRemoteClusters:
             "nodes": {
                 "ZrKjLJ1cT6eXblbjwMkkFA": {
                     "transport_address": f"127.0.0.1:39320",
+                    "roles": ["data_hot", "remote_cluster_client"],
                 },
                 "ZrKjLJ1cT6eXblbjwMkkFb": {
                     "transport_address": f"127.0.0.2:39320",
+                    "roles": ["master"],
                 },
             },
         }
-        assert ConfigureRemoteClusters._get_seed_nodes(nodes_resp) == ["127.0.0.1:39320", "127.0.0.2:39320"]
+        assert ConfigureRemoteClusters._get_seed_nodes(nodes_resp) == ["127.0.0.1:39320"]
 
     @pytest.mark.asyncio
     async def test_configure_remote_cluster(self, setup_es, setup_params):
@@ -80,9 +82,11 @@ class TestConfigureRemoteClusters:
                     "nodes": {
                         "ZrKjLJ1cT6eXblbjwMkkFA": {
                             "transport_address": f"{i}27.0.0.1:39320",
+                            "roles": ["data_hot", "remote_cluster_client"],
                         },
                         "ZrKjLJ1cT6eXblbjwMkkFB": {
                             "transport_address": f"{i}27.0.0.2:39320",
+                            "roles": ["remote_cluster_client"],
                         },
                     },
                 }
@@ -190,9 +194,11 @@ class TestConfigureRemoteClusters:
                     "nodes": {
                         "ZrKjLJ1cT6eXblbjwMkkFA": {
                             "transport_address": f"{i}27.0.0.1:39320",
+                            "roles": ["data_hot", "remote_cluster_client"],
                         },
                         "ZrKjLJ1cT6eXblbjwMkkFB": {
                             "transport_address": f"{i}27.0.0.2:39320",
+                            "roles": [],
                         },
                     },
                 }

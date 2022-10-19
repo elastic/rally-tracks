@@ -30,7 +30,11 @@ class ConfigureRemoteClusters(Runner):
 
     @staticmethod
     def _get_seed_nodes(nodes_api_response):
-        return [n["transport_address"] for n in nodes_api_response["nodes"].values()]
+        return [
+            n["transport_address"]
+            for n in nodes_api_response["nodes"].values()
+            if "remote_cluster_client" in n["roles"] and "master" not in n["roles"]
+        ]
 
     async def _configure_remote_cluster(self, local_cluster_client, local_cluster_name, remote_cluster_identifier, remote_seed_nodes):
         local_settings_body = {"persistent": {f"cluster.remote.{remote_cluster_identifier}.seeds": remote_seed_nodes}}

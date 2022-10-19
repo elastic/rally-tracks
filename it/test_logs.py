@@ -41,6 +41,16 @@ def params(updates=None):
 
 
 class TestLogs:
+    def test_logs_fails_if_assets_not_installed(self, es_cluster, rally, capsys):
+        ret = rally.race(
+            track="elastic/logs",
+            track_params="use_static_assets:false",
+        )
+        message = "Index templates missing for packages: ['apache', 'kafka', 'mysql', 'nginx', 'postgresql', 'redis', 'system']"
+        stdout = capsys.readouterr().out
+        assert message in stdout
+        assert ret != 0
+
     def test_logs_default(self, es_cluster, rally):
         ret = rally.race(
             track="elastic/logs",

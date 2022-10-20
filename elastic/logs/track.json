@@ -294,65 +294,64 @@
   ],
   "composable-templates": [
     {
-      "name": "logs-kafka.log",
-      "index-pattern": "logs-kafka.log-*",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs-kafka.log.json"
+        "name": "logs-kafka.log",
+        "index-pattern": "logs-kafka.log-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-kafka.log.json"
     },
     {
-       "name": "logs-nginx.access",
-       "index-pattern": "logs-nginx.access-*",
-       "delete-matching-indices": false,
-       "template": "./templates/composable/logs-nginx.access.json"
+        "name": "logs-nginx.access",
+        "index-pattern": "logs-nginx.access-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-nginx.access.json"
     },
     {
-       "name": "logs-nginx.error",
-       "index-pattern": "logs-nginx.error-*",
-       "delete-matching-indices": false,
-       "template": "./templates/composable/logs-nginx.error.json"
-    },
-
-    {
-      "name": "logs-mysql.slowlog",
-      "index-pattern": "logs-mysql.slowlog-*",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs-mysql.slowlog.json"
+        "name": "logs-nginx.error",
+        "index-pattern": "logs-nginx.error-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-nginx.error.json"
     },
     {
-      "name": "logs-mysql.error",
-      "index-pattern": "logs-mysql.error-*",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs-mysql.error.json"
+        "name": "logs-mysql.slowlog",
+        "index-pattern": "logs-mysql.slowlog-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-mysql.slowlog.json"
     },
     {
-      "name": "logs-system.auth",
-      "index-pattern": "logs-system.auth-*",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs-system.auth.json"
+        "name": "logs-mysql.error",
+        "index-pattern": "logs-mysql.error-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-mysql.error.json"
     },
     {
-      "name": "logs-system.syslog",
-      "index-pattern": "logs-system.syslog-*",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs-system.syslog.json"
+        "name": "logs-system.auth",
+        "index-pattern": "logs-system.auth-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-system.auth.json"
     },
     {
-       "name": "logs-postgresql.log",
-       "index-pattern": "logs-postgresql.log-*",
-       "delete-matching-indices": false,
-       "template": "./templates/composable/logs-postgresql.log.json"
+        "name": "logs-system.syslog",
+        "index-pattern": "logs-system.syslog-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-system.syslog.json"
     },
     {
-       "name": "logs-apache.access",
-       "index-pattern": "logs-apache.access-*",
-       "delete-matching-indices": false,
-       "template": "./templates/composable/logs-apache.access.json"
+        "name": "logs-postgresql.log",
+        "index-pattern": "logs-postgresql.log-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-postgresql.log.json"
     },
     {
-       "name": "logs-apache.error",
-       "index-pattern": "logs-apache.error-*",
-       "delete-matching-indices": false,
-       "template": "./templates/composable/logs-apache.error.json"
+        "name": "logs-apache.access",
+        "index-pattern": "logs-apache.access-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-apache.access.json"
+    },
+    {
+        "name": "logs-apache.error",
+        "index-pattern": "logs-apache.error-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-apache.error.json"
     },
     {
         "name": "logs-redis.log",
@@ -367,28 +366,28 @@
         "template": "./templates/composable/logs-redis.slowlog.json"
     },
     {
-    "name": "auditbeat",
-    "index-pattern": "auditbeat-*",
-    "delete-matching-indices": false,
-    "template": "./templates/composable/auditbeat.json"
+        "name": "auditbeat",
+        "index-pattern": "auditbeat-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/auditbeat.json"
     },
     {
-    "name": "auditbeat-frozen",
-    "index-pattern": "auditbeatfrozen-*",
-    "delete-matching-indices": false,
-    "template": "./templates/composable/auditbeat-frozen.json"
+        "name": "auditbeat-frozen",
+        "index-pattern": "auditbeatfrozen-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/auditbeat-frozen.json"
     },
     {
-    "name": "auditbeat-quantitative",
-    "index-pattern": "auditbeatquantitative-*",
-    "delete-matching-indices": false,
-    "template": "./templates/composable/auditbeat-quantitative.json"
+        "name": "auditbeat-quantitative",
+        "index-pattern": "auditbeatquantitative-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/auditbeat-quantitative.json"
     },
     {
-      "name": "logs-k8-application.log",
-      "index-pattern": "logs-k8-application.log-*",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs-k8-application.log.json"
+        "name": "logs-k8-application.log",
+        "index-pattern": "logs-k8-application.log-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-k8-application.log.json"
     }
   ],
   "corpora": [

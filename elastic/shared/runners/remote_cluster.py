@@ -1,7 +1,5 @@
 import asyncio
 import copy
-import math
-import time
 
 from elasticsearch import ElasticsearchException
 from esrally.driver.runner import Runner
@@ -105,21 +103,26 @@ class ConfigureCrossClusterReplication(Runner):
 
     def __init__(self):
         super().__init__()
+        self.required_licenses = ["trial", "platinum", "enterprise"]
+
+    def check_license_type(self, cluster_name, license_type):
+        if license_type not in self.required_licenses:
+            raise BaseException(
+                f"Cluster [{cluster_name}] cannot use license type [{license_type}] "
+                f"for CCR features. All clusters must use one of [{self.required_licenses}]]"
+            )
+        return
 
     async def _follow_indices(self, params, source_cluster_name, source_cluster_client, following_cluster_name, following_cluster_client):
         request_timeout = params.get("request-timeout", 7200)
-        required_licenses = ["trial", "platinum", "enterprise"]
 
         following_license = await following_cluster_client.license.get()
         source_license = await source_cluster_client.license.get()
         source_license_type = source_license.get("license", {}).get("type")
         following_license_type = following_license.get("license", {}).get("type")
 
-        if source_license_type not in required_licenses or following_license_type not in required_licenses:
-            raise BaseException(
-                f"Cannot use license type(s) [{source_license_type}, {following_license_type}] "
-                f"for CCR features. All clusters must use one of [{required_licenses}]]"
-            )
+        self.check_license_type(source_cluster_name, source_license_type)
+        self.check_license_type(following_cluster_name, following_license_type)
 
         # fetch the indices from the source cluster
         source_indices = await source_cluster_client.indices.get_settings(index=params["index"], request_timeout=request_timeout)

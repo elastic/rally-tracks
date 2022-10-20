@@ -397,10 +397,10 @@ class TestConfigureCrossClusterReplication:
         setup_es["source_cluster"].indices.flush.return_value = as_future({})
 
         cfg_ccr = ConfigureCrossClusterReplication()
-        required_licenses = ["trial", "platinum", "enterprise"]
         with pytest.raises(BaseException) as e:
             await cfg_ccr(setup_es, setup_params)
 
-        assert "Cannot use license type(s) [basic, basic] for CCR features. " f"All clusters must use one of [{required_licenses}]" in str(
-            e
+        assert (
+            "Cluster [source_cluster] cannot use license type [basic] for CCR features. "
+            f"All clusters must use one of [{cfg_ccr.required_licenses}]" in str(e)
         )

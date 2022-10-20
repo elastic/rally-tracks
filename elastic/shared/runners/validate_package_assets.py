@@ -31,9 +31,7 @@ async def validate_package_assets(es, params):
                 if package is not None:
                     package_templates.append(package["name"])
 
-        missing_templates = [p for p in packages if p not in package_templates]
-
-        if len(missing_templates) > 0:
+        if missing_templates := [p for p in packages if p not in package_templates]:
             raise BaseException(f"Index templates missing for packages: {sorted(missing_templates)}")
         else:
             return

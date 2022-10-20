@@ -15,6 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import json
+
 import pytest
 
 pytest_rally = pytest.importorskip("pytest_rally")
@@ -42,11 +44,8 @@ def params(updates=None):
 
 class TestLogs:
     def test_logs_fails_if_assets_not_installed(self, es_cluster, rally, capsys):
-        ret = rally.race(
-            track="elastic/logs",
-            track_params="use_static_assets:false",
-        )
-        message = "Index templates missing for packages: ['apache', 'kafka', 'mysql', 'nginx', 'postgresql', 'redis', 'system']"
+        ret = rally.race(track="elastic/logs", exclude_tasks="tag:setup")
+        message = "Index templates missing for packages: ['apache', 'kafka', 'mysql', 'nginx', 'redis', 'system']"
         stdout = capsys.readouterr().out
         assert message in stdout
         assert ret != 0

@@ -34,4 +34,4 @@ async def validate_package_assets(es, params):
         if missing_templates := [p for p in packages if p not in package_templates]:
             raise BaseException(f"Index templates missing for packages: {sorted(missing_templates)}")
         else:
-            return
+            return True

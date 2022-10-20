@@ -106,12 +106,8 @@ class ConfigureCrossClusterReplication(Runner):
     def __init__(self):
         super().__init__()
 
-    def request_timeout(self, timeout):
-        end_request_timeout = time.process_time() + timeout
-        return math.ceil(end_request_timeout - time.process_time())
-
     async def _follow_indices(self, params, source_cluster_name, source_cluster_client, following_cluster_name, following_cluster_client):
-        request_timeout = self.request_timeout(params.get("request-timeout", 7200))
+        request_timeout = params.get("request-timeout", 7200)
         required_licenses = ["trial", "platinum", "enterprise"]
 
         following_license = await following_cluster_client.license.get()

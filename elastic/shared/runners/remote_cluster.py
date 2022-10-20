@@ -95,7 +95,7 @@ class ConfigureRemoteClusters(Runner):
 
 class ConfigureCrossClusterReplication(Runner):
     """
-    Runner that configures all other clusters specified in `target-hosts` to follow specified indices from the 'source-cluster'
+    Runner that configures all other clusters specified in `target-hosts` to follow specified indices from the 'source-cluster'.
     * `source-cluster`: (mandatory) the name of the cluster specified in `target-hosts` parameters from which to follow indices.
     * `index`: (mandatory) the pattern of indices to be replicated
     * `request-timeout`: (optional) the timeout of this runner. Defaults to 7200

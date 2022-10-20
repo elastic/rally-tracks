@@ -44,7 +44,7 @@ class ConfigureRemoteClusters(Runner):
 
         self.logger.info(f"checking that cluster [{local_cluster_name}] is connected to cluster [{remote_cluster_identifier}]")
         local_info = await local_cluster_client.cluster.remote_info()
-        if not local_info.get(f"{remote_cluster_identifier}", {}).get("connected"):
+        if not local_info.get(remote_cluster_identifier, {}).get("connected"):
             self.logger.error(f"Unable to connect [{local_cluster_name}] to cluster [{remote_cluster_identifier}]")
             raise BaseException(
                 f"Unable to connect [{local_cluster_name}] to cluster [{remote_cluster_identifier}]. "

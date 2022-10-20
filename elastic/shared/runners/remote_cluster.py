@@ -53,15 +53,15 @@ class ConfigureRemoteClusters(Runner):
 
     async def __call__(self, multi_es, params):
 
-        local_es = multi_es[params["local-cluster"]]
         local_cluster_name = params["local-cluster"]
+        local_es = multi_es[local_cluster_name]
         self.logger.info(f"retrieving nodes from the local cluster [{local_es}]")
         local_nodes_resp = await local_es.nodes.info()
         local_seed_nodes = self._get_seed_nodes(local_nodes_resp)
 
         # remove our 'local-cluster' from the overall list of es clients
         remaining_es_clients = copy.copy(multi_es)
-        remaining_es_clients.pop(params["local-cluster"])
+        remaining_es_clients.pop(local_cluster_name)
 
         for remote_cluster_name, remote_cluster_client in remaining_es_clients.items():
             # retrieve seed nodes from the remote cluster

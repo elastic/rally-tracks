@@ -24,8 +24,8 @@
       },
       "clients": {{ p_bulk_indexing_clients }}
     },
-    {# randomize base path to avoid clashes when running concurrent benchmarks #}
-      {% set _=p_snapshot_repo_settings.update({"base_path":"many-shards-"+((now|int)|string)}) %}
+  {# TODO randomize base path to avoid clashes when running concurrent benchmarks after https://github.com/elastic/rally-tracks/issues/337 #}
+    {# % set _=p_snapshot_repo_settings.update({"base_path":"many-shards-"+((now|int)|string)}) % #}
     {
       "name": "register-snapshot-repository",
       "operation": {

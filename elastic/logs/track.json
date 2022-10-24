@@ -5,7 +5,7 @@
 "postgresql/overview", "postgresql/duration"])) %}
 
 {% set p_num_query_workflows = p_query_workflows | length %}
-{% set num_corpus = 18 %}
+{% set num_corpus = 16 %}
 {% set p_bulk_indexing_clients = (bulk_indexing_clients | default(8)) %}
 {% set p_initial_indices_count = (initial_indices_count | default(0)) %}
 {% set p_initial_frozen_indices_count = (initial_frozen_indices_count | default(0)) %}

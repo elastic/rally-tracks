@@ -5,7 +5,7 @@
 "postgresql/overview", "postgresql/duration"])) %}
 
 {% set p_num_query_workflows = p_query_workflows | length %}
-{% set num_corpus = 18 %}
+{% set num_corpus = 16 %}
 {% set p_bulk_indexing_clients = (bulk_indexing_clients | default(8)) %}
 {% set p_initial_indices_count = (initial_indices_count | default(0)) %}
 {% set p_initial_frozen_indices_count = (initial_frozen_indices_count | default(0)) %}
@@ -54,12 +54,6 @@
         "nginx-error-logs-2": 0.01
       }
     },
-    "application-logs": {
-      "corpora": {
-        "application-logs-1": 0.5,
-        "application-logs-2": 0.25
-      }
-    },
     "apache": {
       "corpora": {
         "apache-access-logs": 0.025,
@@ -97,8 +91,6 @@
     "nginx-access-logs-2": ["container"],
     "nginx-error-logs": ["container"],
     "nginx-error-logs-2": ["container"],
-    "application-logs-1": ["kubernetes"],
-    "application-logs-2": ["kubernetes"],
     "mysql-error-logs": ["container"],
     "mysql-slowlog-logs": ["container"],
     "system-auth-logs": [],
@@ -150,9 +142,6 @@
     },
     {
       "name": "logs-nginx.error-default"
-    },
-    {
-      "name": "logs-k8-application.log-default"
     },
     {
       "name": "logs-mysql.slowlog-default"
@@ -382,12 +371,6 @@
         "index-pattern": "auditbeatquantitative-*",
         "delete-matching-indices": false,
         "template": "./templates/composable/auditbeat-quantitative.json"
-    },
-    {
-        "name": "logs-k8-application.log",
-        "index-pattern": "logs-k8-application.log-*",
-        "delete-matching-indices": false,
-        "template": "./templates/composable/logs-k8-application.log.json"
     }
   ],
   "corpora": [
@@ -461,34 +444,6 @@
           }
         {% endfor %}
       ]
-    },
-    {
-        "name": "application-logs-1",
-        "base-url": "{{p_corpora_uri_base}}/observability/logging/application_logs/k8-stats/v2",
-        "documents": [
-          {% for i in range([p_max_download_per_corpus_gb, 185] | min) %}
-            {% if not i == 0 %},{% endif %}
-            {
-              "target-data-stream": "logs-k8-application.log-default",
-              "source-file": "document-{{i}}.json.bz2",
-              "document-count": 660000
-            }
-          {% endfor %}
-        ]
-    },
-    {
-        "name": "application-logs-2",
-        "base-url": "{{p_corpora_uri_base}}/observability/logging/application_logs/eden-apps",
-        "documents": [
-          {% for i in range([p_max_download_per_corpus_gb, 17] | min) %}
-            {% if not i == 0 %},{% endif %}
-            {
-              "target-data-stream": "logs-k8-application.log-default",
-              "source-file": "document-{{i}}.json.bz2",
-              "document-count": 570000
-            }
-          {% endfor %}
-        ]
     },
     {
         "name": "mysql-error-logs",

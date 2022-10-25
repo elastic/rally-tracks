@@ -9,6 +9,12 @@
   "number_of_shards":2,
   "number_of_replicas":0,
   "integration_ratios": {
+    "application-logs": {
+      "corpora": {
+        "application-logs-1": 0.25,
+        "application-logs-2": 0.25
+      }
+    },
     "nginx": {
       "corpora": {
         "nginx-access-logs": 0.125,

@@ -37,6 +37,8 @@ from shared.runners.remote_cluster import (
     ConfigureRemoteClusters,
 )
 from shared.runners.slm import create_slm
+from shared.runners.update_custom_templates import update_custom_templates
+from shared.runners.validate_package_assets import validate_package_assets
 from shared.schedulers.indexing import TimestampThrottler
 from shared.schedulers.query import WorkflowScheduler
 from shared.track_processors import data_generator
@@ -57,7 +59,12 @@ def register(registry):
     registry.register_runner("check-datastream", datastream.check_health, async_runner=True)
     registry.register_runner("rollover-datastream", datastream.rollover, async_runner=True)
     registry.register_runner("set-shards-datastream", datastream.shards, async_runner=True)
+<<<<<<< HEAD
     registry.register_runner("delete-remote-datastream", datastream.DeleteRemoteDataStream(), async_runner=True)
+=======
+    registry.register_runner("update-custom-templates", update_custom_templates, async_runner=True)
+    registry.register_runner("validate-package-assets", validate_package_assets, async_runner=True)
+>>>>>>> upstream/master
 
     registry.register_param_source("processed-source", ProcessedCorpusParamSource)
 

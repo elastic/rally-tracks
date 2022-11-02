@@ -22,4 +22,154 @@
     },
     "size": 1000
   }
+},
+{
+  "name": "create-transform-group-by-hour",
+  "operation-type": "create-transform",
+  "transform-id": "transform-group-by-hour",
+  "body": {
+    "source": {
+      "index": [
+        "github-archive"
+      ],
+      "query": {
+        "match_all": {}
+      }
+    },
+    "dest": {
+      "index": "gha-by-hour"
+    },
+    "pivot": {
+      "group_by": {
+        "timestamp": {
+          "date_histogram": {
+            "field": "created_at",
+            "fixed_interval": "1h"
+          }
+        }
+      },
+      "aggregations": {
+        "count": {
+          "value_count": {
+            "field": "created_at"
+          }
+        },
+        "issues": {
+          "filter": {
+            "term": {
+              "type": "IssuesEvent"
+            }
+          }
+        },
+        "pull_requests": {
+          "filter": {
+            "term": {
+              "type": "PullRequestEvent"
+            }
+          }
+        },
+        "active_users": {
+          "cardinality": {
+            "field": "actor.login"
+          }
+        }
+      }
+    },
+    "settings": {
+      "max_page_search_size": {{max_page_search_size | default(500)}}
+    }
+  }
+},
+{
+  "name": "create-transform-issue-comments",
+  "operation-type": "create-transform",
+  "transform-id": "transform-issue-comments",
+  "body": {
+    "source": {
+      "index": [
+        "github-archive"
+      ],
+      "query": {
+        "match_all": {}
+      }
+    },
+    "dest": {
+      "index": "gha-issue-comments-test"
+    },
+    "pivot": {
+      "group_by": {
+        "repo.name": {
+          "terms": {
+            "field": "repo.name"
+          }
+        },
+        "payload.issue.html_url": {
+          "terms": {
+            "field": "payload.issue.html_url"
+          }
+        }
+      },
+      "aggregations": {
+        "payload.comment.id.value_count": {
+          "value_count": {
+            "field": "payload.comment.id"
+          }
+        }
+      }
+    },
+    "settings": {
+      "max_page_search_size": {{max_page_search_size | default(500)}}
+    }
+  }
+},
+{
+  "name": "create-transform-repo-commits",
+  "operation-type": "create-transform",
+  "transform-id": "transform-repo-commits",
+  "body": {
+    "source": {
+      "index": [
+        "github-archive"
+      ],
+      "query": {
+        "bool": {
+          "should": [
+            {
+              "match_phrase": {
+                "type": "PushEvent"
+              }
+            }
+          ],
+          "minimum_should_match": 1
+        }
+      }
+    },
+    "dest": {
+      "index": "gha-repo-commits"
+    },
+    "pivot": {
+      "group_by": {
+        "repo.name": {
+          "terms": {
+            "field": "repo.name"
+          }
+        },
+        "type": {
+          "terms": {
+            "field": "type"
+          }
+        }
+      },
+      "aggregations": {
+        "payload.commits.sha.cardinality": {
+          "cardinality": {
+            "field": "payload.commits.sha"
+          }
+        }
+      }
+    },
+    "settings": {
+      "max_page_search_size": {{max_page_search_size | default(500)}}
+    }
+  }
 }

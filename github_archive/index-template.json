@@ -20,7 +20,9 @@
       }
     },
     "mappings": {
-        {{ rally.collect(parts="index-mappings.json") }}
-    }
+      {{ rally.collect(parts="index-mappings.json") }},
+      "_source": {
+        "enabled": {{ source_enabled | default(true) | tojson }}
+      }
   }
 }

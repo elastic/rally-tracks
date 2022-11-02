@@ -70,4 +70,93 @@
       "operation": "refresh"
     }
   ]
+},
+{
+  "name": "transform",
+  "description": "Run transforms",
+  "default": false,
+  "schedule": [
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "github-archive",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": "index",
+      "warmup-time-period": 240,
+      "clients": {{bulk_indexing_clients | default(8)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "delete-transform-group-by-hour",
+      "operation": {
+        "operation-type": "delete-transform",
+        "transform-id": "transform-group-by-hour",
+        "force": true
+      }
+    },
+    {
+      "operation": "create-transform-group-by-hour"
+    },
+    {
+      "name": "delete-transform-issue-comments",
+      "operation": {
+        "operation-type": "delete-transform",
+        "transform-id": "transform-issue-comments",
+        "force": true
+      }
+    },
+    {
+      "operation": "create-transform-issue-comments"
+    },
+    {
+      "name": "delete-transform-repo-commits",
+      "operation": {
+        "operation-type": "delete-transform",
+        "transform-id": "transform-repo-commits",
+        "force": true
+      }
+    },
+    {
+      "operation": "create-transform-repo-commits"
+    }
+  ]
 }

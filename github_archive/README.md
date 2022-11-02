@@ -14,8 +14,10 @@ Track parameters are specified using `--track-params`; e.g., `--track-params="bu
 | `disable_watermarks` | `false` | Disable the disk allocation decider. |
 | `ingest_mode` | `index` | Set to `data_stream` to index to a data stream, otherwise, use a standard index. |
 | `ingest_percentage` | `100` | A number between 0 and 100 representing how much of the document corpus should be indexed |
+| `max_page_search_size` | `500` | Defines the initial composite aggregation page size for each checkpoint when creating transforms. |
 | `number_of_shards` | `1` | Set the number of index primary shards. |
 | `number_of_replicas` | `0` | Set the number of replica shards per primary. |
+| `source_enabled` | `true` | Set to `false` to disable storing the `_source` field in the index. |
 
 ### License
 

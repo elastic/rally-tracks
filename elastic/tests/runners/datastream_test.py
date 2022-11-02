@@ -14,12 +14,19 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
+import copy
 import json
+import logging
 import os
 from unittest import mock
 
 import pytest
-from shared.runners.datastream import compression_stats, create, rollover
+from shared.runners.datastream import (
+    DeleteRemoteDataStream,
+    compression_stats,
+    create,
+    rollover,
+)
 from tests import as_future
 
 
@@ -180,3 +187,42 @@ async def test_data_stream_stats(es):
         assert result["weight"] == weights[i]
         assert result["data_stream_stats"] == stats[data_stream]
         assert result["complete_message_stats"] == complete[i]
+
+
+@pytest.mark.asyncio
+@mock.patch("elasticsearch.Elasticsearch")
+async def test_delete_remote_datastream(es, caplog):
+    caplog.set_level(logging.INFO)
+    cluster_0 = es
+    cluster_1 = copy.deepcopy(es)
+    cluster_2 = copy.deepcopy(es)
+    cluster_3 = copy.deepcopy(es)
+    cluster_4 = copy.deepcopy(es)
+    local_cluster = copy.deepcopy(es)
+
+    multi_es = {
+        "cluster_0": cluster_0,
+        "cluster_1": cluster_1,
+        "cluster_2": cluster_2,
+        "cluster_3": cluster_3,
+        "cluster_4": cluster_4,
+        "local_cluster": local_cluster,
+    }
+
+    for _, cluster_client in multi_es.items():
+        cluster_client.indices.delete_data_stream.return_value = as_future({})
+
+    data_streams = ["logs-*", ".ds-a-specific-datastream"]
+
+    total_ops = 0
+    del_ds = DeleteRemoteDataStream()
+    for data_stream in data_streams:
+        result = await del_ds(multi_es, params={"data-stream": data_stream})
+        total_ops += result[0]
+
+    for cluster_name, cluster_client in multi_es.items():
+        cluster_client.indices.delete_data_stream.assert_has_calls([mock.call(name="logs-*"), mock.call(name=".ds-a-specific-datastream")])
+        for data_stream in data_streams:
+            assert f"Deleting data stream: [{data_stream}] in cluster [{cluster_name}]" in caplog.text
+
+    assert total_ops == 12

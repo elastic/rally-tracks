@@ -1,8 +1,15 @@
 {% import "rally.helpers" as rally %}
 {
   "name": "cross-clusters-search",
-  "description": "Indexes logs to the local cluster, replicates to the remote cluster, then search against both clusters",
+  "description": "Indexes logs to the default (local) cluster, then replicates to all other clusters specified in 'target-hosts' using CCR, finally searching across all clusters via CCS",
   "schedule": [
+    {
+        "name": "delete-existing-datastreams-in-all-clusters",
+        "operation": {
+          "operation-type": "delete-remote-datastream",
+          "data-stream": "logs-*"
+        }
+    },
     {% include "tasks/index-setup.json" %},
     {
       "name": "bulk-index",
@@ -21,28 +28,18 @@
       {% endif %}
     },
     {
-        "name": "connect-local-cluster-to-remote-cluster",
+        "name": "setup-bi-directional-remote-clusters",
         "operation": {
-          "operation-type": "configure-remote-cluster",
-          "local-cluster": "default",
-          "remote-cluster": "remote"
+          "operation-type": "configure-remote-clusters",
+          "local-cluster": "default"
         }
     },
     {
-        "name": "connect-remote-cluster-to-local-cluster",
+        "name": "setup-ccr-on-remote-clusters",
         "operation": {
-          "operation-type": "configure-remote-cluster",
-          "local-cluster": "remote",
-          "remote-cluster": "default"
-        }
-    },
-    {
-        "name": "remote-cluster-follows-logs-indices",
-        "operation": {
-          "operation-type": "follow-index",
+          "operation-type": "configure-ccr",
           "index": "logs-*",
-          "local-cluster": "remote",
-          "remote-cluster": "default"
+          "source-cluster": "default"
         }
     },
     {
@@ -51,8 +48,8 @@
         "time-period": {{ p_query_time_period }},
         "warmup-time-period": {{ p_query_warmup_time_period }},
         "tasks": [
+          {% set target_index = "logs-*,remote*:logs-*" %}
           {% for workflow in p_query_workflows %}
-            {% set target_index = "logs-*,remote:logs-*" %}
             {
               "name": {{ workflow | tojson }},
               "operation": {
@@ -89,9 +86,18 @@
               "warmup-time-period": {{ p_query_warmup_time_period }},
               "clients": 1,
               "schedule": "workflow-scheduler"
-            }
-            {{ ", " if not loop.last else "" }}
+            },
           {% endfor %}
+            {
+              "name": "field-caps",
+              "operation": {
+                "operation-type": "raw-request",
+                "path": {{ "/%s/_field_caps?fields=*" | format(target_index) | tojson }},
+                "method": "GET"
+              },
+              "target-interval": {{ p_user_think_time }},
+              "schedule": "poisson"
+            }
         ]
       }
     }

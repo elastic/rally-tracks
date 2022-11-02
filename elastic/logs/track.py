@@ -32,7 +32,10 @@ from shared.runners import datastream, snapshot
 from shared.runners.bulk import RawBulkIndex
 from shared.runners.ilm import create_ilm
 from shared.runners.pipelines import create_pipeline
-from shared.runners.remote_cluster import ConfigureRemoteCluster, FollowIndexRunner
+from shared.runners.remote_cluster import (
+    ConfigureCrossClusterReplication,
+    ConfigureRemoteClusters,
+)
 from shared.runners.slm import create_slm
 from shared.runners.update_custom_templates import update_custom_templates
 from shared.runners.validate_package_assets import validate_package_assets
@@ -56,6 +59,7 @@ def register(registry):
     registry.register_runner("check-datastream", datastream.check_health, async_runner=True)
     registry.register_runner("rollover-datastream", datastream.rollover, async_runner=True)
     registry.register_runner("set-shards-datastream", datastream.shards, async_runner=True)
+    registry.register_runner("delete-remote-datastream", datastream.DeleteRemoteDataStream(), async_runner=True)
     registry.register_runner("update-custom-templates", update_custom_templates, async_runner=True)
     registry.register_runner("validate-package-assets", validate_package_assets, async_runner=True)
 
@@ -80,5 +84,5 @@ def register(registry):
     registry.register_track_processor(TrackIdGenerator())
     registry.register_track_processor(data_generator.DataGenerator())
 
-    registry.register_runner("configure-remote-cluster", ConfigureRemoteCluster(), async_runner=True)
-    registry.register_runner("follow-index", FollowIndexRunner(), async_runner=True)
+    registry.register_runner("configure-remote-clusters", ConfigureRemoteClusters(), async_runner=True)
+    registry.register_runner("configure-ccr", ConfigureCrossClusterReplication(), async_runner=True)

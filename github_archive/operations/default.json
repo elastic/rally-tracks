@@ -1,3 +1,9 @@
+{%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+{% set p_index_source = 'gharchive' %}
+{%- else %}
+{% set p_index_source = 'github-archive' %}
+{%- endif %}
+
 {
   "name": "index",
   "operation-type": "bulk",
@@ -30,7 +36,7 @@
   "body": {
     "source": {
       "index": [
-        "github-archive"
+        "{{ p_index_source }}"
       ],
       "query": {
         "match_all": {}
@@ -87,7 +93,7 @@
   "body": {
     "source": {
       "index": [
-        "github-archive"
+        "{{ p_index_source }}"
       ],
       "query": {
         "match_all": {}
@@ -129,7 +135,7 @@
   "body": {
     "source": {
       "index": [
-        "github-archive"
+        "{{ p_index_source }}"
       ],
       "query": {
         "bool": {
@@ -161,7 +167,7 @@
         }
       },
       "aggregations": {
-        "payload.commits.sha.cardinality": {
+         "payload.commits.sha.cardinality": {
           "cardinality": {
             "field": "payload.commits.sha"
           }

@@ -24,5 +24,6 @@
       "_source": {
         "enabled": {{ source_enabled | default(true) | tojson }}
       }
+    }
   }
 }

@@ -3,19 +3,6 @@
   "description": "Index the document corpus",
   "default": true,
   "schedule": [
-    {%- if disable_watermarks is defined and disable_watermarks == true %}
-    {
-      "name": "disable-watermarks",
-      "operation": {
-        "operation-type": "put-settings",
-        "body": {
-          "persistent": {
-            "cluster.routing.allocation.disk.threshold_enabled": false
-          }
-        }
-      }
-    },
-    {%- endif %}
     {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
     {
       "name": "delete-all-data-streams",
@@ -79,27 +66,106 @@
     {
       "name": "refresh-after-index",
       "operation": "refresh"
+    },
+    {
+      "operation": "default",
+      "warmup-iterations": 50,
+      "iterations": 100,
+      "target-throughput": 3
+    },
+    {
+      "operation": "default_1k",
+      "warmup-iterations": 50,
+      "iterations": 100,
+      "target-throughput": 3
+    }
+  ]
+},
+{
+  "name": "aggs",
+  "description": "Index the document corpus and execute some aggregations.",
+  "default": false,
+  "schedule": [
+    {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+    {
+      "name": "delete-all-data-streams",
+      "operation": {
+        "operation-type": "delete-data-stream"
+      }
+    },
+    {
+      "name": "delete-all-templates",
+      "operation": {
+        "operation-type": "delete-composable-template"
+      }
+    },
+    {
+      "name": "create-all-templates",
+      "operation": {
+        "operation-type": "create-composable-template",
+        "request-params": {
+          "create": "true"
+        }
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {%- else %}
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "github-archive",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {%- endif %}
+    {
+      "operation": "index",
+      "warmup-time-period": 240,
+      "clients": {{bulk_indexing_clients | default(8)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "operation": "simulate-dashboard"
     }
   ]
 },
 {
   "name": "transform",
-  "description": "Run transforms",
+  "description": "Create and run a few transforms",
   "default": false,
   "schedule": [
-    {%- if disable_watermarks is defined and disable_watermarks == true %}
-    {
-      "name": "disable-watermarks",
-      "operation": {
-        "operation-type": "put-settings",
-        "body": {
-          "persistent": {
-            "cluster.routing.allocation.disk.threshold_enabled": false
-          }
-        }
-      }
-    },
-    {%- endif %}
     {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
     {
       "name": "delete-all-data-streams",

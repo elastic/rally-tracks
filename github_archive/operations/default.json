@@ -30,6 +30,349 @@
   }
 },
 {
+  "name": "simulate-dashboard",
+  "operation-type": "composite",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "aggs-most-heart-issues-async-submit",
+          "operation-type": "submit-async-search",
+          "body": {
+            "aggs": {
+              "0": {
+                "terms": {
+                  "field": "payload.issue.html_url",
+                  "order": {
+                    "1": "desc"
+                  },
+                  "size": 10,
+                  "shard_size": 25
+                },
+                "aggs": {
+                  "1": {
+                    "max": {
+                      "field": "payload.issue.reactions.heart"
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "stored_fields": [
+              "*"
+            ],
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2021-09-30T04:00:00.000Z",
+                        "lte": "2021-10-11T04:00:00.000Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          },
+          "request-params": {
+            "wait_for_completion_timeout": "100ms",
+            "keep_on_completion": "true"
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "aggs-elastic-top50-async-submit",
+          "operation-type": "submit-async-search",
+          "body": {
+            "aggs": {
+              "0": {
+                "terms": {
+                  "field": "actor.login",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 50
+                },
+                "aggs": {
+                  "1": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "fixed_interval": "3h",
+                      "time_zone": "America/Indianapolis",
+                      "extended_bounds": {
+                        "min": 1632974400000,
+                        "max": 1633924800000
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "stored_fields": [
+              "*"
+            ],
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "match_phrase": {
+                      "org.login": "elastic"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2021-09-30T04:00:00.000Z",
+                        "lte": "2021-10-11T04:00:00.000Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          },
+          "request-params": {
+            "wait_for_completion_timeout": "100ms",
+            "keep_on_completion": "true"
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "aggs-repo-activity-async-submit",
+          "operation-type": "submit-async-search",
+          "body": {
+            "aggs": {
+              "0": {
+                "terms": {
+                  "field": "repo.name",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 10,
+                  "shard_size": 25
+                },
+                "aggs": {
+                  "1": {
+                    "date_histogram": {
+                      "field": "created_at",
+                      "fixed_interval": "3h",
+                      "time_zone": "America/Indianapolis",
+                      "extended_bounds": {
+                        "min": 1632974400000,
+                        "max": 1633924800000
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "_source": {
+              "excludes": []
+            },
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "created_at": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2021-09-30T04:00:00.000Z",
+                        "lte": "2021-10-11T04:00:00.000Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          },
+          "request-params": {
+            "wait_for_completion_timeout": "100ms",
+            "keep_on_completion": "true"
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "aggs-events-by-repo-async-submit",
+          "operation-type": "submit-async-search",
+          "body": {
+            "aggs": {
+              "0": {
+                "terms": {
+                  "field": "type",
+                  "order": {
+                    "2": "desc"
+                  },
+                  "size": 20
+                },
+                "aggs": {
+                  "1": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "fixed_interval": "3h",
+                      "time_zone": "America/Indianapolis",
+                      "extended_bounds": {
+                        "min": 1632974400000,
+                        "max": 1633924800000
+                      }
+                    },
+                    "aggs": {
+                      "2": {
+                        "cardinality": {
+                          "field": "repo.name"
+                        }
+                      }
+                    }
+                  },
+                  "2": {
+                    "cardinality": {
+                      "field": "repo.name"
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "stored_fields": [
+              "*"
+            ],
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2021-09-30T04:00:00.000Z",
+                        "lte": "2021-10-11T04:00:00.000Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          },
+          "request-params": {
+            "wait_for_completion_timeout": "100ms",
+            "keep_on_completion": "true"
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "aggs-issues-most-reactions",
+          "operation-type": "submit-async-search",
+          "body": {
+            "aggs": {
+              "0": {
+                "terms": {
+                  "field": "payload.issue.html_url",
+                  "order": {
+                    "1": "desc"
+                  },
+                  "size": 10,
+                  "shard_size": 25
+                },
+                "aggs": {
+                  "1": {
+                    "max": {
+                      "field": "payload.issue.reactions.total_count"
+                    }
+                  }
+                }
+              }
+            },
+            "size": 0,
+            "stored_fields": [
+              "*"
+            ],
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2021-09-30T04:00:00.000Z",
+                        "lte": "2021-10-11T04:00:00.000Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          },
+          "request-params": {
+            "wait_for_completion_timeout": "100ms",
+            "keep_on_completion": "true"
+          }
+        }
+      ]
+    },
+    {
+      "operation-type": "get-async-search",
+      "retrieve-results-for": [
+        "aggs-most-heart-issues-async-submit",
+        "aggs-elastic-top50-async-submit",
+        "aggs-repo-activity-async-submit",
+        "aggs-events-by-repo-async-submit",
+        "aggs-issues-most-reactions"
+      ]
+    },
+    {
+      "name": "simulate-client-side-result-processing",
+      "operation-type": "sleep",
+      "duration": 0.2
+    },
+    {
+      "operation-type": "delete-async-search",
+      "delete-results-for": [
+        "aggs-most-heart-issues-async-submit",
+        "aggs-elastic-top50-async-submit",
+        "aggs-repo-activity-async-submit",
+        "aggs-events-by-repo-async-submit",
+        "aggs-issues-most-reactions"
+      ]
+    }
+  ]
+},
+{
   "name": "create-transform-group-by-hour",
   "operation-type": "create-transform",
   "transform-id": "transform-group-by-hour",

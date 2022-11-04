@@ -11,7 +11,6 @@ Track parameters are specified using `--track-params`; e.g., `--track-params="bu
 | `bulk_size` | `5000` | Number of batched documents per bulk request |
 | `bulk_indexing_clients` | `8` | Number of clients issuing bulk indexing requests |
 | `codec` | `default` | The index compression codec to use. Use `best_compression` for higher compression at the cost of CPU. |
-| `disable_watermarks` | `false` | Disable the disk allocation decider. |
 | `ingest_mode` | `index` | Set to `data_stream` to index to a data stream, otherwise, use a standard index. |
 | `ingest_percentage` | `100` | A number between 0 and 100 representing how much of the document corpus should be indexed |
 | `max_page_search_size` | `500` | Defines the initial composite aggregation page size for each checkpoint when creating transforms. |

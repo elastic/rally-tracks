@@ -95,8 +95,8 @@ class TestConfigureRemoteClusters:
             ConfigureRemoteClusters._get_seed_nodes(nodes_resp)
 
         assert (
-            "Unable to retrieve any seed nodes for cluster [cluster_name]. Ensure that the node(s) have the correct "
-            "'nodes.roles' assigned." in str(e)
+            "Unable to retrieve any seed nodes for cluster [cluster_name]. Ensure that the node(s) have the "
+            "'remote_cluster_client' node role assigned under 'node.roles'." in str(e)
         )
 
     @pytest.mark.asyncio

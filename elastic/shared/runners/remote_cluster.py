@@ -30,7 +30,7 @@ class ConfigureRemoteClusters(Runner):
     def _get_seed_nodes(nodes_api_response):
         seed_nodes = []
 
-        if len(nodes_api_response["nodes"].values()) > 1:
+        if len(nodes_api_response["nodes"]) > 1:
             # we dont want to target masters on multi node clusters
             for n in nodes_api_response["nodes"].values():
                 if "remote_cluster_client" in n["roles"] and "master" not in n["roles"]:
@@ -44,7 +44,7 @@ class ConfigureRemoteClusters(Runner):
         if len(seed_nodes) < 1:
             raise BaseException(
                 f"Unable to retrieve any seed nodes for cluster [{nodes_api_response['cluster_name']}]. "
-                "Ensure that the node(s) have the correct 'nodes.roles' assigned."
+                "Ensure that the node(s) have the 'remote_cluster_client' node role assigned under 'node.roles'."
             )
 
         return seed_nodes

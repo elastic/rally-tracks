@@ -85,7 +85,7 @@ class TestConfigureRemoteClusters:
             "cluster_name": "cluster_name",
             "nodes": {
                 "ZrKjLJ1cT6eXblbjwMkkFA": {
-                    "transport_address": f"127.0.0.1:39320",
+                    "transport_address": "127.0.0.1:39320",
                     "roles": ["data_hot"],
                 }
             },

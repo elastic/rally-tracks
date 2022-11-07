@@ -34,8 +34,11 @@
     },
     {
       "name": "refresh-after-index",
-      "operation": "refresh",
-      "include-in-reporting": true
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
     },
     {
       "name": "knn-search-10-50-match-all",

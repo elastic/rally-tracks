@@ -28,11 +28,26 @@ class ConfigureRemoteClusters(Runner):
 
     @staticmethod
     def _get_seed_nodes(nodes_api_response):
-        return [
-            n["transport_address"]
-            for n in nodes_api_response["nodes"].values()
-            if "remote_cluster_client" in n["roles"] and "master" not in n["roles"]
-        ]
+        seed_nodes = []
+
+        if len(nodes_api_response["nodes"]) > 1:
+            # we dont want to target masters on multi node clusters
+            for n in nodes_api_response["nodes"].values():
+                if "remote_cluster_client" in n["roles"] and "master" not in n["roles"]:
+                    seed_nodes.append(n["transport_address"])
+        else:
+            # single node clusters have all roles
+            for n in nodes_api_response["nodes"].values():
+                if "remote_cluster_client" in n["roles"]:
+                    seed_nodes.append(n["transport_address"])
+
+        if len(seed_nodes) < 1:
+            raise BaseException(
+                f"Unable to retrieve any seed nodes for cluster [{nodes_api_response['cluster_name']}]. "
+                "Ensure that the node(s) have the 'remote_cluster_client' node role assigned under 'node.roles'."
+            )
+
+        return seed_nodes
 
     async def _configure_remote_cluster(self, local_cluster_client, local_cluster_name, remote_cluster_identifier, remote_seed_nodes):
         local_settings_body = {"persistent": {f"cluster.remote.{remote_cluster_identifier}.seeds": remote_seed_nodes}}

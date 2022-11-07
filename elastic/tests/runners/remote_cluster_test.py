@@ -52,7 +52,7 @@ class TestConfigureRemoteClusters:
         params = {"local-cluster": "local_cluster"}
         return params
 
-    def test_get_seed_nodes(self):
+    def test_get_seed_nodes_multiple_nodes(self):
         nodes_resp = {
             "cluster_name": "cluster_name",
             "nodes": {
@@ -67,6 +67,37 @@ class TestConfigureRemoteClusters:
             },
         }
         assert ConfigureRemoteClusters._get_seed_nodes(nodes_resp) == ["127.0.0.1:39320"]
+
+    def test_get_seed_nodes_single_node(self):
+        nodes_resp = {
+            "cluster_name": "cluster_name",
+            "nodes": {
+                "ZrKjLJ1cT6eXblbjwMkkFA": {
+                    "transport_address": "127.0.0.1:39320",
+                    "roles": ["master", "data_hot", "remote_cluster_client"],
+                }
+            },
+        }
+        assert ConfigureRemoteClusters._get_seed_nodes(nodes_resp) == ["127.0.0.1:39320"]
+
+    def test_get_seed_nodes_no_nodes(self):
+        nodes_resp = {
+            "cluster_name": "cluster_name",
+            "nodes": {
+                "ZrKjLJ1cT6eXblbjwMkkFA": {
+                    "transport_address": "127.0.0.1:39320",
+                    "roles": ["data_hot"],
+                }
+            },
+        }
+
+        with pytest.raises(BaseException) as e:
+            ConfigureRemoteClusters._get_seed_nodes(nodes_resp)
+
+        assert (
+            "Unable to retrieve any seed nodes for cluster [cluster_name]. Ensure that the node(s) have the "
+            "'remote_cluster_client' node role assigned under 'node.roles'." in str(e)
+        )
 
     @pytest.mark.asyncio
     async def test_configure_remote_cluster(self, setup_es, setup_params):

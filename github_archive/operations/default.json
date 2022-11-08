@@ -85,6 +85,18 @@
             "wait_for_completion_timeout": "100ms",
             "keep_on_completion": "true"
           }
+        },
+        {
+          "operation-type": "get-async-search",
+          "retrieve-results-for": [
+            "aggs-most-heart-issues-async-submit"
+          ]
+        },
+        {
+          "operation-type": "delete-async-search",
+          "delete-results-for": [
+            "aggs-most-heart-issues-async-submit"
+          ]
         }
       ]
     },
@@ -150,6 +162,18 @@
             "wait_for_completion_timeout": "100ms",
             "keep_on_completion": "true"
           }
+        },
+        {
+          "operation-type": "get-async-search",
+          "retrieve-results-for": [
+            "aggs-elastic-top50-async-submit"
+          ]
+        },
+        {
+          "operation-type": "delete-async-search",
+          "delete-results-for": [
+            "aggs-elastic-top50-async-submit"
+          ]
         }
       ]
     },
@@ -215,6 +239,18 @@
             "wait_for_completion_timeout": "100ms",
             "keep_on_completion": "true"
           }
+        },
+        {
+          "operation-type": "get-async-search",
+          "retrieve-results-for": [
+            "aggs-repo-activity-async-submit"
+          ]
+        },
+        {
+          "operation-type": "delete-async-search",
+          "delete-results-for": [
+            "aggs-repo-activity-async-submit"
+          ]
         }
       ]
     },
@@ -287,6 +323,18 @@
             "wait_for_completion_timeout": "100ms",
             "keep_on_completion": "true"
           }
+        },
+        {
+          "operation-type": "get-async-search",
+          "retrieve-results-for": [
+            "aggs-events-by-repo-async-submit"
+          ]
+        },
+        {
+          "operation-type": "delete-async-search",
+          "delete-results-for": [
+            "aggs-events-by-repo-async-submit"
+          ]
         }
       ]
     },
@@ -342,32 +390,19 @@
             "wait_for_completion_timeout": "100ms",
             "keep_on_completion": "true"
           }
+        },
+        {
+          "operation-type": "get-async-search",
+          "retrieve-results-for": [
+            "aggs-issues-most-reactions"
+          ]
+        },
+        {
+          "operation-type": "delete-async-search",
+          "delete-results-for": [
+            "aggs-issues-most-reactions"
+          ]
         }
-      ]
-    },
-    {
-      "operation-type": "get-async-search",
-      "retrieve-results-for": [
-        "aggs-most-heart-issues-async-submit",
-        "aggs-elastic-top50-async-submit",
-        "aggs-repo-activity-async-submit",
-        "aggs-events-by-repo-async-submit",
-        "aggs-issues-most-reactions"
-      ]
-    },
-    {
-      "name": "simulate-client-side-result-processing",
-      "operation-type": "sleep",
-      "duration": 0.2
-    },
-    {
-      "operation-type": "delete-async-search",
-      "delete-results-for": [
-        "aggs-most-heart-issues-async-submit",
-        "aggs-elastic-top50-async-submit",
-        "aggs-repo-activity-async-submit",
-        "aggs-events-by-repo-async-submit",
-        "aggs-issues-most-reactions"
       ]
     }
   ]

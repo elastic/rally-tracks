@@ -18,7 +18,7 @@ jobs:
 
       - name: Sync upstream changes
         id: sync
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.0
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
         with:
           target_sync_branch: 8.5
           target_repo_token: ${{ secrets.GITHUB_TOKEN }}

@@ -46,8 +46,7 @@
                   "order": {
                     "1": "desc"
                   },
-                  "size": 10,
-                  "shard_size": 25
+                  "size": 1000
                 },
                 "aggs": {
                   "1": {
@@ -58,10 +57,7 @@
                 }
               }
             },
-            "size": 0,
-            "stored_fields": [
-              "*"
-            ],
+            "size": 100,
             "query": {
               "bool": {
                 "must": [],
@@ -103,7 +99,7 @@
     {
       "stream": [
         {
-          "name": "aggs-elastic-top50-async-submit",
+          "name": "aggs-elastic-top100-async-submit",
           "operation-type": "submit-async-search",
           "body": {
             "aggs": {
@@ -113,7 +109,7 @@
                   "order": {
                     "_count": "desc"
                   },
-                  "size": 50
+                  "size": 100
                 },
                 "aggs": {
                   "1": {
@@ -130,10 +126,7 @@
                 }
               }
             },
-            "size": 0,
-            "stored_fields": [
-              "*"
-            ],
+            "size": 100,
             "query": {
               "bool": {
                 "must": [],
@@ -166,13 +159,13 @@
         {
           "operation-type": "get-async-search",
           "retrieve-results-for": [
-            "aggs-elastic-top50-async-submit"
+            "aggs-elastic-top100-async-submit"
           ]
         },
         {
           "operation-type": "delete-async-search",
           "delete-results-for": [
-            "aggs-elastic-top50-async-submit"
+            "aggs-elastic-top100-async-submit"
           ]
         }
       ]
@@ -190,8 +183,7 @@
                   "order": {
                     "_count": "desc"
                   },
-                  "size": 10,
-                  "shard_size": 25
+                  "size": 500
                 },
                 "aggs": {
                   "1": {
@@ -208,10 +200,7 @@
                 }
               }
             },
-            "size": 0,
-            "stored_fields": [
-              "*"
-            ],
+            "size": 10,
             "runtime_mappings": {},
             "_source": {
               "excludes": []
@@ -267,7 +256,7 @@
                   "order": {
                     "2": "desc"
                   },
-                  "size": 20
+                  "size": 200
                 },
                 "aggs": {
                   "1": {
@@ -296,10 +285,7 @@
                 }
               }
             },
-            "size": 0,
-            "stored_fields": [
-              "*"
-            ],
+            "size": 10,
             "query": {
               "bool": {
                 "must": [],
@@ -351,8 +337,7 @@
                   "order": {
                     "1": "desc"
                   },
-                  "size": 10,
-                  "shard_size": 25
+                  "size": 100
                 },
                 "aggs": {
                   "1": {
@@ -363,10 +348,7 @@
                 }
               }
             },
-            "size": 0,
-            "stored_fields": [
-              "*"
-            ],
+            "size": 10,
             "query": {
               "bool": {
                 "must": [],

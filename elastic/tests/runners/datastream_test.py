@@ -118,7 +118,7 @@ async def test_data_stream_rollover(es):
         }
     )
     result = await rollover(es, {"conditions": {"max_docs": 0}, "data-stream": "logs-*"})
-    assert result[0] == 12
+    assert result[0] == 13
 
 
 @mock.patch("elasticsearch.Elasticsearch")

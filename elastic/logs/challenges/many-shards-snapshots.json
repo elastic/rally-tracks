@@ -24,8 +24,10 @@
       },
       "clients": {{ p_bulk_indexing_clients }}
     },
+    {# mutate a copy so as not to override in other challenges. shallow copy is ok since we're changing a top-level element.' #}
+      {% set many_shards_snapshot_repo_settings = p_snapshot_repo_settings.copy() %}
     {# randomize base path to avoid clashes when running concurrent benchmarks #}
-      {% set _=p_snapshot_repo_settings.update({"base_path":"many-shards-"+((now|int)|string)}) %}
+      {% set _=many_shards_snapshot_repo_settings.update({"base_path":"many-shards-"+((now|int)|string)}) %}
     {
       "name": "register-snapshot-repository",
       "operation": {
@@ -33,7 +35,7 @@
         "repository": "many-shards",
         "body": {
           "type": {{ p_snapshot_repo_type | tojson }},
-          "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+          "settings": {{ many_shards_snapshot_repo_settings | tojson(indent=2)}}
         }
       }
     },

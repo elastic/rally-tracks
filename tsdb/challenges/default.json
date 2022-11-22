@@ -123,6 +123,11 @@
           "operation": "date-histo-entire-range",
           "warmup-iterations": 50,
           "iterations": 100
+        },
+        {
+          "operation": "date-histo-with-time-series-1h",
+          "warmup-iterations": 50,
+          "iterations": 100
         }
       ]
     },

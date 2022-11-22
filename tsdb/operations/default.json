@@ -86,4 +86,39 @@
           }
         }
       }
+    },
+    {
+      "name": "date-histo-with-time-series-1h",
+      "operation-type": "search",
+      "index": "tsdb",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "by_timestamp": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "1h"
+            },
+            "aggs": {
+              "ts": {
+                "time_series": {
+                  "keyed": false
+                },
+                "aggs": {
+                  "available_memory": {
+                    "min": {
+                      "field": "kubernetes.node.memory.available.bytes"
+                    }
+                  }
+                }
+              },
+              "min_available_memory": {
+                "min_bucket": {
+                  "buckets_path": "ts>available_memory" 
+                }
+              }
+            }
+          }
+        }
+      }
     }

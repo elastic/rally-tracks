@@ -3,6 +3,20 @@
       "description": "Indexes the whole document corpus.",
       "default": true,
       "schedule": [
+        {
+          "name":"increase-max_buckets_setting",
+          "tags": ["setup"],
+          "operation": {
+            "operation-type": "raw-request",
+            "method": "PUT",
+            "path": "/_cluster/settings",
+            "body": {
+              "transient": {
+                "search.max_buckets" : 1000000
+              }
+            }
+          }
+        },
         {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
         {
           "name": "put-timestamp-pipeline",

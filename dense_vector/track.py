@@ -94,8 +94,9 @@ class KnnRecallParamSource:
 # the accuracy of the knn query.
 class KnnRecallRunner:
     async def __call__(self, es, params):
-        intersection = 0
-        total = 0
+        recall_total = 0
+        exact_total = 0
+        min_recall = params["size"]
 
         for query in params["queries"]:
             knn_result = await es.search(
@@ -131,10 +132,21 @@ class KnnRecallRunner:
             )
             knn_hits = {hit["_id"] for hit in knn_result["hits"]["hits"]}
             script_hits = {hit["_id"] for hit in script_result["hits"]["hits"]}
-            intersection += len(knn_hits.intersection(script_hits))
-            total += len(script_hits)
+            current_recall = len(knn_hits.intersection(script_hits))
+            recall_total += current_recall
+            exact_total += len(script_hits)
+            min_recall = min(min_recall, current_recall)
 
-        return {"recall": intersection / total}
+        return (
+            {
+                "avg_recall": recall_total / exact_total,
+                "min_recall": min_recall,
+                "k": params["size"],
+                "num_candidates": params["num_candidates"],
+            }
+            if exact_total > 0
+            else None
+        )
 
     def __repr__(self, *args, **kwargs):
         return "knn-recall"

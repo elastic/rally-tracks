@@ -667,4 +667,76 @@
           }
         }
       }
-    }
+    },
+    {
+      "name": "histo_avg_total_amount_agg",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool" : {
+            "must" : [
+              {
+                "range": {
+                  "dropoff_datetime": {
+                    "gte": "01/01/2015",
+                    "lte": "31/05/2015",
+                    "format": "dd/MM/yyyy"
+                  }
+                }
+              },
+              {
+                "range": {
+                  "total_amount": {
+                    "gte": "0",
+                    "lte": "100"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "histo": {
+            "histogram": {
+              "field": "total_amount",
+              "interval": 0.003
+            },
+            "aggs": {
+              "avg_total_amount": { "avg": { "field": "total_amount" } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "daily_avg_tip_amount_agg",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "01/01/2015",
+              "lte": "31/06/2015",
+              "format": "dd/MM/yyyy"
+            }
+          }
+        },
+        "aggs": {
+          "daily_avg_tip_amount": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "fixed_interval": "1d"
+            },
+            "aggs": {
+              "avg_tip_amount": {
+                "avg": { "field": "tip_amount" }
+              }
+            }
+          }
+        }
+      }
+    },
+
+

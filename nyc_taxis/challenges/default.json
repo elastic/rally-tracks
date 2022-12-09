@@ -89,7 +89,12 @@
         {
           "operation": "date_histogram_agg",
           "warmup-iterations": 500,
-          "iterations": 500
+          "iterations": 500,
+        },
+        {
+          "operation": "histo_avg_total_amount_agg",
+          "warmup-iterations": 50,
+          "iterations": 50,
         }
       ]
     },

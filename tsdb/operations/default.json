@@ -115,6 +115,11 @@
                 }
               }
             }
+          },
+          "min_total_memory_usage_by_date": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_date"
+            }
           }
         }
       }
@@ -148,6 +153,11 @@
                   "field": "kubernetes.container.memory.usage.bytes"
                 }
               }
+            }
+          },
+          "min_total_memory_usage_by_date": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_date"
             }
           }
         }
@@ -183,6 +193,11 @@
                 }
               }
             }
+          },
+          "min_total_memory_usage_by_date": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_date"
+            }
           }
         }
       }
@@ -217,6 +232,11 @@
                 }
               }
             }
+          },
+          "min_total_memory_usage_by_date": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_date"
+            }
           }
         }
       }
@@ -250,6 +270,11 @@
                 }
               }
             }
+          },
+          "min_total_memory_usage_by_container_name": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_container_name"
+            }
           }
         }
       }
@@ -282,6 +307,11 @@
                   "field": "kubernetes.container.memory.usage.bytes"
                 }
               }
+            }
+          },
+          "min_total_memory_usage_by_container_image": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_container_image"
             }
           }
         }

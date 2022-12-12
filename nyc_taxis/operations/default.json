@@ -801,5 +801,75 @@
           "add_task_parallelism_above_query" : true
         }
       }
+    },
+    {
+      "name": "search_avg_tip_by_vendor",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-09-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vendors": {
+            "terms": {
+              "field": "vendor_id"
+            },
+            "aggs": {
+              "avg_tip_amount": {
+                "avg": {
+                  "field": "tip_amount"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "esql_avg_tip_by_vendor_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg_tip_amount = avg(tip_amount) by vendor_id",
+        "filter": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-09-01 00:00:00"
+            }
+          }
+        },
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "esql_avg_tip_by_vendor_segment_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg_tip_amount = avg(tip_amount) by vendor_id",
+        "filter": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-09-01 00:00:00"
+            }
+          }
+        },
+        "pragma" : {
+          "data_partitioning" : "segment"
+        }
+      }
     }
+
 

@@ -767,6 +767,24 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "search_avg_tip_by_vendor",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_avg_tip_by_vendor_shard_partitioning",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_avg_tip_by_vendor_segment_partitioning",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
         }
       ]
     }

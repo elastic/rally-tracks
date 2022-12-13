@@ -57,6 +57,7 @@
                 "param-source": "workflow-selector",
                 "workflow": {{workflow | tojson }},
                 "workflow-target": {{ target_index | tojson }},
+                "detailed-results": true,
                 "task-offset": {{ loop.index }},
                 "request-params": {{ p_query_request_params | tojson(indent=2) }}
               },
@@ -73,6 +74,7 @@
                 "param-source": "workflow-selector",
                 "workflow": {{workflow | tojson }},
                 "workflow-target": {{ target_index | tojson }},
+                "detailed-results": true,
                 "task-offset": {{ loop.index }},
                 "request-params": {
                     "ccs_minimize_roundtrips": false

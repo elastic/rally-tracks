@@ -62,7 +62,9 @@ class WorkflowSelectorParamSource:
         # for testing purposes only we allow a configurable now function
         self._utc_now = kwargs.get("utc_now", datetime.utcnow)
         self._init_date = self._utc_now().replace(tzinfo=timezone.utc)
-        self._detailed_results = track.selected_challenge_or_default.parameters.get("detailed-results", False)
+        self._detailed_results = params.get(
+            "detailed-results", track.selected_challenge_or_default.parameters.get("detailed-results", False)
+        )
         self._workflow_target = params.get(
             "workflow-target",
             track.selected_challenge_or_default.parameters.get("workflow-target"),

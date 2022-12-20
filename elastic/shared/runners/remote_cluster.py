@@ -30,13 +30,13 @@ class ConfigureRemoteClusters(Runner):
     def _get_seed_nodes(nodes_api_response):
         seed_nodes = []
 
-        if len(nodes_api_response["nodes"]) > 1:
-            # we dont want to target masters on multi node clusters
-            for n in nodes_api_response["nodes"].values():
-                if "remote_cluster_client" in n["roles"] and "master" not in n["roles"]:
-                    seed_nodes.append(n["transport_address"])
-        else:
-            # single node clusters have all roles
+        # naively avoid targeting masters on multi node clusters
+        for n in nodes_api_response["nodes"].values():
+            if "remote_cluster_client" in n["roles"] and "master" not in n["roles"]:
+                seed_nodes.append(n["transport_address"])
+
+        # maybe we have a single node cluster, or all nodes have all roles
+        if len(seed_nodes) < 1:
             for n in nodes_api_response["nodes"].values():
                 if "remote_cluster_client" in n["roles"]:
                     seed_nodes.append(n["transport_address"])

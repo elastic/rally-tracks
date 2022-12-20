@@ -22,6 +22,7 @@ import pytest
 from shared.runners.remote_cluster import (
     ConfigureCrossClusterReplication,
     ConfigureRemoteClusters,
+    MultiClusterWrapper,
 )
 from tests import as_future
 
@@ -435,3 +436,56 @@ class TestConfigureCrossClusterReplication:
             "Cluster [source_cluster] cannot use license type [basic] for CCR features. "
             f"All clusters must use one of [{cfg_ccr.required_licenses}]" in str(e)
         )
+
+
+class TestMultiClusterWrapper:
+    @pytest.fixture
+    @mock.patch("elasticsearch.Elasticsearch")
+    def setup_es(self, es):
+        cluster_0 = es
+        cluster_1 = copy.deepcopy(es)
+        cluster_2 = copy.deepcopy(es)
+        cluster_3 = copy.deepcopy(es)
+        cluster_4 = copy.deepcopy(es)
+        default_cluster = copy.deepcopy(es)
+
+        multi_es = {
+            "cluster_0": cluster_0,
+            "cluster_1": cluster_1,
+            "cluster_2": cluster_2,
+            "cluster_3": cluster_3,
+            "cluster_4": cluster_4,
+            "default": default_cluster,
+        }
+        return multi_es
+
+    @pytest.fixture
+    def setup_params(self):
+        params = {
+            "base-operation-type": "unit-test-single-cluster-runner",
+            "ignore-clusters": ["cluster_0", "cluster_1"],
+            "base-runner-param": "test",
+        }
+        return params
+
+    @pytest.mark.asyncio
+    @mock.patch("shared.runners.remote_cluster.runner_for")
+    async def test_wraps_correctly(self, mocked_runner_for, setup_es, setup_params):
+        class UnitTestSingleClusterRunner:
+            async def __call__(self, es, params):
+                es.test_method(params["base-runner-param"])
+                return {"weight": 1, "unit": "ops", "test": "value"}
+
+            def __str__(self):
+                return "UnitTestSingleClusterRunner"
+
+        base_runner = UnitTestSingleClusterRunner()
+        mocked_runner_for.return_value = base_runner
+
+        mcw = MultiClusterWrapper()
+        r = await mcw(setup_es, setup_params)
+
+        for cluster_name, _ in setup_es.items():
+            # skipped clusters
+            if cluster_name not in ["cluster_0", "cluster_1"]:
+                setup_es[cluster_name].test_method.assert_has_calls([mock.call(setup_params["base-runner-param"])])

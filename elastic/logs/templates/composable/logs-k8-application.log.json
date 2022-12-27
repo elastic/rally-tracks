@@ -22,7 +22,9 @@
             "message"
           ]
         },
+        {%- if disable_pipelines is not true %}
         "default_pipeline": "logs-k8-app",
+        {%- endif %}
         "number_of_routing_shards": "30"
       }
     },

@@ -5,7 +5,9 @@
   "template": {
     "settings": {
       "index": {
+        {%- if disable_pipelines is not true %}
         "default_pipeline": "logs-nginx.access-1.2.0"
+        {%- endif %}
       }
     },
     "mappings": {

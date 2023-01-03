@@ -129,6 +129,22 @@
           "local-cluster": "default"
         }
     },
+    {
+      "name": "reset-recovery-settings-on-all-clusters",
+      "operation": {
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/_cluster/settings",
+        "body": {
+          "persistent": {
+            "indices.recovery.max_bytes_per_sec": -1,
+            "cluster.routing.allocation.node_concurrent_recoveries": -1,
+            "cluster.routing.allocation.node_initial_primaries_recoveries": -1
+          }
+        }
+      }
+    },
     {% include "tasks/many-clusters-ccs-queries.json" %}
   ]
 }

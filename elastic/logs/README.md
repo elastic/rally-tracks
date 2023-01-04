@@ -239,6 +239,7 @@ The following parameters are available:
 * `bulk_indexing_clients` (default: 8) - The number of clients issuing indexing requests.
 * `bulk_size` (default: 1000) - The number of documents to send per indexing request.
 * `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 
+* `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
 
 ### Querying parameters
 

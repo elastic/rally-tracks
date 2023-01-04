@@ -2,7 +2,7 @@ import asyncio
 import copy
 
 from elasticsearch import ElasticsearchException
-from esrally.driver.runner import Runner
+from esrally.driver.runner import Runner, runner_for, unwrap
 
 """
 Runners for configuring a typical CCS/CCR architecture, where we have a central 'local' cluster and many 'remote'
@@ -30,13 +30,13 @@ class ConfigureRemoteClusters(Runner):
     def _get_seed_nodes(nodes_api_response):
         seed_nodes = []
 
-        if len(nodes_api_response["nodes"]) > 1:
-            # we dont want to target masters on multi node clusters
-            for n in nodes_api_response["nodes"].values():
-                if "remote_cluster_client" in n["roles"] and "master" not in n["roles"]:
-                    seed_nodes.append(n["transport_address"])
-        else:
-            # single node clusters have all roles
+        # naively avoid targeting masters on multi node clusters
+        for n in nodes_api_response["nodes"].values():
+            if "remote_cluster_client" in n["roles"] and "master" not in n["roles"]:
+                seed_nodes.append(n["transport_address"])
+
+        # maybe we have a single node cluster, or all nodes have all roles
+        if len(seed_nodes) < 1:
             for n in nodes_api_response["nodes"].values():
                 if "remote_cluster_client" in n["roles"]:
                     seed_nodes.append(n["transport_address"])
@@ -195,3 +195,33 @@ class ConfigureCrossClusterReplication(Runner):
 
     def __repr__(self, *args, **kwargs):
         return "configure-ccr"
+
+
+class MultiClusterWrapper(Runner):
+    """
+    Wraps the provided runner (`base-operation-type`) to execute across all clusters provided in Rally's CLI arg `target-hosts`.
+    * `base-operation-type`: (mandatory) the name of the runner for which to 'wrap'
+    * `ignore-clusters`: (optional) A list of cluster name(s) as provided in `target-hosts` to skip over and not execute on
+    the runner
+    """
+
+    multi_cluster = True
+
+    def __init__(self):
+        super().__init__()
+
+    async def __call__(self, multi_es, params):
+        base_runner = params.get("base-operation-type")
+        coroutines = []
+        for cluster_name, cluster_client in multi_es.items():
+            if cluster_name in params.get("ignore-clusters", []):
+                self.logger.info(f"Multi cluster wrapped runner [{base_runner}] ignoring cluster [{cluster_name}].")
+                continue
+            runner_for_op = unwrap(runner_for(base_runner))
+            self.logger.info(f"Multi cluster wrapped runner [{base_runner}] executing on cluster [{cluster_name}].")
+            # just call base runner op, don't mess with 'return' values
+            coroutines.append(runner_for_op(cluster_client, params))
+        await asyncio.gather(*coroutines)
+
+    def __repr__(self, *args, **kwargs):
+        return "multi-cluster-wrapper"

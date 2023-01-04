@@ -35,6 +35,7 @@ from shared.runners.pipelines import create_pipeline
 from shared.runners.remote_cluster import (
     ConfigureCrossClusterReplication,
     ConfigureRemoteClusters,
+    MultiClusterWrapper,
 )
 from shared.runners.slm import create_slm
 from shared.runners.update_custom_templates import update_custom_templates
@@ -86,3 +87,4 @@ def register(registry):
 
     registry.register_runner("configure-remote-clusters", ConfigureRemoteClusters(), async_runner=True)
     registry.register_runner("configure-ccr", ConfigureCrossClusterReplication(), async_runner=True)
+    registry.register_runner("multi-cluster-wrapper", MultiClusterWrapper(), async_runner=True)

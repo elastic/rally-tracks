@@ -1,24 +1,23 @@
 {% import "rally.helpers" as rally with context %}
-
 {
   "version": 2,
-  "description": "Full text benchmark with academic papers from PMC",
+  "description": "Benchmark for dense vector indexing and search",
   "indices": [
     {
-      "name": "pmc",
+      "name": "vectors",
       "body": "index.json"
     }
   ],
   "corpora": [
     {
-      "name": "pmc",
-      "base-url": "https://rally-tracks.elastic.co/pmc",
+      "name": "dense-vector",
+      "base-url": "https://rally-tracks.elastic.co/dense_vector",
       "documents": [
         {
           "source-file": "documents.json.bz2",
-          "document-count": 574199,
-          "compressed-bytes": 5931724449,
-          "uncompressed-bytes": 23256051757
+          "document-count": 10000000,
+          "compressed-bytes": 7689453829,
+          "uncompressed-bytes": 20905226599
         }
       ]
     }

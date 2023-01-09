@@ -1,0 +1,61 @@
+{
+  "name": "knn-search-10-100",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 100
+},
+{
+  "name": "knn-search-100-1000",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 1000
+},
+{
+  "name": "script-score-query",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "exact": true
+},
+{
+  "name": "knn-recall-10-100",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 100,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-1000",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 1000,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-10",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 10,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-100",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 100,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-1000-1000",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 1000,
+  "num-candidates": 1000,
+  "include-in-reporting": false
+}

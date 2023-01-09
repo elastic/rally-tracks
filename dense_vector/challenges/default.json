@@ -1,0 +1,143 @@
+{
+  "name": "index-and-search",
+  "description": "Indexes vectors, then executes searches under various conditions",
+  "default": true,
+  "schedule": [
+    {
+      "operation": {
+        "operation-type": "delete-index"
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "create-index"
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "green"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "name": "index-append",
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(5000)}},
+        "ingest-percentage": 20
+      },
+      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+      "clients": {{bulk_indexing_clients | default(1)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "wait-until-merges-finish-after-index",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "parallel": {
+        "warmup-time-period": 10,
+        "completed-by": "index-update-concurrent-with-searches",
+        "tasks": [
+          {
+            "name": "index-update-concurrent-with-searches",
+            "operation": {
+              "operation-type": "bulk",
+              "bulk-size": 5000,
+              "ingest-percentage": 5
+            }
+          },
+          {
+            "name": "knn-search-100-1000-concurrent-with-indexing",
+            "operation": "knn-search-100-1000"
+          }
+        ]
+      }
+    },
+    {
+      "name": "refresh-after-update",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": 1,
+        "request-timeout": 7200,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "operation": "refresh"
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "knn-search-10-100",
+      "operation": "knn-search-10-100",
+      "warmup-iterations": 100,
+      "iterations": 1000
+    },
+    {
+      "name": "knn-search-100-1000",
+      "operation": "knn-search-100-1000",
+      "warmup-iterations": 100,
+      "iterations": 1000
+    },
+    {
+      "name": "script-score-query",
+      "operation": "script-score-query",
+      "warmup-iterations": 100,
+      "iterations": 1000
+    },
+    {
+      "operation": "knn-recall-10-100"
+    },
+    {
+      "operation": "knn-recall-100-1000"
+    },
+    {
+      "operation": "knn-recall-10-10"
+    },
+    {
+      "operation": "knn-recall-100-100"
+    },
+    {
+      "operation": "knn-recall-1000-1000"
+    }
+  ]
+}

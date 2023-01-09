@@ -58,9 +58,9 @@
         "path": "/_cluster/settings",
         "body": {
           "persistent": {
-            "indices.recovery.max_bytes_per_sec": -1,
-            "cluster.routing.allocation.node_concurrent_recoveries": -1,
-            "cluster.routing.allocation.node_initial_primaries_recoveries": -1
+            "indices.recovery.max_bytes_per_sec": null,
+            "cluster.routing.allocation.node_concurrent_recoveries": null,
+            "cluster.routing.allocation.node_initial_primaries_recoveries": null
           }
         }
       }

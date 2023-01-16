@@ -29,7 +29,7 @@
     {
       "name": "tsdb",
       "base-url": "https://rally-tracks.elastic.co/tsdb",
-      {%- if corpus is defined and corpus == "split" %}
+      {%- if corpus is defined and corpus == "split16" %}
         "documents": [
           {
             "source-file": "documents-split-0.json.bz2",

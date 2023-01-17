@@ -801,5 +801,80 @@
           "add_task_parallelism_above_query" : true
         }
       }
-    }
+    },
 
+    {
+      "name": "avg_amount_group_by_integer_aggregation",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+            "by_passenger_count": {
+                "terms": {
+                    "field": "passenger_count",
+                    "order": {
+                        "_key": "asc"
+                    }
+                },
+                "aggs": {
+                    "avg_total_amount": {
+                        "avg": {
+                            "field": "total_amount"
+                        }
+                    }
+                }
+            }
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+
+
+    {
+      "name": "avg_amount_group_by_integer_esql_segment_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+        "pragma" : {
+          "data_partitioning" : "segment"
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+        }
+      }
+    }

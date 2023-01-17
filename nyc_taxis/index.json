@@ -74,11 +74,7 @@
       },
       "vendor_name": {
         "type": "text"{% if source_mode == "synthetic" %},
-        "fields": {
-          "raw": {
-            "type": "keyword"
-          }
-        }
+        "store": true
         {% endif %}
       },
       "total_amount": {

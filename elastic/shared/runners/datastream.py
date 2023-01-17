@@ -19,7 +19,6 @@ import asyncio
 import logging
 
 import elasticsearch
-from esrally import exceptions
 from shared.utils.track import mandatory
 
 """
@@ -48,6 +47,31 @@ async def create(es, params):
         await es.indices.create_data_stream(data_stream)
         ops += 1
     return ops, "ops"
+
+
+class DeleteRemoteDataStream:
+    multi_cluster = True
+
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+
+    async def __call__(self, multi_es, params):
+        """
+        Deletes specified datastreams from all clusters
+        """
+        for ops, (cluster_name, cluster_client) in enumerate(multi_es.items(), start=1):
+            data_stream = params["data-stream"]
+            try:
+                self.logger.info("Deleting data stream: [%s] in cluster [%s]", data_stream, cluster_name)
+                await cluster_client.indices.delete_data_stream(name=data_stream)
+            except elasticsearch.ElasticsearchException as e:
+                msg = f"Failed to delete datastream [{data_stream}]; [{e}]"
+                self.logger.error("Deleting data stream: [%s] in cluster [%s]", data_stream, cluster_name)
+                raise BaseException(msg, e)
+        return ops, "ops"
+
+    def __repr__(self, *args, **kwargs):
+        return "delete-remote-datastream"
 
 
 async def check_health(es, params):

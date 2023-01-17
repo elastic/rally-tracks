@@ -2,7 +2,9 @@
   "template": {
     "settings": {
       "index": {
+        {%- if disable_pipelines is not true %}
         "final_pipeline": ".fleet_final_pipeline-1"
+        {%- endif %}
       }
     },
     "mappings": {

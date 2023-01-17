@@ -1,3 +1,4 @@
+{%- if disable_pipelines is not true %}
 {
   "name":"insert-pipelines",
   "tags": ["setup"],
@@ -6,6 +7,7 @@
     "param-source": "add-track-path"
   }
 },
+{%- endif %}
 {
   "name": "insert-ilm",
   "tags": ["setup"],
@@ -56,6 +58,55 @@
     "operation-type": "create-data-stream"
   }
 },
+{
+  "name": "validate-package-template-installation",
+  "operation": {
+    "operation-type": "validate-package-assets",
+    "packages": {{ p_integration_ratios.keys() | reject("==", "application-logs") | list | tojson }},
+    "asset-types": ["index-templates"]
+  }
+},
+{
+  "name": "update-custom-package-templates",
+  "operation": {
+    "operation-type": "update-custom-templates",
+    "body": {
+      "template" : {
+        "settings": {
+          "index" : {
+            "number_of_replicas" : "{{ number_of_replicas | default('1')}}",
+            "number_of_shards" : "{{ number_of_shards | default('1')}}"
+          }
+        },
+        "mappings" : {
+          "runtime": {
+            "rally.doc_size": {
+              "type": "long"
+            },
+            "rally.message_size": {
+              "type": "long"
+            }
+          },
+          "properties" : {
+            "event": {
+              "properties": {
+                "created": {
+                  "type": "date",
+                  "format": "strict_date_optional_time"
+                },
+                "ingested": {
+                  "type": "date",
+                  "format": "strict_date_optional_time"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+},
+
 {
   "name": "check-cluster-health",
   "operation": {

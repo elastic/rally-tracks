@@ -16,7 +16,7 @@
           "name": "check-cluster-health",
           "operation": {
             "operation-type": "cluster-health",
-            "index": "logs-*",
+            "index": "so",
             "request-params": {
               "wait_for_status": "{{cluster_health | default('green')}}",
               "wait_for_no_relocating_shards": "true"
@@ -48,6 +48,183 @@
             "retry-until-success": true,
             "include-in-reporting": false
           }
+        }
+      ]
+    },
+    {
+      "name": "transform",
+      "description": "Run transforms to pivot data by terms and date_histogram",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "so",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "name": "delete-transform-group-by-user",
+          "operation": {
+            "operation-type": "delete-transform",
+            "transform-id": "transform-group-by-user",
+            "force": true
+          }
+        },
+        {
+          "operation": "create-transform-group-by-user"
+        },
+        {
+          "name": "start-transform-group-by-user",
+          "operation": {
+            "operation-type": "start-transform",
+            "transform-id": "transform-group-by-user"
+          }
+        },
+        {
+          "name": "wait-for-transform-group-by-user",
+          "include-in-reporting": true,
+          "operation": {
+            "operation-type": "wait-for-transform",
+            "transform-id": "transform-group-by-user",
+            "transform-timeout": 3600,
+            "timeout": "60m"
+          }
+        },
+        {
+          "name": "delete-transform-group-by-hour",
+          "operation": {
+            "operation-type": "delete-transform",
+            "transform-id": "transform-group-by-hour",
+            "force": true
+          }
+        },
+        {
+          "operation": "create-transform-group-by-hour"
+        },
+        {
+          "name": "start-transform-group-by-hour",
+          "operation": {
+            "operation-type": "start-transform",
+            "transform-id": "transform-group-by-hour"
+          }
+        },
+        {
+          "name": "wait-for-transform-group-by-hour",
+          "include-in-reporting": true,
+          "operation": {
+            "operation-type": "wait-for-transform",
+            "transform-id": "transform-group-by-hour",
+            "transform-timeout": 3600,
+            "timeout": "60m"
+          }
+        }
+      ]
+    },
+    {
+      "name": "frequent-items",
+      "description": "Checks the performance of the frequent item aggregation",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "so",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "index-append",
+          "warmup-time-period": 120,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "operation": "frequent_items_all_100",
+          "warmup-iterations": 3,
+          "iterations": 10
+        },
+        {
+          "operation": "frequent_items_python_10",
+          "warmup-iterations": 3,
+          "iterations": 10
+        },
+        {
+          "operation": "frequent_items_java_1000",
+          "warmup-iterations": 3,
+          "iterations": 10
         }
       ]
     }

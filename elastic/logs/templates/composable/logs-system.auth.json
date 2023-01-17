@@ -5,7 +5,9 @@
   "template": {
     "settings": {
       "index": {
+        {%- if disable_pipelines is not true %}
         "default_pipeline": "logs-system.auth-1.6.4"
+        {%- endif %}
       }
     },
     "mappings": {

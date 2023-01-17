@@ -1,89 +1,321 @@
-    {
-      "name": "index",
-      "operation-type": "bulk",
-      "bulk-size": {{bulk_size | default(5000)}},
-      "ingest-percentage": {{ingest_percentage | default(100)}}
+{
+  "name": "index",
+  "operation-type": "bulk",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}}
+},
+{
+  "name": "default",
+  "operation-type": "search",
+  "body": {
+    "query": {
+      "match_all": {}
+    }
+  }
+},
+{
+  "name": "default_1k",
+  "operation-type": "search",
+  "body": {
+    "query": {
+      "match_all": {}
     },
-    {
-      "name": "default",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "match_all": {}
+    "size": 1000
+  }
+},
+{
+  "name": "date-histo-entire-range-1m",
+  "operation-type": "search",
+  "index": "tsdb-1m",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "date": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "fixed_interval": "1m"
         }
       }
-    },
-    {
-      "name": "default_1k",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "match_all": {}
+    }
+  }
+},
+{
+  "name": "date-histo-entire-range-1h",
+  "operation-type": "search",
+  "index": "tsdb-1h",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "date": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "fixed_interval": "1h"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "date-histo-entire-range-1d",
+  "operation-type": "search",
+  "index": "tsdb-1d",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "date": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "fixed_interval": "1d"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "date-histo-entire-range",
+  "operation-type": "search",
+  "index": "tsdb",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "date": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "fixed_interval": "1d"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "date-histo-memory-usage-hour",
+  "operation-type": "search",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "index": "k8s",
+  {%- else %}
+  "index": "tsdb",
+  {% endif %}
+  "body": {
+    "size": 0,
+    "aggs": {
+      "by_date": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "fixed_interval": "1h"
         },
-        "size": 1000
-      }
-    },
-    {
-      "name": "date-histo-entire-range-1m",
-      "operation-type": "search",
-      "index": "tsdb-1m",
-      "body": {
-        "size": 0,
         "aggs": {
-          "date": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "1m"
+          "ts": {
+            "time_series": {
+              "keyed": false
+            },
+            "aggs": {
+              "total_memory_usage_by_date": {
+                "sum": {
+                  "field": "kubernetes.container.memory.usage.bytes"
+                }
+              }
             }
-          }
-        }
-      }
-    },
-    {
-      "name": "date-histo-entire-range-1h",
-      "operation-type": "search",
-      "index": "tsdb-1h",
-      "body": {
-        "size": 0,
-        "aggs": {
-          "date": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "1h"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "date-histo-entire-range-1d",
-      "operation-type": "search",
-      "index": "tsdb-1d",
-      "body": {
-        "size": 0,
-        "aggs": {
-          "date": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "1d"
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "date-histo-entire-range",
-      "operation-type": "search",
-      "index": "tsdb",
-      "body": {
-        "size": 0,
-        "aggs": {
-          "date": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "1d"
+          },
+          "min_total_memory_usage_by_date": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_date"
             }
           }
         }
       }
     }
+  }
+},
+{
+  "name": "date-histo-memory-usage-day",
+  "operation-type": "search",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "index": "k8s",
+  {%- else %}
+  "index": "tsdb",
+  {% endif %}
+  "body": {
+    "size": 0,
+    "aggs": {
+      "by_date": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "fixed_interval": "1d"
+        },
+        "aggs": {
+          "ts": {
+            "time_series": {
+              "keyed": false
+            },
+            "aggs": {
+              "total_memory_usage_by_date": {
+                "sum": {
+                  "field": "kubernetes.container.memory.usage.bytes"
+                }
+              }
+            }
+          },
+          "min_total_memory_usage_by_date": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_date"
+            }
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "auto-date-histo-memory-usage-100",
+  "operation-type": "search",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "index": "k8s",
+  {%- else %}
+  "index": "tsdb",
+  {% endif %}
+  "body": {
+    "size": 0,
+    "aggs": {
+      "by_date": {
+        "auto_date_histogram": {
+          "field": "@timestamp",
+          "buckets": "100"
+        },
+        "aggs": {
+          "ts": {
+            "time_series": {
+              "keyed": false
+            },
+            "aggs": {
+              "total_memory_usage_by_date": {
+                "sum": {
+                  "field": "kubernetes.container.memory.usage.bytes"
+                }
+              }
+            }
+          },
+          "min_total_memory_usage_by_date": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_date"
+            }
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "auto-date-histo-memory-usage-1000",
+  "operation-type": "search",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "index": "k8s",
+  {%- else %}
+  "index": "tsdb",
+  {% endif %}
+  "body": {
+    "size": 0,
+    "aggs": {
+      "by_date": {
+        "auto_date_histogram": {
+          "field": "@timestamp",
+          "buckets": "1000"
+        },
+        "aggs": {
+          "ts": {
+            "time_series": {
+              "keyed": false
+            },
+            "aggs": {
+              "total_memory_usage_by_date": {
+                "sum": {
+                  "field": "kubernetes.container.memory.usage.bytes"
+                }
+              }
+            }
+          },
+          "min_total_memory_usage_by_date": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_date"
+            }
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "terms-container-name-memory-usage",
+  "operation-type": "search",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "index": "k8s",
+  {%- else %}
+  "index": "tsdb",
+  {% endif %}
+  "body": {
+    "size": 0,
+    "aggs": {
+      "container_name": {
+        "terms": {
+          "field": "kubernetes.container.name"
+        },
+        "aggs": {
+          "ts": {
+            "time_series": {
+              "keyed": false
+            },
+            "aggs": {
+              "total_memory_usage_by_container_name": {
+                "sum": {
+                  "field": "kubernetes.container.memory.usage.bytes"
+                }
+              }
+            }
+          },
+          "min_total_memory_usage_by_container_name": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_container_name"
+            }
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "terms-container-image-memory-usage",
+  "operation-type": "search",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "index": "k8s",
+  {%- else %}
+  "index": "tsdb",
+  {% endif %}
+  "body": {
+    "size": 0,
+    "aggs": {
+      "container_image": {
+        "terms": {
+          "field": "kubernetes.container.image"
+        },
+        "aggs": {
+          "ts": {
+            "time_series": {
+              "keyed": false
+            },
+            "aggs": {
+              "total_memory_usage_by_container_image": {
+                "sum": {
+                  "field": "kubernetes.container.memory.usage.bytes"
+                }
+              }
+            }
+          },
+          "min_total_memory_usage_by_container_image": {
+            "min_bucket": {
+              "buckets_path": "ts>total_memory_usage_by_container_image"
+            }
+          }
+        }
+      }
+    }
+  }
+}

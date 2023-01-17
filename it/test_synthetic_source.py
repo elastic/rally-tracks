@@ -19,26 +19,30 @@ import pytest
 
 pytest_rally = pytest.importorskip("pytest_rally")
 
+BASE_PARAMS = {
+    "source_mode": "synthetic",
+    "number_of_replicas": "0",
+}
 
-class TestSecurity:
-    def test_security_indexing(self, es_cluster, rally):
-        ret = rally.race(track="elastic/security", challenge="security-indexing", track_params={"number_of_replicas": "0"})
-        assert ret == 0
 
-    def test_security_indexing_querying(self, es_cluster, rally):
+def params(updates=None):
+    base = BASE_PARAMS.copy()
+    if updates is None:
+        return base
+    else:
+        return {**base, **updates}
+
+
+class TestSyntheticSource:
+    def test_tsdb_default(self, es_cluster, rally):
         ret = rally.race(
-            track="elastic/security",
-            challenge="security-indexing-querying",
-            track_params={
-                "number_of_replicas": "0",
-                "query_warmup_time_period": "1",
-                "query_time_period": "1",
-                "workflow_time_interval": "1",
-                "think_time_interval": "1",
-            },
+            track="tsdb",
+            track_params=params(),
         )
         assert ret == 0
 
-    def test_security_index_alert_source_events(self, es_cluster, rally):
-        ret = rally.race(track="elastic/security", challenge="index-alert-source-events", track_params={"number_of_replicas": "0"})
-        assert ret == 0
+    def test_nyc_taxis_default(self, es_cluster, rally):
+        ret = rally.race(
+            track="nyc_taxis",
+            track_params=params(),
+        )

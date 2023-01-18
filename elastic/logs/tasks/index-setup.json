@@ -1,0 +1,135 @@
+{%- if disable_pipelines is not true %}
+{
+  "name":"insert-pipelines",
+  "tags": ["setup"],
+  "operation": {
+    "operation-type": "create-pipeline",
+    "param-source": "add-track-path"
+  }
+},
+{%- endif %}
+{
+  "name": "insert-ilm",
+  "tags": ["setup"],
+  "operation": {
+    "operation-type": "create-ilm",
+    "param-source": "add-track-path"
+  }
+},
+{
+  "name": "delete-all-datastreams",
+  "tags": ["setup"],
+  "operation": "delete-data-stream"
+},
+{
+  "name": "delete-all-composable-templates",
+  "tags": ["setup"],
+  "operation": "delete-composable-template"
+},
+{
+  "name": "delete-all-component-templates",
+  "tags": ["setup"],
+  "operation": "delete-component-template"
+},
+{
+  "name": "create-all-component-templates",
+  "tags": ["setup"],
+  "operation": {
+    "operation-type": "create-component-template",
+    "param-source": "component-template-source",
+    "remove-routing-shards": true,
+    "remove-pipelines": false
+  }
+},
+{
+  "name": "create-all-composable-templates",
+  "tags": ["setup"],
+  "operation": {
+    "operation-type": "create-composable-template",
+    "param-source": "composable-template-source",
+    "remove-routing-shards": true,
+    "remove-pipelines": false
+  }
+},
+{
+  "name": "create-required-data-streams",
+  "tags": ["setup"],
+  "operation": {
+    "operation-type": "create-data-stream"
+  }
+},
+{
+  "name": "validate-package-template-installation",
+  "operation": {
+    "operation-type": "validate-package-assets",
+    "packages": {{ p_integration_ratios.keys() | reject("==", "application-logs") | list | tojson }},
+    "asset-types": ["index-templates"]
+  }
+},
+{
+  "name": "update-custom-package-templates",
+  "operation": {
+    "operation-type": "update-custom-templates",
+    "body": {
+      "template" : {
+        "settings": {
+          "index" : {
+            "number_of_replicas" : "{{ number_of_replicas | default('1')}}",
+            "number_of_shards" : "{{ number_of_shards | default('1')}}"
+          }
+        },
+        "mappings" : {
+          "runtime": {
+            "rally.doc_size": {
+              "type": "long"
+            },
+            "rally.message_size": {
+              "type": "long"
+            }
+          },
+          "properties" : {
+            "event": {
+              "properties": {
+                "created": {
+                  "type": "date",
+                  "format": "strict_date_optional_time"
+                },
+                "ingested": {
+                  "type": "date",
+                  "format": "strict_date_optional_time"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+},
+
+{
+  "name": "check-cluster-health",
+  "operation": {
+    "operation-type": "cluster-health",
+    "index": "_all",
+    "request-params": {
+      "wait_for_status": "{{wait_for_status | default('green')}}",
+      "wait_for_no_relocating_shards": "true"
+    },
+    "retry-until-success": true
+  }
+},
+{
+  "name": "wait-until-merges-finish",
+  "tags": ["setup"],
+  "operation": {
+    "operation-type": "index-stats",
+    "index": "_all",
+    "condition": {
+      "path": "_all.total.merges.current",
+      "expected-value": 0
+    },
+    "retry-until-success": true,
+    "include-in-reporting": false
+  }
+}

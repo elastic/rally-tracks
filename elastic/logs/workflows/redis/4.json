@@ -1,0 +1,518 @@
+{
+  "id": "Filter on redis.slowlog.cmd",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.320819
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - redis - 4.1",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650497833296"
+              },
+              "body": {
+                "aggs": {
+                  "3": {
+                    "terms": {
+                      "field": "redis.log.role",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    },
+                    "aggs": {
+                      "2": {
+                        "terms": {
+                          "field": "log.level",
+                          "order": {
+                            "_count": "desc"
+                          },
+                          "size": 5
+                        }
+                      }
+                    }
+                  }
+                },
+                "size": 0,
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "range": {
+                                "redis.slowlog.duration.us": {
+                                  "gte": "2000"
+                                }
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "match": {
+                                "data_stream.dataset": "redis.log"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "redis.slowlog.cmd": "BRPOP"
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-19T23:42:00.447Z",
+                            "lte": "2022-04-20T23:42:00.447Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.321363
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - redis - 4.2",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650497833296"
+              },
+              "body": {
+                "aggs": {
+                  "2": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "fixed_interval": "30m",
+                      "time_zone": "UTC",
+                      "min_doc_count": 1
+                    },
+                    "aggs": {
+                      "3": {
+                        "terms": {
+                          "field": "log.level",
+                          "order": {
+                            "_count": "desc"
+                          },
+                          "size": 5
+                        }
+                      }
+                    }
+                  }
+                },
+                "size": 0,
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "range": {
+                                "redis.slowlog.duration.us": {
+                                  "gte": "2000"
+                                }
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "match": {
+                                "data_stream.dataset": "redis.log"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "redis.slowlog.cmd": "BRPOP"
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-19T23:42:00.447Z",
+                            "lte": "2022-04-20T23:42:00.447Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.321882
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - redis - 4.3",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650497833296"
+              },
+              "body": {
+                "version": true,
+                "size": 500,
+                "sort": [
+                  {
+                    "@timestamp": {
+                      "order": "desc",
+                      "unmapped_type": "boolean"
+                    }
+                  }
+                ],
+                "fields": [
+                  {
+                    "field": "*",
+                    "include_unmapped": "true"
+                  },
+                  {
+                    "field": "@timestamp",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "eden.created_at",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.end",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.ingested",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.accessed",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.ctime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.mtime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "postgresql.log.session_start_time",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.parent.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.start",
+                    "format": "strict_date_optional_time"
+                  }
+                ],
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "_source": false,
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "range": {
+                                "redis.slowlog.duration.us": {
+                                  "gte": "2000"
+                                }
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "data_stream.dataset": "redis.log"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "redis.slowlog.cmd": "BRPOP"
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-19T23:42:00.447Z",
+                            "lte": "2022-04-20T23:42:00.447Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "highlight": {
+                  "pre_tags": [
+                    "@kibana-highlighted-field@"
+                  ],
+                  "post_tags": [
+                    "@/kibana-highlighted-field@"
+                  ],
+                  "fields": {
+                    "*": {}
+                  },
+                  "fragment_size": 2147483647
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.322204
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - redis - 4.4",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650497833296"
+              },
+              "body": {
+                "version": true,
+                "size": 500,
+                "sort": [
+                  {
+                    "@timestamp": {
+                      "order": "desc",
+                      "unmapped_type": "boolean"
+                    }
+                  }
+                ],
+                "fields": [
+                  {
+                    "field": "*",
+                    "include_unmapped": "true"
+                  },
+                  {
+                    "field": "@timestamp",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "eden.created_at",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.end",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.ingested",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.accessed",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.ctime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.mtime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "postgresql.log.session_start_time",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.parent.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.start",
+                    "format": "strict_date_optional_time"
+                  }
+                ],
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "_source": false,
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "match": {
+                                "data_stream.dataset": "redis.slowlog"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "range": {
+                                "redis.slowlog.duration.us": {
+                                  "gte": "2000"
+                                }
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "redis.slowlog.cmd": "BRPOP"
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-19T23:42:00.447Z",
+                            "lte": "2022-04-20T23:42:00.447Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "highlight": {
+                  "pre_tags": [
+                    "@kibana-highlighted-field@"
+                  ],
+                  "post_tags": [
+                    "@/kibana-highlighted-field@"
+                  ],
+                  "fields": {
+                    "*": {}
+                  },
+                  "fragment_size": 2147483647
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

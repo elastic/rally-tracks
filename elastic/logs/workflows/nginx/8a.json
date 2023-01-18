@@ -1,0 +1,504 @@
+{
+  "id": "Text Search - part a",
+  "name": "POST /api/metrics/vis/data",
+  "requests": [
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 1.604276
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 8a.1",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true"
+              },
+              "body": {
+                "size": 0,
+                "query": {
+                  "bool": {
+                    "must": [
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-04-20T18:11:15.486Z",
+                            "lte": "2022-04-20T19:11:15.486Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      },
+                      {
+                        "bool": {
+                          "must": [
+                            {
+                              "query_string": {
+                                "query": "data_stream.dataset:nginx.access",
+                                "analyze_wildcard": true
+                              }
+                            }
+                          ],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      }
+                    ],
+                    "filter": [
+                      {
+                        "multi_match": {
+                          "type": "phrase",
+                          "query": "access forbidden",
+                          "lenient": true
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                },
+                "aggs": {
+                  "timeseries": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "min_doc_count": 0,
+                      "time_zone": "UTC",
+                      "extended_bounds": {
+                        "min": 1650478275486,
+                        "max": 1650481875486
+                      },
+                      "fixed_interval": "60s"
+                    },
+                    "aggs": {
+                      "61ca57f2-469d-11e7-af02-69e470af7417": {
+                        "bucket_script": {
+                          "buckets_path": {
+                            "count": "_count"
+                          },
+                          "script": {
+                            "source": "count * 1",
+                            "lang": "expression"
+                          },
+                          "gap_policy": "skip"
+                        }
+                      }
+                    },
+                    "meta": {
+                      "timeField": "@timestamp",
+                      "panelId": "61ca57f0-469d-11e7-af02-69e470af7417",
+                      "seriesId": "61ca57f1-469d-11e7-af02-69e470af7417",
+                      "intervalString": "60s"
+                    }
+                  }
+                },
+                "runtime_mappings": {},
+                "timeout": "30000ms"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.31117399999999995
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 8a.2",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650481826954"
+              },
+              "body": {
+                "highlight": {
+                  "pre_tags": [
+                    "@kibana-highlighted-field@"
+                  ],
+                  "post_tags": [
+                    "@/kibana-highlighted-field@"
+                  ],
+                  "fields": {
+                    "*": {}
+                  },
+                  "fragment_size": 2147483647
+                },
+                "version": true,
+                "size": 500,
+                "sort": [
+                  {
+                    "@timestamp": {
+                      "order": "desc",
+                      "unmapped_type": "boolean"
+                    }
+                  }
+                ],
+                "fields": [
+                  {
+                    "field": "*",
+                    "include_unmapped": "true"
+                  },
+                  {
+                    "field": "@timestamp",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "eden.created_at",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.end",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.ingested",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.accessed",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.ctime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.mtime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "postgresql.log.session_start_time",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.parent.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.start",
+                    "format": "strict_date_optional_time"
+                  }
+                ],
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "_source": false,
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "bool": {
+                                      "should": [
+                                        {
+                                          "match": {
+                                            "data_stream.dataset": "nginx.access"
+                                          }
+                                        }
+                                      ],
+                                      "minimum_should_match": 1
+                                    }
+                                  },
+                                  {
+                                    "bool": {
+                                      "should": [
+                                        {
+                                          "match": {
+                                            "data_stream.dataset": "nginx.error"
+                                          }
+                                        }
+                                      ],
+                                      "minimum_should_match": 1
+                                    }
+                                  },
+                                  {
+                                    "bool": {
+                                      "should": [
+                                        {
+                                          "match": {
+                                            "data_stream.dataset": "nginx.ingress_controller"
+                                          }
+                                        }
+                                      ],
+                                      "minimum_should_match": 1
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "message"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "multi_match": {
+                          "type": "phrase",
+                          "query": "access forbidden",
+                          "lenient": true
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-20T18:11:15.486Z",
+                            "lte": "2022-04-20T19:11:15.486Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.311612
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - nginx - 8a.3",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "enable_fields_emulation": "true",
+                "preference": "1650481826954"
+              },
+              "body": {
+                "highlight": {
+                  "pre_tags": [
+                    "@kibana-highlighted-field@"
+                  ],
+                  "post_tags": [
+                    "@/kibana-highlighted-field@"
+                  ],
+                  "fields": {
+                    "*": {}
+                  },
+                  "fragment_size": 2147483647
+                },
+                "version": true,
+                "size": 500,
+                "sort": [
+                  {
+                    "@timestamp": {
+                      "order": "desc",
+                      "unmapped_type": "boolean"
+                    }
+                  }
+                ],
+                "fields": [
+                  {
+                    "field": "*",
+                    "include_unmapped": "true"
+                  },
+                  {
+                    "field": "@timestamp",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "eden.created_at",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.end",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.ingested",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "event.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.accessed",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.created",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.ctime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "file.mtime",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "postgresql.log.session_start_time",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.parent.start",
+                    "format": "strict_date_optional_time"
+                  },
+                  {
+                    "field": "process.start",
+                    "format": "strict_date_optional_time"
+                  }
+                ],
+                "script_fields": {},
+                "stored_fields": [
+                  "*"
+                ],
+                "runtime_mappings": {},
+                "_source": false,
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "bool": {
+                                      "should": [
+                                        {
+                                          "match": {
+                                            "data_stream.dataset": "nginx.access"
+                                          }
+                                        }
+                                      ],
+                                      "minimum_should_match": 1
+                                    }
+                                  },
+                                  {
+                                    "bool": {
+                                      "should": [
+                                        {
+                                          "match": {
+                                            "data_stream.dataset": "nginx.error"
+                                          }
+                                        }
+                                      ],
+                                      "minimum_should_match": 1
+                                    }
+                                  },
+                                  {
+                                    "bool": {
+                                      "should": [
+                                        {
+                                          "match": {
+                                            "data_stream.dataset": "nginx.ingress_controller"
+                                          }
+                                        }
+                                      ],
+                                      "minimum_should_match": 1
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "url.original"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "multi_match": {
+                          "type": "phrase",
+                          "query": "access forbidden",
+                          "lenient": true
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-04-20T18:11:15.486Z",
+                            "lte": "2022-04-20T19:11:15.486Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

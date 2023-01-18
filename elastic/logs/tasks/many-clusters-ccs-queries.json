@@ -1,0 +1,61 @@
+{
+  "name": "ccs-queries",
+  "parallel": {
+    "time-period": {{ p_query_time_period }},
+    "warmup-time-period": {{ p_query_warmup_time_period }},
+    "tasks": [
+      {% set target_index = "logs-*,remote*:logs-*" %}
+      {% for workflow in p_query_workflows %}
+      {
+        "name": {{ workflow | tojson }},
+        "operation": {
+          "operation-type": "composite",
+          "param-source": "workflow-selector",
+          "workflow": {{workflow | tojson }},
+          "workflow-target": {{ target_index | tojson }},
+          "detailed-results": true,
+          "task-offset": {{ loop.index }},
+          "request-params": {{ p_query_request_params | tojson(indent=2) }}
+        },
+        "think-time-interval": {{ p_user_think_time }},
+        "workflow-interval": {{ p_user_workflow_time }},
+        "warmup-time-period": {{ p_query_warmup_time_period }},
+        "clients": 1,
+        "schedule": "workflow-scheduler"
+      },
+      {
+        "name": {{ "%s/no_minimized_roundtrips" | format(workflow) | tojson }},
+        "operation": {
+          "operation-type": "composite",
+          "param-source": "workflow-selector",
+          "workflow": {{workflow | tojson }},
+          "workflow-target": {{ target_index | tojson }},
+          "detailed-results": true,
+          "task-offset": {{ loop.index }},
+          "request-params": {
+              "ccs_minimize_roundtrips": false
+              {% for key, value in p_query_request_params.items() %}
+                  ,{{ key | tojson }} : {{ value | tojson }}
+              {% endfor %}
+          }
+        },
+        "think-time-interval": {{ p_user_think_time }},
+        "workflow-interval": {{ p_user_workflow_time }},
+        "warmup-time-period": {{ p_query_warmup_time_period }},
+        "clients": 1,
+        "schedule": "workflow-scheduler"
+      },
+      {% endfor %}
+      {
+        "name": "field-caps",
+        "operation": {
+          "operation-type": "raw-request",
+          "path": {{ "/%s/_field_caps?fields=*" | format(target_index) | tojson }},
+          "method": "GET"
+        },
+        "target-interval": {{ p_user_think_time }},
+        "schedule": "poisson"
+      }
+    ]
+  }
+}

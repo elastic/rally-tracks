@@ -1,0 +1,93 @@
+{
+  "id": "Save and load [Logs MySQL] Overview dashboard - part b",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "name": "sleep",
+      "operation-type": "sleep",
+      "duration": 0.305565
+    },
+    {
+      "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 9b.1",
+      "operation-type": "search",
+      "index": "logs-*",
+      "request-params": {
+        "batched_reduce_size": "64",
+        "ignore_unavailable": "true",
+        "track_total_hits": "true",
+        "enable_fields_emulation": "true",
+        "preference": "1650388485609"
+      },
+      "body": {
+        "aggs": {
+          "2": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "30m",
+              "time_zone": "UTC",
+              "min_doc_count": 1
+            },
+            "aggs": {
+              "3": {
+                "terms": {
+                  "field": "log.level",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 5
+                },
+                "aggs": {
+                  "4": {
+                    "terms": {
+                      "field": "kubernetes.pod.name",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 5
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "size": 0,
+        "script_fields": {},
+        "stored_fields": [
+          "*"
+        ],
+        "runtime_mappings": {},
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "multi_match": {
+                  "type": "phrase",
+                  "query": "",
+                  "lenient": true
+                }
+              },
+              {
+                "match_phrase": {
+                  "data_stream.dataset": "mysql.error"
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "2022-04-18T17:50:08.200Z",
+                    "lte": "2022-04-19T17:50:08.200Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        }
+      }
+    }
+  ]
+}

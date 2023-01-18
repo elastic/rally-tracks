@@ -1,0 +1,58 @@
+{
+  "id": "Discover/visualize: switch visualization",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "name": "sleep",
+      "operation-type": "sleep",
+      "duration": 0.313651
+    },
+    {
+      "name": "Elasticsearch: POST /logs-*/_async_search - discover/visualize - 5.1",
+      "operation-type": "search",
+      "index": "logs-*",
+      "request-params": {
+        "batched_reduce_size": "64",
+        "ignore_unavailable": "true",
+        "track_total_hits": "true",
+        "enable_fields_emulation": "true",
+        "preference": "1650317360945"
+      },
+      "body": {
+        "aggs": {
+          "0": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "3h",
+              "time_zone": "UTC"
+            }
+          }
+        },
+        "size": 0,
+        "script_fields": {},
+        "stored_fields": [
+          "*"
+        ],
+        "runtime_mappings": {},
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "2022-04-17T21:34:09.566Z",
+                    "lte": "2022-04-18T21:34:09.566Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        }
+      }
+    }
+  ]
+}

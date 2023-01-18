@@ -1,0 +1,190 @@
+{
+  "id": "Discover/search: open",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.313076
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - discover/search - 1.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "false",
+            "enable_fields_emulation": "true",
+            "preference": "1650039059666"
+          },
+          "body": {
+            "sort": [
+              {
+                "@timestamp": {
+                  "order": "desc",
+                  "unmapped_type": "boolean"
+                }
+              }
+            ],
+            "fields": [
+              {
+                "field": "*",
+                "include_unmapped": "true"
+              },
+              {
+                "field": "@timestamp",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "eden.created_at",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.created",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.end",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.ingested",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.start",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.accessed",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.created",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.ctime",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.mtime",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "postgresql.log.session_start_time",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "process.parent.start",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "process.start",
+                "format": "strict_date_optional_time"
+              }
+            ],
+            "size": 500,
+            "version": true,
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "_source": false,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-14T16:36:52.359Z",
+                        "lte": "2022-04-15T16:36:52.359Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            },
+            "highlight": {
+              "pre_tags": [
+                "@kibana-highlighted-field@"
+              ],
+              "post_tags": [
+                "@/kibana-highlighted-field@"
+              ],
+              "fields": {
+                "*": {}
+              },
+              "fragment_size": 2147483647
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.313435
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - discover/search - 1.2",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650039059666"
+          },
+          "body": {
+            "size": 0,
+            "aggs": {
+              "2": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "fixed_interval": "30m",
+                  "time_zone": "UTC",
+                  "min_doc_count": 1
+                }
+              }
+            },
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-14T16:36:52.359Z",
+                        "lte": "2022-04-15T16:36:52.359Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": ".logs-endpoint.action.responses",
+  "index_template": {
+    "index_patterns": [
+      ".logs-endpoint.action.responses-*"
+    ],
+    "template": {
+      "settings": {
+        "index": {
+          "default_pipeline": "logs-endpoint.action.responses-8.3.0"
+        }
+      },
+      "mappings": {
+        "_meta": {
+          "package": {
+            "name": "endpoint"
+          },
+          "managed_by": "fleet",
+          "managed": true
+        }
+      }
+    },
+    "composed_of": [
+      ".logs-endpoint.action.responses@package",
+      ".logs-endpoint.action.responses@custom",
+      ".fleet_globals-1",
+      ".fleet_agent_id_verification-1"
+    ],
+    "priority": 200,
+    "_meta": {
+      "package": {
+        "name": "endpoint"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    },
+    "data_stream": {
+      "hidden": true,
+      "allow_custom_routing": false
+    }
+  }
+}

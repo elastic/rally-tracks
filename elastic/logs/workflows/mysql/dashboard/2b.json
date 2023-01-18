@@ -1,0 +1,153 @@
+{
+  "id": "Search for mysql.slowlog.query: UPDATE* - part b",
+  "name": "POST /internal/bsearch",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.304444
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - mysql/dashboard - 2b.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true",
+            "preference": "1650388485609"
+          },
+          "body": {
+            "highlight": {
+              "pre_tags": [
+                "@kibana-highlighted-field@"
+              ],
+              "post_tags": [
+                "@/kibana-highlighted-field@"
+              ],
+              "fields": {
+                "*": {}
+              },
+              "fragment_size": 2147483647
+            },
+            "version": true,
+            "size": 500,
+            "sort": [
+              {
+                "@timestamp": {
+                  "order": "desc",
+                  "unmapped_type": "boolean"
+                }
+              }
+            ],
+            "fields": [
+              {
+                "field": "*",
+                "include_unmapped": "true"
+              },
+              {
+                "field": "@timestamp",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "eden.created_at",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.created",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.end",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.ingested",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "event.start",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.accessed",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.created",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.ctime",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "file.mtime",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "postgresql.log.session_start_time",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "process.parent.start",
+                "format": "strict_date_optional_time"
+              },
+              {
+                "field": "process.start",
+                "format": "strict_date_optional_time"
+              }
+            ],
+            "script_fields": {},
+            "stored_fields": [
+              "*"
+            ],
+            "runtime_mappings": {},
+            "_source": false,
+            "query": {
+              "bool": {
+                "must": [],
+                "filter": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "query_string": {
+                            "fields": [
+                              "mysql.slowlog.query"
+                            ],
+                            "query": "UPDATE*"
+                          }
+                        }
+                      ],
+                      "minimum_should_match": 1
+                    }
+                  },
+                  {
+                    "match_phrase": {
+                      "data_stream.dataset": "mysql.error"
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "format": "strict_date_optional_time",
+                        "gte": "2022-04-18T17:48:47.026Z",
+                        "lte": "2022-04-19T17:48:47.026Z"
+                      }
+                    }
+                  }
+                ],
+                "should": [],
+                "must_not": []
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

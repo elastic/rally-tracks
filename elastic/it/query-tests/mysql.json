@@ -1,0 +1,27 @@
+{
+  "start_date":"2021-01-01T00:00:00Z",
+  "end_date":"2021-01-02T00:00:00Z",
+  "max_total_download_gb":200,
+  "raw_data_volume_per_day":"4GB",
+  "max_generated_corpus_size":"10GB",
+  "wait_for_status":"green",
+  "force_data_generation":true,
+  "number_of_shards":2,
+  "number_of_replicas":0,
+  "integration_ratios": {
+    "mysql": {
+      "corpora": {
+        "mysql-error-logs": 0.5,
+        "mysql-slowlog-logs": 0.5
+      }
+    }
+  },
+  "query_workflows": ["mysql/dashboard"],
+  "query_min_date":"2021-01-01T00:30:00Z",
+  "query_max_date":"2021-01-01T23:30:00Z",
+  "query_warmup_time_period":60,
+  "query_time_period":200,
+  "workflow_time_interval":10,
+  "think_time_interval":10,
+  "detailed_results":true
+}

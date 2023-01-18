@@ -1,0 +1,70 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "many-shards-snapshots",
+  "description": "Indexes a large amount of shards and then sequentially takes a configurable number of snapshots. Used for benchmarks to help identify regressions related to snapshots with high index counts.",
+  "schedule": [
+    {% include "tasks/many-shards-setup.json" %},
+    {
+      "name": "add-many-shards-ilm",
+      "operation": {
+        "operation-type": "create-ilm",
+        "param-source": "add-track-path",
+        "policies": "ilm/many-shards-quantitative"
+      }
+    },
+    {
+      "name": "initial-indices",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "initial-indices-source",
+        "detailed-results": true,
+        "initial_indices_count": {{ p_initial_indices_count }},
+        "name": "auditbeatquantitative",
+        "timeout": "10m"
+      },
+      "clients": {{ p_bulk_indexing_clients }}
+    },
+    {# mutate a copy so as not to override in other challenges. shallow copy is ok since we're changing a top-level element.' #}
+      {% set many_shards_snapshot_repo_settings = p_snapshot_repo_settings.copy() %}
+    {# randomize base path to avoid clashes when running concurrent benchmarks #}
+      {% set _=many_shards_snapshot_repo_settings.update({"base_path":"many-shards-"+((now|int)|string)}) %}
+    {
+      "name": "register-snapshot-repository",
+      "operation": {
+        "operation-type": "create-snapshot-repository",
+        "repository": "many-shards",
+        "body": {
+          "type": {{ p_snapshot_repo_type | tojson }},
+          "settings": {{ many_shards_snapshot_repo_settings | tojson(indent=2)}}
+        }
+      }
+    },
+    {# Issue <snapshot_counts> number of back to back snapshots and wait until all have completed #}
+      {% for snap_iter in range(snapshot_counts | default(100)) %}
+      {
+        "name": "create-snapshot-{{ snap_iter }}",
+        "operation": {
+          "operation-type": "create-snapshot",
+          "repository": {{ p_snapshot_repo_name | tojson }},
+          "snapshot": "{{ p_snapshot_name  }}-{{ snap_iter }}",
+          "wait-for-completion": false,
+          "body": {
+            "indices": {{ p_restore_data_streams | tojson }},
+            "ignore_unavailable": true,
+            "include_global_state": false,
+            "metadata": {{ p_snapshot_metadata | tojson }}
+          },
+          "include-in-reporting": true
+        }
+      },
+      {% endfor %}
+      {
+        "name": "wait-for-snapshots",
+        "operation": {
+          "operation-type": "wait-for-current-snapshots-create",
+          "repository": {{ p_snapshot_repo_name | tojson }}
+        }
+      },
+    {% include "tasks/field-caps.json" %}
+  ]
+}

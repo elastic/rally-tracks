@@ -1,0 +1,47 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "security-indexing-querying",
+  "description": "Indexes security data then executes queries to simulate Kibana users.",
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {
+      "name": "bulk-index-initial-load",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "detailed-results": true,
+        "bulk-size": {{ (bulk_size | default(50)) }}
+      },
+      "ingest-percentage": {{ ingest_percentage | default(100) }},
+      "clients": {{ p_bulk_indexing_clients }},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    {
+      "name": "kibana-queries",
+      "parallel": {
+        "time-period": {{ query_time_period | default(900) }},
+        "warmup-time-period": {{ query_warmup_time_period | default(120) }},
+        "tasks": [
+          {% for workflow in p_query_workflows %}
+            {
+              "name": {{workflow | tojson }},
+              "operation": {
+                "operation-type": "composite",
+                "param-source": "workflow-selector",
+                "workflow": {{workflow | tojson }},
+                "task-offset": {{ loop.index }},
+                "request-params": {{ query_request_params | default({}) | tojson(indent=2) }}
+              },
+              "think-time-interval": {{ think_time_interval | default(4) }},
+              "workflow-interval": {{ p_user_workflow_time }},
+              "clients": 1,
+              "schedule": "workflow-scheduler"
+            }{{ ", " if not loop.last else "" }}
+          {% endfor %}
+        ]
+      }
+    }
+  ]
+}

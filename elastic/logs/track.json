@@ -1,0 +1,646 @@
+{% import "rally.helpers" as rally with context %}
+
+{% set p_query_workflows = (query_workflows | default(["discover/search", "discover/visualize", "kafka", "nginx",
+"apache", "system/auth", "system/syslog/dashboard", "system/syslog/lens", "mysql/dashboard", "redis", "mysql/lens",
+"postgresql/overview", "postgresql/duration"])) %}
+
+{% set p_num_query_workflows = p_query_workflows | length %}
+{% set num_corpus = 18 %}
+{% set p_bulk_indexing_clients = (bulk_indexing_clients | default(8)) %}
+{% set p_initial_indices_count = (initial_indices_count | default(0)) %}
+{% set p_initial_frozen_indices_count = (initial_frozen_indices_count | default(0)) %}
+{% set p_bulk_size = bulk_size | default(1000) %}
+{% set p_user_think_time = (think_time_interval | default(4)) %}
+{% set p_workflow_time_interval = (workflow_time_interval | default(30)) %}
+{% set p_user_workflow_time = p_workflow_time_interval * p_num_query_workflows %}
+{% set p_query_warmup_time_period = (query_warmup_time_period | default(120)) %}
+{% set p_query_time_period = (query_time_period | default(900)) %}
+{% set p_query_request_params = (query_request_params | default({}))%}
+
+{% set p_throttle_indexing = (throttle_indexing | default(false)) %}
+{% set p_max_download_gb = (max_total_download_gb | default(2 * num_corpus)) %}
+{% set p_max_download_per_corpus_gb = ([p_max_download_gb / num_corpus, 1] | max | int ) %}
+{% set p_corpora_uri_base = (corpora_uri_base | default("https://rally-tracks.elastic.co")) %}
+
+{% set p_recovery_max_bytes_per_sec = (recovery_max_bytes_per_sec | default(-1)) %}
+{% set p_node_concurrent_recoveries = (node_concurrent_recoveries | default(2)) %}
+{% set p_snapshot_repo_name = (snapshot_repo_name | default("logging")) %}
+{% set p_snapshot_repo_type = (snapshot_repo_type | default("s3")) %}
+{% set p_snapshot_repo_settings = (snapshot_repo_settings | default({
+    "bucket": snapshot_bucket | default("test-bucket"),
+    "client": "default",
+    "base_path": snapshot_base_path | default("observability/logging"),
+    "max_snapshot_bytes_per_sec": -1,
+    "readonly": snapshot_repo_readonly | default(false)
+}))%}
+{% set p_snapshot_name = (snapshot_name | default("logging-test")) %}
+{% set p_restore_data_streams = (restore_data_streams | default("logs-*")) %}
+{% set p_snapshot_metadata = (snapshot_metadata | default({}))%}
+{% set p_snapshot_rename_suffix = (snapshot_rename_suffix | default("") ) %}
+
+{% set es_version = "7.13.2" %}
+
+{% set p_integration_ratios = (integration_ratios | default({
+    "kafka": {
+      "corpora": {
+        "kafka-logs": 0.025
+      }
+    },
+    "nginx": {
+      "corpora": {
+        "nginx-access-logs": 0.025,
+        "nginx-access-logs-2": 0.025,
+        "nginx-error-logs": 0.01,
+        "nginx-error-logs-2": 0.01
+      }
+    },
+    "application-logs": {
+      "corpora": {
+        "application-logs-1": 0.5,
+        "application-logs-2": 0.25
+      }
+    },
+    "apache": {
+      "corpora": {
+        "apache-access-logs": 0.025,
+        "apache-error-logs": 0.01
+      }
+    },
+    "mysql": {
+      "corpora": {
+        "mysql-slowlog-logs": 0.025,
+        "mysql-error-logs": 0.01
+      }
+    },
+    "postgresql": {
+      "corpora": {
+        "postgresql-logs": 0.025
+      }
+    },
+    "redis": {
+      "corpora": {
+        "redis-app-logs": 0.01,
+        "redis-app-slowlogs": 0.025
+      }
+    },
+    "system": {
+      "corpora": {
+        "system-syslog-logs": 0.05,
+        "system-auth-logs": 0.025
+      }
+    }
+  }))
+%}
+
+{% set default_exclude_properties = {
+    "kafka-logs": ["container"],
+    "nginx-access-logs": ["container"],
+    "nginx-access-logs-2": ["container"],
+    "nginx-error-logs": ["container"],
+    "nginx-error-logs-2": ["container"],
+    "application-logs-1": ["kubernetes"],
+    "application-logs-2": ["kubernetes"],
+    "mysql-error-logs": ["container"],
+    "mysql-slowlog-logs": ["container"],
+    "system-auth-logs": [],
+    "system-syslog-logs": [],
+    "system-auth-logs-2": [],
+    "system-syslog-logs-2": [],
+    "postgresql-logs": ["container"],
+    "apache-access-logs": ["container"],
+    "apache-error-logs": ["container"],
+    "redis-app-logs": ["container"],
+    "redis-app-slowlogs": ["container"]
+  }
+%}
+
+{
+  "version": 2,
+  "description": "Track for simulating logging workloads",
+  "parameters": {
+    "raw-data-volume-per-day": "{{ raw_data_volume_per_day | default('0.1GB') }}",
+    "random-seed": {{ random_seed | default(13) | int }},
+    "generator-batch-size": 10000,
+    "sample-size": 10000,
+    "max-generated-corpus-size": "{{ max_generated_corpus_size | default('2GB') }}",
+{% if data_generation_clients %}
+    "data-generation-clients": {{ data_generation_clients }},
+{% endif %}
+    "start-date": "{{ start_date | default('2020-01-01') }}",
+    "bulk-start-date": "{{ bulk_start_date }}",
+    "end-date": "{{ end_date | default('2020-01-02') }}",
+    "bulk-end-date": "{{ bulk_end_date }}",
+    "query-average-interval": "{{ query_average_interval }}",
+    "query-min-date": "{{ query_min_date | default('2020-01-01') }}",
+    "query-max-date": {{ query_max_date | default(None) | tojson }},
+    "query-max-date-start": {{ query_max_date_start |default(None) | tojson }},
+    "max-total-download-per-corpus-gb": "{{ p_max_download_per_corpus_gb }}",
+    "integration-ratios": {{ p_integration_ratios | tojson }},
+    "exclude-properties": {{ exclude_properties | default(default_exclude_properties) | tojson }},
+    "wait-for-status": "{{ wait_for_status | default('green') }}",
+    "force-data-generation": {{ force_data_generation | default(false) | tojson }},
+    "detailed-results": {{ detailed_results | default(false) | tojson }},
+    "number-of-workflows": {{ p_num_query_workflows }}
+  },
+  "data-streams": [
+    {
+      "name": "logs-kafka.log-default"
+    },
+    {
+      "name": "logs-nginx.access-default"
+    },
+    {
+      "name": "logs-nginx.error-default"
+    },
+    {
+      "name": "logs-k8-application.log-default"
+    },
+    {
+      "name": "logs-mysql.slowlog-default"
+    },
+    {
+      "name": "logs-mysql.error-default"
+    },
+    {
+      "name": "logs-system.auth-default"
+    },
+    {
+      "name": "logs-system.syslog-default"
+    },
+    {
+      "name": "logs-postgresql.log-default"
+    },
+    {
+      "name": "logs-apache.access-default"
+    },
+    {
+      "name": "logs-apache.error-default"
+    },
+    {
+      "name": "logs-redis.log-default"
+    },
+    {
+      "name": "logs-redis.slowlog-default"
+    }
+  ],
+  "component-templates": [
+    {
+        "name": ".fleet_component_template-1",
+        "template": "./templates/component/.fleet_component_template-1.json"
+    },
+    {
+        "name": "logs-apache.access@settings",
+        "template": "./templates/component/logs-apache.access@settings.json"
+    },
+    {
+        "name": "logs-apache.access@custom",
+        "template": "./templates/component/logs-apache.access@custom.json"
+    },
+    {
+        "name": "logs-apache.error@settings",
+        "template": "./templates/component/logs-apache.error@settings.json"
+    },
+    {
+        "name": "logs-apache.error@custom",
+        "template": "./templates/component/logs-apache.error@custom.json"
+    },
+    {
+        "name": "logs-kafka.log@settings",
+        "template": "./templates/component/logs-kafka.log@settings.json"
+    },
+    {
+        "name": "logs-kafka.log@custom",
+        "template": "./templates/component/logs-kafka.log@custom.json"
+    },
+    {
+        "name": "logs-mysql.error@settings",
+        "template": "./templates/component/logs-mysql.error@settings.json"
+    },
+    {
+        "name": "logs-mysql.error@custom",
+        "template": "./templates/component/logs-mysql.error@custom.json"
+    },
+    {
+        "name": "logs-mysql.slowlog@settings",
+        "template": "./templates/component/logs-mysql.slowlog@settings.json"
+    },
+    {
+        "name": "logs-mysql.slowlog@custom",
+        "template": "./templates/component/logs-mysql.slowlog@custom.json"
+    },
+    {
+        "name": "logs-nginx.access@settings",
+        "template": "./templates/component/logs-nginx.access@settings.json"
+    },
+    {
+        "name": "logs-nginx.access@custom",
+        "template": "./templates/component/logs-nginx.access@custom.json"
+    },
+    {
+        "name": "logs-nginx.error@settings",
+        "template": "./templates/component/logs-nginx.error@settings.json"
+    },
+    {
+        "name": "logs-nginx.error@custom",
+        "template": "./templates/component/logs-nginx.error@custom.json"
+    },
+    {
+        "name": "logs-postgresql.log@settings",
+        "template": "./templates/component/logs-postgresql.log@settings.json"
+    },
+    {
+        "name": "logs-postgresql.log@custom",
+        "template": "./templates/component/logs-postgresql.log@custom.json"
+    },
+    {
+        "name": "logs-redis.log@settings",
+        "template": "./templates/component/logs-redis.log@settings.json"
+    },
+    {
+        "name": "logs-redis.log@custom",
+        "template": "./templates/component/logs-redis.log@custom.json"
+    },
+    {
+        "name": "logs-redis.slowlog@settings",
+        "template": "./templates/component/logs-redis.slowlog@settings.json"
+    },
+    {
+        "name": "logs-redis.slowlog@custom",
+        "template": "./templates/component/logs-redis.slowlog@custom.json"
+    },
+    {
+        "name": "logs-system.auth@settings",
+        "template": "./templates/component/logs-system.auth@settings.json"
+    },
+    {
+        "name": "logs-system.auth@custom",
+        "template": "./templates/component/logs-system.auth@custom.json"
+    },
+    {
+        "name": "logs-system.syslog@settings",
+        "template": "./templates/component/logs-system.syslog@settings.json"
+    },
+    {
+        "name": "logs-system.syslog@custom",
+        "template": "./templates/component/logs-system.syslog@custom.json"
+    },
+    {
+        "name": "track-custom-mappings",
+        "template": "./templates/component/track-custom-mappings.json"
+    },
+    {
+        "name": "auditbeat-mappings",
+        "template": "./templates/component/auditbeat-mappings.json"
+    }
+  ],
+  "composable-templates": [
+    {
+        "name": "logs-kafka.log",
+        "index-pattern": "logs-kafka.log-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-kafka.log.json"
+    },
+    {
+        "name": "logs-nginx.access",
+        "index-pattern": "logs-nginx.access-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-nginx.access.json"
+    },
+    {
+        "name": "logs-nginx.error",
+        "index-pattern": "logs-nginx.error-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-nginx.error.json"
+    },
+    {
+        "name": "logs-k8-application.log",
+        "index-pattern": "logs-k8-application.log-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-k8-application.log.json"
+    },
+    {
+        "name": "logs-mysql.slowlog",
+        "index-pattern": "logs-mysql.slowlog-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-mysql.slowlog.json"
+    },
+    {
+        "name": "logs-mysql.error",
+        "index-pattern": "logs-mysql.error-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-mysql.error.json"
+    },
+    {
+        "name": "logs-system.auth",
+        "index-pattern": "logs-system.auth-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-system.auth.json"
+    },
+    {
+        "name": "logs-system.syslog",
+        "index-pattern": "logs-system.syslog-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-system.syslog.json"
+    },
+    {
+        "name": "logs-postgresql.log",
+        "index-pattern": "logs-postgresql.log-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-postgresql.log.json"
+    },
+    {
+        "name": "logs-apache.access",
+        "index-pattern": "logs-apache.access-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-apache.access.json"
+    },
+    {
+        "name": "logs-apache.error",
+        "index-pattern": "logs-apache.error-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-apache.error.json"
+    },
+    {
+        "name": "logs-redis.log",
+        "index-pattern": "logs-redis.log-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-redis.log.json"
+    },
+    {
+        "name": "logs-redis.slowlog",
+        "index-pattern": "logs-redis.slowlog-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-redis.slowlog.json"
+    },
+    {
+        "name": "auditbeat",
+        "index-pattern": "auditbeat-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/auditbeat.json"
+    },
+    {
+        "name": "auditbeat-frozen",
+        "index-pattern": "auditbeatfrozen-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/auditbeat-frozen.json"
+    },
+    {
+        "name": "auditbeat-quantitative",
+        "index-pattern": "auditbeatquantitative-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/auditbeat-quantitative.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "kafka-logs",
+      "base-url": "{{p_corpora_uri_base}}/observability/logging/kafka/kafka.log/raw",
+      "documents": [
+        {% for i in range([p_max_download_per_corpus_gb, 53] | min) %}
+          {% if not i == 0 %},{% endif %}
+          {
+          "target-data-stream": "logs-kafka.log-default",
+          "source-file": "document-{{i}}.json.bz2",
+          {# These "document-count" values equate to approximately 1GB of de-compressed data. #}
+          "document-count": 312333
+          }
+        {% endfor %}
+      ]
+    },
+    {
+      "name": "nginx-access-logs",
+      "base-url": "{{p_corpora_uri_base}}/observability/logging/nginx/demo.elastic.co/nginx.access/raw",
+      "documents": [
+        {% for i in range([p_max_download_per_corpus_gb, 80] | min) %}
+          {% if not i == 0 %},{% endif %}
+          {
+            "target-data-stream": "logs-nginx.access-default",
+            "source-file": "document-{{i}}.json.bz2",
+            "document-count": 277500
+          }
+        {% endfor %}
+      ]
+    },
+    {
+      "name": "nginx-access-logs-2",
+      "base-url": "{{p_corpora_uri_base}}/observability/logging/nginx/infra-stats/nginx.access/raw",
+      "documents": [
+        {% for i in range([p_max_download_per_corpus_gb, 44] | min) %}
+          {% if not i == 0 %},{% endif %}
+          {
+            "target-data-stream": "logs-nginx.access-default",
+            "source-file": "document-{{i}}.json.bz2",
+            "document-count": 648000
+          }
+        {% endfor %}
+      ]
+    },
+    {
+      "name": "nginx-error-logs",
+      "base-url": "{{p_corpora_uri_base}}/observability/logging/nginx/demo.elastic.co/nginx.error/raw_v2",
+      "documents": [
+        {% for i in range([p_max_download_per_corpus_gb, 3] | min) %}
+          {% if not i == 0 %},{% endif %}
+          {
+            "target-data-stream": "logs-nginx.error-default",
+            "source-file": "document-{{i}}.json.bz2",
+            "document-count": 263000
+          }
+        {% endfor %}
+      ]
+    },
+    {
+      "name": "nginx-error-logs-2",
+      "base-url": "{{p_corpora_uri_base}}/observability/logging/nginx/infra-stats/nginx.error/raw",
+      "documents": [
+        {% for i in range([p_max_download_per_corpus_gb, 2] | min) %}
+          {% if not i == 0 %},{% endif %}
+          {
+            "target-data-stream": "logs-nginx.error-default",
+            "source-file": "document-{{i}}.json.bz2",
+            "document-count": 591705
+          }
+        {% endfor %}
+      ]
+    },
+    {
+        "name": "application-logs-1",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/application_logs/k8-stats/v2",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 185] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-k8-application.log-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 660000
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "application-logs-2",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/application_logs/eden-apps",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 17] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-k8-application.log-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 570000
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "mysql-error-logs",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/mysql/mysql.error/raw",
+        "documents": [
+          {
+            "target-data-stream": "logs-mysql.error-default",
+            "source-file": "document-0.json.bz2",
+            "document-count": 86390
+          }
+        ]
+    },
+    {
+        "name": "mysql-slowlog-logs",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/mysql/mysql.slowlog/raw",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 8] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-mysql.slowlog-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 287000
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "system-auth-logs",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/system/infra-stats/system.auth/raw",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 10] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-system.auth-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 666666
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "system-syslog-logs",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/system/infra-stats/system.syslog/raw",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 94] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-system.syslog-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 645000
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "system-auth-logs-2",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/system/demo.elastic.co/system.auth/raw",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 5] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-system.auth-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 880000
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "system-syslog-logs-2",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/system/demo.elastic.co/system.syslog/raw",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 15] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-system.syslog-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 734450
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "postgresql-logs",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/postgresql/postgresql.log/raw",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 271] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-postgresql.log-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 285400
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "apache-access-logs",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/apache/apache.access/raw",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 45] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-apache.access-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 322200
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "apache-error-logs",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/apache/apache.error/raw",
+        "documents": [
+          {
+            "target-data-stream": "logs-apache.error-default",
+            "source-file": "document-0.json.bz2",
+            "document-count": 310000
+          }
+        ]
+    },
+    {
+        "name": "redis-app-logs",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/redis/redis.log/raw",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 18] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-redis.log-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 343090
+            }
+          {% endfor %}
+        ]
+    },
+    {
+        "name": "redis-app-slowlogs",
+        "base-url": "{{p_corpora_uri_base}}/observability/logging/redis/redis.slowlog/with_data_stream",
+        "documents": [
+          {% for i in range([p_max_download_per_corpus_gb, 3] | min) %}
+            {% if not i == 0 %},{% endif %}
+            {
+              "target-data-stream": "logs-redis.slowlog-default",
+              "source-file": "document-{{i}}.json.bz2",
+              "document-count": 550000
+            }
+          {% endfor %}
+        ]
+    }
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

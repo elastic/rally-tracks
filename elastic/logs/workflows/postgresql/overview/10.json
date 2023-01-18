@@ -1,0 +1,210 @@
+{
+  "id": "Add Percentile(event.duration)",
+  "name": "POST /api/metrics/vis/data",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 1.0252080000000001
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - postgresql/overview - 10.1",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true"
+          },
+          "body": {
+            "size": 0,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "gte": "2022-04-20T19:54:15.767Z",
+                        "lte": "2022-04-20T20:54:15.767Z",
+                        "format": "strict_date_optional_time"
+                      }
+                    }
+                  },
+                  {
+                    "bool": {
+                      "must": [],
+                      "filter": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match_phrase": {
+                                  "data_stream.dataset": "postgresql.log"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        }
+                      ],
+                      "should": [],
+                      "must_not": []
+                    }
+                  }
+                ],
+                "filter": [],
+                "should": [],
+                "must_not": []
+              }
+            },
+            "aggs": {
+              "fb3acf3b-5fa2-4d5f-9e6b-196b321afa39": {
+                "terms": {
+                  "field": "kubernetes.pod.name",
+                  "order": {
+                    "_count": "desc"
+                  }
+                },
+                "aggs": {
+                  "timeseries": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "min_doc_count": 0,
+                      "time_zone": "UTC",
+                      "extended_bounds": {
+                        "min": 1650484455767,
+                        "max": 1650488055767
+                      },
+                      "fixed_interval": "60s"
+                    },
+                    "aggs": {
+                      "0ea734ec-b1ce-4025-9174-162c0683e1f5": {
+                        "max": {
+                          "field": "event.duration"
+                        }
+                      },
+                      "51c01380-c0ec-11ec-8591-433dae5c4479": {
+                        "moving_fn": {
+                          "buckets_path": "0ea734ec-b1ce-4025-9174-162c0683e1f5",
+                          "window": 5,
+                          "script": "MovingFunctions.unweightedAvg(values)"
+                        }
+                      }
+                    }
+                  }
+                },
+                "meta": {
+                  "timeField": "@timestamp",
+                  "panelId": "bbe7ca99-504a-44e1-a5fa-f4dc60bd455d",
+                  "seriesId": "fb3acf3b-5fa2-4d5f-9e6b-196b321afa39",
+                  "intervalString": "60s",
+                  "index": "logs-*"
+                }
+              }
+            },
+            "runtime_mappings": {},
+            "timeout": "30000ms"
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 1.025481
+        },
+        {
+          "name": "Elasticsearch: POST /logs-*/_async_search - postgresql/overview - 10.2",
+          "operation-type": "search",
+          "index": "logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "enable_fields_emulation": "true"
+          },
+          "body": {
+            "size": 0,
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "gte": "2022-04-20T19:54:15.767Z",
+                        "lte": "2022-04-20T20:54:15.767Z",
+                        "format": "strict_date_optional_time"
+                      }
+                    }
+                  },
+                  {
+                    "bool": {
+                      "must": [],
+                      "filter": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match_phrase": {
+                                  "data_stream.dataset": "postgresql.log"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        }
+                      ],
+                      "should": [],
+                      "must_not": []
+                    }
+                  }
+                ],
+                "filter": [],
+                "should": [],
+                "must_not": []
+              }
+            },
+            "aggs": {
+              "timeseries": {
+                "date_histogram": {
+                  "field": "@timestamp",
+                  "min_doc_count": 0,
+                  "time_zone": "UTC",
+                  "extended_bounds": {
+                    "min": 1650484455767,
+                    "max": 1650488055767
+                  },
+                  "fixed_interval": "60s"
+                },
+                "aggs": {
+                  "8d896791-c0ec-11ec-8591-433dae5c4479": {
+                    "percentiles": {
+                      "field": "event.duration",
+                      "percents": [
+                        50
+                      ]
+                    }
+                  }
+                },
+                "meta": {
+                  "timeField": "@timestamp",
+                  "panelId": "bbe7ca99-504a-44e1-a5fa-f4dc60bd455d",
+                  "seriesId": "8d896790-c0ec-11ec-8591-433dae5c4479",
+                  "intervalString": "60s",
+                  "index": "logs-*"
+                }
+              }
+            },
+            "runtime_mappings": {},
+            "timeout": "30000ms"
+          }
+        }
+      ]
+    }
+  ]
+}

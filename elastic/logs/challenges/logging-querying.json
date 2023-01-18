@@ -1,0 +1,59 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-querying",
+  "description": "Applies a query workload. Ensures data streams exist so queries can be run, but does not remove existing data.",
+  "parameters": {
+    "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
+  },
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {% if bulk_start_date and bulk_end_date %}
+      {
+        "name": "bulk-index",
+        "operation": {
+          "operation-type": "raw-bulk",
+          "param-source": "processed-source",
+          "time-format": "milliseconds",
+          "profile": "fixed_interval",
+          "init-load": true,
+          "bulk-size": {{ p_bulk_size }},
+          "detailed-results": true
+        },
+        "clients": {{ p_bulk_indexing_clients }},
+        "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+      },
+      {
+        "name": "compression-stats",
+        "operation": {
+          "operation-type": "compression-statistics",
+          "param-source": "create-datastream-source"
+        }
+      },
+    {% endif %}
+    {
+      "name": "logging-queries",
+      "parallel": {
+        "time-period": {{ p_query_time_period }},
+        "warmup-time-period": {{ p_query_warmup_time_period }},
+        "tasks": [
+          {% for workflow in p_query_workflows %}
+            {
+              "name": {{workflow | tojson }},
+              "operation": {
+                "operation-type": "composite",
+                "param-source": "workflow-selector",
+                "workflow": {{workflow | tojson }},
+                "task-offset": {{ loop.index }},
+                "request-params": {{ p_query_request_params | tojson(indent=2) }}
+              },
+              "think-time-interval": {{ p_user_think_time }},
+              "workflow-interval": {{ p_user_workflow_time }},
+              "clients": 1,
+              "schedule": "workflow-scheduler"
+            }{{ ", " if not loop.last else "" }}
+          {% endfor %}
+        ]
+      }
+    }
+  ]
+}

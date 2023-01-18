@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "modified_date": "2022-07-11T16:30:56.619Z",
+  "policy": {
+    "phases": {
+      "hot": {
+        "min_age": "0ms",
+        "actions": {
+          "rollover": {
+            "max_primary_shard_size": "50gb",
+            "max_age": "30d"
+          }
+        }
+      }
+    },
+    "_meta": {
+      "managed": true,
+      "description": "default policy for the logs index template installed by x-pack"
+    }
+  },
+  "in_use_by": {
+    "indices": [
+      ".ds-logs-elastic_agent.filebeat-default-2022.07.11-000001",
+      ".ds-logs-elastic_agent.fleet_server-default-2022.07.11-000001",
+      ".ds-logs-elastic_agent-default-2022.07.11-000001",
+      ".ds-logs-elastic_agent.metricbeat-default-2022.07.11-000001"
+    ],
+    "data_streams": [
+      "logs-elastic_agent-default",
+      "logs-elastic_agent.metricbeat-default",
+      "logs-elastic_agent.filebeat-default",
+      "logs-elastic_agent.fleet_server-default"
+    ],
+    "composable_templates": [
+      ".logs-endpoint.actions",
+      "logs-elastic_agent.metricbeat",
+      "logs-elastic_agent.fleet_server",
+      ".logs-endpoint.action.responses",
+      "logs-system.system",
+      "logs-system.application",
+      "logs-elastic_agent.osquerybeat",
+      "logs-endpoint.events.security",
+      "logs-endpoint.events.registry",
+      "logs-elastic_agent.auditbeat",
+      "logs",
+      "logs-endpoint.events.network",
+      "logs-endpoint.events.process",
+      "logs-elastic_agent.cloudbeat",
+      "logs-elastic_agent.apm_server",
+      "logs-system.security",
+      "logs-system.auth",
+      "logs-elastic_agent.filebeat",
+      "logs-elastic_agent.packetbeat",
+      "logs-elastic_agent.endpoint_security",
+      "logs-endpoint.events.library",
+      "logs-elastic_agent.heartbeat",
+      "logs-system.syslog",
+      "logs-endpoint.alerts",
+      "logs-elastic_agent",
+      "logs-endpoint.events.file"
+    ]
+  }
+}

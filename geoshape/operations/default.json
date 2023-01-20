@@ -89,7 +89,7 @@
         }
       }
     },      
-     {
+    {
       "name": "polygon-disjoint",
       "operation-type": "search",
       "index": "osm*",
@@ -113,8 +113,8 @@
           }
         }
       }
-    },   
-                          {
+    },
+    {
       "name": "polygon-within",
       "operation-type": "search",
       "index": "osm*",
@@ -271,7 +271,7 @@
       "body": {
         "query": {
           "geo_grid": {
-            "location": {
+            "shape": {
               "geohash": "u0"
             }
           }
@@ -284,8 +284,8 @@
       "index": "osm*",
       "body": {
         "query": {
-          "geo_tile": {
-            "location": {
+          "geo_grid": {
+            "shape": {
               "geotile" : "6/32/22"
             }
           }
@@ -298,8 +298,8 @@
       "index": "osm*",
       "body": {
         "query": {
-          "geo_tile": {
-            "location": {
+          "geo_grid": {
+            "shape": {
               "geohex" : "811fbffffffffff"
             }
           }
@@ -311,12 +311,24 @@
       "operation-type": "search",
       "index": "osm*",
       "body": {
+        "query": {
+          "geo_bounding_box": {
+            "shape": {
+              "top_left": "POINT (2.20 48.95)",
+              "bottom_right": "POINT (2.40 48.75)"
+            }
+          }
+        },
         "size": 0,
         "aggs": {
-          "grouped": {
+          "zoomed-in": {
             "geohash_grid": {
-              "field": "location",
-              "precision": 2
+              "field": "shape",
+              "precision": 5,
+              "bounds": {
+                "top_left": "POINT (2.20 48.95)",
+                "bottom_right": "POINT (2.40 48.75)"
+              }
             }
           }
         }
@@ -327,12 +339,24 @@
       "operation-type": "search",
       "index": "osm*",
       "body": {
+        "query": {
+          "geo_bounding_box": {
+            "shape": {
+              "top_left": "POINT (2.20 48.95)",
+              "bottom_right": "POINT (2.40 48.75)"
+            }
+          }
+        },
         "size": 0,
         "aggs": {
-          "grouped": {
+          "zoomed-in": {
             "geotile_grid": {
-              "field": "location",
-              "precision": 6
+              "field": "shape",
+              "precision": 13,
+              "bounds": {
+                "top_left": "POINT (2.20 48.95)",
+                "bottom_right": "POINT (2.40 48.75)"
+              }
             }
           }
         }
@@ -343,12 +367,24 @@
       "operation-type": "search",
       "index": "osm*",
       "body": {
+        "query": {
+          "geo_bounding_box": {
+            "shape": {
+              "top_left": "POINT (2.20 48.95)",
+              "bottom_right": "POINT (2.40 48.75)"
+            }
+          }
+        },
         "size": 0,
         "aggs": {
-          "grouped": {
+          "zoomed-in": {
             "geohex_grid": {
-              "field": "location",
-              "precision": 1
+              "field": "shape",
+              "precision": 6,
+              "bounds": {
+                "top_left": "POINT (2.20 48.95)",
+                "bottom_right": "POINT (2.40 48.75)"
+              }
             }
           }
         }

@@ -734,6 +734,7 @@
     {
       "name": "avg_tip_percent_aggregation",
       "operation-type": "search",
+      "request-timeout": 120,
       "body": {
         "size": 0,
         "runtime_mappings": {
@@ -805,6 +806,7 @@
     {
       "name": "avg_amount_group_by_integer_aggregation",
       "operation-type": "search",
+      "request-timeout": 120,
       "body": {
         "size": 0,
         "aggs": {
@@ -878,6 +880,7 @@
     {
       "name": "avg_amount_group_by_keyword_aggregation",
       "operation-type": "search",
+      "request-timeout": 120,
       "body": {
         "size": 0,
         "aggs": {
@@ -1046,6 +1049,7 @@
       "operation-type": "raw-request",
       "method": "POST",
       "path": "/_esql",
+      "request-timeout": 120,
       "body": {
         "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
         "pragma" : {
@@ -1058,6 +1062,7 @@
       "operation-type": "raw-request",
       "method": "POST",
       "path": "/_esql",
+      "request-timeout": 120,
       "body": {
         "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
         "pragma" : {
@@ -1070,6 +1075,7 @@
       "operation-type": "raw-request",
       "method": "POST",
       "path": "/_esql",
+      "request-timeout": 120,
       "body": {
         "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
         "pragma" : {
@@ -1082,6 +1088,7 @@
       "operation-type": "raw-request",
       "method": "POST",
       "path": "/_esql",
+      "request-timeout": 120,
       "body": {
         "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
         "pragma" : {

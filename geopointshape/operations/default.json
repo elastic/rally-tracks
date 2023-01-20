@@ -71,7 +71,7 @@
       "operation-type": "search",
       "body": {
         "query": {
-          "geo_tile": {
+          "geo_grid": {
             "location": {
               "geotile" : "6/32/22"
             }
@@ -84,7 +84,7 @@
       "operation-type": "search",
       "body": {
         "query": {
-          "geo_tile": {
+          "geo_grid": {
             "location": {
               "geohex" : "811fbffffffffff"
             }

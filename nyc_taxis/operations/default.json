@@ -734,6 +734,7 @@
     {
       "name": "avg_tip_percent_aggregation",
       "operation-type": "search",
+      "request-timeout": 120,
       "body": {
         "size": 0,
         "runtime_mappings": {
@@ -801,5 +802,298 @@
           "add_task_parallelism_above_query" : true
         }
       }
+    },
+    {
+      "name": "avg_amount_group_by_integer_aggregation",
+      "operation-type": "search",
+      "request-timeout": 120,
+      "body": {
+        "size": 0,
+        "aggs": {
+            "by_passenger_count": {
+                "terms": {
+                    "field": "passenger_count",
+                    "order": {
+                        "_key": "asc"
+                    }
+                },
+                "aggs": {
+                    "avg_total_amount": {
+                        "avg": {
+                            "field": "total_amount"
+                        }
+                    }
+                }
+            }
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql_segment_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+        "pragma" : {
+          "data_partitioning" : "segment"
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_keyword_aggregation",
+      "operation-type": "search",
+      "request-timeout": 120,
+      "body": {
+        "size": 0,
+        "aggs": {
+            "by_rate_code_id": {
+                "terms": {
+                    "field": "rate_code_id",
+                    "order": {
+                        "_key": "asc"
+                    }
+                },
+                "aggs": {
+                    "avg_total_amount": {
+                        "avg": {
+                            "field": "total_amount"
+                        }
+                    }
+                }
+            }
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_keyword_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_keyword_esql_segment_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
+        "pragma" : {
+          "data_partitioning" : "segment"
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_keyword_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_keyword_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
+        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+        }
+      }
+    },
+    {
+      "name": "avg_passenger_count_filtered_aggregation",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "term": {
+                            "rate_code_id": "2"
+                        }
+                    },
+                    {
+                        "range": {
+                            "total_amount": {
+                                "gt": 60
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "aggs": {
+            "avg_passenger_count": {
+                "avg": {
+                    "field": "passenger_count"
+                }
+            }
+        }
+      }
+    },
+    {
+      "name": "avg_passenger_count_filtered_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "avg_passenger_count_filtered_esql_segment_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
+        "pragma" : {
+          "data_partitioning" : "segment"
+        }
+      }
+    },
+    {
+      "name": "avg_passenger_count_filtered_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
+    },
+    {
+      "name": "avg_passenger_count_filtered_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "body": {
+        "query" : "from nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
+        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+        }
+      }
+    },
+    {
+      "name": "sort_by_ts_query",
+      "operation-type": "search",
+      "body": {
+        "size": 1000,
+        "_source": false,
+        "fields": ["pickup_datetime", "dropoff_datetime", "trip_distance"],
+        "sort": {
+            "pickup_datetime": "desc"
+        }
+      }
+    },
+    {
+      "name": "sort_by_ts_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "sort_by_ts_esql_segment_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
+        "pragma" : {
+          "data_partitioning" : "segment"
+        }
+      }
+    },
+    {
+      "name": "sort_by_ts_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
+    },
+    {
+      "name": "sort_by_ts_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
+        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+        }
+      }
     }
-

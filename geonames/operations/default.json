@@ -273,6 +273,39 @@
       }
     },
     {
+      "name": "desc_sort_population_can_match_shortcut",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "timezone": "America"
+          }
+        },
+        "sort" : [
+          {"population" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "desc_sort_population_no_can_match_shortcut",
+      "operation-type": "search",
+      "request-params" : {
+          "pre_filter_shard_size" : 10000
+      },
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "timezone": "America"
+          }
+        },
+        "sort" : [
+          {"population" : "desc"}
+        ]
+      }
+    },
+    {
       "name": "asc_sort_population",
       "operation-type": "search",
       "body": {
@@ -347,6 +380,39 @@
           {"geonameid" : "asc"}
         ],
         "search_after": [5000000]
+      }
+    },
+    {
+      "name": "sort_country_code_can_match_shortcut",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "timezone": "America"
+          }
+        },
+        "sort" : [
+          {"country_code.raw" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_country_code_no_can_match_shortcut",
+      "operation-type": "search",
+      "request-params" : {
+          "pre_filter_shard_size" : 10000
+      },
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "timezone": "America"
+          }
+        },
+        "sort" : [
+          {"country_code.raw" : "asc"}
+        ]
       }
     },
     {

@@ -32,84 +32,9 @@
       {%- if corpus is defined and corpus == "split16" %}
         "documents": [
           {
-            "source-file": "documents-split-0.json.bz2",
-            "document-count": 7289607,
-            "uncompressed-bytes": 8252385790
-          },
-          {
-            "source-file": "documents-split-1.json.bz2",
-            "document-count": 7289607,
-            "uncompressed-bytes": 8252715218
-          },
-          {
-            "source-file": "documents-split-2.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8252482193
-          },
-          {
-            "source-file": "documents-split-3.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8253066083
-          },
-          {
-            "source-file": "documents-split-4.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8252686254
-          },
-          {
-            "source-file": "documents-split-5.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8252842205
-          },
-          {
-            "source-file": "documents-split-6.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8252839714
-          },
-          {
-            "source-file": "documents-split-7.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8253327643
-          },
-          {
-            "source-file": "documents-split-8.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8252994659
-          },
-          {
-            "source-file": "documents-split-9.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8253163552
-          },
-          {
-            "source-file": "documents-split-10.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8252932917
-          },
-          {
-            "source-file": "documents-split-11.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8252752704
-          },
-          {
-            "source-file": "documents-split-12.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8253251862
-          },
-          {
-            "source-file": "documents-split-13.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8253166730
-          },
-          {
-            "source-file": "documents-split-14.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8252927958
-          },
-          {
-            "source-file": "documents-split-15.json.bz2",
-            "document-count": 7289606,
-            "uncompressed-bytes": 8252803345
+            "source-file": "documents-split16.json.bz2",
+            "document-count": 116633698,
+            "uncompressed-bytes": 132046338827
           }
         ]
       {%- else %}
@@ -117,7 +42,7 @@
           {
             "source-file": "documents.json.bz2",
             "document-count": 116633698,
-            "uncompressed-bytes": 132046338827
+            "uncompressed-bytes": 138721940450
           }
         ]
       {%- endif %}

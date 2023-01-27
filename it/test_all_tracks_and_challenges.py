@@ -30,7 +30,7 @@ class TestTrackRepository:
             if challenge in self.disable_assertions.get(track, []):
                 rally_options.update({"enable_assertions": False})
             if challenge == "runtime-fields":
-                track_params = {"runtime_fields": True}
+                track_params = {"runtime_fields": "true"}
             ret = rally.race(track=track, challenge=challenge, track_params=track_params, **rally_options)
             assert ret == 0
         else:

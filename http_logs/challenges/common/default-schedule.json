@@ -184,7 +184,6 @@
           "iterations": 100,
           "target-throughput": 2
         },
-{%- if not runtime_fields is defined %}
         {
           "operation": "sort_keyword_can_match_shortcut",
           "warmup-iterations": 200,
@@ -209,7 +208,6 @@
           "iterations": 100,
           "target-throughput": 2
         },
-{%- endif %}
         {
           "name": "force-merge-1-seg",
           "operation": {

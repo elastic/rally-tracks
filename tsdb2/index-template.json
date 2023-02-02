@@ -9,7 +9,11 @@
         "mapping.total_fields.limit": 10000,
         "mode": "time_series",
         "requests.cache.enable": false,
-        "look_ahead_time": "7d"
+        "routing_path": ["oracle.machine"],
+        "time_series": {
+          "start_time": "2000-01-01T00:00:00Z",
+          "end_time": "2099-12-31T23:59:59Z"
+        }
       }
     },
     "mappings": {
@@ -23,9 +27,6 @@
         },
         "_data_stream_timestamp": {
           "enabled": true
-        },
-        "_source": {
-          "mode": "synthetic"
         },
         "dynamic_templates": [
           {

@@ -15,16 +15,16 @@
     {
       "name": "k8s"
     }
-  ]
+  ],
   "corpora": [
     {
       "name": "tsdb",
-      "base-url": "https://rally-tracks.elastic.co/tsdb",
+      "base-url": "https://storage.cloud.google.com/cloudnative-rally/",
       "documents": [
         {
-          "source-file": "documents.json.bz2",
-          "document-count": 116633698,
-          "uncompressed-bytes": 138721940450
+          "source-file": "documents-1k.json.bz2",
+          "document-count": 4000,
+          "uncompressed-bytes": 41059107
         }
       ]
     }

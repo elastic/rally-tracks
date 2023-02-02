@@ -1,0 +1,357 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "index_patterns": ["k8s*"],
+  "data_stream": {},
+  "template": {
+    "settings": {
+      "index": {
+        "mapping.total_fields.limit": 10000,
+        "mode": "time_series",
+        "requests.cache.enable": false,
+        "look_ahead_time": "7d"
+      }
+    },
+    "mappings": {
+      {
+        "_meta": {
+          "managed_by": "fleet",
+          "managed": true,
+          "package": {
+            "name": "oracle"
+          }
+        },
+        "_data_stream_timestamp": {
+          "enabled": true
+        },
+        "_source": {
+          "mode": "synthetic"
+        },
+        "dynamic_templates": [
+          {
+            "strings_as_keyword": {
+              "match_mapping_type": "string",
+              "mapping": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          }
+        ],
+        "date_detection": false,
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "agent": {
+            "properties": {
+              "ephemeral_id": {
+                "type": "keyword",
+                "ignore_above": 1024
+              },
+              "id": {
+                "type": "keyword",
+                "ignore_above": 1024
+              },
+              "name": {
+                "type": "keyword",
+                "ignore_above": 1024
+              },
+              "type": {
+                "type": "keyword",
+                "ignore_above": 1024
+              },
+              "version": {
+                "type": "keyword",
+                "ignore_above": 1024
+              }
+            }
+          },
+          "data_stream": {
+            "properties": {
+              "dataset": {
+                "type": "constant_keyword",
+                "value": "oracle.performance"
+              },
+              "namespace": {
+                "type": "constant_keyword",
+                "value": "default"
+              },
+              "type": {
+                "type": "constant_keyword",
+                "value": "metrics"
+              }
+            }
+          },
+          "ecs": {
+            "properties": {
+              "version": {
+                "type": "keyword",
+                "ignore_above": 1024
+              }
+            }
+          },
+          "elastic_agent": {
+            "properties": {
+              "id": {
+                "type": "keyword",
+                "ignore_above": 1024
+              },
+              "snapshot": {
+                "type": "boolean"
+              },
+              "version": {
+                "type": "keyword",
+                "ignore_above": 1024
+              }
+            }
+          },
+          "event": {
+            "properties": {
+              "agent_id_status": {
+                "type": "keyword",
+                "ignore_above": 1024
+              },
+              "dataset": {
+                "type": "constant_keyword",
+                "value": "oracle.performance"
+              },
+              "duration": {
+                "type": "long"
+              },
+              "ingested": {
+                "type": "date",
+                "format": "strict_date_time_no_millis||strict_date_optional_time||epoch_millis"
+              },
+              "module": {
+                "type": "constant_keyword",
+                "value": "sql"
+              }
+            }
+          },
+          "host": {
+            "properties": {
+              "ip": {
+                "type": "ip"
+              },
+              "name": {
+                "type": "keyword",
+                "ignore_above": 1024
+              }
+            }
+          },
+          "metricset": {
+            "properties": {
+              "name": {
+                "type": "keyword",
+                "ignore_above": 1024
+              },
+              "period": {
+                "type": "long"
+              }
+            }
+          },
+          "oracle": {
+            "properties": {
+              "performance": {
+                "properties": {
+                  "buffer_pool": {
+                    "type": "keyword",
+                    "ignore_above": 1024
+                  },
+                  "cache": {
+                    "properties": {
+                      "buffer": {
+                        "properties": {
+                          "hit": {
+                            "properties": {
+                              "pct": {
+                                "type": "double",
+                                "meta": {
+                                  "unit": "percent"
+                                },
+                                "time_series_metric": "gauge"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "get": {
+                        "properties": {
+                          "consistent": {
+                            "type": "long",
+                            "time_series_metric": "gauge"
+                          },
+                          "db_blocks": {
+                            "type": "long",
+                            "time_series_metric": "gauge"
+                          }
+                        }
+                      },
+                      "physical_reads": {
+                        "type": "long",
+                        "time_series_metric": "gauge"
+                      }
+                    }
+                  },
+                  "cursors": {
+                    "properties": {
+                      "avg": {
+                        "type": "double",
+                        "time_series_metric": "gauge"
+                      },
+                      "cache_hit": {
+                        "properties": {
+                          "pct": {
+                            "type": "double",
+                            "meta": {
+                              "unit": "percent"
+                            },
+                            "time_series_metric": "gauge"
+                          }
+                        }
+                      },
+                      "max": {
+                        "type": "double",
+                        "time_series_metric": "gauge"
+                      },
+                      "opened": {
+                        "properties": {
+                          "current": {
+                            "type": "long",
+                            "time_series_metric": "gauge"
+                          },
+                          "total": {
+                            "type": "long",
+                            "time_series_metric": "counter"
+                          }
+                        }
+                      },
+                      "parse": {
+                        "properties": {
+                          "real": {
+                            "type": "double",
+                            "time_series_metric": "gauge"
+                          },
+                          "total": {
+                            "type": "long",
+                            "time_series_metric": "gauge"
+                          }
+                        }
+                      },
+                      "session": {
+                        "properties": {
+                          "cache_hits": {
+                            "type": "double",
+                            "time_series_metric": "gauge"
+                          }
+                        }
+                      },
+                      "total": {
+                        "type": "double",
+                        "time_series_metric": "gauge"
+                      }
+                    }
+                  },
+                  "failed_db_jobs": {
+                    "type": "double",
+                    "time_series_metric": "gauge"
+                  },
+                  "io_reloads": {
+                    "type": "double",
+                    "time_series_metric": "gauge"
+                  },
+                  "lock_requests": {
+                    "type": "double",
+                    "time_series_metric": "gauge"
+                  },
+                  "machine": {
+                    "type": "keyword",
+                    "time_series_dimension": true
+                  },
+                  "pin_requests": {
+                    "type": "double",
+                    "time_series_metric": "gauge"
+                  },
+                  "query_id": {
+                    "type": "keyword",
+                    "time_series_dimension": true
+                  },
+                  "session_count": {
+                    "properties": {
+                      "active": {
+                        "type": "double",
+                        "time_series_metric": "gauge"
+                      },
+                      "inactive": {
+                        "type": "double",
+                        "time_series_metric": "gauge"
+                      },
+                      "inactive_morethan_onehr": {
+                        "type": "double",
+                        "time_series_metric": "gauge"
+                      }
+                    }
+                  },
+                  "username": {
+                    "type": "keyword",
+                    "time_series_dimension": true
+                  },
+                  "wait": {
+                    "properties": {
+                      "pct_time": {
+                        "type": "double",
+                        "meta": {
+                          "unit": "percent"
+                        },
+                        "time_series_metric": "gauge"
+                      },
+                      "pct_waits": {
+                        "type": "double",
+                        "meta": {
+                          "unit": "percent"
+                        },
+                        "time_series_metric": "gauge"
+                      },
+                      "time_waited_secs": {
+                        "type": "double",
+                        "meta": {
+                          "unit": "s"
+                        },
+                        "time_series_metric": "gauge"
+                      },
+                      "total_waits": {
+                        "type": "double",
+                        "time_series_metric": "counter"
+                      },
+                      "wait_class": {
+                        "type": "keyword",
+                        "time_series_dimension": true
+                      }
+                    }
+                  }
+                }
+              },
+              "query": {
+                "type": "keyword",
+                "time_series_dimension": true
+              }
+            }
+          },
+          "service": {
+            "properties": {
+              "address": {
+                "type": "keyword",
+                "time_series_dimension": true
+              },
+              "type": {
+                "type": "keyword",
+                "ignore_above": 1024
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

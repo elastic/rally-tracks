@@ -1,0 +1,38 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "metricbeat information for elastic-app k8s cluster",
+  "composable-templates": [
+    {
+      "name": "tsdb-template",
+      "index-pattern": "k8s*",
+      "delete-matching-indices": true,
+      "template": "index-template.json"
+    }
+  ],
+  "data-streams": [
+    {
+      "name": "k8s"
+    }
+  ]
+  "corpora": [
+    {
+      "name": "tsdb",
+      "base-url": "https://rally-tracks.elastic.co/tsdb",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 116633698,
+          "uncompressed-bytes": 138721940450
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

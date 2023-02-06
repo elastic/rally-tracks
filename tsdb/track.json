@@ -32,9 +32,10 @@
       {%- if corpus is defined and corpus == "split16" %}
         "documents": [
           {
-            "source-file": "documents-split16.json.bz2",
-            "document-count": 116633698,
-            "uncompressed-bytes": 132046338827
+            "source-file": "documents-split16-v2.json.bz2",
+            {# deleted 2 docs to get to multiple of 16 #}
+            "document-count": 116633696,
+            "uncompressed-bytes": 132046335865
           }
         ]
       {%- else %}
@@ -42,7 +43,7 @@
           {
             "source-file": "documents.json.bz2",
             "document-count": 116633698,
-            "uncompressed-bytes": 138721940450
+            "uncompressed-bytes": 132046338827
           }
         ]
       {%- endif %}

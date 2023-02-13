@@ -35,7 +35,12 @@ async def create_ilm(es, params):
             name = os.path.splitext(os.path.basename(p))[0]
             with open(p, "r") as f:
                 policy = {"policy": json.load(f)["policy"]}  # only `policy` is allowed
-            await es.ilm.put_lifecycle(name, body=policy)
+            try:
+                await es.ilm.put_lifecycle(name=name, policy=policy)
+            # method signature changed in es client >8.x
+            except TypeError:
+                await es.ilm.put_lifecycle(name, body=policy)
+
             policy_num += 1
 
     return policy_num, "ops"

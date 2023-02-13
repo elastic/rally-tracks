@@ -55,7 +55,7 @@ async def test_mount_snapshot(es):
 
     await snapshot.mount(es, params=params)
 
-    es.snapshot.get.assert_called_once_with("logging", "logging-snapshot")
+    es.snapshot.get.assert_called_once_with(repository="logging", snapshot="logging-snapshot")
     es.searchable_snapshots.mount.assert_has_calls(
         [
             mock.call(
@@ -115,7 +115,7 @@ async def test_mount_snapshot_frozen(es):
 
     await snapshot.mount(es, params=params)
 
-    es.snapshot.get.assert_called_once_with("logging", "logging-snapshot")
+    es.snapshot.get.assert_called_once_with(repository="logging", snapshot="logging-snapshot")
     es.searchable_snapshots.mount.assert_has_calls(
         [
             mock.call(
@@ -177,7 +177,7 @@ async def test_mount_snapshot_with_renames(es):
 
     await snapshot.mount(es, params=params)
 
-    es.snapshot.get.assert_called_once_with("logging", "logging-snapshot")
+    es.snapshot.get.assert_called_once_with(repository="logging", snapshot="logging-snapshot")
     es.searchable_snapshots.mount.assert_has_calls(
         [
             mock.call(

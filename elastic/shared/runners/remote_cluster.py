@@ -1,8 +1,19 @@
 import asyncio
 import copy
 
-from elasticsearch import ElasticsearchException
 from esrally.driver.runner import Runner, runner_for, unwrap
+
+# exceptions were changed in 'elasticsearch-py' >8.x
+try:
+
+    from elasticsearch import ElasticsearchException
+
+    ApiError = None
+    TransportError = None
+except ImportError:
+    from elasticsearch import ApiError, TransportError
+
+    ElasticsearchException = None
 
 """
 Runners for configuring a typical CCS/CCR architecture, where we have a central 'local' cluster and many 'remote'
@@ -162,9 +173,9 @@ class ConfigureCrossClusterReplication(Runner):
                 await following_cluster_client.ccr.follow(
                     index=index, wait_for_active_shards="1", body=follow_body, request_timeout=request_timeout
                 )
-            except ElasticsearchException as e:
+            except (ApiError, TransportError, ElasticsearchException) as e:
                 msg = f"Failed to follow index [{index}] from [{source_cluster_name}] on [{following_cluster_name}]; [{e}]"
-                raise BaseException(msg)
+                raise e(msg)
 
             self.logger.info(f"index [{index}] was replicated from [{source_cluster_name}] to [{following_cluster_name}]")
 

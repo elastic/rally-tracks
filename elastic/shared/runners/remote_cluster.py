@@ -3,7 +3,6 @@ import copy
 
 from esrally.driver.runner import Runner, runner_for, unwrap
 
-
 """
 Runners for configuring a typical CCS/CCR architecture, where we have a central 'local' cluster and many 'remote'
 clusters.

@@ -3,17 +3,6 @@ import copy
 
 from esrally.driver.runner import Runner, runner_for, unwrap
 
-# exceptions were changed in 'elasticsearch-py' >8.x
-try:
-
-    from elasticsearch import ElasticsearchException
-
-    ApiError = None
-    TransportError = None
-except ImportError:
-    from elasticsearch import ApiError, TransportError
-
-    ElasticsearchException = None
 
 """
 Runners for configuring a typical CCS/CCR architecture, where we have a central 'local' cluster and many 'remote'
@@ -53,7 +42,7 @@ class ConfigureRemoteClusters(Runner):
                     seed_nodes.append(n["transport_address"])
 
         if len(seed_nodes) < 1:
-            raise BaseException(
+            raise Exception(
                 f"Unable to retrieve any seed nodes for cluster [{nodes_api_response['cluster_name']}]. "
                 "Ensure that the node(s) have the 'remote_cluster_client' node role assigned under 'node.roles'."
             )
@@ -70,7 +59,7 @@ class ConfigureRemoteClusters(Runner):
         local_info = await local_cluster_client.cluster.remote_info()
         if not local_info.get(remote_cluster_identifier, {}).get("connected"):
             self.logger.error(f"Unable to connect [{local_cluster_name}] to cluster [{remote_cluster_identifier}]")
-            raise BaseException(
+            raise Exception(
                 f"Unable to connect [{local_cluster_name}] to cluster [{remote_cluster_identifier}]. "
                 f"Check each cluster's logs for more information on why the connection failed."
             )
@@ -133,7 +122,7 @@ class ConfigureCrossClusterReplication(Runner):
 
     def check_license_type(self, cluster_name, license_type):
         if license_type not in self.required_licenses:
-            raise BaseException(
+            raise Exception(
                 f"Cluster [{cluster_name}] cannot use license type [{license_type}] "
                 f"for CCR features. All clusters must use one of [{self.required_licenses}]]"
             )
@@ -173,9 +162,9 @@ class ConfigureCrossClusterReplication(Runner):
                 await following_cluster_client.ccr.follow(
                     index=index, wait_for_active_shards="1", body=follow_body, request_timeout=request_timeout
                 )
-            except (ApiError, TransportError, ElasticsearchException) as e:
+            except Exception as e:
                 msg = f"Failed to follow index [{index}] from [{source_cluster_name}] on [{following_cluster_name}]; [{e}]"
-                raise e(msg)
+                raise Exception(msg) from e
 
             self.logger.info(f"index [{index}] was replicated from [{source_cluster_name}] to [{following_cluster_name}]")
 

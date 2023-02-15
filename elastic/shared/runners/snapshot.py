@@ -28,7 +28,7 @@ async def mount(es, params):
     ignore_index_settings = params.get("ignore_index_settings")
     storage = params.get("storage")
     query_params = params.get("query_params", {})
-    snapshots = await es.snapshot.get(repository_name, snapshot_name)
+    snapshots = await es.snapshot.get(repository=repository_name, snapshot=snapshot_name)
 
     for snapshot in snapshots["snapshots"]:
         for index in snapshot["indices"]:

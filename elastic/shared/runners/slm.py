@@ -28,6 +28,6 @@ async def create_slm(es, params):
         policy_name = os.path.splitext(os.path.basename(policy_path))[0]
         with open(policy_path, "r") as policy_file:
             policy = json.load(policy_file)
-            await slm.put_lifecycle(policy_name, body=policy)
-            policy_num += 1
+        await slm.put_lifecycle(policy_id=policy_name, body=policy)
+        policy_num += 1
     return policy_num, "ops"

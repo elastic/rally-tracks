@@ -5174,7 +5174,7 @@
           },
           "message": {
             "type": "text",
-            "norms": false{% if source_mode == "synthetic" %},
+            "norms": false{% if p_source_mode == "synthetic" %},
             "store": true
             {% endif %}
           },
@@ -8521,7 +8521,7 @@
               },
               "message": {
                 "type": "text",
-                "norms": false,{% if source_mode != "synthetic" %}
+                "norms": false,{% if p_source_mode != "synthetic" %}
                 "copy_to": [
                   "message"
                 ]{% else %}
@@ -10143,7 +10143,7 @@
       },
       "message": {
         "type": "text",
-        "norms": false{% if source_mode == "synthetic" %},
+        "norms": false{% if p_source_mode == "synthetic" %},
         "store": true
         {% endif %}
       },

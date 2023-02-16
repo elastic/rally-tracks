@@ -82,6 +82,36 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 0.5
+        },
+        {
+          "operation": "geoGrid_geohash",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "geoGrid_geotile",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "geoGrid_geohex",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "geoGrid_aggs_geohash",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "geoGrid_aggs_geotile",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "geoGrid_aggs_geohex",
+          "warmup-iterations": 200,
+          "iterations": 100
         }
       ]
     },

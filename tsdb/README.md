@@ -114,9 +114,9 @@ TMPDIR=tmp ~/Downloads/jlsort/target/release/jlsort -k '@timestamp' data-anonymi
 rm -rf tmp
 ```
 
-Finally you'll also need a deduped version of the data in order to to support the `ingest_mode` that 
-benchmarks ingesting into a tsdb data stream (`data_stream`). Use the `dedupe.py` tool in the 
-`_tools` directory. This tool needs `data-sorted.json` as input via standard in and generates a 
+Finally you'll also need a deduped version of the data in order to to support the `ingest_mode` that
+benchmarks ingesting into a tsdb data stream (`data_stream`). Use the `dedupe.py` tool in the
+`_tools` directory. This tool needs `data-sorted.json` as input via standard in and generates a
 deduped variant via standard out.
 
 ```
@@ -141,6 +141,36 @@ pbzip2 documents.json
 
 Now upload all of that to the AWS location from `track.json`.
 
+### Generating the split16 corpus
+
+By default, with N indexing clients Rally will split documents.json in N parts and bulk index from
+them in parallel. As a result, by default ingest is not done in order, which makes TSDB sorting
+appear more costly than it really is. To work around this issue, we rearrange the original corpora
+by splitting it in 16 parts (the number of indexing clients we use in practice in benchmarks) so
+that indexing is done in roughly order.
+
+To generate that corpus, first split the data in 16 files:
+
+```
+_tools/split.py ~/.rally/benchmarks/data/tsdb/documents.json 16
+```
+
+Note that this is a destructive operation! It will drop up to 15 documents so that the resulting
+file contains a number of documents that is a multiple of 16 to ensure that Rally will split the
+file as expected.
+
+Now generate a single file again out of the splits:
+
+```
+cat documents-split-0.json documents-split-1.json documents-split-2.json documents-split-3.json documents-split-4.json documents-split-5.json documents-split-6.json documents-split-7.json documents-split-8.json documents-split-9.json documents-split-10.json documents-split-11.json documents-split-12.json documents-split-13.json documents-split-14.json documents-split-15.json > documents-split16-v2.json
+```
+
+The versioning (v2 here) ensures that nobody will use an old version of that corpus by accident.
+
+Finally, as shown above, you can now then generate the 1k documents version, run pbzip2 on both
+versions and upload the two resulting files to AWS.
+
+
 ### Parameters
 
 This track allows to overwrite the following parameters using `--track-params`:
@@ -151,10 +181,11 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
-* `source_mode` (default: stored): Should the `_source` be `stored` to disk exactly as sent (the default), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
+* `source_mode` (default: synthetic): Should the `_source` be `stored` to disk exactly as sent (the Elasticsearch default outside of TSDB mode), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
 * `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.
 * `ingest_mode` (default: index) Should be `data_stream` to benchmark ingesting into a tsdb data stream.
+* `corpus` (default: full) Should be `split16` to use a corpus split in 16 to be used with 16 indexing clients and index mostly in @timestamp order.
 
 ### License
 

@@ -34,7 +34,7 @@ async def create_pipeline(es, params):
             name = os.path.splitext(os.path.basename(p))[0]
             with open(p, "r") as f:
                 pipeline = json.load(f)
-            await es.ingest.put_pipeline(name, body=pipeline)
+            await es.ingest.put_pipeline(id=name, body=pipeline)
             pipeline_num += 1
 
     return pipeline_num, "ops"

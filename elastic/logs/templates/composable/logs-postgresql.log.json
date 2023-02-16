@@ -5,7 +5,9 @@
   "template": {
     "settings": {
       "index": {
+        {%- if disable_pipelines is not true %}
         "default_pipeline": "logs-postgresql.log-1.2.0"
+        {%- endif %}
       }
     },
     "mappings": {

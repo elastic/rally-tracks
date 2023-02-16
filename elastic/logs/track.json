@@ -72,14 +72,15 @@
         "mysql-error-logs": 0.01
       }
     },
-    "kafka": {
+    "postgresql": {
       "corpora": {
-        "kafka-logs": 0.025
+        "postgresql-logs": 0.025
       }
     },
     "redis": {
       "corpora": {
-        "redis-app-logs": 0.01
+        "redis-app-logs": 0.01,
+        "redis-app-slowlogs": 0.025
       }
     },
     "system": {

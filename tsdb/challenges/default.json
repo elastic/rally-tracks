@@ -3,6 +3,21 @@
       "description": "Indexes the whole document corpus.",
       "default": true,
       "schedule": [
+        {
+          "name":"increase-max_buckets_setting",
+          "tags": ["setup"],
+          "operation": {
+            "operation-type": "raw-request",
+            "method": "PUT",
+            "path": "/_cluster/settings",
+            "body": {
+              "transient": {
+                "search.max_buckets" : 300000
+              }
+            },
+            "include-in-reporting": false
+          }
+        },
         {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
         {
           "name": "put-timestamp-pipeline",
@@ -124,6 +139,38 @@
           "warmup-iterations": 50,
           "iterations": 100
         }
+        {% if index_mode | default('time_series') is equalto 'time_series' and skip_running_tsdb_aggs is not defined %}
+        ,{
+          "operation": "date-histo-memory-usage-hour",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
+          "operation": "date-histo-memory-usage-day",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
+          "operation": "auto-date-histo-memory-usage-100",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
+          "operation": "auto-date-histo-memory-usage-1000",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
+          "operation": "terms-container-name-memory-usage",
+          "warmup-iterations": 50,
+          "iterations": 100
+        },
+        {
+          "operation": "terms-container-image-memory-usage",
+          "warmup-iterations": 50,
+          "iterations": 100
+        }
+        {% endif %}
       ]
     },
     {

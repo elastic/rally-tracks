@@ -1,0 +1,150 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "cross-clusters-search-and-snapshot",
+  "description": "Indexes logs to the default (local) cluster, snapshots the resulting data streams and restores the snapshot across all other clusters specified in 'target-hosts', finally searching across all clusters via CCS",
+  "schedule": [
+    {% include "tasks/many-clusters-setup.json" %},
+    {% include "tasks/index-setup.json" %},
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "bulk-size": {{ p_bulk_size }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients }}{% if p_throttle_indexing %},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "schedule": "timestamp-throttler",
+      "max-delay-secs": 1
+      {% endif %}
+    },
+    {
+      "name": "force-merge-data-streams",
+      "operation": {
+        "operation-type": "force-merge",
+        "mode": "polling",
+        "max-num-segments": 1,
+        "request-timeout": 60
+      }
+    },
+    {# mutate a copy so as not to override in other challenges. shallow copy is ok since we're changing a top-level element.' #}
+      {% set many_clusters_snapshot_repo_settings = p_snapshot_repo_settings.copy() %}
+    {# randomize base path to avoid clashes when running concurrent benchmarks #}
+      {% set _=many_clusters_snapshot_repo_settings.update({"base_path":"many-clusters-"+((now|int)|string)}) %}
+    {
+      "name": "register-snapshot-repository-on-local-cluster",
+      "operation": {
+        "operation-type": "create-snapshot-repository",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "body": {
+          "type": {{ p_snapshot_repo_type | tojson }},
+          "settings": {{ many_clusters_snapshot_repo_settings | tojson(indent=2)}}
+        }
+      }
+    },
+    {% set _=many_clusters_snapshot_repo_settings.update({"readonly":true}) %}
+    {
+      "name": "register-snapshot-repository-on-remote-clusters",
+      "operation": {
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "create-snapshot-repository",
+        "ignore-clusters": ["default"],
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "body": {
+          "type": {{ p_snapshot_repo_type | tojson }},
+          "settings": {{ many_clusters_snapshot_repo_settings | tojson(indent=2)}}
+        }
+      }
+    },
+    {
+      "name": "create-snapshot-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "create-snapshot",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": false,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "metadata": {{ p_snapshot_metadata | tojson }}
+        },
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "wait-for-snapshot-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "wait-for-snapshot-create",
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "repository": {{ p_snapshot_repo_name | tojson }}
+      }
+    },
+    {
+      "name": "recover-snapshot-{{ p_snapshot_name }}-on-remote-clusters",
+      "operation": {
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "restore-snapshot",
+        "ignore-clusters": ["default"],
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": false,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "rename_pattern": "(.+)",
+          "rename_replacement": "$1{{ p_snapshot_rename_suffix }}"
+        }
+      }
+    },
+    {
+      "name": "wait-for-snapshot-recovery-{{ p_snapshot_name }}-on-all-clusters",
+      "operation": {
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "wait-for-recovery",
+        "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+      }
+    },
+    {
+      "name": "check-cluster-health-all-clusters",
+      "operation": {
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "cluster-health",
+        "index": "_all",
+        "request-params": {
+          "wait_for_status": "{{wait_for_status | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+        "name": "setup-bi-directional-remote-clusters",
+        "operation": {
+          "operation-type": "configure-remote-clusters",
+          "local-cluster": "default"
+        }
+    },
+    {
+      "name": "reset-recovery-settings-on-all-clusters",
+      "operation": {
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/_cluster/settings",
+        "body": {
+          "persistent": {
+            "indices.recovery.max_bytes_per_sec": null,
+            "cluster.routing.allocation.node_concurrent_recoveries": null,
+            "cluster.routing.allocation.node_initial_primaries_recoveries": null
+          }
+        }
+      }
+    },
+    {% include "tasks/many-clusters-ccs-queries.json" %}
+  ]
+}

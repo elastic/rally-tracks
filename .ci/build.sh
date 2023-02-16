@@ -112,12 +112,6 @@ function install {
   make install
 }
 
-function precommit {
-  install
-  make test
-  make pre-commit
-}
-
 function it {
   install
   make it

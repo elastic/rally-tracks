@@ -22,13 +22,6 @@ PY_BIN = python3
 # https://github.com/pypa/pip/issues/5599
 PIP_WRAPPER = $(PY_BIN) -m pip
 export PY38 = "3.8.13"
-export HATCH_VERSION = "1.3.1"
-export HATCHLING_VERSION = "1.6.0"
-export PIP_VERSION = "22.2"
-export WHEEL_VERSION = "0.37.1"
-export PRE_COMMIT_VERSION = "2.20.0"
-export BLACK_VERSION = "22.3.0"
-export ISORT_VERSION = "5.8.0"
 VIRTUAL_ENV ?= .venv
 VENV_ACTIVATE_FILE = $(VIRTUAL_ENV)/bin/activate
 VENV_ACTIVATE = . $(VENV_ACTIVATE_FILE)
@@ -57,7 +50,7 @@ check-venv:
 	fi
 
 install: venv-create
-	. $(VENV_ACTIVATE_FILE); $(PIP_WRAPPER) install --upgrade hatch==$(HATCH_VERSION) hatchling==$(HATCHLING_VERSION) pip==$(PIP_VERSION) wheel==$(WHEEL_VERSION) pre-commit==$(PRE_COMMIT_VERSION) black==$(BLACK_VERSION) isort==$(ISORT_VERSION)
+	. $(VENV_ACTIVATE_FILE); $(PIP_WRAPPER) install .[develop]
 
 shell: check-venv
 	. $(VENV_ACTIVATE_FILE); hatch -v shell
@@ -71,7 +64,7 @@ it: check-venv
 sdist: check-venv
 	. $(VENV_ACTIVATE_FILE); hatch -v build -t sdist -c
 
-pre-commit: check-venv
+precommit: check-venv
 	@. $(VENV_ACTIVATE_FILE); pre-commit run --all-files
 
 clean:

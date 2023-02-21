@@ -34,6 +34,9 @@
         "beat": "metricbeat",
         "version": "7.6.2"
       },
+      "_source": {
+        "mode": {{ p_source_mode | tojson }}
+      },
       "dynamic_templates": [
         {
           "labels": {

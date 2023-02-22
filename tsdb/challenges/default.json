@@ -20,33 +20,6 @@
         },
         {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
         {
-          "name": "put-timestamp-pipeline",
-          "operation": {
-            "operation-type": "put-pipeline",
-            "id": "timestamp_pipeline",
-            "body": {
-              "processors": [
-                  {
-                      "set": {
-                          "field": "now",
-                          "value": {{'"{{_ingest.timestamp}}"'}}
-                      }
-                  },
-                  {
-                      "script": {
-                          "source": "ZonedDateTime base = ZonedDateTime.parse('2021-04-28T17:18:23.410Z');long numDays = Duration.between(base, ZonedDateTime.parse(ctx['now'])).toDays();ZonedDateTime timestamp = ZonedDateTime.parse(ctx['@timestamp']);ctx['@timestamp']=timestamp.plusDays(numDays).truncatedTo(ChronoUnit.MILLIS).toString();"
-                      }
-                  },
-                  {
-                      "remove": {
-                          "field": "now"
-                      }
-                  }
-              ]
-          }
-          }
-        },
-        {
           "name": "create-all-templates",
           "operation": {
             "operation-type": "create-composable-template",

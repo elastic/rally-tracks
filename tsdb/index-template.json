@@ -12,9 +12,21 @@
         "mapping.total_fields.limit": 10000,
         "codec": "{{codec | default('default')}}",
         "mode": "{{index_mode | default('time_series')}}",
-        "requests.cache.enable": false,
-        "default_pipeline": "timestamp_pipeline",
-        "look_ahead_time": "7d"
+        {% if index_mode | default('time_series') is equalto 'time_series' %}
+        "routing_path": [
+          "metricset.name",
+          "kubernetes.container.name",
+          "kubernetes.event.involved_object.uid",
+          "kubernetes.node.name",
+          "kubernetes.system.container.id",
+          "kubernetes.volume.name"
+        ],
+        "time_series": {
+          "start_time": "2021-04-28T00:00:00.000Z",
+          "end_time": "2021-05-01T00:00:00.000Z"
+        },
+        {% endif %}
+        "requests.cache.enable": false
       }
     },
     "mappings": {

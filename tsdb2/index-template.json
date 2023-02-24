@@ -1,7 +1,9 @@
 {% import "rally.helpers" as rally with context %}
 
 {
-  "index_patterns": ["k8s*"],
+  "index_patterns": [
+    "k8s*"
+  ],
   "data_stream": {},
   "template": {
     "settings": {
@@ -9,7 +11,12 @@
         "mapping.total_fields.limit": 10000,
         "mode": "time_series",
         "requests.cache.enable": false,
-        "routing_path": ["oracle.machine"],
+        "routing_path": [
+          "kubernetes.namespace",
+          "kubernetes.namespace_uid",
+          "kubernetes.pod.name",
+          "kubernetes.pod.uid"
+        ],
         "time_series": {
           "start_time": "2000-01-01T00:00:00Z",
           "end_time": "2099-12-31T23:59:59Z"
@@ -17,340 +24,824 @@
       }
     },
     "mappings": {
-        "_meta": {
-          "managed_by": "fleet",
-          "managed": true,
-          "package": {
-            "name": "oracle"
-          }
-        },
-        "_data_stream_timestamp": {
-          "enabled": true
-        },
-        "dynamic_templates": [
-          {
-            "strings_as_keyword": {
-              "match_mapping_type": "string",
-              "mapping": {
-                "ignore_above": 1024,
-                "type": "keyword"
-              }
+      "_meta": {
+        "managed_by": "fleet",
+        "managed": true,
+        "package": {
+          "name": "kubernetes"
+        }
+      },
+      "_data_stream_timestamp": {
+        "enabled": true
+      },
+      "dynamic_templates": [
+        {
+          "container.labels": {
+            "path_match": "container.labels.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
             }
           }
-        ],
-        "date_detection": false,
-        "properties": {
-          "@timestamp": {
-            "type": "date"
-          },
-          "agent": {
-            "properties": {
-              "ephemeral_id": {
-                "type": "keyword",
-                "ignore_above": 1024
-              },
-              "id": {
-                "type": "keyword",
-                "ignore_above": 1024
-              },
-              "name": {
-                "type": "keyword",
-                "ignore_above": 1024
-              },
-              "type": {
-                "type": "keyword",
-                "ignore_above": 1024
-              },
-              "version": {
-                "type": "keyword",
-                "ignore_above": 1024
+        },
+        {
+          "kubernetes.node.labels.*": {
+            "path_match": "kubernetes.node.labels.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "kubernetes.node.annotations.*": {
+            "path_match": "kubernetes.node.annotations.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "kubernetes.labels.*": {
+            "path_match": "kubernetes.labels.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "kubernetes.annotations.*": {
+            "path_match": "kubernetes.annotations.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "kubernetes.namespace_labels.*": {
+            "path_match": "kubernetes.namespace_labels.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "kubernetes.namespace_annotations.*": {
+            "path_match": "kubernetes.namespace_annotations.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "kubernetes.selectors.*": {
+            "path_match": "kubernetes.selectors.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "strings_as_keyword": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        }
+      ],
+      "date_detection": false,
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "agent": {
+          "properties": {
+            "ephemeral_id": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "id": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "name": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "type": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "version": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        },
+        "cloud": {
+          "properties": {
+            "account": {
+              "properties": {
+                "id": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "availability_zone": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "image": {
+              "properties": {
+                "id": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "instance": {
+              "properties": {
+                "id": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "machine": {
+              "properties": {
+                "type": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "project": {
+              "properties": {
+                "id": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "provider": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "region": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "service": {
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
               }
             }
-          },
-          "data_stream": {
-            "properties": {
-              "dataset": {
-                "type": "constant_keyword",
-                "value": "oracle.performance"
-              },
-              "namespace": {
-                "type": "constant_keyword",
-                "value": "default"
-              },
-              "type": {
-                "type": "constant_keyword",
-                "value": "metrics"
+          }
+        },
+        "container": {
+          "properties": {
+            "id": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "image": {
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
               }
-            }
-          },
-          "ecs": {
-            "properties": {
-              "version": {
-                "type": "keyword",
-                "ignore_above": 1024
-              }
-            }
-          },
-          "elastic_agent": {
-            "properties": {
-              "id": {
-                "type": "keyword",
-                "ignore_above": 1024
-              },
-              "snapshot": {
-                "type": "boolean"
-              },
-              "version": {
-                "type": "keyword",
-                "ignore_above": 1024
-              }
-            }
-          },
-          "event": {
-            "properties": {
-              "agent_id_status": {
-                "type": "keyword",
-                "ignore_above": 1024
-              },
-              "dataset": {
-                "type": "constant_keyword",
-                "value": "oracle.performance"
-              },
-              "duration": {
-                "type": "long"
-              },
-              "ingested": {
-                "type": "date",
-                "format": "strict_date_time_no_millis||strict_date_optional_time||epoch_millis"
-              },
-              "module": {
-                "type": "constant_keyword",
-                "value": "sql"
-              }
-            }
-          },
-          "host": {
-            "properties": {
-              "ip": {
-                "type": "ip"
-              },
-              "name": {
-                "type": "keyword",
-                "ignore_above": 1024
-              }
-            }
-          },
-          "metricset": {
-            "properties": {
-              "name": {
-                "type": "keyword",
-                "ignore_above": 1024
-              },
-              "period": {
-                "type": "long"
-              }
-            }
-          },
-          "oracle": {
-            "properties": {
-              "performance": {
-                "properties": {
-                  "buffer_pool": {
-                    "type": "keyword",
-                    "ignore_above": 1024
-                  },
-                  "cache": {
-                    "properties": {
-                      "buffer": {
-                        "properties": {
-                          "hit": {
-                            "properties": {
-                              "pct": {
-                                "type": "double",
-                                "meta": {
-                                  "unit": "percent"
-                                },
-                                "time_series_metric": "gauge"
-                              }
-                            }
-                          }
-                        }
-                      },
-                      "get": {
-                        "properties": {
-                          "consistent": {
-                            "type": "long",
-                            "time_series_metric": "gauge"
-                          },
-                          "db_blocks": {
-                            "type": "long",
-                            "time_series_metric": "gauge"
-                          }
-                        }
-                      },
-                      "physical_reads": {
-                        "type": "long",
-                        "time_series_metric": "gauge"
+            },
+            "name": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "network": {
+              "properties": {
+                "egress": {
+                  "properties": {
+                    "bytes": {
+                      "type": "long",
+                      "meta": {
+                        "metric_type": "counter"
                       }
                     }
-                  },
-                  "cursors": {
-                    "properties": {
-                      "avg": {
-                        "type": "double",
-                        "time_series_metric": "gauge"
-                      },
-                      "cache_hit": {
-                        "properties": {
-                          "pct": {
-                            "type": "double",
-                            "meta": {
-                              "unit": "percent"
-                            },
-                            "time_series_metric": "gauge"
-                          }
-                        }
-                      },
-                      "max": {
-                        "type": "double",
-                        "time_series_metric": "gauge"
-                      },
-                      "opened": {
-                        "properties": {
-                          "current": {
-                            "type": "long",
-                            "time_series_metric": "gauge"
-                          },
-                          "total": {
-                            "type": "long",
-                            "time_series_metric": "counter"
-                          }
-                        }
-                      },
-                      "parse": {
-                        "properties": {
-                          "real": {
-                            "type": "double",
-                            "time_series_metric": "gauge"
-                          },
-                          "total": {
-                            "type": "long",
-                            "time_series_metric": "gauge"
-                          }
-                        }
-                      },
-                      "session": {
-                        "properties": {
-                          "cache_hits": {
-                            "type": "double",
-                            "time_series_metric": "gauge"
-                          }
-                        }
-                      },
-                      "total": {
-                        "type": "double",
-                        "time_series_metric": "gauge"
-                      }
-                    }
-                  },
-                  "failed_db_jobs": {
-                    "type": "double",
-                    "time_series_metric": "gauge"
-                  },
-                  "io_reloads": {
-                    "type": "double",
-                    "time_series_metric": "gauge"
-                  },
-                  "lock_requests": {
-                    "type": "double",
-                    "time_series_metric": "gauge"
-                  },
-                  "machine": {
-                    "type": "keyword",
-                    "time_series_dimension": true
-                  },
-                  "pin_requests": {
-                    "type": "double",
-                    "time_series_metric": "gauge"
-                  },
-                  "query_id": {
-                    "type": "keyword",
-                    "time_series_dimension": true
-                  },
-                  "session_count": {
-                    "properties": {
-                      "active": {
-                        "type": "double",
-                        "time_series_metric": "gauge"
-                      },
-                      "inactive": {
-                        "type": "double",
-                        "time_series_metric": "gauge"
-                      },
-                      "inactive_morethan_onehr": {
-                        "type": "double",
-                        "time_series_metric": "gauge"
-                      }
-                    }
-                  },
-                  "username": {
-                    "type": "keyword",
-                    "time_series_dimension": true
-                  },
-                  "wait": {
-                    "properties": {
-                      "pct_time": {
-                        "type": "double",
-                        "meta": {
-                          "unit": "percent"
-                        },
-                        "time_series_metric": "gauge"
-                      },
-                      "pct_waits": {
-                        "type": "double",
-                        "meta": {
-                          "unit": "percent"
-                        },
-                        "time_series_metric": "gauge"
-                      },
-                      "time_waited_secs": {
-                        "type": "double",
-                        "meta": {
-                          "unit": "s"
-                        },
-                        "time_series_metric": "gauge"
-                      },
-                      "total_waits": {
-                        "type": "double",
-                        "time_series_metric": "counter"
-                      },
-                      "wait_class": {
-                        "type": "keyword",
-                        "time_series_dimension": true
+                  }
+                },
+                "ingress": {
+                  "properties": {
+                    "bytes": {
+                      "type": "long",
+                      "meta": {
+                        "metric_type": "counter"
                       }
                     }
                   }
                 }
-              },
-              "query": {
-                "type": "keyword",
-                "time_series_dimension": true
               }
             }
-          },
-          "service": {
-            "properties": {
-              "address": {
-                "type": "keyword",
-                "time_series_dimension": true
-              },
-              "type": {
-                "type": "keyword",
-                "ignore_above": 1024
+          }
+        },
+        "data_stream": {
+          "properties": {
+            "dataset": {
+              "type": "constant_keyword",
+              "value": "kubernetes.pod"
+            },
+            "namespace": {
+              "type": "constant_keyword",
+              "value": "default"
+            },
+            "type": {
+              "type": "constant_keyword",
+              "value": "metrics"
+            }
+          }
+        },
+        "ecs": {
+          "properties": {
+            "version": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        },
+        "elastic_agent": {
+          "properties": {
+            "id": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "snapshot": {
+              "type": "boolean"
+            },
+            "version": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        },
+        "event": {
+          "properties": {
+            "agent_id_status": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "dataset": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "duration": {
+              "type": "long"
+            },
+            "ingested": {
+              "type": "date",
+              "format": "strict_date_time_no_millis||strict_date_optional_time||epoch_millis"
+            },
+            "module": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        },
+        "host": {
+          "properties": {
+            "architecture": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "containerized": {
+              "type": "boolean"
+            },
+            "domain": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "hostname": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "id": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "ip": {
+              "type": "ip"
+            },
+            "mac": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "name": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "os": {
+              "properties": {
+                "build": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "codename": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "family": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "kernel": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024,
+                  "fields": {
+                    "text": {
+                      "type": "text"
+                    }
+                  }
+                },
+                "platform": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "type": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "version": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
               }
+            },
+            "type": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        },
+        "kubernetes": {
+          "properties": {
+            "container": {
+              "properties": {
+                "image": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "cronjob": {
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "daemonset": {
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "deployment": {
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "job": {
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "labels": {
+              "properties": {
+                "app": {
+                  "type": "keyword"
+                },
+                "app-1": {
+                  "type": "keyword"
+                },
+                "app-2": {
+                  "type": "keyword"
+                },
+                "app_kubernetes_io/component": {
+                  "type": "keyword"
+                },
+                "app_kubernetes_io/name": {
+                  "type": "keyword"
+                },
+                "app_kubernetes_io/version": {
+                  "type": "keyword"
+                },
+                "component": {
+                  "type": "keyword"
+                },
+                "controller-revision-hash": {
+                  "type": "keyword"
+                },
+                "k8s-app": {
+                  "type": "keyword"
+                },
+                "kubernetes_io/cluster-service": {
+                  "type": "keyword"
+                },
+                "name": {
+                  "type": "keyword"
+                },
+                "pod-template-generation": {
+                  "type": "keyword"
+                },
+                "pod-template-hash": {
+                  "type": "keyword"
+                },
+                "tier": {
+                  "type": "keyword"
+                },
+                "version": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "namespace": {
+              "type": "keyword",
+              "time_series_dimension": true
+            },
+            "namespace_labels": {
+              "properties": {
+                "kubernetes_io/metadata_name": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "namespace_uid": {
+              "type": "keyword",
+              "time_series_dimension": true
+            },
+            "node": {
+              "properties": {
+                "hostname": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "labels": {
+                  "properties": {
+                    "beta_kubernetes_io/arch": {
+                      "type": "keyword"
+                    },
+                    "beta_kubernetes_io/instance-type": {
+                      "type": "keyword"
+                    },
+                    "beta_kubernetes_io/os": {
+                      "type": "keyword"
+                    },
+                    "cloud_google_com/gke-boot-disk": {
+                      "type": "keyword"
+                    },
+                    "cloud_google_com/gke-container-runtime": {
+                      "type": "keyword"
+                    },
+                    "cloud_google_com/gke-cpu-scaling-level": {
+                      "type": "keyword"
+                    },
+                    "cloud_google_com/gke-logging-variant": {
+                      "type": "keyword"
+                    },
+                    "cloud_google_com/gke-max-pods-per-node": {
+                      "type": "keyword"
+                    },
+                    "cloud_google_com/gke-nodepool": {
+                      "type": "keyword"
+                    },
+                    "cloud_google_com/gke-os-distribution": {
+                      "type": "keyword"
+                    },
+                    "cloud_google_com/machine-family": {
+                      "type": "keyword"
+                    },
+                    "cloud_google_com/private-node": {
+                      "type": "keyword"
+                    },
+                    "env": {
+                      "type": "keyword"
+                    },
+                    "failure-domain_beta_kubernetes_io/region": {
+                      "type": "keyword"
+                    },
+                    "failure-domain_beta_kubernetes_io/zone": {
+                      "type": "keyword"
+                    },
+                    "kubernetes_io/arch": {
+                      "type": "keyword"
+                    },
+                    "kubernetes_io/hostname": {
+                      "type": "keyword"
+                    },
+                    "kubernetes_io/os": {
+                      "type": "keyword"
+                    },
+                    "node_kubernetes_io/instance-type": {
+                      "type": "keyword"
+                    },
+                    "topology_gke_io/zone": {
+                      "type": "keyword"
+                    },
+                    "topology_kubernetes_io/region": {
+                      "type": "keyword"
+                    },
+                    "topology_kubernetes_io/zone": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "uid": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "pod": {
+              "properties": {
+                "cpu": {
+                  "properties": {
+                    "usage": {
+                      "properties": {
+                        "limit": {
+                          "properties": {
+                            "pct": {
+                              "type": "scaled_float",
+                              "meta": {
+                                "metric_type": "gauge",
+                                "unit": "percent"
+                              },
+                              "scaling_factor": 1000,
+                              "time_series_metric": "gauge"
+                            }
+                          }
+                        },
+                        "nanocores": {
+                          "type": "long",
+                          "meta": {
+                            "metric_type": "gauge",
+                            "unit": "byte"
+                          }
+                        },
+                        "node": {
+                          "properties": {
+                            "pct": {
+                              "type": "scaled_float",
+                              "meta": {
+                                "metric_type": "gauge",
+                                "unit": "percent"
+                              },
+                              "scaling_factor": 1000,
+                              "time_series_metric": "gauge"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "ip": {
+                  "type": "ip"
+                },
+                "memory": {
+                  "properties": {
+                    "available": {
+                      "properties": {
+                        "bytes": {
+                          "type": "long",
+                          "meta": {
+                            "metric_type": "gauge",
+                            "unit": "percent"
+                          }
+                        }
+                      }
+                    },
+                    "major_page_faults": {
+                      "type": "long",
+                      "meta": {
+                        "metric_type": "counter"
+                      }
+                    },
+                    "page_faults": {
+                      "type": "long",
+                      "meta": {
+                        "metric_type": "counter"
+                      }
+                    },
+                    "rss": {
+                      "properties": {
+                        "bytes": {
+                          "type": "long",
+                          "meta": {
+                            "metric_type": "gauge",
+                            "unit": "percent"
+                          }
+                        }
+                      }
+                    },
+                    "usage": {
+                      "properties": {
+                        "bytes": {
+                          "type": "long",
+                          "meta": {
+                            "metric_type": "gauge",
+                            "unit": "byte"
+                          }
+                        },
+                        "limit": {
+                          "properties": {
+                            "pct": {
+                              "type": "scaled_float",
+                              "meta": {
+                                "metric_type": "gauge",
+                                "unit": "percent"
+                              },
+                              "scaling_factor": 1000,
+                              "time_series_metric": "gauge"
+                            }
+                          }
+                        },
+                        "node": {
+                          "properties": {
+                            "pct": {
+                              "type": "scaled_float",
+                              "meta": {
+                                "metric_type": "gauge",
+                                "unit": "percent"
+                              },
+                              "scaling_factor": 1000,
+                              "time_series_metric": "gauge"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "working_set": {
+                      "properties": {
+                        "bytes": {
+                          "type": "long",
+                          "meta": {
+                            "metric_type": "gauge",
+                            "unit": "percent"
+                          }
+                        },
+                        "limit": {
+                          "properties": {
+                            "pct": {
+                              "type": "scaled_float",
+                              "meta": {
+                                "metric_type": "gauge",
+                                "unit": "percent"
+                              },
+                              "scaling_factor": 1000,
+                              "time_series_metric": "gauge"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "name": {
+                  "type": "keyword",
+                  "time_series_dimension": true
+                },
+                "network": {
+                  "properties": {
+                    "rx": {
+                      "properties": {
+                        "bytes": {
+                          "type": "long",
+                          "meta": {
+                            "metric_type": "counter",
+                            "unit": "byte"
+                          }
+                        },
+                        "errors": {
+                          "type": "long",
+                          "meta": {
+                            "metric_type": "counter"
+                          }
+                        }
+                      }
+                    },
+                    "tx": {
+                      "properties": {
+                        "bytes": {
+                          "type": "long",
+                          "meta": {
+                            "metric_type": "counter",
+                            "unit": "byte"
+                          }
+                        },
+                        "errors": {
+                          "type": "long",
+                          "meta": {
+                            "metric_type": "counter"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "start_time": {
+                  "type": "date"
+                },
+                "uid": {
+                  "type": "keyword",
+                  "time_series_dimension": true
+                }
+              }
+            },
+            "replicaset": {
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "statefulset": {
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            }
+          }
+        },
+        "metricset": {
+          "properties": {
+            "name": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "period": {
+              "type": "long"
+            }
+          }
+        },
+        "orchestrator": {
+          "properties": {
+            "cluster": {
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "url": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            }
+          }
+        },
+        "service": {
+          "properties": {
+            "address": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "type": {
+              "type": "keyword",
+              "ignore_above": 1024
             }
           }
         }
       }
+    }
   }
 }

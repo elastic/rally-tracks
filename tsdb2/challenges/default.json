@@ -59,12 +59,12 @@
           "operation": "refresh"
         },
         {
-          "operation": "default",
+          "operation": "cpu_usage_by_pod",
           "warmup-iterations": 50,
           "iterations": 100
         },
         {
-          "operation": "default_1k",
+          "operation": "memory_usage_by_pod",
           "warmup-iterations": 50,
           "iterations": 100
         }

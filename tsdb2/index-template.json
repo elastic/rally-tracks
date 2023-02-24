@@ -8,7 +8,70 @@
   "template": {
     "settings": {
       "index": {
-        "mapping.total_fields.limit": 10000,
+        "lifecycle": {
+          "name": "metrics"
+        },
+        "routing": {
+          "allocation": {
+            "include": {
+              "_tier_preference": "data_hot"
+            }
+          }
+        },
+        "mapping": {
+          "total_fields": {
+            "limit": "10000"
+          }
+        },
+        "query": {
+          "default_field": [
+            "cloud.account.id",
+            "cloud.availability_zone",
+            "cloud.instance.id",
+            "cloud.instance.name",
+            "cloud.machine.type",
+            "cloud.provider",
+            "cloud.region",
+            "cloud.project.id",
+            "cloud.image.id",
+            "container.id",
+            "container.image.name",
+            "container.name",
+            "host.architecture",
+            "host.hostname",
+            "host.id",
+            "host.mac",
+            "host.name",
+            "host.os.family",
+            "host.os.kernel",
+            "host.os.name",
+            "host.os.platform",
+            "host.os.version",
+            "host.os.build",
+            "host.os.codename",
+            "host.type",
+            "kubernetes.pod.name",
+            "kubernetes.pod.uid",
+            "kubernetes.namespace",
+            "kubernetes.node.name",
+            "kubernetes.node.hostname",
+            "kubernetes.node.uid",
+            "kubernetes.namespace_uid",
+            "kubernetes.replicaset.name",
+            "kubernetes.deployment.name",
+            "kubernetes.daemonset.name",
+            "kubernetes.statefulset.name",
+            "kubernetes.job.name",
+            "kubernetes.cronjob.name",
+            "kubernetes.container.name",
+            "kubernetes.container.image",
+            "ecs.version",
+            "service.address",
+            "service.type",
+            "orchestrator.cluster.name",
+            "orchestrator.cluster.url"
+          ]
+        },
         "mode": "time_series",
         "requests.cache.enable": false,
         "routing_path": [
@@ -30,9 +93,6 @@
         "package": {
           "name": "kubernetes"
         }
-      },
-      "_data_stream_timestamp": {
-        "enabled": true
       },
       "dynamic_templates": [
         {
@@ -115,30 +175,6 @@
         "@timestamp": {
           "type": "date"
         },
-        "agent": {
-          "properties": {
-            "ephemeral_id": {
-              "type": "keyword",
-              "ignore_above": 1024
-            },
-            "id": {
-              "type": "keyword",
-              "ignore_above": 1024
-            },
-            "name": {
-              "type": "keyword",
-              "ignore_above": 1024
-            },
-            "type": {
-              "type": "keyword",
-              "ignore_above": 1024
-            },
-            "version": {
-              "type": "keyword",
-              "ignore_above": 1024
-            }
-          }
-        },
         "cloud": {
           "properties": {
             "account": {
@@ -196,14 +232,6 @@
             "region": {
               "type": "keyword",
               "ignore_above": 1024
-            },
-            "service": {
-              "properties": {
-                "name": {
-                  "type": "keyword",
-                  "ignore_above": 1024
-                }
-              }
             }
           }
         },
@@ -254,36 +282,18 @@
         "data_stream": {
           "properties": {
             "dataset": {
-              "type": "constant_keyword",
-              "value": "kubernetes.pod"
+              "type": "constant_keyword"
             },
             "namespace": {
-              "type": "constant_keyword",
-              "value": "default"
+              "type": "constant_keyword"
             },
             "type": {
-              "type": "constant_keyword",
-              "value": "metrics"
+              "type": "constant_keyword"
             }
           }
         },
         "ecs": {
           "properties": {
-            "version": {
-              "type": "keyword",
-              "ignore_above": 1024
-            }
-          }
-        },
-        "elastic_agent": {
-          "properties": {
-            "id": {
-              "type": "keyword",
-              "ignore_above": 1024
-            },
-            "snapshot": {
-              "type": "boolean"
-            },
             "version": {
               "type": "keyword",
               "ignore_above": 1024
@@ -296,20 +306,9 @@
               "type": "keyword",
               "ignore_above": 1024
             },
-            "dataset": {
-              "type": "keyword",
-              "ignore_above": 1024
-            },
-            "duration": {
-              "type": "long"
-            },
             "ingested": {
               "type": "date",
               "format": "strict_date_time_no_millis||strict_date_optional_time||epoch_millis"
-            },
-            "module": {
-              "type": "keyword",
-              "ignore_above": 1024
             }
           }
         },
@@ -376,10 +375,6 @@
                   "type": "keyword",
                   "ignore_above": 1024
                 },
-                "type": {
-                  "type": "keyword",
-                  "ignore_above": 1024
-                },
                 "version": {
                   "type": "keyword",
                   "ignore_above": 1024
@@ -438,65 +433,9 @@
                 }
               }
             },
-            "labels": {
-              "properties": {
-                "app": {
-                  "type": "keyword"
-                },
-                "app-1": {
-                  "type": "keyword"
-                },
-                "app-2": {
-                  "type": "keyword"
-                },
-                "app_kubernetes_io/component": {
-                  "type": "keyword"
-                },
-                "app_kubernetes_io/name": {
-                  "type": "keyword"
-                },
-                "app_kubernetes_io/version": {
-                  "type": "keyword"
-                },
-                "component": {
-                  "type": "keyword"
-                },
-                "controller-revision-hash": {
-                  "type": "keyword"
-                },
-                "k8s-app": {
-                  "type": "keyword"
-                },
-                "kubernetes_io/cluster-service": {
-                  "type": "keyword"
-                },
-                "name": {
-                  "type": "keyword"
-                },
-                "pod-template-generation": {
-                  "type": "keyword"
-                },
-                "pod-template-hash": {
-                  "type": "keyword"
-                },
-                "tier": {
-                  "type": "keyword"
-                },
-                "version": {
-                  "type": "keyword"
-                }
-              }
-            },
             "namespace": {
               "type": "keyword",
               "time_series_dimension": true
-            },
-            "namespace_labels": {
-              "properties": {
-                "kubernetes_io/metadata_name": {
-                  "type": "keyword"
-                }
-              }
             },
             "namespace_uid": {
               "type": "keyword",
@@ -507,76 +446,6 @@
                 "hostname": {
                   "type": "keyword",
                   "ignore_above": 1024
-                },
-                "labels": {
-                  "properties": {
-                    "beta_kubernetes_io/arch": {
-                      "type": "keyword"
-                    },
-                    "beta_kubernetes_io/instance-type": {
-                      "type": "keyword"
-                    },
-                    "beta_kubernetes_io/os": {
-                      "type": "keyword"
-                    },
-                    "cloud_google_com/gke-boot-disk": {
-                      "type": "keyword"
-                    },
-                    "cloud_google_com/gke-container-runtime": {
-                      "type": "keyword"
-                    },
-                    "cloud_google_com/gke-cpu-scaling-level": {
-                      "type": "keyword"
-                    },
-                    "cloud_google_com/gke-logging-variant": {
-                      "type": "keyword"
-                    },
-                    "cloud_google_com/gke-max-pods-per-node": {
-                      "type": "keyword"
-                    },
-                    "cloud_google_com/gke-nodepool": {
-                      "type": "keyword"
-                    },
-                    "cloud_google_com/gke-os-distribution": {
-                      "type": "keyword"
-                    },
-                    "cloud_google_com/machine-family": {
-                      "type": "keyword"
-                    },
-                    "cloud_google_com/private-node": {
-                      "type": "keyword"
-                    },
-                    "env": {
-                      "type": "keyword"
-                    },
-                    "failure-domain_beta_kubernetes_io/region": {
-                      "type": "keyword"
-                    },
-                    "failure-domain_beta_kubernetes_io/zone": {
-                      "type": "keyword"
-                    },
-                    "kubernetes_io/arch": {
-                      "type": "keyword"
-                    },
-                    "kubernetes_io/hostname": {
-                      "type": "keyword"
-                    },
-                    "kubernetes_io/os": {
-                      "type": "keyword"
-                    },
-                    "node_kubernetes_io/instance-type": {
-                      "type": "keyword"
-                    },
-                    "topology_gke_io/zone": {
-                      "type": "keyword"
-                    },
-                    "topology_kubernetes_io/region": {
-                      "type": "keyword"
-                    },
-                    "topology_kubernetes_io/zone": {
-                      "type": "keyword"
-                    }
-                  }
                 },
                 "name": {
                   "type": "keyword",
@@ -802,17 +671,6 @@
             }
           }
         },
-        "metricset": {
-          "properties": {
-            "name": {
-              "type": "keyword",
-              "ignore_above": 1024
-            },
-            "period": {
-              "type": "long"
-            }
-          }
-        },
         "orchestrator": {
           "properties": {
             "cluster": {
@@ -842,6 +700,7 @@
           }
         }
       }
-    }
+    },
+    "aliases": {}
   }
 }

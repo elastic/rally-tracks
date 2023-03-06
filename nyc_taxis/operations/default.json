@@ -1244,7 +1244,9 @@
       "request-timeout": 120,
       "body": {
         "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 10 days) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
-        "data_partitioning" : "doc"
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
       }
     },
     {
@@ -1255,7 +1257,9 @@
       "request-timeout": 120,
       "body": {
         "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 10 days) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
-        "data_partitioning" : "shard",
+        "pragma" : {
+          "data_partitioning" : "shard",
           "add_task_parallelism_above_query" : true
+        }
       }
     }

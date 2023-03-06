@@ -1096,4 +1096,166 @@
           "add_task_parallelism_above_query" : true
         }
       }
+    },
+    {
+      "name": "date_histogram_calendar_interval_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 1 week) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "date_histogram_calendar_interval_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 1 week) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
+    },
+    {
+      "name": "date_histogram_calendar_interval_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 1 week) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+        }
+      }
+    },
+
+
+    {
+      "name": "date_histogram_fixed_interval_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 10 days) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "date_histogram_fixed_interval_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 10 days) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
+    },
+    {
+      "name": "date_histogram_fixed_interval_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 10 days) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",        "pragma" : {
+          "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+        }
+      }
+    },
+
+    {
+      "name": "date_histogram_fixed_interval_with_metrics_agg",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+            "range": {
+                "dropoff_datetime": {
+                    "gte": "2015-01-01 00:00:00",
+                    "lt": "2015-03-01 00:00:00"
+                }
+            }
+        },
+        "aggs": {
+            "dropoffs_over_time": {
+                "date_histogram": {
+                    "field": "dropoff_datetime",
+                    "fixed_interval": "10d"
+                },
+                "aggs": {
+                    "min_total_amount": {
+                        "min": {
+                            "field": "total_amount"
+                        }
+                    },
+                    "max_total_amount": {
+                        "max": {
+                            "field": "total_amount"
+                        }
+                    },
+                    "avg_total_amount": {
+                        "avg": {
+                            "field": "total_amount"
+                        }
+                    },
+                    "avg_trip_distance": {
+                        "avg": {
+                            "field": "trip_distance"
+                        }
+                    }
+                }
+            }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_fixed_interval_with_metrics_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 10 days) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "date_histogram_fixed_interval_with_metrics_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 10 days) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
+        "data_partitioning" : "doc"
+      }
+    },
+    {
+      "name": "date_histogram_fixed_interval_with_metrics_esql_shard_partitioning_with_task_parallelism",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | eval dropoffs_over_time=date_trunc(dropoff_datetime, 10 days) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
+        "data_partitioning" : "shard",
+          "add_task_parallelism_above_query" : true
+      }
     }

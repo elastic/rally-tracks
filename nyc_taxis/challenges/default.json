@@ -727,12 +727,6 @@
           "iterations": 50
         },
         {
-          "operation": "avg_passenger_count_esql_shard_partitioning_with_task_parallelism",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
           "operation": "avg_passenger_count_filtered_aggregation",
           "clients": 1,
           "warmup-iterations": 10,
@@ -746,12 +740,6 @@
         },
         {
           "operation": "avg_passenger_count_filtered_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "avg_passenger_count_filtered_esql_shard_partitioning_with_task_parallelism",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -775,12 +763,6 @@
           "iterations": 50
         },
         {
-          "operation": "avg_tip_percent_esql_shard_partitioning_with_task_parallelism",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
           "operation": "avg_amount_group_by_integer_aggregation",
           "clients": 1,
           "warmup-iterations": 10,
@@ -794,12 +776,6 @@
         },
         {
           "operation": "avg_amount_group_by_integer_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "avg_amount_group_by_integer_esql_shard_partitioning_with_task_parallelism",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -823,12 +799,6 @@
           "iterations": 50
         },
         {
-          "operation": "avg_amount_group_by_keyword_esql_shard_partitioning_with_task_parallelism",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        }, 
-        {
           "operation": "sort_by_ts_query",
           "clients": 1,
           "warmup-iterations": 10,
@@ -842,12 +812,6 @@
         },
         {
           "operation": "sort_by_ts_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "sort_by_ts_esql_shard_partitioning_with_task_parallelism",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -871,12 +835,6 @@
           "iterations": 50
         },
         {
-          "operation": "date_histogram_calendar_interval_esql_shard_partitioning_with_task_parallelism",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
           "operation": "date_histogram_fixed_interval",
           "clients": 1,
           "warmup-iterations": 10,
@@ -895,12 +853,6 @@
           "iterations": 50
         },
         {
-          "operation": "date_histogram_fixed_interval_esql_shard_partitioning_with_task_parallelism",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
           "operation": "date_histogram_fixed_interval_with_metrics_agg",
           "clients": 1,
           "warmup-iterations": 10,
@@ -914,12 +866,6 @@
         },
         {
           "operation": "date_histogram_fixed_interval_with_metrics_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "date_histogram_fixed_interval_with_metrics_esql_shard_partitioning_with_task_parallelism",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50

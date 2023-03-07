@@ -72,7 +72,7 @@
             "orchestrator.cluster.url"
           ]
         },
-        "mode": "time_series",
+        "mode": "{{index_mode | default('time_series')}}",
         "requests.cache.enable": false,
         "routing_path": [
           "kubernetes.namespace",

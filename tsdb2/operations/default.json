@@ -24,8 +24,8 @@
               "fixed_interval": "30s",
               "time_zone": "Europe/Athens",
               "extended_bounds": {
-                "min": 1677234543630,
-                "max": 1677235443630
+                "min": "2023-01-19T13:23:09.807Z",
+                "max": "2023-01-19T13:38:09.807Z"
               }
             },
             "aggs": {
@@ -84,8 +84,8 @@
             "range": {
               "@timestamp": {
                 "format": "strict_date_optional_time",
-                "gte": "2023-02-24T10:29:03.630Z",
-                "lte": "2023-02-24T10:44:03.630Z"
+                "gte": "2023-01-19T13:23:09.807Z",
+                "lte": "2023-01-19T13:38:09.807Z"
               }
             }
           }
@@ -116,8 +116,8 @@
               "fixed_interval": "30s",
               "time_zone": "Europe/Athens",
               "extended_bounds": {
-                "min": 1677233701149,
-                "max": 1677234601149
+                "min": "2023-01-19T13:23:09.807Z",
+                "max": "2023-01-19T13:38:09.807Z"
               }
             },
             "aggs": {
@@ -176,8 +176,8 @@
             "range": {
               "@timestamp": {
                 "format": "strict_date_optional_time",
-                "gte": "2023-02-24T10:15:01.149Z",
-                "lte": "2023-02-24T10:30:01.149Z"
+                "gte": "2023-01-19T13:23:09.807Z",
+                "lte": "2023-01-19T13:38:09.807Z"
               }
             }
           }

@@ -264,6 +264,112 @@
       }
     },
     {
+      "name": "desc_sort_timestamp_can_match_shortcut",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "status": "200"
+          }
+        },
+        "sort" : [
+          {"@timestamp" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "desc_sort_timestamp_no_can_match_shortcut",
+      "operation-type": "search",
+      "index": "logs-*",
+      "request-params" : {
+          "pre_filter_shard_size" : 100000
+      },
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "status": "200"
+          }
+        },
+        "sort" : [
+          {"@timestamp" : "desc"}
+        ]
+      }
+    },
+
+    {
+      "name": "sort_keyword_can_match_shortcut",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "status": "200"
+          }
+        },
+        "sort" : [
+          {"geoip.country_name" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_keyword_no_can_match_shortcut",
+      "operation-type": "search",
+      "index": "logs-*",
+      "request-params" : {
+          "pre_filter_shard_size" : 100000
+      },
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "status": "200"
+          }
+        },
+        "sort" : [
+          {"geoip.country_name" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_numeric_can_match_shortcut",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "status": "200"
+          }
+        },
+        "sort" : [
+          {"size" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_numeric_no_can_match_shortcut",
+      "operation-type": "search",
+      "index": "logs-*",
+      "request-params" : {
+          "pre_filter_shard_size" : 100000
+      },
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "status": "200"
+          }
+        },
+        "sort" : [
+          {"size" : "desc"}
+        ]
+      }
+    },
+    {
       "name": "create-http-log-baseline-pipeline",
       "operation-type": "put-pipeline",
       "id": "http-log-baseline-pipeline",

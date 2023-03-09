@@ -173,6 +173,44 @@
           "target-throughput": 0.5
         },
         {
+          "operation": "desc_sort_timestamp_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+        {
+          "operation": "desc_sort_timestamp_no_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+{%- if not runtime_fields is defined %}
+        {
+          "operation": "sort_keyword_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+        {
+          "operation": "sort_keyword_no_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+        {
+          "operation": "sort_numeric_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+        {
+          "operation": "sort_numeric_no_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 2
+        },
+{%- endif %}
+        {
           "name": "force-merge-1-seg",
           "operation": {
             "operation-type": "force-merge",

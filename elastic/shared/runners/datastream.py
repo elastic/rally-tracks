@@ -100,7 +100,7 @@ async def rollover(es, params):
     # expand the data_streams into a list as we cant use wildcard in rollover
     response = await es.indices.get_data_stream(name=data_stream)
     for ds_stream in response["data_streams"]:
-        rollover_response = await es.indices.rollover(ds_stream["name"], body={"conditions": conditions})
+        rollover_response = await es.indices.rollover(alias=ds_stream["name"], body={"conditions": conditions})
         logger.debug(
             "Rolled over [%s] - old index: [%s], new index: [%s]",
             rollover_response["old_index"],
@@ -114,7 +114,7 @@ async def shards(es, params):
     number_of_replicas = mandatory(params, "number-of-replicas", "set-data-stream-shards")
     data_stream = mandatory(params, "data-stream", "set-shards-datastream")
     await es.indices.put_settings(
-        {"number_of_replicas": number_of_replicas},
+        body={"number_of_replicas": number_of_replicas},
         index=data_stream,
     )
     return 1, "ops"

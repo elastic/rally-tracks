@@ -36,6 +36,7 @@ async def create_ilm(es, params):
             with open(p, "r") as f:
                 policy = {"policy": json.load(f)["policy"]}  # only `policy` is allowed
             await es.ilm.put_lifecycle(name, body=policy)
+
             policy_num += 1
 
     return policy_num, "ops"

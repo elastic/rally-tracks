@@ -83,4 +83,124 @@
           }
         }
       }
+    },
+    {
+      "name": "geoGrid_geohash",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_grid": {
+            "location": {
+              "geohash": "u0"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "geoGrid_geotile",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_grid": {
+            "location": {
+              "geotile" : "6/32/22"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "geoGrid_geohex",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_grid": {
+            "location": {
+              "geohex" : "811fbffffffffff"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "geoGrid_aggs_geohash",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_bounding_box": {
+            "location": {
+              "top_left": "POINT (2.20 48.95)",
+              "bottom_right": "POINT (2.40 48.75)"
+            }
+          }
+        },
+        "size": 0,
+        "aggs": {
+          "zoomed-in": {
+            "geohash_grid": {
+              "field": "location",
+              "precision": 5,
+              "bounds": {
+                "top_left": "POINT (2.20 48.95)",
+                "bottom_right": "POINT (2.40 48.75)"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "geoGrid_aggs_geotile",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_bounding_box": {
+            "location": {
+              "top_left": "POINT (2.20 48.95)",
+              "bottom_right": "POINT (2.40 48.75)"
+            }
+          }
+        },
+        "size": 0,
+        "aggs": {
+          "zoomed-in": {
+            "geotile_grid": {
+              "field": "location",
+              "precision": 13,
+              "bounds": {
+                "top_left": "POINT (2.20 48.95)",
+                "bottom_right": "POINT (2.40 48.75)"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "geoGrid_aggs_geohex",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_bounding_box": {
+            "location": {
+              "top_left": "POINT (2.20 48.95)",
+              "bottom_right": "POINT (2.40 48.75)"
+            }
+          }
+        },
+        "size": 0,
+        "aggs": {
+          "zoomed-in": {
+            "geohex_grid": {
+              "field": "location",
+              "precision": 6,
+              "bounds": {
+                "top_left": "POINT (2.20 48.95)",
+                "bottom_right": "POINT (2.40 48.75)"
+              }
+            }
+          }
+        }
+      }
     }

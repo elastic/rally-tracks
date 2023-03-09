@@ -16,7 +16,7 @@
       "size": {
         "type": "double",
         "script": {
-        "source": "ScriptDocValues.Geometry geometry = doc[\"shape\"];double w = geometry.getMercatorWidth();double h = geometry.getMercatorHeight();emit(h * h + w * w);"
+          "source": "ScriptDocValues.Geometry geometry = doc[\"shape\"];double w = geometry.getMercatorWidth();double h = geometry.getMercatorHeight();emit(h * h + w * w);"
         }
       }
     }

@@ -175,6 +175,19 @@
           "target-throughput": 1.5
         },
         {
+          "operation": "desc_sort_population_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
+          "operation": "desc_sort_population_no_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+
+        {
           "operation": "asc_sort_population",
           "warmup-iterations": 200,
           "iterations": 100,
@@ -209,6 +222,18 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 6
+        },
+        {
+          "operation": "sort_country_code_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
+        },
+        {
+          "operation": "sort_country_code_no_can_match_shortcut",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "target-throughput": 1.5
         }
       ]
     },

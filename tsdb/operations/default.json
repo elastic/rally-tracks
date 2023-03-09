@@ -74,7 +74,11 @@
 {
   "name": "date-histo-entire-range",
   "operation-type": "search",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "index": "k8s",
+  {%- else %}
   "index": "tsdb",
+  {% endif %}
   "body": {
     "size": 0,
     "aggs": {

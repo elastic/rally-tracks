@@ -1,0 +1,68 @@
+name: CI
+
+on: [push, pull_request]
+
+permissions: "read-all"
+
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: "Install dependencies"
+        run: python -m pip install .[develop]
+      - uses: pre-commit/action@v3.0.0
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+        os:
+          - macos-latest
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ fromJson('{"macos-latest":"macOS","ubuntu-latest":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: "Install dependencies"
+        run: python -m pip install .[develop]
+      - name: "Run tests"
+        run: hatch -v -e unit run test
+
+  rally-tracks-compat:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "17"
+      - run: echo "JAVA17_HOME=$JAVA_HOME_17_X64" >> $GITHUB_ENV
+      - run: echo "JAVA11_HOME=$JAVA_HOME_11_X64" >> $GITHUB_ENV
+      - name: "Install dependencies"
+        run: python -m pip install .[develop]
+      - name: "Run tests"
+        run: hatch -v -e it run test
+        env:
+          # elastic/endpoint fetches assets from GitHub, authenticate to avoid
+          # being rate limited
+          ASSETS_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

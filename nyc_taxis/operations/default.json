@@ -1140,5 +1140,56 @@
           "data_partitioning" : "doc"
         }
       }
+    },
+    {
+      "name": "composite_terms-keyword",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-02-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                { "trip_type": { "terms": { "field": "trip_type", "order": "asc" }}},
+                { "payment_type": { "terms": { "field": "payment_type", "order": "asc" }}},
+                { "vendor_id": { "terms": { "field": "vendor_id", "order": "asc" }}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "multi_terms-keyword_esql_shard_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-02-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id",
+        "pragma" : {
+          "data_partitioning" : "shard"
+        }
+      }
+    },
+    {
+      "name": "multi_terms-keyword_esql_doc_partitioning",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_esql",
+      "request-timeout": 120,
+      "body": {
+        "query": "from nyc_taxis | where dropoff_datetime < \"2015-02-01 00:00:00\" AND dropoff_datetime >= \"2015-01-01 00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id",
+        "pragma" : {
+          "data_partitioning" : "doc"
+        }
+      }
     }
-  

@@ -799,6 +799,30 @@
           "iterations": 50
         },
         {
+          "operation": "multi_terms-keyword",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "composite_terms-keyword",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "multi_terms-keyword_esql_shard_partitioning",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "multi_terms-keyword_esql_doc_partitioning",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
           "operation": "sort_by_ts_query",
           "clients": 1,
           "warmup-iterations": 10,

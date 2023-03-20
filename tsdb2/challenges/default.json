@@ -60,34 +60,34 @@
         },
         {
           "operation": "cpu_usage_by_pod_last_3_hours",
-          "warmup-iterations": 50,
+          "warmup-iterations": 0,
           "iterations": 100
         },
 
         {
           "operation": "cpu_usage_by_pod_last_15_minutes",
-          "warmup-iterations": 50,
+          "warmup-iterations": 0,
           "iterations": 100
         },
 
         {
           "operation": "cpu_usage_by_pod_last_15_seconds",
-          "warmup-iterations": 50,
+          "warmup-iterations": 0,
           "iterations": 100
         },
         {
           "operation": "memory_usage_by_pod_last_3_hours",
-          "warmup-iterations": 50,
+          "warmup-iterations": 0,
           "iterations": 100
         },
         {
           "operation": "memory_usage_by_pod_last_15_minutes",
-          "warmup-iterations": 50,
+          "warmup-iterations": 0,
           "iterations": 100
         },
         {
           "operation": "memory_usage_by_pod_last_15_seconds",
-          "warmup-iterations": 50,
+          "warmup-iterations": 0,
           "iterations": 100
         }
       ]

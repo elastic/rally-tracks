@@ -3,8 +3,14 @@
 
 {%- if runtime_fields is defined %}
   {% set index_body = 'index-runtime-fields.json' %}
+  {% set query_range_ts_start = "1998-05-01T00:00:00Z" %}
+  {% set query_range_ts_end = "1998-05-02T00:00:00Z" %}
+  {% set search_after_ts = "1998-06-10" %}
 {%- else %}
   {% set index_body = 'index.json' %}
+  {% set query_range_ts_start = "893980800" %}
+  {% set query_range_ts_end = "894067200" %}
+  {% set search_after_ts = "897436800" %}
 {%- endif %}
 {
   "version": 2,

@@ -122,8 +122,8 @@
               {
                 "range": {
                   "@timestamp": {
-                    "gte": "1998-05-01T00:00:00Z",
-                    "lt": "1998-05-02T00:00:00Z"
+                    "gte": {{query_range_ts_start | tojson}},
+                    "lt": {{query_range_ts_end | tojson}}
                   }
                 }
               },
@@ -156,8 +156,8 @@
               {
                 "range": {
                   "@timestamp": {
-                    "gte": "1998-05-01T00:00:00Z",
-                    "lt": "1998-05-02T00:00:00Z"
+                    "gte": {{query_range_ts_start | tojson}},
+                    "lt": {{query_range_ts_end | tojson}}
                   }
                 }
               },
@@ -232,7 +232,7 @@
         "sort" : [
           {"@timestamp" : "desc"}
         ],
-        "search_after": ["1998-06-10"]
+        "search_after": [{{search_after_ts | tojson}}]
       }
     },
     {
@@ -260,7 +260,7 @@
         "sort" : [
           {"@timestamp" : "asc"}
         ],
-        "search_after": ["1998-06-10"]
+        "search_after": [{{search_after_ts | tojson}}]
       }
     },
     {

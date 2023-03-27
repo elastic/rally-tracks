@@ -11,7 +11,7 @@
     },
     "properties": {
       "@timestamp": {
-        "format": "epoch_second",
+        "format": "strict_date_optional_time||epoch_second",
         "type": "date"
       },
       "message": {

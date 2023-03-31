@@ -26,8 +26,7 @@
         {
           "operation": "index",
           "warmup-time-period": 240,
-          "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "name": "refresh-after-index",
@@ -57,33 +56,6 @@
         {
           "name": "refresh-after-force-merge",
           "operation": "refresh"
-        },
-        {
-          "operation": "cpu_usage_by_pod_last_3_hours",
-          "warmup-iterations": 0,
-          "iterations": 100
-        },
-
-        {
-          "operation": "cpu_usage_by_pod_last_15_minutes",
-          "warmup-iterations": 0,
-          "iterations": 100
-        },
-
-        {
-          "operation": "cpu_usage_by_pod_last_15_seconds",
-          "warmup-iterations": 0,
-          "iterations": 100
-        },
-        {
-          "operation": "memory_usage_by_pod_last_3_hours",
-          "warmup-iterations": 0,
-          "iterations": 100
-        },
-        {
-          "operation": "memory_usage_by_pod_last_15_minutes",
-          "warmup-iterations": 0,
-          "iterations": 100
         },
         {
           "operation": "average_container_cpu_1day",

@@ -5,559 +5,8 @@
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {
-  "name": "cpu_usage_by_pod_last_3_hours",
-  "operation-type": "search",
-  "body": {
-    "aggs": {
-      "0": {
-        "terms": {
-          "field": "kubernetes.pod.name",
-          "order": {
-            "2": "desc"
-          },
-          "size": 100
-        },
-        "aggs": {
-          "1": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "30s",
-              "time_zone": "Europe/Athens",
-              "extended_bounds": {
-                "min": "2023-01-19T10:38:09.807Z",
-                "max": "2023-01-19T13:38:09.807Z"
-              }
-            },
-            "aggs": {
-              "2": {
-                "avg": {
-                  "field": "kubernetes.pod.cpu.usage.limit.pct"
-                }
-              }
-            }
-          },
-          "2": {
-            "avg": {
-              "field": "kubernetes.pod.cpu.usage.limit.pct"
-            }
-          }
-        }
-      }
-    },
-    "size": 0,
-    "fields": [
-      {
-        "field": "@timestamp",
-        "format": "date_time"
-      },
-      {
-        "field": "event.ingested",
-        "format": "date_time"
-      },
-      {
-        "field": "process.cpu.start_time",
-        "format": "date_time"
-      },
-      {
-        "field": "system.process.cpu.start_time",
-        "format": "date_time"
-      }
-    ],
-    "script_fields": {},
-    "stored_fields": [
-      "*"
-    ],
-    "runtime_mappings": {},
-    "_source": {
-      "excludes": []
-    },
-    "query": {
-      "bool": {
-        "must": [],
-        "filter": [
-          {
-            "match_phrase": {
-              "data_stream.dataset": "kubernetes.pod"
-            }
-          },
-          {
-            "range": {
-              "@timestamp": {
-                "format": "strict_date_optional_time",
-                "gte": "2023-01-19T10:38:09.807Z",
-                "lte": "2023-01-19T13:38:09.807Z"
-              }
-            }
-          }
-        ],
-        "should": [],
-        "must_not": []
-      }
-    }
-  }  
-},
-{
-  "name": "cpu_usage_by_pod_last_15_minutes",
-  "operation-type": "search",
-  "body": {
-    "aggs": {
-      "0": {
-        "terms": {
-          "field": "kubernetes.pod.name",
-          "order": {
-            "2": "desc"
-          },
-          "size": 100
-        },
-        "aggs": {
-          "1": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "30s",
-              "time_zone": "Europe/Athens",
-              "extended_bounds": {
-                "min": "2023-01-19T13:23:09.807Z",
-                "max": "2023-01-19T13:38:09.807Z"
-              }
-            },
-            "aggs": {
-              "2": {
-                "avg": {
-                  "field": "kubernetes.pod.cpu.usage.limit.pct"
-                }
-              }
-            }
-          },
-          "2": {
-            "avg": {
-              "field": "kubernetes.pod.cpu.usage.limit.pct"
-            }
-          }
-        }
-      }
-    },
-    "size": 0,
-    "fields": [
-      {
-        "field": "@timestamp",
-        "format": "date_time"
-      },
-      {
-        "field": "event.ingested",
-        "format": "date_time"
-      },
-      {
-        "field": "process.cpu.start_time",
-        "format": "date_time"
-      },
-      {
-        "field": "system.process.cpu.start_time",
-        "format": "date_time"
-      }
-    ],
-    "script_fields": {},
-    "stored_fields": [
-      "*"
-    ],
-    "runtime_mappings": {},
-    "_source": {
-      "excludes": []
-    },
-    "query": {
-      "bool": {
-        "must": [],
-        "filter": [
-          {
-            "match_phrase": {
-              "data_stream.dataset": "kubernetes.pod"
-            }
-          },
-          {
-            "range": {
-              "@timestamp": {
-                "format": "strict_date_optional_time",
-                "gte": "2023-01-19T13:23:09.807Z",
-                "lte": "2023-01-19T13:38:09.807Z"
-              }
-            }
-          }
-        ],
-        "should": [],
-        "must_not": []
-      }
-    }
-  }  
-},
-{
-  "name": "cpu_usage_by_pod_last_15_seconds",
-  "operation-type": "search",
-  "body": {
-    "aggs": {
-      "0": {
-        "terms": {
-          "field": "kubernetes.pod.name",
-          "order": {
-            "2": "desc"
-          },
-          "size": 100
-        },
-        "aggs": {
-          "1": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "30s",
-              "time_zone": "Europe/Athens",
-              "extended_bounds": {
-                "min": "2023-01-19T13:37:54.807Z",
-                "max": "2023-01-19T13:38:09.807Z"
-              }
-            },
-            "aggs": {
-              "2": {
-                "avg": {
-                  "field": "kubernetes.pod.cpu.usage.limit.pct"
-                }
-              }
-            }
-          },
-          "2": {
-            "avg": {
-              "field": "kubernetes.pod.cpu.usage.limit.pct"
-            }
-          }
-        }
-      }
-    },
-    "size": 0,
-    "fields": [
-      {
-        "field": "@timestamp",
-        "format": "date_time"
-      },
-      {
-        "field": "event.ingested",
-        "format": "date_time"
-      },
-      {
-        "field": "process.cpu.start_time",
-        "format": "date_time"
-      },
-      {
-        "field": "system.process.cpu.start_time",
-        "format": "date_time"
-      }
-    ],
-    "script_fields": {},
-    "stored_fields": [
-      "*"
-    ],
-    "runtime_mappings": {},
-    "_source": {
-      "excludes": []
-    },
-    "query": {
-      "bool": {
-        "must": [],
-        "filter": [
-          {
-            "match_phrase": {
-              "data_stream.dataset": "kubernetes.pod"
-            }
-          },
-          {
-            "range": {
-              "@timestamp": {
-                "format": "strict_date_optional_time",
-                "gte": "2023-01-19T13:37:54.807Z",
-                "lte": "2023-01-19T13:38:09.807Z"
-              }
-            }
-          }
-        ],
-        "should": [],
-        "must_not": []
-      }
-    }
-  }  
-},
-{
-  "name": "memory_usage_by_pod_last_3_hours",
-  "operation-type": "search",
-  "body": {
-    "aggs": {
-      "0": {
-        "terms": {
-          "field": "kubernetes.pod.name",
-          "order": {
-            "2": "desc"
-          },
-          "size": 100
-        },
-        "aggs": {
-          "1": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "30s",
-              "time_zone": "Europe/Athens",
-              "extended_bounds": {
-                "min": "2023-01-19T10:38:09.807Z",
-                "max": "2023-01-19T13:38:09.807Z"
-              }
-            },
-            "aggs": {
-              "2": {
-                "avg": {
-                  "field": "kubernetes.pod.memory.usage.node.pct"
-                }
-              }
-            }
-          },
-          "2": {
-            "avg": {
-              "field": "kubernetes.pod.memory.usage.node.pct"
-            }
-          }
-        }
-      }
-    },
-    "size": 0,
-    "fields": [
-      {
-        "field": "@timestamp",
-        "format": "date_time"
-      },
-      {
-        "field": "event.ingested",
-        "format": "date_time"
-      },
-      {
-        "field": "process.cpu.start_time",
-        "format": "date_time"
-      },
-      {
-        "field": "system.process.cpu.start_time",
-        "format": "date_time"
-      }
-    ],
-    "script_fields": {},
-    "stored_fields": [
-      "*"
-    ],
-    "runtime_mappings": {},
-    "_source": {
-      "excludes": []
-    },
-    "query": {
-      "bool": {
-        "must": [],
-        "filter": [
-          {
-            "match_phrase": {
-              "data_stream.dataset": "kubernetes.pod"
-            }
-          },
-          {
-            "range": {
-              "@timestamp": {
-                "format": "strict_date_optional_time",
-                "gte": "2023-01-19T10:38:09.807Z",
-                "lte": "2023-01-19T13:38:09.807Z"
-              }
-            }
-          }
-        ],
-        "should": [],
-        "must_not": []
-      }
-    }
-  }  
-},
-{
-  "name": "memory_usage_by_pod_last_15_minutes",
-  "operation-type": "search",
-  "body": {
-    "aggs": {
-      "0": {
-        "terms": {
-          "field": "kubernetes.pod.name",
-          "order": {
-            "2": "desc"
-          },
-          "size": 100
-        },
-        "aggs": {
-          "1": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "30s",
-              "time_zone": "Europe/Athens",
-              "extended_bounds": {
-                "min": "2023-01-19T13:23:09.807Z",
-                "max": "2023-01-19T13:38:09.807Z"
-              }
-            },
-            "aggs": {
-              "2": {
-                "avg": {
-                  "field": "kubernetes.pod.memory.usage.node.pct"
-                }
-              }
-            }
-          },
-          "2": {
-            "avg": {
-              "field": "kubernetes.pod.memory.usage.node.pct"
-            }
-          }
-        }
-      }
-    },
-    "size": 0,
-    "fields": [
-      {
-        "field": "@timestamp",
-        "format": "date_time"
-      },
-      {
-        "field": "event.ingested",
-        "format": "date_time"
-      },
-      {
-        "field": "process.cpu.start_time",
-        "format": "date_time"
-      },
-      {
-        "field": "system.process.cpu.start_time",
-        "format": "date_time"
-      }
-    ],
-    "script_fields": {},
-    "stored_fields": [
-      "*"
-    ],
-    "runtime_mappings": {},
-    "_source": {
-      "excludes": []
-    },
-    "query": {
-      "bool": {
-        "must": [],
-        "filter": [
-          {
-            "match_phrase": {
-              "data_stream.dataset": "kubernetes.pod"
-            }
-          },
-          {
-            "range": {
-              "@timestamp": {
-                "format": "strict_date_optional_time",
-                "gte": "2023-01-19T13:23:09.807Z",
-                "lte": "2023-01-19T13:38:09.807Z"
-              }
-            }
-          }
-        ],
-        "should": [],
-        "must_not": []
-      }
-    }
-  }  
-},
-{
-  "name": "memory_usage_by_pod_last_15_seconds",
-  "operation-type": "search",
-  "body": {
-    "aggs": {
-      "0": {
-        "terms": {
-          "field": "kubernetes.pod.name",
-          "order": {
-            "2": "desc"
-          },
-          "size": 100
-        },
-        "aggs": {
-          "1": {
-            "date_histogram": {
-              "field": "@timestamp",
-              "fixed_interval": "30s",
-              "time_zone": "Europe/Athens",
-              "extended_bounds": {
-                "min": "2023-01-19T13:37:54.807Z",
-                "max": "2023-01-19T13:38:09.807Z"
-              }
-            },
-            "aggs": {
-              "2": {
-                "avg": {
-                  "field": "kubernetes.pod.memory.usage.node.pct"
-                }
-              }
-            }
-          },
-          "2": {
-            "avg": {
-              "field": "kubernetes.pod.memory.usage.node.pct"
-            }
-          }
-        }
-      }
-    },
-    "size": 0,
-    "fields": [
-      {
-        "field": "@timestamp",
-        "format": "date_time"
-      },
-      {
-        "field": "event.ingested",
-        "format": "date_time"
-      },
-      {
-        "field": "process.cpu.start_time",
-        "format": "date_time"
-      },
-      {
-        "field": "system.process.cpu.start_time",
-        "format": "date_time"
-      }
-    ],
-    "script_fields": {},
-    "stored_fields": [
-      "*"
-    ],
-    "runtime_mappings": {},
-    "_source": {
-      "excludes": []
-    },
-    "query": {
-      "bool": {
-        "must": [],
-        "filter": [
-          {
-            "match_phrase": {
-              "data_stream.dataset": "kubernetes.pod"
-            }
-          },
-          {
-            "range": {
-              "@timestamp": {
-                "format": "strict_date_optional_time",
-                "gte": "2023-01-19T13:37:54.807Z",
-                "lte": "2023-01-19T13:38:09.807Z"
-              }
-            }
-          }
-        ],
-        "should": [],
-        "must_not": []
-      }
-    }
-  }  
-},
-{
   "name": "average_container_cpu_1day",
+  "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
     "aggs": {
@@ -573,7 +22,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30s",
+              "fixed_interval": "30m",
               "time_zone": "Europe/Athens",
               "extended_bounds": {
                 "min": 1680011661879,
@@ -650,6 +99,7 @@
 },
 {
   "name": "average_container_memory_usage_1d",
+  "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
     "aggs": {
@@ -665,7 +115,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30s",
+              "fixed_interval": "30m",
               "time_zone": "Europe/Athens",
               "extended_bounds": {
                 "min": 1680010574045,
@@ -742,6 +192,7 @@
 },
 {
   "name": "cpu_usage_per_container_1d",
+  "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
     "aggs": {
@@ -758,7 +209,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30s",
+              "fixed_interval": "30m",
               "time_zone": "Europe/Athens",
               "extended_bounds": {
                 "min": 1680011591174,
@@ -835,6 +286,7 @@
 },
 {
   "name": "cpu_usage_per_pod_1d",
+  "data-stream": "k8s-pod",
   "operation-type": "search",
   "body": {
     "aggs": {
@@ -850,7 +302,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30s",
+              "fixed_interval": "30m",
               "time_zone": "Europe/Athens",
               "extended_bounds": {
                 "min": 1680011802672,
@@ -927,6 +379,7 @@
 },
 {
   "name": "memory_usage_per_container_1d",
+  "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
     "aggs": {
@@ -942,7 +395,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30s",
+              "fixed_interval": "30m",
               "time_zone": "Europe/Athens",
               "extended_bounds": {
                 "min": 1680011037462,
@@ -1019,6 +472,7 @@
 },
 {
   "name": "memory_usage_per_pod_1d",
+  "data-stream": "k8s-pod",
   "operation-type": "search",
   "body": {
     "aggs": {
@@ -1034,7 +488,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30s",
+              "fixed_interval": "30m",
               "time_zone": "Europe/Athens",
               "extended_bounds": {
                 "min": 1680011551125,
@@ -1116,6 +570,7 @@
 },
 {
   "name": "unique_deployment_count_1d",
+  "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
     "aggs": {

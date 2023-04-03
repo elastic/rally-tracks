@@ -24,7 +24,7 @@
           }
         },
         {
-          "operation": "index-pod",
+          "operation": "index-container",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}}
         },
@@ -34,7 +34,7 @@
           "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
-          "operation": "index-container",
+          "operation": "index-pod",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}}
         },

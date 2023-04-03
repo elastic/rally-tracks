@@ -1,6 +1,21 @@
 {
-  "name": "index",
+  "name": "index-pod",
   "operation-type": "bulk",
+  "corpora" : "k8s-pod",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}}
+},
+{
+  "name": "index-node",
+  "operation-type": "bulk",
+  "corpora" : "k8s-node",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}}
+},
+{
+  "name": "index-container",
+  "operation-type": "bulk",
+  "corpora" : "k8s-container",
   "bulk-size": {{bulk_size | default(5000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },

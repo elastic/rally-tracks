@@ -647,7 +647,6 @@
   "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
-    {
       "aggs": {
         "0": {
           "terms": {
@@ -747,7 +746,6 @@
           },
           "size": 20
         },
-        {
           "aggs": {
             "0": {
               "terms": {
@@ -780,7 +778,9 @@
                 }
               }
             }
-          },
+          }
+        }
+      },
           "size": 0,
           "fields": [
             {
@@ -831,7 +831,7 @@
               "must_not": []
             }
           }
-        }
+        
         
   }  
 },
@@ -840,7 +840,6 @@
   "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
-    {
       "aggs": {
         "0": {
           "terms": {
@@ -932,7 +931,6 @@
   "data-stream": "k8s-pod",
   "operation-type": "search",
   "body": {
-    {
       "aggs": {
         "0": {
           "terms": {
@@ -1023,7 +1021,6 @@
   "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
-    {
       "aggs": {
         "0": {
           "terms": {
@@ -1114,7 +1111,6 @@
   "data-stream": "k8s-pod",
   "operation-type": "search",
   "body": {
-    {
       "aggs": {
         "0": {
           "terms": {
@@ -1201,11 +1197,10 @@
     }  
 },
 {
-  "name": "unique_deployment_count_1d",
+  "name": "updated_unique_deployment_count_1d",
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
-    {
       "aggs": {
         "0": {
           "cardinality": {
@@ -1270,7 +1265,6 @@
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
-    {
       "aggs": {
         "0": {
           "date_histogram": {

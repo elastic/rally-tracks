@@ -101,6 +101,41 @@
           "operation": "unique_deployment_count_1d",
           "warmup-iterations": 0,
           "iterations": 100
+        },
+        {
+          "operation": "updated_average_container_cpu_1day",
+          "warmup-iterations": 0,
+          "iterations": 100
+        },
+        {
+          "operation": "updated_average_container_memory_usage_1d",
+          "warmup-iterations": 0,
+          "iterations": 100
+        },
+        {
+          "operation": "updated_cpu_usage_per_container_1d",
+          "warmup-iterations": 0,
+          "iterations": 100
+        },
+        {
+          "operation": "updated_cpu_usage_per_pod_1d",
+          "warmup-iterations": 0,
+          "iterations": 100
+        },
+        {
+          "operation": "updated_memory_usage_per_container_1d",
+          "warmup-iterations": 0,
+          "iterations": 100
+        },
+        {
+          "operation": "updated_memory_usage_per_pod_1d",
+          "warmup-iterations": 0,
+          "iterations": 100
+        },
+        {
+          "operation": "updated_unique_deployment_count_1d",
+          "warmup-iterations": 0,
+          "iterations": 100
         }
       ]
     }

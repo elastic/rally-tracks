@@ -2,14 +2,14 @@
   "name": "index-container",
   "operation-type": "bulk",
   "corpora" : "k8s-container",
-  "bulk-size": {{bulk_size | default(1000)}},
+  "bulk-size": {{bulk_size | default(2000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {
   "name": "index-node",
   "operation-type": "bulk",
   "corpora" : "k8s-node",
-  "bulk-size": {{bulk_size | default(1000)}},
+  "bulk-size": {{bulk_size | default(2000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {

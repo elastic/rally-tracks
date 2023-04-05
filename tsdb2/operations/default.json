@@ -20,6 +20,56 @@
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {
+  "name": "touch-container-index",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/k8s-container/_doc",
+  "request-params": {
+    "pipeline": "timestamp_pipeline"
+  },
+  "body": {
+    "@timestamp": "2023-03-22T14:35:53.842Z",
+    "container": {
+      "id": "test"
+    },
+    "kubernetes": {
+      "container": {
+        "id": "test" 
+      },
+      "namespace": "test",
+      "pod": {
+        "name": "test",
+        "uid": "test"
+      }
+    }
+  }
+},
+{
+  "name": "touch-pod-index",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/k8s-pod/_doc",
+  "request-params": {
+    "pipeline": "timestamp_pipeline"
+  },
+  "body": {
+    "@timestamp": "2023-03-22T14:35:53.842Z",
+    "container": {
+      "id": "test"
+    },
+    "kubernetes": {
+      "container": {
+        "id": "test" 
+      },
+      "namespace": "test",
+      "pod": {
+        "name": "test",
+        "uid": "test"
+      }
+    }
+  }
+},
+{
   "name": "average_container_cpu_1day",
   "data-stream": "k8s-container",
   "operation-type": "search",

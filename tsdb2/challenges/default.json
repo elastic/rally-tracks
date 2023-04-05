@@ -13,6 +13,23 @@
           }
         },
         {
+          "name": "put-timestamp-pipeline",
+          "operation": {
+            "operation-type": "put-pipeline",
+            "id": "timestamp_pipeline",
+            "body": {
+              "processors": [
+                  {
+                      "set": {
+                          "field": "@timestamp",
+                          "value": {{'"{{_ingest.timestamp}}"'}}
+                      }
+                  }
+              ]
+            }
+          }
+        },
+        {
           "name": "check-cluster-health",
           "operation": {
             "operation-type": "cluster-health",
@@ -68,39 +85,128 @@
           "operation": "refresh"
         },
         {
-          "operation": "average_container_cpu_1day",
-          "warmup-iterations": 0,
-          "iterations": 100
+          "parallel": {
+            "completed-by": "average_container_cpu_1day",
+            "tasks": [
+              {
+                "name": "touch-container-index-1",
+                "operation": "touch-container-index",
+                "iterations": 20000
+              },
+              {
+                "operation": "average_container_cpu_1day",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
         },
         {
-          "operation": "average_container_memory_usage_1d",
-          "warmup-iterations": 0,
-          "iterations": 100
+          "parallel": {
+            "completed-by": "average_container_memory_usage_1d",
+            "tasks": [
+              {
+                "name": "touch-container-index-2",
+                "operation": "touch-container-index",
+                "iterations": 20000
+              },
+              {
+                "operation": "average_container_memory_usage_1d",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
         },
         {
-          "operation": "cpu_usage_per_container_1d",
-          "warmup-iterations": 0,
-          "iterations": 100
+          "parallel": {
+            "completed-by": "cpu_usage_per_container_1d",
+            "tasks": [
+              {
+                "name": "touch-container-index-4",
+                "operation": "touch-container-index",
+                "iterations": 20000
+              },
+              {
+                "operation": "cpu_usage_per_container_1d",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
         },
         {
-          "operation": "cpu_usage_per_pod_1d",
-          "warmup-iterations": 0,
-          "iterations": 100
+          "parallel": {
+            "completed-by": "memory_usage_per_container_1d",
+            "tasks": [
+              {
+                "name": "touch-container-index-5",
+                "operation": "touch-container-index",
+                "iterations": 20000
+              },
+              {
+                "operation": "memory_usage_per_container_1d",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
         },
         {
-          "operation": "memory_usage_per_container_1d",
-          "warmup-iterations": 0,
-          "iterations": 100
+          "parallel": {
+            "completed-by": "cpu_usage_per_pod_1d",
+            "tasks": [
+              {
+                "name": "touch-container-pod-1",
+                "operation": "touch-pod-index",
+                "iterations": 20000
+              },
+              {
+                "operation": "cpu_usage_per_pod_1d",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
         },
         {
-          "operation": "memory_usage_per_pod_1d",
-          "warmup-iterations": 0,
-          "iterations": 100
+          "parallel": {
+            "completed-by": "memory_usage_per_pod_1d",
+            "tasks": [
+              {
+                "name": "touch-container-pod-2",
+                "operation": "touch-pod-index",
+                "iterations": 20000
+              },
+              {
+                "operation": "memory_usage_per_pod_1d",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
         },
         {
-          "operation": "unique_deployment_count_1d",
-          "warmup-iterations": 0,
-          "iterations": 100
+          "parallel": {
+            "completed-by": "unique_deployment_count_1d",
+            "tasks": [
+              {
+                "name": "touch-container-index-6",
+                "operation": "touch-container-index",
+                "iterations": 20000
+              },
+              {
+                "name": "touch-container-pod-3",
+                "operation": "touch-pod-index",
+                "iterations": 20000
+              },
+              {
+                "operation": "unique_deployment_count_1d",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
         },
         {
           "operation": "updated_average_container_cpu_1day",

@@ -11,7 +11,11 @@
     },
     "properties": {
       "@timestamp": {
-        "format": "strict_date_optional_time||epoch_second",
+        {%- if ingest_pipeline is defined and ingest_pipeline == "grok" %}
+        "format": "strict_date_optional_time",
+        {%- else %}
+        "format": "epoch_second",
+        {%- endif %}
         "type": "date"
       },
       "message": {

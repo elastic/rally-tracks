@@ -25,7 +25,8 @@
   "method": "POST",
   "path": "/k8s-container/_doc",
   "request-params": {
-    "pipeline": "timestamp_pipeline"
+    "pipeline": "timestamp_pipeline",
+    "refresh": true
   },
   "body": {
     "@timestamp": "2023-03-22T14:35:53.842Z",
@@ -50,7 +51,8 @@
   "method": "POST",
   "path": "/k8s-pod/_doc",
   "request-params": {
-    "pipeline": "timestamp_pipeline"
+    "pipeline": "timestamp_pipeline",
+    "refresh": true.
   },
   "body": {
     "@timestamp": "2023-03-22T14:35:53.842Z",

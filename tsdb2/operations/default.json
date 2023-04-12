@@ -297,8 +297,9 @@
   }
 },
 {%- endfor %}
+{% for name, info in time_intervals.items() %}
 {
-  "name": "average_container_memory_usage_15_minutes",
+  "name": "average_container_memory_usage_{{name}}",
   "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
@@ -315,7 +316,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30s",
+              "fixed_interval": "{{info[0]}}",
               "time_zone": "Europe/Athens",
               "min_doc_count": 1
             },
@@ -375,7 +376,7 @@
             "range": {
               "@timestamp": {
                 "format": "strict_date_optional_time",
-                "gte": "2023-03-22T14:20:53.842Z",
+                "gte": "{{info[1]}}",
                 "lte": "{{end_time}}"
               }
             }
@@ -387,8 +388,10 @@
     }
   }
 },
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
 {
-  "name": "cpu_usage_per_container_15_minutes",
+  "name": "cpu_usage_per_container_{{name}}",
   "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
@@ -406,7 +409,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30s",
+              "fixed_interval": "{{info[0]}}",
               "time_zone": "Europe/Athens",
               "min_doc_count": 1
             },
@@ -466,7 +469,7 @@
             "range": {
               "@timestamp": {
                 "format": "strict_date_optional_time",
-                "gte": "2023-03-22T14:20:53.842Z",
+                "gte": "{{info[1]}}",
                 "lte": "{{end_time}}"
               }
             }
@@ -478,8 +481,10 @@
     }
   }
 },
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
 {
-  "name": "memory_usage_per_container_15_minutes",
+  "name": "memory_usage_per_container_{{name}}",
   "data-stream": "k8s-container",
   "operation-type": "search",
   "body": {
@@ -496,7 +501,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30s",
+              "fixed_interval": "{{info[0]}}",
               "time_zone": "Europe/Athens",
               "min_doc_count": 1
             },
@@ -556,7 +561,7 @@
             "range": {
               "@timestamp": {
                 "format": "strict_date_optional_time",
-                "gte": "2023-03-22T14:20:53.842Z",
+                "gte": "{{info[1]}}",
                 "lte": "{{end_time}}"
               }
             }
@@ -568,8 +573,10 @@
     }
   }  
 },
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
 {
-  "name": "unique_deployment_count_15_minutes",
+  "name": "unique_deployment_count_{{name}}",
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
@@ -620,7 +627,7 @@
             "range": {
               "@timestamp": {
                 "format": "strict_date_optional_time",
-                "gte": "2023-03-22T14:20:53.842Z",
+                "gte": "{{info[1]}}",
                 "lte": "{{end_time}}"
               }
             }
@@ -632,8 +639,10 @@
     }
   }  
 },
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
 {
-  "name": "percentile_cpu_usage_per_container_15_minutes",
+  "name": "percentile_cpu_usage_per_container_{{name}}",
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
@@ -641,7 +650,7 @@
         "0": {
           "date_histogram": {
             "field": "@timestamp",
-            "fixed_interval": "30s",
+            "fixed_interval": "{{info[0]}}",
             "time_zone": "Europe/Athens",
             "min_doc_count": 1
           },
@@ -697,7 +706,7 @@
               "range": {
                 "@timestamp": {
                   "format": "strict_date_optional_time",
-                  "gte": "2023-03-22T14:20:53.842Z",
+                  "gte": "{{info[1]}}",
                   "lte": "{{end_time}}"
                 }
               }
@@ -709,6 +718,7 @@
       }
     } 
 },
+{%- endfor %}
 {% for name, info in time_intervals.items() %}
 {
   "name": "status_per_pod_{{name}}",

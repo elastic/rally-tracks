@@ -756,11 +756,10 @@
     } 
 },
 {
-  "name": "updated_status_per_pod_15min",
+  "name": "status_per_pod_15min",
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
-    {
       "aggs": {
         "0": {
           "terms": {
@@ -954,7 +953,7 @@
                 "@timestamp": {
                   "format": "strict_date_optional_time",
                   "gte": "2023-03-22T14:20:53.842Z",
-                  "lte": "2023-03-22T14:35:53.842Z"
+                  "lte": "{{end_time}}"
                 }
               }
             }
@@ -966,11 +965,10 @@
     } 
 },
 {
-  "name": "updated_tx_network_usage_per_pod_15min",
+  "name": "tx_network_usage_per_pod_15min",
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
-    {
       "aggs": {
         "0": {
           "date_histogram": {
@@ -978,8 +976,7 @@
             "fixed_interval": "30s",
             "time_zone": "Europe/Athens",
             "min_doc_count": 1
-            }
-          },
+            },
           "aggs": {
             "1": {
               "terms": {
@@ -1023,8 +1020,8 @@
                 }
               }
             }
-          }
-        }
+          } 
+        }       
       },
       "size": 0,
       "fields": [
@@ -1098,7 +1095,7 @@
                 "@timestamp": {
                   "format": "strict_date_optional_time",
                   "gte": "2023-03-22T14:20:53.842Z",
-                "lte": "2023-03-22T14:35:53.842Z"
+                  "lte": "{{end_time}}"
                 }
               }
             }

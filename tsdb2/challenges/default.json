@@ -137,15 +137,15 @@
         },
         {
           "parallel": {
-            "completed-by": "updated_status_per_pod_15min",
+            "completed-by": "status_per_pod_15min",
             "tasks": [
               {
-                "name": "touch-container-pod-2",
+                "name": "touch-container-pod-3",
                 "operation": "touch-pod-index",
                 "iterations": 20000000
               },
               {
-                "operation": "updated_status_per_pod_15min",
+                "operation": "status_per_pod_15min",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -154,15 +154,15 @@
         },
         {
           "parallel": {
-            "completed-by": "updated_tx_network_usage_per_pod_15min",
+            "completed-by": "tx_network_usage_per_pod_15min",
             "tasks": [
               {
-                "name": "touch-container-pod-2",
+                "name": "touch-container-pod-4",
                 "operation": "touch-pod-index",
                 "iterations": 20000000
               },
               {
-                "operation": "updated_tx_network_usage_per_pod_15min",
+                "operation": "tx_network_usage_per_pod_15min",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -230,7 +230,7 @@
                 "iterations": 20000000
               },
               {
-                "name": "touch-container-pod-3",
+                "name": "touch-container-pod-5",
                 "operation": "touch-pod-index",
                 "iterations": 20000000
               },

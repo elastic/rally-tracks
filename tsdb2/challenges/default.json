@@ -86,7 +86,7 @@
         },
         {
           "parallel": {
-            "completed-by": "average_container_cpu_15min",
+            "completed-by": "average_container_cpu_15_minutes",
             "tasks": [
               {
                 "name": "touch-container-index-1",
@@ -94,7 +94,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "average_container_cpu_15min",
+                "operation": "average_container_cpu_15_minutes",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -103,7 +103,7 @@
         },
         {
           "parallel": {
-            "completed-by": "cpu_usage_per_pod_15min",
+            "completed-by": "cpu_usage_per_pod_15_minutes",
             "tasks": [
               {
                 "name": "touch-container-pod-1",
@@ -111,7 +111,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "cpu_usage_per_pod_15min",
+                "operation": "cpu_usage_per_pod_15_minutes",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -120,7 +120,7 @@
         },
         {
           "parallel": {
-            "completed-by": "memory_usage_per_pod_15min",
+            "completed-by": "cpu_usage_per_pod_2_hours",
             "tasks": [
               {
                 "name": "touch-container-pod-2",
@@ -128,7 +128,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "memory_usage_per_pod_15min",
+                "operation": "cpu_usage_per_pod_2_hours",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -137,7 +137,7 @@
         },
         {
           "parallel": {
-            "completed-by": "status_per_pod_15min",
+            "completed-by": "cpu_usage_per_pod_24_hours",
             "tasks": [
               {
                 "name": "touch-container-pod-3",
@@ -145,7 +145,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "status_per_pod_15min",
+                "operation": "cpu_usage_per_pod_24_hours",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -154,7 +154,7 @@
         },
         {
           "parallel": {
-            "completed-by": "tx_network_usage_per_pod_15min",
+            "completed-by": "memory_usage_per_pod_15_minutes",
             "tasks": [
               {
                 "name": "touch-container-pod-4",
@@ -162,7 +162,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "tx_network_usage_per_pod_15min",
+                "operation": "memory_usage_per_pod_15_minutes",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -171,7 +171,75 @@
         },
         {
           "parallel": {
-            "completed-by": "average_container_memory_usage_15min",
+            "completed-by": "memory_usage_per_pod_2_hours",
+            "tasks": [
+              {
+                "name": "touch-container-pod-5",
+                "operation": "touch-pod-index",
+                "iterations": 20000000
+              },
+              {
+                "operation": "memory_usage_per_pod_2_hours",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
+        },
+        {
+          "parallel": {
+            "completed-by": "memory_usage_per_pod_24_hours",
+            "tasks": [
+              {
+                "name": "touch-container-pod-6",
+                "operation": "touch-pod-index",
+                "iterations": 20000000
+              },
+              {
+                "operation": "memory_usage_per_pod_24_hours",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
+        },
+        {
+          "parallel": {
+            "completed-by": "status_per_pod_15_minutes",
+            "tasks": [
+              {
+                "name": "touch-container-pod-7",
+                "operation": "touch-pod-index",
+                "iterations": 20000000
+              },
+              {
+                "operation": "status_per_pod_15_minutes",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
+        },
+        {
+          "parallel": {
+            "completed-by": "tx_network_usage_per_pod_15_minutes",
+            "tasks": [
+              {
+                "name": "touch-container-pod-8",
+                "operation": "touch-pod-index",
+                "iterations": 20000000
+              },
+              {
+                "operation": "tx_network_usage_per_pod_15_minutes",
+                "warmup-iterations": 50,
+                "iterations": 200
+              }
+            ]
+          }
+        },
+        {
+          "parallel": {
+            "completed-by": "average_container_memory_usage_15_minutes",
             "tasks": [
               {
                 "name": "touch-container-index-2",
@@ -179,7 +247,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "average_container_memory_usage_15min",
+                "operation": "average_container_memory_usage_15_minutes",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -188,7 +256,7 @@
         },
         {
           "parallel": {
-            "completed-by": "cpu_usage_per_container_15min",
+            "completed-by": "cpu_usage_per_container_15_minutes",
             "tasks": [
               {
                 "name": "touch-container-index-4",
@@ -196,7 +264,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "cpu_usage_per_container_15min",
+                "operation": "cpu_usage_per_container_15_minutes",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -205,7 +273,7 @@
         },
         {
           "parallel": {
-            "completed-by": "memory_usage_per_container_15min",
+            "completed-by": "memory_usage_per_container_15_minutes",
             "tasks": [
               {
                 "name": "touch-container-index-5",
@@ -213,7 +281,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "memory_usage_per_container_15min",
+                "operation": "memory_usage_per_container_15_minutes",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -222,7 +290,7 @@
         },
         {
           "parallel": {
-            "completed-by": "unique_deployment_count_15min",
+            "completed-by": "unique_deployment_count_15_minutes",
             "tasks": [
               {
                 "name": "touch-container-index-6",
@@ -230,12 +298,12 @@
                 "iterations": 20000000
               },
               {
-                "name": "touch-container-pod-5",
+                "name": "touch-container-pod-9",
                 "operation": "touch-pod-index",
                 "iterations": 20000000
               },
               {
-                "operation": "unique_deployment_count_15min",
+                "operation": "unique_deployment_count_15_minutes",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -244,7 +312,7 @@
         },
         {
           "parallel": {
-            "completed-by": "percentile_cpu_usage_per_container_15min",
+            "completed-by": "percentile_cpu_usage_per_container_15_minutes",
             "tasks": [
               {
                 "name": "touch-container-index-7",
@@ -252,7 +320,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "percentile_cpu_usage_per_container_15min",
+                "operation": "percentile_cpu_usage_per_container_15_minutes",
                 "warmup-iterations": 50,
                 "iterations": 200
               }

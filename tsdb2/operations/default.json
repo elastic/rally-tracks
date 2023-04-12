@@ -1375,4 +1375,358 @@
         }
       }
     } 
+},
+{
+  "name": "updated_status_per_pod_1d",
+  "data-stream": "k8s-*",
+  "operation-type": "search",
+  "body": {
+    {
+      "aggs": {
+        "0": {
+          "terms": {
+            "field": "kubernetes.pod.name",
+            "order": {
+              "_key": "asc"
+            },
+            "size": 1000
+          },
+          "aggs": {
+            "1-bucket": {
+              "filter": {
+                "bool": {
+                  "must": [],
+                  "filter": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "exists": {
+                              "field": "kubernetes.pod.status.phase"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    }
+                  ],
+                  "should": [],
+                  "must_not": []
+                }
+              },
+              "aggs": {
+                "1-metric": {
+                  "top_metrics": {
+                    "metrics": {
+                      "field": "kubernetes.pod.status.phase"
+                    },
+                    "size": 1,
+                    "sort": {
+                      "@timestamp": "desc"
+                    }
+                  }
+                }
+              }
+            },
+            "2-bucket": {
+              "filter": {
+                "bool": {
+                  "must": [],
+                  "filter": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "exists": {
+                              "field": "kubernetes.pod.status.ready"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    }
+                  ],
+                  "should": [],
+                  "must_not": []
+                }
+              },
+              "aggs": {
+                "2-metric": {
+                  "top_metrics": {
+                    "metrics": {
+                      "field": "kubernetes.pod.status.ready"
+                    },
+                    "size": 1,
+                    "sort": {
+                      "@timestamp": "desc"
+                    }
+                  }
+                }
+              }
+            },
+            "3-bucket": {
+              "filter": {
+                "bool": {
+                  "must": [],
+                  "filter": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "exists": {
+                              "field": "kubernetes.pod.status.scheduled"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    }
+                  ],
+                  "should": [],
+                  "must_not": []
+                }
+              },
+              "aggs": {
+                "3-metric": {
+                  "top_metrics": {
+                    "metrics": {
+                      "field": "kubernetes.pod.status.scheduled"
+                    },
+                    "size": 1,
+                    "sort": {
+                      "@timestamp": "desc"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "size": 0,
+      "fields": [
+        {
+          "field": "@timestamp",
+          "format": "date_time"
+        },
+        {
+          "field": "event.ingested",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.container.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.event.metadata.timestamp.created",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.event.timestamp.first_occurrence",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.event.timestamp.last_occurrence",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.node.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.pod.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.service.created",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.system.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "process.cpu.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "system.process.cpu.start_time",
+          "format": "date_time"
+        }
+      ],
+      "script_fields": {},
+      "stored_fields": [
+        "*"
+      ],
+      "_source": {
+        "excludes": []
+      },
+      "query": {
+        "bool": {
+          "must": [],
+          "filter": [
+            {
+              "match_phrase": {
+                "data_stream.dataset": "kubernetes.state_pod"
+              }
+            },
+            {
+              "range": {
+                "@timestamp": {
+                  "format": "strict_date_optional_time",
+                  "gte": "2023-03-21T23:18:31.796Z",
+                  "lte": "2023-03-22T14:35:53.842Z"
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must_not": []
+        }
+      }
+    } 
+},
+{
+  "name": "updated_tx_network_usage_per_pod_1d",
+  "data-stream": "k8s-*",
+  "operation-type": "search",
+  "body": {
+    {
+      "aggs": {
+        "0": {
+          "date_histogram": {
+            "field": "@timestamp",
+            "fixed_interval": "30m",
+            "time_zone": "Europe/Athens",
+            "min_doc_count": 1
+            }
+          },
+          "aggs": {
+            "1": {
+              "terms": {
+                "field": "kubernetes.pod.name",
+                "order": {
+                  "2-bucket>2-metric": "desc"
+                },
+                "size": 10,
+                "shard_size": 25
+              },
+              "aggs": {
+                "2-bucket": {
+                  "filter": {
+                    "bool": {
+                      "must": [],
+                      "filter": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "exists": {
+                                  "field": "kubernetes.pod.cpu.usage.node.pct"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        }
+                      ],
+                      "should": [],
+                      "must_not": []
+                    }
+                  },
+                  "aggs": {
+                    "2-metric": {
+                      "avg": {
+                        "field": "kubernetes.pod.network.tx.bytes"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "size": 0,
+      "fields": [
+        {
+          "field": "@timestamp",
+          "format": "date_time"
+        },
+        {
+          "field": "event.ingested",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.container.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.event.metadata.timestamp.created",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.event.timestamp.first_occurrence",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.event.timestamp.last_occurrence",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.node.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.pod.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.service.created",
+          "format": "date_time"
+        },
+        {
+          "field": "kubernetes.system.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "process.cpu.start_time",
+          "format": "date_time"
+        },
+        {
+          "field": "system.process.cpu.start_time",
+          "format": "date_time"
+        }
+      ],
+      "script_fields": {},
+      "stored_fields": [
+        "*"
+      ],
+      "_source": {
+        "excludes": []
+      },
+      "query": {
+        "bool": {
+          "must": [],
+          "filter": [
+            {
+              "match_phrase": {
+                "data_stream.dataset": "kubernetes.pod"
+              }
+            },
+            {
+              "range": {
+                "@timestamp": {
+                  "format": "strict_date_optional_time",
+                  "gte": "2023-03-21T23:18:31.796Z",
+                  "lte": "2023-03-22T14:35:53.842Z"
+                }
+              }
+            }
+          ],
+          "should": [],
+          "must_not": []
+        }
+      }
+    }
 }

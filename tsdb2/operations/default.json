@@ -1,3 +1,5 @@
+{% set end_time = "2023-03-22T14:35:53.842Z" %}
+{% set time_intervals = {"15_minutes": ["30s"]} %}
 {
   "name": "index-container",
   "operation-type": "bulk",
@@ -71,7 +73,6 @@
     }
   }
 },
-
 {
   "name": "cpu_usage_per_pod_15min",
   "data-stream": "k8s-pod",
@@ -90,7 +91,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30m",
+              "fixed_interval": "30s",
               "time_zone": "Europe/Athens",
               "min_doc_count": 1
             },
@@ -180,7 +181,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30m",
+              "fixed_interval": "30s",
               "time_zone": "Europe/Athens",
               "min_doc_count": 1
             },
@@ -270,7 +271,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30m",
+              "fixed_interval": "30s",
               "time_zone": "Europe/Athens",
               "min_doc_count": 1
             },
@@ -451,7 +452,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30m",
+              "fixed_interval": "30s",
               "time_zone": "Europe/Athens",
               "min_doc_count": 1
             },
@@ -541,7 +542,7 @@
           "1": {
             "date_histogram": {
               "field": "@timestamp",
-              "fixed_interval": "30m",
+              "fixed_interval": "30s",
               "time_zone": "Europe/Athens",
               "min_doc_count": 1
             },
@@ -686,7 +687,7 @@
         "0": {
           "date_histogram": {
             "field": "@timestamp",
-            "fixed_interval": "30m",
+            "fixed_interval": "30s",
             "time_zone": "Europe/Athens",
             "min_doc_count": 1
           },

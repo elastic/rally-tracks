@@ -21,58 +21,6 @@
   "bulk-size": {{bulk_size | default(5000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
-{
-  "name": "touch-container-index",
-  "operation-type": "raw-request",
-  "method": "POST",
-  "path": "/k8s-container/_doc",
-  "request-params": {
-    "pipeline": "timestamp_pipeline",
-    "refresh": "true"
-  },
-  "body": {
-    "@timestamp": "2023-03-22T14:35:53.842Z",
-    "container": {
-      "id": "test"
-    },
-    "kubernetes": {
-      "container": {
-        "id": "test" 
-      },
-      "namespace": "test",
-      "pod": {
-        "name": "test",
-        "uid": "test"
-      }
-    }
-  }
-},
-{
-  "name": "touch-pod-index",
-  "operation-type": "raw-request",
-  "method": "POST",
-  "path": "/k8s-pod/_doc",
-  "request-params": {
-    "pipeline": "timestamp_pipeline",
-    "refresh": "true"
-  },
-  "body": {
-    "@timestamp": "2023-03-22T14:35:53.842Z",
-    "container": {
-      "id": "test"
-    },
-    "kubernetes": {
-      "container": {
-        "id": "test" 
-      },
-      "namespace": "test",
-      "pod": {
-        "name": "test",
-        "uid": "test"
-      }
-    }
-  }
-},
 {% for name, info in time_intervals.items() %}
 {
   "name": "cpu_usage_per_pod_{{name}}",
@@ -761,8 +709,9 @@
       }
     } 
 },
+{% for name, info in time_intervals.items() %}
 {
-  "name": "status_per_pod_15_minutes",
+  "name": "status_per_pod_{{name}}",
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
@@ -958,7 +907,7 @@
               "range": {
                 "@timestamp": {
                   "format": "strict_date_optional_time",
-                  "gte": "2023-03-22T14:20:53.842Z",
+                  "gte": "{{info[1]}}",
                   "lte": "{{end_time}}"
                 }
               }
@@ -970,8 +919,10 @@
       }
     } 
 },
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
 {
-  "name": "tx_network_usage_per_pod_15_minutes",
+  "name": "tx_network_usage_per_pod_{{name}}",
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
@@ -979,7 +930,7 @@
         "0": {
           "date_histogram": {
             "field": "@timestamp",
-            "fixed_interval": "30s",
+            "fixed_interval": "{{info[0]}}",
             "time_zone": "Europe/Athens",
             "min_doc_count": 1
             },
@@ -1100,7 +1051,7 @@
               "range": {
                 "@timestamp": {
                   "format": "strict_date_optional_time",
-                  "gte": "2023-03-22T14:20:53.842Z",
+                  "gte": "{{info[1]}}",
                   "lte": "{{end_time}}"
                 }
               }
@@ -1111,4 +1062,57 @@
         }
       }
     }
+},
+{%- endfor %}
+{
+  "name": "touch-container-index",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/k8s-container/_doc",
+  "request-params": {
+    "pipeline": "timestamp_pipeline",
+    "refresh": "true"
+  },
+  "body": {
+    "@timestamp": "2023-03-22T14:35:53.842Z",
+    "container": {
+      "id": "test"
+    },
+    "kubernetes": {
+      "container": {
+        "id": "test" 
+      },
+      "namespace": "test",
+      "pod": {
+        "name": "test",
+        "uid": "test"
+      }
+    }
+  }
+},
+{
+  "name": "touch-pod-index",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/k8s-pod/_doc",
+  "request-params": {
+    "pipeline": "timestamp_pipeline",
+    "refresh": "true"
+  },
+  "body": {
+    "@timestamp": "2023-03-22T14:35:53.842Z",
+    "container": {
+      "id": "test"
+    },
+    "kubernetes": {
+      "container": {
+        "id": "test" 
+      },
+      "namespace": "test",
+      "pod": {
+        "name": "test",
+        "uid": "test"
+      }
+    }
+  }
 }

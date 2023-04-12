@@ -756,7 +756,7 @@
     } 
 },
 {
-  "name": "updated_status_per_pod_1d",
+  "name": "updated_status_per_pod_15min",
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
@@ -953,7 +953,7 @@
               "range": {
                 "@timestamp": {
                   "format": "strict_date_optional_time",
-                  "gte": "2023-03-21T23:18:31.796Z",
+                  "gte": "2023-03-22T14:20:53.842Z",
                   "lte": "2023-03-22T14:35:53.842Z"
                 }
               }
@@ -966,7 +966,7 @@
     } 
 },
 {
-  "name": "updated_tx_network_usage_per_pod_1d",
+  "name": "updated_tx_network_usage_per_pod_15min",
   "data-stream": "k8s-*",
   "operation-type": "search",
   "body": {
@@ -975,7 +975,7 @@
         "0": {
           "date_histogram": {
             "field": "@timestamp",
-            "fixed_interval": "30m",
+            "fixed_interval": "30s",
             "time_zone": "Europe/Athens",
             "min_doc_count": 1
             }
@@ -1097,8 +1097,8 @@
               "range": {
                 "@timestamp": {
                   "format": "strict_date_optional_time",
-                  "gte": "2023-03-21T23:18:31.796Z",
-                  "lte": "2023-03-22T14:35:53.842Z"
+                  "gte": "2023-03-22T14:20:53.842Z",
+                "lte": "2023-03-22T14:35:53.842Z"
                 }
               }
             }

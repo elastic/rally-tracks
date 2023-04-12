@@ -137,7 +137,7 @@
         },
         {
           "parallel": {
-            "completed-by": "updated_status_per_pod_1d",
+            "completed-by": "updated_status_per_pod_15min",
             "tasks": [
               {
                 "name": "touch-container-pod-2",
@@ -145,7 +145,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "updated_status_per_pod_1d",
+                "operation": "updated_status_per_pod_15min",
                 "warmup-iterations": 50,
                 "iterations": 200
               }
@@ -154,7 +154,7 @@
         },
         {
           "parallel": {
-            "completed-by": "updated_tx_network_usage_per_pod_1d",
+            "completed-by": "updated_tx_network_usage_per_pod_15min",
             "tasks": [
               {
                 "name": "touch-container-pod-2",
@@ -162,7 +162,7 @@
                 "iterations": 20000000
               },
               {
-                "operation": "updated_tx_network_usage_per_pod_1d",
+                "operation": "updated_tx_network_usage_per_pod_15min",
                 "warmup-iterations": 50,
                 "iterations": 200
               }

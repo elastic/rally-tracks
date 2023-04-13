@@ -1076,53 +1076,17 @@
 {%- endfor %}
 {
   "name": "touch-container-index",
-  "operation-type": "raw-request",
-  "method": "POST",
-  "path": "/k8s-container/_doc",
-  "request-params": {
-    "pipeline": "timestamp_pipeline",
-    "refresh": "true"
-  },
-  "body": {
-    "@timestamp": "2023-03-22T14:35:53.842Z",
-    "container": {
-      "id": "test"
-    },
-    "kubernetes": {
-      "container": {
-        "id": "test" 
-      },
-      "namespace": "test",
-      "pod": {
-        "name": "test",
-        "uid": "test"
-      }
-    }
-  }
+  "operation-type": "bulk",
+  "corpora" : "k8s-container",
+  "bulk-size": 1,
+  "ingest-percentage": 100,
+  "pipeline": "timestamp_pipeline"
 },
 {
   "name": "touch-pod-index",
-  "operation-type": "raw-request",
-  "method": "POST",
-  "path": "/k8s-pod/_doc",
-  "request-params": {
-    "pipeline": "timestamp_pipeline",
-    "refresh": "true"
-  },
-  "body": {
-    "@timestamp": "2023-03-22T14:35:53.842Z",
-    "container": {
-      "id": "test"
-    },
-    "kubernetes": {
-      "container": {
-        "id": "test" 
-      },
-      "namespace": "test",
-      "pod": {
-        "name": "test",
-        "uid": "test"
-      }
-    }
-  }
+  "operation-type": "bulk",
+  "corpora" : "k8s-node",
+  "bulk-size": 1,
+  "ingest-percentage": 100,
+  "pipeline": "timestamp_pipeline"
 }

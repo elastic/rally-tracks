@@ -90,8 +90,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-1",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "cpu_usage_per_pod_15_minutes",
@@ -107,8 +106,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-2",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "cpu_usage_per_pod_2_hours",
@@ -124,8 +122,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-3",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "cpu_usage_per_pod_24_hours",
@@ -141,8 +138,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-4",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "memory_usage_per_pod_15_minutes",
@@ -158,8 +154,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-5",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "memory_usage_per_pod_2_hours",
@@ -175,8 +170,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-6",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "memory_usage_per_pod_24_hours",
@@ -192,8 +186,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-7",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "status_per_pod_15_minutes",
@@ -210,8 +203,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-8",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "status_per_pod_2_hours",
@@ -228,8 +220,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-9",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "status_per_pod_24_hours",
@@ -245,8 +236,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-10",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "tx_network_usage_per_pod_15_minutes",
@@ -262,8 +252,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-11",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "tx_network_usage_per_pod_2_hours",
@@ -279,8 +268,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-12",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "tx_network_usage_per_pod_24_hours",
@@ -296,8 +284,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-1",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "average_container_cpu_15_minutes",
@@ -313,8 +300,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-2",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "average_container_cpu_2_hours",
@@ -330,8 +316,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-3",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "average_container_cpu_24_hours",
@@ -347,8 +332,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-4",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "average_container_memory_usage_15_minutes",
@@ -364,8 +348,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-5",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "average_container_memory_usage_2_hours",
@@ -381,8 +364,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-6",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "average_container_memory_usage_24_hours",
@@ -398,8 +380,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-7",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "cpu_usage_per_container_15_minutes",
@@ -415,8 +396,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-8",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "cpu_usage_per_container_2_hours",
@@ -432,8 +412,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-9",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "cpu_usage_per_container_24_hours",
@@ -449,8 +428,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-10",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "memory_usage_per_container_15_minutes",
@@ -466,8 +444,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-11",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "memory_usage_per_container_2_hours",
@@ -483,8 +460,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-12",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "memory_usage_per_container_24_hours",
@@ -500,8 +476,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-13",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "unique_deployment_count_15_minutes",
@@ -517,8 +492,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-14",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "unique_deployment_count_2_hours",
@@ -534,8 +508,7 @@
             "tasks": [
               {
                 "name": "touch-container-pod-15",
-                "operation": "touch-pod-index",
-                "iterations": 20000000
+                "operation": "touch-pod-index"
               },
               {
                 "operation": "unique_deployment_count_24_hours",
@@ -551,8 +524,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-13",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "percentile_cpu_usage_per_container_15_minutes",
@@ -568,8 +540,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-14",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "percentile_cpu_usage_per_container_2_hours",
@@ -585,8 +556,7 @@
             "tasks": [
               {
                 "name": "touch-container-index-15",
-                "operation": "touch-container-index",
-                "iterations": 20000000
+                "operation": "touch-container-index"
               },
               {
                 "operation": "percentile_cpu_usage_per_container_24_hours",

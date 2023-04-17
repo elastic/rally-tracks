@@ -37,8 +37,27 @@ def random_url():
     return "http://elastic.co/%s?%s" % (random.choice(random_paths), random.choice(random_query_params))
 
 
+def random_search_result_item():
+    return {
+        "page": {
+            "url": random_url(),
+        },
+        "document": {
+            "id": random.choice(random_docs),
+            "index": random.choice(random_indices),
+        },
+    }
+
+
 def base_event_payload(session_id, user_id):
-    return {"session": {"id": session_id}, "user": {"id": user_id}}
+    return {
+        "session": {
+            "id": session_id,
+        },
+        "user": {
+            "id": user_id,
+        },
+    }
 
 
 def random_page_view_event(session_id, user_id):
@@ -47,8 +66,15 @@ def random_page_view_event(session_id, user_id):
         "payload": {
             **base_event_payload(session_id, user_id),
             **{
-                "page": {"url": random_url(), "title": random.choice(random_titles), "referrer": random_url()},
-                "document": {"id": random.choice(random_docs), "index": random.choice(random_indices)},
+                "page": {
+                    "url": random_url(),
+                    "title": random.choice(random_titles),
+                    "referrer": random_url(),
+                },
+                "document": {
+                    "id": random.choice(random_docs),
+                    "index": random.choice(random_indices),
+                },
             },
         },
     }
@@ -63,19 +89,17 @@ def random_search_event(session_id, user_id):
                 "search": {
                     "query": random.choice(random_queries),
                     "search_application": random.choice(random_search_applications),
-                    "page": {"current": random.randint(1, 100), "size": random.choice([10, 20, 50])},
-                    "sort": {"name": random.choice(["relevance", "name", "price"]), "direction": random.choice(["asc", "desc"])},
+                    "page": {
+                        "current": random.randint(1, 100),
+                        "size": random.choice([10, 20, 50]),
+                    },
+                    "sort": {
+                        "name": random.choice(["relevance", "name", "price"]),
+                        "direction": random.choice(["asc", "desc"]),
+                    },
                     "results": {
                         "total_results": random.randint(1, 10000),
-                        "items": list(
-                            map(
-                                lambda _: {
-                                    "page": {"url": random_url()},
-                                    "document": {"id": random.choice(random_docs), "index": random.choice(random_indices)},
-                                },
-                                range(num_result),
-                            )
-                        ),
+                        "items": list(map(lambda _: random_search_result_item(), range(num_result))),
                     },
                 }
             },

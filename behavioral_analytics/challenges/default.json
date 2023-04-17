@@ -1,0 +1,32 @@
+  {
+    "name": "event-ingest",
+    "description": "Send the whole event corpus to the behavioral_analytics ingest API",
+    "default": true,
+    "schedule": [
+      {
+        "operation": "delete-analytics-collection",
+        "clients": 1
+      },
+      {
+        "operation": "create-analytics-collection",
+        "clients": 1
+      },
+      {
+        "operation": "check-cluster-health",
+        "clients": 1
+      },
+      {
+        "operation": "event-ingest",
+        "warmup-time-period": {{ ingest_warmup | default(40) | int }},
+        "clients": {{ingest_clients | default(5) | int }},
+        "target-throughput": {{target_throughput | default(2000) | int }}
+      },
+      {
+        "operation": "refresh-after-index"
+      },
+
+      {
+        "operation": "wait-until-merges-finish-after-index"
+      }
+    ]
+  }

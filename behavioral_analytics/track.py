@@ -7,6 +7,7 @@ import re
 
 from esrally.track.params import *
 
+
 class EventBatchDataReader:
     def __init__(self, data_file, batch_size, file_source, collection_name):
         self.data_file = data_file
@@ -27,11 +28,11 @@ class EventBatchDataReader:
             docs_in_batch = 0
             while docs_in_batch < self.batch_size:
                 try:
-                  rows = next(self.file_source)
-                  for row in rows:
-                    docs_in_batch += 1
-                    event_data = json.loads(row)
-                    batch.append((event_data['event_type'], event_data['payload']))
+                    rows = next(self.file_source)
+                    for row in rows:
+                        docs_in_batch += 1
+                        event_data = json.loads(row)
+                        batch.append((event_data["event_type"], event_data["payload"]))
                 except StopIteration:
                     break
             if docs_in_batch == 0:
@@ -62,12 +63,7 @@ class EventIngestParamSource(ParamSource):
         except ValueError:
             raise exceptions.InvalidSyntax("'batch-size' must be numeric")
 
-        self.param_source = PartitionEventIngestParamSource(
-            self.corpora,
-            self.batch_size,
-            self.ingest_percentage,
-            self._params
-        )
+        self.param_source = PartitionEventIngestParamSource(self.corpora, self.batch_size, self.ingest_percentage, self._params)
 
     def float_param(self, params, name, default_value, min_value, max_value, min_operator=operator.le):
         try:
@@ -87,6 +83,7 @@ class EventIngestParamSource(ParamSource):
 
     def params(self):
         raise exceptions.RallyError("Do not use a EventIngestParamSource without partitioning")
+
 
 class PartitionEventIngestParamSource:
     def __init__(
@@ -141,7 +138,9 @@ class PartitionEventIngestParamSource:
         self.event_generator = self._create_event_generator(chain(*readers))
 
     def _bounds(self, docs, start_partition_index, end_partition_index):
-        return bounds(docs.number_of_documents, start_partition_index, end_partition_index, self.total_partitions, docs.includes_action_and_meta_data)
+        return bounds(
+            docs.number_of_documents, start_partition_index, end_partition_index, self.total_partitions, docs.includes_action_and_meta_data
+        )
 
     def _number_of_events(self, start_partition_index, end_partition_index):
         events = 0
@@ -174,19 +173,21 @@ class PartitionEventIngestParamSource:
         return EventBatchDataReader(docs.document_file, self.batch_size, source, self._collection_name(target))
 
     def _collection_name(self, index_name):
-        return re.search('behavioral_analytics-events-(.*)', index_name).group(1)
+        return re.search("behavioral_analytics-events-(.*)", index_name).group(1)
 
     def _create_event_generator(self, readers):
         for collection_name, batch in readers:
             for event_type, event_payload in batch:
                 params = self.original_params.copy()
-                params.update({
-                    "path": "/_application/analytics/%s/event/%s" % (collection_name, event_type),
-                    "method": "POST",
-                    "body": event_payload,
-                })
+                params.update(
+                    {
+                        "path": "/_application/analytics/%s/event/%s" % (collection_name, event_type),
+                        "method": "POST",
+                        "body": event_payload,
+                    }
+                )
                 yield params
 
 
 def register(registry):
-  registry.register_param_source("event-ingest-param-source", EventIngestParamSource)
+    registry.register_param_source("event-ingest-param-source", EventIngestParamSource)

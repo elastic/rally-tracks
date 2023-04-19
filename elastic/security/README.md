@@ -134,6 +134,10 @@ Users of this track may use this challenge to execute queries on an existing ind
 
 This challenge executes indexing and querying sequentially. Queries will be issued concurrently until `query_time_period` has elapsed.
 
+### Generate source events for detection rules (generate-alerts-source-events)
+
+This challenge is a demo usage of Geneve via the `events-emitter-source` parameter source, it generates source events but does not interact with anything else. It's executed as part of the `it/test_security.py` integration tests.
+
 ## Ratios
 
 By default, the track generates a dataset by sampling the source corpora randomly according to defined ratios. These ratios can be changed through the parameter `integration_ratios`. 

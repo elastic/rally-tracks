@@ -134,7 +134,7 @@ Users of this track may use this challenge to execute queries on an existing ind
 
 This challenge executes indexing and querying sequentially. Queries will be issued concurrently until `query_time_period` has elapsed.
 
-### Ratios
+## Ratios
 
 By default, the track generates a dataset by sampling the source corpora randomly according to defined ratios. These ratios can be changed through the parameter `integration_ratios`. 
 

@@ -126,7 +126,7 @@ In order to optimise indexing throughput, users may wish to consider modifying t
 
 ### Security Querying (security-querying)
 
-This challenge issues queries at the rate determined by the parameters `number_of_users`,  `workflow_time_interval` and `think_time_interval`. Queries will be issued for the period specified by the parameter `query_time_period`. No indexing will occur.
+This challenge simulates Kibana load via so-called workflows. Workflows execute concurrently at random intervals, and each workflow executes their actions sequentially until completion. An exponentially distributed random delay occurs between each action - the mean of this distribution can be controlled through the parameter `think_time_interval`. This simulates the user pausing and thinking between actions. A random delay (also exponentially distributed and controlled via a parameter `workflow_time_interval`) occurs between executing workflows. This is the main parameter users should use to control individual levels of user activity. Queries will be issued for the period specified by the parameter `query_time_period`. No indexing will occur.
 
 Users of this track may use this challenge to execute queries on an existing index for which bulk indexing has completed e.g. after using the challenge `#Security Indexing`.
 

@@ -1,5 +1,5 @@
 {% set search_iterations = 200 %} 
-{% set search_warmup_iterations = 50 %}    
+{% set search_warmup_iterations = 50 %}
     {
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus.",
@@ -86,487 +86,185 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {% for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "cpu_usage_per_pod_15_minutes",
+            "completed-by": "cpu_usage_per_pod_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-pod-1",
+                "name": "touch-pod-1-{{name}}",
                 "operation": "touch-pod-index"
               },
               {
-                "operation": "cpu_usage_per_pod_15_minutes",
+                "operation": "cpu_usage_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}}
               }
             ]
           }
         },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "cpu_usage_per_pod_2_hours",
+            "completed-by": "memory_usage_per_pod_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-pod-2",
+                "name": "touch-pod-2-{{name}}",
                 "operation": "touch-pod-index"
               },
               {
-                "operation": "cpu_usage_per_pod_2_hours",
+                "operation": "memory_usage_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}}
               }
             ]
           }
         },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "cpu_usage_per_pod_24_hours",
+            "completed-by": "status_per_pod_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-pod-3",
+                "name": "touch-pod-3-{{name}}",
                 "operation": "touch-pod-index"
               },
               {
-                "operation": "cpu_usage_per_pod_24_hours",
+                "operation": "status_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}}
               }
             ]
           }
         },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "memory_usage_per_pod_15_minutes",
+            "completed-by": "tx_network_usage_per_pod_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-pod-4",
+                "name": "touch-pod-4-{{name}}",
                 "operation": "touch-pod-index"
               },
               {
-                "operation": "memory_usage_per_pod_15_minutes",
+                "operation": "tx_network_usage_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}}
               }
             ]
           }
         },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "memory_usage_per_pod_2_hours",
+            "completed-by": "average_container_cpu_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-pod-5",
+                "name": "touch-container-1-{{name}}",
+                "operation": "touch-container-index"
+              },
+              {
+                "operation": "average_container_cpu_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "average_container_memory_usage_{{name}}",
+            "tasks": [
+              {
+                "name": "touch-container-2-{{name}}",
+                "operation": "touch-container-index"
+              },
+              {
+                "operation": "average_container_memory_usage_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "cpu_usage_per_container_{{name}}",
+            "tasks": [
+              {
+                "name": "touch-container-3-{{name}}",
+                "operation": "touch-container-index"
+              },
+              {
+                "operation": "cpu_usage_per_container_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "memory_usage_per_container_{{name}}",
+            "tasks": [
+              {
+                "name": "touch-container-4-{{name}}",
+                "operation": "touch-container-index"
+              },
+              {
+                "operation": "memory_usage_per_container_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "unique_deployment_count_{{name}}",
+            "tasks": [
+              {
+                "name": "touch-pod-5-{{name}}",
                 "operation": "touch-pod-index"
               },
               {
-                "operation": "memory_usage_per_pod_2_hours",
+                "operation": "unique_deployment_count_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}}
               }
             ]
           }
         },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "memory_usage_per_pod_24_hours",
+            "completed-by": "percentile_cpu_usage_per_container_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-pod-6",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "memory_usage_per_pod_24_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "status_per_pod_15_minutes",
-            "tasks": [
-              {
-                "name": "touch-container-pod-7",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "status_per_pod_15_minutes",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-
-        {
-          "parallel": {
-            "completed-by": "status_per_pod_2_hours",
-            "tasks": [
-              {
-                "name": "touch-container-pod-8",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "status_per_pod_2_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-
-        {
-          "parallel": {
-            "completed-by": "status_per_pod_24_hours",
-            "tasks": [
-              {
-                "name": "touch-container-pod-9",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "status_per_pod_24_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "tx_network_usage_per_pod_15_minutes",
-            "tasks": [
-              {
-                "name": "touch-container-pod-10",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "tx_network_usage_per_pod_15_minutes",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "tx_network_usage_per_pod_2_hours",
-            "tasks": [
-              {
-                "name": "touch-container-pod-11",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "tx_network_usage_per_pod_2_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "tx_network_usage_per_pod_24_hours",
-            "tasks": [
-              {
-                "name": "touch-container-pod-12",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "tx_network_usage_per_pod_24_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "average_container_cpu_15_minutes",
-            "tasks": [
-              {
-                "name": "touch-container-index-1",
+                "name": "touch-container-5-{{name}}",
                 "operation": "touch-container-index"
               },
               {
-                "operation": "average_container_cpu_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "average_container_cpu_2_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-2",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "average_container_cpu_2_hours",
+                "operation": "percentile_cpu_usage_per_container_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}}
               }
             ]
           }
-        },
-        {
-          "parallel": {
-            "completed-by": "average_container_cpu_24_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-3",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "average_container_cpu_24_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "average_container_memory_usage_15_minutes",
-            "tasks": [
-              {
-                "name": "touch-container-index-4",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "average_container_memory_usage_15_minutes",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "average_container_memory_usage_2_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-5",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "average_container_memory_usage_2_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "average_container_memory_usage_24_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-6",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "average_container_memory_usage_24_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "cpu_usage_per_container_15_minutes",
-            "tasks": [
-              {
-                "name": "touch-container-index-7",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "cpu_usage_per_container_15_minutes",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "cpu_usage_per_container_2_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-8",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "cpu_usage_per_container_2_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "cpu_usage_per_container_24_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-9",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "cpu_usage_per_container_24_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "memory_usage_per_container_15_minutes",
-            "tasks": [
-              {
-                "name": "touch-container-index-10",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "memory_usage_per_container_15_minutes",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "memory_usage_per_container_2_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-11",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "memory_usage_per_container_2_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "memory_usage_per_container_24_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-12",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "memory_usage_per_container_24_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "unique_deployment_count_15_minutes",
-            "tasks": [
-              {
-                "name": "touch-container-pod-13",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "unique_deployment_count_15_minutes",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "unique_deployment_count_2_hours",
-            "tasks": [
-              {
-                "name": "touch-container-pod-14",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "unique_deployment_count_2_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "unique_deployment_count_24_hours",
-            "tasks": [
-              {
-                "name": "touch-container-pod-15",
-                "operation": "touch-pod-index"
-              },
-              {
-                "operation": "unique_deployment_count_24_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "percentile_cpu_usage_per_container_15_minutes",
-            "tasks": [
-              {
-                "name": "touch-container-index-13",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "percentile_cpu_usage_per_container_15_minutes",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "percentile_cpu_usage_per_container_2_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-14",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "percentile_cpu_usage_per_container_2_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "completed-by": "percentile_cpu_usage_per_container_24_hours",
-            "tasks": [
-              {
-                "name": "touch-container-index-15",
-                "operation": "touch-container-index"
-              },
-              {
-                "operation": "percentile_cpu_usage_per_container_24_hours",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
-              }
-            ]
-          }
-        }
+        }{{ ", " if not loop.last else "" }}
+        {%- endfor %}
       ]
     }

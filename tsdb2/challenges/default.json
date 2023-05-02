@@ -1,3 +1,5 @@
+{% set search_iterations = 200 %} 
+{% set search_warmup_iterations = 50 %}    
     {
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus.",
@@ -94,8 +96,8 @@
               },
               {
                 "operation": "cpu_usage_per_pod_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -110,8 +112,8 @@
               },
               {
                 "operation": "cpu_usage_per_pod_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -126,8 +128,8 @@
               },
               {
                 "operation": "cpu_usage_per_pod_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -142,8 +144,8 @@
               },
               {
                 "operation": "memory_usage_per_pod_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -158,8 +160,8 @@
               },
               {
                 "operation": "memory_usage_per_pod_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -174,8 +176,8 @@
               },
               {
                 "operation": "memory_usage_per_pod_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -190,8 +192,8 @@
               },
               {
                 "operation": "status_per_pod_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -207,8 +209,8 @@
               },
               {
                 "operation": "status_per_pod_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -224,8 +226,8 @@
               },
               {
                 "operation": "status_per_pod_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -240,8 +242,8 @@
               },
               {
                 "operation": "tx_network_usage_per_pod_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -256,8 +258,8 @@
               },
               {
                 "operation": "tx_network_usage_per_pod_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -272,8 +274,8 @@
               },
               {
                 "operation": "tx_network_usage_per_pod_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -289,7 +291,7 @@
               {
                 "operation": "average_container_cpu_15_minutes",
                 "warmup-iterations": 50,
-                "iterations": 200
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -304,8 +306,8 @@
               },
               {
                 "operation": "average_container_cpu_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -320,8 +322,8 @@
               },
               {
                 "operation": "average_container_cpu_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -336,8 +338,8 @@
               },
               {
                 "operation": "average_container_memory_usage_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -352,8 +354,8 @@
               },
               {
                 "operation": "average_container_memory_usage_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -368,8 +370,8 @@
               },
               {
                 "operation": "average_container_memory_usage_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -384,8 +386,8 @@
               },
               {
                 "operation": "cpu_usage_per_container_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -400,8 +402,8 @@
               },
               {
                 "operation": "cpu_usage_per_container_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -416,8 +418,8 @@
               },
               {
                 "operation": "cpu_usage_per_container_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -432,8 +434,8 @@
               },
               {
                 "operation": "memory_usage_per_container_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -448,8 +450,8 @@
               },
               {
                 "operation": "memory_usage_per_container_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -464,8 +466,8 @@
               },
               {
                 "operation": "memory_usage_per_container_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -480,8 +482,8 @@
               },
               {
                 "operation": "unique_deployment_count_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -496,8 +498,8 @@
               },
               {
                 "operation": "unique_deployment_count_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -512,8 +514,8 @@
               },
               {
                 "operation": "unique_deployment_count_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -528,8 +530,8 @@
               },
               {
                 "operation": "percentile_cpu_usage_per_container_15_minutes",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -544,8 +546,8 @@
               },
               {
                 "operation": "percentile_cpu_usage_per_container_2_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }
@@ -560,8 +562,8 @@
               },
               {
                 "operation": "percentile_cpu_usage_per_container_24_hours",
-                "warmup-iterations": 50,
-                "iterations": 200
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}}
               }
             ]
           }

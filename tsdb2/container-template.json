@@ -77,10 +77,6 @@
           "mode": "{{index_mode | default('time_series')}}",
           {% if index_mode | default('time_series') is equalto 'time_series' %}
           "routing_path": [
-            "container.id",
-            "kubernetes.container.name",
-            "kubernetes.namespace",
-            "kubernetes.pod.name",
             "kubernetes.pod.uid"
           ],
           "time_series": {
@@ -257,7 +253,6 @@
               },
               "id": {
                 "type": "keyword",
-                "time_series_dimension": true
               },
               "image": {
                 "properties": {
@@ -616,7 +611,7 @@
                   },
                   "name": {
                     "type": "keyword",
-                    "time_series_dimension": true
+                    "ignore_above": 1024
                   },
                   "rootfs": {
                     "properties": {
@@ -704,7 +699,7 @@
               },
               "namespace": {
                 "type": "keyword",
-                "time_series_dimension": true
+                "ignore_above": 1024
               },
               "namespace_uid": {
                 "type": "keyword",
@@ -733,7 +728,7 @@
                   },
                   "name": {
                     "type": "keyword",
-                    "time_series_dimension": true
+                    "ignore_above": 1024
                   },
                   "uid": {
                     "type": "keyword",

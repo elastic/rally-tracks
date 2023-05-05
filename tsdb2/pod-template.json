@@ -76,9 +76,6 @@
           "mode": "{{index_mode | default('time_series')}}",
           {% if index_mode | default('time_series') is equalto 'time_series' %}
           "routing_path": [
-            "kubernetes.namespace",
-            "kubernetes.namespace_uid",
-            "kubernetes.pod.name",
             "kubernetes.pod.uid"
           ],
           "time_series": {
@@ -438,11 +435,11 @@
               },
               "namespace": {
                 "type": "keyword",
-                "time_series_dimension": true
+                "ignore_above": 1024
               },
               "namespace_uid": {
                 "type": "keyword",
-                "time_series_dimension": true
+                "ignore_above": 1024
               },
               "node": {
                 "properties": {
@@ -607,7 +604,7 @@
                   },
                   "name": {
                     "type": "keyword",
-                    "time_series_dimension": true
+                    "ignore_above": 1024
                   },
                   "network": {
                     "properties": {

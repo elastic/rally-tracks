@@ -1,0 +1,81 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "metricbeat information for elastic-app k8s cluster",
+  "composable-templates": [
+    {
+      "name": "pod-template",
+      "index-pattern": "k8s-pod*",
+      "delete-matching-indices": true,
+      "template": "pod-template.json"
+    },
+    {
+      "name": "container-template",
+      "index-pattern": "k8s-container*",
+      "delete-matching-indices": true,
+      "template": "container-template.json"
+    },
+    {
+      "name": "node-template",
+      "index-pattern": "k8s-node*",
+      "delete-matching-indices": true,
+      "template": "node-template.json"
+    }
+  ],
+  "data-streams": [
+    {
+      "name": "k8s-pod"
+    },
+    {
+      "name": "k8s-container"
+    },
+    {
+      "name": "k8s-node"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "k8s-pod",
+      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally",
+      "documents": [
+        {
+          "target-data-stream": "k8s-pod",
+          "source-file": "doc-ds-metrics-kubernetes.pod.json.bz2",
+          "document-count": 5121996,
+          "uncompressed-bytes": 54919757570
+        }
+      ]
+    },
+    {
+      "name": "k8s-container",
+      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally",
+      "documents": [
+        {
+          "target-data-stream": "k8s-container",
+          "source-file": "doc-ds-metrics-kubernetes.container.json.bz2",
+          "document-count": 9872554,
+          "uncompressed-bytes": 54828972018
+        }
+      ]
+    },
+    {
+      "name": "k8s-node",
+      "base-url": "https://storage.googleapis.com/cloudnative-rally/",
+      "documents": [
+        {
+          "target-data-stream": "k8s-node",
+          "source-file": "doc-ds-metrics-kubernetes.node.json.bz2",
+          "document-count": 955589,
+          "uncompressed-bytes": 9338980583
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

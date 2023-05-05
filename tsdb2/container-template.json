@@ -77,7 +77,8 @@
           "mode": "{{index_mode | default('time_series')}}",
           {% if index_mode | default('time_series') is equalto 'time_series' %}
           "routing_path": [
-            "kubernetes.pod.uid"
+            "kubernetes.pod.uid",
+            "kubernetes.container.name"
           ],
           "time_series": {
             "start_time": "2000-01-01T00:00:00Z",
@@ -277,7 +278,7 @@
               },
               "name": {
                 "type": "keyword",
-                "ignore_above": 1024
+                "time_series_dimension": true
               },
               "runtime": {
                 "type": "keyword",

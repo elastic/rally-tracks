@@ -46,7 +46,8 @@
       "on-conflict": "{{on_conflict | default('update')}}",
       "conflict-probability": {{conflict_probability | default(25)}},
       "recency": {{recency | default(0)}},
-      "corpora": "http_logs"
+      "corpora": "http_logs",
+      "detailed-results": true
     },
     {
       "name": "default",

@@ -336,4 +336,10 @@
           }
         }
       ]
+    },
+    {
+      "name": "update-querying",
+      "schedule": [
+        {{ rally.collect(parts="common/update-querying-schedule.json") }}
+      ]
     }

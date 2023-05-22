@@ -47,7 +47,7 @@
       "conflict-probability": {{conflict_probability | default(25)}},
       "recency": {{recency | default(0)}},
       "corpora": "http_logs",
-      "detailed-results": true
+      "detailed-results": {{detailed_results | default(false) | tojson}}
     },
     {
       "name": "default",

@@ -5,7 +5,7 @@
           "operation": {
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-              "index.number_of_shards": {{number_of_shards | default(1)}},
+              "index.number_of_shards": {{number_of_shards | default(0)}},
               "index.number_of_replicas": {{number_of_replicas | default(1)}},
               "index.store.type": "{{store_type | default('fs')}}"
             }{%- endif %}

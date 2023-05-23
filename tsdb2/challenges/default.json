@@ -1,5 +1,6 @@
-{% set search_iterations = 200 %} 
-{% set search_warmup_iterations = 50 %}
+{% set search_iterations = 10 %} 
+{% set search_warmup_iterations = 1 %}
+{% set target_interval = 3 %}
     {
       "name": "append-no-conflicts",
       "description": "Indexes the whole document corpus.",
@@ -90,15 +91,19 @@
         {
           "parallel": {
             "completed-by": "cpu_usage_per_pod_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-pod-1-{{name}}",
-                "operation": "touch-pod-index"
+                "operation": "touch-pod-index",
+                "clients": 1
               },
               {
                 "operation": "cpu_usage_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }
@@ -108,15 +113,19 @@
         {
           "parallel": {
             "completed-by": "memory_usage_per_pod_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-pod-2-{{name}}",
-                "operation": "touch-pod-index"
+                "operation": "touch-pod-index",
+                "clients": 1
               },
               {
                 "operation": "memory_usage_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }
@@ -126,15 +135,19 @@
         {
           "parallel": {
             "completed-by": "status_per_pod_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-pod-3-{{name}}",
-                "operation": "touch-pod-index"
+                "operation": "touch-pod-index",
+                "clients": 1
               },
               {
                 "operation": "status_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }
@@ -144,15 +157,19 @@
         {
           "parallel": {
             "completed-by": "tx_network_usage_per_pod_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-pod-4-{{name}}",
-                "operation": "touch-pod-index"
+                "operation": "touch-pod-index",
+                "clients": 1
               },
               {
                 "operation": "tx_network_usage_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }
@@ -162,15 +179,19 @@
         {
           "parallel": {
             "completed-by": "average_container_cpu_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-container-1-{{name}}",
-                "operation": "touch-container-index"
+                "operation": "touch-container-index",
+                "clients": 1
               },
               {
                 "operation": "average_container_cpu_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }
@@ -180,15 +201,19 @@
         {
           "parallel": {
             "completed-by": "average_container_memory_usage_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-container-2-{{name}}",
-                "operation": "touch-container-index"
+                "operation": "touch-container-index",
+                "clients": 1
               },
               {
                 "operation": "average_container_memory_usage_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }
@@ -198,15 +223,19 @@
         {
           "parallel": {
             "completed-by": "cpu_usage_per_container_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-container-3-{{name}}",
-                "operation": "touch-container-index"
+                "operation": "touch-container-index",
+                "clients": 1
               },
               {
                 "operation": "cpu_usage_per_container_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }
@@ -216,15 +245,19 @@
         {
           "parallel": {
             "completed-by": "memory_usage_per_container_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-container-4-{{name}}",
-                "operation": "touch-container-index"
+                "operation": "touch-container-index",
+                "clients": 1
               },
               {
                 "operation": "memory_usage_per_container_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }
@@ -234,15 +267,19 @@
         {
           "parallel": {
             "completed-by": "unique_deployment_count_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-pod-5-{{name}}",
-                "operation": "touch-pod-index"
+                "operation": "touch-pod-index",
+                "clients": 1
               },
               {
                 "operation": "unique_deployment_count_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }
@@ -252,15 +289,19 @@
         {
           "parallel": {
             "completed-by": "percentile_cpu_usage_per_container_{{name}}",
+            "clients": 2,
             "tasks": [
               {
                 "name": "touch-container-5-{{name}}",
-                "operation": "touch-container-index"
+                "operation": "touch-container-index",
+                "clients": 1
               },
               {
                 "operation": "percentile_cpu_usage_per_container_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}}
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
               }
             ]
           }

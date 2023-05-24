@@ -229,7 +229,7 @@ The following parameters are available:
 * `max_generated_corpus_size` (default: `2GB`) - Sets an upper limit for the size of the generated corpus, allowing the user to limit disk space usage. Accepts units `M`, `MB`, `G`, `GB`, `T`, `TB`, `P`, `PB`.
 * `force_data_generation` (default: `false`) - If set to `true`, file generation always takes place. If `false` and generated files exist in `{file_cache_dir}/{unique_id}` they are re-used and generation is skipped. The `unique_id` here will be a hash of the parameters which effect data generation - see [Data Generation](#2-data-generation).
 * `random_seed` (default: 13) - Files are generated through random sampling of the source corpora. This pseudo random selection process is seeded to ensure multiple runs of the track generate the same data - thus ensuring tests are repeatable. Changing this value or `data_generation_clients` will cause the generation of a different dataset. Must be an integer.
-* `integration_ratios` - A dictionary containing a key per integration. Each integration in turn has a configuration object. This object includes a `corpora` dictionary, containing the ratios of the source corpora to use for this integration in the generated corpus. The keys represent the corpus names and the values the ratios - ratios across all integrations must add up to 1. See [Ratios](#ratios) for further details.
+* `integration_ratios` - A dictionary containing a key per integration. Each integration in turn has a configuration object. This object includes a `corpora` dictionary, containing the ratios of the source corpora to use for this integration in the generated corpus. The keys represent the corpus names and the values the ratios. See [Ratios](#ratios) for further details.
 * `exclude_properties` - The list of fields to remove from the source corpora when generating a corpus. The keys represent the corpus names and the values a list of fields to remove per corpus. Only root fields can currently be removed from the JSON.
 
 ### Indexing Parameters
@@ -349,7 +349,7 @@ As an example, consider the following for the integrations `kafka` and `nginx`:
 }
 ```
 
-Note how in this case, the ratios associated with the corpora sum to 1 i.e. `0.25+0.25+0.1+0.25+0.1+0.3 = 1.0` allowing for easier calculation of the data distribution but this is not required.
+Note how in this case, the ratios associated with the corpora sum to 1 i.e. `0.25+0.25+0.1+0.1+0.3 = 1.0` allowing for easier calculation of the data distribution but this is not required. For cases when all integration rations do not add up to 1, [data_generator.py processor](https://github.com/elastic/rally-tracks/blob/e86cbff0666eb3c6a62afe109cb90581fc69f8b0/elastic/shared/track_processors/data_generator.py#LL252C15-L252C15) will recalculate the ratios.  
 
 
 The parameter `integration_ratios` is best set via a track parameter file as described here [here](https://esrally.readthedocs.io/en/stable/command_line_reference.html#track-params). 

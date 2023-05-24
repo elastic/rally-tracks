@@ -180,6 +180,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
+* `refresh_interval` (default not defined)
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `source_mode` (default: synthetic): Should the `_source` be `stored` to disk exactly as sent (the Elasticsearch default outside of TSDB mode), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
 * `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)

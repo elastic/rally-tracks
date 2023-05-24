@@ -49,11 +49,6 @@
           "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
-          "operation": "index-node",
-          "warmup-time-period": 240,
-          "clients": {{bulk_indexing_clients | default(8)}}
-        },
-        {
           "operation": "index-pod",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}}

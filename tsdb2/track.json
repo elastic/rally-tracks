@@ -15,12 +15,6 @@
       "index-pattern": "k8s-container*",
       "delete-matching-indices": true,
       "template": "container-template.json"
-    },
-    {
-      "name": "node-template",
-      "index-pattern": "k8s-node*",
-      "delete-matching-indices": true,
-      "template": "node-template.json"
     }
   ],
   "data-streams": [
@@ -29,9 +23,6 @@
     },
     {
       "name": "k8s-container"
-    },
-    {
-      "name": "k8s-node"
     }
   ],
   "corpora": [
@@ -56,18 +47,6 @@
           "source-file": "doc-ds-metrics-kubernetes.container.json.bz2",
           "document-count": 4931850,
           "uncompressed-bytes": 54957816792
-        }
-      ]
-    },
-    {
-      "name": "k8s-node",
-      "base-url": "https://storage.googleapis.com/cloudnative-rally/",
-      "documents": [
-        {
-          "target-data-stream": "k8s-node",
-          "source-file": "doc-ds-metrics-kubernetes.node.json.bz2",
-          "document-count": 955589,
-          "uncompressed-bytes": 9338980583
         }
       ]
     }

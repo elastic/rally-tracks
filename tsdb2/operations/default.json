@@ -8,13 +8,6 @@
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {
-  "name": "index-node",
-  "operation-type": "bulk",
-  "corpora" : "k8s-node",
-  "bulk-size": {{bulk_size | default(2000)}},
-  "ingest-percentage": {{ingest_percentage | default(100)}}
-},
-{
   "name": "index-pod",
   "operation-type": "bulk",
   "corpora" : "k8s-pod",
@@ -1085,7 +1078,7 @@
 {
   "name": "touch-pod-index",
   "operation-type": "bulk",
-  "corpora" : "k8s-node",
+  "corpora" : "k8s-pod",
   "bulk-size": 1,
   "ingest-percentage": 100,
   "pipeline": "timestamp_pipeline"

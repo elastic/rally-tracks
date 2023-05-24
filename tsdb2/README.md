@@ -19,13 +19,15 @@ This track contains templates for these 10 most common queries for this integrat
 Each of these queries is executed 3 times. First with last 15 minutes filter, then last 2 hours filter  and finally with a last 24 hour interval. In case a `date_histogram` is used in the query template then each of this variation uses a different interval. A fixed interval of 30 seconds, 1 minute and 30 minutes repectively.
 
 The k8s visualizations that run these queries don't run very often or under a high query load.
-Often these visualizations are loaded and then some time later re-loaded. This triggers the
-shards of the k8s pod and container data streams to go search-idle. However indexing always
-happen in the background. When shards become search-active again, a refresh need to occur
-as part of the search request. This track is designed to emulate this runtime behaviour.
+Often these visualizations are loaded and then some time later re-loaded. This triggers the shards of the k8s pod and container data streams to go search-idle. However indexing always happen in the background. When shards become search-active again, a refresh need to occur as part of the search request. This track is designed to emulate this runtime behaviour.
+
 This is done by concurrently indexing while the searches are ran. By lowering the `index.search.idle.after` setting from 30s (which is the default) to 1s. And force fully reducing the query load, so that one search gets executed every 3 seconds.
 
-[describe how data is generated]
+### Generation of data
+
+The data are being generated with the help of [elastic-integration-corpus-generator-tool](https://github.com/elastic/observability-dev/blob/main/docs/infraobs/cloudnative-monitoring/dev-docs/elastic-generator-tool-with-rally.md)
+
+Specific templates have been implemented as part of the generator tool. Based on them, sample datasets needed for the rally track have been generated and uploaded to GCP bucket with public access for reuse. For more information on how to use the tool and generate your corpora data please check the above link.
 
 ### Parameters
 

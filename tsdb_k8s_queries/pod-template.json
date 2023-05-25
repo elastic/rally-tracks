@@ -73,8 +73,7 @@
               "orchestrator.cluster.url"
             ]
           },
-          "mode": "{{index_mode | default('time_series')}}",
-          {% if index_mode | default('time_series') is equalto 'time_series' %}
+          "mode": "time_series",
           "routing_path": [
             "kubernetes.pod.uid",
             "orchestrator.cluster.url",
@@ -84,7 +83,6 @@
             "start_time": "2000-01-01T00:00:00Z",
             "end_time": "2099-12-31T23:59:59Z"
           },
-          {% endif %}
           "requests.cache.enable": false,
           "search": {
             "idle": {

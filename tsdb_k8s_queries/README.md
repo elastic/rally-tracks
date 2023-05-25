@@ -25,6 +25,11 @@ Often these visualizations are loaded and then some time later re-loaded. This t
 
 This is done by concurrently indexing while the searches are ran. By lowering the `index.search.idle.after` setting from 30s (which is the default) to 1s. And force fully reducing the query load, so that one search gets executed every 3 seconds.
 
+When the data sets are updated. The `end_time` constant and `time_intervals` dictonary in `operations/default.json` file must be updated.
+The `end_time` should match with the `@timestamp` field of latest document in the data files. Note that this timestamp should be the same for both pod and container k8s data sets.
+The `time_intervals` dictonary control for each search request template fixed interval used in date_histogram and the range query on the `@timestamp` field.
+The timestamp the dictonary value entry need to be updated based on what the `end_time` has been set. For example the value for `15_minutes` key the timestamp shoud be `end_time` - 15 minutes. Note that Kibana doesn't use dath math and therefor these queries don't use that too. This to emulate production as close as possible.
+
 ### Generation of data
 
 New Corpora data can be generated with the help of [Elastic-integration-corpus-generator-tool How_to_Guide](https://github.com/elastic/observability-dev/blob/main/docs/infraobs/cloudnative-monitoring/dev-docs/elastic-generator-tool-with-rally.md).
@@ -73,11 +78,6 @@ elastic-package stack up -d -vvv --version=8.7.1
   - metrics-kubernetes.pod.json
   - metrics-kubernetes.container.json 
 ```
-
-When the curposes are updated. The `end_time` constant and `time_intervals` dictonary in `operations/default.json` file must be updated.
-The `end_time` should match with the `@timestamp` field of latest document in the data files. Note that this timestamp should be the same for both pod and container k8s data sets.
-The `time_intervals` dictonary control for each search request template fixed interval used in date_histogram and the range query on the `@timestamp` field.
-The timestamp the dictonary value entry need to be updated based on what the `end_time` has been set. For example the value for `15_minutes` key the timestamp shoud be `end_time` - 15 minutes. Note that Kibana doesn't use dath math and therefor these queries don't use that too. This to emulate production as close as possible.
 
 ### Parameters
 

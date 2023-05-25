@@ -46,12 +46,12 @@
         {
           "operation": "index-container",
           "warmup-time-period": 240,
-          "clients": {{bulk_indexing_clients | default(8)}}
+          "clients": {{bulk_indexing_clients | default(6)}}
         },
         {
           "operation": "index-pod",
           "warmup-time-period": 240,
-          "clients": {{bulk_indexing_clients | default(8)}}
+          "clients": {{bulk_indexing_clients | default(6)}}
         },
         {
           "name": "refresh-after-index",

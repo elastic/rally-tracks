@@ -27,9 +27,52 @@ This is done by concurrently indexing while the searches are ran. By lowering th
 
 ### Generation of data
 
-The data are being generated with the help of [elastic-integration-corpus-generator-tool](https://github.com/elastic/observability-dev/blob/main/docs/infraobs/cloudnative-monitoring/dev-docs/elastic-generator-tool-with-rally.md)
+New Corpora data can being generated with the help of [Elastic-integration-corpus-generator-tool How_to_Guide](https://github.com/elastic/observability-dev/blob/main/docs/infraobs/cloudnative-monitoring/dev-docs/elastic-generator-tool-with-rally.md).
 
-Specific templates have been implemented as part of the generator tool. Based on them, sample datasets needed for the rally track have been generated and uploaded to GCP bucket with public access for reuse. For more information on how to use the tool and generate your corpora data please check the above link.
+Specific templates have already been implemented as part of the generator tool. Based on them, sample datasets needed for the rally track have already been generated and uploaded to public GCP bucket for reuse.
+
+### Generation of Templates
+
+Along with generation of data, a rally track might also need updated template files for the specific datasets that will index.
+
+Follow below process to extract the latest index templates for specific package version:
+
+1. Create local Elastic stack
+
+```bash
+elastic-package stack up -d -vvv --version=8.7.1
+```
+
+1. Login to Kibana (https://localhost:5601) and install specific integration. `Eg. Kubernetes Integration v1.39.1`
+   The installation of package will install index templates in local Elasticseacrch.
+
+2. Export needed environmental variables
+
+```bash
+ elastic-package stack shellinit
+ export ELASTIC_PACKAGE_ELASTICSEARCH_HOST=https://127.0.0.1:9200
+ export ELASTIC_PACKAGE_ELASTICSEARCH_USERNAME=elastic
+ export ELASTIC_PACKAGE_ELASTICSEARCH_PASSWORD=changeme
+ export ELASTIC_PACKAGE_KIBANA_HOST=https://127.0.0.1:5601
+ export ELASTIC_PACKAGE_CA_CERT=<home_path>/elastic-package/profiles/default/certs/ca-cert.pem
+ ```
+
+ 4. Use elastic-package dump command:
+
+```bash
+ elastic-package dump installed-objects --package kubernetes
+
+ [output] ...
+ packages exttracted to package-dump
+ ```
+
+5. Locate and use your needed index templates
+
+```bash
+ cd package-dump/index_templates
+  - metrics-kubernetes.pod.json
+  - metrics-kubernetes.container.json 
+```
 
 When the curposes are updated. The `end_time` constant and `time_intervals` dictonary in `operations/default.json` file must be updated.
 The `end_time` should match with the `@timestamp` field of latest document in the data files. Note that this timestamp should be the same for both pod and container k8s data sets.

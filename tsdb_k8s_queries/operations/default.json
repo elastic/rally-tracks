@@ -4,14 +4,14 @@
   "name": "index-container",
   "operation-type": "bulk",
   "corpora" : "k8s-container",
-  "bulk-size": {{bulk_size | default(2000)}},
+  "bulk-size": {{bulk_size | default(4000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {
   "name": "index-pod",
   "operation-type": "bulk",
   "corpora" : "k8s-pod",
-  "bulk-size": {{bulk_size | default(5000)}},
+  "bulk-size": {{bulk_size | default(7000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {% for name, info in time_intervals.items() %}

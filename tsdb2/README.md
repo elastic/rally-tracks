@@ -31,6 +31,11 @@ The data are being generated with the help of [elastic-integration-corpus-genera
 
 Specific templates have been implemented as part of the generator tool. Based on them, sample datasets needed for the rally track have been generated and uploaded to GCP bucket with public access for reuse. For more information on how to use the tool and generate your corpora data please check the above link.
 
+When the curposes are updated. The `end_time` constant and `time_intervals` dictonary in `operations/default.json` file must be updated.
+The `end_time` should match with the `@timestamp` field of latest document in the data files. Note that this timestamp should be the same for both pod and container k8s data sets.
+The `time_intervals` dictonary control for each search request template fixed interval used in date_histogram and the range query on the `@timestamp` field.
+The timestamp the dictonary value entry need to be updated based on what the `end_time` has been set. For example the value for `15_minutes` key the timestamp shoud be `end_time` - 15 minutes. Note that Kibana doesn't use dath math and therefor these queries don't use that too. This to emulate production as close as possible.
+
 ### Parameters
 
 This track allows to overwrite the following parameters using `--track-params`:

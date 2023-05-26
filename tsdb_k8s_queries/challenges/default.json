@@ -1,5 +1,5 @@
 {% set search_iterations = 10 %} 
-{% set search_warmup_iterations = 1 %}
+{% set search_warmup_iterations = 50 %}
 {% set target_interval = 3 %}
     {
       "name": "append-no-conflicts",

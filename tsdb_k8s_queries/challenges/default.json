@@ -51,7 +51,7 @@
         {
           "operation": "index-pod",
           "warmup-time-period": 240,
-          "clients": {{bulk_indexing_clients | default86)}}
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "name": "refresh-after-index",

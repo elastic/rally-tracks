@@ -47,7 +47,6 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'geoip'`. For example: `--challenge=append-index-only-with-ingest-pipeline --track-params="ingest_pipeline:'baseline'" `
 * `runtime_fields`: If defined the challenge loads the `unparsed` set of documents, indexing the `@timestamp` and the raw `message` field and the runtime fields required for the `runtime-fields` challenge.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
-* `detailed_results` (default: `false`): Adds additional [metadata](https://esrally.readthedocs.io/en/latest/track.html?highlight=detailed-results#meta-data) to challenges using the track `update` operation. Be aware using this option can add client side overhead due to the deserialization of API responses.
 
 ### License
 

@@ -71,6 +71,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
+* `detailed_results` (default: `false`): Adds additional [metadata](https://esrally.readthedocs.io/en/latest/track.html?highlight=detailed-results#meta-data) to challenges using the track `update` operation. Be aware using this option can add client side overhead due to the deserialization of API responses.
 
 ### License
 

@@ -209,6 +209,7 @@
     },
     {
       "name": "update",
+      "description": "Bulk indexes documents with conflicts with additional force-merge and refresh operations.",
       "schedule": [
         {
           "operation": "delete-index"
@@ -264,6 +265,7 @@
     },
     {
       "name": "update-only",
+      "description": "Bulk indexes documents with conflicts without additional force-merge and refresh operations.",
       "schedule": [
         {
           "operation": "delete-index"
@@ -934,6 +936,8 @@
     },
     {
       "name": "update-aggs-only",
+      "description": "Bulk indexes documents with conflicts and checks the performance of some aggregations",
+      "default": false,
       "schedule": [
         {{ rally.collect(parts="common/update-aggs-only-schedule.json") }}
       ]

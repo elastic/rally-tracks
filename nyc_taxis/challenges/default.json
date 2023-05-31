@@ -209,6 +209,7 @@
     },
     {
       "name": "update",
+      "description": "Bulk indexes documents with conflicts with additional force-merge and refresh operations.",
       "schedule": [
         {
           "operation": "delete-index"
@@ -259,6 +260,41 @@
         },
         {
           "operation": "wait-until-merges-finish"
+        }
+      ]
+    },
+    {
+      "name": "update-only",
+      "description": "Bulk indexes documents with conflicts without additional force-merge and refresh operations.",
+      "schedule": [
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              "index.store.type": "{{store_type | default('fs')}}"
+            }{%- endif %}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "nyc_taxis",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "update",
+          "warmup-time-period": 1200,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         }
       ]
     },
@@ -894,5 +930,13 @@
           "warmup-iterations": 10,
           "iterations": 50
         }
+      ]
+    },
+    {
+      "name": "update-aggs-only",
+      "description": "Bulk indexes documents with conflicts and checks the performance of some aggregations",
+      "default": false,
+      "schedule": [
+        {{ rally.collect(parts="common/update-aggs-only-schedule.json") }}
       ]
     }

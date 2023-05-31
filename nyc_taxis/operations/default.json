@@ -12,7 +12,8 @@
       "conflicts": "{{conflicts | default('random')}}",
       "on-conflict": "{{on_conflict | default('update')}}",
       "conflict-probability": {{conflict_probability | default(25)}},
-      "recency": {{recency | default(0)}}
+      "recency": {{recency | default(0)}},
+      "detailed-results": {{detailed_results | default(false) | tojson}}
     },
     {
       "name": "wait-until-merges-finish",

@@ -61,7 +61,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `conflicts` (default: "random"): Type of id conflicts to simulate. Valid values are: 'sequential' (A document id is replaced with a document id with a sequentially increasing id), 'random' (A document id is replaced with a document id with a random other id).
-* `conflict_probability` (default: 25): A number between 0 and 100 that defines the probability of id conflicts. Only used by the `update` challenge. Combining ``conflicts=sequential`` and ``conflict-probability=0`` makes Rally generate index ids by itself, instead of relying on Elasticsearch's `automatic id generation <https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html#_automatic_id_generation>`_.
+* `conflict_probability` (default: 25): A number between 0 and 100 that defines the probability of id conflicts. Only used by the `update` challenge. Combining ``conflicts=sequential`` and ``conflict-probability=0`` makes Rally generate index ids by itself, instead of relying on Elasticsearch's [automatic id generation](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html#_automatic_id_generation).
 * `on_conflict` (default: "index"): Whether to use an "index" or an "update" action when simulating an id conflict. Only used by the `update` challenge.
 * `recency` (default: 0): A number between 0 and 1 that defines whether to bias towards more recent ids when simulating conflicts. See the [Rally docs](http://esrally.readthedocs.io/en/latest/track.html#bulk) for the full definition of this parameter. Only used by the `update` challenge.
 * `number_of_replicas` (default: 0)
@@ -71,6 +71,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
+* `detailed_results` (default: `false`): Adds additional [metadata](https://esrally.readthedocs.io/en/latest/track.html?highlight=detailed-results#meta-data) to challenges using the track `update` operation. Be aware using this option can add client side overhead due to the deserialization of API responses.
 
 ### License
 

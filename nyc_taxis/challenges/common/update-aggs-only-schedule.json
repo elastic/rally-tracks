@@ -1,0 +1,150 @@
+{
+  "operation": "delete-index"
+},
+{
+  "operation": {
+    "operation-type": "create-index",
+    "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+      "index.store.type": "{{store_type | default('fs')}}",
+      "index.codec": "best_compression",
+      "index.refresh_interval": "30s",
+      "index.translog.flush_threshold_size": "4g"
+    }{%- endif %}
+  }
+},
+{
+  "name": "check-cluster-health",
+  "operation": {
+    "operation-type": "cluster-health",
+    "index": "nyc_taxis",
+    "request-params": {
+      "wait_for_status": "{{cluster_health | default('green')}}",
+      "wait_for_no_relocating_shards": "true"
+    },
+    "retry-until-success": true
+  }
+},
+{
+  "operation": "update",
+  "warmup-time-period": 240,
+  "clients": {{bulk_indexing_clients | default(8)}},
+  "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+},
+{
+  "operation": "date_histogram_calendar_interval",
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "date_histogram_calendar_interval_with_tz",
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "date_histogram_fixed_interval",
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "date_histogram_fixed_interval_with_tz",
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "date_histogram_fixed_interval_with_metrics",
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "auto_date_histogram",
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "auto_date_histogram_with_tz",
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "auto_date_histogram_with_metrics",
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "composite-terms",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "composite-histogram",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "composite-date_histogram-daily",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "composite-date_histogram-weekly",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "composite-date_histogram-monthly",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "composite-geotile_grid-precision-8",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "composite-geotile_grid-precision-12",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "composite-geotile_grid-precision-15",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "sampler-keyword",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "sampler-numeric",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "percentiles-tdigest-compression-default",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "percentiles-tdigest-compression-200",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+},
+{
+  "operation": "multi_terms-keyword",
+  "clients": 1,
+  "warmup-iterations": 10,
+  "iterations": 50
+}

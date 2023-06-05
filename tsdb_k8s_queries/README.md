@@ -1,6 +1,6 @@
 ## TSDB k8s query track
 
-This track main goal is keeping track of the performance of common k8s integration search requests.
+The main goal of the TSDB k8s query track is to measure the performance of common k8s integration search requests.
 The queries, index templates and corpus data try to match production as close as possible.
 
 ### The search requests

@@ -18,7 +18,7 @@ The search requests of the following visualizations have been included in this t
 * Transmitted network usage per pod.
 
 The search request is sourced from Kibana Lens in the k8s integration. For each of this search request a template is defined in operations.
-From each template three search requests are generated. First with last 15 minutes filter, then last 2 hours filter and finally with a last 24 hour interval. In case a `date_histogram` is used in the query template then each of this variation uses a different interval. A fixed interval of 30 seconds, 1 minute and 30 minutes repectively.
+From each template, three search requests are generated. First with the last 15 minutes filter, then the last 2 hours filter, and finally with a last 24-hour interval. In case a `date_histogram` is used in the query template then each of these variations uses a different interval. A fixed interval of 30 seconds, 1 minute, and 30 minutes respectively.
 
 The k8s visualizations that run these queries don't run very often or under a high query load.
 Often these visualizations are loaded and then some time later re-loaded. This triggers the shards of the k8s pod and container data streams to go search-idle. However indexing always happen in the background. When shards become search-active again, a refresh need to occur as part of the search request. This track is designed to emulate this runtime behaviour.

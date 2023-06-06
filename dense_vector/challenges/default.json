@@ -84,6 +84,8 @@
     {
       "operation": {
         "operation-type": "force-merge",
+        "mode" : "polling",
+        
         "max-num-segments": 1,
         "request-timeout": 7200,
         "include-in-reporting": true

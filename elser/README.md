@@ -71,7 +71,7 @@ Once restored the MS Marco passage documents need to be run through ELSER to gen
 This is done by reindexing through an ingest pipeline containing the inference processor.
 
 
-Firt, put the pipeline
+First, put the pipeline
 ```  
 PUT _ingest/pipeline/elser
 {

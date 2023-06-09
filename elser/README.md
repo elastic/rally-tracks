@@ -37,7 +37,7 @@ is a file containing the inference response.
 
 if [ -z $1 ]
 then 
-	echo "Missing input file: usgae ./gen_queries.sh input_json"; 
+	echo "Missing input file: usage ./gen_queries.sh input_json"; 
 	exit 1
 fi
 

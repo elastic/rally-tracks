@@ -1,7 +1,7 @@
 {% import "rally.helpers" as rally with context %}
 {
   "version": 2,
-  "description": "Benchmark weighted terms queries on ELSER tokens",
+  "description": "Benchmark weighted terms queries on ELSER tokens on the MS MARCO passage dataset",
   "indices": [
     {
       "name": "msmarco-passage-collection-elser",

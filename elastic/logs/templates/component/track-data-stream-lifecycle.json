@@ -9,9 +9,7 @@
       }
     }
 {%- elif lifecycle == "dlm" -%}
-    "lifecycle": {
-      "data_retention": "30d"
-    }
+    "lifecycle": {}
 {%- endif -%}
   }
 }

@@ -49,7 +49,7 @@ elastic-package stack up -d -vvv --version=8.7.1
 ```
 
 1. Login to Kibana (https://localhost:5601) and install specific integration. `Eg. Kubernetes Integration v1.39.1`
-   The installation of package will install index templates in local Elasticseacrch.
+   The installation of package will install index templates in local Elasticsearch.
 
 2. Export needed environmental variables
 

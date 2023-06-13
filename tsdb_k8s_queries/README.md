@@ -59,7 +59,7 @@ elastic-package stack up -d -vvv --version=8.7.1
  export ELASTIC_PACKAGE_ELASTICSEARCH_USERNAME=elastic
  export ELASTIC_PACKAGE_ELASTICSEARCH_PASSWORD=changeme
  export ELASTIC_PACKAGE_KIBANA_HOST=https://127.0.0.1:5601
- export ELASTIC_PACKAGE_CA_CERT=<home_path>/elastic-package/profiles/default/certs/ca-cert.pem
+ export ELASTIC_PACKAGE_CA_CERT=~/.elastic-package/profiles/default/certs/ca-cert.pem
  ```
 
  4. Use elastic-package dump command:

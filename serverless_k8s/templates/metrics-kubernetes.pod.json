@@ -1,0 +1,38 @@
+{
+  "name": "metrics-kubernetes.pod-template",
+  "index_template": {
+    "index_patterns": [
+      "metrics-kubernetes.pod*"
+    ],
+    "template": {
+      "settings": {
+        "index": {}
+      },
+      "mappings": {
+        "_meta": {
+          "package": {
+            "name": "kubernetes"
+          },
+          "managed_by": "fleet",
+          "managed": true
+        }
+      }
+    },
+    "composed_of": [
+      "metrics-kubernetes.pod@package",
+      "metrics-kubernetes.pod@custom"
+    ],
+    "priority": 200,
+    "_meta": {
+      "package": {
+        "name": "kubernetes"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    },
+    "data_stream": {
+      "hidden": false,
+      "allow_custom_routing": false
+    }
+  }
+}

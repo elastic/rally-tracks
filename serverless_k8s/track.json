@@ -1,0 +1,70 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Serverless refresh benchmarks with a Kubernetes pod metrics dataset",
+  "composable-templates": [
+    {
+      "name": "rallybenchmark-template",
+      "index-pattern": "rallybenchmark",
+      "template": "templates/rallybenchmark.json",
+      "delete-matching-indices": true
+    },
+    {
+      "name": "metrics-kubernetes.pod-template",
+      "index-pattern": "metrics-kubernetes.pod*",
+      "template": "templates/metrics-kubernetes.pod.json",
+      "template-path": "index_template"
+    }
+  ],
+  "component-templates": [
+    {
+      "name": "metrics-kubernetes.pod@custom",
+      "template": "templates/metrics-kubernetes.pod@custom.json",
+      "template-path": "component_template"
+    },
+    {
+      "name": "metrics-kubernetes.pod@package",
+      "template": "templates/metrics-kubernetes.pod@package.json",
+      "template-path": "component_template"
+    }
+  ],
+  "data-streams": [
+    {
+      "name": "metrics-kubernetes.pod-rally"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "k8s-integration",
+      "documents": [
+        {
+          "source-file": "k8s-object-export.ndjson.bz2",
+          "base-url": "gs://rally-tracks/serverless_k8s",
+          "includes-action-and-meta-data": true,
+          "document-count": 21,
+          "uncompressed-bytes": 485077,
+          "compressed-bytes": 37834
+        }
+      ]
+    },
+    {
+      "name": "kubernetes-pod-metrics",
+      "documents": [
+        {
+          "source-file": "doc-ds-metrics-kubernetes.pod.json.bz2",
+          "target-data-stream": "metrics-kubernetes.pod-rally",
+          "base-url": "gs://rally-tracks/serverless_k8s",
+          "document-count": 8640000,
+          "uncompressed-bytes": 92412567091,
+          "compressed-bytes": 2272527391
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

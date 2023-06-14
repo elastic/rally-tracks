@@ -1,0 +1,662 @@
+{
+  "name": "metrics-kubernetes.pod@package",
+  "component_template": {
+    "template": {
+      "lifecycle": {},
+      "settings": {
+        "index": {
+          "number_of_shards": 1,
+          "number_of_replicas": 1,
+          "codec": "best_compression",
+          "mapping": {
+            "total_fields": {
+              "limit": "10000"
+            }
+          },
+          "query": {
+            "default_field": [
+              "cloud.account.id",
+              "cloud.availability_zone",
+              "cloud.instance.id",
+              "cloud.instance.name",
+              "cloud.machine.type",
+              "cloud.provider",
+              "cloud.region",
+              "cloud.project.id",
+              "cloud.image.id",
+              "container.id",
+              "container.image.name",
+              "container.name",
+              "host.architecture",
+              "host.hostname",
+              "host.id",
+              "host.mac",
+              "host.name",
+              "host.os.family",
+              "host.os.kernel",
+              "host.os.name",
+              "host.os.platform",
+              "host.os.version",
+              "host.os.build",
+              "host.os.codename",
+              "host.type",
+              "kubernetes.pod.name",
+              "kubernetes.pod.uid",
+              "kubernetes.namespace",
+              "kubernetes.node.name",
+              "kubernetes.node.hostname",
+              "kubernetes.node.uid",
+              "kubernetes.namespace_uid",
+              "kubernetes.replicaset.name",
+              "kubernetes.deployment.name",
+              "kubernetes.daemonset.name",
+              "kubernetes.statefulset.name",
+              "kubernetes.job.name",
+              "kubernetes.cronjob.name",
+              "kubernetes.container.name",
+              "kubernetes.container.image",
+              "ecs.version",
+              "service.address",
+              "service.type",
+              "orchestrator.cluster.name",
+              "orchestrator.cluster.url"
+            ]
+          }
+        }
+      },
+      "mappings": {
+        "_source": {
+          "mode": "synthetic"
+        },
+        "dynamic_templates": [
+          {
+            "container.labels": {
+              "path_match": "container.labels.*",
+              "mapping": {
+                "type": "keyword"
+              },
+              "match_mapping_type": "string"
+            }
+          },
+          {
+            "kubernetes.node.labels.*": {
+              "path_match": "kubernetes.node.labels.*",
+              "mapping": {
+                "type": "keyword"
+              },
+              "match_mapping_type": "*"
+            }
+          },
+          {
+            "kubernetes.node.annotations.*": {
+              "path_match": "kubernetes.node.annotations.*",
+              "mapping": {
+                "type": "keyword"
+              },
+              "match_mapping_type": "*"
+            }
+          },
+          {
+            "kubernetes.labels.*": {
+              "path_match": "kubernetes.labels.*",
+              "mapping": {
+                "type": "keyword"
+              },
+              "match_mapping_type": "*"
+            }
+          },
+          {
+            "kubernetes.annotations.*": {
+              "path_match": "kubernetes.annotations.*",
+              "mapping": {
+                "type": "keyword"
+              },
+              "match_mapping_type": "*"
+            }
+          },
+          {
+            "kubernetes.namespace_labels.*": {
+              "path_match": "kubernetes.namespace_labels.*",
+              "mapping": {
+                "type": "keyword"
+              },
+              "match_mapping_type": "*"
+            }
+          },
+          {
+            "kubernetes.namespace_annotations.*": {
+              "path_match": "kubernetes.namespace_annotations.*",
+              "mapping": {
+                "type": "keyword"
+              },
+              "match_mapping_type": "*"
+            }
+          },
+          {
+            "kubernetes.selectors.*": {
+              "path_match": "kubernetes.selectors.*",
+              "mapping": {
+                "type": "keyword"
+              },
+              "match_mapping_type": "*"
+            }
+          }
+        ],
+        "properties": {
+          "cloud": {
+            "properties": {
+              "availability_zone": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "image": {
+                "properties": {
+                  "id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "instance": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "provider": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "machine": {
+                "properties": {
+                  "type": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "project": {
+                "properties": {
+                  "id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "region": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "account": {
+                "properties": {
+                  "id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
+          },
+          "container": {
+            "properties": {
+              "image": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "network": {
+                "properties": {
+                  "ingress": {
+                    "properties": {
+                      "bytes": {
+                        "time_series_metric": "counter",
+                        "meta": {},
+                        "type": "long"
+                      }
+                    }
+                  },
+                  "egress": {
+                    "properties": {
+                      "bytes": {
+                        "time_series_metric": "counter",
+                        "meta": {},
+                        "type": "long"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "kubernetes": {
+            "properties": {
+              "container": {
+                "properties": {
+                  "image": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "node": {
+                "properties": {
+                  "uid": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "hostname": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "pod": {
+                "properties": {
+                  "uid": {
+                    "time_series_dimension": true,
+                    "type": "keyword"
+                  },
+                  "start_time": {
+                    "type": "date"
+                  },
+                  "memory": {
+                    "properties": {
+                      "rss": {
+                        "properties": {
+                          "bytes": {
+                            "time_series_metric": "gauge",
+                            "meta": {
+                              "unit": "percent"
+                            },
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "major_page_faults": {
+                        "time_series_metric": "counter",
+                        "meta": {},
+                        "type": "long"
+                      },
+                      "usage": {
+                        "properties": {
+                          "node": {
+                            "properties": {
+                              "pct": {
+                                "time_series_metric": "gauge",
+                                "meta": {
+                                  "unit": "percent"
+                                },
+                                "scaling_factor": 1000,
+                                "type": "scaled_float"
+                              }
+                            }
+                          },
+                          "bytes": {
+                            "time_series_metric": "gauge",
+                            "meta": {
+                              "unit": "byte"
+                            },
+                            "type": "long"
+                          },
+                          "limit": {
+                            "properties": {
+                              "pct": {
+                                "time_series_metric": "gauge",
+                                "meta": {
+                                  "unit": "percent"
+                                },
+                                "scaling_factor": 1000,
+                                "type": "scaled_float"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "available": {
+                        "properties": {
+                          "bytes": {
+                            "time_series_metric": "gauge",
+                            "meta": {
+                              "unit": "percent"
+                            },
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "page_faults": {
+                        "time_series_metric": "counter",
+                        "meta": {},
+                        "type": "long"
+                      },
+                      "working_set": {
+                        "properties": {
+                          "bytes": {
+                            "time_series_metric": "gauge",
+                            "meta": {
+                              "unit": "percent"
+                            },
+                            "type": "long"
+                          },
+                          "limit": {
+                            "properties": {
+                              "pct": {
+                                "time_series_metric": "gauge",
+                                "meta": {
+                                  "unit": "percent"
+                                },
+                                "scaling_factor": 1000,
+                                "type": "scaled_float"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "ip": {
+                    "type": "ip"
+                  },
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "cpu": {
+                    "properties": {
+                      "usage": {
+                        "properties": {
+                          "node": {
+                            "properties": {
+                              "pct": {
+                                "time_series_metric": "gauge",
+                                "meta": {
+                                  "unit": "percent"
+                                },
+                                "scaling_factor": 1000,
+                                "type": "scaled_float"
+                              }
+                            }
+                          },
+                          "nanocores": {
+                            "time_series_metric": "gauge",
+                            "meta": {
+                              "unit": "byte"
+                            },
+                            "type": "long"
+                          },
+                          "limit": {
+                            "properties": {
+                              "pct": {
+                                "time_series_metric": "gauge",
+                                "meta": {
+                                  "unit": "percent"
+                                },
+                                "scaling_factor": 1000,
+                                "type": "scaled_float"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "network": {
+                    "properties": {
+                      "tx": {
+                        "properties": {
+                          "bytes": {
+                            "time_series_metric": "counter",
+                            "meta": {
+                              "unit": "byte"
+                            },
+                            "type": "long"
+                          },
+                          "errors": {
+                            "time_series_metric": "counter",
+                            "meta": {},
+                            "type": "long"
+                          }
+                        }
+                      },
+                      "rx": {
+                        "properties": {
+                          "bytes": {
+                            "time_series_metric": "counter",
+                            "meta": {
+                              "unit": "byte"
+                            },
+                            "type": "long"
+                          },
+                          "errors": {
+                            "time_series_metric": "counter",
+                            "meta": {},
+                            "type": "long"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "statefulset": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "namespace": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "namespace_uid": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "replicaset": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "daemonset": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "job": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "cronjob": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "deployment": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
+          },
+          "orchestrator": {
+            "properties": {
+              "cluster": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "url": {
+                    "time_series_dimension": true,
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
+          },
+          "@timestamp": {
+            "ignore_malformed": false,
+            "type": "date"
+          },
+          "ecs": {
+            "properties": {
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "data_stream": {
+            "properties": {
+              "namespace": {
+                "type": "constant_keyword"
+              },
+              "type": {
+                "type": "constant_keyword"
+              },
+              "dataset": {
+                "type": "constant_keyword"
+              }
+            }
+          },
+          "service": {
+            "properties": {
+              "address": {
+                "time_series_dimension": true,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "host": {
+            "properties": {
+              "hostname": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "os": {
+                "properties": {
+                  "build": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "kernel": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "codename": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "text": {
+                        "type": "text"
+                      }
+                    }
+                  },
+                  "family": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "version": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "platform": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "domain": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "ip": {
+                "type": "ip"
+              },
+              "containerized": {
+                "type": "boolean"
+              },
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "mac": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "architecture": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    },
+    "_meta": {
+      "package": {
+        "name": "kubernetes"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    }
+  }
+}

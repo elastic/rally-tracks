@@ -1,0 +1,25 @@
+{
+  "name": "create-metrics-datastream",
+  "operation-type": "create-data-stream",
+  "data-stream": "metrics-kubernetes.pod-rally"
+},
+{
+  "name": "bulk-index-metrics",
+    "operation-type": "bulk",
+    "bulk-size": {{bulk_size | default(1000)}},
+    "corpora": "kubernetes-pod-metrics",
+    "ingest-percentage": {{ingest_percentage | default(100)}}
+},
+{
+  "name": "fast-refresh-index",
+    "operation-type": "bulk",
+    "bulk-size": {{fast_refresh_bulk_size | default(1)}},
+    "corpora": "k8s-integration",
+    "include-in-reporting": true
+},
+{
+  "name": "intermittent-manual-refresh",
+  "operation-type": "refresh",
+  "index": "metrics-kubernetes.pod-rally",
+  "include-in-reporting": true
+}

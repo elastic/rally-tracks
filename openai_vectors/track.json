@@ -1,0 +1,30 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark for vector search on nq dataset embedded with openai model of 1536 dims",
+  "indices": [
+    {
+      "name": "nq_openai_vectors",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "nq_openai_vectors",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 2680961,
+          "compressed-bytes": 33319300533,
+          "uncompressed-bytes": 89626708020
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

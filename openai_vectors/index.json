@@ -1,0 +1,36 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    }
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "_source": {
+      "enabled": false
+    },
+    "properties": {
+      "id" : {
+        "type" : "keyword"
+      },
+      "title" : {
+        "type" : "text"
+      },
+      "text" : {
+        "type" : "text"
+      },
+      "vector": {
+        "type": "dense_vector",
+        "dims" : 1536,
+        "index" : true,
+        "similarity": "dot_product",
+        "index_options": {
+          "type": "hnsw",
+          "m": 16,
+          "ef_construction": 100
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "template": {
+{% if not lifecycle or lifecycle == "ilm" -%}
+    "settings": {
+      "index": {
+        "lifecycle": {
+          "name": "logs"
+        }
+      }
+    }
+{%- elif lifecycle == "dlm" -%}
+    "lifecycle": {}
+{%- endif -%}
+  }
+}

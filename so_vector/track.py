@@ -42,7 +42,7 @@ class KnnParamSource:
                 "_source": False,
             }
             if filter in self._params:
-                result["body"]["query"]["script_score"]["query"] = self._params["filter"] 
+                result["body"]["query"]["script_score"]["query"] = self._params["filter"]
         else:
             result["body"] = {
                 "knn": {
@@ -54,7 +54,7 @@ class KnnParamSource:
                 "_source": False,
             }
             if filter in self._params:
-                result["body"]["knn"]["filter"] = self._params["filter"] 
+                result["body"]["knn"]["filter"] = self._params["filter"]
         return result
 
 

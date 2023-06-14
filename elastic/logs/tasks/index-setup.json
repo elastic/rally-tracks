@@ -8,6 +8,7 @@
   }
 },
 {%- endif %}
+{%- if not lifecycle or lifecycle == "ilm" %}
 {
   "name": "insert-ilm",
   "tags": ["setup"],
@@ -16,6 +17,7 @@
     "param-source": "add-track-path"
   }
 },
+{%- endif %}
 {
   "name": "delete-all-datastreams",
   "tags": ["setup"],

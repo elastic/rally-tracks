@@ -237,6 +237,7 @@ The following parameters are available:
 
 * `number_of_shards` (default: 1) - The number of primary shards to set per Data Stream. The same value is used for all Data Streams.
 * `number_of_replicas` (default: 1) - The number of replicas to set per Data Stream. The same value is used for all Data Streams.
+* `refresh_interval` (default: unset) - The Data Stream refresh interval. It is unset by default to use the Elasticsearch default refresh interval.
 * `bulk_indexing_clients` (default: 8) - The number of clients issuing indexing requests.
 * `bulk_size` (default: 1000) - The number of documents to send per indexing request.
 * `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 

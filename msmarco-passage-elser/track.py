@@ -1,6 +1,7 @@
 import itertools
-import os
 import json
+import os
+
 
 class WeightedTermsParamsSource:
     def __init__(self, track, params, **kwargs):
@@ -24,7 +25,7 @@ class WeightedTermsParamsSource:
         with open(os.path.join(cwd, self._tokens_file), "r") as file:
             self._query_tokens = json.load(file)
 
-        self._iters = 0        
+        self._iters = 0
 
     def partition(self, partition_index, total_partitions):
         return self
@@ -39,22 +40,17 @@ class WeightedTermsParamsSource:
             "query": {
                 "bool": {
                     "should": [
-                        {
-                            "term": {
-                                f"{self._field}": {
-                                    "value": f"{key}",
-                                    "boost": value
-                                }
-                            }    
-                        } for key, value in itertools.islice(query.items(), self._num_terms)
-                    ]                
+                        {"term": {f"{self._field}": {"value": f"{key}", "boost": value}}}
+                        for key, value in itertools.islice(query.items(), self._num_terms)
+                    ]
                 }
             },
-            "track_total_hits": self._track_total_hits
+            "track_total_hits": self._track_total_hits,
         }
         self._iters = (self._iters + 1) % len(self._query_tokens)
-        
+
         return result
+
 
 def register(registry):
     registry.register_param_source("weighted-terms-param-source", WeightedTermsParamsSource)

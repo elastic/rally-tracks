@@ -11,9 +11,9 @@
   "corpora": [
     {
       "name": "msmarco-passage-collection-elser",
+      "base-url": "https://rally-tracks.elastic.co/msmarco-passage-collection-elser",
       "documents": [
         {
-          "target-index": "msmarco-passage-collection-elser",
           "source-file": "msmarco-passage-collection-elser-documents.json.bz2",
           "document-count": 100000,
           "compressed-bytes": 78074178,

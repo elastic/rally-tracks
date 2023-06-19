@@ -901,7 +901,7 @@
           "filter": [
             {
               "match_phrase": {
-                "data_stream.dataset": "kubernetes.state_pod"
+                "data_stream.dataset": "kubernetes.pod"
               }
             },
             {

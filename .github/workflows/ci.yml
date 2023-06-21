@@ -68,7 +68,15 @@ jobs:
         run: python -m pip install .[develop]
       - name: "Run tests"
         run: hatch -v -e it run test
+        timeout-minutes: 120
         env:
           # elastic/endpoint fetches assets from GitHub, authenticate to avoid
           # being rate limited
           ASSETS_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            +      # Artifact will show up under "Artifacts" in the "Summary" page of runs
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: rally-tracks-compat-logs
+          path: /home/runner/.rally/logs/
+          if-no-files-found: error

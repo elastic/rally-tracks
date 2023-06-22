@@ -22,6 +22,7 @@ class KnnParamSource:
             for line in file:
                 self._queries.append(json.loads(line))
         self._iters = 0
+        self.infinite = True
 
     def partition(self, partition_index, total_partitions):
         return self
@@ -70,6 +71,7 @@ class KnnRecallParamSource:
         self._cache = params.get("cache", False)
         self._params = params
         self._queries = []
+        self.infinite = True
 
         cwd = os.path.dirname(__file__)
         with open(os.path.join(cwd, "queries.json"), "r") as file:

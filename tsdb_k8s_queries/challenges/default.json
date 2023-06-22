@@ -93,7 +93,7 @@
               {
                 "name": "touch-pod-1-{{name}}",
                 "operation": "touch-pod-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "cpu_usage_per_pod_{{name}}",
@@ -115,7 +115,7 @@
               {
                 "name": "touch-pod-2-{{name}}",
                 "operation": "touch-pod-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "memory_usage_per_pod_{{name}}",
@@ -137,7 +137,7 @@
               {
                 "name": "touch-pod-3-{{name}}",
                 "operation": "touch-pod-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "status_per_pod_{{name}}",
@@ -159,7 +159,7 @@
               {
                 "name": "touch-pod-4-{{name}}",
                 "operation": "touch-pod-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "tx_network_usage_per_pod_{{name}}",
@@ -181,7 +181,7 @@
               {
                 "name": "touch-container-1-{{name}}",
                 "operation": "touch-container-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "average_container_cpu_{{name}}",
@@ -203,7 +203,7 @@
               {
                 "name": "touch-container-2-{{name}}",
                 "operation": "touch-container-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "average_container_memory_usage_{{name}}",
@@ -225,7 +225,7 @@
               {
                 "name": "touch-container-3-{{name}}",
                 "operation": "touch-container-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "cpu_usage_per_container_{{name}}",
@@ -247,7 +247,7 @@
               {
                 "name": "touch-container-4-{{name}}",
                 "operation": "touch-container-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "memory_usage_per_container_{{name}}",
@@ -269,7 +269,7 @@
               {
                 "name": "touch-pod-5-{{name}}",
                 "operation": "touch-pod-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "unique_deployment_count_{{name}}",
@@ -291,7 +291,7 @@
               {
                 "name": "touch-container-5-{{name}}",
                 "operation": "touch-container-index",
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{concurrent_bulk_indexing_clients | default(6)}}
               },
               {
                 "operation": "percentile_cpu_usage_per_container_{{name}}",

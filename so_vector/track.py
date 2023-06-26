@@ -34,14 +34,14 @@ class KnnParamSource:
                     "script_score": {
                         "query": {"match_all": {}},
                         "script": {
-                            "source": "cosineSimilarity(params.query, 'titleVector') + 1.0",
+                            "source": "dotProduct(params.query, 'titleVector') + 1.0",
                             "params": {"query": self._queries[0]},
                         },
                     }
                 },
                 "_source": False,
             }
-            if filter in self._params:
+            if "filter" in self._params:
                 result["body"]["query"]["script_score"]["query"] = self._params["filter"]
         else:
             result["body"] = {
@@ -49,11 +49,11 @@ class KnnParamSource:
                     "field": "titleVector",
                     "query_vector": self._queries[0],
                     "k": self._params.get("k", 10),
-                    "num_candidates": self._params.get("num-candidates", 100),
+                    "num_candidates": self._params.get("num-candidates", 50),
                 },
                 "_source": False,
             }
-            if filter in self._params:
+            if "filter" in self._params:
                 result["body"]["knn"]["filter"] = self._params["filter"]
         return result
 

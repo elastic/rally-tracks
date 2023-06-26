@@ -84,8 +84,8 @@ elastic-package stack up -d -vvv --version=8.7.1
 This track allows to overwrite the following parameters using `--track-params`:
 
 * `bulk_size` (default: 9000)
-* `touch_bulk_size` (default: 500): The bulk size for bulk requests executed during searching.
-* `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
+* `touch_bulk_size` (default: 50): The bulk size for bulk requests executed during searching.
+* `bulk_indexing_clients` (default: 3): Number of clients that issue bulk indexing requests.
 * `touch_bulk_indexing_clients` (default: 4): Number of clients that issue bulk indexing for the bulk tasks that get executed during searching.
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.

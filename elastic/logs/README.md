@@ -314,6 +314,29 @@ compared baseline or there are other symptoms that we are in bad shape (excessiv
 Users of this track may use this challenge as base for nightly tests in regard to indices count (`data.initial.indices=20k`
 is good start point)
 
+### Cross Cluster Search + Cross Cluster Replication
+
+A common architecture for geographically dispersed Logging/o11y use cases is to use the Cross Cluster Search (CCS) functionality to fan out searches from a central (local) cluster to many 'remote' clusters. This challenge aims to benchmark the query performance of the various workflows as they are performed through CCS.
+
+All 'remote' clusters are configured on the 'local' cluster with the `remote*` prefix, this is achieved by using the `default` cluster specified in via `--target-hosts` as the 'local' cluster, and all others as 'remote' clusters.
+
+For example, the below `esrally` invocation would setup the cluster hosted in `us-east-1` as the 'local' cluster, and the `us-west-1` and `ap-southeast-1` clusters as `remote*` prefixed clusters. There is no limit on the number of 'remote' clusters that can be configured, but there can only be one 'local' cluster from which searches are executed.
+```
+esrally race --track=elastic/logs --client-options='{"default": {"basic_auth_user": "elastic", "basic_auth_password": "changeme"}, "us-west-1-cluster": {[...]}, "ap-southeast-1-cluster": {[...]}}' --target-hosts='{"default":{"https://elasticsearch-us-east-1:9200"}, "us-west-1-cluster":{"https://elasticsearch-us-west-1:9200}, "ap-southeast-1-cluster": {"https://elasticsearch-ap-southeast-1"}}'
+```
+
+#### (cross-clusters-search-and-replication)
+
+Indexes logs to the default (local) cluster, then replicates to all other clusters specified in 'target-hosts' using Cross Cluster Replication (CCR), finally searching across all clusters via Cross Cluster Search (CCS).
+
+Note that this challenge requires _all_ clusters to have the CCR feature licensed.
+
+#### (cross-clusters-search-and-snapshot)
+
+Indexes logs to the default (local) cluster, snapshots the resulting data streams and restores the snapshot across all other clusters specified in 'target-hosts', finally searching across all clusters via Cross Cluster Search (CCS).
+
+Note that this challenge requires you to be able to successfully create a snapshot repository using the `p_snapshot_repo_name`, `p_snapshot_repo_type`, and `many_clusters_snapshot_repo_settings` track parameters.
+
 ## Changing the Datasets
 
 The generated dataset is influenced by 2 key configurations:

@@ -46,7 +46,7 @@ async def create(es, params):
             create_data_stream = None
     if create_data_stream:
         logger.debug("Create data stream: [%s]", data_stream)
-        await es.indices.create_data_stream(data_stream)
+        await es.indices.create_data_stream(name=data_stream)
         ops += 1
     return ops, "ops"
 

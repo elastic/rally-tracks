@@ -15,6 +15,7 @@ Serverless Kubernetes is a track intended for benchmarking serverless Elasticsea
 | `manual_refresh_interval` | `15` | The interval, in seconds, for issuing manual refresh requests. |
 | `number_of_replicas` | `1` | The number of replicas to allocate to the corpus data stream. |
 | `number_of_shards` | `1` | The number of shards to allocate to the corpus data stream. |
+| `refresh_interval` | `unset` | The target data stream refresh interval; e.g., `5s`. If unset, the Elasticsearch default refresh interval is used. |
 
 ## Challenges
 
@@ -30,6 +31,7 @@ Index a metrics document corpus while performing intermittent manual refreshes o
 * `manual_refresh_interval` (default: `15`)
 * `number_of_replicas` (default: `1`)
 * `number_of_shards` (default: `1`)
+* `refresh_interval` (defaulit: `unset`)
 
 ### `append-no-conflicts-metrics-index-only`
 
@@ -41,6 +43,7 @@ Index a metrics document corpus. This challenge can be used as a baseline when c
 * `ingest_percentage` (default: `100`)
 * `number_of_replicas` (default: `1`)
 * `number_of_shards` (default: `1`)
+* `refresh_interval` (defaulit: `unset`)
 
 ### `append-no-conflicts-metrics-with-fast-refresh`
 
@@ -54,3 +57,4 @@ Index a metrics document corpus while indexing a small Kibana corpus to a separa
 * `fast_refresh_indexing_interval` (default: `15`)
 * `number_of_replicas` (default: `1`)
 * `number_of_shards` (default: `1`)
+* `refresh_interval` (defaulit: `unset`)

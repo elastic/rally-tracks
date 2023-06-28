@@ -3,6 +3,8 @@
 {% set search_iterations = 20 %} 
 {% set search_warmup_iterations = 50 %}
 {% set target_interval = 4 %}
+{% set touch_bulk_indexing_clients = touch_bulk_indexing_clients | default(3) %}
+{% set touch_bulk_size = touch_bulk_size | default(50) %}
 
 {% set end_time = "2023-05-16T21:00:00.000Z" %}
 {% set time_intervals = {"15_minutes": ["30s", "2023-05-16T20:45:00.000Z"], "2_hours": ["1m", "2023-05-16T19:00:00.000Z"], "24_hours": ["30m", "2023-05-15T21:00:00.000Z"]} %}

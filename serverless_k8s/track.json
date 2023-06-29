@@ -39,7 +39,7 @@
       "documents": [
         {
           "source-file": "k8s-object-export.json.bz2",
-          "base-url": "gs://rally-tracks/serverless_k8s",
+          "base-url": "https://rally-tracks.elastic.co/serverless_k8s",
           "includes-action-and-meta-data": true,
           "document-count": 21,
           "uncompressed-bytes": 485077,
@@ -53,7 +53,7 @@
         {
           "source-file": "doc-ds-metrics-kubernetes.pod.json.bz2",
           "target-data-stream": "metrics-kubernetes.pod-rally",
-          "base-url": "gs://rally-tracks/serverless_k8s",
+          "base-url": "https://rally-tracks.elastic.co/serverless_k8s",
           "document-count": 8640000,
           "uncompressed-bytes": 92412567091,
           "compressed-bytes": 2272527391

@@ -1,0 +1,30 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark for search with Wikipedia data",
+  "indices": [
+    {
+      "name": "wikipedia",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "wikipedia",
+      "base-url": "https://rally-tracks.elastic.co/wikipedia",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 27379,
+          "uncompressed-bytes": 973965149
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

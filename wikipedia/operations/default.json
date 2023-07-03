@@ -1,0 +1,12 @@
+{
+  "name": "knn-search-10-50-java",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": {
+    "terms": {
+      "tags": ["java"]
+    }
+  }
+}

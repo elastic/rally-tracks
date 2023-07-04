@@ -21,7 +21,6 @@ import logging
 
 
 class TrackIdGenerator:
-
     track_id_hash_parameters = [
         "raw-data-volume-per-day",
         "random-seed",

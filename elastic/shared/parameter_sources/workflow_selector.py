@@ -37,7 +37,6 @@ from shared.utils.track import mandatory
 
 
 class WorkflowSelectorParamSource:
-
     _file_sort_numeric_pattern = re.compile("([0-9]+)")
 
     def __init__(self, track, params, **kwargs):

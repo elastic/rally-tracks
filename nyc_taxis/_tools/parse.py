@@ -38,7 +38,7 @@ for f in ["pickup_datetime", "dropoff_datetime"]:
 
 def write_mappings():
     mappings = {}
-    for (k, v) in types.items():
+    for k, v in types.items():
         mappings[k] = {"type": v}
         if v == "date":
             mappings[k]["format"] = "yyyy-MM-dd HH:mm:ss"
@@ -94,7 +94,7 @@ def to_json(f):
             to_geo_point(d, "pickup")
             to_geo_point(d, "dropoff")
 
-            for (k, v) in d.items():
+            for k, v in d.items():
                 if k not in types:
                     raise Exception("Unknown field '%s'" % k)
                 t = types[k]

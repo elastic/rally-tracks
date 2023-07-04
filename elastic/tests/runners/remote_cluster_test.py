@@ -308,7 +308,6 @@ class TestConfigureCrossClusterReplication:
 
     @pytest.mark.asyncio
     async def test_configure_ccr(self, setup_es, setup_params):
-
         license = {
             "license": {
                 "status": "active",
@@ -403,7 +402,6 @@ class TestConfigureCrossClusterReplication:
 
     @pytest.mark.asyncio
     async def test_configure_ccr_invalid_license(self, setup_es, setup_params):
-
         license = {
             "license": {
                 "status": "active",

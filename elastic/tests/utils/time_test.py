@@ -135,7 +135,6 @@ def test_parse_invalid_time():
 
 
 def test_generate_new_bounds_preserve_interval():
-
     upper_bound = parse_date_optional_time("2020-01-03T12:00:00.000Z")
     lower_bound = parse_date_optional_time("2020-01-02T12:00:00.000Z")
 
@@ -149,7 +148,6 @@ def test_generate_new_bounds_preserve_interval():
 
 
 def test_generate_new_bounds_replace_interval():
-
     upper_bound = parse_date_optional_time("2020-01-03T12:00:00.000Z")
     lower_bound = parse_date_optional_time("2020-01-02T12:00:00.000Z")
 

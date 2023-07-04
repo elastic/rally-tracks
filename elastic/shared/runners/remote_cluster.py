@@ -64,7 +64,6 @@ class ConfigureRemoteClusters(Runner):
             )
 
     async def __call__(self, multi_es, params):
-
         local_cluster_name = params["local-cluster"]
         local_es = multi_es[local_cluster_name]
         self.logger.info(f"retrieving nodes from the local cluster [{local_es}]")

@@ -30,7 +30,7 @@ jobs:
       - uses: elastic/es-perf-github-status@v2
         if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
         with:
-          slack_webhook_url: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack_channel: ${{ secrets.SLACK_CHANNEL }}
           status: FAILED
 
@@ -59,7 +59,7 @@ jobs:
       - uses: elastic/es-perf-github-status@v2
         if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
         with:
-          slack_webhook_url: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack_channel: ${{ secrets.SLACK_CHANNEL }}
           status: FAILED
 
@@ -91,7 +91,7 @@ jobs:
       - uses: elastic/es-perf-github-status@v2
         if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
         with:
-          slack_webhook_url: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack_channel: ${{ secrets.SLACK_CHANNEL }}
           status: FAILED
       # Artifact will show up under "Artifacts" in the "Summary" page of runs

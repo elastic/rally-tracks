@@ -1069,7 +1069,7 @@
   "name": "touch-container-index",
   "operation-type": "bulk",
   "corpora" : "k8s-container",
-  "bulk-size": 1,
+  "bulk-size": {{touch_bulk_size}},
   "ingest-percentage": 100,
   "pipeline": "timestamp_pipeline"
 },
@@ -1077,7 +1077,7 @@
   "name": "touch-pod-index",
   "operation-type": "bulk",
   "corpora" : "k8s-pod",
-  "bulk-size": 1,
+  "bulk-size": {{touch_bulk_size}},
   "ingest-percentage": 100,
   "pipeline": "timestamp_pipeline"
 }

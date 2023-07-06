@@ -60,7 +60,7 @@ Index a metrics document corpus. This challenge can be used as a baseline when c
 
 ### `append-no-conflicts-metrics-with-fast-refresh`
 
-Index a metrics document corpus while indexing a small Kibana corpus to a separate fast refresh index. This challange simulates indexing to a smaller index with fast refresh enabled while concurrently bulk indexing to a larger data stream. The race ends once all fast refresh documents have been indexed.
+Index a metrics document corpus while indexing a small Kibana corpus to a separate fast refresh index. This challange simulates indexing to a smaller index with fast refresh enabled while concurrently bulk indexing to a larger data stream. The race ends once all fast refresh documents have been indexed. Test mode is not supported and will result in an error since the fast refresh corpus contains less than 1000 documents.
 
 #### Parameters
 

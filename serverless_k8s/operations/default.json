@@ -11,6 +11,14 @@
     "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {
+  "name": "bulk-index-metrics-with-refresh",
+    "operation-type": "bulk",
+    "bulk-size": {{bulk_size | default(1000)}},
+    "corpora": "kubernetes-pod-metrics",
+    "ingest-percentage": {{ingest_percentage | default(100)}},
+    "refresh": "{{bulk_refresh | default('async')}}"
+},
+{
   "name": "fast-refresh-index",
     "operation-type": "bulk",
     "bulk-size": {{fast_refresh_bulk_size | default(1)}},

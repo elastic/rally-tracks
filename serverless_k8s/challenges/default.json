@@ -1,7 +1,62 @@
 {
   "name": "append-no-conflicts-metrics-index-with-refresh",
-  "description": "Index a metrics document corpus while performing intermittent refreshes of the target data stream.",
+  "description": "Index a metrics document corpus with control over refresh behavior.",
   "default": true,
+  "schedule": [
+    {
+      "name": "delete-data-streams",
+      "operation": {
+        "operation-type": "delete-data-stream"
+      }
+    },
+    {
+      "name": "delete-track-composable-templates",
+      "operation": {
+        "operation-type": "delete-composable-template",
+        "template": "metrics-kubernetes.pod-template"
+      }
+    },
+    {
+      "name": "delete-track-component-templates",
+      "operation": {
+        "operation-type": "delete-component-template"
+      }
+    },
+    {
+      "name": "create-track-component-templates",
+      "operation": {
+        "operation-type": "create-component-template"
+      }
+    },
+    {
+      "name": "create-track-composable-templates",
+      "operation": {
+        "operation-type": "create-composable-template"
+      }
+    },
+    {
+      "operation": "create-metrics-datastream"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": "bulk-index-metrics-with-refresh",
+      "clients": {{bulk_indexing_clients | default(8)}}
+    }
+  ]
+},
+{
+  "name": "append-no-conflicts-metrics-index-with-intermittent-refresh",
+  "description": "Index a metrics document corpus while performing intermittent refreshes of the target data stream.",
   "schedule": [
     {
       "name": "delete-data-streams",
@@ -179,7 +234,7 @@
     },
     {
       "parallel": {
-        "completed-by": "bulk-index-metrics",
+        "completed-by": "fast-refresh-index",
         "tasks": [
           {
             "operation": "bulk-index-metrics",
@@ -188,7 +243,7 @@
           {
             "operation": "fast-refresh-index",
             "clients": {{fast_refresh_clients | default(1)}},
-            "target-interval": {{fast_refresh_indexing_interval | default(15)}}
+            "target-interval": {{fast_refresh_indexing_interval | default(30)}}
           }
         ]
       }

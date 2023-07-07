@@ -1,5 +1,5 @@
-# Serverless Kubernetes Track
-Serverless Kubernetes is a track intended for benchmarking serverless Elasticsearch using a Kubernetes pod metrics dataset. A small corpus of Kibana object definitions is included for indexing with fast refresh enabled.
+# Kubernetes (K8s) Metrics Track
+K8s Metrics is a track intended for benchmarking refresh on Elasticsearch using a Kubernetes pod metrics dataset. A small corpus of Kibana object definition documents is included for indexing with fast refresh enabled.
 
 ## Track Parameters
 
@@ -22,7 +22,7 @@ Serverless Kubernetes is a track intended for benchmarking serverless Elasticsea
 
 ### `append-no-conflicts-metrics-index-with-refresh` (default)
 
-Index a metrics document corpus and sets the bulk API `refresh` query parameter. By default, Elasticsearch will perform refreshes asynchronously. This challenge is intended to capture refresh latency and the indexing throughput impact of refreshes during bulk indexing.
+Index a metrics document corpus and sets the bulk API `refresh` query parameter. By default, Elasticsearch will perform refreshes asynchronously. This challenge is intended to capture refresh latency and the indexing throughput impact of refreshes during bulk indexing. This challenge can be executed against both stateful and serverless Elasticsearch.
 
 #### Parameters
 
@@ -34,7 +34,7 @@ Index a metrics document corpus and sets the bulk API `refresh` query parameter.
 
 ### `append-no-conflicts-metrics-index-with-intermittent-refresh`
 
-Index a metrics document corpus while performing intermittent manual refreshes of the target data stream at the specified interval. This challenge is intended to capture refresh latency and the indexing throughput impact of refreshes.
+Index a metrics document corpus while performing intermittent manual refreshes of the target data stream at the specified interval. This challenge is intended to capture refresh latency and the indexing throughput impact of refreshes. This challenge can be executed against both stateful and serverless Elasticsearch.
 
 #### Parameters
 
@@ -48,7 +48,7 @@ Index a metrics document corpus while performing intermittent manual refreshes o
 
 ### `append-no-conflicts-metrics-index-only`
 
-Index a metrics document corpus. This challenge can be used as a baseline when comparing benchmarking results with other refresh-oriented track challenges.
+Index a metrics document corpus. This challenge can be used as a baseline when comparing benchmarking results with other refresh-oriented track challenges. This challenge can be executed against both stateful and serverless Elasticsearch.
 
 #### Parameters
 
@@ -60,7 +60,7 @@ Index a metrics document corpus. This challenge can be used as a baseline when c
 
 ### `append-no-conflicts-metrics-with-fast-refresh`
 
-Index a metrics document corpus while indexing a small Kibana corpus to a separate fast refresh index. This challange simulates indexing to a smaller index with fast refresh enabled while concurrently bulk indexing to a larger data stream. The race ends once all fast refresh documents have been indexed. Test mode is not supported and will result in an error since the fast refresh corpus contains less than 1000 documents.
+Index a metrics document corpus while indexing a small Kibana corpus to a separate fast refresh index. This challange simulates indexing to a smaller index with fast refresh enabled while concurrently bulk indexing to a larger data stream. The race ends once all fast refresh documents have been indexed. Test mode is not supported and will result in an error since the fast refresh corpus contains less than 1000 documents. This challenge can be executed against serverless Elasticsearch.
 
 #### Parameters
 

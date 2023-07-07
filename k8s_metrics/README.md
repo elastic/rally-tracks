@@ -6,7 +6,7 @@ K8s Metrics is a track intended for benchmarking refresh on Elasticsearch using 
 | Setting | Default | Description |
 | --- | --- | --- |
 | `bulk_indexing_clients` | `8` | The number of bulk indexing clients. |
-| `bulk_refresh` | `unset` | Control the refresh behavior for bulk requests. Valid values are `async`, `sync`, `default`, or unset. |
+| `bulk_refresh` | `unset` | Control the refresh behavior for bulk requests. Valid values are `true`, `wait_for`, `false`, or unset. This parameter is always specified as a string. |
 | `bulk_size` | `1000` | The batch size of bulk requests. |
 | `fast_refresh_bulk_size` | `1` | The bulk batch size of the fast refresh index. |
 | `fast_refresh_clients` | `1` | The number of bulk indexing clients for fast refresh indexing. |
@@ -27,7 +27,7 @@ Index a metrics document corpus and sets the bulk API `refresh` query parameter.
 #### Parameters
 
 * `bulk_indexing_clients` (default: `8`)
-* `bulk_refresh` (defaulit: `async`)
+* `bulk_refresh` (default: `"true"`)
 * `ingest_percentage` (default: `100`)
 * `number_of_replicas` (default: `1`)
 * `number_of_shards` (default: `1`)

@@ -1,0 +1,314 @@
+{
+  "index_patterns": [
+    "k8s_metrics"
+  ],
+  "template": {
+    "settings": {
+      "index": {
+        "number_of_shards": "1",
+        "number_of_replicas": "1",
+        "fast_refresh": true
+      }
+    },
+    "mappings": {
+      "properties": {
+        "attributes": {
+          "properties": {
+            "allowNoIndex": {
+              "type": "boolean"
+            },
+            "color": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "columns": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "controlGroupInput": {
+              "properties": {
+                "chainingSystem": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "controlStyle": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "ignoreParentSettingsJSON": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "panelsJSON": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                }
+              }
+            },
+            "description": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "grid": {
+              "properties": {
+                "columns": {
+                  "properties": {
+                    "kubernetes": {
+                      "properties": {
+                        "event": {
+                          "properties": {
+                            "involved_object": {
+                              "properties": {
+                                "kind": {
+                                  "properties": {
+                                    "width": {
+                                      "type": "float"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "metadata": {
+                              "properties": {
+                                "namespace": {
+                                  "properties": {
+                                    "width": {
+                                      "type": "float"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "reason": {
+                              "properties": {
+                                "width": {
+                                  "type": "float"
+                                }
+                              }
+                            },
+                            "type": {
+                              "properties": {
+                                "width": {
+                                  "type": "float"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "hideChart": {
+              "type": "boolean"
+            },
+            "isTextBasedQuery": {
+              "type": "boolean"
+            },
+            "kibanaSavedObjectMeta": {
+              "properties": {
+                "searchSourceJSON": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                }
+              }
+            },
+            "name": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "optionsJSON": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "panelsJSON": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "rowHeight": {
+              "type": "long"
+            },
+            "sort": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "timeFieldName": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "timeRestore": {
+              "type": "boolean"
+            },
+            "title": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "usesAdHocDataView": {
+              "type": "boolean"
+            },
+            "version": {
+              "type": "long"
+            }
+          }
+        },
+        "coreMigrationVersion": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "created_at": {
+          "type": "date"
+        },
+        "id": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "managed": {
+          "type": "boolean"
+        },
+        "references": {
+          "properties": {
+            "id": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "name": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "type": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        },
+        "type": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "typeMigrationVersion": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "updated_at": {
+          "type": "date"
+        },
+        "version": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    }
+  }
+}

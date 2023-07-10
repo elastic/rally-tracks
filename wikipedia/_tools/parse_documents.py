@@ -1,7 +1,7 @@
 import bz2
 import json
 import sys
-from xml.etree import cElementTree as ET
+from xml.etree import cElementTree
 
 PAGE_TAG = "page"
 SITEINFO_TAG = "siteinfo"
@@ -10,7 +10,7 @@ XML_NAMESPACES = {"": "http://www.mediawiki.org/xml/export-0.10/"}
 
 def doc_generator(f):
     namespaces = dict()
-    for _, element in ET.iterparse(f):
+    for _, element in cElementTree.iterparse(f):
         _, tag = element.tag.split("}")
         if tag == PAGE_TAG:
             yield parse_page(element, namespaces)

@@ -44,7 +44,7 @@ Index a metrics document corpus while performing intermittent manual refreshes o
 * `manual_refresh_interval` (default: `15`)
 * `number_of_replicas` (default: `1`)
 * `number_of_shards` (default: `1`)
-* `refresh_interval` (defaulit: `unset`)
+* `refresh_interval` (default: `unset`)
 
 ### `append-no-conflicts-metrics-index-only`
 
@@ -56,7 +56,7 @@ Index a metrics document corpus. This challenge can be used as a baseline when c
 * `ingest_percentage` (default: `100`)
 * `number_of_replicas` (default: `1`)
 * `number_of_shards` (default: `1`)
-* `refresh_interval` (defaulit: `unset`)
+* `refresh_interval` (default: `unset`)
 
 ### `append-no-conflicts-metrics-with-fast-refresh`
 
@@ -70,4 +70,4 @@ Index a metrics document corpus while indexing a small Kibana corpus to a separa
 * `fast_refresh_indexing_interval` (default: `30`)
 * `number_of_replicas` (default: `1`)
 * `number_of_shards` (default: `1`)
-* `refresh_interval` (defaulit: `unset`)
+* `refresh_interval` (default: `unset`)

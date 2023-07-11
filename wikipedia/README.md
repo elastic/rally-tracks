@@ -7,10 +7,10 @@ https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistre
 
 Each page is formatted into a JSON document with the following fields:
 
-  title: Page title
-  namespace: Optional namespace for the page. [Namespaces](https://en.wikipedia.org/wiki/Wikipedia:Namespace) allow for the organization and separation of content pages from administration pages.
-  content: Page content.
-  redirect: If the page is a redirect, the target of the redirection. In this case content is empty.
+title: Page title
+namespace: Optional namespace for the page. [Namespaces](https://en.wikipedia.org/wiki/Wikipedia:Namespace) allow for the organization and separation of content pages from administration pages.
+content: Page content.
+redirect: If the page is a redirect, the target of the redirection. In this case content is empty.
 
 Fields that do not have values have been left out.
 
@@ -20,10 +20,18 @@ To regenerate the dataset from scratch, first download and unzip an archive
 of Wikipedia dumps from [this link](https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2) (~21GB).
 
 Then run this command:
+
 ```bash
 python _tools/parse_documents.py <path_to_xml_file> | bzip2 --best > documents.json.bz2
 ```
 
+### Generating clickstream probability ditribution
+
+To generate the probability distribution of the most frequent queries in a specific month from the Wikimedia clickstream, please execute the following command
+
+```bash
+python3 _tools/parse_clicks.py --year 2023 --month 6 --lang en > queries.csv
+```
 
 ### Example Document
 
@@ -38,10 +46,11 @@ python _tools/parse_documents.py <path_to_xml_file> | bzip2 --best > documents.j
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 
-* `bulk_size` (default: 500)
-* `bulk_indexing_clients` (default: 1)
-* `ingest_percentage` (default: 100)
+- `bulk_size` (default: 500)
+- `bulk_indexing_clients` (default: 1)
+- `ingest_percentage` (default: 100)
 
 ### License
+
 We use the same license for the data as the original data: [CC-SA-3.0](http://creativecommons.org/licenses/by-sa/3.0/).
 More details can be found on [this page](https://en.wikipedia.org/wiki/Wikipedia:Copyrights).

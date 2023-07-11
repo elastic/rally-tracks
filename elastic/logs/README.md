@@ -335,7 +335,7 @@ Note that this challenge requires you to be able to successfully create a snapsh
 
 This challenge aims to get more specific numbers of what we can support in terms of indices count. It creates initial 
 set of indices as before and then index to small set of data streams. These data streams will almost never
-rollover (rollover based on size with 150gb as `max_size`). This is supposed to be run with multiple values of
+rollover (rollover based on size with 100gb as `max_size`). This is supposed to be run with multiple values of
 `initial_indices_count` parameter (0k, 5k, 10k, 20k, 25k, 30k etc), to find when we observe slowdown of more than 20% 
 compared baseline or there are other symptoms that we are in bad shape (excessive GC collection etc).
 

@@ -327,7 +327,7 @@ Note: If the indexing load is higher than the cluster can support, a time lag wi
 
 ### Many Shards Snapshots (many-shards-snapshots)
 
-This benchmarks aims to evaluate the performance of the Log Monitoring part of Elastic's Observability solution with a large amount of shards. It sets up initial set of indices (count controlled by `data.initial.indices` param) with a large amount of shards, with `auditbeat` template and ILM policy (hot tier only) and then sequentially takes a configurable via `snapshot_counts` number of snapshots. Used for benchmarks to help identify regressions related to snapshots with high index counts. The performance can be evaluated by the `service_time` of the `wait-for-snapshots` task.
+This benchmarks aims to evaluate the performance of the Log Monitoring part of Elastic's Observability solution with a large amount of shards. It sets up initial set of indices (count controlled by `data.initial.indices` param) with a large amount of shards, with `auditbeat` template and ILM policy (hot tier only) and then sequentially takes a configurable via `snapshot_counts` number of snapshots. These data streams will almost never rollover (rollover based on size with 100gb as max_size). Used for benchmarks to help identify regressions related to snapshots with high index counts. The performance can be evaluated by the `service_time` of the `wait-for-snapshots` task.
 
 Note that this challenge requires you to be able to successfully create a snapshot repository using the `snapshot_repo_type`, and `many_shards_snapshot_repo_settings` track parameters.
 

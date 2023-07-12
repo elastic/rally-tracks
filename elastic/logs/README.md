@@ -261,7 +261,7 @@ The following parameters are available:
 ### Snapshot parameters
 * `snapshot_counts` (default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
 * `snapshot_repo_name` (default: `logging`) - Snapshot repository name.
-* `snapshot_repo_type` (default: `s3`) - Other valid choices can be `gsc` and `azure`.
+* `snapshot_repo_type` (default: `s3`) - Other valid choices can be `gcs` and `azure`.
 * `snapshot_repo_settings` (default: 
 ```
 {

@@ -184,6 +184,13 @@
   "description": "Index a metrics document corpus while indexing a small Kibana corpus to a separate fast refresh index.",
   "schedule": [
     {
+      "name": "delete-fast-refresh-index",
+      "operation": {
+        "operation-type": "delete-index",
+        "index": ".kibana_k8s_metrics"
+      }
+    },
+    {
       "name": "delete-data-streams",
       "operation": {
         "operation-type": "delete-data-stream"
@@ -194,13 +201,6 @@
       "operation": {
         "operation-type": "delete-composable-template",
         "template": "metrics-kubernetes.pod-template" 
-      }
-    },
-    {
-      "name": "delete-fast-refresh-templates",
-      "operation": {
-        "operation-type": "delete-composable-template",
-        "template": "k8s_metrics-template" 
       }
     },
     {
@@ -225,6 +225,9 @@
       "operation": "create-metrics-datastream"
     },
     {
+      "operation": "create-fast-refresh-index"
+    },
+    {
       "name": "check-cluster-health",
       "operation": {
         "operation-type": "cluster-health",
@@ -246,7 +249,7 @@
           {
             "operation": "fast-refresh-index",
             "clients": {{fast_refresh_clients | default(1)}},
-            "target-interval": {{fast_refresh_indexing_interval | default(30)}}
+            "target-throughput": {{fast_refresh_indexing_throughput | default(3)}}
           }
         ]
       }

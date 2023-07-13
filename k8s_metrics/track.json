@@ -4,12 +4,6 @@
   "description": "Index refresh benchmarks with a Kubernetes pod metrics dataset",
   "composable-templates": [
     {
-      "name": "k8s_metrics-template",
-      "index-pattern": "k8s_metrics",
-      "template": "templates/k8s_metrics.json",
-      "delete-matching-indices": true
-    },
-    {
       "name": "metrics-kubernetes.pod-template",
       "index-pattern": "metrics-kubernetes.pod*",
       "template": "templates/metrics-kubernetes.pod.json",
@@ -38,12 +32,12 @@
       "name": "k8s-integration",
       "documents": [
         {
-          "source-file": "k8s-object-export.json.bz2",
+          "source-file": "docs-fast-refresh.json.bz2",
           "base-url": "https://rally-tracks.elastic.co/k8s_metrics",
           "includes-action-and-meta-data": true,
-          "document-count": 21,
-          "uncompressed-bytes": 485077,
-          "compressed-bytes": 37834
+          "document-count": 2016,
+          "uncompressed-bytes": 46515072,
+          "compressed-bytes": 2249885
         }
       ]
     },

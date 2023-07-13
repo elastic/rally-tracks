@@ -41,7 +41,7 @@ class ClickStreamDist:
 
         if response.status_code == 200:
             # Create the file if it is missing
-            os.makedirs(os.path.dirname(self.clickstream_output_file))
+            os.makedirs(os.path.dirname(self.clickstream_output_file), exist_ok=True)
 
             # Write the content to the file
             with open(self.clickstream_output_file, "wb") as file:

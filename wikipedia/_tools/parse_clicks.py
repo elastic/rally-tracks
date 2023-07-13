@@ -86,7 +86,7 @@ class ClickStreamDist:
         logger.info("Dumping probability distribution...")
 
         writer = csv.writer(sys.stdout)
-        writer.writerow(["Word", "Probability"])
+        writer.writerow(["query", "probability"])
         writer.writerows(prob_dist)
 
 

@@ -54,6 +54,8 @@ class KnnParamSource:
                 "_source": False,
             }
         self._iters += 1
+        if self._iters >= len(self._queries):
+            self._iters = 0
         return result
 
 

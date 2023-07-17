@@ -24,6 +24,17 @@
     {
       "name": "refresh-after-index",
       "operation": "refresh-after-index"
+    },
+    {
+      "name": "create-default-search-application",
+      "operation": "create-default-search-application"
+    },
+    {
+      "name": "default-search-application-search",
+      "operation": "default-search-application-search",
+      "clients": {{search_clients | default(10)}},
+      "warmup-iterations": 500,
+      "iterations": 10000
     }
   ]
 }

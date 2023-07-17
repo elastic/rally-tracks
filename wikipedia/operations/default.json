@@ -25,4 +25,9 @@
   "operation-type": "refresh",
   "request-timeout": 1000,
   "include-in-reporting": true
+},
+{
+  "name": "create-default-search-application",
+  "operation-type": "raw-request",
+  "param-source": "create-search-application-param-source"
 }

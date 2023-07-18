@@ -30,4 +30,10 @@
   "name": "create-default-search-application",
   "operation-type": "raw-request",
   "param-source": "create-search-application-param-source"
+},
+{
+  "name": "default-search-application-search",
+  "operation-type": "raw-request",
+  "param-source": "search-application-search-param-source",
+  "iterations": 10000
 }

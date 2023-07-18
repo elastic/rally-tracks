@@ -1,15 +1,17 @@
 import csv
+import math
 import random
+import re
 from os import getcwd
 from os.path import dirname
 from typing import Iterator
 
 from esrally.track.params import ParamSource
 
-QUERIES_DIRNAME: str = dirname(f"{getcwd()}/{__file__}")
+QUERIES_DIRNAME: str = dirname(__file__)
 QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"
 
-SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application/"
+SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 
 
 def query_iterator(k: int) -> Iterator[str]:
@@ -25,10 +27,16 @@ def query_iterator(k: int) -> Iterator[str]:
             yield query
 
 
+class SearchApplicationParams:
+    def __init__(self, track, params):
+        self.indices = params.get("indices", track.index_names())
+        self.name = params.get("search-application", f"{self.indices[0]}-search-application")
+
+
 class CreateSearchApplicationParamSource(ParamSource):
     def __init__(self, track, params, **kwargs):
-        print(track)
         super().__init__(track, params, **kwargs)
+        self.search_application_params = SearchApplicationParams(track, params)
 
     def partition(self, partition_index, total_partitions):
         return self
@@ -36,10 +44,36 @@ class CreateSearchApplicationParamSource(ParamSource):
     def params(self):
         return {
             "method": "PUT",
-            "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}wikipedia",
-            "body": {"indices": ["wikipedia"]},
+            "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}",
+            "body": {"indices": self.search_application_params.indices},
+        }
+
+
+class SearchApplicationSearchParamSource(ParamSource):
+    def __init__(self, track, params, **kwargs):
+        super().__init__(track, params, **kwargs)
+        self.search_application_params = SearchApplicationParams(track, params)
+        self._queries_iterator = None
+
+    def size(self):
+        return self._params.get("iterations", 10000)
+
+    def partition(self, partition_index, total_partitions):
+        if self._queries_iterator is None:
+            partition_size = math.ceil(self.size() / total_partitions)
+            self._queries_iterator = query_iterator(partition_size)
+        return self
+
+    def params(self):
+        # remover special chars from the query + lowercase
+        query = re.sub("[^0-9a-zA-Z]+", " ", next(self._queries_iterator)).lower()
+        return {
+            "method": "POST",
+            "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
+            "body": {"params": {"query_string": query}},
         }
 
 
 def register(registry):
     registry.register_param_source("create-search-application-param-source", CreateSearchApplicationParamSource)
+    registry.register_param_source("search-application-search-param-source", SearchApplicationSearchParamSource)

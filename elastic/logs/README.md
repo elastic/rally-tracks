@@ -242,6 +242,7 @@ The following parameters are available:
 * `bulk_size` (default: 1000) - The number of documents to send per indexing request.
 * `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 
 * `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
+* `initial_indices_count` (default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
 
 ### Querying parameters
 
@@ -257,9 +258,42 @@ The following parameters are available:
 * `query_request_params` (optional) - A map of query parameters that will be used with any querying.
 * `query_workflows` (optional) - A list of workflows to execute. By default, all workflows are used.
 
+### Snapshot parameters
+* `snapshot_counts` (default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
+* `snapshot_repo_name` (default: `logging`) - Snapshot repository name.
+* `snapshot_repo_type` (default: `s3`) - Other valid choices can be `gcs` and `azure`.
+* `snapshot_repo_settings` (default: 
+```
+{
+    "bucket": snapshot_bucket | default("test-bucket"),
+    "client": "default",
+    "base_path": snapshot_base_path | default("observability/logging"),
+    "max_snapshot_bytes_per_sec": -1,
+    "readonly": snapshot_repo_readonly | default(false)
+}
+```
+Setting that can also be set with separate parameters is `snapshot_bucket`, `snapshot_base_path` and `snapshot_repo_readonly`
+* `snapshot_name` (default: `logging-test`) Snapshot name when creating or to recover. Used as a prefix in case more than one snapshot is taken.
+* `restore_data_streams` (default: `logs-*`) Specifies data streams for `restore-snapshot` and `create-snapshot` operations.
+* `snapshot_metadata` (default: `{}`) Metadata to set when creating a snapshot. Used in `create-snapshot` operation.
+
 ## Available Challenges
 
 The following challenges are currently subject to change.
+
+### Challenges that can be used as a setup prior to other challenges
+
+#### logging-snapshot-restore
+
+Restores snapshots specified with [snapshot parameters](#snapshot-parameters) prior to testing. Example can be used before running [Logging Querying challenge](#logging-querying-logging-querying).
+
+#### logging-snapshot-mount
+
+Mounts searchable snapshots as partial indices to test the frozen tier.
+
+#### logging-snapshot
+
+Performs a snapshot of the cluster.
 
 ### Logging Disk Usage (logging-disk-usage)
 
@@ -291,27 +325,21 @@ This challenge executes indexing and querying concurrently. Queries will be issu
 
 Note: If the indexing load is higher than the cluster can support, a time lag will start to occur on the indexed documents. This may result in queries returning with no hits as the expected data has yet to be indexed.
 
-### Many Shards Basic (many-shards-base)
+### Many Shards Snapshots (many-shards-snapshots)
 
-This challenge measures performance (throughput) with big (and increasing) number of indices. It sets up initial set
-of indices (count controlled by `data.initial.indices` param) with `auditbeat` template and ILM policy (hot tier only),
-optional initial set of indices that will go to frozen tier through ILM searchable snapshot action
-(count controlled by `data.initial.frozen.indices` param) and then index to small set of data streams. These data streams
-will rollover every 10m
+This benchmarks aims to track performance and stability improvements related to snapshots in use cases with a high shard count. The challenge creates and indexes into initial set of indices (count controlled by `data.initial.indices` param); each index receives 100 auditbeat-like documents. Issues a number of sequential create snapshot requests (non blocking, using `wait_for_completion=false`), configurable via `snapshot_counts`. Waits until all snapshots have completed. The performance can be evaluated by the `service_time` of the `wait-for-snapshots` task.
 
-### Many Shards Full (many-shards-full)
-
-Same as above but additionally it sets up SLM with snapshotting every index every 15min
+Note that this challenge requires you to be able to successfully create a snapshot repository using the `snapshot_repo_type`, and `many_shards_snapshot_repo_settings` track parameters.
 
 ### Many Shards Quantitative (many-shards-quantitative)
 
 This challenge aims to get more specific numbers of what we can support in terms of indices count. It creates initial 
 set of indices as before and then index to small set of data streams. These data streams will almost never
-rollover (rollover based on size with 150gb as `max_size`). This is supposed to be run with multiple values of
-`data.initial.indices` parameter (0k, 5k, 10k, 20k, 25k, 30k etc), to find when we observe slowdown of more than 20% 
+rollover (rollover based on size with 100gb as `max_size`). This is supposed to be run with multiple values of
+`initial_indices_count` parameter (0k, 5k, 10k, 20k, 25k, 30k etc), to find when we observe slowdown of more than 20% 
 compared baseline or there are other symptoms that we are in bad shape (excessive GC collection etc).
 
-Users of this track may use this challenge as base for nightly tests in regard to indices count (`data.initial.indices=20k`
+Users of this track may use this challenge as base for nightly tests in regard to indices count (`initial_indices_count=20k`
 is good start point)
 
 ### Cross Cluster Search + Cross Cluster Replication
@@ -335,7 +363,7 @@ Note that this challenge requires _all_ clusters to have the CCR feature license
 
 Indexes logs to the default (local) cluster, snapshots the resulting data streams and restores the snapshot across all other clusters specified in 'target-hosts', finally searching across all clusters via Cross Cluster Search (CCS).
 
-Note that this challenge requires you to be able to successfully create a snapshot repository using the `p_snapshot_repo_name`, `p_snapshot_repo_type`, and `many_clusters_snapshot_repo_settings` track parameters.
+Note that this challenge requires you to be able to successfully create a snapshot repository using the `snapshot_repo_name`, `snapshot_repo_type`, and `snapshot_repo_settings` track parameters.
 
 ## Changing the Datasets
 

@@ -91,6 +91,7 @@ class QueryParamSource:
         self._cache = params.get("cache", False)
         self._params = params
         self.infinite = True
+        self._queries_iterator = None
 
     def partition(self, partition_index, total_partitions):
         if self._queries_iterator is None:
@@ -103,6 +104,7 @@ class QueryParamSource:
         result = {
             "body": {"query": {"query_string": {"query": query_str, "default_field": self._params["search_fields"]}}},
             "size": self._params["size"],
+            "index": self._index_name,
         }
 
         if "cache" in self._params:

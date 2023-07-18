@@ -1,0 +1,31 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark weighted terms queries on ELSER tokens on the MS MARCO passage dataset",
+  "indices": [
+    {
+      "name": "msmarco-passage-collection-elser",
+      "body": "msmarco-passage-collection-elser.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "msmarco-passage-collection-elser",
+      "base-url": "https://rally-tracks.elastic.co/msmarco-passage-collection-elser",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 1000000,
+          "compressed-bytes": 779613360,
+          "uncompressed-bytes": 2542363241
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

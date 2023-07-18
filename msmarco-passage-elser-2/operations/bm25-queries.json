@@ -1,0 +1,120 @@
+{
+  "name": "10-words-bm25-passage-search-maxwand-disabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "true",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in"
+      }
+    }
+  }
+},
+{
+  "name": "10-words-bm25-passage-search-maxwand-enabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "false",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in"
+      }
+    }
+  }
+},
+{
+  "name": "20-words-bm25-passage-search-maxwand-disabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "true",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in combination with the Cedex HiRes Analyzer offer exceptional data reliability"
+      }
+    }
+  }
+},
+{
+  "name": "20-words-bm25-passage-search-maxwand-enabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "false",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in combination with the Cedex HiRes Analyzer offer exceptional data reliability"
+      }
+    }
+  }
+},
+{
+  "name": "30-words-bm25-passage-search-maxwand-disabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "true",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in combination with the Cedex HiRes Analyzer offer exceptional data reliability and near-automated integration during the cell fermentation process."
+      }
+    }
+  }
+},
+{
+  "name": "30-words-bm25-passage-search-maxwand-enabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "false",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in combination with the Cedex HiRes Analyzer offer exceptional data reliability and near-automated integration during the cell fermentation process."
+      }
+    }
+  }
+},
+{
+  "name": "40-words-bm25-passage-search-maxwand-disabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "true",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in combination with the Cedex HiRes Analyzer offer exceptional data reliability and near-automated integration during the cell fermentation process. High accuracy, less variation between samples. Operating convenience"
+      }
+    }
+  }
+},
+{
+  "name": "40-words-bm25-passage-search-maxwand-enabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "false",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in combination with the Cedex HiRes Analyzer offer exceptional data reliability and near-automated integration during the cell fermentation process. High accuracy, less variation between samples. Operating convenience"
+      }
+    }
+  }
+},
+{
+  "name": "50-words-bm25-passage-search-maxwand-disabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "true",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in combination with the Cedex HiRes Analyzer offer exceptional data reliability and near-automated integration during the cell fermentation process. High accuracy, less variation between samples. Operating convenience and ease of use. Few attempts have been made to"
+      }
+    }
+  }
+},
+{
+  "name": "50-words-bm25-passage-search-maxwand-enabled",
+  "operation-type": "search",
+  "body": {
+    "track_total_hits": "false",
+    "query": { 
+      "match": {
+        "body": "The Cedex Bio HT Analyzer and Cedex Bio Analyzer in combination with the Cedex HiRes Analyzer offer exceptional data reliability and near-automated integration during the cell fermentation process. High accuracy, less variation between samples. Operating convenience and ease of use. Few attempts have been made to"
+      }
+    }
+  }
+}

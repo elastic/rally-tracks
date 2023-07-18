@@ -1,0 +1,35 @@
+{
+    "mappings": {
+        "properties": {
+            "body": {
+                "type": "text"
+            },
+            "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+            },
+            "ml": {
+                "properties": {
+                    "model_id": {
+                        "fields": {
+                            "keyword": {
+                                "ignore_above": 256,
+                                "type": "keyword"
+                            }
+                        },
+                        "type": "text"
+                    },
+                    "tokens": {
+                        "type": "rank_features"
+                    }
+                }
+            }
+        }
+    },
+    "settings": {
+        "index": {
+            "number_of_replicas": "{{number_of_replicas | default(0)}}",
+            "number_of_shards": "{{number_of_shards | default(1)}}"
+        }
+    }
+}

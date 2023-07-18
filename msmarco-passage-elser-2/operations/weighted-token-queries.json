@@ -1,0 +1,71 @@
+{
+  "name": "10-weighted-terms-maxwand-disabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",
+  "num-terms": 10,
+  "track_total_hits": true
+}, {
+  "name": "10-weighted-terms-maxwand-enabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",
+  "num-terms": 10,
+  "track_total_hits": false
+}, {
+  "name": "20-weighted-terms-maxwand-disabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",
+  "num-terms": 20,
+  "track_total_hits": true
+}, {
+  "name": "20-weighted-terms-maxwand-enabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",
+  "num-terms": 20,
+  "track_total_hits": false
+}, {
+  "name": "30-weighted-terms-maxwand-disabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",
+  "num-terms": 30,
+  "track_total_hits": true
+}, {
+  "name": "30-weighted-terms-maxwand-enabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",
+  "num-terms": 30,
+  "track_total_hits": false
+}, {
+  "name": "40-weighted-terms-maxwand-disabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",
+  "num-terms": 40,
+  "track_total_hits": true
+}, {
+  "name": "40-weighted-terms-maxwand-enabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",
+  "num-terms": 40,
+  "track_total_hits": false
+}, {
+  "name": "50-weighted-terms-maxwand-disabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",
+  "num-terms": 50,
+  "track_total_hits": true
+}, {
+  "name": "50-weighted-terms-maxwand-enabled",
+  "operation-type": "search",
+  "param-source": "weighted-terms-param-source",
+  "tokens-source": "elser-query-tokens.json",  
+  "num-terms": 50,
+  "track_total_hits": false
+}

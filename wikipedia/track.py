@@ -74,6 +74,44 @@ class SearchApplicationSearchParamSource(ParamSource):
         }
 
 
+class QueryParamSource:
+    def __init__(self, track, params, **kwargs):
+        if len(track.indices) == 1:
+            default_index = track.indices[0].name
+            if len(track.indices[0].types) == 1:
+                default_type = track.indices[0].types[0].name
+            else:
+                default_type = None
+        else:
+            default_index = "_all"
+            default_type = None
+
+        self._index_name = params.get("index", default_index)
+        self._type_name = params.get("type", default_type)
+        self._cache = params.get("cache", False)
+        self._params = params
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        if self._queries_iterator is None:
+            partition_size = math.ceil(self._params.get("iterations", 10000) / total_partitions)
+            self._queries_iterator = query_iterator(partition_size)
+        return self
+
+    def params(self):
+        query_str = re.sub("[^0-9a-zA-Z]+", " ", next(self._queries_iterator)).lower()
+        result = {
+            "body": {"query": {"query_string": {"query": query_str, "default_field": self._params["search_fields"]}}},
+            "size": self._params["size"],
+        }
+
+        if "cache" in self._params:
+            result["cache"] = self._params["cache"]
+
+        return result
+
+
 def register(registry):
+    registry.register_param_source("query-string-search", QueryParamSource)
     registry.register_param_source("create-search-application-param-source", CreateSearchApplicationParamSource)
     registry.register_param_source("search-application-search-param-source", SearchApplicationSearchParamSource)

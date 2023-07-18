@@ -36,4 +36,12 @@
   "operation-type": "raw-request",
   "param-source": "search-application-search-param-source",
   "iterations": 10000
+},
+{
+  "name": "query-string-search",
+  "operation-type": "search",
+  "param-source": "query-string-search",
+  "size" : {{search_size | default(20)}},
+  "search_fields" : {{search_fields | default("*")}},
+  "iterations": 10000 
 }

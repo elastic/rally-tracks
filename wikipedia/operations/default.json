@@ -42,6 +42,6 @@
   "operation-type": "search",
   "param-source": "query-string-search",
   "size" : {{search_size | default(20)}},
-  "search_fields" : {{search_fields | default("*")}},
+  "search_fields" : "title",
   "iterations": 10000 
 }

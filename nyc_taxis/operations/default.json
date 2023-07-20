@@ -1,4 +1,4 @@
-    {
+[{
       "name": "index",
       "operation-type": "bulk",
       "bulk-size": {{bulk_size | default(10000)}},
@@ -28,11 +28,27 @@
     },
     {
       "name": "default",
-      "operation-type": "search",
-      "body": {
-        "query": {
-          "match_all": {}
-        }
+      "operation": {
+        "operation-type": "composite",
+        "requests": [
+          {
+            "stream": [
+              {
+                "operation-type": "raw-request",
+                "method": "POST",
+                "path": "/_internal/blob_caches/clear"
+              },
+              {
+                "operation-type": "search",
+                "body": {
+                  "query":
+                    "match_all": {}
+                  }
+                }
+              }
+            ]
+          }
+        ]
       }
     },
     {

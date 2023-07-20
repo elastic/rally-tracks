@@ -27,8 +27,7 @@
       "include-in-reporting": false
     },
     {
-      "name": "default",
-      "operation": {
+        "name": "default",
         "operation-type": "composite",
         "requests": [
           {
@@ -49,11 +48,9 @@
             ]
           }
         ]
-      }
     },
     {
       "name": "default_1k",
-      "operation": {
         "operation-type": "composite",
         "requests": [
           {
@@ -75,11 +72,9 @@
             ]
           }
         ]
-      }
     },
     {
       "name": "range",
-      "operation": {
         "operation-type": "composite",
         "requests": [
           {
@@ -105,11 +100,9 @@
             ]
           }
         ]
-      }
     },
     {
       "name": "distance_amount_agg",
-      "operation": {
         "operation-type": "composite",
         "requests": [
           {
@@ -155,11 +148,9 @@
             ]
           }
         ]
-      }
     },
     {
       "name": "autohisto_agg",
-      "operation": {
         "operation-type": "composite",
         "requests": [
           {
@@ -195,11 +186,9 @@
             ]
           }
         ]
-      }
     },
     {
       "name": "date_histogram_agg",
-      "operation": {
         "operation-type": "composite",
         "requests": [
           {
@@ -235,7 +224,6 @@
             ]
           }
         ]
-      }
     },
     {
       "name": "date_histogram_calendar_interval",

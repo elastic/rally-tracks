@@ -27,17 +27,20 @@
       "include-in-reporting": false
     },
     {
-        "name": "default",
+      "name": "default",
+      "operation": {
         "operation-type": "composite",
         "requests": [
           {
             "stream": [
               {
+                "name": "cache-clear",
                 "operation-type": "raw-request",
-                "method": "POST",
-                "path": "/_internal/blob_caches/clear"
+                "path": "/_internal/blob_caches/clear",
+                "method": "POST"
               },
               {
+                "name": "default-op",
                 "operation-type": "search",
                 "body": {
                   "query": {
@@ -48,19 +51,23 @@
             ]
           }
         ]
+      }
     },
     {
       "name": "default_1k",
+      "operation": {
         "operation-type": "composite",
         "requests": [
           {
             "stream": [
               {
+                "name": "cache-clear",
                 "operation-type": "raw-request",
-                "method": "POST",
-                "path": "/_internal/blob_caches/clear"
+                "path": "/_internal/blob_caches/clear",
+                "method": "POST"
               },
               {
+                "name": "default_1k-op",
                 "operation-type": "search",
                 "body": {
                   "query": {
@@ -72,19 +79,23 @@
             ]
           }
         ]
+      }
     },
     {
       "name": "range",
+      "operation": {
         "operation-type": "composite",
         "requests": [
           {
             "stream": [
               {
+                "name": "cache-clear",
                 "operation-type": "raw-request",
-                "method": "POST",
-                "path": "/_internal/blob_caches/clear"
+                "path": "/_internal/blob_caches/clear",
+                "method": "POST"
               },
               {
+                "name": "range-op",
                 "operation-type": "search",
                 "body": {
                   "query": {
@@ -100,19 +111,23 @@
             ]
           }
         ]
+      }
     },
     {
       "name": "distance_amount_agg",
+      "operation": {
         "operation-type": "composite",
         "requests": [
           {
             "stream": [
               {
+                "name": "cache-clear",
                 "operation-type": "raw-request",
-                "method": "POST",
-                "path": "/_internal/blob_caches/clear"
+                "path": "/_internal/blob_caches/clear",
+                "method": "POST"
               },
               {
+                "name": "distance_amount_agg-op",
                 "operation-type": "search",
                 "body": {
                   "size": 0,
@@ -148,19 +163,23 @@
             ]
           }
         ]
+      }
     },
     {
       "name": "autohisto_agg",
+      "operation": {
         "operation-type": "composite",
         "requests": [
           {
             "stream": [
               {
+                "name": "cache-clear",
                 "operation-type": "raw-request",
-                "method": "POST",
-                "path": "/_internal/blob_caches/clear"
+                "path": "/_internal/blob_caches/clear",
+                "method": "POST"
               },
               {
+                "name": "autohisto_agg-op",
                 "operation-type": "search",
                 "body": {
                   "size": 0,
@@ -186,19 +205,23 @@
             ]
           }
         ]
+      }
     },
     {
       "name": "date_histogram_agg",
+      "operation": {
         "operation-type": "composite",
         "requests": [
           {
             "stream": [
               {
+                "name": "cache-clear",
                 "operation-type": "raw-request",
-                "method": "POST",
-                "path": "/_internal/blob_caches/clear"
+                "path": "/_internal/blob_caches/clear",
+                "method": "POST"
               },
               {
+                "name": "date_histogram_agg-op",
                 "operation-type": "search",
                 "body": {
                   "size": 0,
@@ -224,6 +247,7 @@
             ]
           }
         ]
+      }
     },
     {
       "name": "date_histogram_calendar_interval",

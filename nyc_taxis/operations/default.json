@@ -41,6 +41,7 @@
             {
               "name": "default-op",
               "operation-type": "search",
+              "index": "nyc_taxis",
               "body": {
                 "query": {
                   "match_all": {}
@@ -66,6 +67,7 @@
             {
               "name": "default_1k-op",
               "operation-type": "search",
+              "index": "nyc_taxis",
               "body": {
                 "query": {
                   "match_all": {}
@@ -92,6 +94,7 @@
             {
               "name": "range-op",
               "operation-type": "search",
+              "index": "nyc_taxis",
               "body": {
                 "query": {
                   "range": {
@@ -122,6 +125,7 @@
             {
               "name": "distance_amount_agg-op",
               "operation-type": "search",
+              "index": "nyc_taxis",
               "body": {
                 "size": 0,
                 "query": {
@@ -172,6 +176,7 @@
             {
               "name": "autohisto_agg-op",
               "operation-type": "search",
+              "index": "nyc_taxis",
               "body": {
                 "size": 0,
                 "query": {
@@ -211,6 +216,7 @@
             },
             {
               "name": "date_histogram_agg-op",
+              "index": "nyc_taxis",
               "operation-type": "search",
               "body": {
                 "size": 0,

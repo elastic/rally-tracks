@@ -255,4 +255,182 @@
       }
     }
   ]
+},
+{
+  "name": "fast-refresh-index-only",
+  "description": "Index to a fast refresh system index.",
+  "schedule": [
+    {
+      "name": "delete-fast-refresh-index",
+      "operation": {
+        "operation-type": "delete-index",
+        "index": ".kibana_k8s_metrics"
+      }
+    },
+    {
+      "operation": "create-fast-refresh-index"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": "fast-refresh-index",
+      "clients": {{fast_refresh_clients | default(1)}},
+      "target-throughput": {{fast_refresh_indexing_throughput | default(3)}}
+    }
+  ]
+},
+{
+  "name": "fast-refresh-index-with-search",
+  "description": "Index to a fast refresh system index while searching the index.",
+  "schedule": [
+    {
+      "name": "delete-fast-refresh-index",
+      "operation": {
+        "operation-type": "delete-index",
+        "index": ".kibana_k8s_metrics"
+      }
+    },
+    {
+      "operation": "create-fast-refresh-index"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "parallel": {
+        "completed-by": "fast-refresh-index",
+        "tasks": [
+          {
+            "operation": "fast-refresh-index",
+            "clients": {{fast_refresh_clients | default(1)}},
+            "target-throughput": {{fast_refresh_indexing_throughput | default(3)}}
+          },
+          {
+            "name": "search-fast-refresh-index",
+            "operation": {
+              "operation-type": "composite",
+              "requests": [
+                {
+                  "stream": [
+                    {
+                      "name": "search-system",
+                      "operation-type": "search",
+                      "detailed-results": "true",
+                      "index": ".kibana_k8s_metrics",
+                      "cache": "false",
+                      "body": {
+                        "_source": [
+                          "type"
+                        ],
+                        "query": {
+                          "bool": {
+                            "filter": [
+                              {
+                                "term": {
+                                  "type": "dashboard"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "name": "search-system",
+                      "operation-type": "search",
+                      "detailed-results": "true",
+                      "index": ".kibana_k8s_metrics",
+                      "cache": "false",
+                      "body": {
+                        "_source": [
+                          "type"
+                        ],
+                        "query": {
+                          "bool": {
+                            "filter": [
+                              {
+                                "term": {
+                                  "type": "index"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "name": "search-system",
+                      "operation-type": "search",
+                      "detailed-results": "true",
+                      "index": ".kibana_k8s_metrics",
+                      "cache": "false",
+                      "body": {
+                        "_source": [
+                          "type"
+                        ],
+                        "query": {
+                          "bool": {
+                            "filter": [
+                              {
+                                "term": {
+                                  "type": "tag"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "name": "search-system",
+                      "operation-type": "search",
+                      "detailed-results": "true",
+                      "index": ".kibana_k8s_metrics",
+                      "cache": "false",
+                      "body": {
+                        "_source": [
+                          "type"
+                        ],
+                        "query": {
+                          "bool": {
+                            "filter": [
+                              {
+                                "term": {
+                                  "type": "search"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "warmup-time-period": 60,
+            "time-period": 99999,
+            "target-interval": 5
+          }
+        ]
+      }
+    }
+  ]
 }

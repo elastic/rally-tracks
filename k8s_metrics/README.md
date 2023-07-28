@@ -75,3 +75,21 @@ Index a metrics document corpus while indexing a small Kibana corpus to a separa
 * `number_of_replicas` (default: `1`)
 * `number_of_shards` (default: `1`)
 * `refresh_interval` (default: `unset`)
+
+### `fast-refresh-index-only`
+
+Index a small Kibana corpus to a system index with fast refresh enabled. This challenge can be executed against serverless Elasticsearch and requires the `kibana_system` security role for the authenticated user.
+
+#### Parameters
+
+* `fast_refresh_clients` (default: `1`)
+* `fast_refresh_indexing_throughput` (default: `3`)
+
+### `fast-refresh-index-with-search`
+
+Index a small Kibana corpus to a system index with fast refresh enabled, and simultaneously perform searches on the index. This challenge can be executed against serverless Elasticsearch and requires the `kibana_system` security role for the authenticated user.
+
+#### Parameters
+
+* `fast_refresh_clients` (default: `1`)
+* `fast_refresh_indexing_throughput` (default: `3`)

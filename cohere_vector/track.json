@@ -1,0 +1,32 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Benchmark for vector search with Cohere Wikipedia data",
+  "indices": [
+    {
+      "name": "cohere",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "cohere",
+      "base-url": "https://rally-tracks.elastic.co/cohere_vector",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 500,
+          "compressed-bytes": 3044110,
+          "uncompressed-bytes": 8253991
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

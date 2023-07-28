@@ -59,10 +59,24 @@ class WeightedTermsParamsSource:
 
 elser_model_id = ".elser_model_1"
 
+
 async def put_elser(es, params):
-    await es.ml.put_trained_model(model_id=elser_model_id,
-                               input={"field_names":"text_field"},
-                                  inference_config={"pass_through":{}})
+    print("\ndownload elser")
+    try:
+        print(await es.ml.put_trained_model(model_id=elser_model_id,
+                                  input={"field_names": "text_field"}))
+        return True
+    except BadRequestError as bre:
+        if bre.body["error"]["root_cause"][0]["reason"] == \
+                "Cannot create model [.elser_model_1] the id is the same as an current model deployment":
+            return True
+        else:
+            print(bre)
+            return False
+    except Exception as e:
+        print(e)
+        return False
+
 
 async def poll_for_elser_completion(es, params):
     try_count = 0
@@ -76,28 +90,29 @@ async def poll_for_elser_completion(es, params):
                 return True
         except NotFoundError:
             print("waiting... try count:", try_count)
-        finally:
             await asyncio.sleep(wait_time_per_cycle_seconds)
             try_count += 1
 
     return False
 
+
 async def stop_trained_model_deployment(es, params):
     number_of_allocations = params["number_of_allocations"]
     threads_per_allocation = params["threads_per_allocation"]
-    # deployment_id = "elser-benchmark-allocations-"+str(number_of_allocations)+"-threads-per-"+str(threads_per_allocation)
 
     try:
+        print("stop_trained_model_deployment:")
         print(await es.ml.stop_trained_model_deployment(model_id=elser_model_id,
                                                         force=True))
         return True
     except BadRequestError as bre:
-        print(bre)
         if bre.body["error"]["root_cause"][0]["reason"] == \
                 "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist":
             return True
         else:
+            print(bre)
             return False
+
 
 async def start_trained_model_deployment(es, params):
     number_of_allocations = params["number_of_allocations"]
@@ -105,25 +120,31 @@ async def start_trained_model_deployment(es, params):
     # deployment_id = "elser-benchmark-allocations-"+str(number_of_allocations)+"-threads-per-"+str(threads_per_allocation)
 
     try:
+        print("start_trained_model_deployment:")
         print(await es.ml.start_trained_model_deployment(model_id=elser_model_id,
                                                          wait_for="fully_allocated",
                                                          number_of_allocations=number_of_allocations,
                                                          threads_per_allocation=threads_per_allocation))
         return True
     except BadRequestError as bre:
-        print(bre)
         if bre.body["error"]["root_cause"][0]["reason"] == \
                 "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist":
             return True
         else:
             return False
+    except Exception as e:
+        print("Exception", e)
+        return False
 
 
 async def create_elser_model(es, params):
+    if (await put_elser(es, params) == False):
+        return False
+    if (await poll_for_elser_completion(es, params) == False):
+        return False
     await stop_trained_model_deployment(es, params)
-    # TODO await put_elser(es, params)
-    await poll_for_elser_completion(es, params)
     await start_trained_model_deployment(es, params)
+
 
 def register(registry):
     registry.register_param_source("weighted-terms-param-source", WeightedTermsParamsSource)

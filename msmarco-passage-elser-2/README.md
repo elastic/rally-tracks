@@ -13,7 +13,9 @@ Alternatively, you can manually download the `.elser_model_1` model (this is a c
 
 ### Parameters
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
-
+* `number_of_allocations` (default: 1)
+* `threads_per_allocation` (default: 2)
+* `queue_capacity` (default: 1024)
 * `bulk_size` (default: 5000)
 * `bulk_indexing_clients` (default: 8)
 * `ingest_percentage` (default: 100)

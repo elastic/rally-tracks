@@ -60,15 +60,14 @@ elser_model_id = ".elser_model_1"
 
 
 async def put_elser(es, params):
-    print("\ndownload elser")
     try:
-        print(await es.ml.put_trained_model(model_id=elser_model_id, input={"field_names": "text_field"}))
+        await es.ml.put_trained_model(model_id=elser_model_id, input={"field_names": "text_field"})
         return True
     except BadRequestError as bre:
         if (
             bre.body["error"]["root_cause"][0]["reason"]
             == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
-            or bre.body["error"]["root_cause"][0]["reason"] == "Trained machine learning model [.elser_model_1] already exists'"
+            or bre.body["error"]["root_cause"][0]["reason"] == "Trained machine learning model [.elser_model_1] already exists"
         ):
             return True
         else:
@@ -89,10 +88,10 @@ async def poll_for_elser_completion(es, params):
             if is_model_fully_defined(response):
                 return True
         except NotFoundError:
-            print("waiting... try count:", try_count)
+            print("\nwaiting... try count:", try_count, end="")
             await asyncio.sleep(wait_time_per_cycle_seconds)
             try_count += 1
-
+    print()
     return False
 
 
@@ -106,7 +105,7 @@ async def stop_trained_model_deployment(es, params):
 
     try:
         print("stop_trained_model_deployment:")
-        print(await es.ml.stop_trained_model_deployment(model_id=elser_model_id, force=True))
+        await es.ml.stop_trained_model_deployment(model_id=elser_model_id, force=True)
         return True
     except BadRequestError as bre:
         if model_deployment_already_exists(bre):
@@ -121,20 +120,18 @@ async def start_trained_model_deployment(es, params):
     threads_per_allocation = params["threads_per_allocation"]
     queue_capacity = params["queue_capacity"]
     try:
-        print("start_trained_model_deployment:")
-        print(
-            await es.ml.start_trained_model_deployment(
-                model_id=elser_model_id,
-                wait_for="fully_allocated",
-                number_of_allocations=number_of_allocations,
-                threads_per_allocation=threads_per_allocation,
-            )
+        await es.ml.start_trained_model_deployment(
+            model_id=elser_model_id,
+            wait_for="fully_allocated",
+            number_of_allocations=number_of_allocations,
+            threads_per_allocation=threads_per_allocation,
         )
         return True
     except BadRequestError as bre:
         if model_deployment_already_exists(bre):
             return True
         else:
+            print(bre)
             return False
     except Exception as e:
         print("Exception", e)

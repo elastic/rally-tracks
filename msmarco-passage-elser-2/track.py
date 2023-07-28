@@ -37,8 +37,7 @@ class WeightedTermsParamsSource:
     def params(self):
         query = self._query_tokens[self._iters]
         if self._num_terms > len(query):
-            raise Exception(
-                f"The requested number of terms {self._num_terms} cannot be satisfied by the query with {len(query)} tokens")
+            raise Exception(f"The requested number of terms {self._num_terms} cannot be satisfied by the query with {len(query)} tokens")
 
         result = {"index": self._index_name, "cache": self._cache, "size": self._size}
         result["body"] = {
@@ -63,12 +62,13 @@ elser_model_id = ".elser_model_1"
 async def put_elser(es, params):
     print("\ndownload elser")
     try:
-        print(await es.ml.put_trained_model(model_id=elser_model_id,
-                                  input={"field_names": "text_field"}))
+        print(await es.ml.put_trained_model(model_id=elser_model_id, input={"field_names": "text_field"}))
         return True
     except BadRequestError as bre:
-        if bre.body["error"]["root_cause"][0]["reason"] == \
-                "Cannot create model [.elser_model_1] the id is the same as an current model deployment":
+        if (
+            bre.body["error"]["root_cause"][0]["reason"]
+            == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
+        ):
             return True
         else:
             print(bre)
@@ -84,8 +84,7 @@ async def poll_for_elser_completion(es, params):
     wait_time_per_cycle_seconds = 5
     while wait_time_per_cycle_seconds * try_count < max_wait_time_seconds:
         try:
-            response = await es.ml.get_trained_models(model_id=elser_model_id,
-                                                      include="definition_status")
+            response = await es.ml.get_trained_models(model_id=elser_model_id, include="definition_status")
             if response["trained_model_configs"][0]["fully_defined"]:
                 return True
         except NotFoundError:
@@ -102,12 +101,13 @@ async def stop_trained_model_deployment(es, params):
 
     try:
         print("stop_trained_model_deployment:")
-        print(await es.ml.stop_trained_model_deployment(model_id=elser_model_id,
-                                                        force=True))
+        print(await es.ml.stop_trained_model_deployment(model_id=elser_model_id, force=True))
         return True
     except BadRequestError as bre:
-        if bre.body["error"]["root_cause"][0]["reason"] == \
-                "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist":
+        if (
+            bre.body["error"]["root_cause"][0]["reason"]
+            == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
+        ):
             return True
         else:
             print(bre)
@@ -121,14 +121,20 @@ async def start_trained_model_deployment(es, params):
 
     try:
         print("start_trained_model_deployment:")
-        print(await es.ml.start_trained_model_deployment(model_id=elser_model_id,
-                                                         wait_for="fully_allocated",
-                                                         number_of_allocations=number_of_allocations,
-                                                         threads_per_allocation=threads_per_allocation))
+        print(
+            await es.ml.start_trained_model_deployment(
+                model_id=elser_model_id,
+                wait_for="fully_allocated",
+                number_of_allocations=number_of_allocations,
+                threads_per_allocation=threads_per_allocation,
+            )
+        )
         return True
     except BadRequestError as bre:
-        if bre.body["error"]["root_cause"][0]["reason"] == \
-                "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist":
+        if (
+            bre.body["error"]["root_cause"][0]["reason"]
+            == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
+        ):
             return True
         else:
             return False
@@ -138,9 +144,9 @@ async def start_trained_model_deployment(es, params):
 
 
 async def create_elser_model(es, params):
-    if (await put_elser(es, params) == False):
+    if await put_elser(es, params) == False:
         return False
-    if (await poll_for_elser_completion(es, params) == False):
+    if await poll_for_elser_completion(es, params) == False:
         return False
     await stop_trained_model_deployment(es, params)
     await start_trained_model_deployment(es, params)

@@ -17,6 +17,7 @@
       "operation": {
         "number_of_allocations": {{ number_of_allocations|default(1) }},
         "threads_per_allocation": {{ threads_per_allocation|default(2) }},
+        "queue_capacity": {{ queue_capacity|default(1024) }},
         "operation-type": "create-elser-model",
         "include-in-reporting": false
       }
@@ -48,8 +49,10 @@
             {
               "set": {
                 "field": "_index",
-                {% raw %}
-                "value": "failed-{{ _index }}"
+                 {% raw %}
+                "description": "Record error information",
+                "field": "error_information",
+                "value": "Processor {{ _ingest.on_failure_processor_type }} with tag {{ _ingest.on_failure_processor_tag }} in pipeline {{ _ingest.on_failure_pipeline }} failed with message {{ _ingest.on_failure_message }}"
                 {% endraw %}
               }
             }
@@ -74,11 +77,11 @@
       "operation": {        
         "include-in-reporting": true,
         "operation-type": "bulk",
-        "bulk-size": {{bulk_size | default(5000)}},
+        "bulk-size": {{bulk_size | default(100)}},
         "pipeline": "elser2",
-        "ingest-percentage": {{ingest_percentage | default(100)}}
+        "ingest-percentage": {{ingest_percentage | default(10)}}
       },
-      "clients": {{bulk_indexing_clients | default(2)}}
+      "clients": {{bulk_indexing_clients | default(1)}}
     },
     {
       "operation": {

@@ -37,7 +37,8 @@ class WeightedTermsParamsSource:
     def params(self):
         query = self._query_tokens[self._iters]
         if self._num_terms > len(query):
-            raise Exception(f"The requested number of terms {self._num_terms} cannot be satisfied by the query with {len(query)} tokens")
+            raise Exception(
+                f"The requested number of terms {self._num_terms} cannot be satisfied by the query with {len(query)} tokens")
 
         result = {"index": self._index_name, "cache": self._cache, "size": self._size}
         result["body"] = {
@@ -66,8 +67,10 @@ async def put_elser(es, params):
         return True
     except BadRequestError as bre:
         if (
-            bre.body["error"]["root_cause"][0]["reason"]
-            == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
+                bre.body["error"]["root_cause"][0]["reason"]
+                == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
+                or bre.body["error"]["root_cause"][0]["reason"]
+                == "Trained machine learning model [.elser_model_1] already exists'"
         ):
             return True
         else:
@@ -104,10 +107,7 @@ async def stop_trained_model_deployment(es, params):
         print(await es.ml.stop_trained_model_deployment(model_id=elser_model_id, force=True))
         return True
     except BadRequestError as bre:
-        if (
-            bre.body["error"]["root_cause"][0]["reason"]
-            == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
-        ):
+        if model_deployment_already_exists(bre):
             return True
         else:
             print(bre)
@@ -117,8 +117,7 @@ async def stop_trained_model_deployment(es, params):
 async def start_trained_model_deployment(es, params):
     number_of_allocations = params["number_of_allocations"]
     threads_per_allocation = params["threads_per_allocation"]
-    # deployment_id = "elser-benchmark-allocations-"+str(number_of_allocations)+"-threads-per-"+str(threads_per_allocation)
-
+    queue_capacity = params["queue_capacity"]
     try:
         print("start_trained_model_deployment:")
         print(
@@ -131,16 +130,20 @@ async def start_trained_model_deployment(es, params):
         )
         return True
     except BadRequestError as bre:
-        if (
-            bre.body["error"]["root_cause"][0]["reason"]
-            == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
-        ):
+        if model_deployment_already_exists(bre):
             return True
         else:
             return False
     except Exception as e:
         print("Exception", e)
         return False
+
+
+def model_deployment_already_exists(badRequestError):
+    exists = (badRequestError.body["error"]["root_cause"][0]["reason"]
+              == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist")
+
+    return exists
 
 
 async def create_elser_model(es, params):

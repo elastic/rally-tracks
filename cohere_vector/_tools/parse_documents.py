@@ -1,6 +1,7 @@
 import json
 import sys
 from datasets import load_dataset
+import numpy as np
 
 DATASET_NAME: str = f"Cohere/miracl-en-corpus-22-12"
 OUTPUT_FILENAME: str = "documents.json"
@@ -17,11 +18,13 @@ def output_documents(docs_file):
   docs = load_dataset(DATASET_NAME, split="train", streaming=True)
   doc_count = 0
   for doc in docs:
+      v = np.array(doc['emb'])
+      v_unit = v / np.linalg.norm(v)
       docs_file.write(json.dumps({
          "docid": doc['docid'],
          "title": doc['title'],
          "text": doc['text'],
-         "emb": doc['emb'],
+         "emb": v_unit.tolist(),
       }, ensure_ascii=True))
       docs_file.write("\n")
       doc_count += 1

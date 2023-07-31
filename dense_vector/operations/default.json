@@ -1,61 +1,252 @@
-{
-  "name": "knn-search-10-100",
-  "operation-type": "search",
-  "param-source": "knn-param-source",
-  "k": 10,
-  "num-candidates": 100
-},
-{
-  "name": "knn-search-100-1000",
-  "operation-type": "search",
-  "param-source": "knn-param-source",
-  "k": 100,
-  "num-candidates": 1000
-},
-{
-  "name": "script-score-query",
-  "operation-type": "search",
-  "param-source": "knn-param-source",
-  "k": 10,
-  "exact": true
-},
-{
-  "name": "knn-recall-10-100",
-  "operation-type": "knn-recall",
-  "param-source": "knn-recall-param-source",
-  "k": 10,
-  "num-candidates": 100,
-  "include-in-reporting": false
-},
-{
-  "name": "knn-recall-100-1000",
-  "operation-type": "knn-recall",
-  "param-source": "knn-recall-param-source",
-  "k": 100,
-  "num-candidates": 1000,
-  "include-in-reporting": false
-},
-{
-  "name": "knn-recall-10-10",
-  "operation-type": "knn-recall",
-  "param-source": "knn-recall-param-source",
-  "k": 10,
-  "num-candidates": 10,
-  "include-in-reporting": false
-},
-{
-  "name": "knn-recall-100-100",
-  "operation-type": "knn-recall",
-  "param-source": "knn-recall-param-source",
-  "k": 100,
-  "num-candidates": 100,
-  "include-in-reporting": false
-},
-{
-  "name": "knn-recall-1000-1000",
-  "operation-type": "knn-recall",
-  "param-source": "knn-recall-param-source",
-  "k": 1000,
-  "num-candidates": 1000,
-  "include-in-reporting": false
-}
+
+  {
+    "name": "compareme-knn-search-10-100",
+    "operation-type": "search",
+    "param-source": "knn-param-source",
+    "k": 10,
+    "num-candidates": 100
+  },
+  {
+    "name": "knn-search-10-100-cold_cache",
+    "param-source": "knn-param-source",
+    "operation-type": "composite",
+    "requests": [
+      {
+        "stream": [
+          {
+            "name": "cache-clear",
+            "operation-type": "raw-request",
+            "path": "/_internal/blob_caches/clear",
+            "method": "POST"
+          },
+          {
+            "name": "compareme-knn-search-10-100",
+            "operation-type": "search",
+            "param-source": "knn-param-source",
+            "k": 10,
+            "num-candidates": 100
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compareme-knn-search-100-1000",
+    "operation-type": "search",
+    "param-source": "knn-param-source",
+    "k": 100,
+    "num-candidates": 1000
+  },
+  {
+    "name": "knn-search-100-1000-cold_cache",
+    "operation-type": "composite",
+    "requests": [
+      {
+        "stream": [
+          {
+            "name": "cache-clear",
+            "operation-type": "raw-request",
+            "path": "/_internal/blob_caches/clear",
+            "method": "POST"
+          },
+          {
+            "name": "compareme-knn-search-100-1000",
+            "param-source": "knn-param-source",
+            "operation-type": "search",
+            "k": 100,
+            "num-candidates": 1000
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compareme-script-score-query",
+    "operation-type": "search",
+    "param-source": "knn-param-source",
+    "k": 10,
+    "exact": true
+  },
+  {
+    "name": "script-score-query-cold_cache",
+    "operation-type": "composite",
+    "requests": [
+      {
+        "stream": [
+          {
+            "name": "cache-clear",
+            "operation-type": "raw-request",
+            "path": "/_internal/blob_caches/clear",
+            "method": "POST"
+          },
+          {
+            "name": "compareme-script-score-query",
+            "operation-type": "search",
+            "param-source": "knn-param-source",
+            "k": 10,
+            "exact": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compareme-knn-recall-10-100",
+    "operation-type": "knn-recall",
+    "param-source": "knn-recall-param-source",
+    "k": 10,
+    "num-candidates": 100,
+    "include-in-reporting": false
+  },
+  {
+    "name": "knn-recall-10-100-cold_cache",
+    "operation-type": "composite",
+    "requests": [
+      {
+        "stream": [
+          {
+            "name": "cache-clear",
+            "operation-type": "raw-request",
+            "path": "/_internal/blob_caches/clear",
+            "method": "POST"
+          },
+          {
+            "name": "compareme-knn-recall-10-100",
+            "operation-type": "knn-recall",
+            "param-source": "knn-recall-param-source",
+            "k": 10,
+            "num-candidates": 100,
+            "include-in-reporting": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compareme-knn-recall-100-1000",
+    "operation-type": "knn-recall",
+    "param-source": "knn-recall-param-source",
+    "k": 100,
+    "num-candidates": 1000,
+    "include-in-reporting": false
+  },
+  {
+    "name": "knn-recall-100-1000-cold_cache",
+    "operation-type": "composite",
+    "requests": [
+      {
+        "stream": [
+          {
+            "name": "cache-clear",
+            "operation-type": "raw-request",
+            "path": "/_internal/blob_caches/clear",
+            "method": "POST"
+          },
+          {
+            "name": "compareme-knn-recall-100-1000",
+            "operation-type": "knn-recall",
+            "param-source": "knn-recall-param-source",
+            "k": 100,
+            "num-candidates": 1000,
+            "include-in-reporting": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compareme-knn-recall-10-10",
+    "operation-type": "knn-recall",
+    "param-source": "knn-recall-param-source",
+    "k": 10,
+    "num-candidates": 10,
+    "include-in-reporting": false
+  },
+  {
+    "name": "knn-recall-10-10-cold_cache",
+    "operation-type": "composite",
+    "requests": [
+      {
+        "stream": [
+          {
+            "name": "cache-clear",
+            "operation-type": "raw-request",
+            "path": "/_internal/blob_caches/clear",
+            "method": "POST"
+          },
+          {
+            "name": "compareme-knn-recall-10-10",
+            "operation-type": "knn-recall",
+            "param-source": "knn-recall-param-source",
+            "k": 10,
+            "num-candidates": 10,
+            "include-in-reporting": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compareme-knn-recall-100-100",
+    "operation-type": "knn-recall",
+    "param-source": "knn-recall-param-source",
+    "k": 100,
+    "num-candidates": 100,
+    "include-in-reporting": false
+  },
+  {
+    "name": "knn-recall-100-100-cold_cache",
+    "operation-type": "composite",
+    "requests": [
+      {
+        "stream": [
+          {
+            "name": "cache-clear",
+            "operation-type": "raw-request",
+            "path": "/_internal/blob_caches/clear",
+            "method": "POST"
+          },
+          {
+            "name": "compareme-knn-recall-100-100",
+            "operation-type": "knn-recall",
+            "param-source": "knn-recall-param-source",
+            "k": 100,
+            "num-candidates": 100,
+            "include-in-reporting": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compareme-knn-recall-1000-1000",
+    "operation-type": "knn-recall",
+    "param-source": "knn-recall-param-source",
+    "k": 1000,
+    "num-candidates": 1000,
+    "include-in-reporting": false
+  },
+  {
+    "name": "knn-recall-1000-1000-cold_cache",
+    "operation-type": "composite",
+    "requests": [
+      {
+        "stream": [
+          {
+            "name": "cache-clear",
+            "operation-type": "raw-request",
+            "path": "/_internal/blob_caches/clear",
+            "method": "POST"
+          },
+          {
+            "name": "compareme-knn-recall-1000-1000",
+            "operation-type": "knn-recall",
+            "param-source": "knn-recall-param-source",
+            "k": 1000,
+            "num-candidates": 1000,
+            "include-in-reporting": false
+          }
+        ]
+      }
+    ]
+  }

@@ -39,7 +39,7 @@ class KnnParamSource:
                         "query": {"match_all": {}},
                         "script": {
                             "source": "dotProduct(params.query, 'emb') + 1.0",
-                            "params": {"query": self._queries[0]},
+                            "params": {"query": self._queries[self._iters]},
                         },
                     }
                 },

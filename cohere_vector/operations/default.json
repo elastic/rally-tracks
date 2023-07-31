@@ -16,4 +16,25 @@
   "operation-type": "bulk",
   "bulk-size": {{bulk_size | default(500)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
+},
+{
+  "name": "knn-search-10-100",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 100
+},
+{
+  "name": "knn-search-100-1000",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 1000
+},
+{
+  "name": "script-score-query",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "exact": true
 }

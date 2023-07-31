@@ -99,5 +99,7 @@ jobs:
         if: always()
         with:
           name: rally-tracks-compat-logs
-          path: /home/runner/.rally/logs/
+          path: |
+            /home/runner/.rally/logs/
+            /home/runner/.rally/benchmarks/races/
           if-no-files-found: error

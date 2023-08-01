@@ -37,7 +37,8 @@ class WeightedTermsParamsSource:
     def params(self):
         query = self._query_tokens[self._iters]
         if self._num_terms > len(query):
-            raise Exception(f"The requested number of terms {self._num_terms} cannot be satisfied by the query with {len(query)} tokens")
+            raise Exception(
+                f"The requested number of terms {self._num_terms} cannot be satisfied by the query with {len(query)} tokens")
 
         result = {"index": self._index_name, "cache": self._cache, "size": self._size}
         result["body"] = {
@@ -59,23 +60,39 @@ class WeightedTermsParamsSource:
 elser_model_id = ".elser_model_1"
 
 
+# TODO enable this function once rally upgrades the elasticsearch python client to >=8.9.0
+# async def put_elser(es, params):
+#     try:
+#         await es.ml.put_trained_model(model_id=elser_model_id, input={"field_names": "text_field"})
+#         return True
+#     except BadRequestError as bre:
+#         if (
+#             bre.body["error"]["root_cause"][0]["reason"]
+#             == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
+#             or bre.body["error"]["root_cause"][0]["reason"] == "Trained machine learning model [.elser_model_1] already exists"
+#         ):
+#             return True
+#         else:
+#             print(bre)
+#             return False
+#     except Exception as e:
+#         print(e)
+#         return False
+
 async def put_elser(es, params):
+    print("creating elser model")
     try:
-        await es.ml.put_trained_model(model_id=elser_model_id, input={"field_names": "text_field"})
-        return True
-    except BadRequestError as bre:
-        if (
-            bre.body["error"]["root_cause"][0]["reason"]
-            == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
-            or bre.body["error"]["root_cause"][0]["reason"] == "Trained machine learning model [.elser_model_1] already exists"
-        ):
-            return True
-        else:
-            print(bre)
-            return False
+        await es.perform_request(
+            method="PUT",
+            path="/_ml/trained_models/.elser_model_1",
+            body={
+                "input": {
+                    "field_names": ["text_field"]
+                }
+            }
+        )
     except Exception as e:
         print(e)
-        return False
 
 
 async def poll_for_elser_completion(es, params):
@@ -104,7 +121,6 @@ async def stop_trained_model_deployment(es, params):
     threads_per_allocation = params["threads_per_allocation"]
 
     try:
-        print("stop_trained_model_deployment:")
         await es.ml.stop_trained_model_deployment(model_id=elser_model_id, force=True)
         return True
     except BadRequestError as bre:
@@ -140,8 +156,8 @@ async def start_trained_model_deployment(es, params):
 
 def model_deployment_already_exists(badRequestError):
     exists = (
-        badRequestError.body["error"]["root_cause"][0]["reason"]
-        == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
+            badRequestError.body["error"]["root_cause"][0]["reason"]
+            == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
     )
 
     return exists

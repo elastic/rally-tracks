@@ -3,15 +3,8 @@
 ### Prerequisites
 #### Set up ES cloud deployment
 Create a deployment which contains an ML node
-#### Install Elasticsearch >=8.9 with pip (or manually downlaod ELSER)
-Warning: esrally is theoretically not compatible with elasticsearch>8.6.1, but we need it to run this track
 
-`python -m pip install elasticsearch -U`
-
-Alternatively, you can manually download the `.elser_model_1` model (this is a currently a manual step, but can be automated pending the release of an updated python client)
-
-
-### Parameters
+### Parametersgit 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 * `number_of_allocations` (default: 1)
 * `threads_per_allocation` (default: 2)

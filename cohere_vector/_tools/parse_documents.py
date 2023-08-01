@@ -25,7 +25,7 @@ def output_documents(docs_file):
      print("Parsing {} documents".format(max_documents))
   else:
      print("Parsing entire {} dataset".format(DATASET_NAME))
-  docs = load_dataset(DATASET_NAME, split="train", streaming=True)
+  docs = load_dataset(DATASET_NAME, split="train")
   doc_count = 0
   progress_bar(doc_count, max_documents if partial_index else TOTAL_DOCS)
   for doc in docs:

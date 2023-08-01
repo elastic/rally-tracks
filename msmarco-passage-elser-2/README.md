@@ -2,7 +2,7 @@
 
 ### Prerequisites
 #### Set up ES cloud deployment
-Create a deployment which contains an ML node
+Create a deployment which contains an ML node with at least 4GB of memory.
 
 ### Parametersgit 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:

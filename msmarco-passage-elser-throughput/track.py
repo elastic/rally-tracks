@@ -1,14 +1,10 @@
 import asyncio
-import base64
-import itertools
-import json
-import os
 
 from elasticsearch import BadRequestError, NotFoundError
 
 
 class WeightedTermsParamsSource:
-    def __init__(self, track, params, **kwargs):
+    def __init__(self, track, params):
         # choose a suitable index: if there is only one defined for this track
         # choose that one, but let the user always override index
         if len(track.indices) == 1:
@@ -25,15 +21,6 @@ class WeightedTermsParamsSource:
         self._track_total_hits = params.get("track_total_hits", False)
         self._params = params
 
-        cwd = os.path.dirname(__file__)
-        with open(os.path.join(cwd, self._tokens_file), "r") as file:
-            self._query_tokens = json.load(file)
-
-        self._iters = 0
-
-    def partition(self, partition_index, total_partitions):
-        return self
-
 
 elser_model_id = ".elser_model_1"
 
@@ -47,7 +34,8 @@ elser_model_id = ".elser_model_1"
 #         if (
 #             bre.body["error"]["root_cause"][0]["reason"]
 #             == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
-#             or bre.body["error"]["root_cause"][0]["reason"] == "Trained machine learning model [.elser_model_1] already exists"
+#             or bre.body["error"]["root_cause"][0]["reason"]
+#             == "Trained machine learning model [.elser_model_1] already exists"
 #         ):
 #             return True
 #         else:
@@ -58,7 +46,7 @@ elser_model_id = ".elser_model_1"
 #         return False
 
 
-async def put_elser(es, params):
+async def put_elser(es):
     try:
         await es.perform_request(method="PUT", path="/_ml/trained_models/.elser_model_1", body={"input": {"field_names": ["text_field"]}})
     except BadRequestError as bre:
@@ -76,7 +64,7 @@ async def put_elser(es, params):
         return False
 
 
-async def poll_for_elser_completion(es, params):
+async def poll_for_elser_completion(es):
     try_count = 0
     max_wait_time_seconds = 120
     wait_time_per_cycle_seconds = 5
@@ -97,10 +85,7 @@ def is_model_fully_defined(response):
     return response["trained_model_configs"][0]["fully_defined"]
 
 
-async def stop_trained_model_deployment(es, params):
-    number_of_allocations = params["number_of_allocations"]
-    threads_per_allocation = params["threads_per_allocation"]
-
+async def stop_trained_model_deployment(es):
     try:
         await es.ml.stop_trained_model_deployment(model_id=elser_model_id, force=True)
         return True
@@ -122,6 +107,7 @@ async def start_trained_model_deployment(es, params):
             wait_for="fully_allocated",
             number_of_allocations=number_of_allocations,
             threads_per_allocation=threads_per_allocation,
+            queue_capacity=queue_capacity,
         )
         return True
     except BadRequestError as bre:
@@ -135,9 +121,9 @@ async def start_trained_model_deployment(es, params):
         return False
 
 
-def model_deployment_already_exists(badRequestError):
+def model_deployment_already_exists(bad_request_error):
     exists = (
-        badRequestError.body["error"]["root_cause"][0]["reason"]
+        bad_request_error.body["error"]["root_cause"][0]["reason"]
         == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
     )
 
@@ -145,11 +131,11 @@ def model_deployment_already_exists(badRequestError):
 
 
 async def create_elser_model(es, params):
-    if await put_elser(es, params) == False:
+    if await put_elser(es) == False:
         return False
-    if await poll_for_elser_completion(es, params) == False:
+    if await poll_for_elser_completion(es) == False:
         return False
-    await stop_trained_model_deployment(es, params)
+    await stop_trained_model_deployment(es)
     await start_trained_model_deployment(es, params)
 
 

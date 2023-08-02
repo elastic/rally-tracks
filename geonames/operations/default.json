@@ -38,6 +38,7 @@
             {
               "name": "compareme-default",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "match_all": {}
@@ -74,6 +75,7 @@
             {
               "name": "compareme-term",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "term": {
@@ -111,6 +113,7 @@
             },
             {
               "name": "compareme-phrase",
+              "index": "geonames",
               "operation-type": "search",
               "body": {
                 "query": {
@@ -160,6 +163,7 @@
             {
               "name": "compareme-country_agg_uncached",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "size": 0,
                 "aggs": {
@@ -219,6 +223,7 @@
             {
               "name": "compareme-country_agg_cached",
               "operation-type": "search",
+              "index": "geonames",
               "cache": true,
               "body": {
                 "size": 0,
@@ -268,6 +273,7 @@
             {
               "name": "compareme-scroll",
               "operation-type": "search",
+              "index": "geonames",
               "pages": 25,
               "results-per-page": 1000,
               "body": {
@@ -318,6 +324,7 @@
             {
               "name": "compareme-expression",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "function_score": {
@@ -380,6 +387,7 @@
             {
               "name": "compareme-painless_static",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "function_score": {
@@ -442,6 +450,7 @@
             {
               "name": "compareme-painless_dynamic",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "function_score": {
@@ -502,6 +511,7 @@
             {
               "name": "compareme-decay_geo_gauss_function_score",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "function_score": {
@@ -561,6 +571,7 @@
             {
               "name": "compareme-decay_geo_gauss_script_score",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "script_score": {
@@ -617,6 +628,7 @@
             {
               "name": "compareme-field_value_function_score",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "function_score": {
@@ -667,6 +679,7 @@
             {
               "name": "compareme-field_value_script_score",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "script_score": {
@@ -683,21 +696,6 @@
           ]
         }
       ]
-    },
-    {
-      "name": "compareme-large_terms",
-      "operation-type": "search",
-      "param-source": "pure-terms-query-source"
-    },
-    {
-      "name": "compareme-large_filtered_terms",
-      "operation-type": "search",
-      "param-source": "filtered-terms-query-source"
-    },
-    {
-      "name": "compareme-large_prohibited_terms",
-      "operation-type": "search",
-      "param-source": "prohibited-terms-query-source"
     },
     {
       "name": "compareme-desc_sort_population",
@@ -728,6 +726,7 @@
             {
               "name": "compareme-desc_sort_population",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "match_all": {}
@@ -775,6 +774,7 @@
             {
               "name": "compareme-desc_sort_population_can_match_shortcut",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "track_total_hits": false,
                 "query": {
@@ -828,6 +828,7 @@
             {
               "name": "compareme-desc_sort_population_no_can_match_shortcut",
               "operation-type": "search",
+              "index": "geonames",
               "request-params": {
                 "pre_filter_shard_size": 10000
               },
@@ -878,6 +879,7 @@
             {
               "name": "compareme-asc_sort_population",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "match_all": {}
@@ -925,6 +927,7 @@
             {
               "name": "compareme-asc_sort_with_after_population",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "match_all": {}
@@ -972,6 +975,7 @@
             {
               "name": "compareme-desc_sort_geonameid",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "match_all": {}
@@ -1020,6 +1024,7 @@
             {
               "name": "compareme-desc_sort_with_after_geonameid",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "track_total_hits": false,
                 "query": {
@@ -1068,6 +1073,7 @@
             {
               "name": "compareme-asc_sort_geonameid",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "query": {
                   "match_all": {}
@@ -1116,6 +1122,7 @@
             {
               "name": "compareme-asc_sort_with_after_geonameid",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "track_total_hits": false,
                 "query": {
@@ -1167,6 +1174,7 @@
             {
               "name": "compareme-sort_country_code_can_match_shortcut",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "track_total_hits": false,
                 "query": {
@@ -1220,6 +1228,7 @@
             {
               "name": "compareme-sort_country_code_no_can_match_shortcut",
               "operation-type": "search",
+              "index": "geonames",
               "request-params": {
                 "pre_filter_shard_size": 10000
               },
@@ -1275,6 +1284,7 @@
             {
               "name": "compareme-significant_text_selective",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "size": 0,
                 "query": {
@@ -1336,6 +1346,7 @@
             {
               "name": "compareme-significant_text_sampled_selective",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "size": 0,
                 "query": {
@@ -1397,6 +1408,7 @@
             {
               "name": "compareme-significant_text_unselective",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "size": 0,
                 "query": {
@@ -1458,6 +1470,7 @@
             {
               "name": "compareme-significant_text_sampled_unselective",
               "operation-type": "search",
+              "index": "geonames",
               "body": {
                 "size": 0,
                 "query": {

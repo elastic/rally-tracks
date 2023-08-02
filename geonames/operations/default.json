@@ -15,7 +15,7 @@
       "recency": {{recency | default(0)}}
     },
     {
-      "name": "default",
+      "name": "compareme-default",
       "operation-type": "search",
       "body": {
         "query": {
@@ -24,7 +24,7 @@
       }
     },
     {
-      "name": "term",
+      "name": "compareme-term",
       "operation-type": "search",
       "body": {
         "query": {
@@ -35,7 +35,7 @@
       }
     },
     {
-      "name": "phrase",
+      "name": "compareme-phrase",
       "operation-type": "search",
       "body": {
         "query": {
@@ -46,7 +46,7 @@
       }
     },
     {
-      "name": "country_agg_uncached",
+      "name": "compareme-country_agg_uncached",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -67,7 +67,7 @@
       }
     },
     {
-      "name": "country_agg_cached",
+      "name": "compareme-country_agg_cached",
       "operation-type": "search",
       "cache": true,
       "body": {
@@ -89,7 +89,7 @@
       }
     },
     {
-      "name": "scroll",
+      "name": "compareme-scroll",
       "operation-type": "search",
       "pages": 25,
       "results-per-page": 1000,
@@ -100,7 +100,7 @@
       }
     },
     {
-      "name": "expression",
+      "name": "compareme-expression",
       "operation-type": "search",
       "body": {
         "query": {
@@ -123,7 +123,7 @@
       }
     },
     {
-      "name": "painless_static",
+      "name": "compareme-painless_static",
       "operation-type": "search",
       "body": {
         "query": {
@@ -146,7 +146,7 @@
       }
     },
     {
-      "name": "painless_dynamic",
+      "name": "compareme-painless_dynamic",
       "operation-type": "search",
       "body": {
         "query": {
@@ -169,7 +169,7 @@
       }
     },
     {
-      "name": "decay_geo_gauss_function_score",
+      "name": "compareme-decay_geo_gauss_function_score",
       "operation-type": "search",
       "body": {
         "query": {
@@ -190,7 +190,7 @@
       }
     },
    {
-      "name": "decay_geo_gauss_script_score",
+      "name": "compareme-decay_geo_gauss_script_score",
       "operation-type": "search",
       "body": {
         "query": {
@@ -210,9 +210,9 @@
           }
         }
       }
-    },
+   },
     {
-      "name": "field_value_function_score",
+      "name": "compareme-field_value_function_score",
       "operation-type": "search",
       "body": {
         "query": {
@@ -230,7 +230,7 @@
       }
     }, 
     {
-      "name": "field_value_script_score",
+      "name": "compareme-field_value_script_score",
       "operation-type": "search",
       "body": {
         "query": {
@@ -246,22 +246,22 @@
       }
     },
     {
-      "name": "large_terms",
+      "name": "compareme-large_terms",
       "operation-type": "search",
       "param-source": "pure-terms-query-source"
     },
     {
-      "name": "large_filtered_terms",
+      "name": "compareme-large_filtered_terms",
       "operation-type": "search",
       "param-source": "filtered-terms-query-source"
     },
     {
-      "name": "large_prohibited_terms",
+      "name": "compareme-large_prohibited_terms",
       "operation-type": "search",
       "param-source": "prohibited-terms-query-source"
     },
     {
-      "name": "desc_sort_population",
+      "name": "compareme-desc_sort_population",
       "operation-type": "search",
       "body": {
         "query": {
@@ -273,7 +273,7 @@
       }
     },
     {
-      "name": "desc_sort_population_can_match_shortcut",
+      "name": "compareme-desc_sort_population_can_match_shortcut",
       "operation-type": "search",
       "body": {
         "track_total_hits": false,
@@ -288,7 +288,7 @@
       }
     },
     {
-      "name": "desc_sort_population_no_can_match_shortcut",
+      "name": "compareme-desc_sort_population_no_can_match_shortcut",
       "operation-type": "search",
       "request-params" : {
           "pre_filter_shard_size" : 10000
@@ -306,7 +306,7 @@
       }
     },
     {
-      "name": "asc_sort_population",
+      "name": "compareme-asc_sort_population",
       "operation-type": "search",
       "body": {
         "query": {
@@ -318,7 +318,7 @@
       }
     },
     {
-      "name": "asc_sort_with_after_population",
+      "name": "compareme-asc_sort_with_after_population",
       "operation-type": "search",
       "body": {
         "query": {
@@ -331,7 +331,7 @@
       }
     },
     {
-      "name": "desc_sort_geonameid",
+      "name": "compareme-desc_sort_geonameid",
       "operation-type": "search",
       "body": {
         "query": {
@@ -343,7 +343,7 @@
       }
     },
     {
-      "name": "desc_sort_with_after_geonameid",
+      "name": "compareme-desc_sort_with_after_geonameid",
       "operation-type": "search",
       "body": {
         "track_total_hits": false,
@@ -357,7 +357,7 @@
       }
     },
     {
-      "name": "asc_sort_geonameid",
+      "name": "compareme-asc_sort_geonameid",
       "operation-type": "search",
       "body": {
         "query": {
@@ -369,7 +369,7 @@
       }
     },
     {
-      "name": "asc_sort_with_after_geonameid",
+      "name": "compareme-asc_sort_with_after_geonameid",
       "operation-type": "search",
       "body": {
         "track_total_hits": false,
@@ -383,7 +383,7 @@
       }
     },
     {
-      "name": "sort_country_code_can_match_shortcut",
+      "name": "compareme-sort_country_code_can_match_shortcut",
       "operation-type": "search",
       "body": {
         "track_total_hits": false,
@@ -398,7 +398,7 @@
       }
     },
     {
-      "name": "sort_country_code_no_can_match_shortcut",
+      "name": "compareme-sort_country_code_no_can_match_shortcut",
       "operation-type": "search",
       "request-params" : {
           "pre_filter_shard_size" : 10000
@@ -416,7 +416,7 @@
       }
     },
     {
-      "name": "significant_text_selective",
+      "name": "compareme-significant_text_selective",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -435,7 +435,7 @@
       }
     },
     {
-      "name": "significant_text_sampled_selective",
+      "name": "compareme-significant_text_sampled_selective",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -461,7 +461,7 @@
       }
     },
     {
-      "name": "significant_text_unselective",
+      "name": "compareme-significant_text_unselective",
       "operation-type": "search",
       "body": {
         "size": 0,
@@ -480,7 +480,7 @@
       }
     },
     {
-      "name": "significant_text_sampled_unselective",
+      "name": "compareme-significant_text_sampled_unselective",
       "operation-type": "search",
       "body": {
         "size": 0,

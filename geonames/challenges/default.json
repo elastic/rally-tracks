@@ -72,165 +72,165 @@
           "target-throughput": 90
         },
         {
-          "operation": "default",
+          "operation": "compareme-default",
           "warmup-iterations": 500,
           "iterations": 1000,
           "target-throughput": 50
         },
         {
-          "operation": "term",
+          "operation": "compareme-term",
           "warmup-iterations": 500,
           "iterations": 1000,
           "target-throughput": 100
         },
         {
-          "operation": "phrase",
+          "operation": "compareme-phrase",
           "warmup-iterations": 500,
           "iterations": 1000,
           "target-throughput": 110
         },
         {
-          "operation": "country_agg_uncached",
+          "operation": "compareme-country_agg_uncached",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 3
         },
         {
-          "operation": "country_agg_cached",
+          "operation": "compareme-country_agg_cached",
           "warmup-iterations": 1000,
           "iterations": 1000,
           "target-throughput": 100
         },
         {
-          "operation": "scroll",
+          "operation": "compareme-scroll",
           "warmup-iterations": 200,
           "iterations": 100,
           "#COMMENT": "Throughput is considered per request. So we issue one scroll request per second which will retrieve 25 pages",
           "target-throughput": 0.8
         },
         {
-          "operation": "expression",
+          "operation": "compareme-expression",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
         },
         {
-          "operation": "painless_static",
+          "operation": "compareme-painless_static",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.1
         },
         {
-          "operation": "painless_dynamic",
+          "operation": "compareme-painless_dynamic",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.4
         },
         {
-          "operation": "decay_geo_gauss_function_score",
+          "operation": "compareme-decay_geo_gauss_function_score",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1
         },
         {
-          "operation": "decay_geo_gauss_script_score",
+          "operation": "compareme-decay_geo_gauss_script_score",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1
         },
         {
-          "operation": "field_value_function_score",
+          "operation": "compareme-field_value_function_score",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
         },
         {
-          "operation": "field_value_script_score",
+          "operation": "compareme-field_value_script_score",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
         },
         {
-          "operation": "large_terms",
+          "operation": "compareme-large_terms",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.1
         },
         {
-          "operation": "large_filtered_terms",
+          "operation": "compareme-large_filtered_terms",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.1
         },
         {
-          "operation": "large_prohibited_terms",
+          "operation": "compareme-large_prohibited_terms",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.1
         },
         {
-          "operation": "desc_sort_population",
+          "operation": "compareme-desc_sort_population",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
         },
         {
-          "operation": "desc_sort_population_can_match_shortcut",
+          "operation": "compareme-desc_sort_population_can_match_shortcut",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
         },
         {
-          "operation": "desc_sort_population_no_can_match_shortcut",
+          "operation": "compareme-desc_sort_population_no_can_match_shortcut",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
         },
 
         {
-          "operation": "asc_sort_population",
+          "operation": "compareme-asc_sort_population",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
         },
         {
-          "operation": "asc_sort_with_after_population",
+          "operation": "compareme-asc_sort_with_after_population",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
         },
         {
-          "operation": "desc_sort_geonameid",
+          "operation": "compareme-desc_sort_geonameid",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 6
         },
         {
-          "operation": "desc_sort_with_after_geonameid",
+          "operation": "compareme-desc_sort_with_after_geonameid",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 6
         },
         {
-          "operation": "asc_sort_geonameid",
+          "operation": "compareme-asc_sort_geonameid",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 6
         },
         {
-          "operation": "asc_sort_with_after_geonameid",
+          "operation": "compareme-asc_sort_with_after_geonameid",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 6
         },
         {
-          "operation": "sort_country_code_can_match_shortcut",
+          "operation": "compareme-sort_country_code_can_match_shortcut",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5
         },
         {
-          "operation": "sort_country_code_no_can_match_shortcut",
+          "operation": "compareme-sort_country_code_no_can_match_shortcut",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 1.5

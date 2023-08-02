@@ -16,15 +16,12 @@ class WeightedTermsParamsSource:
         self._cache = params.get("cache", False)
         self._size = params.get("size", 10)
         self._field = params.get("field", "ml.tokens")
-        self._tokens_file = params.get("tokens-source", "elser-query-tokens.json")
         self._num_terms = params.get("num-terms", 10)
         self._track_total_hits = params.get("track_total_hits", False)
         self._params = params
 
 
 elser_model_id = ".elser_model_1"
-
-
 # TODO enable this function once rally upgrades the elasticsearch python client to >=8.9.0
 # async def put_elser(es, params):
 #     try:

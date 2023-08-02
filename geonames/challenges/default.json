@@ -151,24 +151,6 @@
           "target-throughput": 1.5
         },
         {
-          "operation": "compareme-large_terms",
-          "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 1.1
-        },
-        {
-          "operation": "compareme-large_filtered_terms",
-          "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 1.1
-        },
-        {
-          "operation": "compareme-large_prohibited_terms",
-          "warmup-iterations": 200,
-          "iterations": 100,
-          "target-throughput": 1.1
-        },
-        {
           "operation": "compareme-desc_sort_population",
           "warmup-iterations": 200,
           "iterations": 100,

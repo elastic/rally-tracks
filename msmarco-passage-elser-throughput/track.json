@@ -4,13 +4,13 @@
   "description": "Benchmark weighted terms queries on ELSER tokens on the MS MARCO passage dataset",
   "indices": [
     {
-      "name": "msmarco-passage-collection-elser-2",
-      "body": "msmarco-passage-collection-elser-2.json"
+      "name": "msmarco-passage-collection-elser-throughput",
+      "body": "msmarco-passage-collection-elser-throughput.json"
     }
   ],
   "corpora": [
     {
-      "name": "msmarco-passage-collection-elser-2",
+      "name": "msmarco-passage-collection-elser-throughput",
       "base-url": "https://rally-tracks.elastic.co/msmarco-passage-collection-elser",
       "documents": [
         {

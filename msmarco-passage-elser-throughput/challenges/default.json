@@ -1,6 +1,6 @@
 {
-  "name": "msmarco-passage-elser-speed-test",
-  "description": "Test the throughout of ELSER in various scenarios",
+  "name": "msmarco-passage-elser-throughput",
+  "description": "Test the throughput of ELSER in various scenarios",
   "default": true,
   "schedule": [
     {
@@ -65,7 +65,7 @@
       "operation": {
         "include-in-reporting": false,
         "operation-type": "cluster-health",
-        "index": "msmarco-passage-collection-elser-2",
+        "index": "msmarco-passage-collection-elser-throughput",
         "request-params": {
           "wait_for_status": "{{cluster_health | default('yellow')}}",
           "wait_for_no_relocating_shards": "true"

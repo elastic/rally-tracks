@@ -29,4 +29,5 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `bulk_size` (default: 5000)
 * `bulk_indexing_clients` (default: 1): Number of clients that issue bulk indexing requests.
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
+* `max_num_segments`: The number of segments to target when doing a force merge (default: 1)
 * `number_of_replicas` (default: 0)

@@ -21,7 +21,7 @@
 {
   "name": "fast-refresh-index",
     "operation-type": "bulk",
-    "bulk-size": {{fast_refresh_bulk_size | default(1)}},
+    "bulk-size": {{fast_refresh_bulk_size | default(15)}},
     "corpora": "k8s-integration",
     "include-in-reporting": true
 },

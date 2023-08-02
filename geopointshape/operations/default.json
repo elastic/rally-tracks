@@ -15,7 +15,7 @@
       "recency": {{recency | default(0)}}
     },
     {
-      "name": "polygon",
+      "name": "compareme-polygon",
       "operation-type": "search",
       "body": {
         "query": {
@@ -38,7 +38,7 @@
       }
     },
     {
-      "name": "bbox",
+      "name": "compareme-bbox",
       "operation-type": "search",
       "body": {
         "query": {
@@ -54,7 +54,7 @@
       }
     },
     {
-      "name": "geoGrid_geohash",
+      "name": "compareme-geoGrid_geohash",
       "operation-type": "search",
       "body": {
         "query": {
@@ -67,7 +67,7 @@
       }
     },
     {
-      "name": "geoGrid_geotile",
+      "name": "compareme-geoGrid_geotile",
       "operation-type": "search",
       "body": {
         "query": {
@@ -80,7 +80,7 @@
       }
     },
     {
-      "name": "geoGrid_geohex",
+      "name": "compareme-geoGrid_geohex",
       "operation-type": "search",
       "body": {
         "query": {
@@ -93,7 +93,7 @@
       }
     },
     {
-      "name": "geoGrid_aggs_geohash",
+      "name": "compareme-geoGrid_aggs_geohash",
       "operation-type": "search",
       "body": {
         "query": {
@@ -120,7 +120,7 @@
       }
     },
     {
-      "name": "geoGrid_aggs_geotile",
+      "name": "compareme-geoGrid_aggs_geotile",
       "operation-type": "search",
       "body": {
         "query": {
@@ -147,7 +147,7 @@
       }
     },
     {
-      "name": "geoGrid_aggs_geohex",
+      "name": "compareme-geoGrid_aggs_geohex",
       "operation-type": "search",
       "body": {
         "query": {

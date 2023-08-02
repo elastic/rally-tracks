@@ -249,7 +249,7 @@
           {
             "operation": "fast-refresh-index",
             "clients": {{fast_refresh_clients | default(1)}},
-            "target-throughput": {{fast_refresh_indexing_throughput | default(3)}}
+            "target-throughput": {{fast_refresh_indexing_throughput | default(2.7)}}
           }
         ]
       }
@@ -284,7 +284,7 @@
     {
       "operation": "fast-refresh-index",
       "clients": {{fast_refresh_clients | default(1)}},
-      "target-throughput": {{fast_refresh_indexing_throughput | default(3)}}
+      "target-throughput": {{fast_refresh_indexing_throughput | default(2.7)}}
     }
   ]
 },
@@ -320,7 +320,7 @@
           {
             "operation": "fast-refresh-index",
             "clients": {{fast_refresh_clients | default(1)}},
-            "target-throughput": {{fast_refresh_indexing_throughput | default(3)}}
+            "target-throughput": {{fast_refresh_indexing_throughput | default(2.7)}}
           },
           {
             "name": "search-fast-refresh-index",

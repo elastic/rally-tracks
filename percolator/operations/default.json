@@ -5,7 +5,7 @@
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
-      "name": "percolator_with_content_president_bush",
+      "name": "compareme-percolator_with_content_president_bush",
       "operation-type": "search",
       "index": "queries",
       "body": {
@@ -32,7 +32,7 @@
               "method": "POST"
             },
             {
-              "name": "percolator_with_content_president_bush",
+              "name": "compareme-percolator_with_content_president_bush",
               "operation-type": "search",
               "index": "queries",
               "body": {
@@ -51,7 +51,7 @@
       ]
     },
     {
-      "name": "percolator_with_content_saddam_hussein",
+      "name": "compareme-percolator_with_content_saddam_hussein",
       "operation-type": "search",
       "index": "queries",
       "body": {
@@ -78,7 +78,7 @@
               "method": "POST"
             },
             {
-              "name": "percolator_with_content_saddam_hussein",
+              "name": "compareme-percolator_with_content_saddam_hussein",
               "operation-type": "search",
               "index": "queries",
               "body": {
@@ -97,7 +97,7 @@
       ]
     },
     {
-      "name": "percolator_with_content_hurricane_katrina",
+      "name": "compareme-percolator_with_content_hurricane_katrina",
       "operation-type": "search",
       "index": "queries",
       "body": {
@@ -124,7 +124,7 @@
               "method": "POST"
             },
             {
-              "name": "percolator_with_content_hurricane_katrina",
+              "name": "compareme-percolator_with_content_hurricane_katrina",
               "operation-type": "search",
               "index": "queries",
               "body": {
@@ -143,7 +143,7 @@
       ]
     },
     {
-      "name": "percolator_with_content_google",
+      "name": "compareme-percolator_with_content_google",
       "operation-type": "search",
       "index": "queries",
       "body": {
@@ -170,7 +170,7 @@
               "method": "POST"
             },
             {
-              "name": "percolator_with_content_google",
+              "name": "compareme-percolator_with_content_google",
               "operation-type": "search",
               "index": "queries",
               "body": {
@@ -189,7 +189,7 @@
       ]
     },
     {
-      "name": "percolator_no_score_with_content_google",
+      "name": "compareme-percolator_no_score_with_content_google",
       "operation-type": "search",
       "index": "queries",
       "body": {
@@ -220,7 +220,7 @@
               "method": "POST"
             },
             {
-              "name": "percolator_no_score_with_content_google",
+              "name": "compareme-percolator_no_score_with_content_google",
               "operation-type": "search",
               "index": "queries",
               "body": {
@@ -243,7 +243,7 @@
       ]
     },
     {
-      "name": "percolator_with_highlighting",
+      "name": "compareme-percolator_with_highlighting",
       "operation-type": "search",
       "index": "queries",
       "body": {
@@ -275,7 +275,7 @@
               "method": "POST"
             },
             {
-              "name": "percolator_with_highlighting",
+              "name": "compareme-percolator_with_highlighting",
               "operation-type": "search",
               "index": "queries",
               "body": {
@@ -299,7 +299,7 @@
       ]
     },
     {
-      "name": "percolator_with_content_ignore_me",
+      "name": "compareme-percolator_with_content_ignore_me",
       "operation-type": "search",
       "index": "queries",
       "body": {
@@ -326,7 +326,7 @@
               "method": "POST"
             },
             {
-              "name": "percolator_with_content_ignore_me",
+              "name": "compareme-percolator_with_content_ignore_me",
               "operation-type": "search",
               "index": "queries",
               "body": {
@@ -345,7 +345,7 @@
       ]
     },
     {
-      "name": "percolator_no_score_with_content_ignore_me",
+      "name": "compareme-percolator_no_score_with_content_ignore_me",
       "operation-type": "search",
       "index": "queries",
       "body": {
@@ -376,7 +376,7 @@
               "method": "POST"
             },
             {
-              "name": "percolator_no_score_with_content_ignore_me",
+              "name": "compareme-percolator_no_score_with_content_ignore_me",
               "operation-type": "search",
               "index": "queries",
               "body": {

@@ -59,50 +59,50 @@
       }
     },
     {
-      "operation": "percolator_with_content_president_bush",
+      "operation": "compareme-percolator_with_content_president_bush",
       "warmup-iterations": 100,
       "iterations": 100,
       "target-throughput": 50
     },
     {
-      "operation": "percolator_with_content_saddam_hussein",
+      "operation": "compareme-percolator_with_content_saddam_hussein",
       "warmup-iterations": 100,
       "iterations": 100,
       "target-throughput": 50
     },
     {
-      "operation": "percolator_with_content_hurricane_katrina",
+      "operation": "compareme-percolator_with_content_hurricane_katrina",
       "warmup-iterations": 100,
       "iterations": 100,
       "target-throughput": 50
     },
     {
-      "operation": "percolator_with_content_google",
+      "operation": "compareme-percolator_with_content_google",
       "warmup-iterations": 100,
       "iterations": 100,
       "target-throughput": 27
     },
     {
-      "operation": "percolator_no_score_with_content_google",
+      "operation": "compareme-percolator_no_score_with_content_google",
       "warmup-iterations": 100,
       "iterations": 100,
       "target-throughput": 100
     },
     {
-      "operation": "percolator_with_highlighting",
+      "operation": "compareme-percolator_with_highlighting",
       "warmup-iterations": 100,
       "iterations": 100,
       "target-throughput": 50
     },
     {
-      "operation": "percolator_with_content_ignore_me",
+      "operation": "compareme-percolator_with_content_ignore_me",
       "warmup-iterations": 10,
       "iterations": 100,
       "#COMMENT": "Be aware that we specify *target-interval* here! This means we issue one query every 12 seconds",
       "target-interval": 12
     },
     {
-      "operation": "percolator_no_score_with_content_ignore_me",
+      "operation": "compareme-percolator_no_score_with_content_ignore_me",
       "warmup-iterations": 100,
       "iterations": 100,
       "target-throughput": 15

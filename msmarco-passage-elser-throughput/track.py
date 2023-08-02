@@ -3,7 +3,7 @@ import asyncio
 from elasticsearch import BadRequestError, NotFoundError
 
 
-class WeightedTermsParamsSource:
+class ParamSource:
     def __init__(self, track, params):
         # choose a suitable index: if there is only one defined for this track
         # choose that one, but let the user always override index
@@ -137,5 +137,5 @@ async def create_elser_model(es, params):
 
 
 def register(registry):
-    registry.register_param_source("weighted-terms-param-source", WeightedTermsParamsSource)
+    registry.register_param_source("param-source", ParamSource)
     registry.register_runner("create-elser-model", create_elser_model, async_runner=True)

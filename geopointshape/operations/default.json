@@ -38,6 +38,46 @@
       }
     },
     {
+      "name": "cold-cache-polygon",
+      "operation-type": "composite",
+      "requests": [
+        {
+          "stream": [
+            {
+              "name": "cache-clear",
+              "operation-type": "raw-request",
+              "path": "/_internal/blob_caches/clear",
+              "method": "POST"
+            },
+            {
+              "name": "compareme-polygon",
+              "operation-type": "search",
+              "index": "osmgeoshapes",
+              "body": {
+                "query": {
+                  "geo_shape": {
+                    "location": {
+                      "shape": {
+                        "type": "polygon",
+                        "coordinates" : [[
+                          [-0.1, 49.0],
+                          [5.0, 48.0],
+                          [15.0, 49.0],
+                          [14.0, 60.0],
+                          [-0.1, 61.0],
+                          [-0.1, 49.0]
+                        ]]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "compareme-bbox",
       "operation-type": "search",
       "body": {
@@ -54,6 +94,39 @@
       }
     },
     {
+      "name": "cold-cache-bbox",
+      "operation-type": "composite",
+      "requests": [
+        {
+          "stream": [
+            {
+              "name": "cache-clear",
+              "operation-type": "raw-request",
+              "path": "/_internal/blob_caches/clear",
+              "method": "POST"
+            },
+            {
+              "name": "compareme-bbox",
+              "operation-type": "search",
+              "index": "osmgeoshapes",
+              "body": {
+                "query": {
+                  "geo_shape": {
+                    "location": {
+                      "shape": {
+                        "type": "envelope",
+                        "coordinates" : [[-0.1, 61.0], [15.0, 48.0]]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "compareme-geoGrid_geohash",
       "operation-type": "search",
       "body": {
@@ -65,6 +138,36 @@
           }
         }
       }
+    },
+    {
+      "name": "cold-cache-geoGrid_geohash",
+      "operation-type": "composite",
+      "requests": [
+        {
+          "stream": [
+            {
+              "name": "cache-clear",
+              "operation-type": "raw-request",
+              "path": "/_internal/blob_caches/clear",
+              "method": "POST"
+            },
+            {
+              "name": "compareme-geoGrid_geohash",
+              "operation-type": "search",
+              "index": "osmgeoshapes",
+              "body": {
+                "query": {
+                  "geo_grid": {
+                    "location": {
+                      "geohash": "u0"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "compareme-geoGrid_geotile",
@@ -80,6 +183,36 @@
       }
     },
     {
+      "name": "cold-cache-geoGrid_geotile",
+      "operation-type": "composite",
+      "requests": [
+        {
+          "stream": [
+            {
+              "name": "cache-clear",
+              "operation-type": "raw-request",
+              "path": "/_internal/blob_caches/clear",
+              "method": "POST"
+            },
+            {
+              "name": "compareme-geoGrid_geotile",
+              "operation-type": "search",
+              "index": "osmgeoshapes",
+              "body": {
+                "query": {
+                  "geo_grid": {
+                    "location": {
+                      "geotile" : "6/32/22"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "compareme-geoGrid_geohex",
       "operation-type": "search",
       "body": {
@@ -91,6 +224,36 @@
           }
         }
       }
+    },
+    {
+      "name": "cold-cache-geoGrid_geohex",
+      "operation-type": "composite",
+      "requests": [
+        {
+          "stream": [
+            {
+              "name": "cache-clear",
+              "operation-type": "raw-request",
+              "path": "/_internal/blob_caches/clear",
+              "method": "POST"
+            },
+            {
+              "name": "compareme-geoGrid_geohex",
+              "operation-type": "search",
+              "index": "osmgeoshapes",
+              "body": {
+                "query": {
+                  "geo_grid": {
+                    "location": {
+                      "geohex" : "811fbffffffffff"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "compareme-geoGrid_aggs_geohash",
@@ -120,6 +283,50 @@
       }
     },
     {
+      "name": "cold-cache-geoGrid_aggs_geohash",
+      "operation-type": "composite",
+      "requests": [
+        {
+          "stream": [
+            {
+              "name": "cache-clear",
+              "operation-type": "raw-request",
+              "path": "/_internal/blob_caches/clear",
+              "method": "POST"
+            },
+            {
+              "name": "compareme-geoGrid_aggs_geohash",
+              "operation-type": "search",
+              "index": "osmgeoshapes",
+              "body": {
+                "query": {
+                  "geo_bounding_box": {
+                    "location": {
+                      "top_left": "POINT (2.20 48.95)",
+                      "bottom_right": "POINT (2.40 48.75)"
+                    }
+                  }
+                },
+                "size": 0,
+                "aggs": {
+                  "zoomed-in": {
+                    "geohash_grid": {
+                      "field": "location",
+                      "precision": 5,
+                      "bounds": {
+                        "top_left": "POINT (2.20 48.95)",
+                        "bottom_right": "POINT (2.40 48.75)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "compareme-geoGrid_aggs_geotile",
       "operation-type": "search",
       "body": {
@@ -147,6 +354,50 @@
       }
     },
     {
+      "name": "cold-cache-geoGrid_aggs_geotile",
+      "operation-type": "composite",
+      "requests": [
+        {
+          "stream": [
+            {
+              "name": "cache-clear",
+              "operation-type": "raw-request",
+              "path": "/_internal/blob_caches/clear",
+              "method": "POST"
+            },
+            {
+              "name": "compareme-geoGrid_aggs_geotile",
+              "operation-type": "search",
+              "index": "osmgeoshapes",
+              "body": {
+                "query": {
+                  "geo_bounding_box": {
+                    "location": {
+                      "top_left": "POINT (2.20 48.95)",
+                      "bottom_right": "POINT (2.40 48.75)"
+                    }
+                  }
+                },
+                "size": 0,
+                "aggs": {
+                  "zoomed-in": {
+                    "geotile_grid": {
+                      "field": "location",
+                      "precision": 13,
+                      "bounds": {
+                        "top_left": "POINT (2.20 48.95)",
+                        "bottom_right": "POINT (2.40 48.75)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "compareme-geoGrid_aggs_geohex",
       "operation-type": "search",
       "body": {
@@ -172,4 +423,48 @@
           }
         }
       }
+    },
+    {
+      "name": "cold-cache-geoGrid_aggs_geohex",
+      "operation-type": "composite",
+      "requests": [
+        {
+          "stream": [
+            {
+              "name": "cache-clear",
+              "operation-type": "raw-request",
+              "path": "/_internal/blob_caches/clear",
+              "method": "POST"
+            },
+            {
+              "name": "compareme-geoGrid_aggs_geohex",
+              "operation-type": "search",
+              "index": "osmgeoshapes",
+              "body": {
+                "query": {
+                  "geo_bounding_box": {
+                    "location": {
+                      "top_left": "POINT (2.20 48.95)",
+                      "bottom_right": "POINT (2.40 48.75)"
+                    }
+                  }
+                },
+                "size": 0,
+                "aggs": {
+                  "zoomed-in": {
+                    "geohex_grid": {
+                      "field": "location",
+                      "precision": 6,
+                      "bounds": {
+                        "top_left": "POINT (2.20 48.95)",
+                        "bottom_right": "POINT (2.40 48.75)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
     }

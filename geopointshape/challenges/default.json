@@ -163,44 +163,44 @@
           }
         },
         {
-          "operation": "compareme-polygon",
+          "operation": "cold-cache-polygon",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
         },
         {
-          "operation": "compareme-bbox",
+          "operation": "cold-cache-bbox",
           "warmup-iterations": 200,
           "iterations": 100,
           "target-throughput": 2
         },
         {
-          "operation": "compareme-geoGrid_geohash",
+          "operation": "cold-cache-geoGrid_geohash",
           "warmup-iterations": 200,
           "iterations": 100
         },
         {
-          "operation": "compareme-geoGrid_geotile",
+          "operation": "cold-cache-geoGrid_geotile",
           "warmup-iterations": 200,
           "iterations": 100
         },
         {
-          "operation": "compareme-geoGrid_geohex",
+          "operation": "cold-cache-geoGrid_geohex",
           "warmup-iterations": 200,
           "iterations": 100
         },
         {
-          "operation": "compareme-geoGrid_aggs_geohash",
+          "operation": "cold-cache-geoGrid_aggs_geohash",
           "warmup-iterations": 200,
           "iterations": 100
         },
         {
-          "operation": "compareme-geoGrid_aggs_geotile",
+          "operation": "cold-cache-geoGrid_aggs_geotile",
           "warmup-iterations": 200,
           "iterations": 100
         },
         {
-          "operation": "compareme-geoGrid_aggs_geohex",
+          "operation": "cold-cache-geoGrid_aggs_geohex",
           "warmup-iterations": 200,
           "iterations": 100
         }

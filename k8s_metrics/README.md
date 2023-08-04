@@ -8,9 +8,9 @@ K8s Metrics is a track intended for benchmarking refresh on Elasticsearch using 
 | `bulk_indexing_clients` | `8` | The number of bulk indexing clients. |
 | `bulk_refresh` | `unset` | Control the refresh behavior for bulk requests. Valid values are `true`, `wait_for`, `false`, or unset. This parameter is always specified as a string. |
 | `bulk_size` | `1000` | The batch size of bulk requests. |
-| `fast_refresh_bulk_size` | `1` | The bulk batch size of the fast refresh index. |
+| `fast_refresh_bulk_size` | `15` | The bulk batch size of the fast refresh index. |
 | `fast_refresh_clients` | `1` | The number of bulk indexing clients for fast refresh indexing. |
-| `fast_refresh_indexing_throughput` | `3` | The throughput, in documents per second, for fast refresh indexing. |
+| `fast_refresh_indexing_throughput` | `2.7` | The throughput, in operations per second, for fast refresh indexing. |
 | `ingest_percentage` | `100` | The percentage of the document corpus to index. |
 | `manual_refresh_clients` | `1` | The number of clients to use for manual refresh operations. |
 | `manual_refresh_interval` | `15` | The interval, in seconds, for issuing manual refresh requests. |
@@ -70,8 +70,9 @@ Index a metrics document corpus while indexing a small Kibana corpus to a separa
 * `bulk_indexing_clients` (default: `8`)
 * `bulk_size` (default: `1000`)
 * `ingest_percentage` (default: `100`)
+* `fast_refresh_bulk_size` (default: `15`)
 * `fast_refresh_clients` (default: `1`)
-* `fast_refresh_indexing_throughput` (default: `3`)
+* `fast_refresh_indexing_throughput` (default: `2.7`)
 * `number_of_replicas` (default: `1`)
 * `number_of_shards` (default: `1`)
 * `refresh_interval` (default: `unset`)
@@ -82,8 +83,9 @@ Index a small Kibana corpus to a system index with fast refresh enabled. This ch
 
 #### Parameters
 
+* `fast_refresh_bulk_size` (default: `15`)
 * `fast_refresh_clients` (default: `1`)
-* `fast_refresh_indexing_throughput` (default: `3`)
+* `fast_refresh_indexing_throughput` (default: `2.7`)
 
 ### `fast-refresh-index-with-search`
 
@@ -91,5 +93,6 @@ Index a small Kibana corpus to a system index with fast refresh enabled, and sim
 
 #### Parameters
 
+* `fast_refresh_bulk_size` (default: `15`)
 * `fast_refresh_clients` (default: `1`)
-* `fast_refresh_indexing_throughput` (default: `3`)
+* `fast_refresh_indexing_throughput` (default: `2.7`)

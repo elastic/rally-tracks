@@ -112,6 +112,7 @@ async def start_trained_model_deployment(es, params):
             number_of_allocations=number_of_allocations,
             threads_per_allocation=threads_per_allocation,
             queue_capacity=queue_capacity,
+            cache_size="0b"
         )
         return True
     except BadRequestError as bre:

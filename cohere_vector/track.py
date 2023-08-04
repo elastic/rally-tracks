@@ -3,6 +3,7 @@ import os
 
 QUERIES_FILENAME: str = "queries.json"
 
+
 class KnnParamSource:
     def __init__(self, track, params, **kwargs):
         # choose a suitable index: if there is only one defined for this track
@@ -64,6 +65,7 @@ class KnnParamSource:
         if self._iters >= self._maxIters:
             self._iters = 0
         return result
+
 
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)

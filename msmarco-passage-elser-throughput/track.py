@@ -21,6 +21,13 @@ class ParamSource:
         self._params = params
 
 
+async def get_xpack_capabilities(es):
+    print()
+    print("="*50)
+    print(await es.perform_request(method="GET", path="/_xpack"))
+    print("="*50)
+
+
 elser_model_id = ".elser_model_1"
 # TODO enable this function once rally upgrades the elasticsearch python client to >=8.9.0
 # async def put_elser(es, params):
@@ -128,6 +135,8 @@ def model_deployment_already_exists(bad_request_error):
 
 
 async def create_elser_model(es, params):
+    await get_xpack_capabilities(es)
+
     if await put_elser(es) == False:
         return False
     if await poll_for_elser_completion(es) == False:

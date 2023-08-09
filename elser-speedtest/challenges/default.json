@@ -65,7 +65,7 @@
       "operation": {
         "include-in-reporting": false,
         "operation-type": "cluster-health",
-        "index": "msmarco-passage-collection-elser-throughput",
+        "index": "benchmark-elser-speedtest",
         "request-params": {
           "wait_for_status": "{{cluster_health | default('yellow')}}",
           "wait_for_no_relocating_shards": "true"

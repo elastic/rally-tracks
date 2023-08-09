@@ -49,13 +49,13 @@
             {
               "set": {
                 "field": "_index",
-                 {% raw %}
+                {% raw %}
                 "description": "Record error information",
                 "field": "error_information",
                 "value": "Processor {{ _ingest.on_failure_processor_type }} with tag {{ _ingest.on_failure_processor_tag }} in pipeline {{ _ingest.on_failure_pipeline }} failed with message {{ _ingest.on_failure_message }}"
                 {% endraw %}
               }
-            }
+          }
           ]
         }
       }
@@ -79,7 +79,8 @@
         "operation-type": "bulk",
         "bulk-size": {{bulk_size | default(100)}},
         "pipeline": "elser2",
-        "ingest-percentage": {{ingest_percentage | default(10)}}
+        "request-timeout": 60.0,
+        "ingest-percentage": {{ingest_percentage | default(1)}}
       },
       "clients": {{bulk_indexing_clients | default(1)}}
     },

@@ -4,20 +4,18 @@
   "description": "Benchmark weighted terms queries on ELSER tokens on the MS MARCO passage dataset",
   "indices": [
     {
-      "name": "msmarco-passage-collection-elser-throughput",
-      "body": "msmarco-passage-collection-elser-throughput.json"
+      "name": "benchmark-elser-throughput",
+      "body": "bert-vocab-whole-words-mapping.json"
     }
   ],
   "corpora": [
     {
-      "name": "msmarco-passage-collection-elser-throughput",
-      "base-url": "https://rally-tracks.elastic.co/msmarco-passage-collection-elser",
+      "name": "size256-bert-vocab-whole-words",
       "documents": [
         {
-          "source-file": "documents.json.bz2",
-          "document-count": 1000000,
-          "compressed-bytes": 779613360,
-          "uncompressed-bytes": 2542363241
+          "source-file": "document_set.json",
+          "document-count": 10000,
+          "uncompressed-bytes": 20474501
         }
       ]
     }

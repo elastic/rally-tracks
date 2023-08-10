@@ -13,4 +13,3 @@ with open("../document_set.json", "w") as doc_file:
         doc = {"body": " ".join(doc_words)}
 
         doc_file.writelines([json.dumps(doc), "\n"])
-`

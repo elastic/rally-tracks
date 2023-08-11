@@ -15,7 +15,6 @@ class KnnParamSource:
 
         self._index_name = params.get("index", default_index)
         self._cache = params.get("cache", False)
-        self._exact_scan = params.get("exact", False)
         self._params = params
         self._queries = []
 
@@ -33,33 +32,17 @@ class KnnParamSource:
     def params(self):
         result = {"index": self._index_name, "cache": self._params.get("cache", False), "size": self._params.get("k", 10)}
 
-        if self._exact_scan:
-            result["body"] = {
-                "query": {
-                    "script_score": {
-                        "query": {"match_all": {}},
-                        "script": {
-                            "source": "dotProduct(params.query, 'emb') + 1.0",
-                            "params": {"query": self._queries[self._iters]},
-                        },
-                    }
-                },
-                "_source": False,
-            }
-            if "filter" in self._params:
-                result["body"]["query"]["script_score"]["query"] = self._params["filter"]
-        else:
-            result["body"] = {
-                "knn": {
-                    "field": "emb",
-                    "query_vector": self._queries[self._iters],
-                    "k": self._params.get("k", 10),
-                    "num_candidates": self._params.get("num-candidates", 50),
-                },
-                "_source": False,
-            }
-            if "filter" in self._params:
-                result["body"]["knn"]["filter"] = self._params["filter"]
+        result["body"] = {
+            "knn": {
+                "field": "emb",
+                "query_vector": self._queries[self._iters],
+                "k": self._params.get("k", 10),
+                "num_candidates": self._params.get("num-candidates", 50),
+            },
+            "_source": False,
+        }
+        if "filter" in self._params:
+            result["body"]["knn"]["filter"] = self._params["filter"]
 
         self._iters += 1
         if self._iters >= self._maxIters:

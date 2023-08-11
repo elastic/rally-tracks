@@ -2,7 +2,7 @@ import json
 import sys
 
 import numpy as np
-from datasets import load_dataset, DownloadMode
+from datasets import DownloadMode, load_dataset
 
 DATASET_NAME: str = f"Cohere/miracl-en-corpus-22-12"
 DATASET_DL_PROCS: int = 6
@@ -13,6 +13,7 @@ MAX_DOCS_PER_FILE = 3_000_000
 TOTAL_PAGES = 11
 PROGRESS_EVERY = 100
 
+
 def progress_bar(count, total):
     bar_length = 100
     filled_length = int(round(bar_length * count / float(total)))
@@ -20,6 +21,7 @@ def progress_bar(count, total):
     bar = "=" * filled_length + "-" * (bar_length - filled_length)
     sys.stdout.write("[{}] {}{} ... {:,}/{:,}\r".format(bar, percentage, "%", count, total))
     sys.stdout.flush()
+
 
 def output_pages(start_page, end_page):
     for page in range(start_page, end_page + 1):
@@ -65,6 +67,7 @@ def output_documents(docs_file, start_index, end_index):
             progress_bar(doc_count, dataset_size)
     print(f"Wrote {doc_count} documents to output file.")
 
+
 def parse_arguments():
     if len(sys.argv) >= 3:
         return (DEFAULT_MAX_DOCS, int(sys.argv[1]), int(sys.argv[2]))
@@ -72,6 +75,7 @@ def parse_arguments():
     if len(sys.argv) >= 2:
         return (int(sys.argv[1]), 1, TOTAL_PAGES)
     return (DEFAULT_MAX_DOCS, 1, TOTAL_PAGES)
+
 
 if __name__ == "__main__":
     (max_documents, start_page, end_page) = parse_arguments()

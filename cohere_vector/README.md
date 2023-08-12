@@ -6,9 +6,16 @@ This track benchmarks the dataset from [Cohere/miracl-en-corpus-22-12](https://h
 
 To rebuild the dataset run the following commands:
 
-```
+```shell
 $ python _tools/parse_documents.py
-$ bzip2 --best cohere-documents.json
+# Create a test file for each page of documents
+$ for file in cohere-documents-*; do
+  head -n 1000 $file > "${file%.*}-1k.json"
+done
+# Zip each document file for uploading
+$ for file in cohere-documents-*; do
+  pv $file | bzip2 -k >> $file.bz2
+done
 ```
 
 This will build the `cohere-documents.json` file for the entire dataset of 32.8M documents and then bzip it. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents. This script will normalize the embeddings vector to be unit-length so that they can be indexed in an elasticsearch index.

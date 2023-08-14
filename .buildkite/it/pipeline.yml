@@ -1,0 +1,6 @@
+agents:
+  image: "docker.elastic.co/ci-agent-images/es-perf/buildkite-agent-python"
+
+steps:
+  - label: "Run IT Test"
+    command: echo "TODO"

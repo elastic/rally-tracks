@@ -29,15 +29,15 @@
 }
 {%- set p_as_bulk_step_count = as_bulk_step_count | default(1) %}
 {%- set p_as_bulk_clients_base = as_bulk_clients_base | default(8) %}
-{%- set p_as_downscale_factor = as_downscale_factor | default(3) %}
+{%- set p_as_reduce_factor = as_reduce_factor | default(3) %}
 {%- set p_ingest_percentage = ingest_percentage | default(100) %}
 {%- for step in range(1, p_as_bulk_step_count + 1, 1) %},
-    {%- if step % p_as_downscale_factor == 0 %}
-        {%- set task_label = "base" %}
+    {%- if step % p_as_reduce_factor == 0 %}
+        {%- set task_label = "reduced" %}
         {%- set bulk_clients = p_as_bulk_clients_base %}
         {%- set p_ingest_percentage = p_ingest_percentage * 0.5 %}
     {%- else %}
-        {%- set task_label = "step" %}
+        {%- set task_label = "full" %}
         {%- set bulk_clients = p_as_bulk_clients_base * step %}
     {%- endif %}
 {

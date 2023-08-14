@@ -49,6 +49,8 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 - `bulk_size` (default: 500)
 - `bulk_indexing_clients` (default: 1)
 - `ingest_percentage` (default: 100)
+- `number_of_replicas` (default: 0)
+- `number_of_shards` (default: 1)
 
 ### License
 

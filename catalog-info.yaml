@@ -43,7 +43,7 @@ spec:
     apiVersion: buildkite.elastic.dev/v1
     kind: Pipeline
     metadata:
-      name: IT
+      name: Rally Tracks - IT
     spec:
       pipeline_file: .buildkite/it/pipeline.yml
       repository: elastic/rally-tracks

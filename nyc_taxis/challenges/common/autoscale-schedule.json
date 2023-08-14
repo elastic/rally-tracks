@@ -27,7 +27,7 @@
     "retry-until-success": true
   }
 }
-{%- set p_as_bulk_step_count = as_bulk_step_count | default(1) %}
+{%- set p_as_bulk_step_count = as_bulk_step_count | default(3) %}
 {%- set p_as_bulk_clients_base = as_bulk_clients_base | default(8) %}
 {%- set p_as_reduce_factor = as_reduce_factor | default(3) %}
 {%- set p_ingest_percentage = ingest_percentage | default(100) %}

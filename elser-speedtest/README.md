@@ -13,3 +13,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `bulk_indexing_clients` (default: 1)
 * `ingest_percentage` (default: 100)
 
+### Data Setup
+The documents are all of a fixed length input equivalent to 256 Word Piece tokens. They were created by taking words from the BERT vocabulary that tokenize as a single token and generating fixed length inputs from a random selection of single token words.
+
+See `_support/generate_fixed_length_docs.py` and other files in the `_support` folder.

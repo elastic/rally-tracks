@@ -3,9 +3,17 @@
     "auditbeatquantitative-*"
   ],
   "template": {
+  {% if not lifecycle or lifecycle == "ilm" -%}
     "settings": {
-      "index.lifecycle.name": "auditbeat-quantitative"
+      "index": {
+        "lifecycle": {
+          "name": "auditbeat-quantitative"
+        }
+      }
     }
+  {%- elif lifecycle == "dlm" -%}
+    "lifecycle": {}
+  {%- endif -%}
   },
   "composed_of" : ["auditbeat-mappings"],
   "priority": 1,

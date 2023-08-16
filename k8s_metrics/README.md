@@ -11,6 +11,7 @@ K8s Metrics is a track intended for benchmarking refresh on Elasticsearch using 
 | `fast_refresh_bulk_size` | `15` | The bulk batch size of the fast refresh index. |
 | `fast_refresh_clients` | `1` | The number of bulk indexing clients for fast refresh indexing. |
 | `fast_refresh_indexing_throughput` | `2.7` | The throughput, in operations per second, for fast refresh indexing. |
+| `fast_refresh_search_throughput` | `1` | The throughput, in operations per second, for fast refresh search. |
 | `ingest_percentage` | `100` | The percentage of the document corpus to index. |
 | `manual_refresh_clients` | `1` | The number of clients to use for manual refresh operations. |
 | `manual_refresh_interval` | `15` | The interval, in seconds, for issuing manual refresh requests. |
@@ -96,3 +97,4 @@ Index a small Kibana corpus to a system index with fast refresh enabled, and sim
 * `fast_refresh_bulk_size` (default: `15`)
 * `fast_refresh_clients` (default: `1`)
 * `fast_refresh_indexing_throughput` (default: `2.7`)
+* `fast_refresh_search_throughput` (default: `1`)

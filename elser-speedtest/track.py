@@ -89,7 +89,7 @@ def is_model_fully_defined(response):
     return response["trained_model_configs"][0]["fully_defined"]
 
 
-async def stop_trained_model_deployment(es):
+async def stop_trained_model_deployment(es, params):
     try:
         await es.ml.stop_trained_model_deployment(model_id=elser_model_id, force=True)
         return True
@@ -137,15 +137,13 @@ def model_deployment_already_exists(bad_request_error):
 
 async def create_elser_model(es, params):
     await get_xpack_capabilities(es)
-
     if await put_elser(es) == False:
         return False
     if await poll_for_elser_completion(es) == False:
         return False
-    await stop_trained_model_deployment(es)
-    await start_trained_model_deployment(es, params)
-
 
 def register(registry):
     registry.register_param_source("param-source", ParamSource)
-    registry.register_runner("create-elser-model", create_elser_model, async_runner=True)
+    registry.register_runner("put-elser", create_elser_model, async_runner=True)
+    registry.register_runner("stop-trained-model-deployment", stop_trained_model_deployment, async_runner=True)
+    registry.register_runner("start-trained-model-deployment", start_trained_model_deployment, async_runner=True)

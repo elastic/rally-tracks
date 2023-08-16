@@ -13,12 +13,26 @@
       }
     },
     {
-      "name": "create elser model and deployment",
+      "name": "put elser model",
+      "operation": {
+        "operation-type": "put-elser",
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "stop any existing trained model with the same name",
+      "operation": {
+        "operation-type": "stop-trained-model-deployment",
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "start new trained model deployment",
       "operation": {
         "number_of_allocations": {{ number_of_allocations|default(1) }},
         "threads_per_allocation": {{ threads_per_allocation|default(2) }},
         "queue_capacity": {{ queue_capacity|default(1024) }},
-        "operation-type": "create-elser-model",
+        "operation-type": "start-trained-model-deployment",
         "include-in-reporting": false
       }
     },

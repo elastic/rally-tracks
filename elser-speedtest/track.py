@@ -53,6 +53,7 @@ elser_model_id = ".elser_model_1"
 async def put_elser(es):
     try:
         await es.perform_request(method="PUT", path="/_ml/trained_models/.elser_model_1", body={"input": {"field_names": ["text_field"]}})
+        return True
     except BadRequestError as bre:
         if (
             bre.body["error"]["root_cause"][0]["reason"]
@@ -141,6 +142,8 @@ async def create_elser_model(es, params):
         return False
     if await poll_for_elser_completion(es) == False:
         return False
+
+    return True
 
 def register(registry):
     registry.register_param_source("param-source", ParamSource)

@@ -427,7 +427,7 @@
             },
             "warmup-time-period": 5,
             "time-period": 99999,
-            "target-throughput": 1
+            "target-throughput": {{fast_refresh_search_throughput | default(1)}}
           }
         ]
       }

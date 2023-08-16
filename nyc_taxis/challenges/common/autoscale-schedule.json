@@ -1,0 +1,53 @@
+{
+  "name": "delete-index",
+  "operation": {
+    "operation-type": "delete-index"
+  }
+},
+{
+  "name": "create-index",
+  "operation": {
+    "operation-type": "create-index",
+    "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+      "index.store.type": "{{store_type | default('fs')}}",
+      "index.codec": "best_compression",
+      "index.refresh_interval": "30s",
+      "index.translog.flush_threshold_size": "4g"
+    }{%- endif %}
+  }
+},
+{
+  "name": "check-cluster-health",
+  "operation": {
+    "operation-type": "cluster-health",
+    "index": "nyc_taxis",
+    "request-params": {
+      "wait_for_status": "{{cluster_health | default('green')}}"
+    },
+    "retry-until-success": true
+  }
+}
+{%- set p_as_bulk_step_count = as_bulk_step_count | default(3) %}
+{%- set p_as_bulk_clients_base = as_bulk_clients_base | default(8) %}
+{%- set p_as_reduce_factor = as_reduce_factor | default(3) %}
+{%- set p_ingest_percentage = ingest_percentage | default(100) %}
+{%- for step in range(1, p_as_bulk_step_count + 1, 1) %},
+    {%- if step % p_as_reduce_factor == 0 %}
+        {%- set task_label = "reduced" %}
+        {%- set bulk_clients = p_as_bulk_clients_base %}
+        {%- set p_ingest_percentage = p_ingest_percentage * 0.5 %}
+    {%- else %}
+        {%- set task_label = "full" %}
+        {%- set bulk_clients = p_as_bulk_clients_base * step %}
+    {%- endif %}
+{
+  "name": "bulk-{{step}}-{{bulk_clients}}clients-{{task_label}}",
+  "clients": {{bulk_clients}},
+  "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+  "operation": {
+    "operation-type": "bulk",
+    "bulk-size": {{bulk_size | default(10000)}},
+    "ingest-percentage": {{p_ingest_percentage|int}}
+  }
+}
+{%- endfor %}

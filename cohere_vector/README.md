@@ -2,6 +2,9 @@
 
 This track benchmarks the dataset from [Cohere/miracl-en-corpus-22-12](https://huggingface.co/datasets/Cohere/miracl-en-corpus-22-12).
 
+Given the size of this dataset 32.8M documents with 768 dimension vectors you
+need a cluster with at least 103GB of total RAM available to run performant HNSW queries.
+
 ### Generating the document dataset
 
 To rebuild the dataset run the following commands:
@@ -18,7 +21,7 @@ $ for file in cohere-documents-*; do
 done
 ```
 
-This will build the `cohere-documents.json` file for the entire dataset of 32.8M documents and then bzip it. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents. This script will normalize the embeddings vector to be unit-length so that they can be indexed in an elasticsearch index.
+This will build 11 `cohere-documents-XX.json` filse for the entire dataset of 32.8M documents and then bzip then. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents. This script will normalize the embeddings vector to be unit-length so that they can be indexed in an elasticsearch index.
 
 ### Example Document
 

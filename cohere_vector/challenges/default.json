@@ -1,0 +1,59 @@
+{
+  "name": "index-and-search",
+  "description": "",
+  "default": true,
+  "schedule": [
+    {
+      "operation": {
+        "operation-type": "delete-index"
+      }
+    },
+    {
+      "name": "create-index",
+      "operation": "create-index"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": "check-cluster-health"
+    },
+    {
+      "name": "index-documents",
+      "operation": "index-documents",
+      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+      "clients": {{bulk_indexing_clients | default(5)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "wait-until-merges-finish-after-index",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "knn-search-10-100",
+      "operation": "knn-search-10-100",
+      "warmup-iterations": 100,
+      "iterations": 1000
+    },
+    {
+      "name": "knn-search-100-1000",
+      "operation": "knn-search-100-1000",
+      "warmup-iterations": 100,
+      "iterations": 1000
+    }
+  ]
+}

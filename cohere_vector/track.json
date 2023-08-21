@@ -1,0 +1,92 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Benchmark for vector search with Cohere Wikipedia data",
+  "indices": [
+    {
+      "name": "cohere",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "cohere",
+      "base-url": "https://rally-tracks.elastic.co/cohere_vector",
+      "documents": [
+        {
+          "source-file": "cohere-documents-01.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19290543568,
+          "uncompressed-bytes": 52419473477
+        },
+        {
+          "source-file": "cohere-documents-02.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19287111099,
+          "uncompressed-bytes": 52433892295
+        },
+        {
+          "source-file": "cohere-documents-03.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19322622342,
+          "uncompressed-bytes": 52510616309
+        },
+        {
+          "source-file": "cohere-documents-04.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19295498142,
+          "uncompressed-bytes": 52434453013
+        },
+        {
+          "source-file": "cohere-documents-05.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19269704451,
+          "uncompressed-bytes": 52389991012
+        },
+        {
+          "source-file": "cohere-documents-06.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19288642635,
+          "uncompressed-bytes": 52406814654
+        },
+        {
+          "source-file": "cohere-documents-07.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19288872569,
+          "uncompressed-bytes": 52425395991
+        },
+        {
+          "source-file": "cohere-documents-08.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19295538212,
+          "uncompressed-bytes": 52427352348
+        },
+        {
+          "source-file": "cohere-documents-09.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19273979165,
+          "uncompressed-bytes": 52394647689
+        },
+        {
+          "source-file": "cohere-documents-10.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": 19233451681,
+          "uncompressed-bytes": 52331515902
+        },
+        {
+          "source-file": "cohere-documents-11.json.bz2",
+          "document-count": 2893221,
+          "compressed-bytes": 18567412284,
+          "uncompressed-bytes": 50492368576
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

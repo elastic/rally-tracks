@@ -1,0 +1,28 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": {{number_of_shards | default(1)}},
+      "number_of_replicas": {{number_of_replicas | default(0)}}
+    }
+  },
+  "mappings": {
+    "properties": {
+      "docid": {
+        "type": "keyword"
+      },
+      "title": {
+        "type": "text"
+      },
+      "text": {
+        "type": "text"
+      },
+      "emb": {
+        "type": "dense_vector",
+        "element_type": "float",
+        "dims": 768,
+        "index": true,
+        "similarity": "dot_product"
+      }
+    }
+  }
+}

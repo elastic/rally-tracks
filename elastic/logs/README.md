@@ -218,7 +218,7 @@ The following parameters are available:
 * `start_date` (default: `2020-01-01` ) - The start date of the data. The `end_date` minus this value will determine the time range assigned to the data and also directly impact the total volume indexed. Must be less than the `end_date`.
 * `end_date` (default: `2020-01-02` ) - The end date of the data. This value minus the `start_date` will determine the time range assigned to the data and also directly impact the total volume indexed. Must be greater than the `start_date`.
 * `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
-* `lifecycle` (default: `ilm`) - Specifies the lifecycle management feature to use for data streams. Use `ilm` for index lifecycle management or `dlm` for data lifecycle management. `dlm` is required for benchmarking Serverless Elasticsearch.
+* `lifecycle` (default: unset to fall back on Serverless detection) - Specifies the lifecycle management feature to use for data streams. Use `ilm` for index lifecycle management or `dlm` for data lifecycle management. By default, `dlm` will be used for benchmarking Serverless Elasticsearch.
 
 ### Data Download Parameters
 

@@ -22,7 +22,7 @@ of Wikipedia dumps from [this link](https://dumps.wikimedia.org/enwiki/latest/en
 Then run this command:
 
 ```bash
-python _tools/parse_documents.py <path_to_xml_file> | bzip2 --best > documents.json.bz2
+python _tools/parse_documents.py <path_to_xml_file> | pbzip2 -9 -k -m2000 > documents.json.bz2
 ```
 
 ### Generating clickstream probability ditribution

@@ -13,6 +13,8 @@ QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"
 
 SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 
+QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
+
 
 def query_iterator(k: int) -> Iterator[str]:
     with open(QUERIES_FILENAME) as queries_file:
@@ -25,7 +27,7 @@ def query_iterator(k: int) -> Iterator[str]:
 
         for query in random.choices(queries, weights=probabilities, k=k):
             # remove special chars from the query + lowercase
-            yield re.sub("[^0-9a-zA-Z]+", " ", query).lower()
+            yield QUERY_CLEAN_REXEXP.sub(" ", query).lower()
 
 
 class SearchApplicationParams:

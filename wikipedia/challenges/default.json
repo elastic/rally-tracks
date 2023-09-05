@@ -28,8 +28,12 @@
     {
       "name": "query-string-search",
       "operation": "query-string-search",
-      "clients": {{search_clients | default(10)}},
-      "warmup-iterations": 500
+      "clients": {{search_clients | default(20)}},
+      "warmup-iterations": 100
+    },
+    {
+      "name": "clear-cache",
+      "operation": "clear-cache"
     },
     {
       "name": "create-default-search-application",
@@ -38,7 +42,8 @@
     {
       "name": "default-search-application-search",
       "operation": "default-search-application-search",
-      "clients": {{search_clients | default(10)}}
+      "clients": {{search_clients | default(20)}},
+      "warmup-iterations": 100
     }
   ]
 }

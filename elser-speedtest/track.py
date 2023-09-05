@@ -145,6 +145,7 @@ async def create_elser_model(es, params):
 
     return True
 
+
 def register(registry):
     registry.register_param_source("param-source", ParamSource)
     registry.register_runner("put-elser", create_elser_model, async_runner=True)

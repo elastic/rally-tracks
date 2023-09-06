@@ -91,7 +91,7 @@
       "operation": {        
         "include-in-reporting": true,
         "operation-type": "bulk",
-        "bulk-size": {{bulk_size | default(100)}},
+        "bulk-size": {{bulk_size | default(5)}},
         "pipeline": "elser2",
         "request-timeout": 60.0,
         "ingest-percentage": {{ingest_percentage | default(1)}}

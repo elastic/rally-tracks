@@ -29,6 +29,8 @@ async def get_xpack_capabilities(es):
 
 
 elser_model_id = ".elser_model_1"
+
+
 # TODO enable this function once rally upgrades the elasticsearch python client to >=8.9.0
 # async def put_elser(es, params):
 #     try:
@@ -52,13 +54,35 @@ elser_model_id = ".elser_model_1"
 
 async def put_elser(es):
     try:
-        await es.perform_request(method="PUT", path="/_ml/trained_models/.elser_model_1", body={"input": {"field_names": ["text_field"]}})
+        await es.perform_request(method="PUT", path="/_ml/trained_models/.elser_model_1",
+                                 body={"input": {"field_names": ["text_field"]}})
         return True
     except BadRequestError as bre:
         if (
-            bre.body["error"]["root_cause"][0]["reason"]
-            == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
-            or bre.body["error"]["root_cause"][0]["reason"] == "Trained machine learning model [.elser_model_1] already exists"
+                bre.body["error"]["root_cause"][0]["reason"]
+                == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
+                or bre.body["error"]["root_cause"][0][
+            "reason"] == "Trained machine learning model [.elser_model_1] already exists"
+        ):
+            return True
+        else:
+            print(bre)
+            return False
+    except Exception as e:
+        print(e)
+        return False
+
+
+async def delete_elser(es, params):
+    try:
+        await es.perform_request(method="DELETE", path="/_ml/trained_models/.elser_model_1", params={"force":"true"})
+        return True
+    except BadRequestError as bre:
+        if (
+                bre.body["error"]["root_cause"][0]["reason"]
+                == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
+                or bre.body["error"]["root_cause"][0][
+            "reason"] == "Trained machine learning model [.elser_model_1] already exists"
         ):
             return True
         else:
@@ -129,8 +153,8 @@ async def start_trained_model_deployment(es, params):
 
 def model_deployment_already_exists(bad_request_error):
     exists = (
-        bad_request_error.body["error"]["root_cause"][0]["reason"]
-        == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
+            bad_request_error.body["error"]["root_cause"][0]["reason"]
+            == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
     )
 
     return exists
@@ -149,5 +173,6 @@ async def create_elser_model(es, params):
 def register(registry):
     registry.register_param_source("param-source", ParamSource)
     registry.register_runner("put-elser", create_elser_model, async_runner=True)
+    registry.register_runner("delete-elser", delete_elser, async_runner=True)
     registry.register_runner("stop-trained-model-deployment", stop_trained_model_deployment, async_runner=True)
     registry.register_runner("start-trained-model-deployment", start_trained_model_deployment, async_runner=True)

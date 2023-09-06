@@ -99,6 +99,13 @@
       "clients": {{bulk_indexing_clients | default(1)}}
     },
     {
+      "name": "delete elser model",
+      "operation": {
+        "operation-type": "delete-elser",
+        "include-in-reporting": false
+      }
+    },
+    {
       "operation": {
         "include-in-reporting": false,
         "operation-type": "force-merge",

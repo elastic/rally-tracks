@@ -47,11 +47,10 @@
       "name": "standalone-search-knn-10-100-single-client",
       "operation": "knn-search-10-100",
       "warmup-iterations": 100,
-      "clients": {{ standalone_search_clients | default(1) | int }},
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
     },
     {
-      "name": "knn-search-100-1000-single-client",
+      "name": "standalone-knn-search-100-1000-single-client",
       "operation": "knn-search-100-1000",
       "warmup-iterations": 100,
       "iterations": {{ standalone_search_iterations | default(10000) | int }}

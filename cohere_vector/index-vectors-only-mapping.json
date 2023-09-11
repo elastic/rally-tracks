@@ -1,9 +1,10 @@
 {
   "settings": {
-    "index": {
-      "number_of_shards": {{number_of_shards | default(1)}},
-      "number_of_replicas": {{number_of_replicas | default(0)}}
-    }
+  {% if preload_pagecache %}
+    "index.store.preload": [ "vec", "vex", "vem"],
+  {% endif %}
+    "index.number_of_shards": {{number_of_shards | default(1)}},
+    "index.number_of_replicas": {{number_of_replicas | default(0)}}
   },
   "mappings": {
     "dynamic": false,

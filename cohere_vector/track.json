@@ -6,12 +6,12 @@
   "indices": [
     {
       "name": "cohere",
-      "body": "index.json"
+      "body": "index-{{ mapping_type | default("vectors-only") }}-mapping.json"
     }
   ],
   "corpora": [
     {
-      "name": "cohere",
+      "name": "cohere-initial-indexing",
       "base-url": "https://rally-tracks.elastic.co/cohere_vector",
       "documents": [
         {
@@ -73,7 +73,13 @@
           "document-count": 3000000,
           "compressed-bytes": 19233451681,
           "uncompressed-bytes": 52331515902
-        },
+        }
+      ]
+    },
+    {
+      "name": "cohere-parallel-indexing",
+      "base-url": "https://rally-tracks.elastic.co/cohere_vector",
+      "documents": [
         {
           "source-file": "cohere-documents-11.json.bz2",
           "document-count": 2893221,

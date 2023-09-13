@@ -10,8 +10,7 @@
     "operation-type": "create-index",
     "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
       "index.store.type": "{{store_type | default('fs')}}",
-      "index.codec": "best_compression",
-      "index.refresh_interval": "30s"
+      "index.codec": "best_compression"
     }{%- endif %}
   }
 },

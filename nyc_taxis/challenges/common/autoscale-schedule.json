@@ -11,8 +11,7 @@
     "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
       "index.store.type": "{{store_type | default('fs')}}",
       "index.codec": "best_compression",
-      "index.refresh_interval": "30s",
-      "index.translog.flush_threshold_size": "4g"
+      "index.refresh_interval": "30s"
     }{%- endif %}
   }
 },

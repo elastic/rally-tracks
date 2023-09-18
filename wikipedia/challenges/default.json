@@ -1,0 +1,49 @@
+{
+  "name": "index-and-search",
+  "description": "Indexes wikipedia data, then executes searches.",
+  "default": true,
+  "schedule": [
+    {
+      "name": "delete-index",
+      "operation": "delete-index"
+    },
+    {
+      "name": "create-index",
+      "operation": "create-index"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": "check-cluster-health"
+    },
+    {
+      "name": "index-documents",
+      "operation": "index-documents",
+      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+      "clients": {{bulk_indexing_clients | default(5)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh-after-index"
+    },
+    {
+      "name": "query-string-search",
+      "operation": "query-string-search",
+      "clients": {{search_clients | default(20)}},
+      "warmup-iterations": 100
+    },
+    {
+      "name": "clear-cache",
+      "operation": "clear-cache"
+    },
+    {
+      "name": "create-default-search-application",
+      "operation": "create-default-search-application"
+    },
+    {
+      "name": "default-search-application-search",
+      "operation": "default-search-application-search",
+      "clients": {{search_clients | default(20)}},
+      "warmup-iterations": 100
+    }
+  ]
+}

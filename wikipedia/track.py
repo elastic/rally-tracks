@@ -16,7 +16,7 @@ SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
 
-def query_iterator(k: int) -> Iterator[str]:
+def query_iterator(k: int, random_seed: int = None) -> Iterator[str]:
     with open(QUERIES_FILENAME) as queries_file:
         csv_reader = csv.reader(queries_file)
         next(csv_reader)
@@ -24,7 +24,7 @@ def query_iterator(k: int) -> Iterator[str]:
 
         queries = [query for query, _ in queries_with_probabilities]
         probabilities = [float(probability) for _, probability in queries_with_probabilities]
-
+        random.seed(random_seed)
         for query in random.choices(queries, weights=probabilities, k=k):
             # remove special chars from the query + lowercase
             yield QUERY_CLEAN_REXEXP.sub(" ", query).lower()
@@ -63,7 +63,7 @@ class QueryIteratorParamSource(ParamSource):
     def partition(self, partition_index, total_partitions):
         if self._queries_iterator is None:
             partition_size = math.ceil(self.size() / total_partitions)
-            self._queries_iterator = query_iterator(partition_size)
+            self._queries_iterator = query_iterator(partition_size, random_seed=self._params.get("seed", None))
         return self
 
 
@@ -89,17 +89,15 @@ class QueryParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
-        self._cache = params.get("cache", False)
+        self._cache = params.get("cache", True)
 
     def params(self):
         result = {
             "body": {"query": {"query_string": {"query": next(self._queries_iterator), "default_field": self._params["search-fields"]}}},
             "size": self._params["size"],
             "index": self._index_name,
+            "cache": self._cache,
         }
-
-        if "cache" in self._params:
-            result["cache"] = self._params["cache"]
 
         return result
 

@@ -56,15 +56,19 @@ class QueryIteratorParamSource(ParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self._queries_iterator = None
+        self._batch_size = self._params.get("batch_size", 10000)
+        self._random_seed = self._params.get("seed", None)
 
     def size(self):
-        return self._params.get("iterations", 10000)
+        return None
 
     def partition(self, partition_index, total_partitions):
         if self._queries_iterator is None:
-            partition_size = math.ceil(self.size() / total_partitions)
-            self._queries_iterator = query_iterator(partition_size, random_seed=self._params.get("seed", None))
+            self.init_queries()
         return self
+
+    def init_queries(self):
+        self._queries_iterator = query_iterator(self._batch_size, self._random_seed)
 
 
 class SearchApplicationSearchParamSource(QueryIteratorParamSource):
@@ -73,16 +77,20 @@ class SearchApplicationSearchParamSource(QueryIteratorParamSource):
         self.search_application_params = SearchApplicationParams(track, params)
 
     def params(self):
-        query = next(self._queries_iterator)
-        return {
-            "method": "POST",
-            "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
-            "body": {
-                "params": {
-                    "query_string": query,
+        try:
+            query = next(self._queries_iterator)
+            return {
+                "method": "POST",
+                "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
+                "body": {
+                    "params": {
+                        "query_string": query,
+                    },
                 },
-            },
-        }
+            }
+        except StopIteration:
+            self.init_queries()
+            return self.params()
 
 
 class QueryParamSource(QueryIteratorParamSource):
@@ -92,14 +100,20 @@ class QueryParamSource(QueryIteratorParamSource):
         self._cache = params.get("cache", True)
 
     def params(self):
-        result = {
-            "body": {"query": {"query_string": {"query": next(self._queries_iterator), "default_field": self._params["search-fields"]}}},
-            "size": self._params["size"],
-            "index": self._index_name,
-            "cache": self._cache,
-        }
+        try:
+            result = {
+                "body": {
+                    "query": {"query_string": {"query": next(self._queries_iterator), "default_field": self._params["search-fields"]}}
+                },
+                "size": self._params["size"],
+                "index": self._index_name,
+                "cache": self._cache,
+            }
 
-        return result
+            return result
+        except StopIteration:
+            self.init_queries()
+            return self.params()
 
 
 def register(registry):

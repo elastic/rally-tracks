@@ -16,18 +16,17 @@ SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
 
-def query_iterator(k: int, random_seed: int = None) -> Iterator[str]:
+def query_samples(k: int, random_seed: int = None) -> list[str]:
     with open(QUERIES_FILENAME) as queries_file:
         csv_reader = csv.reader(queries_file)
         next(csv_reader)
         queries_with_probabilities = list(tuple(line) for line in csv_reader)
 
-        queries = [query for query, _ in queries_with_probabilities]
+        queries = [QUERY_CLEAN_REXEXP.sub(" ", query).lower() for query, _ in queries_with_probabilities]
         probabilities = [float(probability) for _, probability in queries_with_probabilities]
         random.seed(random_seed)
-        for query in random.choices(queries, weights=probabilities, k=k):
-            # remove special chars from the query + lowercase
-            yield QUERY_CLEAN_REXEXP.sub(" ", query).lower()
+
+        return random.choices(queries, weights=probabilities, k=k)
 
 
 class SearchApplicationParams:
@@ -55,20 +54,18 @@ class CreateSearchApplicationParamSource(ParamSource):
 class QueryIteratorParamSource(ParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
-        self._queries_iterator = None
-        self._batch_size = self._params.get("batch_size", 10000)
+        self._batch_size = self._params.get("batch_size", 100000)
         self._random_seed = self._params.get("seed", None)
+        self._sample_queries = query_samples(self._batch_size, self._random_seed)
+        self._queries_iterator = None
 
     def size(self):
         return None
 
     def partition(self, partition_index, total_partitions):
         if self._queries_iterator is None:
-            self.init_queries()
+            self._queries_iterator = iter(self._sample_queries)
         return self
-
-    def init_queries(self):
-        self._queries_iterator = query_iterator(self._batch_size, self._random_seed)
 
 
 class SearchApplicationSearchParamSource(QueryIteratorParamSource):
@@ -89,7 +86,7 @@ class SearchApplicationSearchParamSource(QueryIteratorParamSource):
                 },
             }
         except StopIteration:
-            self.init_queries()
+            self._queries_iterator = iter(self._sample_queries)
             return self.params()
 
 
@@ -112,7 +109,7 @@ class QueryParamSource(QueryIteratorParamSource):
 
             return result
         except StopIteration:
-            self.init_queries()
+            self._queries_iterator = iter(self._sample_queries)
             return self.params()
 
 

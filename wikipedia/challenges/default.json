@@ -43,7 +43,7 @@
     {
       "name": "default-search-application-search",
       "operation": "default-search-application-search",
-      "clients": {{search_clients | default(20)}},
+      "clients": {{application_search_clients | default(20)}},
       "time-period": {{search_time_period | default(300) | int}},
       "warmup-time-period": {{search_warmup | default(10) | int}}
     }

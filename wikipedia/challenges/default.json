@@ -18,7 +18,7 @@
     {
       "name": "index-documents",
       "operation": "index-documents",
-      "warmup-time-period": {{ bulk_warmup | default(40) | int}},
+      "warmup-time-period": {{bulk_warmup | default(40) | int}},
       "clients": {{bulk_indexing_clients | default(5)}}
     },
     {

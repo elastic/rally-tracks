@@ -42,10 +42,20 @@ The `queries.json` can be rebuilt using the `_tools/parse_queries.py`, this will
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 
- - bulk_size (default: 500)
- - bulk_indexing_clients (default: 5)
- - build_warmup (default: 40)
- - ingest_percentage (default: 100)
+ - initial_indexing_bulk_indexing_clients (default: 5)
+ - initial_indexing_bulk_warmup (default: 40)
+ - initial_indexing_bulk_size (default: 500)
+ - initial_indexing_ingest_percentage (default: 100)
  - index_settings {default: {}}
+ - mapping_type {default: "vectors-only"} "vectors-with-text" | "vectors-only"
  - number_of_shards (default : 1)
  - number_of_replicas (default: 0)
+ - parallel_indexing_bulk_size (default: 500)
+ - parallel_indexing_bulk_clients (default: 1)
+ - parallel_indexing_bulk_target_throughput (default: 1)
+ - parallel_indexing_time_period (default: 1800)
+ - parallel_indexing_ingest_percentage (default: 100)
+ - parallel_indexing_search_clients (default: 3)
+ - parallel_indexing_search_target_throughput (default: 100)
+ - preload_pagecache (boolean)
+ - standalone_search_iterations (default: 10000)

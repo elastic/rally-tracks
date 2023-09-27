@@ -710,7 +710,8 @@
       "default": false,
       "schedule": [
         {
-          "operation": "delete-index"
+          "operation": "delete-index",
+          "tags": ["setup"]
         },
         {
           "operation": {
@@ -720,7 +721,8 @@
               "index.refresh_interval": "30s",
               "index.translog.flush_threshold_size": "4g"
             }{%- endif %}
-          }
+          },
+          "tags": ["setup"]
         },
         {
           "name": "check-cluster-health",
@@ -732,17 +734,20 @@
               "wait_for_no_relocating_shards": "true"
             },
             "retry-until-success": true
-          }
+          },
+          "tags": ["setup"]
         },
         {
           "operation": "index",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+          "tags": ["setup"]
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh"
+          "operation": "refresh",
+          "tags": ["setup"]
         },
         {
           "operation": "avg_passenger_count_aggregation",
@@ -938,5 +943,13 @@
       "default": false,
       "schedule": [
         {{ rally.collect(parts="common/update-aggs-only-schedule.json") }}
+      ]
+    },
+    {
+      "name": "autoscale",
+      "description": "Bulk index with a varying number of clients",
+      "default": false,
+      "schedule": [
+        {{ rally.collect(parts="common/autoscale-schedule.json") }}
       ]
     }

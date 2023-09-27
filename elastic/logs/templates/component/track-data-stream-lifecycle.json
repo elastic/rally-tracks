@@ -1,6 +1,6 @@
 {
   "template": {
-{% if not lifecycle or lifecycle == "ilm" -%}
+{% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
     "settings": {
       "index": {
         "lifecycle": {
@@ -8,7 +8,7 @@
         }
       }
     }
-{%- elif lifecycle == "dlm" -%}
+{%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
     "lifecycle": {}
 {%- endif -%}
   }

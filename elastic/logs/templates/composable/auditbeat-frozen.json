@@ -3,9 +3,17 @@
     "auditbeatfrozen-*"
   ],
   "template": {
+  {% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
     "settings": {
-      "index.lifecycle.name": "auditbeat-frozen"
+      "index": {
+        "lifecycle": {
+          "name": "auditbeat-frozen"
+        }
+      }
     }
+  {%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
+    "lifecycle": {}
+  {%- endif -%}
   },
   "composed_of" : ["auditbeat-mappings"],
   "priority": 1,

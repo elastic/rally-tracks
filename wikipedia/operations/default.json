@@ -40,14 +40,12 @@
 {
   "name": "default-search-application-search",
   "operation-type": "raw-request",
-  "param-source": "search-application-search-param-source",
-  "iterations": {{search_iterations | default(100000)}}
+  "param-source": "search-application-search-param-source"
 },
 {
   "name": "query-string-search",
   "operation-type": "search",
   "param-source": "query-string-search",
   "size" : {{search_size | default(20)}},
-  "search-fields" : "{{search_fields | default("*")}}",
-  "iterations": {{search_iterations | default(100000)}}
+  "search-fields" : "{{search_fields | default("*")}}"
 }

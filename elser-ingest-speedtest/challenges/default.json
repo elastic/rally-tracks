@@ -1,5 +1,5 @@
 {
-  "name": "elser-speedtest",
+  "name": "elser-ingest-speedtest",
   "description": "Test the throughput of ELSER in various scenarios",
   "default": true,
   "schedule": [
@@ -79,7 +79,7 @@
       "operation": {
         "include-in-reporting": false,
         "operation-type": "cluster-health",
-        "index": "benchmark-elser-speedtest",
+        "index": "benchmark-elser-ingest-speedtest",
         "request-params": {
           "wait_for_status": "{{cluster_health | default('yellow')}}",
           "wait_for_no_relocating_shards": "true"

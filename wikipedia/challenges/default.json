@@ -18,7 +18,7 @@
     {
       "name": "index-documents",
       "operation": "index-documents",
-      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+      "warmup-time-period": {{bulk_warmup | default(40) | int}},
       "clients": {{bulk_indexing_clients | default(5)}}
     },
     {
@@ -29,7 +29,8 @@
       "name": "query-string-search",
       "operation": "query-string-search",
       "clients": {{search_clients | default(20)}},
-      "warmup-iterations": 100
+      "time-period": {{search_time_period | default(300) | int}},
+      "warmup-time-period": {{search_warmup | default(10) | int}}
     },
     {
       "name": "clear-cache",
@@ -42,8 +43,9 @@
     {
       "name": "default-search-application-search",
       "operation": "default-search-application-search",
-      "clients": {{search_clients | default(20)}},
-      "warmup-iterations": 100
+      "clients": {{application_search_clients | default(20)}},
+      "time-period": {{search_time_period | default(300) | int}},
+      "warmup-time-period": {{search_warmup | default(10) | int}}
     }
   ]
 }

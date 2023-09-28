@@ -113,7 +113,7 @@
     {
       "operation": {
         "operation-type": "force-merge",
-        "max-num-segments": 1,
+        "max-num-segments": {{max_num_segments | default(1)}},
         "request-timeout": 7200,
         "include-in-reporting": true
       }

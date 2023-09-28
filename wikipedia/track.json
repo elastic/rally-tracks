@@ -1,0 +1,34 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark for search with Wikipedia data",
+  "search_applications": [
+    {}
+  ],
+  "indices": [
+    {
+      "name": "wikipedia",
+      "body": "wikipedia-{{index_mapping_type | default("minimal")}}-mapping.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "wikipedia",
+      "base-url": "https://rally-tracks.elastic.co/wikipedia",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 22986185,
+          "compressed-bytes": 19057132284,
+          "uncompressed-bytes": 80754578532
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

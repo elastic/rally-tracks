@@ -65,6 +65,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `bulk_size` (default: 500)
 * `bulk_indexing_clients` (default: 1)
 * `ingest_percentage` (default: 100)
+* `max_num_segments` (default: 1)
 
 ### License
 We use the same license for the data as the original data: [CC-SA-4.0](http://creativecommons.org/licenses/by-sa/4.0/).

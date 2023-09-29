@@ -39,7 +39,7 @@
               "workflow-interval": {{ p_user_workflow_time }},
               "time-period": 99999,
               "warmup-time-period": {{ p_query_warmup_time_period }},
-              "clients": {{ p_search_query_clients }},
+              "clients": {{ p_search_clients }},
               "schedule": "workflow-scheduler"
             },
           {% endfor %}

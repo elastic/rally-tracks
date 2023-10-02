@@ -4,7 +4,7 @@ import random
 import re
 from os import getcwd
 from os.path import dirname
-from typing import Iterator
+from typing import Iterator, List
 
 from esrally.track.params import ParamSource
 
@@ -16,7 +16,7 @@ SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
 
-def query_samples(k: int, random_seed: int = None) -> list[str]:
+def query_samples(k: int, random_seed: int = None) -> List[str]:
     with open(QUERIES_FILENAME) as queries_file:
         csv_reader = csv.reader(queries_file)
         next(csv_reader)

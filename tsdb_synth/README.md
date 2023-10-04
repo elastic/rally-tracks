@@ -180,3 +180,4 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
+* `enable_more_dimensions` (default: false)

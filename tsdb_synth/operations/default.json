@@ -1,0 +1,93 @@
+{
+  "name": "index",
+  "operation-type": "bulk",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}}
+},
+{
+  "name": "time-series-rate-minute",
+  "operation-type": "search",
+  "index": "tsdb_synth",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "date_histogram": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "calendar_interval": "1m"
+        },
+        "aggs": {
+          "time_series": {
+            "time_series": {
+              "keyed": false
+            },
+            "aggs": {
+              "rate": {
+                "field": "counter",
+                "unit": "1m"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "time-series-rate-hour",
+  "operation-type": "search",
+  "index": "tsdb_synth",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "date_histogram": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "calendar_interval": "1h"
+        },
+        "aggs": {
+          "time_series": {
+            "time_series": {
+              "keyed": false
+            },
+            "aggs": {
+              "rate": {
+                "field": "counter",
+                "unit": "1h"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "time-series-rate-day",
+  "operation-type": "search",
+  "index": "tsdb_synth",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "date_histogram": {
+        "date_histogram": {
+          "field": "@timestamp",
+          "calendar_interval": "1d"
+        },
+        "aggs": {
+          "time_series": {
+            "time_series": {
+              "keyed": false
+            },
+            "aggs": {
+              "rate": {
+                "field": "counter",
+                "unit": "1d"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

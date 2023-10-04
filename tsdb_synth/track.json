@@ -1,0 +1,39 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "synthetic time series dataset for tsid hashing benchmarks",
+  "composable-templates": [
+    {
+      "name": "index-template",
+      "index-pattern": "tsdb_*",
+      "delete-matching-indices": true,
+      "template": "index-template.json"
+    }
+  ],
+  "data-streams": [
+    {
+      "name": "tsdb_synth"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "tsdb_synth",
+      "base-url": "https://storage.googleapis.com/rally-tracks/tsdb_synth/",
+      "documents": [
+        {
+          "target-data-stream": "tsdb_synth",
+          "source-file": "documents.json.bz2",
+          "document-count": 3145728,
+          "compressed-bytes": 80735788640,
+          "uncompressed-bytes": 123666200041
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

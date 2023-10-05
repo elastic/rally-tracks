@@ -13,7 +13,7 @@
       }
     },
     {
-      "name": "put elser v1",
+      "name": "put elser v2",
       "operation": {
         "operation-type": "put-elser",
         "include-in-reporting": false,
@@ -43,7 +43,7 @@
       "name": "setup-elser-pipeline",
       "operation": {
         "operation-type": "put-pipeline",
-        "id": "elser-v1-ingest",
+        "id": "elser-v2-ingest",
         "body": {
           "description": "Pipes documents to ELSER",
           "processors": [
@@ -95,7 +95,7 @@
         "include-in-reporting": true,
         "operation-type": "bulk",
         "bulk-size": {{bulk_size | default(5)}},
-    "pipeline": "elser-v1-ingest",
+    "pipeline": "elser-v2-ingest",
     "request-timeout": 60.0,
     "ingest-percentage": {{ingest_percentage | default(1)}}
   },

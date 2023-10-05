@@ -13,11 +13,11 @@
       }
     },
     {
-      "name": "put elser v1",
+      "name": "put elser v2 platform specific",
       "operation": {
         "operation-type": "put-elser",
         "include-in-reporting": false,
-        "model_id": "..elser_model_2_linux-x86_64"
+        "model_id": ".elser_model_2_linux-x86_64"
       }
     },
     {
@@ -25,7 +25,7 @@
       "operation": {
         "operation-type": "stop-trained-model-deployment",
         "include-in-reporting": false,
-        "model_id": "..elser_model_2_linux-x86_64"
+        "model_id": "elser_model_2_linux-x86_64"
       }
     },
     {
@@ -36,20 +36,20 @@
         "queue_capacity": {{ queue_capacity|default(1024) }},
         "operation-type": "start-trained-model-deployment",
         "include-in-reporting": false,
-        "model_id": "..elser_model_2_linux-x86_64"
+        "model_id": ".elser_model_2_linux-x86_64"
       }
   },
     {
       "name": "setup-elser-pipeline",
       "operation": {
         "operation-type": "put-pipeline",
-        "id": "elser-v1-ingest",
+        "id": "elser-v2-ps-ingest",
         "body": {
           "description": "Pipes documents to ELSER",
           "processors": [
             {
               "inference": {
-                "model_id": "..elser_model_2_linux-x86_64",
+                "model_id": ".elser_model_2_linux-x86_64",
                 "target_field": "ml",
                 "field_map": {
                   "body": "text_field"
@@ -95,7 +95,7 @@
         "include-in-reporting": true,
         "operation-type": "bulk",
         "bulk-size": {{bulk_size | default(5)}},
-    "pipeline": "elser-v1-ingest",
+    "pipeline": "elser-v2-ps-ingest",
     "request-timeout": 60.0,
     "ingest-percentage": {{ingest_percentage | default(1)}}
   },
@@ -106,7 +106,7 @@
       "operation": {
         "operation-type": "delete-elser",
         "include-in-reporting": false,
-        "model_id": "..elser_model_2_linux-x86_64"
+        "model_id": ".elser_model_2_linux-x86_64"
       }
     },
     {

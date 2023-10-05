@@ -28,20 +28,22 @@ async def get_xpack_capabilities(es):
     print("=" * 50)
 
 
-elser_model_id = ".elser_model_1"
+elser_v1_model_id = ".elser_model_1"
+elser_v2_model_id = ".elser_model_1"
+elser_v2_platform_specific_model_id = ".elser_model_1"
 
 
 # TODO enable this function once rally upgrades the elasticsearch python client to >=8.9.0
 # async def put_elser(es, params):
 #     try:
-#         await es.ml.put_trained_model(model_id=elser_model_id, input={"field_names": "text_field"})
+#         await es.ml.put_trained_model(model_id=elser_v1_model_id, input={"field_names": "text_field"})
 #         return True
 #     except BadRequestError as bre:
 #         if (
 #             bre.body["error"]["root_cause"][0]["reason"]
-#             == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
+#             == f"Cannot create model [{model_id}] the id is the same as an current model deployment"
 #             or bre.body["error"]["root_cause"][0]["reason"]
-#             == "Trained machine learning model [.elser_model_1] already exists"
+#             == f"Trained machine learning model [{model_id}] already exists"
 #         ):
 #             return True
 #         else:
@@ -52,19 +54,22 @@ elser_model_id = ".elser_model_1"
 #         return False
 
 
-async def put_elser(es):
+async def put_elser(es, params):
+    model_id = params["model_id"]
+
     try:
-        await es.perform_request(method="PUT", path="/_ml/trained_models/.elser_model_1", body={"input": {"field_names": ["text_field"]}})
+        await es.perform_request(method="PUT", path=f"/_ml/trained_models/{model_id}",
+                                 body={"input": {"field_names": ["text_field"]}})
         return True
     except BadRequestError as bre:
-        if (
-            bre.body["error"]["root_cause"][0]["reason"]
-            == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
-            or bre.body["error"]["root_cause"][0]["reason"] == "Trained machine learning model [.elser_model_1] already exists"
-        ):
-            return True
-        else:
-            print(bre)
+        try:
+            if (model_already_downloaded(bre, model_id)):
+                return True
+            else:
+                print(bre)
+                return False
+        except Exception as e:
+            print(e)
             return False
     except Exception as e:
         print(e)
@@ -72,31 +77,34 @@ async def put_elser(es):
 
 
 async def delete_elser(es, params):
+    model_id = params["model_id"]
+
     try:
-        await es.perform_request(method="DELETE", path="/_ml/trained_models/.elser_model_1", params={"force": "true"})
+        await es.perform_request(method="DELETE", path="/_ml/trained_models/{model_id}", params={"force": "true"})
         return True
     except BadRequestError as bre:
-        if (
-            bre.body["error"]["root_cause"][0]["reason"]
-            == "Cannot create model [.elser_model_1] the id is the same as an current model deployment"
-            or bre.body["error"]["root_cause"][0]["reason"] == "Trained machine learning model [.elser_model_1] already exists"
-        ):
-            return True
-        else:
-            print(bre)
+        try:
+            if (model_already_downloaded(bre, model_id)):
+                return True
+            else:
+                print(bre)
+                return False
+        except Exception as e:
+            print(e)
             return False
     except Exception as e:
         print(e)
         return False
 
 
-async def poll_for_elser_completion(es):
+async def poll_for_elser_completion(es, params):
+    model_id = params["model_id"]
     try_count = 0
     max_wait_time_seconds = 120
     wait_time_per_cycle_seconds = 5
     while wait_time_per_cycle_seconds * try_count < max_wait_time_seconds:
         try:
-            response = await es.ml.get_trained_models(model_id=elser_model_id, include="definition_status")
+            response = await es.ml.get_trained_models(model_id=model_id, include="definition_status")
             if is_model_fully_defined(response):
                 return True
         except NotFoundError:
@@ -112,14 +120,19 @@ def is_model_fully_defined(response):
 
 
 async def stop_trained_model_deployment(es, params):
+    model_id = params["model_id"]
     try:
-        await es.ml.stop_trained_model_deployment(model_id=elser_model_id, force=True)
+        await es.ml.stop_trained_model_deployment(model_id=model_id, force=True)
         return True
     except BadRequestError as bre:
-        if model_deployment_already_exists(bre):
-            return True
-        else:
-            print(bre)
+        try:
+            if model_deployment_already_exists(bre, model_id):
+                return True
+            else:
+                print(bre)
+                return False
+        except Exception as e:
+            print(e)
             return False
 
 
@@ -127,9 +140,10 @@ async def start_trained_model_deployment(es, params):
     number_of_allocations = params["number_of_allocations"]
     threads_per_allocation = params["threads_per_allocation"]
     queue_capacity = params["queue_capacity"]
+    model_id = params["model_id"]
     try:
         await es.ml.start_trained_model_deployment(
-            model_id=elser_model_id,
+            model_id=model_id,
             wait_for="fully_allocated",
             number_of_allocations=number_of_allocations,
             threads_per_allocation=threads_per_allocation,
@@ -138,30 +152,48 @@ async def start_trained_model_deployment(es, params):
         )
         return True
     except BadRequestError as bre:
-        if model_deployment_already_exists(bre):
-            return True
-        else:
-            print(bre)
+        try:
+            if model_deployment_already_exists(bre, model_id):
+                return True
+            else:
+                print(bre)
+                return False
+        except Exception as e:
+            print(e)
             return False
     except Exception as e:
         print("Exception", e)
         return False
 
 
-def model_deployment_already_exists(bad_request_error):
-    exists = (
-        bad_request_error.body["error"]["root_cause"][0]["reason"]
-        == "Could not start model deployment because an existing deployment with the same id [.elser_model_1] exist"
-    )
+def model_deployment_already_exists(bad_request_error, model_id):
+    try:
 
-    return exists
+        return (bad_request_error.body["error"]["root_cause"][0]["reason"]
+            == f"Could not start model deployment because an existing deployment with the same id [{model_id}] exist")
 
+    except Exception as e:
+        print(e)
+        return False
+
+
+def model_already_downloaded(bre, model_id):
+    try:
+        return (
+            bre.body["error"]["root_cause"][0]["reason"]
+            == f"Cannot create model [{model_id}] the id is the same as an current model deployment"
+            or bre.body["error"]["root_cause"][0]["reason"]
+            == f"Trained machine learning model [{model_id}] already exists")
+
+    except Exception as e:
+        print(e)
+        return False
 
 async def create_elser_model(es, params):
     await get_xpack_capabilities(es)
-    if await put_elser(es) == False:
+    if await put_elser(es, params) == False:
         return False
-    if await poll_for_elser_completion(es) == False:
+    if await poll_for_elser_completion(es, params) == False:
         return False
 
     return True

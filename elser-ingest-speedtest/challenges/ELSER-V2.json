@@ -1,0 +1,134 @@
+{
+  "name": "ELSER-V2",
+  "description": "Test the throughput of ELSER in various scenarios",
+  "default": true,
+  "schedule": [
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "include-in-reporting": false,
+        "operation-type": "create-index"
+      }
+    },
+    {
+      "name": "put elser v1",
+      "operation": {
+        "operation-type": "put-elser",
+        "include-in-reporting": false,
+        "model_id": ".elser_model_1"
+      }
+    },
+    {
+      "name": "stop any existing trained model with the same name",
+      "operation": {
+        "operation-type": "stop-trained-model-deployment",
+        "include-in-reporting": false,
+        "model_id": ".elser_model_1"
+      }
+    },
+    {
+      "name": "start new trained model deployment",
+      "operation": {
+        "number_of_allocations": {{ number_of_allocations|default(1) }},
+        "threads_per_allocation": {{ threads_per_allocation|default(2) }},
+        "queue_capacity": {{ queue_capacity|default(1024) }},
+        "operation-type": "start-trained-model-deployment",
+        "include-in-reporting": false,
+        "model_id": ".elser_model_1"
+      }
+  },
+    {
+      "name": "setup-elser-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "elser-v1-ingest",
+        "body": {
+          "description": "Pipes documents to ELSER",
+          "processors": [
+            {
+              "inference": {
+                "model_id": ".elser_model_1",
+                "target_field": "ml",
+                "field_map": {
+                  "body": "text_field"
+                },
+                "inference_config": {
+                  "text_expansion": {
+                    "results_field": "tokens"
+                  }
+                }
+              }
+            }
+          ],
+          "on_failure": [
+            {
+              "set": {
+                "field": "_index",
+                {% raw %}
+                "description": "Record error information",
+                "field": "error_information",
+                "value": "Processor {{ _ingest.on_failure_processor_type }} with tag {{ _ingest.on_failure_processor_tag }} in pipeline {{ _ingest.on_failure_pipeline }} failed with message {{ _ingest.on_failure_message }}"
+                {% endraw %}
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "include-in-reporting": false,
+        "operation-type": "cluster-health",
+        "index": "benchmark-elser-ingest-speedtest",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('yellow')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": {
+        "include-in-reporting": true,
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(5)}},
+    "pipeline": "elser-v1-ingest",
+    "request-timeout": 60.0,
+    "ingest-percentage": {{ingest_percentage | default(1)}}
+  },
+    "clients": {{bulk_indexing_clients | default(1)}}
+  },
+    {
+      "name": "delete elser model",
+      "operation": {
+        "operation-type": "delete-elser",
+        "include-in-reporting": false,
+        "model_id": ".elser_model_1"
+      }
+    },
+    {
+      "operation": {
+        "include-in-reporting": false,
+        "operation-type": "force-merge",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "include-in-reporting": false,
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    }
+  ]
+}

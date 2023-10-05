@@ -21,6 +21,9 @@
         "mapping": {
           "total_fields": {
             "limit": "10000"
+          },
+          "dimension_fields": {
+            "limit": "9999"
           }
         },
         "mode": "time_series",

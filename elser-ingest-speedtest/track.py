@@ -58,12 +58,11 @@ async def put_elser(es, params):
     model_id = params["model_id"]
 
     try:
-        await es.perform_request(method="PUT", path=f"/_ml/trained_models/{model_id}",
-                                 body={"input": {"field_names": ["text_field"]}})
+        await es.perform_request(method="PUT", path=f"/_ml/trained_models/{model_id}", body={"input": {"field_names": ["text_field"]}})
         return True
     except BadRequestError as bre:
         try:
-            if (model_already_downloaded(bre, model_id)):
+            if model_already_downloaded(bre, model_id):
                 return True
             else:
                 print(bre)
@@ -84,7 +83,7 @@ async def delete_elser(es, params):
         return True
     except BadRequestError as bre:
         try:
-            if (model_already_downloaded(bre, model_id)):
+            if model_already_downloaded(bre, model_id):
                 return True
             else:
                 print(bre)
@@ -168,9 +167,10 @@ async def start_trained_model_deployment(es, params):
 
 def model_deployment_already_exists(bad_request_error, model_id):
     try:
-
-        return (bad_request_error.body["error"]["root_cause"][0]["reason"]
-            == f"Could not start model deployment because an existing deployment with the same id [{model_id}] exist")
+        return (
+            bad_request_error.body["error"]["root_cause"][0]["reason"]
+            == f"Could not start model deployment because an existing deployment with the same id [{model_id}] exist"
+        )
 
     except Exception as e:
         print(e)
@@ -182,12 +182,13 @@ def model_already_downloaded(bre, model_id):
         return (
             bre.body["error"]["root_cause"][0]["reason"]
             == f"Cannot create model [{model_id}] the id is the same as an current model deployment"
-            or bre.body["error"]["root_cause"][0]["reason"]
-            == f"Trained machine learning model [{model_id}] already exists")
+            or bre.body["error"]["root_cause"][0]["reason"] == f"Trained machine learning model [{model_id}] already exists"
+        )
 
     except Exception as e:
         print(e)
         return False
+
 
 async def create_elser_model(es, params):
     await get_xpack_capabilities(es)

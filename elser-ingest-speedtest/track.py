@@ -80,7 +80,7 @@ async def delete_elser(es, params):
     model_id = params["model_id"]
 
     try:
-        await es.perform_request(method="DELETE", path="/_ml/trained_models/{model_id}", params={"force": "true"})
+        await es.perform_request(method="DELETE", path=f"/_ml/trained_models/{model_id}", params={"force": "true"})
         return True
     except BadRequestError as bre:
         try:

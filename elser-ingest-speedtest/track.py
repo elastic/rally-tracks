@@ -29,8 +29,8 @@ async def get_xpack_capabilities(es):
 
 
 elser_v1_model_id = ".elser_model_1"
-elser_v2_model_id = ".elser_model_1"
-elser_v2_platform_specific_model_id = ".elser_model_1"
+elser_v2_model_id = ".elser_model_2"
+elser_v2_platform_specific_model_id = ".elser_model_2_linux-x86_64"
 
 
 # TODO enable this function once rally upgrades the elasticsearch python client to >=8.9.0

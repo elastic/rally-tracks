@@ -19,11 +19,13 @@
           "bulk-size": {{ p_bulk_size }},
           "detailed-results": true
         },
+        "tags": ["setup"],
         "clients": {{ p_bulk_indexing_clients }},
         "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
       },
       {
         "name": "compression-stats",
+        "tags": ["setup"],
         "operation": {
           "operation-type": "compression-statistics",
           "param-source": "create-datastream-source"
@@ -54,6 +56,48 @@
           {% endfor %}
         ]
       }
+    },
+    {
+      "operation": "esql_basic_count_group_1",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql"]
+    },
+    {
+      "operation": "esql_basic_count_group_2",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql"]
+    },
+    {
+      "operation": "esql_basic_count_group_3",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 10,
+      "tags": ["esql"]
+    },
+    {
+      "operation": "esql_basic_count_group_4",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 10,
+      "tags": ["esql"]
+    },
+    {
+      "operation": "esql_time_range_and_date_histogram_two_groups_pre_filter",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql"]
+    },
+    {
+      "operation": "esql_time_range_and_date_histogram_two_groups_post_filter",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql"]
     }
   ]
 }

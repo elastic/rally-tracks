@@ -22,13 +22,11 @@ import pytest
 pytest_rally = pytest.importorskip("pytest_rally")
 
 BASE_PARAMS = {
-    "bulk_start_date": "2021-01-01T00-00-00Z",
-    "bulk_end_date": "2021-01-01T00-13-00Z",
-    "bulk_indexing_clients": 12,
-    "data_generation_clients": 16,
+    "start_date": "2021-01-01T00-00-00Z",
+    "end_date": "2021-01-01T00-01-00Z",
     "max_total_download_gb": "18",
-    "raw_data_volume_per_day": "10GB",
-    "max_generated_corpus_size": "4GB",
+    "raw_data_volume_per_day": "72GB",
+    "max_generated_corpus_size": "1GB",
     "wait_for_status": "green",
     "force_data_generation": "true",
     "number_of_shards": "2",
@@ -131,7 +129,7 @@ class TestLogs:
     def test_logs_querying_with_preloaded_data(self, es_cluster, rally):
         custom = {
             "bulk_start_date": "2020-09-30T00-00-00Z",
-            "bulk_end_date": "2020-09-30T00-00-02Z",
+            "bulk_end_date": "2020-09-30T00-01-00Z",
             "query_warmup_time_period": "1",
             "query_time_period": "1",
             "workflow_time_interval": "1",

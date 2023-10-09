@@ -19,13 +19,11 @@
           "bulk-size": {{ p_bulk_size }},
           "detailed-results": true
         },
-        "tags": ["setup"],
         "clients": {{ p_bulk_indexing_clients }},
         "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
       },
       {
         "name": "compression-stats",
-        "tags": ["setup"],
         "operation": {
           "operation-type": "compression-statistics",
           "param-source": "create-datastream-source"
@@ -48,7 +46,6 @@
                 "task-offset": {{ loop.index }},
                 "request-params": {{ p_query_request_params | tojson(indent=2) }}
               },
-              "tags": ["logging-queries"],
               "think-time-interval": {{ p_user_think_time }},
               "workflow-interval": {{ p_user_workflow_time }},
               "clients": 1,

@@ -36,6 +36,7 @@
     },
     {
       "name": "esql_time_range_and_date_histogram_two_groups_pre_filter",
+      "description": "Based on observability queries for average CPU over date histogram",
       "operation-type": "raw-request",
       "method": "POST",
       "path": "/_query",
@@ -45,10 +46,21 @@
     },
     {
       "name": "esql_time_range_and_date_histogram_two_groups_post_filter",
+      "description": "Based on observability queries for average CPU over date histogram",
       "operation-type": "raw-request",
       "method": "POST",
       "path": "/_query",
       "body": {
         "query": "FROM logs-* | EVAL start_time = DATE_PARSE(\"yyyy-MM-dd\",\"2020-01-01\"), end_time = DATE_PARSE(\"yyyy-MM-dd\",\"2020-01-02\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | EVAL bucket = DATE_TRUNC(1 hour, @timestamp) | STATS avg=AVG(http.response.body.bytes), min=MIN(http.response.body.bytes), max=MAX(http.response.body.bytes) BY data_stream.dataset, bucket | WHERE min IS NOT NULL | KEEP data_stream.dataset, bucket, min, avg, max"
+      }
+    },
+    {
+      "name": "esql_dissect_duration_and_stats",
+      "description": "Based on observability queries for duration average",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "body": {
+        "query": "FROM logs-postgres* | DISSECT message \"duration: %{query_duration} ms\" | EVAL query_duration_num = TO_DOUBLE(query_duration) | STATS avg_duration = AVG(query_duration_num)"
       }
     }

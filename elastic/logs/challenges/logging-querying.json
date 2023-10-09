@@ -48,6 +48,7 @@
                 "task-offset": {{ loop.index }},
                 "request-params": {{ p_query_request_params | tojson(indent=2) }}
               },
+              "tags": ["logging-queries"],
               "think-time-interval": {{ p_user_think_time }},
               "workflow-interval": {{ p_user_workflow_time }},
               "clients": 1,
@@ -94,6 +95,13 @@
     },
     {
       "operation": "esql_time_range_and_date_histogram_two_groups_post_filter",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql"]
+    },
+    {
+      "operation": "esql_dissect_duration_and_stats",
       "clients": 1,
       "warmup-iterations": 5,
       "iterations": 20,

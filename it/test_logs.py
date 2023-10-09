@@ -22,11 +22,13 @@ import pytest
 pytest_rally = pytest.importorskip("pytest_rally")
 
 BASE_PARAMS = {
-    "start_date": "2021-01-01T00-00-00Z",
-    "end_date": "2021-01-01T00-00-02Z",
+    "bulk_start_date": "2021-01-01T00-00-00Z",
+    "bulk_end_date": "2021-01-01T00-13-00Z",
+    "bulk_indexing_clients": 12,
+    "data_generation_clients": 16,
     "max_total_download_gb": "18",
-    "raw_data_volume_per_day": "72GB",
-    "max_generated_corpus_size": "1GB",
+    "raw_data_volume_per_day": "10GB",
+    "max_generated_corpus_size": "4GB",
     "wait_for_status": "green",
     "force_data_generation": "true",
     "number_of_shards": "2",

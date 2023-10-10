@@ -12,7 +12,7 @@ Generated data has the following characteristics:
   time series is (sometimes) larger then 32 Kb. The name of each dimension field starts with the prefix `d_` and ends with a progressive value as a suffix such as `001`, `002` and so on.
 * Other then the timestamp field and dimension fields, data includes two metric fields, a gauge `gauge` and a counter `counter` and two non-metric fields, `key` and `val`
 
-### Mapping properties
+### Mapping properties (time series mode)
 
 ```json
 {
@@ -170,10 +170,166 @@ Generated data has the following characteristics:
 }
 ```
 
+### Mapping properties (standard mode)
+
+```json
+{
+    "properties": {
+        "@timestamp": {
+            "type": "date"
+        },
+        "def_dim": {
+            "type": "keyword"
+        },
+        "counter": {
+            "type": "long"
+        },
+        "gauge": {
+            "type": "double"
+        },
+        "key": {
+            "type": "keyword"
+        },
+        "val": {
+            "type": "integer"
+        },
+        "d_ufseibmjnkguynqfyclevvweebkoxqgvspbbngkvtrsegqtwuyel_001": {"type": "keyword"},
+        "d_xnbbwadzlsmascuwfgmgezvpqdpxlhdbthcppsajhqbsakeyuhxoaiatvqrryxq_002": {"type": "keyword"},
+        "d_blzajgeqnkncwuxcvtynuzkzopovmspftvxsdctqebzuomkiwjcieo_003": {"type": "keyword"},
+        "d_qqnjuveqimaxewfvzdzardfuacdpiaitamagmvibwf_004": {"type": "keyword"},
+        "d_xipvxrsjoijnsuevivtolfykfocpfssuvmcfpsyt_005": {"type": "keyword"},
+        "d_akjodkyqfl_006": {"type": "keyword"},
+        "d_nnwotohljrhizujqcrtkxgmlsrmapuoriceoahjmjcxfqauloo_007": {"type": "keyword"},
+        "d_cadwiklfhhxnbepowpaoeexvdijgyhzaloxwrmvddctbcumvm_008": {"type": "keyword"},
+        "d_rxkywkwqguca_009": {"type": "keyword"},
+        "d_eisgvcnksbawsvd_010": {"type": "keyword"},
+        "d_wbgmzlirkitlvhgpziaihplhoneywqajuaurcnksivljjanmubmgswzkw_011": {"type": "keyword"},
+        "d_bjcrwryofdaefmutnmtycncwnp_012": {"type": "keyword"},
+        "d_tmdopgrw_013": {"type": "keyword"},
+        "d_dnysvciuvgtqgkeeqcuuffpnpiqumehnkkfchidmkacmef_014": {"type": "keyword"},
+        "d_trmmtvdzuglsnbutbuylldxmpyvioh_015": {"type": "keyword"},
+        "d_qtotzmjpdvrholegtddixzmhuklxpfkwdnqwicggtvuigppyzrovqf_016": {"type": "keyword"},
+        "d_jdokldxavpnsrmdedowxerks_017": {"type": "keyword"},
+        "d_hupbcujkmlecyeqixxuttowzctihnbexraglwwrixvdod_018": {"type": "keyword"},
+        "d_aqcxnjgteaazeywfa_019": {"type": "keyword"},
+        "d_vzawzvycpgzqjncnnvkmuwinzyaroepfyzfdnhvgen_020": {"type": "keyword"},
+        "d_ppmjbulaiztsnhlcafqxmnaqtrkortvrhyxnylvtebslysmjzqvlxmeutyjrby_021": {"type": "keyword"},
+        "d_uwkxqgjcagzfkgscpnkd_022": {"type": "keyword"},
+        "d_aooyeqoyxulxzrliepbrgzxxbpjsybnsifurktorcjufj_023": {"type": "keyword"},
+        "d_rkjjdrnfrihsybkzauxvuyn_024": {"type": "keyword"},
+        "d_zzjvqkhnfuyjqmfyqycevcwrhxqkdvgfkvtxfdt_025": {"type": "keyword"},
+        "d_egoqbcrosickbczvyubmtgwehqwcjsskwkinrppfids_026": {"type": "keyword"},
+        "d_nsietpfxulkyrcyzscaasqlmdzktpou_027": {"type": "keyword"},
+        "d_xtkktnwqqpvbcorrfvxbcyinwlupjozrkmtewwzlgagswwiqhruqzujxojtue_028": {"type": "keyword"},
+        "d_gqxiwdeqjnccmzifzsavjlodzhccyzzsqopwzqvejgrbcsywpyetkpsehxwff_029": {"type": "keyword"},
+        "d_glmaozbqzpgmtvcrjutdmfc_030": {"type": "keyword"},
+        "d_pkvmdemjmfqzpaxxtiwypfclqpnltyvngxfjljsvkwxgapisjyvihlzrydgtl_031": {"type": "keyword"},
+        "d_vearqgikeibzckvljimabmtrgyacygtmzidufsnrruuxbkkhndkuiran_032": {"type": "keyword"},
+        "d_dpbpucerm_033": {"type": "keyword"},
+        "d_kgglppzibjgtilurxllbeeannpgmjupwosd_034": {"type": "keyword"},
+        "d_mfcwnfpwfiivsrpofmkfaddhktppfvfoq_035": {"type": "keyword"},
+        "d_icykvfpdxfqlaoqliamasxbaaoxixlwagovgfvuhtfx_036": {"type": "keyword"},
+        "d_dxynmwoxwtbeilsnmdbsordapgjmoetkijslzugydyjpnxfbgnwirjsjcm_037": {"type": "keyword"},
+        "d_bpksasvwxerwnwbuilzgvomsejcwvirkgikxymfbmdxovzjrqccsdavkess_038": {"type": "keyword"},
+        "d_fbskkemblnpczurtbabaomiezpulzjqbu_039": {"type": "keyword"},
+        "d_zljayrez_040": {"type": "keyword"},
+        "d_vyflfcdkqaqmzzafrwpsijldmnznekeeyclgqgyscfmwjgpjebxdisobvuzowzg_041": {"type": "keyword"},
+        "d_bplubclwrchjkurzuhyiafioenrnprgghebiaygggrkguqcihtxl_042": {"type": "keyword"},
+        "d_mwyuwbmyqjjuqvxhtgxpkbdalevlbtjowkfsm_043": {"type": "keyword"},
+        "d_zszslmzdkjictecjcjvrwfmnw_044": {"type": "keyword"},
+        "d_orgqbnoltihxfrghmqhfjdjpxskzpkdtovkyjsqagsmglwnjrymhmbxwwega_045": {"type": "keyword"},
+        "d_mfalfoicnoodvcvftkicuztnbcbrwkhwicupjkrcqgezsstj_046": {"type": "keyword"},
+        "d_pvqnuxsuaajhpsdlqpcawwpuvsjwvswrqgpkrqpcaumv_047": {"type": "keyword"},
+        "d_gupwiidxrmpoptpzg_048": {"type": "keyword"},
+        "d_ezvzczzzkabvuepjnrjt_049": {"type": "keyword"},
+        "d_agmgfljrkslzymtjsqsxckuamkfkfmpsihyuvkdxvrcxyrvglwrcq_050": {"type": "keyword"},
+        "d_pfwxfjkpwkyoomzlfmcerdpqcmwbbnigqodmbyevvehcsvsger_051": {"type": "keyword"},
+        "d_qjjrgdicrrbb_052": {"type": "keyword"},
+        "d_ayssroaqgoimnavyzohoqirjunvxfrvuqbroecpltibcujmigywq_053": {"type": "keyword"},
+        "d_xnzfyznysgokvlcvhburbgqwjfjzy_054": {"type": "keyword"},
+        "d_ktgforazlqhrvgzvadyszuzkqqljjehnceylojxuqq_055": {"type": "keyword"},
+        "d_ebxhkvisfyddafshzteafrpbpyxrcylvtnqvtpuyrbsoc_056": {"type": "keyword"},
+        "d_orsmhbwikbcwfxcmzskqdaqissfwilxrnzjynvrgceoptqpmjkgammmg_057": {"type": "keyword"},
+        "d_iyvedzjtmpclftsopznfipqdgidhdihd_058": {"type": "keyword"},
+        "d_mdyqxhdovbabgevnathxsqdvolqpadzfsoyeqcmsrrufhkxvmkwrabeisika_059": {"type": "keyword"},
+        "d_dvhkskmzmvtbaqtuimlgxkdmevrvkvbdoozqzstvdaccgizdxegcismuohvydv_060": {"type": "keyword"},
+        "d_wfhzvefualtakquglnvnfprgjuvrdlqzoegbxceawutkqmmmcsaftxciffjo_061": {"type": "keyword"},
+        "d_wzxuxyzjrrhnuvknbwdbxcxxziscojebtkaqvtrftohxselpshaxj_062": {"type": "keyword"},
+        "d_evgytuyrdqdhbcwijozzmeqtrnyvyqoqzsmp_063": {"type": "keyword"},
+        "d_xhfoxicrnpkbtqwphinpcwhdkcpbgqlpzonmmhoymrwlojatsu_064": {"type": "keyword"},
+        "d_erfsrejpcqazbbplfslaajubskdhcibmw_065": {"type": "keyword"},
+        "d_vvejaixmuxnnnxpnwnmregbwnkptblapykgzdczlpidoxqno_066": {"type": "keyword"},
+        "d_vegcmknltgrkfrxlmqzurpkuuhmiuiikpxzrcid_067": {"type": "keyword"},
+        "d_lxxhbhtcvzkoeswmoxizlkgzbfcthzepnrfvflfuwgyxypoujvvpsovaedlxigt_068": {"type": "keyword"},
+        "d_synpuqsgphcjhbuvnjjesqzwkdadikxqci_069": {"type": "keyword"},
+        "d_mlouyrisesaywnuxwctwuzupoopsrylgpvtsg_070": {"type": "keyword"},
+        "d_gstjsaggntqwugbzikeksujuyt_071": {"type": "keyword"},
+        "d_jsxyvyvgffldldyconidbtyfrvnisqsviychbaghpqdzzjz_072": {"type": "keyword"},
+        "d_slmlekdogwuyznlfzvflifsuxonfigpxyhpcadxof_073": {"type": "keyword"},
+        "d_zcxqaqfebivrbpnhgm_074": {"type": "keyword"},
+        "d_rgugqihpjcxlhglimkxruzpgzmcusnqwmnrzkfjahetbqpbtrmenudxnp_075": {"type": "keyword"},
+        "d_wucgvjqlfgupikliqfbqzrhicewcz_076": {"type": "keyword"},
+        "d_jfmfmjzsoluwljufgzdlskazqxjenjuzlyqoiavpcntzghonrlp_077": {"type": "keyword"},
+        "d_wyldzmvvrvjbkielxdbyjythgrahlwvgkxcubcajmeoearrikakmcsthdke_078": {"type": "keyword"},
+        "d_iarzgzcozvmkubufwrdwwuhhpbopdqhmbjiecpbbhdgrrkuhivhfsyni_079": {"type": "keyword"},
+        "d_rrdutmsokqmomnhtctniorumhjxuwpmpbuswhbdktuissmfcpzbrcxndntxn_080": {"type": "keyword"},
+        "d_qxaccsklvqjebsjwfbxnjcdnlhmoizvllxvkz_081": {"type": "keyword"},
+        "d_dklsivejoouqdcl_082": {"type": "keyword"},
+        "d_rolvyswdillwdausp_083": {"type": "keyword"},
+        "d_myqckvrvsmncbudocvixuewjywrkcdkscam_084": {"type": "keyword"},
+        "d_pluxuunglukbgjzcfaztqrhkngxdpfbicbgvxpcgpoamsrlswr_085": {"type": "keyword"},
+        "d_mlamwfmidvxhwohrtypcxwnvmlxfqviwqpexdoly_086": {"type": "keyword"},
+        "d_tswgxygdchjyqchjgncnrjhrzewhfusgfuavqjpttgy_087": {"type": "keyword"},
+        "d_mkxjegmjlzkkwzuaagket_088": {"type": "keyword"},
+        "d_jvzcvudaqy_089": {"type": "keyword"},
+        "d_ndljtwayqimwxvpv_090": {"type": "keyword"},
+        "d_pdbrwzfkxdigwojaslwkoyhwdpuybvsowivjbuwkldkadtaxbros_091": {"type": "keyword"},
+        "d_eqahosohrurcs_092": {"type": "keyword"},
+        "d_djlimaqszvyheetenvrevzgnkrrtsxsl_093": {"type": "keyword"},
+        "d_kmpejulimytkrjczozfghforsychlbaysbrwrecfbawujny_094": {"type": "keyword"},
+        "d_nbslhdzmdeqanexovwmjgkocvrg_095": {"type": "keyword"},
+        "d_egldfzguunvjvoe_096": {"type": "keyword"},
+        "d_kmhhervu_097": {"type": "keyword"},
+        "d_kalqxdkiwtedrorvvrolmxwp_098": {"type": "keyword"},
+        "d_ckxrhzavmsumfrnggqimvfoymzjguvpjanjctlwjlyegaiohikad_099": {"type": "keyword"},
+        "d_xzvgddcctnwfhpebzkxgruzrcfjadtwchikthvsvce_100": {"type": "keyword"},
+        "d_qudmdawmeyctcipeottybgepwerwitmrirnilvrcgxgyuntnrehmpnepcam_101": {"type": "keyword"},
+        "d_tpuknqhtrar_102": {"type": "keyword"},
+        "d_xhuhjbuevjylmmyoztqcqsdfmsbkttxxcgxyqgust_103": {"type": "keyword"},
+        "d_hftdsrzzdrbtmbska_104": {"type": "keyword"},
+        "d_pakcihdwycgvpsvtrqheavgspqkyxrkd_105": {"type": "keyword"},
+        "d_aznyanfwxokcomewgfcjpe_106": {"type": "keyword"},
+        "d_yarvhfrpetlhvpcaolhslhymgkwkhmmjlwlhnimvv_107": {"type": "keyword"},
+        "d_adsloyvqxcithmxkigtgttlhmfxfmxkbjddyeqgrimblwjdse_108": {"type": "keyword"},
+        "d_nbgwlbtqnperafzfrdshrisjvinagydmanucoebstqslbupqftrpsgqtc_109": {"type": "keyword"},
+        "d_eomnifgshvuj_110": {"type": "keyword"},
+        "d_ttmpvutlcbddpachzoavrrakgcjfmqqmarfvbpkhxtrqewd_111": {"type": "keyword"},
+        "d_icgzivtjfwtrjtlmkxiayblroqujoapolpjldsrxuoiecdiiutys_112": {"type": "keyword"},
+        "d_msrslyxeeioakoqtxarcejhmmaquoietjhneyks_113": {"type": "keyword"},
+        "d_psybipczrhsymii_114": {"type": "keyword"},
+        "d_cvciybuuydrodukczp_115": {"type": "keyword"},
+        "d_rdmgfxyidmktyulcsdnehcsdkgqptzyqnjfuwgiksycxcjqvztolrwxnheiz_116": {"type": "keyword"},
+        "d_ckgvgaiagassnuftbvm_117": {"type": "keyword"},
+        "d_xgawtepdmjtclkfhnreoyrrpzrimxyrjbxsegdanrvmpxokkpgwmtsrnmg_118": {"type": "keyword"},
+        "d_cfzzvuvzlldhfuudvgfz_119": {"type": "keyword"},
+        "d_heonoqtezapfykjeafldgufpdzorgprayzmuqyomqxs_120": {"type": "keyword"},
+        "d_vavkrppflewbbgpmbyi_121": {"type": "keyword"},
+        "d_fdgpdkqfpoaohyfkvcftacp_122": {"type": "keyword"},
+        "d_pisbrwfpvpcrwnawhlnvnfrgvholisawqa_123": {"type": "keyword"},
+        "d_wrwvqjahlxmpybcfrqrqjhfqykfkuur_124": {"type": "keyword"},
+        "d_faapharfxdlxuesunslqkfrmvvzggcgvtjbxedetojocnukhfxsoltckxsxhj_125": {"type": "keyword"},
+        "d_zynorwvbvpusmwktuxkbulhbfcnnhtscqaetmbdvcpnbqkum_126": {"type": "keyword"},
+        "d_ghfyoyozjwzgiwppedxemouhftmsakgjlyotbybommexuve_127": {"type": "keyword"},
+        "d_dvretyeczsbaiabqdxrkdfwgneifefnxedasvwcshjeirqdrvyj_128": {"type": "keyword"}
+    }
+}
+```
+
 ### Parameters
 
 This track allows to overwrite the following parameters using `--track-params`:
 
+* `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)
 * `bulk_size` (default: 5000)
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.

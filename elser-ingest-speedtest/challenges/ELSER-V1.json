@@ -1,7 +1,7 @@
 {
-  "name": "elser-ingest-speedtest",
+  "name": "ELSER-V1",
   "description": "Test the throughput of ELSER in various scenarios",
-  "default": true,
+  "default": false,
   "schedule": [
     {
       "operation": "delete-index"
@@ -13,17 +13,19 @@
       }
     },
     {
-      "name": "put elser model",
+      "name": "put elser v1",
       "operation": {
         "operation-type": "put-elser",
-        "include-in-reporting": false
+        "include-in-reporting": false,
+        "model_id": ".elser_model_1"
       }
     },
     {
       "name": "stop any existing trained model with the same name",
       "operation": {
         "operation-type": "stop-trained-model-deployment",
-        "include-in-reporting": false
+        "include-in-reporting": false,
+        "model_id": ".elser_model_1"
       }
     },
     {
@@ -33,14 +35,15 @@
         "threads_per_allocation": {{ threads_per_allocation|default(2) }},
         "queue_capacity": {{ queue_capacity|default(1024) }},
         "operation-type": "start-trained-model-deployment",
-        "include-in-reporting": false
+        "include-in-reporting": false,
+        "model_id": ".elser_model_1"
       }
     },
     {
       "name": "setup-elser-pipeline",
       "operation": {
         "operation-type": "put-pipeline",
-        "id": "elser2",
+        "id": "elser-v1-ingest",
         "body": {
           "description": "Pipes documents to ELSER",
           "processors": [
@@ -69,7 +72,7 @@
                 "value": "Processor {{ _ingest.on_failure_processor_type }} with tag {{ _ingest.on_failure_processor_tag }} in pipeline {{ _ingest.on_failure_pipeline }} failed with message {{ _ingest.on_failure_message }}"
                 {% endraw %}
               }
-          }
+            }
           ]
         }
       }
@@ -88,11 +91,11 @@
       }
     },
     {
-      "operation": {        
+      "operation": {
         "include-in-reporting": true,
         "operation-type": "bulk",
         "bulk-size": {{bulk_size | default(5)}},
-        "pipeline": "elser2",
+        "pipeline": "elser-v1-ingest",
         "request-timeout": 60.0,
         "ingest-percentage": {{ingest_percentage | default(1)}}
       },
@@ -102,7 +105,8 @@
       "name": "delete elser model",
       "operation": {
         "operation-type": "delete-elser",
-        "include-in-reporting": false
+        "include-in-reporting": false,
+        "model_id": ".elser_model_1"
       }
     },
     {

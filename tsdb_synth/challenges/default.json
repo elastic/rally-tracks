@@ -33,7 +33,7 @@
           "operation": "refresh"
         },
         {
-          "name": "wait-until-merges-finish",
+          "name": "wait-until-merges-finish-before",
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -54,7 +54,7 @@
           }
         },
         {
-          "name": "wait-until-merges-finish",
+          "name": "wait-until-merges-finish-after",
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",

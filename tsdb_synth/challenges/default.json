@@ -33,14 +33,6 @@
           "operation": "refresh"
         },
         {
-          "operation": {
-            "operation-type": "force-merge",
-            "request-timeout": 15000{%- if force_merge_max_num_segments is defined %},
-            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
-            {%- endif %}
-          }
-        },
-        {
           "name": "wait-until-merges-finish",
           "operation": {
             "operation-type": "index-stats",

@@ -33,8 +33,9 @@
           "operation": "refresh"
         },
         {
+          "name": "force-merge-1",
           "operation": {
-            "operation-type": "force-merge-1",
+            "operation-type": "force-merge",
             "request-timeout": 15000{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -53,8 +54,9 @@
             "include-in-reporting": false
           }
         },{
+          "name": "force-merge-2",
           "operation": {
-            "operation-type": "force-merge-2",
+            "operation-type": "force-merge",
             "request-timeout": 15000{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}

@@ -33,7 +33,15 @@
           "operation": "refresh"
         },
         {
-          "name": "wait-until-merges-finish-before",
+          "operation": {
+            "operation-type": "force-merge-1",
+            "request-timeout": 15000{%- if force_merge_max_num_segments is defined %},
+            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+            {%- endif %}
+          }
+        },
+        {
+          "name": "wait-until-merges-finish-1",
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -44,17 +52,16 @@
             "retry-until-success": true,
             "include-in-reporting": false
           }
-        },
-        {
+        },{
           "operation": {
-            "operation-type": "force-merge",
+            "operation-type": "force-merge-2",
             "request-timeout": 15000{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
           }
         },
         {
-          "name": "wait-until-merges-finish-after",
+          "name": "wait-until-merges-finish-2",
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",

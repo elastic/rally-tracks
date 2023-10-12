@@ -18,6 +18,11 @@
             }
           }
         },
+        "merge": {
+          "policy": {
+            "max_merged_segment": "1024GB"
+          }
+        },
         "mapping": {
           "total_fields": {
             "limit": "10000"

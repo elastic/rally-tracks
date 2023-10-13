@@ -7,6 +7,22 @@
     {
       "name": "nyc_taxis",
       "body": "index.json"
+    },
+    {
+      "name": "nyc_payment_types",
+      "body": "index-payment-types.json"
+    },
+    {
+      "name": "nyc_rate_codes",
+      "body": "index-rate-codes.json"
+    },
+    {
+      "name": "nyc_trip_types",
+      "body": "index-trip-types.json"
+    },
+    {
+      "name": "nyc_vendors",
+      "body": "index-vendors.json"
     }
   ],
   "corpora": [
@@ -15,11 +31,64 @@
       "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
       "documents": [
         {
+          "target-index": "nyc_taxis",
           "source-file": "documents.json.bz2",
           "#COMMENT": "ML benchmark rely on the fact that the document count stays constant.",
           "document-count": 165346692,
           "compressed-bytes": 4820107188,
           "uncompressed-bytes": 79802445255
+        }
+      ]
+    },
+    {
+      "name": "nyc_payment_types",
+      "documents": [
+        {
+          "target-index": "nyc_payment_types",
+          "source-file": "documents.json.bz2",
+          "#COMMENT": "Manually created ENRICH lookup table for payment_type field",
+          "document-count": 5,
+          "compressed-bytes": 139,
+          "uncompressed-bytes": 245
+        }
+      ]
+    },
+    {
+      "name": "nyc_rate_codes",
+      "documents": [
+        {
+          "target-index": "nyc_rate_codes",
+          "source-file": "documents.json.bz2",
+          "#COMMENT": "Manually created ENRICH lookup table for rate_code_id field",
+          "document-count": 7,
+          "compressed-bytes": 166,
+          "uncompressed-bytes": 337
+        }
+      ]
+    },
+    {
+      "name": "nyc_trip_types",
+      "documents": [
+        {
+          "target-index": "nyc_trip_types",
+          "source-file": "documents.json.bz2",
+          "#COMMENT": "Manually created ENRICH lookup table for trip_type field",
+          "document-count": 2,
+          "compressed-bytes": 94,
+          "uncompressed-bytes": 75
+        }
+      ]
+    },
+    {
+      "name": "nyc_vendors",
+      "documents": [
+        {
+          "target-index": "nyc_vendors",
+          "source-file": "documents.json.bz2",
+          "#COMMENT": "Manually created ENRICH lookup table for vendor_id field",
+          "document-count": 2,
+          "compressed-bytes": 92,
+          "uncompressed-bytes": 67
         }
       ]
     }

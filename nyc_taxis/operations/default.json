@@ -1,12 +1,16 @@
     {
       "name": "index",
       "operation-type": "bulk",
+      "indices": ["nyc_taxis"],
+      "corpora": ["nyc_taxis"],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
       "name": "update",
       "operation-type": "bulk",
+      "indices": ["nyc_taxis"],
+      "corpora": ["nyc_taxis"],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": {{ingest_percentage | default(100)}},
       "conflicts": "{{conflicts | default('random')}}",
@@ -14,6 +18,14 @@
       "conflict-probability": {{conflict_probability | default(25)}},
       "recency": {{recency | default(0)}},
       "detailed-results": {{detailed_results | default(false) | tojson}}
+    },
+    {
+      "name": "index-enrich-sources",
+      "operation-type": "bulk",
+      "indices": ["nyc_rate_codes", "nyc_payment_types", "nyc_trip_types", "nyc_vendors"],
+      "corpora": ["nyc_rate_codes", "nyc_payment_types", "nyc_trip_types", "nyc_vendors"],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": 100
     },
     {
       "name": "wait-until-merges-finish",
@@ -29,6 +41,7 @@
     {
       "name": "default",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "query": {
           "match_all": {}
@@ -38,6 +51,7 @@
     {
       "name": "default_1k",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "query": {
           "match_all": {}
@@ -48,6 +62,7 @@
     {
       "name": "range",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "query": {
           "range": {
@@ -62,6 +77,7 @@
     {
       "name": "distance_amount_agg",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -96,6 +112,7 @@
     {
       "name": "autohisto_agg",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -120,6 +137,7 @@
     {
       "name": "date_histogram_agg",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -144,6 +162,7 @@
     {
       "name": "date_histogram_calendar_interval",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -167,6 +186,7 @@
     {
       "name": "date_histogram_calendar_interval_with_tz",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -191,6 +211,7 @@
     {
       "name": "date_histogram_fixed_interval",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -214,6 +235,7 @@
     {
       "name": "date_histogram_fixed_interval_with_tz",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -238,6 +260,7 @@
     {
       "name": "date_histogram_fixed_interval_with_metrics",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -266,6 +289,7 @@
     {
       "name": "auto_date_histogram",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -290,6 +314,7 @@
     {
       "name": "auto_date_histogram_with_tz",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -315,6 +340,7 @@
     {
       "name": "auto_date_histogram_with_metrics",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -344,6 +370,7 @@
     {
       "name": "composite-terms",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -369,6 +396,7 @@
     {
       "name": "composite-histogram",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -393,6 +421,7 @@
     {
       "name": "composite-date_histogram-daily",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -417,6 +446,7 @@
     {
       "name": "composite-date_histogram-weekly",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -441,6 +471,7 @@
     {
       "name": "composite-date_histogram-monthly",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -465,6 +496,7 @@
     {
       "name": "composite-geotile_grid-precision-8",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -489,6 +521,7 @@
     {
       "name": "composite-geotile_grid-precision-12",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -513,6 +546,7 @@
     {
       "name": "composite-geotile_grid-precision-15",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -537,6 +571,7 @@
     {
       "name": "sampler-keyword",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -567,6 +602,7 @@
     {
       "name": "sampler-numeric",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -597,6 +633,7 @@
     {
       "name": "percentiles-tdigest-compression-default",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -620,6 +657,7 @@
     {
       "name": "percentiles-tdigest-compression-200",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -646,6 +684,7 @@
     {
       "name": "multi_terms-keyword",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -670,8 +709,245 @@
       }
     },
     {
+      "name": "delete-enrich-nyc_rate_codes",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_rate_codes"
+    },
+    {
+      "name": "create-enrich-nyc_rate_codes",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_rate_codes",
+      "body": {
+        "match": {
+          "indices": "nyc_rate_codes",
+          "match_field": "id",
+          "enrich_fields": [ "name" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_rate_codes_fares",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_rate_codes_fares"
+    },
+    {
+      "name": "create-enrich-nyc_rate_codes_fares",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_rate_codes_fares",
+      "body": {
+        "match": {
+          "indices": "nyc_rate_codes",
+          "match_field": "id",
+          "enrich_fields": [ "name", "fares" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_payment_types",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_payment_types"
+    },
+    {
+      "name": "create-enrich-nyc_payment_types",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_payment_types",
+      "body": {
+        "match": {
+          "indices": "nyc_payment_types",
+          "match_field": "type",
+          "enrich_fields": [ "name" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_payment_types_fares",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_payment_types_fares"
+    },
+    {
+      "name": "create-enrich-nyc_payment_types_fares",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_payment_types_fares",
+      "body": {
+        "match": {
+          "indices": "nyc_payment_types",
+          "match_field": "type",
+          "enrich_fields": [ "name", "fare" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_trip_types",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_trip_types"
+    },
+    {
+      "name": "create-enrich-nyc_trip_types",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_trip_types",
+      "body": {
+        "match": {
+          "indices": "nyc_trip_types",
+          "match_field": "type",
+          "enrich_fields": [ "name" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_vendors",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_vendors"
+    },
+    {
+      "name": "create-enrich-nyc_vendors",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_vendors",
+      "body": {
+        "match": {
+          "indices": "nyc_vendors",
+          "match_field": "id",
+          "enrich_fields": [ "name" ]
+        }
+      }
+    },
+    {
+      "name": "execute-enrich-nyc_rate_codes",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_rate_codes/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_rate_codes_fares",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_rate_codes_fares/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_payment_types",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_payment_types/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_payment_types_fares",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_payment_types_fares/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_trip_types",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_trip_types/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_vendors",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_vendors/_execute"
+    },
+    {
+      "name": "delete-enrich-pipeline",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_ingest/pipeline/nyc_enrich"
+    },
+    {
+      "name": "create-enrich-pipeline",
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_ingest/pipeline/nyc_enrich",
+      "body": {
+        "processors": [
+          {
+            "enrich": {
+              "description": "Add 'rate_code' name based on 'rate_code_id'",
+              "policy_name": "nyc_rate_codes",
+              "field": "rate_code_id",
+              "target_field": "rate_code"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'rate_code' name and fare based on 'rate_code_id'",
+              "policy_name": "nyc_rate_codes_fares",
+              "field": "rate_code_id",
+              "target_field": "rate_code_fare"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'payment_type' name based on 'payment_type'",
+              "policy_name": "nyc_payment_types",
+              "field": "payment_type",
+              "target_field": "payment_type_details"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'payment_type' name and fare based on 'payment_type'",
+              "policy_name": "nyc_payment_types_fares",
+              "field": "payment_type",
+              "target_field": "payment_type_fare"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'trip_type' name based on 'trip_type'",
+              "policy_name": "nyc_trip_types",
+              "field": "trip_type",
+              "ignore_missing": true,
+              "target_field": "trip_type_details"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'vendor' name based on 'vendor_id'",
+              "policy_name": "nyc_vendors",
+              "field": "vendor_id",
+              "target_field": "vendor"
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "avg_passenger_count_aggregation",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "aggs": {
@@ -710,6 +986,7 @@
     {
       "name": "avg_tip_percent_aggregation",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "request-timeout": 120,
       "body": {
         "size": 0,
@@ -764,6 +1041,7 @@
     {
       "name": "avg_amount_group_by_integer_aggregation",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "request-timeout": 120,
       "body": {
         "size": 0,
@@ -813,6 +1091,7 @@
     {
       "name": "avg_amount_group_by_keyword_aggregation",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "request-timeout": 120,
       "body": {
         "size": 0,
@@ -862,6 +1141,7 @@
     {
       "name": "avg_passenger_count_filtered_aggregation",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -918,6 +1198,7 @@
     {
       "name": "sort_by_ts_query",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 1000,
         "_source": false,
@@ -1008,6 +1289,7 @@
     {
       "name": "date_histogram_fixed_interval_with_metrics_agg",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -1079,6 +1361,7 @@
     {
       "name": "composite_terms-keyword",
       "operation-type": "search",
+      "index": "nyc_taxis",
       "body": {
         "size": 0,
         "query": {
@@ -1126,5 +1409,55 @@
         "pragma" : {
           "data_partitioning" : "doc"
         }
+      }
+    },
+    {
+      "name": "esql_enrich_control",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | LIMIT 100000"
+      }
+    },
+    {
+      "name": "esql_enrich_1",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | LIMIT 100000"
+      }
+    },
+    {
+      "name": "esql_enrich_2",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 100000"
+      }
+    },
+    {
+      "name": "esql_enrich_3",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | LIMIT 100000"
+      }
+    },
+    {
+      "name": "esql_enrich_4",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | LIMIT 100000"
       }
     }

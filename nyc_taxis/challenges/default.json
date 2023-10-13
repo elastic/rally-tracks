@@ -738,6 +738,86 @@
           "tags": ["setup"]
         },
         {
+          "operation": "index-enrich-sources",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-enrich-pipeline",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-enrich-nyc_rate_codes",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-enrich-nyc_rate_codes",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-enrich-nyc_rate_codes_fares",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-enrich-nyc_rate_codes_fares",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-enrich-nyc_payment_types",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-enrich-nyc_payment_types",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-enrich-nyc_payment_types_fares",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-enrich-nyc_payment_types_fares",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-enrich-nyc_trip_types",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-enrich-nyc_trip_types",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-enrich-nyc_vendors",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-enrich-nyc_vendors",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "execute-enrich-nyc_rate_codes",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "execute-enrich-nyc_rate_codes_fares",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "execute-enrich-nyc_payment_types",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "execute-enrich-nyc_payment_types_fares",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "execute-enrich-nyc_trip_types",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "execute-enrich-nyc_vendors",
+          "tags": ["setup"]
+        },
+        {
           "operation": "index",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
@@ -931,6 +1011,36 @@
         },
         {
           "operation": "date_histogram_fixed_interval_with_metrics_esql_doc_partitioning",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_control",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_1",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_2",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_3",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_4",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50

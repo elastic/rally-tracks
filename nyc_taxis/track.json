@@ -42,11 +42,11 @@
     },
     {
       "name": "nyc_payment_types",
-      "base-url": "https://rally-tracks.elastic.co/nyc_taxis/nyc_payment_types",
+      "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
       "documents": [
         {
           "target-index": "nyc_payment_types",
-          "source-file": "documents.json.bz2",
+          "source-file": "nyc_payment_types.json.bz2",
           "#COMMENT": "Manually created ENRICH lookup table for payment_type field",
           "document-count": 5,
           "compressed-bytes": 139,
@@ -56,11 +56,11 @@
     },
     {
       "name": "nyc_rate_codes",
-      "base-url": "https://rally-tracks.elastic.co/nyc_taxis/nyc_rate_codes",
+      "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
       "documents": [
         {
           "target-index": "nyc_rate_codes",
-          "source-file": "documents.json.bz2",
+          "source-file": "nyc_rate_codes.json.bz2",
           "#COMMENT": "Manually created ENRICH lookup table for rate_code_id field",
           "document-count": 7,
           "compressed-bytes": 166,
@@ -70,11 +70,11 @@
     },
     {
       "name": "nyc_trip_types",
-      "base-url": "https://rally-tracks.elastic.co/nyc_taxis/nyc_trip_types",
+      "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
       "documents": [
         {
           "target-index": "nyc_trip_types",
-          "source-file": "documents.json.bz2",
+          "source-file": "nyc_trip_types.json.bz2",
           "#COMMENT": "Manually created ENRICH lookup table for trip_type field",
           "document-count": 2,
           "compressed-bytes": 94,
@@ -84,11 +84,11 @@
     },
     {
       "name": "nyc_vendors",
-      "base-url": "https://rally-tracks.elastic.co/nyc_taxis/nyc_vendors",
+      "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
       "documents": [
         {
           "target-index": "nyc_vendors",
-          "source-file": "documents.json.bz2",
+          "source-file": "nyc_vendors.json.bz2",
           "#COMMENT": "Manually created ENRICH lookup table for vendor_id field",
           "document-count": 2,
           "compressed-bytes": 92,

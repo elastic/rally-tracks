@@ -9,6 +9,7 @@
         {
           "operation": {
             "operation-type": "create-index",
+            "indices": ["nyc_taxis"],
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -103,6 +104,7 @@
         {
           "operation": {
             "operation-type": "create-index",
+            "indices": ["nyc_taxis"],
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -159,6 +161,7 @@
         {
           "operation": {
             "operation-type": "create-index",
+            "indices": ["nyc_taxis"],
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -217,6 +220,7 @@
         {
           "operation": {
             "operation-type": "create-index",
+            "indices": ["nyc_taxis"],
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.number_of_shards": {{number_of_shards | default(1)}},
               "index.number_of_replicas": {{number_of_replicas | default(0)}},
@@ -273,6 +277,7 @@
         {
           "operation": {
             "operation-type": "create-index",
+            "indices": ["nyc_taxis"],
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.store.type": "{{store_type | default('fs')}}"
             }{%- endif %}
@@ -310,6 +315,7 @@
         {
           "operation": {
             "operation-type": "create-index",
+            "indices": ["nyc_taxis"],
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -555,6 +561,7 @@
         {
           "operation": {
             "operation-type": "create-index",
+            "indices": ["nyc_taxis"],
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",

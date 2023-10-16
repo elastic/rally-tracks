@@ -56,6 +56,13 @@
       }
     },
     {
+      "operation": "esql_basic_count_group_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql"]
+    },
+    {
       "operation": "esql_basic_count_group_1",
       "clients": 1,
       "warmup-iterations": 10,

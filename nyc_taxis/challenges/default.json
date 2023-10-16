@@ -9,7 +9,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "indices": ["nyc_taxis"],
+            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -42,6 +42,7 @@
         {
           "operation": {
             "operation-type": "force-merge",
+            "index": "nyc_taxis",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -104,7 +105,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "indices": ["nyc_taxis"],
+            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -137,6 +138,7 @@
         {
           "operation": {
             "operation-type": "force-merge",
+            "index": "nyc_taxis",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -221,7 +223,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "indices": ["nyc_taxis"],
+            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.number_of_shards": {{number_of_shards | default(1)}},
               "index.number_of_replicas": {{number_of_replicas | default(0)}},
@@ -254,6 +256,7 @@
         {
           "operation": {
             "operation-type": "force-merge",
+            "index": "nyc_taxis",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -278,7 +281,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "indices": ["nyc_taxis"],
+            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.store.type": "{{store_type | default('fs')}}"
             }{%- endif %}
@@ -316,7 +319,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "indices": ["nyc_taxis"],
+            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -516,6 +519,7 @@
         {
           "operation": {
             "operation-type": "force-merge",
+            "index": "nyc_taxis",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -562,7 +566,7 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "indices": ["nyc_taxis"],
+            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",

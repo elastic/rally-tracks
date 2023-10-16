@@ -2,7 +2,6 @@
       "name": "index",
       "operation-type": "bulk",
       "indices": ["nyc_taxis"],
-      "corpora": ["nyc_taxis"],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
@@ -10,7 +9,6 @@
       "name": "update",
       "operation-type": "bulk",
       "indices": ["nyc_taxis"],
-      "corpora": ["nyc_taxis"],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": {{ingest_percentage | default(100)}},
       "conflicts": "{{conflicts | default('random')}}",
@@ -23,7 +21,6 @@
       "name": "index-enrich-sources",
       "operation-type": "bulk",
       "indices": ["nyc_rate_codes", "nyc_payment_types", "nyc_trip_types", "nyc_vendors"],
-      "corpora": ["nyc_rate_codes", "nyc_payment_types", "nyc_trip_types", "nyc_vendors"],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": 100
     },

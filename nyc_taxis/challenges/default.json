@@ -754,11 +754,11 @@
           "tags": ["setup"]
         },
         {
-          "name": "check-cluster-health",
+          "name": "check-enrich-cluster-health",
           "operation": {
             "operation-type": "cluster-health",
             "request-params": {
-              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_status": "{{cluster_health | default('yellow')}}",
               "wait_for_no_relocating_shards": "true"
             },
             "retry-until-success": true

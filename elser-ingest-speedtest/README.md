@@ -19,6 +19,15 @@ This rally track includes a challenge for each version of the ELSER model:
 * ELSER-V2 Platform Agnostic: ".elser_model_2"
 * ELSER-V2 Platform Specific: ".elser_model_2_linux-x86_64"
 
+There is also a multi-parametric challenge to decrease the number of esbench instances that need to be started to run the track: 
+* Multi-Parametric-ELSER-V2-PlatformSpecific: 
+    * note that this challenge has different track parameters and defaults
+    * Additional Parameters:
+      * `pipeline_name` (default: "default-pipeline")
+      * `model_id`
+
+
+
 
 ### Data Setup
 The documents are all of a fixed length input equivalent to 256 Word Piece tokens. They were created by taking words from the BERT vocabulary that tokenize as a single token and generating fixed length inputs from a random selection of single token words.

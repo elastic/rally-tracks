@@ -239,10 +239,13 @@ The following parameters are available:
 * `number_of_replicas` (default: 1) - The number of replicas to set per Data Stream. The same value is used for all Data Streams.
 * `refresh_interval` (default: unset) - The Data Stream refresh interval. It is unset by default to use the Elasticsearch default refresh interval.
 * `bulk_indexing_clients` (default: 8) - The number of clients issuing indexing requests.
+* `runtime_indexing_clients`(default: bulk_indexing_clients) - for the simoutaneous indexing and querying challenge (`logging-indexing-querying`) this allows a different number of clients to be used in runtime vs the initial bulk load.
 * `bulk_size` (default: 1000) - The number of documents to send per indexing request.
+* `runtime_bulk_size` (default: bulk_size) - The number of documents to send per indexing request during the runtime phase of `logging-indexing-querying`challenge.
 * `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 
 * `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
 * `initial_indices_count` (default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
+* `ingest_percentage` (default: 100) - The percentage of data to be ingested.
 
 ### Querying parameters
 
@@ -252,7 +255,8 @@ The following parameters are available:
 * `query_time_period` (default: 900) - The period for which queries should be issued. This only applies to challenges where no concurrent indexing is occurring. If concurrent indexing is occurring, querying will stop once this completes.
 * `random_seed` (default: 13) - Integer used to determine the order of query execution. The interval between workflow executions, as well as the actions within them, is based on an exponentially distributed random variable. Seeding this process ensures execution is deterministic across different executions.
 * `query_min_date` (default: `2020-01-01`) - Minimum datetime to execute queries over (such as yyyy-MM-dd or yyyy-MM-ddThh:mm:ss.zzzZ). Affects ranges and date_histograms.  Must be less than `query_max_date` (or `query_max_date_start`).
-* `query_max_date` (default: `2020-01-02`) - Maximum datetime to execute queries over (such as yyyy-MM-dd or yyyy-MM-ddThh:mm:ss.zzzZ). Affects ranges and date_histograms. Cannot be configured when `query_max_date_start` is also defined. 
+* `query_max_date` (default: `2020-01-02`) - Maximum datetime to execute queries over (such as yyyy-MM-dd or yyyy-MM-ddThh:mm:ss.zzzZ). Affects ranges and date_histograms. Cannot be configured when `query_max_date_start` is also defined.
+* `query_clients` (default: 1) - for the `logging-indexing-querying` challenge, this allows the number of clients per workflow to be adjusted.
 * `query_max_date_start` (optional) - Maximum datetime to execute queries over, at the beginning of a query workflow task. Increments with the time elapsed as the benchmark executes. Cannot be configured when `query_max_date` is also defined.
 * `query_average_interval` (optional) - Average time interval for queries to use. If unset, we use the durations and intervals set in the original action definitions.
 * `query_request_params` (optional) - A map of query parameters that will be used with any querying.

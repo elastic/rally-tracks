@@ -37,30 +37,21 @@ class QueryParamsSource:
                         {"term": {f"{self._text_expansion_field}": {"value": f"{key}", "boost": value}}}
                         for key, value in query_expansion.items()
                     ],
-                    "boost": boost
+                    "boost": boost,
                 }
             }
         }
 
     def generate_bm25_query(self, query, boost=1.0):
-        return {
-            "query": {
-                "match": {
-                    f"{self._text_field}": {
-                        "query": query,
-                        "boost": boost
-                    }
-                }
-            }
-        }
+        return {"query": {"match": {f"{self._text_field}": {"query": query, "boost": boost}}}}
 
     def generate_combine_bm25_weighted_terms_query(self, query, query_boost, query_expansion, query_expansion_boost):
         return {
             "query": {
                 "bool": {
                     "should": [
-                        self.generate_bm25_query(query, query_boost)['query'],
-                        self.generate_weighted_terms_query(query_expansion, query_expansion_boost)['query']
+                        self.generate_bm25_query(query, query_boost)["query"],
+                        self.generate_weighted_terms_query(query_expansion, query_expansion_boost)["query"],
                     ]
                 }
             }
@@ -68,12 +59,12 @@ class QueryParamsSource:
 
     def params(self):
         query_doc = self._queries[self._iters]
-        if self._query_strategy == 'bm25':
-            query = self.generate_bm25_query(query_doc['query'], 1)
-        elif self._query_strategy == 'text_expansion':
-            query = self.generate_weighted_terms_query(query_doc['query_expansion'], 1)
-        elif self._query_strategy == 'hybrid':
-            query = self.generate_combine_bm25_weighted_terms_query(query_doc['query'], 1, query_doc['query_expansion'], 1)
+        if self._query_strategy == "bm25":
+            query = self.generate_bm25_query(query_doc["query"], 1)
+        elif self._query_strategy == "text_expansion":
+            query = self.generate_weighted_terms_query(query_doc["query_expansion"], 1)
+        elif self._query_strategy == "hybrid":
+            query = self.generate_combine_bm25_weighted_terms_query(query_doc["query"], 1, query_doc["query_expansion"], 1)
         else:
             raise Exception(f"The query strategy \\`{self._query_strategy}]\\` is not implemented")
 
@@ -83,7 +74,7 @@ class QueryParamsSource:
             "cache": self._cache,
             "size": self._size,
             "track_total_hits": self._track_total_hits,
-            "body": query
+            "body": query,
         }
 
 

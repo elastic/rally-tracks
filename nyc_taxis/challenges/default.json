@@ -9,7 +9,6 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -42,7 +41,6 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "index": "nyc_taxis",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -105,7 +103,6 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -138,7 +135,6 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "index": "nyc_taxis",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -163,7 +159,6 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -198,7 +193,6 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "index": "nyc_taxis",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -223,7 +217,6 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.number_of_shards": {{number_of_shards | default(1)}},
               "index.number_of_replicas": {{number_of_replicas | default(0)}},
@@ -256,7 +249,6 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "index": "nyc_taxis",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -281,7 +273,6 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.store.type": "{{store_type | default('fs')}}"
             }{%- endif %}
@@ -319,7 +310,6 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -519,7 +509,6 @@
         {
           "operation": {
             "operation-type": "force-merge",
-            "index": "nyc_taxis",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
@@ -566,7 +555,6 @@
         {
           "operation": {
             "operation-type": "create-index",
-            "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -747,103 +735,6 @@
             },
             "retry-until-success": true
           },
-          "tags": ["setup"]
-        },
-        {
-          "operation": "index-enrich-sources",
-          "tags": ["setup"]
-        },
-        {
-          "name": "check-enrich-cluster-health",
-          "operation": {
-            "operation-type": "cluster-health",
-            "request-params": {
-              "wait_for_status": "{{cluster_health | default('green')}}",
-              "wait_for_no_relocating_shards": "true"
-            },
-            "retry-until-success": true
-          },
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-enrich-pipeline",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-enrich-nyc_rate_codes",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "create-enrich-nyc_rate_codes",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-enrich-nyc_rate_codes_fares",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "create-enrich-nyc_rate_codes_fares",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-enrich-nyc_payment_types",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "create-enrich-nyc_payment_types",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-enrich-nyc_payment_types_fares",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "create-enrich-nyc_payment_types_fares",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-enrich-nyc_trip_types",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "create-enrich-nyc_trip_types",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-enrich-nyc_vendors",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "create-enrich-nyc_vendors",
-          "tags": ["setup"]
-        },
-        {
-          "name": "refresh-before-execute-enrich",
-          "operation": "refresh",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "execute-enrich-nyc_rate_codes",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "execute-enrich-nyc_rate_codes_fares",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "execute-enrich-nyc_payment_types",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "execute-enrich-nyc_payment_types_fares",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "execute-enrich-nyc_trip_types",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "execute-enrich-nyc_vendors",
           "tags": ["setup"]
         },
         {
@@ -1040,36 +931,6 @@
         },
         {
           "operation": "date_histogram_fixed_interval_with_metrics_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "esql_enrich_control",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "esql_enrich_1",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "esql_enrich_2",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "esql_enrich_3",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-        {
-          "operation": "esql_enrich_4",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50

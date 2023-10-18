@@ -53,9 +53,9 @@
     {
       "operation": "delete-index",
       "name": "first-delete-index"
-    },
+    }
     {%- set p_number_of_allocations = number_of_allocations | default(1) %}
-    {%- for step in range(1, p_number_of_allocations + 1, 1) %}
+    {%- for step in range(1, p_number_of_allocations + 1, 1) %},
         {
           "operation": {
             "include-in-reporting": false,
@@ -87,6 +87,7 @@
             "operation": {
               "operation-type": "bulk",
               "ingest-percentage": {{ ingest_percentage | default(0.01) }},
+              "corpora": "size256-bert-vocab-whole-words",
               "bulk-size": {{ bulk_size | default(100) }},
               "pipeline": "{{ pipeline_name | default('default-pipeline')}}",
               "request-timeout": 60.0,

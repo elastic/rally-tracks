@@ -53,51 +53,54 @@
     {
       "operation": "delete-index",
       "name": "first-delete-index"
-    },
+    }
     {%- set p_number_of_allocations = number_of_allocations | default(1) %}
-    {%- for step in range(1, p_number_of_allocations + 1, 1) %}
-        {
-          "operation": {
-            "include-in-reporting": false,
-            "operation-type": "create-index"
-          }
-        },
-        {
-            "name": "stop any existing trained model deployment with name: [{{ model_id }}]",
-            "operation": {
-              "operation-type": "stop-trained-model-deployment",
-              "include-in-reporting": false,
-              "model_id": "{{ model_id }}"
+    {%- for doc_size in range(128, 512 + 128, 128) %}
+        {%- for step in range(1, p_number_of_allocations + 1, 1) %}
+            {
+              "operation": {
+                "operation-type": "create-index",
+                "include-in-reporting": false
+              }
+            },
+            {
+                "name": "stop any existing trained model deployment with name: [{{ model_id }}]",
+                "operation": {
+                  "operation-type": "stop-trained-model-deployment",
+                  "include-in-reporting": false,
+                  "model_id": "{{ model_id }}"
+                }
+            },
+            {
+                "name": "start new trained model deployment with name [{{ model_id }}] and [{{ step }}] allocations",
+                "operation": {
+                  "operation-type": "start-trained-model-deployment",
+                  "number_of_allocations": {{ number_of_allocations | default(1) }},
+                  "threads_per_allocation": {{ threads_per_allocation | default(1) }},
+                  "queue_capacity": {{ queue_capacity | default(200000) }},
+                  "include-in-reporting": false,
+                  "model_id": "{{ model_id }}"
+                }
+            },
+            {
+                "name": "bulk--{{ doc_size }}-docsize--{{ step }}-allocations--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent--{{ bulk_size }}-bulk-size",
+                "clients": {{ bulk_indexing_clients | default(3) }},
+                "operation": {
+                  "operation-type": "bulk",
+                  "ingest-percentage": {{ ingest_percentage | default(0.01) }},
+                  "corpora": "size{{ doc_size }}-small-bert-vocab-whole-words",
+                  "bulk-size": {{ bulk_size | default(100) }},
+                  "pipeline": "{{ pipeline_name | default('default-pipeline')}}",
+                  "request-timeout": 60.0,
+                  "include-in-reporting": true
+                }
+            },
+            {
+              "operation": "delete-index",
+              "name": "loop-delete-index"
             }
-        },
-        {
-            "name": "start new trained model deployment with name [{{ model_id }}] and [{{ number_of_allocations }}] allocations",
-            "operation": {
-              "operation-type": "start-trained-model-deployment",
-              "number_of_allocations": {{ number_of_allocations | default(1) }},
-              "threads_per_allocation": {{ threads_per_allocation | default(1) }},
-              "queue_capacity": {{ queue_capacity | default(200000) }},
-              "include-in-reporting": false,
-              "model_id": "{{ model_id }}"
-            }
-        },
-        {
-            "name": "bulk--{{ number_of_allocations }}-allocations--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent--{{ bulk_size }}-bulk-size",
-            "clients": {{ bulk_indexing_clients | default(3) }},
-            "operation": {
-              "operation-type": "bulk",
-              "ingest-percentage": {{ ingest_percentage | default(0.01) }},
-              "bulk-size": {{ bulk_size | default(100) }},
-              "pipeline": "{{ pipeline_name | default('default-pipeline')}}",
-              "request-timeout": 60.0,
-              "include-in-reporting": true
-            }
-        },
-        {
-          "operation": "delete-index",
-          "name": "loop-delete-index"
-        }
-    {%- endfor %},
+        {%- endfor %}
+    {%- endfor %}
 
     {
       "name": "delete elser model",

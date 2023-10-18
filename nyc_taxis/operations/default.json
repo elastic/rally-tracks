@@ -745,7 +745,7 @@
         "match": {
           "indices": "nyc_rate_codes",
           "match_field": "id",
-          "enrich_fields": [ "name", "fares" ]
+          "enrich_fields": [ "name", "fare" ]
         }
       }
     },
@@ -1456,5 +1456,115 @@
       "request-timeout": 120,
       "body": {
         "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | LIMIT 100000"
+      }
+    },
+    {
+      "name": "esql_enrich_rates_fares",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | LIMIT 100000"
+      }
+    },
+    {
+      "name": "esql_enrich_payments",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 100000"
+      }
+    },
+    {
+      "name": "esql_enrich_payments_fares",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | LIMIT 100000"
+      }
+    },
+    {
+      "name": "esql_stats_enrich_control",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_id"
+      }
+    },
+    {
+      "name": "esql_stats_enrich_1",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name"
+      }
+    },
+    {
+      "name": "esql_stats_enrich_2",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) ON rate_code_nameBYpayment_type_name"
+      }
+    },
+    {
+      "name": "esql_stats_enrich_3",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | STATS count=count(*), avg_fare=avg(fare_amount) ON rate_code_name, payment_type_nameBYvendor_name"
+      }
+    },
+    {
+      "name": "esql_stats_enrich_4",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) ON rate_code_name, payment_type_name, vendor_nameBYtrip_type_name"
+      }
+    },
+    {
+      "name": "esql_stats_enrich_rates_fares",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_rate_code_fare=avg(rate_code_fare) BY rate_code_name"
+      }
+    },
+    {
+      "name": "esql_stats_enrich_payments",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name"
+      }
+    },
+    {
+      "name": "esql_stats_enrich_payments_fares",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "request-timeout": 120,
+      "body": {
+        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name"
       }
     }

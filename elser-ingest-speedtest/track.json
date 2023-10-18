@@ -21,13 +21,13 @@
       ]
     },
     {
-      "name": "size256-bert-vocab-whole-words",
+      "name": "size128-bert-vocab-whole-words",
       "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
       "documents": [
         {
-          "source-file": "document_set.json",
-          "document-count": 1000000,
-          "uncompressed-bytes": 2047692483
+          "source-file": "128_document_set.json",
+          "document-count": 10000,
+          "uncompressed-bytes": 10298519
         }
       ]
     },
@@ -37,41 +37,30 @@
       "documents": [
         {
           "source-file": "document_set.json",
-          "document-count": 1000000,
-          "uncompressed-bytes": 2047692483
+          "document-count": 10000,
+          "uncompressed-bytes": 20479981
         }
       ]
     },
     {
-      "name": "size256-bert-vocab-whole-words",
+      "name": "size384-bert-vocab-whole-words",
       "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
       "documents": [
         {
           "source-file": "document_set.json",
-          "document-count": 1000000,
-          "uncompressed-bytes": 2047692483
+          "document-count": 10000,
+          "uncompressed-bytes": 30656450
         }
       ]
     },
     {
-      "name": "size256-bert-vocab-whole-words",
+      "name": "size512-bert-vocab-whole-words",
       "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
       "documents": [
         {
           "source-file": "document_set.json",
-          "document-count": 1000000,
-          "uncompressed-bytes": 2047692483
-        }
-      ]
-    },
-    {
-      "name": "size256-bert-vocab-whole-words",
-      "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
-      "documents": [
-        {
-          "source-file": "document_set.json",
-          "document-count": 1000000,
-          "uncompressed-bytes": 2047692483
+          "document-count": 10000,
+          "uncompressed-bytes": 40826235
         }
       ]
     }

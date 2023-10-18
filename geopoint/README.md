@@ -31,6 +31,8 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
+* `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+* `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 
 ### License
 

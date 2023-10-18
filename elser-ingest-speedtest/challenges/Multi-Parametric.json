@@ -71,7 +71,7 @@
             }
         },
         {
-            "name": "start new trained model deployment with name [{{ model_id }}] and [{{ number_of_allocations }}] allocations",
+            "name": "start new trained model deployment with name [{{ model_id }}] and [{{ step }}] allocations",
             "operation": {
               "operation-type": "start-trained-model-deployment",
               "number_of_allocations": {{ number_of_allocations | default(1) }},
@@ -82,7 +82,7 @@
             }
         },
         {
-            "name": "bulk--{{ number_of_allocations }}-allocations--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent--{{ bulk_size }}-bulk-size",
+            "name": "bulk--{{ step }}-allocations--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent--{{ bulk_size }}-bulk-size",
             "clients": {{ bulk_indexing_clients | default(3) }},
             "operation": {
               "operation-type": "bulk",
@@ -96,8 +96,8 @@
         {
           "operation": "delete-index",
           "name": "loop-delete-index"
-        }
-    {%- endfor %},
+        },
+    {%- endfor %}
 
     {
       "name": "delete elser model",

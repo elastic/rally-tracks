@@ -45,7 +45,10 @@ python3 _tools/parse_clicks.py --year 2023 --month 6 --lang en > queries.csv
 ### Parameters
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
-
+- Index settings:
+  - `number_of_replicas` (default: `0`)
+  - `number_of_shards` (default: `1`)
+  - `index_mapping_type` (default: `minimal`)
 - Initial indexing:
   - `initial_indexing_bulk_indexing_clients` (default: `5`)
   - `initial_indexing_bulk_size` (default: `500`)

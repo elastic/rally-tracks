@@ -48,13 +48,13 @@
 {
   "name": "create-default-search-application",
   "operation-type": "raw-request",
-  "param-source": "create-search-application-param-source"
+  "param-source": "create-search-application-param-source",
+  "include-in-reporting": false
 },
 {
   "name": "default-search-application-search",
   "operation-type": "raw-request",
-  "param-source": "search-application-search-param-source",
-  "include-in-reporting": false
+  "param-source": "search-application-search-param-source"
 },
 {
   "name": "query-string-search",

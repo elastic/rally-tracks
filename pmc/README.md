@@ -41,6 +41,8 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * [`default_search_timeout`](https://www.elastic.co/guide/en/elasticsearch/reference/6.0/search.html#global-search-timeout) (default: -1)
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
+* `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+* `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 
 ### License
 

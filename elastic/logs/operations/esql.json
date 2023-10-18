@@ -1,4 +1,13 @@
     {
+      "name": "esql_basic_count_group_0",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_query",
+      "body": {
+        "query": "FROM logs-* | STATS count=count(*) | SORT count DESC | LIMIT 20"
+      }
+    },
+    {
       "name": "esql_basic_count_group_1",
       "operation-type": "raw-request",
       "method": "POST",

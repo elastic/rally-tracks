@@ -650,8 +650,5 @@
   ],
   "challenges": [
     {{ rally.collect(parts="challenges/*.json") }}
-  ],
-  "operations": [
-    {{ rally.collect(parts="operations/*.json") }}
   ]
 }

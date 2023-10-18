@@ -67,6 +67,10 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
   - `parallel_indexing_bulk_size` (default: `500`)
   - `parallel_indexing_bulk_warmup_time_period` (default: `10`)
   - `parallel_indexing_bulk_target_throughput` (default: `1`)
+  - `parallel_indexing_search_clients` (default: `20`)
+  - `parallel_indexing_search_warmup_time_period` (default: `10`)
+  - `parallel_indexing_time_period`: (default: `300`)
+  - `parallel_indexing_target_throughput`: (default: `100`)
 
 ### License
 

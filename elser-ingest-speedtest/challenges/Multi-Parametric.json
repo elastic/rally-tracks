@@ -16,7 +16,7 @@
       "name": "setup-elser-pipeline",
       "operation": {
         "operation-type": "put-pipeline",
-        "id": "{{ pipeline }}",
+        "id": "{{ pipeline_name | default('default-pipeline') }}",
         "body": {
           "description": "Pipes documents to ELSER",
           "processors": [

@@ -54,55 +54,6 @@
           {% endfor %}
         ]
       }
-    },
-    {
-      "operation": "esql_basic_count_group_1",
-      "clients": 1,
-      "warmup-iterations": 10,
-      "iterations": 50,
-      "tags": ["esql"]
-    },
-    {
-      "operation": "esql_basic_count_group_2",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
-      "tags": ["esql"]
-    },
-    {
-      "operation": "esql_basic_count_group_3",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 10,
-      "tags": ["esql"]
-    },
-    {
-      "operation": "esql_basic_count_group_4",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 10,
-      "tags": ["esql"]
-    },
-    {
-      "operation": "esql_time_range_and_date_histogram_two_groups_pre_filter",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
-      "tags": ["esql"]
-    },
-    {
-      "operation": "esql_time_range_and_date_histogram_two_groups_post_filter",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
-      "tags": ["esql"]
-    },
-    {
-      "operation": "esql_dissect_duration_and_stats",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
-      "tags": ["esql"]
     }
   ]
 }

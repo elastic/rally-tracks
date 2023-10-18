@@ -754,6 +754,11 @@
           "tags": ["setup"]
         },
         {
+          "name": "refresh-after-index-enrich-sources",
+          "operation": "refresh",
+          "tags": ["setup"]
+        },
+        {
           "name": "check-enrich-cluster-health",
           "operation": {
             "operation-type": "cluster-health",
@@ -1046,99 +1051,115 @@
         },
         {
           "operation": "esql_enrich_control",
+          "tags": ["enrich"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_enrich_1",
+          "tags": ["enrich"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_enrich_2",
+          "tags": ["enrich"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_enrich_3",
+          "tags": ["enrich"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_enrich_4",
+          "tags": ["enrich"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_enrich_rates_fares",
+          "tags": ["enrich"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_enrich_payments",
+          "tags": ["enrich"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_enrich_payments_fares",
+          "tags": ["enrich"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_stats_enrich_control",
+          "tags": ["enrich","stats"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_stats_enrich_1",
+          "tags": ["enrich","stats"],
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "esql_stats_enrich_2",
+          "tags": ["enrich","stats"],
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "esql_stats_enrich_3",
+          "tags": ["enrich","stats"],
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "esql_stats_enrich_4",
+          "tags": ["enrich","stats"],
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "esql_stats_enrich_rates_fares",
+          "tags": ["enrich","stats"],
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "esql_stats_enrich_payments",
+          "tags": ["enrich","stats"],
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "esql_stats_enrich_payments_fares",
+          "tags": ["enrich","stats"],
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
+          "warmup-iterations": 2,
+          "iterations": 5
         }
       ]
     },

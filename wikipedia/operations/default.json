@@ -20,13 +20,13 @@
 {
   "name": "initial-documents-indexing",
   "operation-type": "bulk",
-  "bulk-size": {{initial_indexing_bulk_size | default(500) | int}},
-  "ingest-percentage": {{initial_indexing_ingest_percentage | default(100) | int}}
+  "bulk-size": {{ initial_indexing_bulk_size | default(500) | int }},
+  "ingest-percentage": {{ initial_indexing_ingest_percentage | default(100) | int }}
 },
 {
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
-  "bulk-size": {{parallel_indexing_bulk_size | default(500)}}
+  "bulk-size": {{ parallel_indexing_bulk_size | default(500) }}
 },
 {
   "name": "refresh-after-index",
@@ -60,6 +60,6 @@
   "name": "query-string-search",
   "operation-type": "search",
   "param-source": "query-string-search",
-  "size" : {{query_string_search_page_size | default(20) | int}},
-  "search-fields" : "{{query_string_search_fields | default("*")}}"
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
 }

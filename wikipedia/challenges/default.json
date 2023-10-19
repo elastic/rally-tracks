@@ -18,8 +18,8 @@
     {
       "name": "initial-documents-indexing",
       "operation": "initial-documents-indexing",
-      "warmup-time-period": {{initial_indexing_bulk_warmup_time_period | default(40) | int}},
-      "clients": {{initial_indexing_bulk_clients | default(5) | int}}
+      "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }},
+      "clients": {{ initial_indexing_bulk_clients | default(5) | int }}
     },
     {
       "name": "refresh-after-index",
@@ -32,9 +32,9 @@
     {
       "name": "standalone-query-string-search",
       "operation": "query-string-search",
-      "clients": {{standalone_search_clients | default(20) | int}},
-      "time-period": {{standalone_search_time_period | default(300) | int}},
-      "warmup-time-period": {{standalone_search_warmup_time_period | default(10) | int}}
+      "clients": {{ standalone_search_clients | default(20) | int }},
+      "time-period": {{ standalone_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
     },
     {
       "name": "create-default-search-application",
@@ -43,9 +43,9 @@
     {
       "name": "default-search-application-search",
       "operation": "default-search-application-search",
-      "clients": {{application_search_clients | default(20) | int}},
-      "time-period": {{application_search_time_period | default(300) | int}},
-      "warmup-time-period": {{application_search_warmup_time_period | default(10) | int}}
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     },
     {
       "parallel": {
@@ -54,16 +54,16 @@
           {
             "name": "parallel-documents-indexing-bulk",
             "operation": "parallel-documents-indexing",
-            "clients": {{parallel_indexing_bulk_clients | default(1) | int}},
-            "warmup-time-period": {{parallel_indexing_bulk_warmup_time_period | default(10) | int}},
-            "target-throughput": {{parallel_indexing_bulk_target_throughput | default(1) | int}}
+            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
+            "warmup-time-period": {{ parallel_indexing_bulk_warmup_time_period | default(10) | int }},
+            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
           },
           {
             "name": "parallel-documents-indexing-query-string-search",
             "operation": "query-string-search",
-            "clients": {{parallel_indexing_search_clients | default(20) | int}},
-            "time-period": {{parallel_indexing_search_time_period | default(300) | int}},
-            "warmup-time-period": {{parallel_indexing_search_warmup_time_period | default(10) | int}}
+            "clients": {{ parallel_indexing_search_clients | default(20) | int }},
+            "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
+            "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}
           }
         ]
       }

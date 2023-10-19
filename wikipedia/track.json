@@ -5,7 +5,7 @@
   "indices": [
     {
       "name": "wikipedia",
-      "body": "wikipedia-{{index_mapping_type | default("minimal")}}-mapping.json"
+      "body": "wikipedia-{{ index_mapping_type | default("minimal") }}-mapping.json"
     }
   ],
   "corpora": [
@@ -24,9 +24,9 @@
     }
   ],
   "operations": [
-    {{rally.collect(parts="operations/*.json")}}
+    {{ rally.collect(parts="operations/*.json") }}
   ],
   "challenges": [
-    {{rally.collect(parts="challenges/*.json")}}
+    {{ rally.collect(parts="challenges/*.json") }}
   ]
 }

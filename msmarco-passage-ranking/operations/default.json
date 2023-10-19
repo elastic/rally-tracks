@@ -1,0 +1,48 @@
+ {
+    "name": "text-expansion-search-maxwand-disabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "text_expansion",
+    "track_total_hits": true
+ },
+ {
+    "name": "text-expansion-search-maxwand-enabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "text_expansion",
+    "track_total_hits": false
+ },
+ {
+    "name": "bm25-search-maxwand-disabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "bm25",
+    "track_total_hits": true
+ },
+ {
+    "name": "bm25-search-maxwand-enabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "bm25",
+    "track_total_hits": false
+ },
+ {
+    "name": "hybrid-search-maxwand-disabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "hybrid",
+    "track_total_hits": true
+ },
+ {
+    "name": "hybrid-search-maxwand-enabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "hybrid",
+    "track_total_hits": false
+ }

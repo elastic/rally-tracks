@@ -18,8 +18,8 @@
     {
       "name": "initial-documents-indexing",
       "operation": "initial-documents-indexing",
-      "warmup-time-period": {{initial_indexing_bulk_warmup | default(40) | int}},
-      "clients": {{initial_indexing_bulk_indexing_clients | default(5) | int}}
+      "warmup-time-period": {{initial_indexing_bulk_warmup_time_period | default(40) | int}},
+      "clients": {{initial_indexing_bulk_clients | default(5) | int}}
     },
     {
       "name": "refresh-after-index",
@@ -54,9 +54,9 @@
           {
             "name": "parallel-documents-indexing-bulk",
             "operation": "parallel-documents-indexing",
-            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
+            "clients": {{parallel_indexing_bulk_clients | default(1) | int}},
             "warmup-time-period": {{parallel_indexing_bulk_warmup_time_period | default(10) | int}},
-            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+            "target-throughput": {{parallel_indexing_bulk_target_throughput | default(1) | int}}
           },
           {
             "name": "parallel-documents-indexing-query-string-search",

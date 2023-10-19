@@ -50,26 +50,26 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
   - `number_of_shards` (default: `1`)
   - `index_mapping_type` (default: `minimal`)
 - Initial indexing:
-  - `initial_indexing_bulk_indexing_clients` (default: `5`)
+  - `initial_indexing_bulk_clients` (default: `5`)
   - `initial_indexing_bulk_size` (default: `500`)
   - `initial_indexing_ingest_percentage` (default: `100`)
-  - `initial_indexing_bulk_warmup` (default: `40``)
+  - `initial_indexing_bulk_warmup_time_period` (default: `40` )
 - Standalone search:
   - `standalone_search_clients` (default: `20`)
-  - `standalone_search_time_period` (default `300`)
-  - `standalone_search_warmup_time_period` (default `10`)
-  - Application search:
-  - `application_search_clients` (default: `20`)
   - `standalone_search_time_period` (default: `300`)
-  - `application_search_clients` (default: `10`)
+  - `standalone_search_warmup_time_period` (default: `10`)
+- Application search:
+  - `application_search_clients` (default: `20`)
+  - `application_search_time_period` (default: `300`)
+  - `application_search_warmup_time_period` (default: `10`)
 - Concurrent searcgh & indexing:
   - `parallel_indexing_bulk_clients` (default: `1`)
   - `parallel_indexing_bulk_size` (default: `500`)
   - `parallel_indexing_bulk_warmup_time_period` (default: `10`)
   - `parallel_indexing_bulk_target_throughput` (default: `1`)
   - `parallel_indexing_search_clients` (default: `20`)
+  - `parallel_indexing_search_time_period`: (default: `300`)
   - `parallel_indexing_search_warmup_time_period` (default: `10`)
-  - `parallel_indexing_time_period`: (default: `300`)
   - `parallel_indexing_target_throughput`: (default: `100`)
 
 ### License

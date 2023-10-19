@@ -1,10 +1,12 @@
 {
   "name": "delete-index",
-  "operation-type": "delete-index"
+  "operation-type": "delete-index",
+  "include-in-reporting": false
 },
 {
   "name": "create-index",
-  "operation-type": "create-index"
+  "operation-type": "create-index",
+  "include-in-reporting": false
 },
 {
   "name": "check-cluster-health",
@@ -12,30 +14,42 @@
   "request-params": {
     "wait_for_status": "green"
   },
-  "retry-until-success": true
+  "retry-until-success": true,
+  "include-in-reporting": false
 },
 {
-  "name": "index-documents",
+  "name": "initial-documents-indexing",
   "operation-type": "bulk",
-  "bulk-size": {{bulk_size | default(500)}},
-  "ingest-percentage": {{ingest_percentage | default(100)}}
+  "bulk-size": {{ initial_indexing_bulk_size | default(500) | int }},
+  "ingest-percentage": {{ initial_indexing_ingest_percentage | default(100) | int }}
+},
+{
+  "name": "parallel-documents-indexing",
+  "operation-type": "bulk",
+  "bulk-size": {{ parallel_indexing_bulk_size | default(500) }}
 },
 {
   "name": "refresh-after-index",
   "operation-type": "refresh",
   "request-timeout": 1000,
-  "include-in-reporting": true
+  "include-in-reporting": false
+},
+{
+  "name": "wait-until-merges-finish-after-index",
+  "operation-type": "index-stats",
+  "index": "_all",
+  "condition": {
+    "path": "_all.total.merges.current",
+    "expected-value": 0
+  },
+  "retry-until-success": true,
+  "include-in-reporting": false
 },
 {
   "name": "create-default-search-application",
   "operation-type": "raw-request",
-  "param-source": "create-search-application-param-source"
-},
-{
-  "name": "clear-cache",
-  "operation-type": "raw-request",
-  "path": "/_cache/clear",
-  "method": "POST"
+  "param-source": "create-search-application-param-source",
+  "include-in-reporting": false
 },
 {
   "name": "default-search-application-search",
@@ -46,6 +60,6 @@
   "name": "query-string-search",
   "operation-type": "search",
   "param-source": "query-string-search",
-  "size" : {{search_size | default(20)}},
-  "search-fields" : "{{search_fields | default("*")}}"
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
 }

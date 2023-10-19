@@ -958,27 +958,15 @@
     },
     {
       "name": "avg_passenger_count_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | stats avg(passenger_count)",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | stats avg(passenger_count)",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "avg_passenger_count_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | stats avg(passenger_count)",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | stats avg(passenger_count)",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "avg_tip_percent_aggregation",
@@ -1013,27 +1001,15 @@
     },
     {
       "name": "avg_tip_percent_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | where fare_amount > 0 | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | where fare_amount > 0 | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "avg_tip_percent_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | where fare_amount > 0 | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | where fare_amount > 0 | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "avg_amount_group_by_integer_aggregation",
@@ -1063,27 +1039,15 @@
     },
     {
       "name": "avg_amount_group_by_integer_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "avg_amount_group_by_integer_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "avg_amount_group_by_keyword_aggregation",
@@ -1113,27 +1077,15 @@
     },
     {
       "name": "avg_amount_group_by_keyword_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "avg_amount_group_by_keyword_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "avg_passenger_count_filtered_aggregation",
@@ -1170,27 +1122,15 @@
     },
     {
       "name": "avg_passenger_count_filtered_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "avg_passenger_count_filtered_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "body": {
-        "query" : "from nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "sort_by_ts_query",
@@ -1207,81 +1147,39 @@
     },
     {
       "name": "sort_by_ts_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "sort_by_ts_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query" : "from nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance| limit 1000",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "date_histogram_calendar_interval_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "date_histogram_calendar_interval_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "date_histogram_fixed_interval_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "date_histogram_fixed_interval_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "date_histogram_fixed_interval_with_metrics_agg",
@@ -1331,29 +1229,15 @@
     },
     {
       "name": "date_histogram_fixed_interval_with_metrics_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "date_histogram_fixed_interval_with_metrics_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query": "from nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "composite_terms-keyword",
@@ -1384,187 +1268,93 @@
     },
     {
       "name": "multi_terms-keyword_esql_shard_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query": "from nyc_taxis | where dropoff_datetime < \"2015-02-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id",
-        "pragma" : {
-          "data_partitioning" : "shard"
-        }
-      }
+      "operation-type": "esql",
+      "query": "from nyc_taxis | where dropoff_datetime < \"2015-02-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id",
+      "body": { "pragma": { "data_partitioning": "shard" } }
     },
     {
       "name": "multi_terms-keyword_esql_doc_partitioning",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_esql",
-      "request-timeout": 120,
-      "body": {
-        "query": "from nyc_taxis | where dropoff_datetime < \"2015-02-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id",
-        "pragma" : {
-          "data_partitioning" : "doc"
-        }
-      }
+      "operation-type": "esql",
+      "query": "from nyc_taxis | where dropoff_datetime < \"2015-02-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id",
+      "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
       "name": "esql_enrich_control",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | LIMIT 100000"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | LIMIT 100000"
     },
     {
       "name": "esql_enrich_1",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | LIMIT 100000"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | LIMIT 100000"
     },
     {
       "name": "esql_enrich_2",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 100000"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 100000"
     },
     {
       "name": "esql_enrich_3",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | LIMIT 100000"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | LIMIT 100000"
     },
     {
       "name": "esql_enrich_4",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | LIMIT 100000"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | LIMIT 100000"
     },
     {
       "name": "esql_enrich_rates_fares",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | LIMIT 100000"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | LIMIT 100000"
     },
     {
       "name": "esql_enrich_payments",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 100000"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 100000"
     },
     {
       "name": "esql_enrich_payments_fares",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | LIMIT 100000"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | LIMIT 100000"
     },
     {
       "name": "esql_stats_enrich_control",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_id"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_id"
     },
     {
       "name": "esql_stats_enrich_1",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name"
     },
     {
       "name": "esql_stats_enrich_2",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name"
     },
     {
       "name": "esql_stats_enrich_3",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name, vendor_name"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name, vendor_name"
     },
     {
       "name": "esql_stats_enrich_4",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name, vendor_name, trip_type_name"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name, vendor_name, trip_type_name"
     },
     {
       "name": "esql_stats_enrich_rates_fares",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_rate_code_fare=avg(rate_code_fare) BY rate_code_name"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_rate_code_fare=avg(rate_code_fare) BY rate_code_name"
     },
     {
       "name": "esql_stats_enrich_payments",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name"
     },
     {
       "name": "esql_stats_enrich_payments_fares",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "request-timeout": 120,
-      "body": {
-        "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name"
-      }
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name"
     }

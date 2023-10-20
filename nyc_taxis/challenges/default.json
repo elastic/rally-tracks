@@ -1111,6 +1111,55 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "esql_stats_enrich_1",
+          "tags": ["enrich","stats"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 5
+        },
+        {
+          "operation": "esql_stats_enrich_2",
+          "tags": ["enrich","stats"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 5
+        },
+        {
+          "operation": "esql_stats_enrich_3",
+          "tags": ["enrich","stats"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 5
+        },
+        {
+          "operation": "esql_stats_enrich_4",
+          "tags": ["enrich","stats"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 5
+        },
+        {
+          "operation": "esql_stats_enrich_rates_fares",
+          "tags": ["enrich","stats"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 5
+        },
+        {
+          "operation": "esql_stats_enrich_payments",
+          "tags": ["enrich","stats"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 5
+        },
+        {
+          "operation": "esql_stats_enrich_payments_fares",
+          "tags": ["enrich","stats"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 5
         }
       ]
     },

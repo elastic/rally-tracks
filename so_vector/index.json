@@ -1,7 +1,9 @@
 {
   "settings": {
+    {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
     "index.number_of_shards": {{number_of_shards | default(2)}},
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
+    {%- endif -%}{# non-serverless-index-settings-marker-end #}
   },
   "mappings": {
     "_source": {

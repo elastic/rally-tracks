@@ -72,6 +72,8 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
 * `detailed_results` (default: `false`): Adds additional [metadata](https://esrally.readthedocs.io/en/latest/track.html?highlight=detailed-results#meta-data) to challenges using the track `update` operation. Be aware using this option can add client side overhead due to the deserialization of API responses.
+* `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+* `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 
 ### License
 

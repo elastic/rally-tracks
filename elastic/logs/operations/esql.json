@@ -1,11 +1,7 @@
     {
       "name": "esql_basic_count_group_0",
-      "operation-type": "raw-request",
-      "method": "POST",
-      "path": "/_query",
-      "body": {
-        "query": "FROM logs-* | STATS count=count(*) | SORT count DESC | LIMIT 20"
-      }
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS count=count(*) | SORT count DESC | LIMIT 20"
     },
     {
       "name": "esql_basic_count_group_1",
@@ -44,6 +40,11 @@
       "description": "Based on observability queries for duration average",
       "operation-type": "esql",
       "query": "FROM logs-postgres* | DISSECT message \"duration: %{query_duration} ms\" | EVAL query_duration_num = TO_DOUBLE(query_duration) | STATS avg_duration = AVG(query_duration_num)"
+    },
+    {
+      "name": "esql_basic_count_group_0_limit_0",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS count=count(*) | SORT count DESC | LIMIT 0"
     },
     {
       "name": "esql_basic_count_group_1_limit_0",

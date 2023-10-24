@@ -11,9 +11,11 @@
             "operation-type": "create-index",
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+              "index.translog.flush_threshold_size": "4g",
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
-              "index.refresh_interval": "30s",
-              "index.translog.flush_threshold_size": "4g"
+              "index.refresh_interval": "30s"
             }{%- endif %}
           }
         },
@@ -55,6 +57,15 @@
         {
           "operation": "wait-until-merges-finish"
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "name": "default_no_target",
           "operation": "default",
@@ -107,9 +118,11 @@
             "operation-type": "create-index",
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+              "index.translog.flush_threshold_size": "4g",
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
-              "index.refresh_interval": "30s",
-              "index.translog.flush_threshold_size": "4g"
+              "index.refresh_interval": "30s"
             }{%- endif %}
           }
         },
@@ -165,9 +178,11 @@
             "operation-type": "create-index",
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+              "index.translog.flush_threshold_size": "4g",
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
-              "index.translog.flush_threshold_size": "4g",
               "index.sort.field": "pickup_datetime",
               "index.sort.order": "desc"
             }{%- endif %}
@@ -225,9 +240,11 @@
             "operation-type": "create-index",
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
               "index.number_of_shards": {{number_of_shards | default(1)}},
               "index.number_of_replicas": {{number_of_replicas | default(0)}},
               "index.store.type": "{{store_type | default('fs')}}"
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
             }{%- endif %}
           }
         },
@@ -283,7 +300,9 @@
             "operation-type": "create-index",
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
               "index.store.type": "{{store_type | default('fs')}}"
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
             }{%- endif %}
           }
         },
@@ -321,9 +340,11 @@
             "operation-type": "create-index",
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+              "index.translog.flush_threshold_size": "4g",
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
-              "index.refresh_interval": "30s",
-              "index.translog.flush_threshold_size": "4g"
+              "index.refresh_interval": "30s"
             }{%- endif %}
           }
         },
@@ -532,6 +553,15 @@
         {
           "operation": "wait-until-merges-finish"
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "operation": {
             "operation-type": "start-ml-datafeed",
@@ -568,9 +598,11 @@
             "operation-type": "create-index",
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+              "index.translog.flush_threshold_size": "4g",
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
-              "index.refresh_interval": "30s",
-              "index.translog.flush_threshold_size": "4g"
+              "index.refresh_interval": "30s"
             }{%- endif %}
           }
         },
@@ -729,9 +761,11 @@
           "operation": {
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+              "index.translog.flush_threshold_size": "4g",
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
-              "index.refresh_interval": "30s",
-              "index.translog.flush_threshold_size": "4g"
+              "index.refresh_interval": "30s"
             }{%- endif %}
           },
           "tags": ["setup"]

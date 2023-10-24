@@ -3,6 +3,7 @@
       "description": "Indexes the whole document corpus.",
       "default": true,
       "schedule": [
+        {# non-serverless-cluster-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
         {
           "name":"increase-max_buckets_setting",
           "tags": ["setup"],
@@ -18,6 +19,7 @@
             "include-in-reporting": false
           }
         },
+        {%- endif -%}{# non-serverless-cluster-settings-marker-end #}
         {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
         {
           "name": "create-all-templates",
@@ -97,6 +99,15 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "operation": "default",
           "warmup-iterations": 50,
@@ -210,6 +221,15 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "name": "block-source-index-writes",
           "operation": {

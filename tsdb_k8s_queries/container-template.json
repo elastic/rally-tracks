@@ -8,12 +8,12 @@
     "template": {
       "settings": {
         "index": {
+          {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
           "number_of_shards": {{number_of_shards | default(1)}},
           "number_of_replicas": {{number_of_replicas | default(0)}},
-          "lifecycle": {
-            "name": "metrics"
-          },
-          "codec": "best_compression",
+          "requests.cache.enable": false,
+          {%- endif -%}{# non-serverless-index-settings-marker-end #}
+          {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" -%}
           "routing": {
             "allocation": {
               "include": {
@@ -21,6 +21,16 @@
               }
             }
           },
+          "search": {
+            "idle": {
+              "after": "1s"
+            }
+          },
+          "lifecycle": {
+            "name": "metrics"
+          },
+          {%- endif -%}{# non-serverless-index-settings-marker-end #}
+          "codec": "best_compression",
           "mapping": {
             "total_fields": {
               "limit": "10000"
@@ -86,12 +96,6 @@
           "time_series": {
             "start_time": "2000-01-01T00:00:00Z",
             "end_time": "2099-12-31T23:59:59Z"
-          },
-          "requests.cache.enable": false,
-          "search": {
-            "idle": {
-              "after": "1s"
-            }
           }
         }
       },

@@ -1194,6 +1194,188 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "avg_passenger_count_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_passenger_count_filtered_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_tip_percent_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_amount_group_by_integer_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "avg_amount_group_by_keyword_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "multi_terms-keyword_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "sort_by_ts_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "date_histogram_calendar_interval_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "date_histogram_fixed_interval_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "date_histogram_fixed_interval_with_metrics_esql_limit_0",
+          "tags": ["limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_control_limit_0",
+          "tags": ["enrich", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_1_limit_0",
+          "tags": ["enrich", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_2_limit_0",
+          "tags": ["enrich", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_3_limit_0",
+          "tags": ["enrich", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_4_limit_0",
+          "tags": ["enrich", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_rates_fares_limit_0",
+          "tags": ["enrich", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_payments_limit_0",
+          "tags": ["enrich", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_enrich_payments_fares_limit_0",
+          "tags": ["enrich", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_stats_enrich_control_limit_0",
+          "tags": ["enrich", "stats", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_stats_enrich_1_limit_0",
+          "tags": ["enrich", "stats", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_stats_enrich_2_limit_0",
+          "tags": ["enrich", "stats", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_stats_enrich_3_limit_0",
+          "tags": ["enrich", "stats", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_stats_enrich_4_limit_0",
+          "tags": ["enrich", "stats", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_stats_enrich_rates_fares_limit_0",
+          "tags": ["enrich", "stats", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_stats_enrich_payments_limit_0",
+          "tags": ["enrich", "stats", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_stats_enrich_payments_fares_limit_0",
+          "tags": ["enrich", "stats", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
         }
       ]
     },

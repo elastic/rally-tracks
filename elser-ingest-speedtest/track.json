@@ -11,7 +11,6 @@
   "corpora": [
     {
       "name": "size256-bert-vocab-whole-words",
-      "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
       "documents": [
         {
           "source-file": "document_set.json",
@@ -36,7 +35,7 @@
       "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
       "documents": [
         {
-          "source-file": "document_set.json",
+          "source-file": "256_document_set.json",
           "document-count": 10000,
           "uncompressed-bytes": 20479981
         }
@@ -47,7 +46,7 @@
       "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
       "documents": [
         {
-          "source-file": "document_set.json",
+          "source-file": "384_document_set.json",
           "document-count": 10000,
           "uncompressed-bytes": 30656450
         }
@@ -58,7 +57,7 @@
       "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
       "documents": [
         {
-          "source-file": "document_set.json",
+          "source-file": "512_document_set.json",
           "document-count": 10000,
           "uncompressed-bytes": 40826235
         }

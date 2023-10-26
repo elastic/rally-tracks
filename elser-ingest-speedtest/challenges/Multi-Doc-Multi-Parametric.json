@@ -61,6 +61,9 @@
     {%- set p_doc_size_interval = doc_size_interval | default(128) %}
 
     {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_interval) %}
+
+    {%- set bulk_size = bulk_size*(max_doc_size/doc_size) | default(100) %}
+
     {%- for step in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
     {
       "operation": "create-index",

@@ -35,6 +35,18 @@
   "include-in-reporting": false
 },
 {
+  "name": "force-merge",
+  "operation-type": "force-merge",
+  "request-timeout": 7200,
+  "include-in-reporting": false
+},
+{
+  "name": "refresh-after-force-merge",
+  "operation-type": "refresh",
+  "request-timeout": 1000,
+  "include-in-reporting": false
+},
+{
   "name": "wait-until-merges-finish-after-index",
   "operation-type": "index-stats",
   "index": "_all",

@@ -24,6 +24,97 @@
       "query": "FROM logs-* | STATS count=count(*) BY agent.version, agent.type, agent.hostname, agent.id | SORT count DESC | LIMIT 20"
     },
     {
+      "name": "search_basic_count_group_0",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "agent.version"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "search_basic_count_group_1",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "count": {
+            "terms": {
+              "field": "agent.version",
+              "size": 20
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "search_basic_count_group_2",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body":{
+        "size": 0,
+        "aggs": {
+          "count": {
+            "multi_terms": {
+              "terms": [
+                { "field": "agent.version" },
+                { "field": "agent.type" }
+              ],
+              "size": 20
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "search_basic_count_group_3",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body":{
+        "size": 0,
+        "aggs": {
+          "count": {
+            "multi_terms": {
+              "terms": [
+                { "field": "agent.version" },
+                { "field": "agent.type" },
+                { "field": "agent.hostname" }
+              ],
+              "size": 20
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "search_basic_count_group_4",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body":{
+        "size": 0,
+        "aggs": {
+          "count": {
+            "multi_terms": {
+              "terms": [
+                { "field": "agent.version" },
+                { "field": "agent.type" },
+                { "field": "agent.hostname" },
+                { "field": "agent.id" }
+              ],
+              "size": 20
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "esql_time_range_and_date_histogram_two_groups_pre_filter",
       "description": "Based on observability queries for average CPU over date histogram",
       "operation-type": "esql",

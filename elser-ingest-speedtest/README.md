@@ -26,16 +26,15 @@ There are also two multi-parametric challenges to decrease the number of esbench
     * Additional Parameters:
       * `pipeline_name` (default: "default-pipeline")
       * `model_id`
-* ELSER-Multi-Doc-Multi-Parametric-Ingest
-    * Reused Parameters:
-        * `number_of_allocations` indicates the maximum number of allocations to test, every number below this and greater than 0 will be tested.
-    * Additional Parameters:
-        * The doc size parameters must be set together to match the available datasets 
-          * `min_doc_size` the size of the smallest document to test
-          * `max_doc_size` the size of the largest document to test
-          * `doc_size_interval` the marginal increase in document size between tests.
-        * `pipeline_name` (default: "default-pipeline")
-        * `model_id`
+* ELSER-Multi-Doc-Multi-Parametric-Ingest:
+    * `max_number_of_allocations` indicates the maximum number of allocations to test, every number below this and greater than and equal to `min_number_of_allocations` will be tested.
+    * `min_number_of_allocations` indicates the minimum number of allocations to test, every number above this less than and equal to `max_number_of_allocations` will be tested.
+    * The doc size parameters must be set together to match the available datasets 
+      * `min_doc_size` the size of the smallest document to test
+      * `max_doc_size` the size of the largest document to test
+      * `doc_size_interval` the marginal increase in document size between tests.
+    * `pipeline_name` (default: "default-pipeline")
+    * `model_id`
 
 
 

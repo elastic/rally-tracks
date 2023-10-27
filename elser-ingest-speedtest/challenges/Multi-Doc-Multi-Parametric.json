@@ -68,7 +68,7 @@
 
     {%- set itr_keys = doc_size ~ "-doc-size--" ~ step ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size",%}
 
-    {%- for step in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
+    {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
     {
       "operation": "create-index",
       "name": "loop-create-index-{{ itr_keys }}"
@@ -85,7 +85,7 @@
       "name": "start new trained model deployment of {{ model_id }} with {{ itr_keys }}",
       "operation": {
         "operation-type": "start-trained-model-deployment",
-        "number_of_allocations": {{ number_of_allocations | default(1) }},
+        "number_of_allocations": {{ l_num_allocations | default(1) }},
         "threads_per_allocation": {{ threads_per_allocation | default(1) }},
         "queue_capacity": {{ queue_capacity | default(200000) }},
         "include-in-reporting": false,

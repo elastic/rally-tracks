@@ -55,7 +55,7 @@
       "name": "first-delete-index"
     }
     {%- set p_number_of_allocations = number_of_allocations | default(1) %}
-    {%- for step in range(1, p_number_of_allocations + 1, 1) %},
+    {%- for l_num_allocations in range(1, p_number_of_allocations + 1, 1) %},
     {
       "operation": "create-index",
       "name": "loop-create-index-{{ step }}"
@@ -72,7 +72,7 @@
       "name": "start new trained model deployment with name [{{ model_id }}] and [{{ step }}] allocations",
       "operation": {
         "operation-type": "start-trained-model-deployment",
-        "number_of_allocations": {{ number_of_allocations | default(1) }},
+        "number_of_allocations": {{ l_num_allocations | default(1) }},
         "threads_per_allocation": {{ threads_per_allocation | default(1) }},
         "queue_capacity": {{ queue_capacity | default(200000) }},
         "include-in-reporting": false,

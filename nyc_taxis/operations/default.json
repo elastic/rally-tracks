@@ -1088,6 +1088,34 @@
       "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
+      "name": "count_group_by_keyword_aggregation",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "request-timeout": 120,
+      "body": {
+        "size": 0,
+        "aggs": {
+          "by_rate_code_id": {
+            "terms": {
+              "field": "rate_code_id"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "count_group_by_keyword_esql_shard_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats count=count(*) by rate_code_id | sort count desc",
+      "body": { "pragma": { "data_partitioning": "shard" } }
+    },
+    {
+      "name": "count_group_by_keyword_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats count=count(*) by rate_code_id | sort count desc",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+    {
       "name": "avg_passenger_count_filtered_aggregation",
       "operation-type": "search",
       "index": "nyc_taxis",

@@ -1,4 +1,24 @@
     {
+      "name": "enable_query_cache",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/logs-*/_settings",
+      "body": {
+        "index.requests.cache.enable": true
+      }
+    },
+    {
+      "name": "disable_query_cache",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/logs-*/_settings",
+      "body": {
+        "index.requests.cache.enable": false
+      }
+    },
+    {
       "name": "esql_basic_count_group_0",
       "operation-type": "esql",
       "query": "FROM logs-* | STATS count=count(*) | SORT count DESC | LIMIT 20"

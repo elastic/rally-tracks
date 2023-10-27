@@ -66,9 +66,10 @@
     {%- set bulk_size_mult_int = (bulk_size_multiplier/10)*(max_doc_size/doc_size) | round %}
     {%- set adj_bulk_size = bulk_size*bulk_size_mult_int | default(100) %}
 
-    {%- set itr_keys = doc_size ~ "-doc-size--" ~ step ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size",%}
-
     {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
+
+    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size",%}
+
     {
       "operation": "create-index",
       "name": "loop-create-index-{{ itr_keys }}"

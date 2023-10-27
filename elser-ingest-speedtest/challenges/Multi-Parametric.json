@@ -58,10 +58,10 @@
     {%- for l_num_allocations in range(1, p_number_of_allocations + 1, 1) %},
     {
       "operation": "create-index",
-      "name": "loop-create-index-{{ step }}"
+      "name": "loop-create-index-{{ l_num_allocations }}"
     },
     {
-      "name": "stop any existing trained model deployment with name: [{{ model_id }}]--{{ step }}",
+      "name": "stop any existing trained model deployment with name: [{{ model_id }}]--{{ l_num_allocations }}",
       "operation": {
         "operation-type": "stop-trained-model-deployment",
         "include-in-reporting": false,
@@ -69,7 +69,7 @@
       }
     },
     {
-      "name": "start new trained model deployment with name [{{ model_id }}] and [{{ step }}] allocations",
+      "name": "start new trained model deployment with name [{{ model_id }}] and [{{ l_num_allocations }}] allocations",
       "operation": {
         "operation-type": "start-trained-model-deployment",
         "number_of_allocations": {{ l_num_allocations | default(1) }},
@@ -80,7 +80,7 @@
       }
     },
     {
-      "name": "bulk--{{ step }}-allocations--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent--{{ bulk_size }}-bulk-size",
+      "name": "bulk--{{ l_num_allocations }}-allocations--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent--{{ bulk_size }}-bulk-size",
       "clients": {{ bulk_indexing_clients | default(3) }},
       "operation": {
         "operation-type": "bulk",
@@ -94,7 +94,7 @@
     },
     {
       "operation": "delete-index",
-      "name": "loop-delete-index-{{ step }}"
+      "name": "loop-delete-index-{{ l_num_allocations }}"
     }
     {%- endfor %},
     {

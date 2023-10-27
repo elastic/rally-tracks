@@ -209,6 +209,10 @@
       "warmup-iterations": 5,
       "iterations": 20,
       "tags": ["esql", "dissect"]
+    },
+    {
+      "operation": "enable_query_cache",
+      "tags": ["esql", "settings"]
     }
   ]
 }

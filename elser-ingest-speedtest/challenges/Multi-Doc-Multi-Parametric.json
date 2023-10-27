@@ -62,15 +62,19 @@
 
     {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_interval) %}
 
-    {%- set bulk_size = bulk_size*(max_doc_size/doc_size) | default(100) %}
+    {%- for bulk_size_multiplier in range(1, 17, 2) %}
+    {%- set bulk_size_mult_int = (bulk_size_multiplier/10)*(max_doc_size/doc_size) | round %}
+    {%- set adj_bulk_size = bulk_size*bulk_size_mult_int | default(100) %}
+
+    {%- set itr_keys = doc_size ~ "-doc-size--" ~ step ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size",%}
 
     {%- for step in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
     {
       "operation": "create-index",
-      "name": "loop-create-index-{{ doc_size}}-doc-size--{{ step }}"
+      "name": "loop-create-index-{{ itr_keys }}"
     },
     {
-      "name": "stop any existing trained model deployment of {{ model_id }}--{{ step }}--{{ doc_size }}",
+      "name": "stop any existing trained model deployment of {{ model_id }}--{{ itr_keys }}",
       "operation": {
         "operation-type": "stop-trained-model-deployment",
         "include-in-reporting": false,
@@ -78,7 +82,7 @@
       }
     },
     {
-      "name": "start new trained model deployment of {{ model_id }} with {{ doc_size}}-doc-size--{{ step }}-allocations",
+      "name": "start new trained model deployment of {{ model_id }} with {{ itr_keys }}",
       "operation": {
         "operation-type": "start-trained-model-deployment",
         "number_of_allocations": {{ number_of_allocations | default(1) }},
@@ -89,13 +93,13 @@
       }
     },
     {
-      "name": "bulk--{{ doc_size}}-doc-size--{{ step }}-allocations--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent--{{ bulk_size }}-bulk-size",
+      "name": "{{   iter_keys }}--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent",
       "clients": {{ bulk_indexing_clients | default(3) }},
       "operation": {
         "operation-type": "bulk",
         "ingest-percentage": {{ ingest_percentage | default(100) }},
         "corpora": "size{{ doc_size }}-small-bert-vocab-whole-words",
-        "bulk-size": {{ bulk_size | default(100) }},
+        "bulk-size": {{ adj_bulk_size | default(100) }},
         "pipeline": "{{ pipeline_name | default('default-pipeline')}}",
         "request-timeout": 60.0,
         "include-in-reporting": true
@@ -103,8 +107,9 @@
     },
     {
       "operation": "delete-index",
-      "name": "loop-delete-index-{{ doc_size}}-doc-size--{{ step }}"
+      "name": "loop-delete-index-{{ itr_keys }}"
     },
+    {%- endfor %}
     {%- endfor %}
     {%- endfor %}
 

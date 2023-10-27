@@ -1,0 +1,123 @@
+{
+  "name": "ELSER-Min-Latency-Multi-Doc-Multi-Parametric-Ingest",
+  "description": "Test the throughput of ELSER in various scenarios",
+  "default": false,
+  "schedule": [
+    {%- set model_id = model_id | default('default') %}
+    {
+      "name": "put elser v2 platform specific",
+      "operation": {
+        "operation-type": "put-elser",
+        "include-in-reporting": false,
+        "model_id": "{{ model_id }}"
+      }
+    },
+    {
+      "name": "setup-elser-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "{{ pipeline_name | default('default-pipeline') }}",
+        "body": {
+          "description": "Pipes documents to ELSER",
+          "processors": [
+            {
+              "inference": {
+                "model_id": "{{ model_id }}",
+                "target_field": "ml",
+                "field_map": {
+                  "body": "text_field"
+                },
+                "inference_config": {
+                  "text_expansion": {
+                    "results_field": "tokens"
+                  }
+                }
+              }
+            }
+          ],
+          "on_failure": [
+            {
+              "set": {
+                "field": "_index",
+                {% raw %}
+                "description": "Record error information",
+                "field": "error_information",
+                "value": "Processor {{ _ingest.on_failure_processor_type }} with tag {{ _ingest.on_failure_processor_tag }} in pipeline {{ _ingest.on_failure_pipeline }} failed with message {{ _ingest.on_failure_message }}"
+                {% endraw %}
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "operation": "delete-index",
+      "name": "first-delete-index"
+    },
+    {%- set p_max_number_of_allocations = max_number_of_allocations | default(1) %}
+    {%- set p_min_number_of_allocations = min_number_of_allocations | default(1) %}
+    {%- set p_min_doc_size = min_doc_size | default(128) %}
+    {%- set p_max_doc_size = max_doc_size | default(128) %}
+    {%- set p_doc_size_interval = doc_size_interval | default(128) %}
+    {%- set bulk_size = 1 %}
+
+
+    {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_interval) %}
+
+    {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
+
+    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ bulk_size ~ "-bulk-size"%}
+
+    {
+      "operation": "create-index",
+      "name": "loop-create-index-{{ itr_keys }}"
+    },
+    {
+      "name": "stop any existing trained model deployment of {{ model_id }}--{{ itr_keys }}",
+      "operation": {
+        "operation-type": "stop-trained-model-deployment",
+        "include-in-reporting": false,
+        "model_id": "{{ model_id }}"
+      }
+    },
+    {
+      "name": "start new trained model deployment of {{ model_id }} with {{ itr_keys }}",
+      "operation": {
+        "operation-type": "start-trained-model-deployment",
+        "number_of_allocations": {{ l_num_allocations | default(1) }},
+        "threads_per_allocation": {{ threads_per_allocation | default(1) }},
+        "queue_capacity": {{ queue_capacity | default(200000) }},
+        "include-in-reporting": false,
+        "model_id": "{{ model_id }}"
+      }
+    },
+    {
+      "name": "bulk--{{ itr_keys }}--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent",
+      "clients": {{ bulk_indexing_clients | default(1) }},
+      "operation": {
+        "operation-type": "bulk",
+        "ingest-percentage": {{ ingest_percentage | default(100) }},
+        "corpora": "size{{ doc_size }}-small-bert-vocab-whole-words",
+        "bulk-size": bulk_size,
+        "pipeline": "{{ pipeline_name | default('default-pipeline')}}",
+        "request-timeout": 60.0,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "operation": "delete-index",
+      "name": "loop-delete-index-{{ itr_keys }}"
+    },
+    {%- endfor %}
+    {%- endfor %}
+
+    {
+      "name": "delete elser model",
+      "operation": {
+        "operation-type": "delete-elser",
+        "include-in-reporting": false,
+        "model_id": "{{ model_id }}"
+      }
+    }
+  ]
+}

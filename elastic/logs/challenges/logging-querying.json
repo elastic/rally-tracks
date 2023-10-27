@@ -31,10 +31,6 @@
       },
     {% endif %}
     {
-      "operation": "enable_query_cache",
-      "tags": ["esql", "settings"]
-    },
-    {
       "name": "logging-queries",
       "parallel": {
         "time-period": {{ p_query_time_period }},

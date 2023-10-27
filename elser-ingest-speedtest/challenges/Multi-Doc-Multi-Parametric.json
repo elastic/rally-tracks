@@ -68,7 +68,7 @@
 
     {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
 
-    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size",%}
+    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size"%}
 
     {
       "operation": "create-index",
@@ -94,7 +94,7 @@
       }
     },
     {
-      "name": "{{   iter_keys }}--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent",
+      "name": "bulk--{{ itr_keys }}--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent",
       "clients": {{ bulk_indexing_clients | default(3) }},
       "operation": {
         "operation-type": "bulk",

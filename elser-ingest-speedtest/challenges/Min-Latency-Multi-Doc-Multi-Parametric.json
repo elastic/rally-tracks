@@ -60,6 +60,7 @@
     {%- set p_max_doc_size = max_doc_size | default(128) %}
     {%- set p_doc_size_interval = doc_size_interval | default(128) %}
     {%- set bulk_size = 1 %}
+    {%- set bulk_indexing_clients = 1 %}
 
 
     {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_interval) %}
@@ -93,12 +94,12 @@
     },
     {
       "name": "bulk--{{ itr_keys }}--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent",
-      "clients": {{ bulk_indexing_clients | default(1) }},
+      "clients": {{ bulk_indexing_clients }},
       "operation": {
         "operation-type": "bulk",
         "ingest-percentage": {{ ingest_percentage | default(100) }},
         "corpora": "size{{ doc_size }}-small-bert-vocab-whole-words",
-        "bulk-size": bulk_size,
+        "bulk-size": {{  bulk_size }},
         "pipeline": "{{ pipeline_name | default('default-pipeline')}}",
         "request-timeout": 60.0,
         "include-in-reporting": true

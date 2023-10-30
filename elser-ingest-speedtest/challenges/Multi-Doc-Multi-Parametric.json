@@ -62,7 +62,7 @@
 
     {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_interval) %}
 
-    {%- set adj_bulk_size = -1.78*bulk_size + 1010 | default(100) | round | int %}
+    {%- set adj_bulk_size = -1.78*doc_size + 1010 | default(100) | round | int %}
 
     {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
 

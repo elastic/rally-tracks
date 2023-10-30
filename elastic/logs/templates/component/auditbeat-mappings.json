@@ -5610,8 +5610,10 @@
             "limit": 10000
           }
         },
+        {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
         "max_docvalue_fields_search": 200,
         "number_of_shards": 1,
+        {%- endif -%}{# non-serverless-index-settings-marker-end #}
         "query": {
           "default_field": [
             "message",

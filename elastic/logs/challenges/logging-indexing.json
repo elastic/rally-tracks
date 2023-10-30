@@ -20,7 +20,8 @@
       "schedule": "timestamp-throttler",
       "max-delay-secs": 1
       {% endif %}
-    },
+    }
+    {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
     {
       "name": "compression-stats",
       "operation": {
@@ -28,5 +29,6 @@
         "param-source": "create-datastream-source"
       }
     }
+    {%- endif -%}{# non-serverless-index-statistics-marker-end #}
   ]
 }

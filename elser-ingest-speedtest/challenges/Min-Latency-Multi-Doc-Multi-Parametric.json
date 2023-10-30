@@ -66,8 +66,9 @@
     {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_interval) %}
 
     {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
+    {%- for l_num_threads in [1, 2, 4, 8, 16] %}
 
-    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ bulk_size ~ "-bulk-size"%}
+    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_threads ~ "-threads--" ~ l_num_allocations ~ "-allocations--" ~ bulk_size ~ "-bulk-size"%}
 
     {
       "operation": "create-index",
@@ -86,7 +87,7 @@
       "operation": {
         "operation-type": "start-trained-model-deployment",
         "number_of_allocations": {{ l_num_allocations | default(1) }},
-        "threads_per_allocation": {{ threads_per_allocation | default(1) }},
+        "threads_per_allocation": {{ l_num_threads | default(1) }},
         "queue_capacity": {{ queue_capacity | default(200000) }},
         "include-in-reporting": false,
         "model_id": "{{ model_id }}"
@@ -109,6 +110,7 @@
       "operation": "delete-index",
       "name": "loop-delete-index-{{ itr_keys }}"
     },
+    {%- endfor %}
     {%- endfor %}
     {%- endfor %}
 

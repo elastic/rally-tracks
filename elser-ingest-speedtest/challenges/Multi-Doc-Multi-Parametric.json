@@ -62,13 +62,11 @@
 
     {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_interval) %}
 
-    {%- for bulk_size_multiplier in range(1, 17, 2) %}
-    {%- set bulk_size_mult_int = (bulk_size_multiplier/10)*(max_doc_size/doc_size) | round %}
-    {%- set adj_bulk_size = bulk_size*bulk_size_mult_int | default(100) %}
+    {%- set adj_bulk_size = -1.78*bulk_size + 1010 | default(100) | round | int %}
 
     {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
 
-    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size"%}
+    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size" %}
 
     {
       "operation": "create-index",
@@ -110,7 +108,6 @@
       "operation": "delete-index",
       "name": "loop-delete-index-{{ itr_keys }}"
     },
-    {%- endfor %}
     {%- endfor %}
     {%- endfor %}
 

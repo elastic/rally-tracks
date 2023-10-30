@@ -135,8 +135,8 @@
           "operation": {
             "operation-type": "wait-for-transform",
             "transform-id": "transform-group-by-user",
-            "transform-timeout": 3600,
-            "timeout": "60m"
+            "transform-timeout": 5400,
+            "timeout": "90m"
           }
         },
         {
@@ -163,8 +163,8 @@
           "operation": {
             "operation-type": "wait-for-transform",
             "transform-id": "transform-group-by-hour",
-            "transform-timeout": 3600,
-            "timeout": "60m"
+            "transform-timeout": 5400,
+            "timeout": "90m"
           }
         }
       ]

@@ -83,6 +83,7 @@ The following parameters are available:
 
 * `wait_for_status` (default: `green`) - The track creates Data Streams prior to indexing. All created Data Streams must at least reach this status before indexing commences. Reduce to `yellow` for clusters where green isn't possible e.g. single node.
 * `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
+* `lifecycle` (default: unset to fall back on Serverless detection) - Specifies the lifecycle management feature to use for data streams. Use `ilm` for index lifecycle management or `dlm` for data lifecycle management. By default, `dlm` will be used for benchmarking Serverless Elasticsearch.
 
 ### Data Generation Parameters
 

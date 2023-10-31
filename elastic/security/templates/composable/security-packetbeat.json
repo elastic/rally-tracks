@@ -5,18 +5,17 @@
   "template" : {
     "settings" : {
       "index" : {
-        "lifecycle" : {
-          "name" : "security"
-        },
         "mapping" : {
           "total_fields" : {
             "limit" : "10000"
           }
         },
         "refresh_interval" : "5s",
+        {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
         "number_of_shards" : "{{ number_of_shards | default(1) }}",
         "number_of_replicas" : "{{ number_of_replicas | default(1) }}",
         "max_docvalue_fields_search" : "200",
+        {%- endif -%}{# non-serverless-index-settings-marker-end #}
         "query" : {
           "default_field" : [
             "tags",
@@ -8973,7 +8972,10 @@
       }
     }
   },
-  "composed_of" : ["track-custom-mappings"],
+  "composed_of" : [
+    "track-custom-mappings",
+    "track-data-stream-lifecycle"
+  ],
   "priority" : 150,
   "data_stream" : { }
 }

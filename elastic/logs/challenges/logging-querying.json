@@ -56,10 +56,6 @@
       }
     },
     {
-      "operation": "disable_query_cache",
-      "tags": ["esql", "settings"]
-    },
-    {
       "operation": "esql_basic_count_group_0_limit_0",
       "clients": 1,
       "warmup-iterations": 10,
@@ -151,6 +147,31 @@
       "tags": ["esql", "count"]
     },
     {
+      "operation": "esql_time_range_and_date_histogram_two_groups_pre_filter",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql", "date_histogram"]
+    },
+    {
+      "operation": "esql_time_range_and_date_histogram_two_groups_post_filter",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql", "date_histogram"]
+    },
+    {
+      "operation": "esql_dissect_duration_and_stats",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql", "dissect"]
+    }{%- if index_settings is defined %},
+    {
+      "operation": "disable_query_cache",
+      "tags": ["esql", "settings"]
+    },
+    {
       "operation": "search_basic_count_group_0",
       "clients": 1,
       "warmup-iterations": 10,
@@ -186,29 +207,8 @@
       "tags": ["esql", "count", "search"]
     },
     {
-      "operation": "esql_time_range_and_date_histogram_two_groups_pre_filter",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
-      "tags": ["esql", "date_histogram"]
-    },
-    {
-      "operation": "esql_time_range_and_date_histogram_two_groups_post_filter",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
-      "tags": ["esql", "date_histogram"]
-    },
-    {
-      "operation": "esql_dissect_duration_and_stats",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
-      "tags": ["esql", "dissect"]
-    },
-    {
       "operation": "enable_query_cache",
       "tags": ["esql", "settings"]
-    }
+    }{%- endif %}
   ]
 }

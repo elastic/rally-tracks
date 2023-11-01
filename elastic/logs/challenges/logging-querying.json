@@ -166,7 +166,7 @@
       "warmup-iterations": 5,
       "iterations": 20,
       "tags": ["esql", "dissect"]
-    }{%- if index_settings is defined %},
+    }{%- if build_flavor != "serverless" or serverless_operator == true %},
     {
       "operation": "disable_query_cache",
       "tags": ["esql", "settings"]

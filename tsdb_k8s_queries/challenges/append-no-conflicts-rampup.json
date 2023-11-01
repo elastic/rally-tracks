@@ -1,0 +1,288 @@
+    {
+      "name": "append-no-conflicts-rampup",
+      "description": "Indexes the whole document corpus. Ramps up the number of clients with each timed operation.",
+      "default": true,
+      "schedule": [
+        {
+          "name": "create-all-templates",
+          "operation": {
+            "operation-type": "create-composable-template",
+            "request-params": {
+              "create": "true"
+            }
+          }
+        },
+        {
+          "name": "put-timestamp-pipeline",
+          "operation": {
+            "operation-type": "put-pipeline",
+            "id": "timestamp_pipeline",
+            "body": {
+              "processors": [
+                  {
+                      "set": {
+                          "field": "@timestamp",
+                          "value": {{'"{{_ingest.timestamp}}"'}}
+                      }
+                  },
+                  {
+                    "script": {
+                      "source": "Random r  = new Random();ctx['kubernetes']['pod']['uid'] = 'value-' + r.nextLong();"
+                    }
+                  }
+              ]
+            }
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "index-container",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "operation": "index-pod",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "cpu_usage_per_pod_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-pod-1-{{name}}",
+                "operation": "touch-pod-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "cpu_usage_per_pod_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "memory_usage_per_pod_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-pod-2-{{name}}",
+                "operation": "touch-pod-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "memory_usage_per_pod_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "status_per_pod_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-pod-3-{{name}}",
+                "operation": "touch-pod-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "status_per_pod_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "tx_network_usage_per_pod_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-pod-4-{{name}}",
+                "operation": "touch-pod-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "tx_network_usage_per_pod_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "average_container_cpu_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-container-1-{{name}}",
+                "operation": "touch-container-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "average_container_cpu_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "average_container_memory_usage_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-container-2-{{name}}",
+                "operation": "touch-container-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "average_container_memory_usage_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "cpu_usage_per_container_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-container-3-{{name}}",
+                "operation": "touch-container-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "cpu_usage_per_container_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "memory_usage_per_container_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-container-4-{{name}}",
+                "operation": "touch-container-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "memory_usage_per_container_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "unique_deployment_count_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-pod-5-{{name}}",
+                "operation": "touch-pod-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "unique_deployment_count_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        },
+        {%- endfor %}
+        {% for name, info in time_intervals.items() %}
+        {
+          "parallel": {
+            "completed-by": "percentile_cpu_usage_per_container_{{name}}",
+            "clients": 2,
+            "tasks": [
+              {
+                "name": "touch-container-5-{{name}}",
+                "operation": "touch-container-index",
+                "clients": {{touch_bulk_indexing_clients}}
+              },
+              {
+                "operation": "percentile_cpu_usage_per_container_{{name}}",
+                "warmup-iterations": {{search_warmup_iterations}},
+                "iterations": {{search_iterations}},
+                "target-interval": {{target_interval}},
+                "clients": 1
+              }
+            ]
+          }
+        }{{ ", " if not loop.last else "" }}
+        {%- endfor %}
+      ]
+    }

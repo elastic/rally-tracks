@@ -1,7 +1,7 @@
     {
       "name": "append-no-conflicts-rampup",
       "description": "Indexes the whole document corpus. Ramps up the number of clients with each timed operation.",
-      "default": true,
+      "default": false,
       "schedule": [
         {
           "name": "create-all-templates",
@@ -48,14 +48,15 @@
         {
           "operation": "index-container",
           "warmup-time-period": 240,
+          "time-period": 900,
           "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "operation": "index-pod",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}}
-        },
-        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        }
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%},
         {
           "name": "post-ingest-sleep",
           "operation": {
@@ -64,19 +65,22 @@
           }
         },
         {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
-        {% for name, info in time_intervals.items() %}
+        {%- set p_task_count = task_count | default(6) %}
+        {%- for step in range(1, p_task_count + 1, 1) %},
+              {%- set task_label = "ramp-up-" %}
+              {%- set touch_bulk_indexing_clients = touch_bulk_indexing_clients * step %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "cpu_usage_per_pod_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_cpu_usage_per_pod_{{name}}",
             "tasks": [
               {
-                "name": "touch-pod-1-{{name}}",
+                "name": "{{task_label}}{{step}}_touch-pod-1-{{name}}",
                 "operation": "touch-pod-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "cpu_usage_per_pod_{{name}}",
+                "operation": "{{task_label}}{{step}}_cpu_usage_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -85,20 +89,19 @@
             ]
           }
         },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
+              {%- endfor %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "memory_usage_per_pod_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_memory_usage_per_pod_{{name}}",
             "tasks": [
               {
-                "name": "touch-pod-2-{{name}}",
+                "name": "{{task_label}}{{step}}_touch-pod-2-{{name}}",
                 "operation": "touch-pod-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "memory_usage_per_pod_{{name}}",
+                "operation": "{{task_label}}{{step}}_memory_usage_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -107,20 +110,19 @@
             ]
           }
         },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
+              {%- endfor %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "status_per_pod_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_status_per_pod_{{name}}",
             "tasks": [
               {
-                "name": "touch-pod-3-{{name}}",
+                "name": "{{task_label}}{{step}}_touch-pod-3-{{name}}",
                 "operation": "touch-pod-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "status_per_pod_{{name}}",
+                "operation": "{{task_label}}{{step}}_status_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -129,20 +131,19 @@
             ]
           }
         },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
+              {%- endfor %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "tx_network_usage_per_pod_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_tx_network_usage_per_pod_{{name}}",
             "tasks": [
               {
-                "name": "touch-pod-4-{{name}}",
+                "name": "{{task_label}}{{step}}_touch-pod-4-{{name}}",
                 "operation": "touch-pod-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "tx_network_usage_per_pod_{{name}}",
+                "operation": "{{task_label}}{{step}}_tx_network_usage_per_pod_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -151,20 +152,19 @@
             ]
           }
         },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
+              {%- endfor %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "average_container_cpu_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_average_container_cpu_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-1-{{name}}",
+                "name": "{{task_label}}{{step}}_touch-container-1-{{name}}",
                 "operation": "touch-container-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "average_container_cpu_{{name}}",
+                "operation": "{{task_label}}{{step}}_average_container_cpu_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -173,20 +173,19 @@
             ]
           }
         },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
+              {%- endfor %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "average_container_memory_usage_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_average_container_memory_usage_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-2-{{name}}",
+                "name": "{{task_label}}{{step}}_touch-container-2-{{name}}",
                 "operation": "touch-container-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "average_container_memory_usage_{{name}}",
+                "operation": "{{task_label}}{{step}}_average_container_memory_usage_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -195,20 +194,19 @@
             ]
           }
         },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
+              {%- endfor %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "cpu_usage_per_container_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_cpu_usage_per_container_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-3-{{name}}",
+                "name": "{{task_label}}{{step}}_touch-container-3-{{name}}",
                 "operation": "touch-container-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "cpu_usage_per_container_{{name}}",
+                "operation": "{{task_label}}{{step}}_cpu_usage_per_container_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -217,20 +215,19 @@
             ]
           }
         },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
+              {%- endfor %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "memory_usage_per_container_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_memory_usage_per_container_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-4-{{name}}",
-                "operation": "touch-container-index",
+                "name": "{{task_label}}{{step}}_touch-container-4-{{name}}",
+                "operation": "{{task_label}}{{step}}_touch-container-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "memory_usage_per_container_{{name}}",
+                "operation": "{{task_label}}{{step}}_memory_usage_per_container_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -239,20 +236,19 @@
             ]
           }
         },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
+              {%- endfor %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "unique_deployment_count_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_unique_deployment_count_{{name}}",
             "tasks": [
               {
-                "name": "touch-pod-5-{{name}}",
+                "name": "{{task_label}}{{step}}_touch-pod-5-{{name}}",
                 "operation": "touch-pod-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "unique_deployment_count_{{name}}",
+                "operation": "{{task_label}}{{step}}_unique_deployment_count_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -261,20 +257,19 @@
             ]
           }
         },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
+              {%- endfor %}
+              {%- for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "percentile_cpu_usage_per_container_{{name}}",
-            "clients": 2,
+            "completed-by": "{{task_label}}{{step}}_percentile_cpu_usage_per_container_{{name}}",
             "tasks": [
               {
-                "name": "touch-container-5-{{name}}",
+                "name": "{{task_label}}{{step}}_touch-container-5-{{name}}",
                 "operation": "touch-container-index",
                 "clients": {{touch_bulk_indexing_clients}}
               },
               {
-                "operation": "percentile_cpu_usage_per_container_{{name}}",
+                "operation": "{{task_label}}{{step}}_percentile_cpu_usage_per_container_{{name}}",
                 "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
@@ -283,6 +278,7 @@
             ]
           }
         }{{ ", " if not loop.last else "" }}
+        {%- endfor %}
         {%- endfor %}
       ]
     }

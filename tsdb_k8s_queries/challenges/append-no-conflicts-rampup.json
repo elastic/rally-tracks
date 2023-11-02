@@ -48,15 +48,18 @@
         {
           "parallel": {
             "tasks": [
+              {%- set p_bulk_indexing_clients = bulk_indexing_clients | default(8) %}
+              {%- set split_bulk_indexing_clients = p_bulk_indexing_clients / 2 %}
+              {%- set split_bulk_indexing_clients = split_bulk_indexing_clients | int %}
               {
                 "operation": "index-container",
                 "warmup-time-period": 240,
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{split_bulk_indexing_clients}}
               },
               {
                 "operation": "index-pod",
                 "warmup-time-period": 240,
-                "clients": {{bulk_indexing_clients | default(8)}}
+                "clients": {{split_bulk_indexing_clients}}
               }
             ]
           }
@@ -70,8 +73,8 @@
           }
         },
         {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
-        {%- set p_task_count = task_count | default(6) %}
-        {%- for step in range(1, p_task_count + 1, 1) %},
+        {%- set p_iteration_count = iteration_count | default(6) %}
+        {%- for step in range(1, p_iteration_count + 1, 1) %},
               {%- set task_label = "ramp-up-" %}
               {%- set touch_bulk_indexing_clients = touch_bulk_indexing_clients * step %}
               {%- for name, info in time_intervals.items() %}
@@ -87,7 +90,6 @@
               {
                 "name": "{{task_label}}{{step}}_cpu_usage_per_pod_{{name}}",
                 "operation": "cpu_usage_per_pod_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1
@@ -109,7 +111,6 @@
               {
                 "name": "{{task_label}}{{step}}_memory_usage_per_pod_{{name}}",
                 "operation": "memory_usage_per_pod_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1
@@ -131,7 +132,6 @@
               {
                 "name": "{{task_label}}{{step}}_status_per_pod_{{name}}",
                 "operation": "status_per_pod_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1
@@ -153,7 +153,6 @@
               {
                 "name": "{{task_label}}{{step}}_tx_network_usage_per_pod_{{name}}",
                 "operation": "tx_network_usage_per_pod_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1
@@ -175,7 +174,6 @@
               {
                 "name": "{{task_label}}{{step}}_average_container_cpu_{{name}}",
                 "operation": "average_container_cpu_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1
@@ -197,7 +195,6 @@
               {
                 "name": "{{task_label}}{{step}}_average_container_memory_usage_{{name}}",
                 "operation": "average_container_memory_usage_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1
@@ -219,7 +216,6 @@
               {
                 "name": "{{task_label}}{{step}}_cpu_usage_per_container_{{name}}",
                 "operation": "cpu_usage_per_container_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1
@@ -241,7 +237,6 @@
               {
                 "name": "{{task_label}}{{step}}_memory_usage_per_container_{{name}}",
                 "operation": "memory_usage_per_container_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1
@@ -263,7 +258,6 @@
               {
                 "name": "{{task_label}}{{step}}_unique_deployment_count_{{name}}",
                 "operation": "unique_deployment_count_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1
@@ -285,7 +279,6 @@
               {
                 "name": "{{task_label}}{{step}}_percentile_cpu_usage_per_container_{{name}}",
                 "operation": "percentile_cpu_usage_per_container_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
                 "iterations": {{search_iterations}},
                 "target-interval": {{target_interval}},
                 "clients": 1

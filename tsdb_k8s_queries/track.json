@@ -2,7 +2,7 @@
 
 {% set search_iterations = 20 %} 
 {% set search_warmup_iterations = 50 %}
-{% set target_interval = 4 %}
+{% set target_interval = target_interval | default(4) %}
 {% set touch_bulk_indexing_clients = touch_bulk_indexing_clients | default(3) %}
 {% set touch_bulk_size = touch_bulk_size | default(50) %}
 

@@ -69,8 +69,15 @@
     {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size" %}
 
     {
-      "operation": "create-index",
-      "name": "loop-create-index-{{ itr_keys }}"
+      "operation-type": "create-index",
+      "name": "loop-create-index-{{ itr_keys }}",
+      "settings": {
+        "index.mapping": {
+          "total_fields": {
+            "limit": "2000"
+          }
+        }
+      }
     },
     {
       "name": "stop any existing trained model deployment of {{ model_id }}--{{ itr_keys }}",

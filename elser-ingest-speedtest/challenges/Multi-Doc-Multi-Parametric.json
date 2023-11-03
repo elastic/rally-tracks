@@ -69,12 +69,14 @@
     {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size" %}
 
     {
-      "operation-type": "create-index",
       "name": "loop-create-index-{{ itr_keys }}",
-      "settings": {
-        "index.mapping": {
-          "total_fields": {
-            "limit": "2000"
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {
+          "index.mapping": {
+            "total_fields": {
+              "limit": "2000"
+            }
           }
         }
       }

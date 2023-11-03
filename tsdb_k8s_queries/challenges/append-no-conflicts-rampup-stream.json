@@ -76,7 +76,7 @@
     {%- set p_iteration_count = iteration_count | default(6) %}
     {%- for step in range(1, p_iteration_count + 1, 1) %},
           {%- set task_label = "ramp-up-" %}
-          {%- set touch_bulk_indexing_clients = touch_bulk_indexing_clients * step %}
+          {%- set touch_bulk_indexing_clients = touch_bulk_indexing_clients * step/2 %}
           {%- for name, info in time_intervals.items() %}
     {
       "parallel": {
@@ -85,12 +85,12 @@
           {
             "name": "{{task_label}}{{step}}_touch-pod-1-{{name}}",
             "operation": "touch-pod-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_touch-container-1-{{name}}",
             "operation": "touch-container-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_composite-1-{{name}}",
@@ -304,12 +304,12 @@
           {
             "name": "{{task_label}}{{step}}_touch-pod-2-{{name}}",
             "operation": "touch-pod-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_touch-container-2-{{name}}",
             "operation": "touch-container-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_composite-2-{{name}}",
@@ -523,12 +523,12 @@
           {
             "name": "{{task_label}}{{step}}_touch-pod-3-{{name}}",
             "operation": "touch-pod-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_touch-container-3-{{name}}",
             "operation": "touch-container-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_composite-3-{{name}}",
@@ -717,12 +717,12 @@
           {
             "name": "{{task_label}}{{step}}_touch-pod-4-{{name}}",
             "operation": "touch-pod-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_touch-container-4-{{name}}",
             "operation": "touch-container-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_composite-4-{{name}}",
@@ -1055,12 +1055,12 @@
           {
             "name": "{{task_label}}{{step}}_touch-pod-5-{{name}}",
             "operation": "touch-pod-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_touch-container-5-{{name}}",
             "operation": "touch-container-index",
-            "clients": {{touch_bulk_indexing_clients}}
+            "clients": {{touch_bulk_indexing_clients|int}}
           },
           {
             "name": "{{task_label}}{{step}}_composite-5-{{name}}",

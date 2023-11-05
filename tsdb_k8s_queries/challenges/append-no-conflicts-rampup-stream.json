@@ -108,6 +108,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_cpu_usage_per_pod_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {
@@ -198,6 +199,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_memory_usage_per_pod_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {
@@ -288,6 +290,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_unique_deployment_count_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {
@@ -352,6 +355,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_status_per_pod_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {
@@ -561,6 +565,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_tx_network_usage_per_pod_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {
@@ -707,6 +712,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_average_container_cpu_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {
@@ -797,6 +803,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_average_container_memory_usage_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {
@@ -887,6 +894,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_cpu_usage_per_container_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {
@@ -978,6 +986,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_memory_usage_per_container_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {
@@ -1068,6 +1077,7 @@
                       "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_percentile_cpu_usage_per_container_{{name}}",
                       "index": "k8s-*",
                       "operation-type": "search",
+                      "detailed-results": {{detailed_results | default("false")}},
                       "body": {
                         "aggs": {
                           "0": {

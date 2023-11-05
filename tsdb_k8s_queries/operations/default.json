@@ -3,6 +3,7 @@
   "operation-type": "bulk",
   "corpora" : "k8s-container",
   "bulk-size": {{bulk_size | default(9000)}},
+  "detailed-results": {{detailed_results | default("false")}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {
@@ -10,6 +11,7 @@
   "operation-type": "bulk",
   "corpora" : "k8s-pod",
   "bulk-size": {{bulk_size | default(9000)}},
+  "detailed-results": {{detailed_results | default("false")}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
 },
 {% for name, info in time_intervals.items() %}

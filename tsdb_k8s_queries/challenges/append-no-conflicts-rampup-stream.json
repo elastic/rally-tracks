@@ -96,7 +96,7 @@
           {
             "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_composite-search-{{name}}",
             "warmup-iterations": {{search_warmup_iterations}},
-            "iterations": {{search_warmup_iterations}},
+            "iterations": {{search_iterations}},
             "target-interval": {{target_interval}},
             "clients": 2,
             "operation": {

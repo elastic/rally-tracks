@@ -114,14 +114,6 @@
             "clients": 1
           },
           {
-            "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_memory_usage_per_pod_{{name}}",
-            "operation": "memory_usage_per_pod_{{name}}",
-            "detailed-results": {{detailed_results | default("false")}},
-            "iterations": {{search_iterations}},
-            "target-interval": {{target_interval}},
-            "clients": 1
-          },
-          {
             "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_unique_deployment_count_{{name}}",
             "operation": "unique_deployment_count_{{name}}",
             "detailed-results": {{detailed_results | default("false")}},

@@ -18,7 +18,7 @@
 {
   "name": "cpu_usage_per_pod_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
     "aggs": {
       "0": {
@@ -110,7 +110,7 @@
 {
   "name": "memory_usage_per_pod_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
     "aggs": {
       "0": {
@@ -202,7 +202,7 @@
 {
   "name": "average_container_cpu_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
     "aggs": {
       "0": {
@@ -294,7 +294,7 @@
 {
   "name": "average_container_memory_usage_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
     "aggs": {
       "0": {
@@ -386,7 +386,7 @@
 {
   "name": "cpu_usage_per_container_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
     "aggs": {
       "0": {
@@ -479,7 +479,7 @@
 {
   "name": "memory_usage_per_container_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
     "aggs": {
       "0": {
@@ -571,7 +571,7 @@
 {
   "name": "unique_deployment_count_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
     "aggs": {
       "0": {
@@ -637,7 +637,7 @@
 {
   "name": "percentile_cpu_usage_per_container_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
       "aggs": {
         "0": {
@@ -716,7 +716,7 @@
 {
   "name": "status_per_pod_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
       "aggs": {
         "0": {
@@ -927,7 +927,7 @@
 {
   "name": "tx_network_usage_per_pod_{{name}}",
   "data-stream": "k8s-*",
-  "operation-type": "search",
+  "detailed-results": {{detailed_results | default("false")}},
   "body": {
       "aggs": {
         "0": {
@@ -1073,7 +1073,8 @@
   "corpora" : "k8s-container",
   "bulk-size": {{touch_bulk_size}},
   "ingest-percentage": 100,
-  "pipeline": "timestamp_pipeline"
+  "pipeline": "timestamp_pipeline",
+  "detailed-results": {{detailed_results | default("false")}}
 },
 {
   "name": "touch-pod-index",
@@ -1081,5 +1082,6 @@
   "corpora" : "k8s-pod",
   "bulk-size": {{touch_bulk_size}},
   "ingest-percentage": 100,
-  "pipeline": "timestamp_pipeline"
+  "pipeline": "timestamp_pipeline",
+  "detailed-results": {{detailed_results | default("false")}}
 }

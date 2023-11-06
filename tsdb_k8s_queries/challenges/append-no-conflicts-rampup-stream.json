@@ -74,7 +74,7 @@
     {%- set p_iteration_count = iteration_count | default(6) %}
     {%- for step in range(1, p_iteration_count + 1, 1) %},
           {%- set touch_bulk_indexing_clients = touch_bulk_indexing_clients * step %}
-          {%- set t_parallel_clients = touch_bulk_indexing_clients + 5 %}
+          {%- set t_parallel_clients = touch_bulk_indexing_clients + 10 %}
           {%- set split_touch_bulk_indexing_clients = touch_bulk_indexing_clients/2 %}
           {%- set split_touch_bulk_indexing_clients = split_touch_bulk_indexing_clients | int %}
           {%- set task_label = "ramp-up-" %}

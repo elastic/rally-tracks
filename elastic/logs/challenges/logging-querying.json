@@ -21,7 +21,8 @@
         },
         "clients": {{ p_bulk_indexing_clients }},
         "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
-      },
+      }
+      {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
       {
         "name": "compression-stats",
         "operation": {
@@ -29,6 +30,7 @@
           "param-source": "create-datastream-source"
         }
       },
+      {%- endif -%}{# non-serverless-index-statistics-marker-end #}
     {% endif %}
     {
       "name": "logging-queries",

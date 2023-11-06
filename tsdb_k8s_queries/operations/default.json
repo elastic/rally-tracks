@@ -390,6 +390,7 @@
 {
   "name": "cpu_usage_per_container_{{name}}",
   "data-stream": "k8s-*",
+  "operation-type": "search",
   "detailed-results": {{detailed_results | default("false")}},
   "body": {
     "aggs": {

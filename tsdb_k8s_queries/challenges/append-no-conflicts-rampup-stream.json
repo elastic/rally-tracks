@@ -78,23 +78,23 @@
           {%- set split_touch_bulk_indexing_clients = touch_bulk_indexing_clients/2 %}
           {%- set split_touch_bulk_indexing_clients = split_touch_bulk_indexing_clients | int %}
           {%- set task_label = "ramp-up-" %}
-          {%- for name, info in time_intervals.items() %}
     {
       "parallel": {
         "clients": {{t_parallel_clients}},
         "tasks": [
           {
-            "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_touch-pod-{{name}}",
+            "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_touch-pod",
             "operation": "touch-pod-index",
             "time-period": {{touch_bulk_indexing_time_period | default(300)}},
             "clients": {{split_touch_bulk_indexing_clients}}
           },
           {
-            "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_touch-container-{{name}}",
+            "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_touch-container",
             "operation": "touch-container-index",
             "time-period": {{touch_bulk_indexing_time_period | default(300)}},
             "clients": {{split_touch_bulk_indexing_clients}}
           },
+          {%- for name, info in time_intervals.items() %}
           {
             "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_cpu_usage_per_pod_{{name}}",
             "operation": "cpu_usage_per_pod_{{name}}",

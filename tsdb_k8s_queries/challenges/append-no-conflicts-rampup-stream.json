@@ -165,11 +165,11 @@
             "iterations": {{search_iterations}},
             "target-interval": {{target_interval}},
             "time-period": {{search_time_period | default(150)}}
-          }
+          }{{ ", " if not loop.last else "" }}
+          {%- endfor %}
         ]
       }
-    }{{ ", " if not loop.last else "" }}
-          {%- endfor %}
-          {%- endfor %}
+    }
+    {%- endfor %}
   ]
 }

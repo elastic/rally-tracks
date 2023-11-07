@@ -904,7 +904,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_passenger_count_esql_shard_partitioning",
+          "operation": "avg_passenger_count_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -922,7 +922,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_passenger_count_filtered_esql_shard_partitioning",
+          "operation": "avg_passenger_count_filtered_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -940,7 +940,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_tip_percent_esql_shard_partitioning",
+          "operation": "avg_tip_percent_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -958,7 +958,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_amount_group_by_integer_esql_shard_partitioning",
+          "operation": "avg_amount_group_by_integer_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -976,7 +976,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_amount_group_by_keyword_esql_shard_partitioning",
+          "operation": "avg_amount_group_by_keyword_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -994,7 +994,7 @@
           "iterations": 50
         },
         {
-          "operation": "count_group_by_keyword_esql_shard_partitioning",
+          "operation": "count_group_by_keyword_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1018,7 +1018,7 @@
           "iterations": 50
         },
         {
-          "operation": "multi_terms-keyword_esql_shard_partitioning",
+          "operation": "multi_terms-keyword_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1036,7 +1036,7 @@
           "iterations": 50
         },
         {
-          "operation": "sort_by_ts_esql_shard_partitioning",
+          "operation": "sort_by_ts_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1054,7 +1054,7 @@
           "iterations": 50
         },
         {
-          "operation": "date_histogram_calendar_interval_esql_shard_partitioning",
+          "operation": "date_histogram_calendar_interval_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1072,7 +1072,7 @@
           "iterations": 50
         },        
         {
-          "operation": "date_histogram_fixed_interval_esql_shard_partitioning",
+          "operation": "date_histogram_fixed_interval_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1090,7 +1090,7 @@
           "iterations": 50
         },
         {
-          "operation": "date_histogram_fixed_interval_with_metrics_esql_shard_partitioning",
+          "operation": "date_histogram_fixed_interval_with_metrics_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50

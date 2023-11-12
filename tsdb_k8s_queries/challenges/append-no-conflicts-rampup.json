@@ -4,11 +4,15 @@
   "default": false,
   "schedule": [
     {
-      "name": "delete-all-templates",
+      "name": "delete-all-datastreams",
       "operation": {
-        "operation-type": "delete-composable-template",
-        "delete-matching-indices": true,
-        "index-pattern": "pod-*"
+        "operation-type": "delete-data-stream"
+      }
+    },
+    {
+      "name": "delete-all-composable-templates",
+      "operation": {
+        "operation-type": "delete-composable-template"
       }
     },
     {

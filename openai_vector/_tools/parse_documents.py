@@ -68,7 +68,7 @@ def parse_documents(doc_table: pa.Table, doc_count: int, table_offset: int, outp
                         "docid": docid.as_py(),
                         "title": title.as_py(),
                         "text": text.as_py(),
-                        "emb": json.dumps(emb.as_py())
+                        "emb": emb.as_py()
                     },
                     ensure_ascii=True
                 ))

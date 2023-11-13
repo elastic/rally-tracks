@@ -4,6 +4,18 @@
       "default": true,
       "schedule": [
         {
+          "name": "delete-all-datastreams",
+          "operation": {
+            "operation-type": "delete-data-stream"
+          }
+        },
+        {
+          "name": "delete-all-composable-templates",
+          "operation": {
+            "operation-type": "delete-composable-template"
+          }
+        },
+        {
           "name": "create-all-templates",
           "operation": {
             "operation-type": "create-composable-template",

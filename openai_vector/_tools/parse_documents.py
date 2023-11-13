@@ -48,6 +48,10 @@ def parse_documents(doc_table: pa.Table, doc_count: int, table_offset: int, outp
     print(f"Writing {doc_count} documents to {output_file_path}")
 
     with bz2.open(output_file_path, 'wt') as output_file:
+        if doc_count <= 0:
+            # Return here so we always create the output file
+            return
+
         doc_table_sliced = doc_table.slice(offset=table_offset, length=doc_count)
 
         docs_written = 0

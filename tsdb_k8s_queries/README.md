@@ -93,3 +93,15 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_shards` (default: 1)
 * `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
 * `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
+
+#### Parameters specific to `append-no-conflicts-rampup`
+
+Challenge `append-no-conflicts-rampup` is intended to be used when benchmarking Elasticsearch Serverless deployments. The benchmark executes search operations while ramping up the indexing workload.
+
+* `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests. Bulk indexing clients will be split across two parallel indexing operations for each of the two data streams.
+* `iteration_count` (default: 6): The number of times to index the corpus and perform concurrent search operations.
+* `search_time_period` (default: 150): The amount of time, in seconds, to execute a search operation.
+* `search_iterations` (default: 20): The number of times to execute a search operation of the `search_time_period`.
+* `target_interval` (default: 4): The time, in seconds, between each search execution iteration.
+* `touch_bulk_indexing_clients` (default: 3): Number of clients that issue bulk indexing for the bulk tasks that get executed during searching. Bulk indexing clients will be split across two parallel indexing operations for each of the two data streams.
+* `touch_bulk_indexing_time_period` (default: 300): The amount of time, in seconds, to execute touch indexing operations. 

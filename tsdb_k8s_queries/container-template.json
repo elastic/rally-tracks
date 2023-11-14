@@ -13,7 +13,11 @@
           "lifecycle": {
             "name": "metrics"
           },
-          "codec": "best_compression",
+          "query": {
+            "default_field": [
+              "message"
+            ]
+          },
           "routing": {
             "allocation": {
               "include": {
@@ -79,7 +83,7 @@
           "mode": "time_series",
           "routing_path": [
             "kubernetes.pod.uid",
-            "kubernetes.container.name",
+            "container.id",
             "orchestrator.cluster.url",
             "service.address"
           ],
@@ -102,6 +106,9 @@
           "package": {
             "name": "kubernetes"
           }
+        },
+        "_source": {
+          "mode": "synthetic"
         },
         "dynamic_templates": [
           {
@@ -245,13 +252,13 @@
             }
           },
           "container": {
+            "dynamic": "true",
             "properties": {
               "cpu": {
                 "properties": {
                   "usage": {
                     "type": "scaled_float",
                     "meta": {
-                      "metric_type": "gauge",
                       "unit": "percent"
                     },
                     "scaling_factor": 1000,
@@ -260,7 +267,8 @@
                 }
               },
               "id": {
-                "type": "keyword"
+                "type": "keyword",
+                "time_series_dimension": true
               },
               "image": {
                 "properties": {
@@ -270,12 +278,15 @@
                   }
                 }
               },
+              "labels": {
+                "type": "object",
+                "dynamic": "true"
+              },
               "memory": {
                 "properties": {
                   "usage": {
                     "type": "scaled_float",
                     "meta": {
-                      "metric_type": "gauge",
                       "unit": "percent"
                     },
                     "scaling_factor": 1000,
@@ -402,7 +413,12 @@
             }
           },
           "kubernetes": {
+            "dynamic": "true",
             "properties": {
+              "annotations": {
+                "type": "object",
+                "dynamic": "true"
+              },
               "container": {
                 "properties": {
                   "cpu": {
@@ -413,9 +429,7 @@
                             "properties": {
                               "ns": {
                                 "type": "long",
-                                "meta": {
-                                  "metric_type": "gauge"
-                                }
+                                "time_series_metric": "gauge"
                               }
                             }
                           },
@@ -424,7 +438,6 @@
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -434,16 +447,13 @@
                           },
                           "nanocores": {
                             "type": "long",
-                            "meta": {
-                              "metric_type": "gauge"
-                            }
+                            "time_series_metric": "gauge"
                           },
                           "node": {
                             "properties": {
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -466,9 +476,9 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
@@ -477,9 +487,9 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
@@ -487,21 +497,15 @@
                         "properties": {
                           "count": {
                             "type": "long",
-                            "meta": {
-                              "metric_type": "gauge"
-                            }
+                            "time_series_metric": "gauge"
                           },
                           "free": {
                             "type": "long",
-                            "meta": {
-                              "metric_type": "gauge"
-                            }
+                            "time_series_metric": "gauge"
                           },
                           "used": {
                             "type": "long",
-                            "meta": {
-                              "metric_type": "gauge"
-                            }
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
@@ -510,9 +514,9 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       }
@@ -525,32 +529,28 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
                       "majorpagefaults": {
                         "type": "long",
-                        "meta": {
-                          "metric_type": "counter"
-                        }
+                        "time_series_metric": "counter"
                       },
                       "pagefaults": {
                         "type": "long",
-                        "meta": {
-                          "metric_type": "counter"
-                        }
+                        "time_series_metric": "counter"
                       },
                       "rss": {
                         "properties": {
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
@@ -559,16 +559,15 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           },
                           "limit": {
                             "properties": {
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -581,7 +580,6 @@
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -596,16 +594,15 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           },
                           "limit": {
                             "properties": {
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -619,7 +616,7 @@
                   },
                   "name": {
                     "type": "keyword",
-                    "time_series_dimension": true
+                    "ignore_above": 1024
                   },
                   "rootfs": {
                     "properties": {
@@ -628,9 +625,9 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
@@ -639,9 +636,9 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
@@ -649,9 +646,7 @@
                         "properties": {
                           "used": {
                             "type": "long",
-                            "meta": {
-                              "metric_type": "gauge"
-                            }
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
@@ -660,9 +655,9 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       }
@@ -705,19 +700,40 @@
                   }
                 }
               },
+              "labels": {
+                "type": "object",
+                "dynamic": "true"
+              },
               "namespace": {
                 "type": "keyword",
                 "ignore_above": 1024
+              },
+              "namespace_annotations": {
+                "type": "object",
+                "dynamic": "true"
+              },
+              "namespace_labels": {
+                "type": "object",
+                "dynamic": "true"
               },
               "namespace_uid": {
                 "type": "keyword",
                 "ignore_above": 1024
               },
               "node": {
+                "dynamic": "true",
                 "properties": {
+                  "annotations": {
+                    "type": "object",
+                    "dynamic": "true"
+                  },
                   "hostname": {
                     "type": "keyword",
                     "ignore_above": 1024
+                  },
+                  "labels": {
+                    "type": "object",
+                    "dynamic": "true"
                   },
                   "name": {
                     "type": "keyword",
@@ -751,6 +767,10 @@
                     "ignore_above": 1024
                   }
                 }
+              },
+              "selectors": {
+                "type": "object",
+                "dynamic": "true"
               },
               "statefulset": {
                 "properties": {

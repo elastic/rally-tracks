@@ -12,6 +12,8 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * `max_num_segments` (default: 1)
 * `query_percentage` (default: 100): Factor applied to the number of warmup-iterations and iterations for queries. Useful to run quick experiments but watch out for effects due to the shorter warmup period!
+* `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+* `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 
 ## Testing
 

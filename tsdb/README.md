@@ -187,6 +187,8 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.
 * `ingest_mode` (default: index) Should be `data_stream` to benchmark ingesting into a tsdb data stream.
 * `corpus` (default: full) Should be `split16` to use a corpus split in 16 to be used with 16 indexing clients and index mostly in @timestamp order.
+* `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+* `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 
 ### License
 

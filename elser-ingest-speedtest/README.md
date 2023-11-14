@@ -13,6 +13,13 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `bulk_indexing_clients` (default: 1)
 * `ingest_percentage` (default: 100)
 
+### Challenges
+This rally track includes a challenge for each version of the ELSER model:
+* ELSER-V1: ".elser_model_1"
+* ELSER-V2 Platform Agnostic: ".elser_model_2"
+* ELSER-V2 Platform Specific: ".elser_model_2_linux-x86_64"
+
+
 ### Data Setup
 The documents are all of a fixed length input equivalent to 256 Word Piece tokens. They were created by taking words from the BERT vocabulary that tokenize as a single token and generating fixed length inputs from a random selection of single token words.
 

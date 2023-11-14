@@ -91,3 +91,5 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)
+* `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+* `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.

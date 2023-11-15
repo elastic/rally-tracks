@@ -177,6 +177,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 
 * `bulk_size` (default: 10000)
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
+* `search_clients` (default: 1): Number of clients that issue search requests.
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested.
 * `number_of_replicas` (default: 0)
 * `number_of_shards` (default: 1)

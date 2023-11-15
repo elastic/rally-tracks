@@ -74,15 +74,6 @@
         ]
       }
     }
-    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
-    {
-      "name": "post-ingest-sleep",
-      "operation": {
-        "operation-type": "sleep",
-        "duration": {{ post_ingest_sleep_duration|default(30) }}
-      }
-    }
-    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {%- set p_iteration_count = iteration_count | default(6) %}
     {%- for step in range(1, p_iteration_count + 1, 1) %},
           {%- set touch_bulk_indexing_clients = touch_bulk_indexing_clients * step %}

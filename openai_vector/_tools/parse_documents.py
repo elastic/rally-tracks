@@ -36,7 +36,7 @@ def output_documents(input_file_path: str, max_initial_indexing_docs: int, max_p
             initial_indexing_docs = max(0, doc_table.num_rows - max_parallel_indexing_docs)
         else:
             initial_indexing_docs = min(doc_table.num_rows, max_initial_indexing_docs)
-        
+
         parallel_indexing_docs = min(doc_table.num_rows - initial_indexing_docs, max_parallel_indexing_docs)
 
         parse_documents(doc_table, initial_indexing_docs, 0, INITIAL_INDEXING_DOCS_FILENAME)

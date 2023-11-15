@@ -50,6 +50,7 @@ class KnnVectorStore:
     @classmethod
     @functools.lru_cache(maxsize=1)
     def get_instance(cls, queries_file: str):
+        logger.info("Initializing KnnVectorStore")
         return KnnVectorStore(queries_file)
 
     @staticmethod
@@ -190,7 +191,7 @@ class KnnRecallParamSource:
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
             "queries_file": self._queries_file,
-            "max_k": self._params.get("max_k", 33)
+            "max_k": self._params.get("max_k", 42)
         }
 
 

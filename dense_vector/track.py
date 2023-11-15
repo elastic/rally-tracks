@@ -22,6 +22,26 @@ def load_query_vectors(queries_file):
     return query_vectors
 
 
+async def extract_exact_neighbors(query_vector: list[float], index: str, max_size: int, client) -> list[str]:
+    script_query = await client.search(
+        body={
+            "query": {
+                "script_score": {
+                    "query": {"match_all": {}},
+                    "script": {
+                        "source": "cosineSimilarity(params.query, 'vector') + 1.0",
+                        "params": {"query": query_vector},
+                    },
+                }
+            },
+            "_source": False,
+        },
+        index=index,
+        size=max_size,
+    )
+    return [hit["_id"] for hit in script_query["hits"]["hits"]]
+
+
 class KnnVectorStore:
 
     def __init__(self, queries_file: str):
@@ -42,7 +62,7 @@ class KnnVectorStore:
     async def load_exact_neighbors(self, index: str, query_id: str, max_size: int, client):
         if query_id not in self._query_vectors:
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
-        return await self.extract_exact_neighbors(self._query_vectors[query_id], index, max_size, client)
+        return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, client)
 
     def get_query_vectors(self) -> dict[str, list[float]]:
         return self._query_vectors
@@ -50,28 +70,8 @@ class KnnVectorStore:
     @classmethod
     @functools.lru_cache(maxsize=1)
     def get_instance(cls, queries_file: str):
-        logger.info("Initializing KnnVectorStore")
+        logger.info(f"Initializing KnnVectorStore for queries file: '{queries_file}'")
         return KnnVectorStore(queries_file)
-
-    @staticmethod
-    async def extract_exact_neighbors(query_vector: list[float], index: str, max_size: int, client) -> list[str]:
-        script_query = await client.search(
-            body={
-                "query": {
-                    "script_score": {
-                        "query": {"match_all": {}},
-                        "script": {
-                            "source": "cosineSimilarity(params.query, 'vector') + 1.0",
-                            "params": {"query": query_vector},
-                        },
-                    }
-                },
-                "_source": False,
-            },
-            index=index,
-            size=max_size,
-        )
-        return [hit["_id"] for hit in script_query["hits"]["hits"]]
 
 
 class KnnRecallProcessor:

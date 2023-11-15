@@ -28,7 +28,7 @@ def output_documents(input_file_path: str, max_initial_indexing_docs: int, max_p
         raise ValueError("max_parallel_indexing_docs must be >= 0")
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    with pa.memory_map(input_file_path, 'rb') as source:
+    with pa.memory_map(input_file_path, "rb") as source:
         doc_table = pa.ipc.open_stream(source).read_all()
 
         if max_initial_indexing_docs < 0:
@@ -47,7 +47,7 @@ def parse_documents(doc_table: pa.Table, doc_count: int, table_offset: int, outp
     output_file_path = os.path.join(OUTPUT_DIR, output_filename)
     print(f"Writing {doc_count} documents to {output_file_path}")
 
-    with bz2.open(output_file_path, 'wt') as output_file:
+    with bz2.open(output_file_path, "wt") as output_file:
         if doc_count <= 0:
             # Return here so we always create the output file
             return
@@ -63,15 +63,11 @@ def parse_documents(doc_table: pa.Table, doc_count: int, table_offset: int, outp
             text_col = record_batch.column("text")
             emb_col = record_batch.column("embedding")
             for docid, title, text, emb in zip(docid_col, title_col, text_col, emb_col):
-                output_file.write(json.dumps(
-                    {
-                        "docid": docid.as_py(),
-                        "title": title.as_py(),
-                        "text": text.as_py(),
-                        "emb": emb.as_py()
-                    },
-                    ensure_ascii=True
-                ))
+                output_file.write(
+                    json.dumps(
+                        {"docid": docid.as_py(), "title": title.as_py(), "text": text.as_py(), "emb": emb.as_py()}, ensure_ascii=True
+                    )
+                )
                 output_file.write("\n")
 
             docs_written += record_batch.num_rows

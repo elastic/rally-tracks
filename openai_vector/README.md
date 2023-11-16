@@ -6,7 +6,7 @@ This track benchmarks the [NQ dataset](https://huggingface.co/datasets/BeIR/nq) 
 
 To rebuild the document dataset:
 
-1. Install Python dependencies listed in `_tools/requimements.txt`
+1. Install Python dependencies listed in `_tools/requirements.txt`
 2. Download the raw corpus dataset [from here](https://rally-tracks.elastic.co/openai_vector/raw_data/corpus/nq_openai-text-embedding-ada-002_corpus_dataset.arrow)
 3. Run `./_tools/parse_documents.py <raw_corpus_dataset_path>`
 
@@ -27,7 +27,7 @@ This will build the document dataset files in the `openai-documents` directory.
 
 To rebuild the `queries.json.bz2` file:
 
-1. Install Python dependencies listed in `_tools/requimements.txt`
+1. Install Python dependencies listed in `_tools/requirements.txt`
 2. Download the raw queries dataset [from here](https://rally-tracks.elastic.co/openai_vector/raw_data/queries/nq_openai-text-embedding-ada-002_queries_dataset.arrow)
 3. Run `./_tools/parse_queries.py <raw_queries_dataset_path>`
 

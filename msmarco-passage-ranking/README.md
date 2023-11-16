@@ -10,7 +10,7 @@ It's important to highlight that the text-expansion and hybrid strategies are de
 
 ### Example Document
 
-Documents adhere to the [JSON Lines format](https://jsonlines.org/). 
+Documents adhere to the [JSON Lines format](https://jsonlines.org/).
 When a single document is pretty printed, it takes the following example format:
 
 <details>
@@ -454,7 +454,7 @@ EnsembleDistil](https://huggingface.co/naver/splade-cocondenser-ensembledistil) 
 
 ### Example Query
 
-Queries are structured within a JSON array, where each individual object signifies a unique 'query' and its corresponding expansion achieved through ELSER v2, which is stored pre-computed in the 'query_expansion' field.:
+Queries are structured within a JSON array, where each individual object signifies a unique 'query' and its corresponding expansion achieved through ELSER v2, which is stored pre-computed in the 'text_expansion_elser' field.:
 
 <details>
   <summary><i>Example query object</i></summary>

@@ -27,7 +27,6 @@
     },
     {
       "operation": {
-        "include-in-reporting": false,
         "operation-type": "bulk",
         "bulk-size": {{bulk_size | default(500)}},
         "ingest-percentage": {{ingest_percentage | default(100)}}
@@ -68,29 +67,43 @@
       "clients": {{search_clients | default(1)}}
     },
     {
+      "operation": "text-expansion-splade-search-maxwand-enabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
+      "operation": "text-expansion-splade-search-maxwand-disabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
       "operation": "pruned-text-expansion-search-maxwand-enabled",
       "warmup-iterations": 100,
       "iterations": 1000,
       "clients": {{search_clients | default(1)}}
-  },
+    },
     {
       "operation": "pruned-text-expansion-search-maxwand-disabled",
       "warmup-iterations": 100,
       "iterations": 1000,
       "clients": {{search_clients | default(1)}}
-  },
+    },
     {
-      "operation": "pruned-all-score-text-expansion-search-maxwand-enabled",
+      "operation": "pruned-rescored-text-expansion-search-maxwand-enabled",
       "warmup-iterations": 100,
       "iterations": 1000,
+      "num_candidates": 100,
       "clients": {{search_clients | default(1)}}
-  },
+    },
     {
-      "operation": "pruned-all-score-text-expansion-search-maxwand-disabled",
+      "operation": "pruned-rescored-text-expansion-search-maxwand-disabled",
       "warmup-iterations": 100,
       "iterations": 1000,
+      "num_candidates": 100,
       "clients": {{search_clients | default(1)}}
-  },
+    },
     {
       "operation": "bm25-search-maxwand-enabled",
       "warmup-iterations": 100,
@@ -116,16 +129,10 @@
       "clients": {{search_clients | default(1)}}
     },
     {
-      "operation": "weighted-terms-recall-10-10"
+      "operation": "pruned-weighted-terms-recall-10-10"
     },
     {
-      "operation": "weighted-terms-recall-10-100"
-    },
-    {
-      "operation": "weighted-terms-recall-100-100"
-    },
-    {
-      "operation": "weighted-terms-recall-100-1000"
+      "operation": "pruned-weighted-terms-recall-10-100"
     }
   ]
 }

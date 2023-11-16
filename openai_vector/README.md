@@ -2,19 +2,34 @@
 
 This track benchmarks the [NQ dataset](https://huggingface.co/datasets/BeIR/nq) enriched with embeddings generated using OpenAI's [`text-embedding-ada-002` model](https://openai.com/blog/new-and-improved-embedding-model).
 
-TODO: Describe required cluster size
-
 ### Generating the document dataset
 
-TODO: Where to download the dataset from publicly?
+To rebuild the document dataset:
+
+1. Install Python dependencies listed in `_tools/requimements.txt`
+2. Download the raw corpus dataset [from here](https://rally-tracks.elastic.co/openai_vector/raw_data/corpus/nq_openai-text-embedding-ada-002_corpus_dataset.arrow)
+3. Run `./_tools/parse_documents.py <raw_corpus_dataset_path>`
+
+This will build the document dataset files in the `openai-documents` directory.
 
 ### Example Document
 
-TODO: Complete section
+```json
+{
+  "docid": "doc0",
+  "title": "Minority interest",
+  "text": "In accounting, minority interest (or non-controlling interest) is the portion of a subsidiary corporation's stock that is not owned by the parent corporation. The magnitude of the minority interest in the subsidiary company is generally less than 50% of outstanding shares, or the corporation would generally cease to be a subsidiary of the parent.[1]",
+  "emb": [-0.01128644309937954, -0.02616020105779171, 0.012801663018763065, ...]
+}
+```
 
 ### Generating the queries
 
-TODO: Complete section
+To rebuild the `queries.json.bz2` file:
+
+1. Install Python dependencies listed in `_tools/requimements.txt`
+2. Download the raw queries dataset [from here](https://rally-tracks.elastic.co/openai_vector/raw_data/queries/nq_openai-text-embedding-ada-002_queries_dataset.arrow)
+3. Run `./_tools/parse_queries.py <raw_queries_dataset_path>`
 
 ### Parameters
 
@@ -29,3 +44,9 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - number_of_replicas (default: 0)
  - post_ingest_sleep (default: false): Whether to pause after ingest and prior to subsequent operations.
  - post_ingest_sleep_duration (default: 30): Sleep duration in seconds.
+
+TODO: Update track params
+
+### License
+
+This track and its dataset are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/legalcode.en).

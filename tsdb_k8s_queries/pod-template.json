@@ -38,7 +38,6 @@
             "name": "metrics"
           },
           {%- endif -%}{# non-serverless-index-settings-marker-end #}
-          "codec": "best_compression",
           "mapping": {
             "total_fields": {
               "limit": "10000"
@@ -112,9 +111,6 @@
           "package": {
             "name": "kubernetes"
           }
-        },
-        "_source": {
-          "mode": "synthetic"
         },
         "dynamic_templates": [
           {

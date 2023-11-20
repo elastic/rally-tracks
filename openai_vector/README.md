@@ -53,4 +53,4 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 
 ### License
 
-This track and its dataset are licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/legalcode.en).
+We use the same license for the data as the original data: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).

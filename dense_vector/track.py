@@ -4,7 +4,7 @@ import logging
 import os
 import re
 from collections import defaultdict
-from typing import List, Dict
+from typing import Dict, List
 
 from esrally.track import loader
 from esrally.track.track import Parallel, Task

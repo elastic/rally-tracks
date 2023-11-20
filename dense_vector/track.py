@@ -6,7 +6,7 @@ import re
 
 from collections import defaultdict
 from esrally.track import loader
-from esrally.track.track import Task, Parallel
+from esrally.track.track import Parallel, Task
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ def load_query_vectors(queries_file):
     if not (os.path.exists(queries_file) and os.path.isfile(queries_file)):
         raise ValueError(f"Provided queries file '{queries_file}' does not exist or is not a file")
     query_vectors: dict[str, list[float]]
-    with open(queries_file, 'r') as f:
+    with open(queries_file, "r") as f:
         logger.debug(f"Reading query vectors from '{queries_file}'")
         lines = f.readlines()
         query_vectors = {_index: json.loads(vector) for _index, vector in enumerate(lines)}
@@ -192,7 +192,7 @@ class KnnRecallParamSource:
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
             "queries_file": self._queries_file,
-            "max_k": self._params.get("max_k", 42)
+            "max_k": self._params.get("max_k", 42),
         }
 
 

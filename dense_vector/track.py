@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import re
-
 from collections import defaultdict
 from esrally.track import loader
 from esrally.track.track import Parallel, Task
@@ -44,7 +43,6 @@ async def extract_exact_neighbors(query_vector: list[float], index: str, max_siz
 
 
 class KnnVectorStore:
-
     def __init__(self, queries_file: str):
         self._query_vectors = load_query_vectors(queries_file)
         self._store = defaultdict(lambda: defaultdict(list))
@@ -77,7 +75,6 @@ class KnnVectorStore:
 
 
 class KnnRecallProcessor:
-
     KNN_RECALL_OPERATION_PATTERN = re.compile(r"knn-recall-(\d+)-(\d+)")
 
     def on_after_load_track(self, t):

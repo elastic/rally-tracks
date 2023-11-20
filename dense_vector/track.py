@@ -7,18 +7,19 @@ import re
 from collections import defaultdict
 from esrally.track import loader
 from esrally.track.track import Task, Parallel
+
 logger = logging.getLogger(__name__)
 
 
 def load_query_vectors(queries_file):
     if not (os.path.exists(queries_file) and os.path.isfile(queries_file)):
-        raise ValueError(f"Provided queries file %s does not exist or is not a file" % queries_file)
+        raise ValueError(f"Provided queries file '{queries_file}' does not exist or is not a file")
     query_vectors: dict[str, list[float]]
     with open(queries_file, 'r') as f:
-        logger.info(f"Reading query vectors from '{queries_file}'")
+        logger.debug(f"Reading query vectors from '{queries_file}'")
         lines = f.readlines()
         query_vectors = {_index: json.loads(vector) for _index, vector in enumerate(lines)}
-        logger.info(f"Finished reading query vectors from '{queries_file}'")
+        logger.debug(f"Finished reading query vectors from '{queries_file}'")
     return query_vectors
 
 
@@ -57,6 +58,7 @@ class KnnVectorStore:
                 logger.debug(f"Finished computing exact neighbors for {query_id} - it's now cached!")
             return self._store[index][query_id]
         except Exception as ex:
+            logger.error(f"Failed to compute nearest neighbors for '{query_id}'. Returning empty results instead.", ex)
             return []
 
     async def load_exact_neighbors(self, index: str, query_id: str, max_size: int, client):

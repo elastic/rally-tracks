@@ -178,7 +178,6 @@ class KnnRecallParamSource:
         self._index_name = params.get("index", default_index)
         self._cache = params.get("cache", False)
         self._params = params
-        self._queries = []
         self.infinite = True
         cwd = os.path.dirname(__file__)
         self._queries_file = os.path.join(cwd, "queries.json")

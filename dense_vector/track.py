@@ -4,6 +4,7 @@ import logging
 import os
 import re
 from collections import defaultdict
+from typing import List, Dict
 
 from esrally.track import loader
 from esrally.track.track import Parallel, Task
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 def load_query_vectors(queries_file):
     if not (os.path.exists(queries_file) and os.path.isfile(queries_file)):
         raise ValueError(f"Provided queries file '{queries_file}' does not exist or is not a file")
-    query_vectors: dict[str, list[float]]
+    query_vectors: Dict[str, List[float]]
     with open(queries_file, "r") as f:
         logger.debug(f"Reading query vectors from '{queries_file}'")
         lines = f.readlines()
@@ -23,7 +24,7 @@ def load_query_vectors(queries_file):
     return query_vectors
 
 
-async def extract_exact_neighbors(query_vector: list[float], index: str, max_size: int, client) -> list[str]:
+async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, client) -> List[str]:
     script_query = await client.search(
         body={
             "query": {
@@ -48,7 +49,7 @@ class KnnVectorStore:
         self._query_vectors = load_query_vectors(queries_file)
         self._store = defaultdict(lambda: defaultdict(list))
 
-    async def get_neighbors_for_query(self, index: str, query_id: str, max_size: int, client) -> list[str]:
+    async def get_neighbors_for_query(self, index: str, query_id: str, max_size: int, client) -> List[str]:
         try:
             logger.debug(f"Fetching exact neighbors for {query_id} from in-memory store")
             if not (index in self._store and query_id in self._store[index]):
@@ -65,7 +66,7 @@ class KnnVectorStore:
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
         return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, client)
 
-    def get_query_vectors(self) -> dict[str, list[float]]:
+    def get_query_vectors(self) -> Dict[str, List[float]]:
         return self._query_vectors
 
     @classmethod

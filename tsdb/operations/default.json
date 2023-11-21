@@ -322,4 +322,14 @@
       }
     }
   }
+},
+{
+  "name": "esql-fetch-500",
+  "description": "Grab 500 documents",
+  "operation-type": "esql",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "query": "FROM k8s | LIMIT 500"
+  {%- else %}
+  "query": "FROM tsdb | LIMIT 500"
+  {% endif %}
 }

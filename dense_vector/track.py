@@ -20,24 +20,26 @@ def load_query_vectors(queries_file):
     return query_vectors
 
 
-async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, client) -> List[str]:
-    script_query = await client.search(
-        body={
+async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, request_cache: bool, client) -> List[str]:
+    script_query = {
             "query": {
                 "script_score": {
                     "query": {"match_all": {}},
                     "script": {
-                        "source": f"cosineSimilarity(params.query, {vector_field}) + 1.0",
+                        "source": f"cosineSimilarity(params.query, '{vector_field}') + 1.0",
                         "params": {"query": query_vector},
                     },
                 }
             },
             "_source": False,
-        },
+        }
+    script_result = await client.search(
+        body=script_query,
         index=index,
+        request_cache=request_cache,
         size=max_size,
     )
-    return [hit["_id"] for hit in script_query["hits"]["hits"]]
+    return [hit["_id"] for hit in script_result["hits"]["hits"]]
 
 
 class KnnVectorStore:
@@ -47,7 +49,7 @@ class KnnVectorStore:
         self._vector_field = vector_field
         self._store = defaultdict(lambda: defaultdict(list))
 
-    async def get_neighbors_for_query(self, index: str, query_id: str, size: int, client) -> List[str]:
+    async def get_neighbors_for_query(self, index: str, query_id: str, size: int, request_cache: bool, client) -> List[str]:
         try:
             logger.debug(f"Fetching exact neighbors for {query_id} from in-memory store")
             exact_neighbors = self._store[index][query_id]
@@ -55,17 +57,17 @@ class KnnVectorStore:
                 logger.debug(
                     f"Query vector with id {query_id} not cached or has fewer then {size} requested results - computing neighbors"
                 )
-                self._store[index][query_id] = await self.load_exact_neighbors(index, query_id, size, client)
+                self._store[index][query_id] = await self.load_exact_neighbors(index, query_id, size, request_cache, client)
                 logger.debug(f"Finished computing exact neighbors for {query_id} - it's now cached!")
             return self._store[index][query_id]
         except Exception as ex:
-            logger.error(f"Failed to compute nearest neighbors for '{query_id}'. Returning empty results instead.", ex)
+            logger.exception(f"Failed to compute nearest neighbors for '{query_id}'. Returning empty results instead.", ex)
             return []
 
-    async def load_exact_neighbors(self, index: str, query_id: str, max_size: int, client):
+    async def load_exact_neighbors(self, index: str, query_id: str, max_size: int, request_cache: bool, client):
         if query_id not in self._query_vectors:
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
-        return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, self._vector_field, client)
+        return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, self._vector_field, request_cache, client)
 
     def get_query_vectors(self) -> Dict[str, List[float]]:
         return self._query_vectors
@@ -202,7 +204,7 @@ class KnnRecallRunner:
                 size=k,
             )
             knn_hits = [hit["_id"] for hit in knn_result["hits"]["hits"]]
-            script_hits = await knn_vector_store.get_neighbors_for_query(index, query_id, target_k, es)
+            script_hits = await knn_vector_store.get_neighbors_for_query(index, query_id, target_k, request_cache, es)
             script_hits = script_hits[:k]
             current_recall = len(set(knn_hits).intersection(set(script_hits)))
             recall_total += current_recall

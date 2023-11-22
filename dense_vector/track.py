@@ -2,12 +2,8 @@ import functools
 import json
 import logging
 import os
-import re
 from collections import defaultdict
 from typing import Dict, List
-
-from esrally.track import loader
-from esrally.track.track import Parallel, Task
 
 logger = logging.getLogger(__name__)
 
@@ -24,14 +20,20 @@ def load_query_vectors(queries_file):
     return query_vectors
 
 
-async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, client) -> List[str]:
+async def extract_exact_neighbors(
+        query_vector: List[float],
+        index: str,
+        max_size: int,
+        vector_field: str,
+        client
+) -> List[str]:
     script_query = await client.search(
         body={
             "query": {
                 "script_score": {
                     "query": {"match_all": {}},
                     "script": {
-                        "source": "cosineSimilarity(params.query, 'vector') + 1.0",
+                        "source": f"cosineSimilarity(params.query, {vector_field}) + 1.0",
                         "params": {"query": query_vector},
                     },
                 }
@@ -45,16 +47,20 @@ async def extract_exact_neighbors(query_vector: List[float], index: str, max_siz
 
 
 class KnnVectorStore:
-    def __init__(self, queries_file: str):
+    def __init__(self, queries_file: str, vector_field: str):
+        assert queries_file and vector_field
         self._query_vectors = load_query_vectors(queries_file)
+        self._vector_field = vector_field
         self._store = defaultdict(lambda: defaultdict(list))
 
-    async def get_neighbors_for_query(self, index: str, query_id: str, max_size: int, client) -> List[str]:
+    async def get_neighbors_for_query(self, index: str, query_id: str, size: int, client) -> List[str]:
         try:
             logger.debug(f"Fetching exact neighbors for {query_id} from in-memory store")
-            if not (index in self._store and query_id in self._store[index]):
-                logger.debug(f"Query vector with id {query_id} not cached - computing neighbors")
-                self._store[index][query_id] = await self.load_exact_neighbors(index, query_id, max_size, client)
+            exact_neighbors = self._store[index][query_id]
+            if not exact_neighbors or len(exact_neighbors) < size:
+                logger.debug(f"Query vector with id {query_id} not cached or has fewer then {size} requested results"
+                             f" - computing neighbors")
+                self._store[index][query_id] = await self.load_exact_neighbors(index, query_id, size, client)
                 logger.debug(f"Finished computing exact neighbors for {query_id} - it's now cached!")
             return self._store[index][query_id]
         except Exception as ex:
@@ -64,47 +70,16 @@ class KnnVectorStore:
     async def load_exact_neighbors(self, index: str, query_id: str, max_size: int, client):
         if query_id not in self._query_vectors:
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
-        return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, client)
+        return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, self._vector_field, client)
 
     def get_query_vectors(self) -> Dict[str, List[float]]:
         return self._query_vectors
 
     @classmethod
     @functools.lru_cache(maxsize=1)
-    def get_instance(cls, queries_file: str):
-        logger.info(f"Initializing KnnVectorStore for queries file: '{queries_file}'")
-        return KnnVectorStore(queries_file)
-
-
-class KnnRecallProcessor:
-    KNN_RECALL_OPERATION_PATTERN = re.compile(r"knn-recall-(\d+)-(\d+)")
-
-    def on_after_load_track(self, t):
-        max_k = 0
-        tasks_to_update = []
-        for challenge in t.challenges:
-            for task in challenge.schedule:
-                if isinstance(task, Task):
-                    task_matched = self.KNN_RECALL_OPERATION_PATTERN.search(task.operation.name)
-                    if task_matched:
-                        tasks_to_update.append(task)
-                        matched_k_parameter = task_matched.group(1)
-                        max_k = max(max_k, int(matched_k_parameter))
-                elif isinstance(task, Parallel):
-                    for nested_task in task.tasks:
-                        task_matched = self.KNN_RECALL_OPERATION_PATTERN.search(nested_task.operation.name)
-                        if task_matched:
-                            tasks_to_update.append(nested_task)
-                            matched_k_parameter = task_matched.group(1)
-                            max_k = max(max_k, int(matched_k_parameter))
-            for task in tasks_to_update:
-                task.operation.params.update({"max_k": max_k})
-
-    def on_prepare_track(self, track, data_root_dir):
-        return []
-
-    def __repr__(self, *args, **kwargs):
-        return "knn-recall-processor"
+    def get_instance(cls, queries_file: str, vector_field):
+        logger.info(f"Initializing KnnVectorStore for queries file: '{queries_file}' and vector field: '{vector_field}'")
+        return KnnVectorStore(queries_file, vector_field)
 
 
 class KnnParamSource:
@@ -191,7 +166,8 @@ class KnnRecallParamSource:
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
             "queries_file": self._queries_file,
-            "max_k": self._params.get("max_k", 42),
+            "vector_field": "vector",
+            "target_k": 1_000,
         }
 
 
@@ -205,12 +181,13 @@ class KnnRecallRunner:
         index = params["index"]
         request_cache = params["cache"]
         queries_file = params["queries_file"]
-        max_k = max(params["max_k"], k)
+        vector_field = params["vector_field"]
+        target_k = max(params["target_k"], k)
         recall_total = 0
         exact_total = 0
         min_recall = k
 
-        knn_vector_store: KnnVectorStore = KnnVectorStore.get_instance(queries_file)
+        knn_vector_store: KnnVectorStore = KnnVectorStore.get_instance(queries_file, vector_field)
         for query_id, query_vector in knn_vector_store.get_query_vectors().items():
             knn_result = await es.search(
                 body={
@@ -227,7 +204,7 @@ class KnnRecallRunner:
                 size=k,
             )
             knn_hits = [hit["_id"] for hit in knn_result["hits"]["hits"]]
-            script_hits = await knn_vector_store.get_neighbors_for_query(index, query_id, max_k, es)
+            script_hits = await knn_vector_store.get_neighbors_for_query(index, query_id, target_k, es)
             script_hits = script_hits[:k]
             current_recall = len(set(knn_hits).intersection(set(script_hits)))
             recall_total += current_recall
@@ -253,10 +230,3 @@ def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)
-    registry.register_track_processor(KnnRecallProcessor())
-    # TODO change this based on https://github.com/elastic/rally/issues/1257
-    try:
-        registry.register_track_processor(loader.DefaultTrackPreparator())
-    except TypeError as e:
-        if e == "__init__() missing 1 required positional argument: 'cfg'":
-            pass

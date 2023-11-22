@@ -150,6 +150,8 @@ class KnnRecallParamSource:
         self.infinite = True
         cwd = os.path.dirname(__file__)
         self._queries_file = os.path.join(cwd, "queries.json")
+        self._vector_field = "vector"
+        self._target_k = 1_000
 
     def partition(self, partition_index, total_partitions):
         return self
@@ -161,8 +163,8 @@ class KnnRecallParamSource:
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
             "queries_file": self._queries_file,
-            "vector_field": "vector",
-            "target_k": 1_000,
+            "vector_field": self._vector_field,
+            "target_k": self._target_k,
         }
 
 

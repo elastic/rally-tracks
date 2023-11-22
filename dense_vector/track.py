@@ -21,7 +21,7 @@ def load_query_vectors(queries_file):
 
 
 async def extract_exact_neighbors(
-        query_vector: List[float], index: str, max_size: int, vector_field: str, request_cache: bool, client
+    query_vector: List[float], index: str, max_size: int, vector_field: str, request_cache: bool, client
 ) -> List[str]:
     script_query = {
         "query": {

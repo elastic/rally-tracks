@@ -20,19 +20,21 @@ def load_query_vectors(queries_file):
     return query_vectors
 
 
-async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, request_cache: bool, client) -> List[str]:
+async def extract_exact_neighbors(
+        query_vector: List[float], index: str, max_size: int, vector_field: str, request_cache: bool, client
+) -> List[str]:
     script_query = {
-            "query": {
-                "script_score": {
-                    "query": {"match_all": {}},
-                    "script": {
-                        "source": f"cosineSimilarity(params.query, '{vector_field}') + 1.0",
-                        "params": {"query": query_vector},
-                    },
-                }
-            },
-            "_source": False,
-        }
+        "query": {
+            "script_score": {
+                "query": {"match_all": {}},
+                "script": {
+                    "source": f"cosineSimilarity(params.query, '{vector_field}') + 1.0",
+                    "params": {"query": query_vector},
+                },
+            }
+        },
+        "_source": False,
+    }
     script_result = await client.search(
         body=script_query,
         index=index,
@@ -54,9 +56,7 @@ class KnnVectorStore:
             logger.debug(f"Fetching exact neighbors for {query_id} from in-memory store")
             exact_neighbors = self._store[index][query_id]
             if not exact_neighbors or len(exact_neighbors) < size:
-                logger.debug(
-                    f"Query vector with id {query_id} not cached or has fewer then {size} requested results - computing neighbors"
-                )
+                logger.debug(f"Query vector with id {query_id} not cached or has fewer then {size} requested results - computing neighbors")
                 self._store[index][query_id] = await self.load_exact_neighbors(index, query_id, size, request_cache, client)
                 logger.debug(f"Finished computing exact neighbors for {query_id} - it's now cached!")
             return self._store[index][query_id]

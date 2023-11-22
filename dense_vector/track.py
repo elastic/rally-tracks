@@ -20,13 +20,7 @@ def load_query_vectors(queries_file):
     return query_vectors
 
 
-async def extract_exact_neighbors(
-        query_vector: List[float],
-        index: str,
-        max_size: int,
-        vector_field: str,
-        client
-) -> List[str]:
+async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, client) -> List[str]:
     script_query = await client.search(
         body={
             "query": {
@@ -58,8 +52,9 @@ class KnnVectorStore:
             logger.debug(f"Fetching exact neighbors for {query_id} from in-memory store")
             exact_neighbors = self._store[index][query_id]
             if not exact_neighbors or len(exact_neighbors) < size:
-                logger.debug(f"Query vector with id {query_id} not cached or has fewer then {size} requested results"
-                             f" - computing neighbors")
+                logger.debug(
+                    f"Query vector with id {query_id} not cached or has fewer then {size} requested results" f" - computing neighbors"
+                )
                 self._store[index][query_id] = await self.load_exact_neighbors(index, query_id, size, client)
                 logger.debug(f"Finished computing exact neighbors for {query_id} - it's now cached!")
             return self._store[index][query_id]

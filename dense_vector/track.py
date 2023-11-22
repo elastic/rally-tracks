@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def load_query_vectors(queries_file):
     if not (os.path.exists(queries_file) and os.path.isfile(queries_file)):
         raise ValueError(f"Provided queries file '{queries_file}' does not exist or is not a file")
-    query_vectors: Dict[str, List[float]]
+    query_vectors: Dict[int, List[float]]
     with open(queries_file, "r") as f:
         logger.debug(f"Reading query vectors from '{queries_file}'")
         lines = f.readlines()
@@ -51,7 +51,7 @@ class KnnVectorStore:
         self._vector_field = vector_field
         self._store = defaultdict(lambda: defaultdict(list))
 
-    async def get_neighbors_for_query(self, index: str, query_id: str, size: int, request_cache: bool, client) -> List[str]:
+    async def get_neighbors_for_query(self, index: str, query_id: int, size: int, request_cache: bool, client) -> List[str]:
         try:
             logger.debug(f"Fetching exact neighbors for {query_id} from in-memory store")
             exact_neighbors = self._store[index][query_id]
@@ -69,7 +69,7 @@ class KnnVectorStore:
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
         return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, self._vector_field, request_cache, client)
 
-    def get_query_vectors(self) -> Dict[str, List[float]]:
+    def get_query_vectors(self) -> Dict[int, List[float]]:
         return self._query_vectors
 
     @classmethod

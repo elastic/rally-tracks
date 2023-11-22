@@ -53,7 +53,7 @@ class KnnVectorStore:
             exact_neighbors = self._store[index][query_id]
             if not exact_neighbors or len(exact_neighbors) < size:
                 logger.debug(
-                    f"Query vector with id {query_id} not cached or has fewer then {size} requested results" f" - computing neighbors"
+                    f"Query vector with id {query_id} not cached or has fewer then {size} requested results - computing neighbors"
                 )
                 self._store[index][query_id] = await self.load_exact_neighbors(index, query_id, size, client)
                 logger.debug(f"Finished computing exact neighbors for {query_id} - it's now cached!")
@@ -98,6 +98,7 @@ class KnnParamSource:
                 self._queries.append(json.loads(line))
         self._iters = 0
         self.infinite = True
+        self._vector_field = "vector"
 
     def partition(self, partition_index, total_partitions):
         return self
@@ -111,7 +112,7 @@ class KnnParamSource:
                     "script_score": {
                         "query": {"match_all": {}},
                         "script": {
-                            "source": "cosineSimilarity(params.query, 'vector') + 1.0",
+                            "source": f"cosineSimilarity(params.query, '{self._vector_field}') + 1.0",
                             "params": {"query": self._queries[self._iters]},
                         },
                     }
@@ -121,7 +122,7 @@ class KnnParamSource:
         else:
             result["body"] = {
                 "knn": {
-                    "field": "vector",
+                    "field": self._vector_field,
                     "query_vector": self._queries[self._iters],
                     "k": self._params.get("k", 10),
                     "num_candidates": self._params.get("num-candidates", 100),

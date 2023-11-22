@@ -11,6 +11,14 @@
           {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
           "number_of_shards": {{number_of_shards | default(1)}},
           "number_of_replicas": {{number_of_replicas | default(0)}},
+          "lifecycle": {
+            "name": "metrics"
+          },
+          "query": {
+            "default_field": [
+              "message"
+            ]
+          },
           "requests.cache.enable": false,
           {%- endif -%}{# non-serverless-index-settings-marker-end #}
           {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" -%}
@@ -30,7 +38,6 @@
             "name": "metrics"
           },
           {%- endif -%}{# non-serverless-index-settings-marker-end #}
-          "codec": "best_compression",
           "mapping": {
             "total_fields": {
               "limit": "10000"
@@ -247,6 +254,7 @@
             }
           },
           "container": {
+            "dynamic": "true",
             "properties": {
               "id": {
                 "type": "keyword",
@@ -260,6 +268,10 @@
                   }
                 }
               },
+              "labels": {
+                "type": "object",
+                "dynamic": "true"
+              },
               "name": {
                 "type": "keyword",
                 "ignore_above": 1024
@@ -270,9 +282,7 @@
                     "properties": {
                       "bytes": {
                         "type": "long",
-                        "meta": {
-                          "metric_type": "counter"
-                        }
+                        "time_series_metric": "counter"
                       }
                     }
                   },
@@ -280,9 +290,7 @@
                     "properties": {
                       "bytes": {
                         "type": "long",
-                        "meta": {
-                          "metric_type": "counter"
-                        }
+                        "time_series_metric": "counter"
                       }
                     }
                   }
@@ -399,7 +407,12 @@
             }
           },
           "kubernetes": {
+            "dynamic": "true",
             "properties": {
+              "annotations": {
+                "type": "object",
+                "dynamic": "true"
+              },
               "container": {
                 "properties": {
                   "image": {
@@ -444,19 +457,40 @@
                   }
                 }
               },
+              "labels": {
+                "type": "object",
+                "dynamic": "true"
+              },
               "namespace": {
                 "type": "keyword",
                 "ignore_above": 1024
+              },
+              "namespace_annotations": {
+                "type": "object",
+                "dynamic": "true"
+              },
+              "namespace_labels": {
+                "type": "object",
+                "dynamic": "true"
               },
               "namespace_uid": {
                 "type": "keyword",
                 "ignore_above": 1024
               },
               "node": {
+                "dynamic": "true",
                 "properties": {
+                  "annotations": {
+                    "type": "object",
+                    "dynamic": "true"
+                  },
                   "hostname": {
                     "type": "keyword",
                     "ignore_above": 1024
+                  },
+                  "labels": {
+                    "type": "object",
+                    "dynamic": "true"
                   },
                   "name": {
                     "type": "keyword",
@@ -479,7 +513,6 @@
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -490,16 +523,15 @@
                           "nanocores": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           },
                           "node": {
                             "properties": {
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -521,32 +553,28 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "percent"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
                       "major_page_faults": {
                         "type": "long",
-                        "meta": {
-                          "metric_type": "counter"
-                        }
+                        "time_series_metric": "counter"
                       },
                       "page_faults": {
                         "type": "long",
-                        "meta": {
-                          "metric_type": "counter"
-                        }
+                        "time_series_metric": "counter"
                       },
                       "rss": {
                         "properties": {
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "percent"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           }
                         }
                       },
@@ -555,16 +583,15 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           },
                           "limit": {
                             "properties": {
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -577,7 +604,6 @@
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -592,16 +618,15 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "gauge",
                               "unit": "percent"
-                            }
+                            },
+                            "time_series_metric": "gauge"
                           },
                           "limit": {
                             "properties": {
                               "pct": {
                                 "type": "scaled_float",
                                 "meta": {
-                                  "metric_type": "gauge",
                                   "unit": "percent"
                                 },
                                 "scaling_factor": 1000,
@@ -624,15 +649,13 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "counter",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "counter"
                           },
                           "errors": {
                             "type": "long",
-                            "meta": {
-                              "metric_type": "counter"
-                            }
+                            "time_series_metric": "counter"
                           }
                         }
                       },
@@ -641,15 +664,13 @@
                           "bytes": {
                             "type": "long",
                             "meta": {
-                              "metric_type": "counter",
                               "unit": "byte"
-                            }
+                            },
+                            "time_series_metric": "counter"
                           },
                           "errors": {
                             "type": "long",
-                            "meta": {
-                              "metric_type": "counter"
-                            }
+                            "time_series_metric": "counter"
                           }
                         }
                       }
@@ -671,6 +692,10 @@
                     "ignore_above": 1024
                   }
                 }
+              },
+              "selectors": {
+                "type": "object",
+                "dynamic": "true"
               },
               "statefulset": {
                 "properties": {

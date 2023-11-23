@@ -158,6 +158,9 @@
                   "properties": {
                     "message": {
                       "type": "text"
+                      {% if index_sorting %},
+                      "store": true
+                      {% endif %}
                     },
                     "class": {
                       "ignore_above": 1024,
@@ -266,11 +269,17 @@
         },
         "message": {
           "type": "text"
+          {% if index_sorting %},
+          "store": true
+          {% endif %}
         },
         "error": {
           "properties": {
             "message": {
               "type": "text"
+              {% if index_sorting %},
+              "store": true
+              {% endif %}
             }
           }
         },
@@ -287,7 +296,8 @@
     ".fleet_component_template-1",
     "track-custom-mappings",
     "track-custom-shared-settings",
-    "track-data-stream-lifecycle"
+    "track-data-stream-lifecycle",
+    "track-shared-logsdb-mode"
   ],
   "priority": 200,
   "_meta": {

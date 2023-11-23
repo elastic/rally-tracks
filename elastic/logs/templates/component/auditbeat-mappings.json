@@ -1785,6 +1785,9 @@
             "message": {
               "norms": false,
               "type": "text"
+              {% if index_sorting %},
+              "store": true
+              {% endif %}
             },
             "stack_trace": {
               "fields": {
@@ -2941,6 +2944,9 @@
         "message": {
           "norms": false,
           "type": "text"
+          {% if index_sorting %},
+          "store": true
+          {% endif %}
         },
         "network": {
           "properties": {

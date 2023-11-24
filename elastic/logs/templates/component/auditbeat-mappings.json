@@ -1785,7 +1785,7 @@
             "message": {
               "norms": false,
               "type": "text"
-              {% if index_sorting %},
+              {% if synthetic_source_mode | default(false) is true %},
               "store": true
               {% endif %}
             },
@@ -2944,7 +2944,7 @@
         "message": {
           "norms": false,
           "type": "text"
-          {% if index_sorting %},
+          {% if synthetic_source_mode | default(false) is true %},
           "store": true
           {% endif %}
         },

@@ -5,18 +5,18 @@
           {% if index_sorting == "hostname" %}
             "sort.field": [ "host.name", "@timestamp" ],
             "sort.order": [ "asc", "desc" ]
-          {%- elif index_sorting == "timestamp" %}
+          {% elif index_sorting == "timestamp" %}
             "sort.field": [ "@timestamp", "host.name" ],
             "sort.order": [ "desc", "asc" ]
-          {%- endif %}
+          {% endif %}
         }
       },
       "mappings": {
-        {% if index_sorting %}
+        {% if synthetic_source_mode | default(false) is true %}
             "_source": {
                 "mode": "synthetic"
             }
-        {%- endif %}
+        {% endif %}
       }
     }
   }

@@ -8,7 +8,7 @@ from typing import Dict, List
 logger = logging.getLogger(__name__)
 
 
-def load_query_vectors(queries_file):
+def load_query_vectors(queries_file) -> Dict[int, List[float]]:
     if not (os.path.exists(queries_file) and os.path.isfile(queries_file)):
         raise ValueError(f"Provided queries file '{queries_file}' does not exist or is not a file")
     query_vectors: Dict[int, List[float]]
@@ -70,6 +70,8 @@ class KnnVectorStore:
         return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, self._vector_field, request_cache, client)
 
     def get_query_vectors(self) -> Dict[int, List[float]]:
+        if len(self._query_vectors) == 0:
+            raise ValueError("Query vectors have not been initialized.")
         return self._query_vectors
 
     @classmethod
@@ -151,10 +153,11 @@ class KnnRecallParamSource:
         self._cache = params.get("cache", False)
         self._params = params
         self.infinite = True
-        cwd = os.path.dirname(__file__)
-        self._queries_file = os.path.join(cwd, "queries.json")
-        self._vector_field = "vector"
         self._target_k = 1_000
+        cwd = os.path.dirname(__file__)
+        queries_file: str = os.path.join(cwd, "queries.json")
+        vector_field: str = "vector"
+        self._knn_vector_store: KnnVectorStore = KnnVectorStore.get_instance(queries_file, vector_field)
 
     def partition(self, partition_index, total_partitions):
         return self
@@ -165,9 +168,8 @@ class KnnRecallParamSource:
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
-            "queries_file": self._queries_file,
-            "vector_field": self._vector_field,
             "target_k": self._target_k,
+            "knn_vector_store": self._knn_vector_store,
         }
 
 
@@ -180,14 +182,12 @@ class KnnRecallRunner:
         num_candidates = params["num_candidates"]
         index = params["index"]
         request_cache = params["cache"]
-        queries_file = params["queries_file"]
-        vector_field = params["vector_field"]
         target_k = max(params["target_k"], k)
         recall_total = 0
         exact_total = 0
         min_recall = k
 
-        knn_vector_store: KnnVectorStore = KnnVectorStore.get_instance(queries_file, vector_field)
+        knn_vector_store: KnnVectorStore = params["knn_vector_store"]
         for query_id, query_vector in knn_vector_store.get_query_vectors().items():
             knn_result = await es.search(
                 body={

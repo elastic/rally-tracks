@@ -48,10 +48,13 @@ test = "pytest"
 [tool.hatch.envs.it.scripts]
 test = "pytest it --log-cli-level=INFO"
 
+[tool.hatch.envs.it_serverless.scripts]
+test = "pytest -s it_serverless --log-cli-level=INFO"
+
 [tool.pytest.ini_options]
 # set to true for more verbose output of tests
 log_cli = false
-addopts = "--verbose --color=yes --ignore=it"
+addopts = "--verbose --color=yes --ignore=it --ignore=it_serverless"
 junit_family = "xunit2"
 junit_logging = "all"
 asyncio_mode = "strict"

@@ -1,6 +1,20 @@
 agents:
-  image: "docker.elastic.co/ci-agent-images/es-perf/buildkite-agent-python"
+  provider: "gcp"
+  image: family/core-ubuntu-2204
 
 steps:
-  - label: "Run IT Serverless Test"
-    command: echo "TODO"
+  - label: "Run IT Serverless tests"
+    plugins:
+      - elastic/vault-secrets#v0.0.2:
+          path: "secret/ci/elastic-rally/employees/cloud/it-serverless"
+          field: "base_url"
+          env_var: "RALLY_IT_SERVERLESS_BASE_URL"
+      - elastic/vault-secrets#v0.0.2:
+          path: "secret/ci/elastic-rally/employees/cloud/it-serverless"
+          field: "get_credentials_endpoint"
+          env_var: "RALLY_IT_SERVERLESS_GET_CREDENTIALS_ENDPOINT"
+      - elastic/vault-secrets#v0.0.2:
+          path: "secret/ci/elastic-rally/employees/cloud/it-serverless"
+          field: "api_key"
+          env_var: "RALLY_IT_SERVERLESS_API_KEY"
+    command: bash .buildkite/it/run_serverless.sh 3.11

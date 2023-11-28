@@ -20,13 +20,13 @@
 {
   "name": "initial-documents-indexing",
   "operation-type": "bulk",
-  "bulk-size": {{ initial_indexing_bulk_size | default(500) | int }},
+  "bulk-size": {{ initial_indexing_bulk_size | default(250) | int }},
   "ingest-percentage": {{ initial_indexing_ingest_percentage | default(100) | int }}
 },
 {
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
-  "bulk-size": {{ parallel_indexing_bulk_size | default(500) }}
+  "bulk-size": {{ parallel_indexing_bulk_size | default(250) }}
 },
 {
   "name": "refresh-after-index",

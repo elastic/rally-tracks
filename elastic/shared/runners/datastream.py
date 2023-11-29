@@ -155,8 +155,9 @@ async def compression_stats(es, params):
             "index_size": ds_index_size,
             "reserved_size": reserved_size,
             "doc_size": ds_doc_size,
-            "json_to_index_ratio": ds_index_size / ds_doc_size,
-            "avg_doc_size": ds_doc_size / total_count,
+            # Avoid ZeroDivisionError in the event of a search failure
+            "json_to_index_ratio": ds_index_size / ds_doc_size if ds_doc_size > 0 else 0,
+            "avg_doc_size": ds_doc_size / total_count if total_count > 0 else 0,
         }
         if total_count == message_count:
             response = await es.search(
@@ -170,9 +171,10 @@ async def compression_stats(es, params):
             )
             ds_msg_size = response["aggregations"]["total_msg_size"]["value"]
             data_stream_stats["message_size"] = ds_msg_size
-            data_stream_stats["avg_message_size"] = ds_msg_size / total_count
-            data_stream_stats["raw_to_json_ratio"] = ds_doc_size / ds_msg_size
-            data_stream_stats["raw_to_index_ratio"] = ds_index_size / ds_msg_size
+            # Avoid ZeroDivisionError in the event of a search failure
+            data_stream_stats["avg_message_size"] = ds_msg_size / total_count if total_count > 0 else 0
+            data_stream_stats["raw_to_json_ratio"] = ds_doc_size / ds_msg_size if ds_msg_size > 0 else 0
+            data_stream_stats["raw_to_index_ratio"] = ds_index_size / ds_msg_size if ds_msg_size > 0 else 0
             complete_message_stats = True
         else:
             logger = logging.getLogger(__name__)

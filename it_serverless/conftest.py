@@ -161,3 +161,14 @@ def write_options_file(config: ServerlessProjectConfig, operator, tmp_path):
     with options_file.open("w") as f:
         json.dump(client_options(client_auth), fp=f)
     return options_file
+
+
+def pytest_addoption(parser):
+    parser.addoption("--operator", action="store_true", help="run as operator")
+
+
+def pytest_generate_tests(metafunc):
+    if "operator" in metafunc.fixturenames:
+        operator = metafunc.config.getoption("operator")
+        label = "operator" if operator else "user"
+        metafunc.parametrize("operator", [operator], ids=[label])

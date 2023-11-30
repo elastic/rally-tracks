@@ -49,7 +49,8 @@ test = "pytest"
 test = "pytest it --log-cli-level=INFO"
 
 [tool.hatch.envs.it_serverless.scripts]
-test = "pytest -s it_serverless --log-cli-level=INFO"
+test_user = "pytest -s it_serverless --log-cli-level=INFO"
+test_operator = "pytest -s it_serverless --log-cli-level=INFO --operator"
 
 [tool.pytest.ini_options]
 # set to true for more verbose output of tests

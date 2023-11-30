@@ -23,11 +23,13 @@ retry 5 sudo apt-get install -y \
     "python${PYTHON_VERSION}" "python${PYTHON_VERSION}-dev" "python${PYTHON_VERSION}-venv" \
     dnsutils  # provides nslookup
 
-echo "--- Run IT test \"$TEST_NAME\" :pytest:"
+echo "--- Python modules"
 
 "python${PYTHON_VERSION}" -m venv .venv
 source .venv/bin/activate
-
 python -m pip install .[develop]
+
+echo "--- Run IT serverless test \"$TEST_NAME\" :pytest:"
+
 hatch -v -e it_serverless run $TEST_NAME
 

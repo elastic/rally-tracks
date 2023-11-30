@@ -15,14 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import collections
 import contextlib
 import json
 import os
-import re
 import subprocess
 import time
 import urllib.parse
+from dataclasses import dataclass
 
 import pytest
 import requests
@@ -33,10 +32,44 @@ API_KEY = os.environ["RALLY_IT_SERVERLESS_API_KEY"]
 GET_CREDENTIALS_ENDPOINT = os.environ["RALLY_IT_SERVERLESS_GET_CREDENTIALS_ENDPOINT"]
 
 
-ServerlessProjectConfig = collections.namedtuple(
-    "ServerlessProjectConfig",
-    ["target_host", "username", "password", "api_key"],
-)
+@dataclass
+class ServerlessProjectConfig:
+    target_host: str
+    username: str
+    password: str
+    api_key: str
+    user_client_options_file: str = None
+    operator_client_options_file: str = None
+
+    def get_client_options_file(self, operator) -> str:
+        return self.operator_client_options_file if operator else self.user_client_options_file
+
+    @staticmethod
+    def _client_options(client_auth):
+        return {
+            "default": {
+                "verify_certs": False,
+                "use_ssl": True,
+                "timeout": 240,
+                **client_auth,
+            }
+        }
+
+    def prepare_client_options_files(self, tmpdir_factory):
+        tmp_path = tmpdir_factory.mktemp("client-options")
+
+        client_auth = {
+            "basic_auth_user": self.username,
+            "basic_auth_password": self.password,
+        }
+        self.operator_client_options_file = tmp_path / "operator.json"
+        with self.operator_client_options_file.open("w") as f:
+            json.dump(self._client_options(client_auth), fp=f)
+
+        client_auth = {"api_key": self.api_key}
+        self.user_client_options_file = tmp_path / "user.json"
+        with self.user_client_options_file.open("w") as f:
+            json.dump(self._client_options(client_auth), fp=f)
 
 
 def serverless_api(method, endpoint, json=None):
@@ -55,7 +88,7 @@ def serverless_api(method, endpoint, json=None):
 
 
 @pytest.fixture(scope="module")
-def serverless_project():
+def project():
     print("\nCreating project")
     created_project = serverless_api(
         "POST",
@@ -73,13 +106,13 @@ def serverless_project():
 
 
 @pytest.fixture(scope="module")
-def serverless_project_config(serverless_project):
+def project_config(project, tmpdir_factory):
     credentials = serverless_api(
         "POST",
-        f"/api/v1/serverless/projects/elasticsearch/{serverless_project['id']}{GET_CREDENTIALS_ENDPOINT}",
+        f"/api/v1/serverless/projects/elasticsearch/{project['id']}{GET_CREDENTIALS_ENDPOINT}",
     )
 
-    es_endpoint = serverless_project["endpoints"]["elasticsearch"]
+    es_endpoint = project["endpoints"]["elasticsearch"]
     es_hostname = urllib.parse.urlparse(es_endpoint).hostname
     rally_target_host = f"{es_hostname}:443"
 
@@ -129,38 +162,14 @@ def serverless_project_config(serverless_project):
     else:
         raise ValueError("Timed out waiting for API key")
 
-    yield ServerlessProjectConfig(
+    project_config = ServerlessProjectConfig(
         rally_target_host,
         credentials["username"],
         credentials["password"],
         api_key.body["encoded"],
     )
-
-
-def client_options(client_auth):
-    return {
-        "default": {
-            "verify_certs": False,
-            "use_ssl": True,
-            "timeout": 240,
-            **client_auth,
-        }
-    }
-
-
-def write_options_file(config: ServerlessProjectConfig, operator, tmp_path):
-    if operator:
-        client_auth = {
-            "basic_auth_user": config.username,
-            "basic_auth_password": config.password,
-        }
-    else:
-        client_auth = {"api_key": config.api_key}
-
-    options_file = tmp_path / "client-options.json"
-    with options_file.open("w") as f:
-        json.dump(client_options(client_auth), fp=f)
-    return options_file
+    project_config.prepare_client_options_files(tmpdir_factory)
+    yield project_config
 
 
 def pytest_addoption(parser):

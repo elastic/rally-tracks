@@ -1,0 +1,41 @@
+{
+  "indices" : [
+    {
+      "names" : [ "search-documents" ],
+      "privileges" : [ "read" ],
+      "query" : {
+        "template" : {
+          "source" : """{
+            "bool": {
+              "filter": {
+                "bool": {
+                  "should": [
+                    {
+                      "bool": {
+                        "must_not": {
+                          "exists": {
+                            "field": "_allow_permissions"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "terms_set": {
+                        "_allow_permissions.keyword": {
+                          "terms": {{#toJson}}_user.metadata.documents-id{{/toJson}},
+                          "minimum_should_match": 1
+                        }
+                      }
+                    }
+                    
+                    ]
+                }
+              }
+            }
+          }"""
+        }
+      }
+    }
+    ]
+}
+

@@ -2,6 +2,7 @@ import csv
 import math
 import random
 import re
+import uuid
 from os import getcwd
 from os.path import dirname
 from typing import Iterator, List
@@ -14,6 +15,46 @@ QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"
 SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
+
+ROLE_TEMPLATE = {
+        "indices" : [
+            {
+                "names" : [ "search-documents" ],
+                "privileges" : [ "read" ],
+                "query" : {
+                    "template" : {
+                        "source" : """{
+            "bool": {
+              "filter": {
+                "bool": {
+                  "should": [
+                    {
+                      "bool": {
+                        "must_not": {
+                          "exists": {
+                            "field": "_allow_permissions"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "terms_set": {
+                        "_allow_permissions.keyword": {
+                          "terms": {{#toJson}}_user.metadata.documents-id{{/toJson}},
+                          "minimum_should_match": 1
+                        }
+                      }
+                    }
+                    ]
+                }
+              }
+            }
+          }"""
+          }
+                    }
+                }
+            ]
+        }
 
 
 def query_samples(k: int, random_seed: int = None) -> List[str]:
@@ -113,7 +154,19 @@ class QueryParamSource(QueryIteratorParamSource):
             return self.params()
 
 
+async def create_users_and_roles(es, params):
+    num_users = params['users']
+    num_roles = params['roles']
+
+    for role in ("managed-role-search-{}".format(uuid.uuid4()) for x in
+                 range(num_roles)):
+        await es.security.put_role(role, ROLE_TEMPLATE, refresh='wait_for')
+
+    es.refresh('_all')
+
+
 def register(registry):
     registry.register_param_source("query-string-search", QueryParamSource)
     registry.register_param_source("create-search-application-param-source", CreateSearchApplicationParamSource)
     registry.register_param_source("search-application-search-param-source", SearchApplicationSearchParamSource)
+    registry.register_runner("create_users_and_roles", create_users_and_roles, async_runner=True)

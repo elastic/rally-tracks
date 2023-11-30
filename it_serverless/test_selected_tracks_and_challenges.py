@@ -23,10 +23,40 @@ pytest_rally = pytest.importorskip("pytest_rally")
 
 
 class TestTrackRepository:
-    #include_tracks = ["geonames", "geopoint", "geopointshape", "geoshape", "nyc_taxis", "so_vector"]
-    include_tracks = ["geonames"]
+    include_tracks = [
+        "cohere_vector",
+        # "dense_vector", (slow)
+        "eql",
+        "geonames",
+        "geopoint",
+        "geopointshape",
+        "geoshape",
+        "http_logs",
+        # "k8s_metrics", (slow)
+        "nested",
+        "noaa",
+        "nyc_taxis",
+        "percolator",
+        "pmc",
+        "so",
+        "so_vector",
+        # "sql", (no support for test mode)
+        "tsdb",
+        # TODO requires a fix after https://github.com/elastic/rally-tracks/pull/513
+        # "tsdb_k8s_queries",
+    ]
+    #include_tracks = ["geonames"]
+
     skip_challenges = {
-        "nyc_taxis": ["esql"]
+        "nyc_taxis": ["esql"],
+        "tsdb": ["downsample"],
+    }
+    skip_challenges_user = {
+        "k8s_metrics": ["append-no-conflicts-metrics-with-fast-refresh", "fast-refresh-index-only", "fast-refresh-index-with-search"],
+    }
+    disable_assertions = {
+        "http_logs": ["append-no-conflicts", "runtime-fields"],
+        "nyc_taxis": ["update-aggs-only"],
     }
 
     @pytest.mark.parametrize("operator", [False, True], ids=["User", "Operator"])
@@ -34,6 +64,16 @@ class TestTrackRepository:
         client_options_file = write_options_file(serverless_project_config, operator, tmp_path)
         track_params = {"number_of_replicas": 1}
         if track in self.include_tracks and challenge not in self.skip_challenges.get(track, []):
+            if not operator and challenge in self.skip_challenges_user.get(track, []):
+                pytest.skip()
+            if challenge in self.disable_assertions.get(track, []):
+                rally_options.update({"enable_assertions": False})
+            if challenge == "runtime-fields":
+                track_params.update({"runtime_fields": "true"})
+            # required to avoid index out of bounds for frequent_items_all_100 operation
+            # TODO verify if index refresh prior to this operation is enough to prevent an error
+            if challenge == "frequent-items" and not operator:
+                track_params.update({"post_ingest_sleep": "true", "post_ingest_sleep_duration": 15})
             ret = rally.race(
                 track=track, challenge=challenge, track_params=track_params, client_options=client_options_file,
                 target_hosts=serverless_project_config.target_host, **rally_options

@@ -84,7 +84,7 @@ def serverless_project_config(serverless_project):
     rally_target_host = f"{es_hostname}:443"
 
     print("Waiting for DNS propagation")
-    for _ in range(10):
+    for _ in range(6):
         time.sleep(30)
         with contextlib.suppress(subprocess.CalledProcessError):
             subprocess.run(["nslookup", es_hostname, "8.8.8.8"], check=True)
@@ -93,7 +93,7 @@ def serverless_project_config(serverless_project):
         raise ValueError("Timed out waiting for DNS propagation")
 
     print("Waiting for Elasticsearch")
-    for _ in range(30):
+    for _ in range(18):
         try:
             es = Elasticsearch(
                 f"https://{rally_target_host}",
@@ -119,7 +119,15 @@ def serverless_project_config(serverless_project):
         raise ValueError("Timed out waiting for Elasticsearch")
 
     # Create API key to test Rally with a public user
-    api_key = es.security.create_api_key(name="public-api-key")
+    for _ in range(3):
+        try:
+            api_key = es.security.create_api_key(name="public-api-key")
+            break
+        except Exception as e:
+            print(f"API create failed with {type(e)}")
+            time.sleep(10)
+    else:
+        raise ValueError("Timed out waiting for API key")
 
     yield ServerlessProjectConfig(
         rally_target_host,

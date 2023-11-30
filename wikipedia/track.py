@@ -16,10 +16,14 @@ SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
+USER_AUTH = {
+    'username': 'wikiuser',
+    'password': 'ujd_rbh5quw7GWC@pjc'
+}
 ROLE_TEMPLATE = {
         "indices" : [
             {
-                "names" : [ "search-documents" ],
+                "names" : [ "wikipedia" ],
                 "privileges" : [ "read" ],
                 "query" : {
                     "template" : {
@@ -155,14 +159,18 @@ class QueryParamSource(QueryIteratorParamSource):
 
 
 async def create_users_and_roles(es, params):
-    num_users = params['users']
-    num_roles = params['roles']
+    # For now we'll just work with one user with all the roles
+    # num_users = params['users']
 
-    for role in ("managed-role-search-{}".format(uuid.uuid4()) for x in
-                 range(num_roles)):
+    num_roles = params['roles']
+    roles = ["managed-role-search-{}".format(uuid.uuid4()) for x in range(num_roles)]
+
+    for role in roles:
         await es.security.put_role(role, ROLE_TEMPLATE, refresh='wait_for')
 
-    es.refresh('_all')
+    await es.security.put_user(USER_AUTH['username'], {'roles': roles, 'password': USER_AUTH['password']})
+
+    es.refresh('wikipedia')
 
 
 def register(registry):

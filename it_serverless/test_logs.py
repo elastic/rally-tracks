@@ -45,7 +45,8 @@ def params(updates=None):
 class TestLogs:
     def test_logs_fails_if_assets_not_installed(self, operator, rally, capsys, project_config: ServerlessProjectConfig):
         ret = rally.race(
-            track="elastic/logs", exclude_tasks="tag:setup",
+            track="elastic/logs",
+            exclude_tasks="tag:setup",
             client_options=project_config.get_client_options_file(operator),
             target_hosts=project_config.target_host,
         )
@@ -56,7 +57,8 @@ class TestLogs:
 
     def test_logs_default(self, operator, rally, project_config: ServerlessProjectConfig):
         ret = rally.race(
-            track="elastic/logs", challenge="logging-indexing",
+            track="elastic/logs",
+            challenge="logging-indexing",
             track_params="number_of_replicas:1",
             client_options=project_config.get_client_options_file(operator),
             target_hosts=project_config.target_host,
@@ -69,7 +71,8 @@ class TestLogs:
             pytest.skip()
         custom = {"number_of_shards": 4}
         ret = rally.race(
-            track="elastic/logs", challenge="logging-disk-usage",
+            track="elastic/logs",
+            challenge="logging-disk-usage",
             track_params=params(updates=custom),
             client_options=project_config.get_client_options_file(operator),
             target_hosts=project_config.target_host,
@@ -78,7 +81,8 @@ class TestLogs:
 
     def test_logs_indexing_unthrottled(self, operator, rally, project_config: ServerlessProjectConfig):
         ret = rally.race(
-            track="elastic/logs", challenge="logging-indexing",
+            track="elastic/logs",
+            challenge="logging-indexing",
             track_params=params(),
             client_options=project_config.get_client_options_file(operator),
             target_hosts=project_config.target_host,
@@ -93,7 +97,8 @@ class TestLogs:
             "think_time_interval": "1",
         }
         ret = rally.race(
-            track="elastic/logs", challenge="logging-querying",
+            track="elastic/logs",
+            challenge="logging-querying",
             track_params=params(updates=custom),
             exclude_tasks="tag:setup",
             client_options=project_config.get_client_options_file(operator),
@@ -109,7 +114,8 @@ class TestLogs:
             "think_time_interval": "1",
         }
         ret = rally.race(
-            track="elastic/logs", challenge="logging-indexing-querying",
+            track="elastic/logs",
+            challenge="logging-indexing-querying",
             track_params=params(updates=custom),
             exclude_tasks="tag:setup",
             client_options=project_config.get_client_options_file(operator),
@@ -120,7 +126,8 @@ class TestLogs:
     def test_logs_indexing_throttled(self, operator, rally, project_config: ServerlessProjectConfig):
         custom = {"throttle_indexing": "true"}
         ret = rally.race(
-            track="elastic/logs", challenge="logging-indexing",
+            track="elastic/logs",
+            challenge="logging-indexing",
             track_params=params(updates=custom),
             client_options=project_config.get_client_options_file(operator),
             target_hosts=project_config.target_host,
@@ -136,7 +143,8 @@ class TestLogs:
             "throttle_indexing": "true",
         }
         ret = rally.race(
-            track="elastic/logs", challenge="logging-indexing-querying",
+            track="elastic/logs",
+            challenge="logging-indexing-querying",
             track_params=params(updates=custom),
             exclude_tasks="tag:setup",
             client_options=project_config.get_client_options_file(operator),
@@ -158,7 +166,8 @@ class TestLogs:
             "think_time_interval": "1",
         }
         ret = rally.race(
-            track="elastic/logs", challenge="logging-querying",
+            track="elastic/logs",
+            challenge="logging-querying",
             track_params=params(updates=custom),
             client_options=project_config.get_client_options_file(operator),
             target_hosts=project_config.target_host,

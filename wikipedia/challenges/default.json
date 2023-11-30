@@ -56,12 +56,8 @@
       "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     },
     {
-        "name": "create-lots-of-roles",
-        "operation-type": "create_users_and_roles",
-        "body": {
-            "roles": 1000,
-            "track_scores": false
-        }
+      "name": "create-lots-of-roles",
+      "operation": "create-users-and-roles"
     },
     {
       "parallel": {

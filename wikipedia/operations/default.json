@@ -74,4 +74,13 @@
   "param-source": "query-string-search",
   "size" : {{ query_string_search_page_size | default(20) | int }},
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "create-users-and-roles",
+  "operation-type": "create_users_and_roles",
+  "body": {
+    "roles": 1000,
+    "track_scores": false
+  },
+  "include-in-reporting": false
 }

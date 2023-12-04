@@ -183,7 +183,7 @@ async def create_users_and_roles(es, params):
     # num_users = params['users']
 
     await es.indices.refresh(index="wikipedia")
-    doc_count = await es.count(index="pages").get("count")
+    doc_count = await es.count(index="pages")
 
     num_roles = params["roles"]
     roles = ["managed-role-search-{}".format(uuid.uuid4()) for x in range(num_roles)]
@@ -193,7 +193,7 @@ async def create_users_and_roles(es, params):
         await es.update_by_query(
             index="wikipedia",
             body={
-                "size": int((doc_count / 100) * 1),
+                "size": int((doc_count['count'] / 100) * 1),
                 "script": {
                     "source": "if (ctx._source._allow_permissions ==null){"
                     "ctx._ource._allow_permissions =[params.role];} else "

@@ -132,6 +132,29 @@ class SearchApplicationSearchParamSource(QueryIteratorParamSource):
             return self.params()
 
 
+class SearchApplicationSearchParamSourceWithUser(QueryIteratorParamSource):
+    def __init__(self, track, params, **kwargs):
+        super().__init__(track, params, **kwargs)
+        self.search_application_params = SearchApplicationParams(track, params)
+
+    def params(self):
+        try:
+            query = next(self._queries_iterator)
+            return {
+                "method": "POST",
+                "headers": {"es-security-runas-user": USER_AUTH['username']},
+                "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
+                "body": {
+                    "params": {
+                        "query_string": query,
+                    },
+                },
+            }
+        except StopIteration:
+            self._queries_iterator = iter(self._sample_queries)
+            return self.params()
+
+
 class QueryParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
@@ -159,19 +182,44 @@ async def create_users_and_roles(es, params):
     # For now we'll just work with one user with all the roles
     # num_users = params['users']
 
+    await es.refresh('wikipedia')
+    doc_count = await es.count('pages').get('count')
+
     num_roles = params["roles"]
     roles = ["managed-role-search-{}".format(uuid.uuid4()) for x in range(num_roles)]
 
     for role in roles:
         await es.security.put_role(role, ROLE_TEMPLATE, refresh="wait_for")
+        await es.update_by_query(
+                index='wikipedia',
+                body={
+                    "size": int((doc_count/100)*1),
+                    "script" : {
+                        "source": "if (ctx._source._allow_permissions ==null){"
+                                  "ctx._ource._allow_permissions =[params.role];} else "
+                                  "{ctx._source._allow_permissions.add(params.role)}",
+                        "lang": "painless",
+                        "params": {
+                            "role": role
+                        }
+                    },
+                    "query": {
+                        "function_score": {
+                            "query" : { "match_all": {} },
+                            "random_score": {}
+                            }
+                    }
+                })
 
     await es.security.put_user(USER_AUTH["username"], {"roles": roles, "password": USER_AUTH["password"]})
 
-    es.refresh("wikipedia")
+    await es.refresh("wikipedia")
 
 
 def register(registry):
     registry.register_param_source("query-string-search", QueryParamSource)
     registry.register_param_source("create-search-application-param-source", CreateSearchApplicationParamSource)
     registry.register_param_source("search-application-search-param-source", SearchApplicationSearchParamSource)
+    registry.register_param_source("search-application-search-param-source-with-user",
+                                   SearchApplicationSearchParamSourceWithUser)
     registry.register_runner("create_users_and_roles", create_users_and_roles, async_runner=True)

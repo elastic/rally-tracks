@@ -60,6 +60,13 @@
       "operation": "create-users-and-roles"
     },
     {
+      "name": "default-search-application-search-with-user",
+      "operation": "default-search-application-search-with-user",
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
       "parallel": {
         "completed-by": "parallel-documents-indexing-query-string-search",
         "tasks": [

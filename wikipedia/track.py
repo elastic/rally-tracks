@@ -183,13 +183,13 @@ async def create_users_and_roles(es, params):
     # num_users = params['users']
 
     await es.indices.refresh(index="wikipedia")
-    doc_count = await es.count("pages").get("count")
+    doc_count = await es.count(index="pages").get("count")
 
     num_roles = params["roles"]
     roles = ["managed-role-search-{}".format(uuid.uuid4()) for x in range(num_roles)]
 
     for role in roles:
-        await es.security.put_role(role, ROLE_TEMPLATE, refresh="wait_for")
+        await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
         await es.update_by_query(
             index="wikipedia",
             body={
@@ -205,7 +205,7 @@ async def create_users_and_roles(es, params):
             },
         )
 
-    await es.security.put_user(USER_AUTH["username"], {"roles": roles, "password": USER_AUTH["password"]})
+    await es.security.put_user(username=USER_AUTH["username"], params={"roles": roles, "password": USER_AUTH["password"]})
 
     await es.indices.refresh(index="wikipedia")
 

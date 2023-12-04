@@ -182,7 +182,7 @@ async def create_users_and_roles(es, params):
     # For now we'll just work with one user with all the roles
     # num_users = params['users']
 
-    await es.refresh("wikipedia")
+    await es.indices.refresh(index="wikipedia")
     doc_count = await es.count("pages").get("count")
 
     num_roles = params["roles"]
@@ -207,7 +207,7 @@ async def create_users_and_roles(es, params):
 
     await es.security.put_user(USER_AUTH["username"], {"roles": roles, "password": USER_AUTH["password"]})
 
-    await es.refresh("wikipedia")
+    await es.indices.refresh(index="wikipedia")
 
 
 def register(registry):

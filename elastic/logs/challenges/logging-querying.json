@@ -29,8 +29,9 @@
           "operation-type": "compression-statistics",
           "param-source": "create-datastream-source"
         }
-      },
+      }
       {%- endif -%}{# non-serverless-index-statistics-marker-end #}
+      ,
     {% endif %}
     {
       "name": "logging-queries",

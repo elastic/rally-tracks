@@ -153,10 +153,6 @@ class TestLogs:
         assert ret == 0
 
     def test_logs_querying_with_preloaded_data(self, operator, rally, project_config: ServerlessProjectConfig):
-        # TODO fix missing coma in elastic/logs/challenges/logging-querying.json introduced in
-        # https://github.com/elastic/rally-tracks/pull/504
-        if not operator:
-            pytest.skip()
         custom = {
             "bulk_start_date": "2020-09-30T00-00-00Z",
             "bulk_end_date": "2020-09-30T00-01-00Z",

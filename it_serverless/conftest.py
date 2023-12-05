@@ -30,6 +30,8 @@ from elasticsearch import Elasticsearch
 BASE_URL = os.environ["RALLY_IT_SERVERLESS_BASE_URL"]
 API_KEY = os.environ["RALLY_IT_SERVERLESS_API_KEY"]
 GET_CREDENTIALS_ENDPOINT = os.environ["RALLY_IT_SERVERLESS_GET_CREDENTIALS_ENDPOINT"]
+PIPELINE_NAME = os.environ.get("BUILDKITE_PIPELINE_SLUG")
+BUILD_NUMBER = os.environ.get("BUILDKITE_BUILD_NUMBER")
 
 
 @dataclass
@@ -90,11 +92,14 @@ def serverless_api(method, endpoint, json=None):
 @pytest.fixture(scope="module")
 def project():
     print("\nCreating project")
+    project_name = "rally-track-it"
+    if PIPELINE_NAME is not None and BUILD_NUMBER is not None:
+        project_name = f"{PIPELINE_NAME}-{BUILD_NUMBER}"
     created_project = serverless_api(
         "POST",
         "/api/v1/serverless/projects/elasticsearch",
         json={
-            "name": "rally-track-it",
+            "name": project_name,
             "region_id": "aws-eu-west-1",
         },
     )

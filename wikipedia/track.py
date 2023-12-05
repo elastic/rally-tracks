@@ -184,7 +184,7 @@ async def create_users_and_roles(es, params):
     # num_users = params['users']
 
     await es.indices.refresh(index="wikipedia")
-    doc_count = await es.count(index="pages")
+    doc_count = await es.count(index="wikipedia")
 
     num_roles = params["roles"]
     skip_roles = params["skip_roles"]

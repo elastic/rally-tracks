@@ -194,7 +194,7 @@ async def create_users_and_roles(es, params):
         await es.update_by_query(
             index="wikipedia",
             body={
-                "size": int((doc_count['count'] / 100) * 1),
+                "size": int((doc_count["count"] / 100) * 1),
                 "script": {
                     "source": "if (ctx._source._allow_permissions ==null){"
                     "ctx._ource._allow_permissions =[params.role];} else "
@@ -206,8 +206,9 @@ async def create_users_and_roles(es, params):
             },
         )
 
-    if skip_roles == 0:
-        await es.security.put_user(username=USER_AUTH["username"], params={"roles": ROLE_IDS, "password": USER_AUTH["password"]})
+    await es.security.put_user(
+        username=USER_AUTH["username"], params={"roles": ROLE_IDS[0, num_roles - 1], "password": USER_AUTH["password"]}
+    )
 
     await es.indices.refresh(index="wikipedia")
 

@@ -16,6 +16,7 @@ SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
+ROLE_IDS = ["managed-role-search-{}".format(uuid.uuid4()) for x in range(0, 500000)]
 USER_AUTH = {"username": "wikiuser", "password": "ujd_rbh5quw7GWC@pjc"}
 ROLE_TEMPLATE = {
     "indices": [
@@ -186,9 +187,9 @@ async def create_users_and_roles(es, params):
     doc_count = await es.count(index="pages")
 
     num_roles = params["roles"]
-    roles = ["managed-role-search-{}".format(uuid.uuid4()) for x in range(num_roles)]
+    skip_roles = params["skip_roles"]
 
-    for role in roles:
+    for role in ROLE_IDS[skip_roles, num_roles - 1]:
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
         await es.update_by_query(
             index="wikipedia",
@@ -205,7 +206,8 @@ async def create_users_and_roles(es, params):
             },
         )
 
-    await es.security.put_user(username=USER_AUTH["username"], params={"roles": roles, "password": USER_AUTH["password"]})
+    if skip_roles == 0:
+        await es.security.put_user(username=USER_AUTH["username"], params={"roles": ROLE_IDS, "password": USER_AUTH["password"]})
 
     await es.indices.refresh(index="wikipedia")
 

@@ -81,10 +81,31 @@
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
-  "name": "create-users-and-roles",
+  "name": "create-1000-roles",
   "operation-type": "create_users_and_roles",
   "body": {
+    "skip_roles": 0,
     "roles": 1000,
+    "track_scores": false
+  },
+  "include-in-reporting": false
+},
+{
+  "name": "create-100000-roles",
+  "operation-type": "create_users_and_roles",
+  "body": {
+    "skip_roles": 1000,
+    "roles": 100000,
+    "track_scores": false
+  },
+  "include-in-reporting": false
+},
+{
+  "name": "create-500000-roles",
+  "operation-type": "create_users_and_roles",
+  "body": {
+    "skip_roles": 100000,
+    "roles": 500000,
     "track_scores": false
   },
   "include-in-reporting": false

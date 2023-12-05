@@ -56,17 +56,6 @@
       "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     },
     {
-      "name": "create-lots-of-roles",
-      "operation": "create-users-and-roles"
-    },
-    {
-      "name": "default-search-application-search-with-user",
-      "operation": "default-search-application-search-with-user",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
       "parallel": {
         "completed-by": "parallel-documents-indexing-query-string-search",
         "tasks": [
@@ -79,6 +68,102 @@
           },
           {
             "name": "parallel-documents-indexing-query-string-search",
+            "operation": "query-string-search",
+            "clients": {{ parallel_indexing_search_clients | default(20) | int }},
+            "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
+            "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}
+          }
+        ]
+      }
+    },
+    {
+      "name": "create-1000-roles",
+      "operation": "create-1000-roles"
+    },
+    {
+      "name": "default-search-application-search-with-1000-roles",
+      "operation": "default-search-application-search-with-user",
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "parallel": {
+        "completed-by": "parallel-documents-indexing-query-string-search-with-1000-roles",
+        "tasks": [
+          {
+            "name": "parallel-documents-indexing-bulk-with-1000-roles",
+            "operation": "parallel-documents-indexing",
+            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
+            "warmup-time-period": {{ parallel_indexing_bulk_warmup_time_period | default(10) | int }},
+            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+          },
+          {
+            "name": "parallel-documents-indexing-query-string-search-with-1000-roles",
+            "operation": "query-string-search",
+            "clients": {{ parallel_indexing_search_clients | default(20) | int }},
+            "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
+            "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}
+          }
+        ]
+      }
+    },
+    {
+      "name": "create-100000-roles",
+      "operation": "create-100000-roles"
+    },
+    {
+      "name": "default-search-application-search-with-with-100000-roles",
+      "operation": "default-search-application-search-with-user",
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "parallel": {
+        "completed-by": "parallel-documents-indexing-query-string-search-with-100000-roles",
+        "tasks": [
+          {
+            "name": "parallel-documents-indexing-bulk-with-100000-roles",
+            "operation": "parallel-documents-indexing",
+            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
+            "warmup-time-period": {{ parallel_indexing_bulk_warmup_time_period | default(10) | int }},
+            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+          },
+          {
+            "name": "parallel-documents-indexing-query-string-search-with-100000-roles",
+            "operation": "query-string-search",
+            "clients": {{ parallel_indexing_search_clients | default(20) | int }},
+            "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
+            "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}
+          }
+        ]
+      }
+    },
+    {
+      "name": "create-500000-roles",
+      "operation": "create-500000-roles"
+    },
+    {
+      "name": "default-search-application-search-with-500000-roles",
+      "operation": "default-search-application-search-with-user",
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "parallel": {
+        "completed-by": "parallel-documents-indexing-query-string-search-with-500000-roles",
+        "tasks": [
+          {
+            "name": "parallel-documents-indexing-bulk-with-500000-roles",
+            "operation": "parallel-documents-indexing",
+            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
+            "warmup-time-period": {{ parallel_indexing_bulk_warmup_time_period | default(10) | int }},
+            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+          },
+          {
+            "name": "parallel-documents-indexing-query-string-search-with-500000-roles",
             "operation": "query-string-search",
             "clients": {{ parallel_indexing_search_clients | default(20) | int }},
             "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},

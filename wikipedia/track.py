@@ -197,7 +197,7 @@ async def create_users_and_roles(es, params):
                 "size": int((doc_count["count"] / 100) * 1),
                 "script": {
                     "source": "if (ctx._source._allow_permissions ==null){"
-                    "ctx._ource._allow_permissions =[params.role];} else "
+                    "ctx._source._allow_permissions =[params.role];} else "
                     "{ctx._source._allow_permissions.add(params.role)}",
                     "lang": "painless",
                     "params": {"role": role},
@@ -212,6 +212,29 @@ async def create_users_and_roles(es, params):
 
     await es.indices.refresh(index="wikipedia")
 
+async def reset_indices(es, params):
+    await es.security.delete_user(username=USER_AUTH["username"])
+
+    roles = await es.security.get_role()
+    for role in roles:
+        name = list(role.keys())[0]
+        if name.startswith('managed-role-search-'):
+            await es.security.delete_role(name=name)
+
+    await es.update_by_query(index="wikipedia", body={
+            "query": {
+                "exists": {
+                    "field": "_allow_permissions"
+                }
+            },
+            "script": {
+                "source": "ctx._source._allow_permissions = new ArrayList();",
+                "lang": "painless"
+            }
+        })
+
+    await es.indices.refresh(index="wikipedia")
+
 
 def register(registry):
     registry.register_param_source("query-string-search", QueryParamSource)
@@ -219,3 +242,4 @@ def register(registry):
     registry.register_param_source("search-application-search-param-source", SearchApplicationSearchParamSource)
     registry.register_param_source("search-application-search-param-source-with-user", SearchApplicationSearchParamSourceWithUser)
     registry.register_runner("create_users_and_roles", create_users_and_roles, async_runner=True)
+    registry.register_runner("reset_indices", reset_indices, async_runner=True)

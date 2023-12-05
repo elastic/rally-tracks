@@ -38,6 +38,10 @@
       "operation": "wait-until-merges-finish-after-index"
     },
     {
+      "name": "reset-indices",
+      "operation": "reset-indices"
+    },
+    {
       "name": "standalone-query-string-search",
       "operation": "query-string-search",
       "clients": {{ standalone_search_clients | default(20) | int }},

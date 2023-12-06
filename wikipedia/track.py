@@ -193,8 +193,8 @@ async def create_users_and_roles(es, params):
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
         await es.update_by_query(
             index="wikipedia",
+            max_docs=int((doc_count["count"] / 100) * 1),
             body={
-                "size": int((doc_count["count"] / 100) * 1),
                 "script": {
                     "source": "if (ctx._source._allow_permissions ==null){"
                     "ctx._source._allow_permissions =[params.role];} else "

@@ -51,7 +51,7 @@
               },
               "think-time-interval": {{ p_user_think_time }},
               "workflow-interval": {{ p_user_workflow_time }},
-              "clients": 1,
+              "clients": {{ p_search_clients }},
               "schedule": "workflow-scheduler"
             }{{ ", " if not loop.last else "" }}
           {% endfor %}

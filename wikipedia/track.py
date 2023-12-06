@@ -5,7 +5,6 @@ import re
 import uuid
 from os import getcwd
 from os.path import dirname
-from random import random
 from typing import Iterator, List
 
 from esrally.track.params import ParamSource
@@ -208,7 +207,8 @@ async def create_users_and_roles(es, params):
                     "lang": "painless",
                     "params": {"role": role},
                 },
-                "query": {"function_score": {"query": {"match_all": {}}, "random_score": {"seed": random(), "field": "_seq_no"}}},
+                "query": {"function_score": {"query": {"match_all": {}},
+                    "random_score": {"seed": random.random(), "field": "_seq_no"}}},
             },
             conflicts="proceed",
         )

@@ -9,6 +9,10 @@ from typing import Iterator, List
 
 from esrally.track.params import ParamSource
 
+# Monkey patch time!
+from thespian.system.transport import asyncTransportBase
+asyncTransportBase.MAX_QUEUED_TRANSMITS = 10000
+
 QUERIES_DIRNAME: str = dirname(__file__)
 QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"
 

@@ -26,10 +26,9 @@
       }
     },
     {
-      "operation": {        
-        "include-in-reporting": false,
+      "operation": {
         "operation-type": "bulk",
-        "bulk-size": {{bulk_size | default(5000)}},
+        "bulk-size": {{bulk_size | default(500)}},
         "ingest-percentage": {{ingest_percentage | default(100)}}
       },
       "clients": {{bulk_indexing_clients | default(8)}}
@@ -67,6 +66,18 @@
       "iterations": 1000,
       "clients": {{search_clients | default(1)}}
     },
+    {
+      "operation": "text-expansion-splade-search-maxwand-enabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_client | default(1)}}
+  },
+    {
+      "operation": "text-expansion-splade-search-maxwand-disabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_clients | default(1)}}
+  },
     {
       "operation": "bm25-search-maxwand-enabled",
       "warmup-iterations": 100,

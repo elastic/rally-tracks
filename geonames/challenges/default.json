@@ -26,7 +26,7 @@
         },
         {
           "operation": "index-append",
-          "warmup-time-period": 120,
+          "warmup-time-period": 60,
           "clients": {{bulk_indexing_clients | default(8)}},
           "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
@@ -272,7 +272,7 @@
         },
         {
           "operation": "index-append",
-          "warmup-time-period": 120,
+          "warmup-time-period": 60,
           "clients": {{bulk_indexing_clients | default(8)}},
           "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },

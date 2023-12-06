@@ -5,12 +5,14 @@ import re
 import uuid
 from os import getcwd
 from os.path import dirname
+from random import random
 from typing import Iterator, List
 
 from esrally.track.params import ParamSource
 
 # Monkey patch time!
 from thespian.system.transport import asyncTransportBase
+
 asyncTransportBase.MAX_QUEUED_TRANSMITS = 10000
 
 QUERIES_DIRNAME: str = dirname(__file__)
@@ -206,9 +208,9 @@ async def create_users_and_roles(es, params):
                     "lang": "painless",
                     "params": {"role": role},
                 },
-                "query": {"function_score": {"query": {"match_all": {}}, "random_score": {}}},
+                "query": {"function_score": {"query": {"match_all": {}}, "random_score": {"seed": random(), "field": "_seq_no"}}},
             },
-            conflicts='proceed',
+            conflicts="proceed",
         )
 
     await es.security.put_user(
@@ -233,7 +235,7 @@ async def reset_indices(es, params):
             "query": {"exists": {"field": "_allow_permissions"}},
             "script": {"source": "ctx._source._allow_permissions = new ArrayList();", "lang": "painless"},
         },
-        conflicts='proceed',
+        conflicts="proceed",
     )
 
     await es.indices.refresh(index="wikipedia")

@@ -248,6 +248,7 @@ The following parameters are available:
 * `ingest_percentage` (default: 100) - The percentage of data to be ingested.
 * `index_sorting` (default: unset): Whether index sorting should be used. Accepted values: `hostname` and `timestamp`. 
 * `synthetic_source_mode` (default: `false`): Whether to enable synthetic source.
+* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
 
 ### Querying parameters
 

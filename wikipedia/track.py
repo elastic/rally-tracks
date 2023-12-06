@@ -208,7 +208,7 @@ async def create_users_and_roles(es, params):
                 },
                 "query": {"function_score": {"query": {"match_all": {}}, "random_score": {}}},
             },
-            retry_on_conflict=10,
+            proceed='proceed',
         )
 
     await es.security.put_user(
@@ -233,7 +233,7 @@ async def reset_indices(es, params):
             "query": {"exists": {"field": "_allow_permissions"}},
             "script": {"source": "ctx._source._allow_permissions = new ArrayList();", "lang": "painless"},
         },
-        retry_on_conflict=10,
+        conflict='proceed',
     )
 
     await es.indices.refresh(index="wikipedia")

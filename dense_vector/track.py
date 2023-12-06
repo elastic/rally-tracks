@@ -1,7 +1,9 @@
 import functools
 import json
 import logging
+import numpy as np
 import os
+import statistics
 from collections import defaultdict
 from typing import Dict, List
 
@@ -185,6 +187,7 @@ class KnnRecallRunner:
         recall_total = 0
         exact_total = 0
         min_recall = k
+        nodes_visited = []
 
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
         for query_id, query_vector in knn_vector_store.get_query_vectors().items():
@@ -197,6 +200,7 @@ class KnnRecallRunner:
                         "num_candidates": num_candidates,
                     },
                     "_source": False,
+                    "profile": True,
                 },
                 index=index,
                 request_cache=request_cache,
@@ -205,6 +209,11 @@ class KnnRecallRunner:
             knn_hits = [hit["_id"] for hit in knn_result["hits"]["hits"]]
             script_hits = await knn_vector_store.get_neighbors_for_query(index, query_id, target_k, request_cache, es)
             script_hits = script_hits[:k]
+            vector_operations_count = 0
+            profile = knn_result["profile"]
+            for shard in profile["shards"]:
+                vector_operations_count += shard["dfs"]["knn"]["vector_operations_count"]
+            nodes_visited.append(vector_operations_count)
             current_recall = len(set(knn_hits).intersection(set(script_hits)))
             recall_total += current_recall
             exact_total += len(script_hits)
@@ -216,6 +225,8 @@ class KnnRecallRunner:
                 "min_recall": min_recall,
                 "k": k,
                 "num_candidates": num_candidates,
+                "avg_nodes_visited": statistics.mean(nodes_visited),
+                "99th_percentile_nodes_visited": np.percentile(nodes_visited, 99)
             }
             if exact_total > 0
             else None

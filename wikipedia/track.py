@@ -189,7 +189,7 @@ async def create_users_and_roles(es, params):
     num_roles = params["roles"]
     skip_roles = params["skip_roles"]
 
-    for role in ROLE_IDS[skip_roles, num_roles - 1]:
+    for role in ROLE_IDS[skip_roles : num_roles - 1]:
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
         await es.update_by_query(
             index="wikipedia",
@@ -207,10 +207,11 @@ async def create_users_and_roles(es, params):
         )
 
     await es.security.put_user(
-        username=USER_AUTH["username"], params={"roles": ROLE_IDS[0, num_roles - 1], "password": USER_AUTH["password"]}
+        username=USER_AUTH["username"], params={"roles": ROLE_IDS[0 : num_roles - 1], "password": USER_AUTH["password"]}
     )
 
     await es.indices.refresh(index="wikipedia")
+
 
 async def reset_indices(es, params):
     await es.security.delete_user(username=USER_AUTH["username"])
@@ -218,20 +219,16 @@ async def reset_indices(es, params):
     roles = await es.security.get_role()
     for role in roles:
         name = list(role.keys())[0]
-        if name.startswith('managed-role-search-'):
+        if name.startswith("managed-role-search-"):
             await es.security.delete_role(name=name)
 
-    await es.update_by_query(index="wikipedia", body={
-            "query": {
-                "exists": {
-                    "field": "_allow_permissions"
-                }
-            },
-            "script": {
-                "source": "ctx._source._allow_permissions = new ArrayList();",
-                "lang": "painless"
-            }
-        })
+    await es.update_by_query(
+        index="wikipedia",
+        body={
+            "query": {"exists": {"field": "_allow_permissions"}},
+            "script": {"source": "ctx._source._allow_permissions = new ArrayList();", "lang": "painless"},
+        },
+    )
 
     await es.indices.refresh(index="wikipedia")
 

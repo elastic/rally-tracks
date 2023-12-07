@@ -64,10 +64,9 @@ class QueryParamsSource:
         elif self._query_strategy == "text_expansion":
             query = self.generate_weighted_terms_query(query_expansion=query_obj[self._text_expansion_field], boost=1)
         elif self._query_strategy == "hybrid":
-            query = self.generate_combine_bm25_weighted_terms_query(query=query_obj["query"],
-                                                                    query_boost=1,
-                                                                    query_expansion=query_obj[self._text_expansion_field],
-                                                                    query_expansion_boost=1)
+            query = self.generate_combine_bm25_weighted_terms_query(
+                query=query_obj["query"], query_boost=1, query_expansion=query_obj[self._text_expansion_field], query_expansion_boost=1
+            )
         else:
             raise Exception(f"The query strategy \\`{self._query_strategy}]\\` is not implemented")
 

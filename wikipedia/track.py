@@ -211,6 +211,8 @@ async def create_users_and_roles(es, params):
     await es.security.put_user(
         username=USER_AUTH["username"], params={"roles": ROLE_IDS[0 : num_roles - 1], "password": USER_AUTH["password"]}
     )
+    await es.security.put_role(name='impersonator', body={"run_as": ["wikiuser"]}, refresh="wait_for")
+    await es.security.put_user(username='esbench', params={"roles": ["superuser", "impersonator"]})
 
     await es.indices.refresh(index="wikipedia")
 

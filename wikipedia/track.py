@@ -12,7 +12,7 @@ from esrally.track.params import ParamSource
 # Monkey patch time!
 from thespian.system.transport import asyncTransportBase
 
-asyncTransportBase.MAX_QUEUED_TRANSMITS = 10000000
+asyncTransportBase.DROP_TRANSMITS_LEVEL = 10000000
 
 QUERIES_DIRNAME: str = dirname(__file__)
 QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"

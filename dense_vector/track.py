@@ -212,7 +212,8 @@ class KnnRecallRunner:
             vector_operations_count = 0
             profile = knn_result["profile"]
             for shard in profile["shards"]:
-                vector_operations_count += shard["dfs"]["knn"]["vector_operations_count"]
+                # we have fixed 0 as index below, because we only have 1 knn search in this benchmark
+                vector_operations_count += shard["dfs"]["knn"][0]["vector_operations_count"]
             nodes_visited.append(vector_operations_count)
             current_recall = len(set(knn_hits).intersection(set(script_hits)))
             recall_total += current_recall

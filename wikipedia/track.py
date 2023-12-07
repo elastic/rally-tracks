@@ -203,7 +203,7 @@ async def create_users_and_roles(es, params):
                     "params": {"role": role},
                 },
                 "query": {"function_score": {"query": {"match_all": {}},
-                    "random_score": {"seed": random.random(), "field": "_seq_no"}}},
+                    "random_score": {"seed": int(random.random()*1000), "field": "_seq_no"}}},
             },
             conflicts="proceed",
         )

@@ -186,7 +186,6 @@ class KnnRecallParamSource:
 # and an equivalent score script query. Results are then compared to gauge
 # the accuracy of the knn query.
 class KnnRecallRunner:
-
     async def __call__(self, es, params):
         k = params["size"]
         num_candidates = params["num_candidates"]

@@ -1,13 +1,21 @@
 import functools
 import json
 import logging
-import numpy as np
 import os
 import statistics
 from collections import defaultdict
-from typing import Dict, List
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
+
+
+def compute_percentile(data: List[Any], percentile):
+    size = len(data)
+    if size <= 0:
+        return None
+    sorted_data = sorted(data)
+    index = int(round(percentile * size / 100)) - 1
+    return sorted_data[max(min(index, size - 1), 0)]
 
 
 def load_query_vectors(queries_file) -> Dict[int, List[float]]:
@@ -178,6 +186,7 @@ class KnnRecallParamSource:
 # and an equivalent score script query. Results are then compared to gauge
 # the accuracy of the knn query.
 class KnnRecallRunner:
+
     async def __call__(self, es, params):
         k = params["size"]
         num_candidates = params["num_candidates"]
@@ -227,7 +236,7 @@ class KnnRecallRunner:
                 "k": k,
                 "num_candidates": num_candidates,
                 "avg_nodes_visited": statistics.mean(nodes_visited),
-                "99th_percentile_nodes_visited": np.percentile(nodes_visited, 99)
+                "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99),
             }
             if exact_total > 0
             else None

@@ -1,6 +1,6 @@
 {
   "name": "ELSER-Multi-Parametric-Ingest",
-  "description": "Test the throughput of ELSER in various scenarios",
+  "description": "Test the throughput of ELSER at ingest with 256 token documents and varying number of allocations",
   "default": false,
   "schedule": [
     {%- set model_id = model_id | default('default') %}

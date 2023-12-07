@@ -1,6 +1,6 @@
 {
   "name": "ELSER-Multi-Doc-Multi-Parametric-Ingest",
-  "description": "Test the throughput of ELSER in various scenarios",
+  "description": "Test the throughput of ELSER at ingest varying the document length and number of allocations",
   "default": false,
   "schedule": [
     {%- set model_id = model_id | default('default') %}
@@ -20,7 +20,7 @@
         "body": {
           "description": "Pipes documents to ELSER",
           "processors": [
-            {
+            {`
               "inference": {
                 "model_id": "{{ model_id }}",
                 "target_field": "ml",
@@ -58,9 +58,9 @@
     {%- set p_min_number_of_allocations = min_number_of_allocations | default(1) %}
     {%- set p_min_doc_size = min_doc_size | default(128) %}
     {%- set p_max_doc_size = max_doc_size | default(128) %}
-    {%- set p_doc_size_interval = doc_size_interval | default(128) %}
+    {%- set p_doc_size_delta = doc_size_delta | default(128) %}
 
-    {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_interval) %}
+    {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_delta) %}
 
     {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
 

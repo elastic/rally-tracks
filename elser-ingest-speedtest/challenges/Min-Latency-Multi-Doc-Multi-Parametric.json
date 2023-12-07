@@ -5,7 +5,7 @@
   "schedule": [
     {%- set model_id = model_id | default('default') %}
     {
-      "name": "put elser v2 platform specific",
+      "name": "put elser",
       "operation": {
         "operation-type": "put-elser",
         "include-in-reporting": false,
@@ -58,12 +58,12 @@
     {%- set p_min_number_of_allocations = min_number_of_allocations | default(1) %}
     {%- set p_min_doc_size = min_doc_size | default(128) %}
     {%- set p_max_doc_size = max_doc_size | default(128) %}
-    {%- set p_doc_size_interval = doc_size_interval | default(128) %}
+    {%- set p_doc_size_delta = doc_size_delta | default(128) %}
     {%- set bulk_size = 1 %}
     {%- set bulk_indexing_clients = 1 %}
 
 
-    {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_interval) %}
+    {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_delta) %}
 
     {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
     {%- for l_num_threads in [1, 2, 4, 8, 16] %}

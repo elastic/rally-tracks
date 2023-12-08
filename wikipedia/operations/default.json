@@ -85,28 +85,28 @@
   "operation-type": "create_users_and_roles",
     "skip_roles": 0,
     "roles": 1000,
-    "track_scores": false,
-  "include-in-reporting": true
+  "include-in-reporting": true,
+  "request-timeout": 3600
 },
 {
   "name": "create-100000-roles",
   "operation-type": "create_users_and_roles",
     "skip_roles": 1000,
     "roles": 100000,
-    "track_scores": false,
-  "include-in-reporting": true
+  "include-in-reporting": true,
+  "request-timeout": 3600
 },
 {
   "name": "create-500000-roles",
   "operation-type": "create_users_and_roles",
     "skip_roles": 100000,
     "roles": 500000,
-    "track_scores": false,
-  "include-in-reporting": true
+  "include-in-reporting": true,
+  "request-timeout": 3600
 },
 {
   "name": "reset-indices",
   "operation-type": "reset_indices",
-    "track_scores": false,
-  "include-in-reporting": false
+  "include-in-reporting": false,
+  "request-timeout": 3600
 }

@@ -202,8 +202,7 @@ async def create_users_and_roles(es, params):
                     "lang": "painless",
                     "params": {"role": role},
                 },
-                "query": {"function_score": {"query": {"match_all": {}},
-                    "random_score": {"seed": int(random.random()*1000), "field": "_seq_no"}}},
+                "query": {"function_score": {"query": {"match_all": {}}, "random_score": {}}},
             },
             conflicts="proceed",
         )

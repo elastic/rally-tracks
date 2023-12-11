@@ -13,7 +13,7 @@ def extract_vector_operations_count(knn_result):
     vector_operations_count = 0
     profile = knn_result["profile"]
     for shard in profile["shards"]:
-        assert len(shard["dfs"]["knn"] == 1)
+        assert len(shard["dfs"]["knn"]) == 1
         knn_search = shard["dfs"]["knn"]
         if "vector_operations_count" in knn_search:
             vector_operations_count += knn_search["vector_operations_count"]
@@ -242,8 +242,7 @@ class KnnRecallRunner:
                 "k": k,
                 "num_candidates": num_candidates,
                 "avg_nodes_visited": statistics.mean(nodes_visited) if any([x > 0 for x in nodes_visited]) else None,
-                "99th_percentile_nodes_visited":
-                    compute_percentile(nodes_visited, 99) if any([x > 0 for x in nodes_visited]) else None,
+                "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99) if any([x > 0 for x in nodes_visited]) else None,
             }
             if exact_total > 0
             else None

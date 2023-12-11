@@ -223,9 +223,8 @@ async def create_users_and_roles(es, params):
 async def reset_indices(es, params):
     roles = await es.security.get_role()
     for role in roles:
-        name = list(role.keys())[0]
-        if name.startswith("managed-role-search-"):
-            await es.security.delete_role(name=name)
+        if role.startswith("managed-role-search-"):
+            await es.security.delete_role(name=role)
 
     await es.update_by_query(
         index="wikipedia",

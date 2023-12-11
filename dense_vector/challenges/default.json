@@ -187,7 +187,15 @@
       "iterations": 1000
     },
     {
-      "operation": "knn-recall-10-100"
+      "name": "knn-recall-10-100",
+      "operation": {
+          "operation-type": "knn-recall",
+          "param-source": "knn-recall-param-source",
+          "k": 10,
+          "num-candidates": 100,
+          "include-in-reporting": false,
+          "invalidate-vector-store": true
+      }
     },
     {
       "operation": "knn-recall-100-1000"

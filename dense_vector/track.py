@@ -45,7 +45,6 @@ async def extract_exact_neighbors(
 
 
 class KnnVectorStore:
-
     @staticmethod
     def empty_store():
         return defaultdict(lambda: defaultdict(list))

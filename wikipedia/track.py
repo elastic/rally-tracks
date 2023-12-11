@@ -185,10 +185,6 @@ async def create_users_and_roles(es, params):
     # For now we'll just work with one user with all the roles
     # num_users = params['users']
 
-    await es.security.put_user(
-        username=USER_AUTH["username"], params={"password": USER_AUTH["password"]}
-    )
-
     await es.indices.refresh(index="wikipedia")
     doc_count = await es.count(index="wikipedia")
 
@@ -238,7 +234,7 @@ async def reset_indices(es, params):
     await es.indices.refresh(index="wikipedia")
 
     await es.security.put_user(
-        username=USER_AUTH["username"], params={"roles": []}
+        username=USER_AUTH["username"], params={"password": USER_AUTH["password"], roles: []}
     )
 
 

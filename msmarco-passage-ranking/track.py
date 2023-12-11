@@ -15,7 +15,7 @@ class QueryParamsSource:
         self._cache = params.get("cache", False)
         self._size = params.get("size", 10)
         self._text_field = params.get("text_field", "text")
-        self._text_expansion_field = params.get("text_expansion_field", "text_expansion")
+        self._text_expansion_field = params.get("text_expansion_field", "text_expansion_elser")
         self._query_file = params.get("query_source", "queries.json")
         self._query_strategy = params.get("query_strategy", "bm25")
         self._track_total_hits = params.get("track_total_hits", False)
@@ -50,21 +50,23 @@ class QueryParamsSource:
             "query": {
                 "bool": {
                     "should": [
-                        self.generate_bm25_query(query, query_boost)["query"],
-                        self.generate_weighted_terms_query(query_expansion, query_expansion_boost)["query"],
+                        self.generate_bm25_query(query=query, boost=query_boost)["query"],
+                        self.generate_weighted_terms_query(query_expansion=query_expansion, boost=query_expansion_boost)["query"],
                     ]
                 }
             }
         }
 
     def params(self):
-        query_doc = self._queries[self._iters]
+        query_obj = self._queries[self._iters]
         if self._query_strategy == "bm25":
-            query = self.generate_bm25_query(query_doc["query"], 1)
+            query = self.generate_bm25_query(query=query_obj["query"], boost=1)
         elif self._query_strategy == "text_expansion":
-            query = self.generate_weighted_terms_query(query_doc["query_expansion"], 1)
+            query = self.generate_weighted_terms_query(query_expansion=query_obj[self._text_expansion_field], boost=1)
         elif self._query_strategy == "hybrid":
-            query = self.generate_combine_bm25_weighted_terms_query(query_doc["query"], 1, query_doc["query_expansion"], 1)
+            query = self.generate_combine_bm25_weighted_terms_query(
+                query=query_obj["query"], query_boost=1, query_expansion=query_obj[self._text_expansion_field], query_expansion_boost=1
+            )
         else:
             raise Exception(f"The query strategy \\`{self._query_strategy}]\\` is not implemented")
 

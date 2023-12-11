@@ -15,7 +15,7 @@
         "path": "/_cluster/settings",
         "body": {
           "transient": {
-            "search.worker_threads_enabled": {{ p_worker_threads_enabled | tojson }}
+            "search.query_phase_parallel_collection_enabled": {{ p_query_phase_parallel_collection_enabled |  tojson }}
           }
         }
       }

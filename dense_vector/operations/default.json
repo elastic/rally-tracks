@@ -20,6 +20,14 @@
   "exact": true
 },
 {
+  "name": "knn-recall-10-100",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 1000,
+  "include-in-reporting": false
+},
+{
   "name": "knn-recall-100-1000",
   "operation-type": "knn-recall",
   "param-source": "knn-recall-param-source",

@@ -178,7 +178,7 @@ class KnnRecallParamSource:
             "num_candidates": self._params.get("num-candidates", 100),
             "target_k": self._target_k,
             "knn_vector_store": KnnVectorStore.get_instance(self._queries_file, self._vector_field),
-            "invalidate_vector_store": self._params.get("invalidate-vector-store", False)
+            "invalidate_vector_store": self._params.get("invalidate-vector-store", False),
         }
 
 

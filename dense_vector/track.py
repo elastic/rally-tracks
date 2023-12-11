@@ -9,6 +9,16 @@ from typing import Any, Dict, List
 logger = logging.getLogger(__name__)
 
 
+def extract_vector_operations_count(knn_result):
+    vector_operations_count = 0
+    profile = knn_result["profile"]
+    for shard in profile["shards"]:
+        for knn_search in shard["dfs"]["knn"]:
+            if "vector_operations_count" in knn_search:
+                vector_operations_count += knn_search["vector_operations_count"]
+    return vector_operations_count
+
+
 def compute_percentile(data: List[Any], percentile):
     size = len(data)
     if size <= 0:
@@ -217,11 +227,7 @@ class KnnRecallRunner:
             knn_hits = [hit["_id"] for hit in knn_result["hits"]["hits"]]
             script_hits = await knn_vector_store.get_neighbors_for_query(index, query_id, target_k, request_cache, es)
             script_hits = script_hits[:k]
-            vector_operations_count = 0
-            profile = knn_result["profile"]
-            for shard in profile["shards"]:
-                # we have fixed 0 as index below, because we only have 1 knn search in this benchmark
-                vector_operations_count += shard["dfs"]["knn"][0]["vector_operations_count"]
+            vector_operations_count = extract_vector_operations_count(knn_result)
             nodes_visited.append(vector_operations_count)
             current_recall = len(set(knn_hits).intersection(set(script_hits)))
             recall_total += current_recall
@@ -234,8 +240,9 @@ class KnnRecallRunner:
                 "min_recall": min_recall,
                 "k": k,
                 "num_candidates": num_candidates,
-                "avg_nodes_visited": statistics.mean(nodes_visited),
-                "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99),
+                "avg_nodes_visited": statistics.mean(nodes_visited) if any([x > 0 for x in nodes_visited]) else None,
+                "99th_percentile_nodes_visited":
+                    compute_percentile(nodes_visited, 99) if any([x > 0 for x in nodes_visited]) else None,
             }
             if exact_total > 0
             else None

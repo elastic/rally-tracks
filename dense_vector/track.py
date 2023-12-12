@@ -14,7 +14,7 @@ def extract_vector_operations_count(knn_result):
     profile = knn_result["profile"]
     for shard in profile["shards"]:
         assert len(shard["dfs"]["knn"]) == 1
-        knn_search = shard["dfs"]["knn"]
+        knn_search = shard["dfs"]["knn"][0]
         if "vector_operations_count" in knn_search:
             vector_operations_count += knn_search["vector_operations_count"]
     return vector_operations_count

@@ -191,6 +191,12 @@ async def create_users_and_roles(es, params):
     num_roles = params["roles"]
     skip_roles = params["skip_roles"]
 
+    user = await es.security.get_user(username=USER_AUTH["username"])
+    if not user:
+        await es.security.put_user(
+            username=USER_AUTH["username"], params={"password": USER_AUTH["password"], roles: []}
+        )
+
     for role in ROLE_IDS[skip_roles : num_roles - 1]:
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
         await es.update_by_query(

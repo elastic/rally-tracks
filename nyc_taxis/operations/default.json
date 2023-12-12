@@ -957,6 +957,11 @@
       }
     },
     {
+      "name": "avg_passenger_count_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(passenger_count)"
+    },
+    {
       "name": "avg_passenger_count_esql_segment_partitioning",
       "operation-type": "esql",
       "query" : "FROM nyc_taxis | stats avg(passenger_count)",
@@ -1000,6 +1005,11 @@
       }
     },
     {
+      "name": "avg_tip_percent_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | where fare_amount > 0 | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)"
+    },
+    {
       "name": "avg_tip_percent_esql_segment_partitioning",
       "operation-type": "esql",
       "query" : "FROM nyc_taxis | where fare_amount > 0 | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
@@ -1036,6 +1046,11 @@
             }
         }
       }
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count"
     },
     {
       "name": "avg_amount_group_by_integer_esql_segment_partitioning",
@@ -1076,6 +1091,11 @@
       }
     },
     {
+      "name": "avg_amount_group_by_keyword_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id"
+    },
+    {
       "name": "avg_amount_group_by_keyword_esql_segment_partitioning",
       "operation-type": "esql",
       "query" : "FROM nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
@@ -1102,6 +1122,11 @@
           }
         }
       }
+    },
+    {
+      "name": "count_group_by_keyword_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats count=count(*) by rate_code_id | sort count desc"
     },
     {
       "name": "count_group_by_keyword_esql_segment_partitioning",
@@ -1149,6 +1174,11 @@
       }
     },
     {
+      "name": "avg_passenger_count_filtered_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)"
+    },
+    {
       "name": "avg_passenger_count_filtered_esql_segment_partitioning",
       "operation-type": "esql",
       "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
@@ -1174,6 +1204,11 @@
       }
     },
     {
+      "name": "sort_by_ts_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000"
+    },
+    {
       "name": "sort_by_ts_esql_segment_partitioning",
       "operation-type": "esql",
       "query" : "FROM nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000",
@@ -1186,6 +1221,11 @@
       "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
+      "name": "date_histogram_calendar_interval_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time"
+    },
+    {
       "name": "date_histogram_calendar_interval_esql_segment_partitioning",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
@@ -1196,6 +1236,11 @@
       "operation-type": "esql",
       "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
       "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+    {
+      "name": "date_histogram_fixed_interval_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time"
     },
     {
       "name": "date_histogram_fixed_interval_esql_segment_partitioning",
@@ -1256,6 +1301,11 @@
       }
     },
     {
+      "name": "date_histogram_fixed_interval_with_metrics_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time"
+    },
+    {
       "name": "date_histogram_fixed_interval_with_metrics_esql_segment_partitioning",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
@@ -1293,6 +1343,11 @@
           }
         }
       }
+    },
+    {
+      "name": "multi_terms-keyword_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-02-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id"
     },
     {
       "name": "multi_terms-keyword_esql_segment_partitioning",

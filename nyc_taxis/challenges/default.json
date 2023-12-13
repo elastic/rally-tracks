@@ -12,7 +12,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"
@@ -41,6 +43,7 @@
           "name": "refresh-after-index",
           "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -54,6 +57,7 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         },
@@ -72,17 +76,20 @@
           "warmup-iterations": 50,
           "iterations": 100
         },
+        {% if p_include_target_throughput %}
         {
           "operation": "default",
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 3
         },
+        {% endif %}
         {
           "operation": "default_1k",
           "warmup-iterations": 50,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 3
+          {%- endif %}
         },
         {
           "operation": "range",
@@ -119,7 +126,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"
@@ -148,6 +157,7 @@
           "name": "refresh-after-index",
           "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -161,6 +171,7 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         }
@@ -179,7 +190,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -210,6 +223,7 @@
           "name": "refresh-after-index",
           "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -223,6 +237,7 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         }
@@ -241,9 +256,11 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.number_of_shards": {{number_of_shards | default(1)}},
               "index.number_of_replicas": {{number_of_replicas | default(0)}},
               "index.store.type": "{{store_type | default('fs')}}"
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
             }{%- endif %}
           }
@@ -270,6 +287,7 @@
           "name": "refresh-after-index",
           "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -283,6 +301,7 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         }
@@ -301,7 +320,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.store.type": "{{store_type | default('fs')}}"
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
             }{%- endif %}
           }
@@ -341,7 +362,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"
@@ -537,6 +560,7 @@
           "name": "refresh-after-index",
           "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -550,6 +574,7 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         },
@@ -599,7 +624,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"
@@ -762,7 +789,9 @@
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"

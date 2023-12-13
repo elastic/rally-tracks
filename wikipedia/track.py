@@ -2,7 +2,7 @@ import csv
 import math
 import random
 import re
-import uuid
+import json
 from base64 import b64encode
 from os import getcwd
 from os.path import dirname
@@ -21,7 +21,8 @@ SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
-ROLE_IDS = ["managed-role-search-{}".format(uuid.uuid4()) for x in range(0, 500000)]
+with open('./roles.json') as f:
+    ROLE_IDS = json.load(f)
 USER_AUTH = {"username": "wikiuser", "password": "ujd_rbh5quw7GWC@pjc"}
 AUTH_HEADER = create_basic_auth_header(**USER_AUTH)
 ROLE_TEMPLATE = {

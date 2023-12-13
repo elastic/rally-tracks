@@ -21,8 +21,9 @@ SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
-with open('./roles.json') as f:
+with open(f"{QUERIES_DIRNAME}/roles.json") as f:
     ROLE_IDS = json.load(f)
+
 USER_AUTH = {"username": "wikiuser", "password": "ujd_rbh5quw7GWC@pjc"}
 AUTH_HEADER = create_basic_auth_header(**USER_AUTH)
 ROLE_TEMPLATE = {

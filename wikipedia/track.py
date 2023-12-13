@@ -224,6 +224,7 @@ async def create_users_and_roles(es, params):
             conflicts="proceed",
             slices="auto",
             timeout="60m",
+            request_timeout=3600,
         )
 
     await es.security.put_user(
@@ -248,6 +249,7 @@ async def reset_indices(es, params):
         conflicts="proceed",
         slices="auto",
         timeout="60m",
+        request_timeout=3600,
     )
 
     await es.indices.refresh(index="wikipedia")

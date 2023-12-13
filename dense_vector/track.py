@@ -45,11 +45,15 @@ async def extract_exact_neighbors(
 
 
 class KnnVectorStore:
+    @staticmethod
+    def empty_store():
+        return defaultdict(lambda: defaultdict(list))
+
     def __init__(self, queries_file: str, vector_field: str):
         assert queries_file and vector_field
         self._query_vectors = load_query_vectors(queries_file)
         self._vector_field = vector_field
-        self._store = defaultdict(lambda: defaultdict(list))
+        self._store = KnnVectorStore.empty_store()
 
     async def get_neighbors_for_query(self, index: str, query_id: int, size: int, request_cache: bool, client) -> List[str]:
         try:
@@ -64,10 +68,14 @@ class KnnVectorStore:
             logger.exception(f"Failed to compute nearest neighbors for '{query_id}'. Returning empty results instead.", ex)
             return []
 
-    async def load_exact_neighbors(self, index: str, query_id: str, max_size: int, request_cache: bool, client):
+    async def load_exact_neighbors(self, index: str, query_id: int, max_size: int, request_cache: bool, client):
         if query_id not in self._query_vectors:
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
         return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, self._vector_field, request_cache, client)
+
+    def invalidate_all(self):
+        logger.info("Invalidating all entries from knn-vector-store")
+        self._store = KnnVectorStore.empty_store()
 
     def get_query_vectors(self) -> Dict[int, List[float]]:
         if len(self._query_vectors) == 0:
@@ -169,6 +177,7 @@ class KnnRecallParamSource:
             "num_candidates": self._params.get("num-candidates", 100),
             "target_k": self._target_k,
             "knn_vector_store": KnnVectorStore.get_instance(self._queries_file, self._vector_field),
+            "invalidate_vector_store": self._params.get("invalidate-vector-store", False),
         }
 
 
@@ -187,6 +196,9 @@ class KnnRecallRunner:
         min_recall = k
 
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
+        invalidate_vector_store: bool = params["invalidate_vector_store"]
+        if invalidate_vector_store:
+            knn_vector_store.invalidate_all()
         for query_id, query_vector in knn_vector_store.get_query_vectors().items():
             knn_result = await es.search(
                 body={

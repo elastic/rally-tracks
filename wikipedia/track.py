@@ -197,7 +197,7 @@ async def create_users_and_roles(es, params):
     except:
         if not user:
             await es.security.put_user(
-                username=USER_AUTH["username"], params={"password": USER_AUTH["password"], roles: []}
+                username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
             )
 
     for role in ROLE_IDS[skip_roles : num_roles - 1]:

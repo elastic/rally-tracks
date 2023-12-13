@@ -34,6 +34,7 @@
           "name": "refresh-after-index",
           "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -46,6 +47,7 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {% endif %}
         {
           "name": "wait-until-merges-finish",
           "operation": {
@@ -71,26 +73,30 @@
         {
           "operation": "polygon",
           "warmup-iterations": 200,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 2
+          {%- endif %}
         },
         {
           "operation": "bbox",
           "warmup-iterations": 200,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 2
+          {%- endif %}
         },
         {
           "operation": "distance",
           "warmup-iterations": 200,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 5
+          {%- endif %}
         },
         {
           "operation": "distanceRange",
           "warmup-iterations": 200,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 0.5
+          {%- endif %}
         },
         {
           "operation": "geoGrid_geohash",
@@ -159,6 +165,7 @@
         "name": "refresh-after-index",
         "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -171,6 +178,7 @@
         "name": "refresh-after-force-merge",
         "operation": "refresh"
         },
+        {% endif %}
         {
           "name": "wait-until-merges-finish",
           "operation": {
@@ -227,6 +235,7 @@
         "name": "refresh-after-index",
         "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -239,6 +248,7 @@
         "name": "refresh-after-force-merge",
         "operation": "refresh"
         },
+        {% endif %}
         {
           "name": "wait-until-merges-finish",
           "operation": {

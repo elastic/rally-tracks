@@ -2556,22 +2556,17 @@
           "parallel": {
             "tasks": [
               {
+                "name": "index-some-1",
+                "operation": "index-some",
+                "clients": 4,
+                "iterations": 4
+              },
+              {
                 "operation": "avg_passenger_count_esql",
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
               },
-              {
-                "name": "index-some-1",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
               {
                 "operation": "avg_passenger_count_filtered_esql",
                 "clients": 1,
@@ -2579,43 +2574,16 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-2",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "avg_tip_percent_esql",
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
               },
               {
-                "name": "index-some-3",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "avg_amount_group_by_integer_esql",
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
-              },
-              {
-                "name": "index-some-4",
-                "operation": "index-some",
-                "iterations": 1
               }
             ]
           }
@@ -2623,6 +2591,12 @@
         {
           "parallel": {
             "tasks": [
+              {
+                "name": "index-some-2",
+                "operation": "index-some",
+                "clients": 4,
+                "iterations": 4
+              },
               {
                 "operation": "avg_amount_group_by_keyword_esql",
                 "clients": 1,
@@ -2630,33 +2604,11 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-5",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "count_group_by_keyword_esql",
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
               },
-              {
-                "name": "index-some-6",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
               {
                 "operation": "multi_terms-keyword",
                 "clients": 1,
@@ -2664,26 +2616,10 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-7",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "composite_terms-keyword",
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
-              },
-              {
-                "name": "index-some-8",
-                "operation": "index-some",
-                "iterations": 1
               }
             ]
           }
@@ -2691,6 +2627,12 @@
         {
           "parallel": {
             "tasks": [
+              {
+                "name": "index-some-3",
+                "operation": "index-some",
+                "clients": 4,
+                "iterations": 4
+              },
               {
                 "operation": "multi_terms-keyword_esql",
                 "clients": 1,
@@ -2698,33 +2640,11 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-9",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "sort_by_ts_query",
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
               },
-              {
-                "name": "index-some-10",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
               {
                 "operation": "sort_by_ts_esql",
                 "clients": 1,
@@ -2732,26 +2652,10 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-11",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "date_histogram_calendar_interval_esql",
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
-              },
-              {
-                "name": "index-some-12",
-                "operation": "index-some",
-                "iterations": 1
               }
             ]
           }
@@ -2759,6 +2663,12 @@
         {
           "parallel": {
             "tasks": [
+              {
+                "name": "index-some-4",
+                "operation": "index-some",
+                "clients": 4,
+                "iterations": 4
+              },
               {
                 "operation": "date_histogram_fixed_interval_esql",
                 "clients": 1,
@@ -2766,33 +2676,11 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-13",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "date_histogram_fixed_interval_with_metrics_esql",
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
               },
-              {
-                "name": "index-some-14",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
               {
                 "operation": "esql_enrich_control",
                 "tags": ["enrich"],
@@ -2801,27 +2689,11 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-15",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "esql_enrich_1",
                 "tags": ["enrich"],
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
-              },
-              {
-                "name": "index-some-16",
-                "operation": "index-some",
-                "iterations": 1
               }
             ]
           }
@@ -2829,6 +2701,12 @@
         {
           "parallel": {
             "tasks": [
+              {
+                "name": "index-some-5",
+                "operation": "index-some",
+                "clients": 4,
+                "iterations": 4
+              },
               {
                 "operation": "esql_enrich_2",
                 "tags": ["enrich"],
@@ -2837,34 +2715,12 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-17",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "esql_enrich_3",
                 "tags": ["enrich"],
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
               },
-              {
-                "name": "index-some-18",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
               {
                 "operation": "esql_enrich_4",
                 "tags": ["enrich"],
@@ -2873,27 +2729,11 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-19",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "esql_enrich_rates_fares",
                 "tags": ["enrich"],
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
-              },
-              {
-                "name": "index-some-20",
-                "operation": "index-some",
-                "iterations": 1
               }
             ]
           }
@@ -2901,6 +2741,12 @@
         {
           "parallel": {
             "tasks": [
+              {
+                "name": "index-some-6",
+                "operation": "index-some",
+                "clients": 4,
+                "iterations": 4
+              },
               {
                 "operation": "esql_enrich_payments",
                 "tags": ["enrich"],
@@ -2909,34 +2755,12 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-21",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "esql_enrich_payments_fares",
                 "tags": ["enrich"],
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
               },
-              {
-                "name": "index-some-22",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
               {
                 "operation": "esql_stats_enrich_control",
                 "tags": ["enrich","stats"],
@@ -2945,27 +2769,11 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-23",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "esql_stats_enrich_1",
                 "tags": ["enrich","stats"],
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
-              },
-              {
-                "name": "index-some-24",
-                "operation": "index-some",
-                "iterations": 1
               }
             ]
           }
@@ -2973,6 +2781,12 @@
         {
           "parallel": {
             "tasks": [
+              {
+                "name": "index-some-7",
+                "operation": "index-some",
+                "clients": 4,
+                "iterations": 4
+              },
               {
                 "operation": "esql_stats_enrich_2",
                 "tags": ["enrich","stats"],
@@ -2981,17 +2795,6 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-25",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "esql_stats_enrich_3",
                 "tags": ["enrich","stats"],
                 "clients": 1,
@@ -2999,27 +2802,11 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-26",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "esql_stats_enrich_4",
                 "tags": ["enrich","stats"],
                 "clients": 1,
                 "warmup-iterations": 3,
                 "iterations": 15
-              },
-              {
-                "name": "index-some-27",
-                "operation": "index-some",
-                "iterations": 1
               }
             ]
           }
@@ -3028,23 +2815,11 @@
           "parallel": {
             "tasks": [
               {
-                "operation": "esql_stats_enrich_rates_fares",
-                "tags": ["enrich","stats"],
-                "clients": 1,
-                "warmup-iterations": 3,
-                "iterations": 15
-              },
-              {
-                "name": "index-some-28",
+                "name": "index-some-8",
                 "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
+                "clients": 4,
+                "iterations": 4
+              },
               {
                 "operation": "esql_stats_enrich_payments",
                 "tags": ["enrich","stats"],
@@ -3053,17 +2828,6 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-29",
-                "operation": "index-some",
-                "iterations": 1
-              }
-            ]
-          }
-        },
-        {
-          "parallel": {
-            "tasks": [
-              {
                 "operation": "esql_stats_enrich_payments_fares",
                 "tags": ["enrich","stats"],
                 "clients": 1,
@@ -3071,9 +2835,11 @@
                 "iterations": 15
               },
               {
-                "name": "index-some-30",
-                "operation": "index-some",
-                "iterations": 1
+                "operation": "esql_stats_enrich_rates_fares",
+                "tags": ["enrich","stats"],
+                "clients": 1,
+                "warmup-iterations": 3,
+                "iterations": 15
               }
             ]
           }

@@ -6,6 +6,13 @@
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
+      "name": "index-some",
+      "operation-type": "bulk",
+      "indices": ["nyc_taxis"],
+      "bulk-size": 500,
+      "ingest-percentage": 1
+    },
+    {
       "name": "update",
       "operation-type": "bulk",
       "indices": ["nyc_taxis"],

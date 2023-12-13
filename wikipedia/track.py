@@ -10,6 +10,10 @@ from typing import Iterator, List
 
 from esrally.track.params import ParamSource
 
+def create_basic_auth_header(username, password):
+    token = b64encode(f"{username}:{password}".encode('utf-8')).decode("ascii")
+    return f'Basic {token}'
+
 QUERIES_DIRNAME: str = dirname(__file__)
 QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"
 
@@ -19,7 +23,7 @@ QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
 ROLE_IDS = ["managed-role-search-{}".format(uuid.uuid4()) for x in range(0, 500000)]
 USER_AUTH = {"username": "wikiuser", "password": "ujd_rbh5quw7GWC@pjc"}
-AUTH_BEARER = b64encode(("{}:{}".format(*USER_AUTH.values())).encode('ascii'))
+AUTH_HEADER = create_basic_auth_header(**USER_AUTH)
 ROLE_TEMPLATE = {
     "indices": [
         {
@@ -145,7 +149,7 @@ class SearchApplicationSearchParamSourceWithUser(QueryIteratorParamSource):
             query = next(self._queries_iterator)
             return {
                 "method": "POST",
-                "headers": {"Authorization": "Basic {}".format(AUTH_BEARER)},
+                "headers": {"Authorization": AUTH_HEADER},
                 "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
                 "body": {
                     "params": {
@@ -243,7 +247,7 @@ async def reset_indices(es, params):
     await es.indices.refresh(index="wikipedia")
 
     await es.security.put_user(
-        username=USER_AUTH["username"], params={"password": USER_AUTH["password"], roles: []}
+        username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
     )
 
 

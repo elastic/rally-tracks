@@ -57,10 +57,10 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
-        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         },
+        {% endif %}
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",
@@ -171,10 +171,10 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
-        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         }
+        {% endif %}
       ]
     },
     {
@@ -237,10 +237,10 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
-        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         }
+        {% endif %}
       ]
     },
     {
@@ -301,10 +301,10 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
-        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         }
+        {% endif %}
       ]
     },
     {
@@ -574,10 +574,10 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
-        {% endif %}
         {
           "operation": "wait-until-merges-finish"
         },
+        {% endif %}
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",

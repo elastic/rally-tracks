@@ -164,8 +164,8 @@
         {
         "name": "refresh-after-index",
         "operation": "refresh"
-        },
-        {% if p_include_force_merge %}
+        }
+        {% if p_include_force_merge %},
         {
           "operation": {
             "operation-type": "force-merge",
@@ -234,8 +234,8 @@
         {
         "name": "refresh-after-index",
         "operation": "refresh"
-        },
-        {% if p_include_force_merge %}
+        }
+        {% if p_include_force_merge %},
         {
           "operation": {
             "operation-type": "force-merge",

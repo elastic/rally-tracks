@@ -231,7 +231,7 @@ async def create_users_and_roles(es, params):
             pass
 
     await es.security.put_user(
-        username=USER_AUTH["username"], params={"roles": ROLE_IDS[0 : num_roles - 1]}
+        username=USER_AUTH["username"], params={"roles": ROLE_IDS[0 : num_roles - 1] + ['app-admin']}
     )
 
     await es.indices.refresh(index="wikipedia")

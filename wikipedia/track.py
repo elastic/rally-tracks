@@ -208,24 +208,27 @@ async def create_users_and_roles(es, params):
 
     for role in ROLE_IDS[skip_roles : num_roles - 1]:
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
-        await es.update_by_query(
-            index="wikipedia",
-            max_docs=int((doc_count["count"] / 100) * 1),
-            body={
-                "script": {
-                    "source": "if (ctx._source._allow_permissions ==null){"
-                    "ctx._source._allow_permissions =[params.role];} else "
-                    "{ctx._source._allow_permissions.add(params.role)}",
-                    "lang": "painless",
-                    "params": {"role": role},
+        try:
+            await es.update_by_query(
+                index="wikipedia",
+                max_docs=int(doc_count["count"] / 1000),
+                body={
+                    "script": {
+                        "source": "if (ctx._source._allow_permissions ==null){"
+                        "ctx._source._allow_permissions =[params.role];} else "
+                        "{ctx._source._allow_permissions.add(params.role)}",
+                        "lang": "painless",
+                        "params": {"role": role},
+                    },
+                    "query": {"function_score": {"query": {"match_all": {}}, "random_score": {}}},
                 },
-                "query": {"function_score": {"query": {"match_all": {}}, "random_score": {}}},
-            },
-            conflicts="proceed",
-            slices="auto",
-            timeout="60m",
-            request_timeout=3600,
-        )
+                conflicts="proceed",
+                slices="auto",
+                timeout="30s",
+                request_timeout=30,
+            )
+        except:
+            pass
 
     await es.security.put_user(
         username=USER_AUTH["username"], params={"roles": ROLE_IDS[0 : num_roles - 1]}

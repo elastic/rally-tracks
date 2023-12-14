@@ -29,7 +29,7 @@ AUTH_HEADER = create_basic_auth_header(**USER_AUTH)
 ROLE_TEMPLATE = {
     "indices": [
         {
-            "names": ["wikipedia"],
+            "names": ["wikipedia*"],
             "privileges": ["read"],
             "query": {
                 "template": {
@@ -208,6 +208,7 @@ async def create_users_and_roles(es, params):
 
     for role in ROLE_IDS[skip_roles : num_roles - 1]:
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
+        continue
         try:
             await es.update_by_query(
                 index="wikipedia",

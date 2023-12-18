@@ -339,19 +339,6 @@
             "retry-until-success": true
           }
         },
-        {% if disable_serverless_autoscaler|default(false) and serverless_operator %}
-        {
-          "name": "disable-serverless-autoscaler",
-          "operation": {
-            "operation-type": "put-settings",
-            "body": {
-              "persistent": {
-                "serverless.autoscaling.enabled": false
-              }
-            }
-          }
-        },
-        {% endif %}
         {
           "operation": "update",
           "warmup-time-period": 1200,

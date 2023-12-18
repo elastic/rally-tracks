@@ -1,8 +1,14 @@
     {
       "name": "append-no-conflicts",
-      "description": "Indexes the whole document corpus.",
+      "description": "Indexes the whole document corpus and runs downsampling",
       "default": true,
       "schedule": [
+        {
+          "operation": {
+            "operation-type": "delete-index",
+            "index": ["tsdb_synth-1m", "tsdb_synth-1h", "tsdb_synth-1d"]
+          }
+        },
         {
           "name": "create-all-templates",
           "operation": {
@@ -73,6 +79,39 @@
             },
             "retry-until-success": true,
             "include-in-reporting": false
+          }
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh"
+        },
+        {
+          "name": "block-source-index-writes",
+          "operation": {
+            "operation-type": "raw-request",
+            "path": "/tsdb_synth/_block/write",
+            "method": "PUT"
+          }
+        },
+        {
+          "name": "downsample-1m",
+          "operation": {
+            "operation-type": "downsample",
+            "fixed-interval": "1m"
+          }
+        },
+        {
+          "name": "downsample-1h",
+          "operation": {
+            "operation-type": "downsample",
+            "fixed-interval": "1h"
+          }
+        },
+        {
+          "name": "downsample-1d",
+          "operation": {
+            "operation-type": "downsample",
+            "fixed-interval": "1d"
           }
         }
       ]

@@ -1,0 +1,21 @@
+{
+  "settings": {
+    {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    "index.number_of_shards": 1,
+    "index.number_of_replicas": 0
+    {%- endif -%}{# non-serverless-index-settings-marker-end #}
+  },
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
+      },
+      "fare": {
+        "type": "double"
+      }
+    }
+  }
+}

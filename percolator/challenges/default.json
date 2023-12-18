@@ -38,6 +38,7 @@
         {
           "operation": {
             "operation-type": "force-merge",
+            "max-num-segments": {{ max_num_segments | default(-1) }},
             "request-timeout": 7200
           }
         },
@@ -58,6 +59,15 @@
             "include-in-reporting": false
           }
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "operation": "percolator_with_content_president_bush",
           "warmup-iterations": 100,

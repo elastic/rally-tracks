@@ -1,0 +1,64 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Index refresh benchmarks with a Kubernetes pod metrics dataset",
+  "composable-templates": [
+    {
+      "name": "metrics-kubernetes.pod-template",
+      "index-pattern": "metrics-kubernetes.pod*",
+      "template": "templates/metrics-kubernetes.pod.json",
+      "template-path": "index_template"
+    }
+  ],
+  "component-templates": [
+    {
+      "name": "metrics-kubernetes.pod@custom",
+      "template": "templates/metrics-kubernetes.pod@custom.json",
+      "template-path": "component_template"
+    },
+    {
+      "name": "metrics-kubernetes.pod@package",
+      "template": "templates/metrics-kubernetes.pod@package.json",
+      "template-path": "component_template"
+    }
+  ],
+  "data-streams": [
+    {
+      "name": "metrics-kubernetes.pod-rally"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "k8s-integration",
+      "documents": [
+        {
+          "source-file": "docs-fast-refresh.json.bz2",
+          "base-url": "https://rally-tracks.elastic.co/k8s_metrics",
+          "includes-action-and-meta-data": true,
+          "document-count": 2016,
+          "uncompressed-bytes": 46515072,
+          "compressed-bytes": 2249885
+        }
+      ]
+    },
+    {
+      "name": "kubernetes-pod-metrics",
+      "documents": [
+        {
+          "source-file": "doc-ds-metrics-kubernetes.pod.json.bz2",
+          "target-data-stream": "metrics-kubernetes.pod-rally",
+          "base-url": "https://rally-tracks.elastic.co/k8s_metrics",
+          "document-count": 8640000,
+          "uncompressed-bytes": 92412567091,
+          "compressed-bytes": 2272527391
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

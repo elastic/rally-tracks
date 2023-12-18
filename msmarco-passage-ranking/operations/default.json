@@ -1,0 +1,70 @@
+ {
+    "name": "text-expansion-search-maxwand-disabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "text_expansion",
+    "text_expansion_field": "text_expansion_elser",
+    "track_total_hits": true
+ },
+ {
+    "name": "text-expansion-search-maxwand-enabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "text_expansion",
+    "text_expansion_field": "text_expansion_elser",
+    "track_total_hits": false
+ },
+ {
+    "name": "text-expansion-splade-search-maxwand-disabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "text_expansion",
+    "text_expansion_field": "text_expansion_splade",
+    "track_total_hits": true
+ },
+ {
+    "name": "text-expansion-splade-search-maxwand-enabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "text_expansion",
+    "text_expansion_field": "text_expansion_splade",
+    "track_total_hits": false
+ },
+ {
+    "name": "bm25-search-maxwand-disabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "bm25",
+    "track_total_hits": true
+ },
+ {
+    "name": "bm25-search-maxwand-enabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "bm25",
+    "track_total_hits": false
+ },
+ {
+    "name": "hybrid-search-maxwand-disabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "hybrid",
+    "text_expansion_field": "text_expansion_elser",
+    "track_total_hits": true
+ },
+ {
+    "name": "hybrid-search-maxwand-enabled",
+    "operation-type": "search",
+    "param-source": "query_param_source",
+    "query_source": "queries.json",
+    "query_strategy": "hybrid",
+    "text_expansion_field": "text_expansion_elser",
+    "track_total_hits": false
+ }

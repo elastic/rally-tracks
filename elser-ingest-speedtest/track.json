@@ -1,0 +1,27 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark weighted terms queries on ELSER tokens on the MS MARCO passage dataset",
+  "indices": [
+    {
+      "name": "benchmark-elser-ingest-speedtest",
+      "body": "bert-vocab-whole-words-mapping.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "size256-bert-vocab-whole-words",
+      "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
+      "documents": [
+        {
+          "source-file": "document_set.json",
+          "document-count": 1000000,
+          "uncompressed-bytes": 2047692483
+        }
+      ]
+    }
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

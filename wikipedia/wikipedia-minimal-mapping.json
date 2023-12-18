@@ -1,0 +1,24 @@
+{
+  "settings": {
+    "index.number_of_replicas": {{ number_of_replicas | default(0) }},
+    "index.number_of_shards": {{ number_of_shards | default(1) }}
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text"
+      },
+      "content": {
+        "type": "text"
+      },
+      "namespace": {
+        "ignore_above": 1024,
+        "type": "keyword"
+      },
+      "redirect": {
+        "ignore_above": 1024,
+        "type": "keyword"
+      }
+    }
+  }
+}

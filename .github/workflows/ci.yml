@@ -8,6 +8,9 @@ on:
   # Allows triggering the job manually
   workflow_dispatch:
 
+env:
+  DEFAULT_BRANCH: master
+
 permissions: "read-all"
 
 jobs:
@@ -24,18 +27,24 @@ jobs:
       - name: "Install dependencies"
         run: python -m pip install .[develop]
       - uses: pre-commit/action@v3.0.0
+      - uses: elastic/es-perf-github-status@v2
+        if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
+        with:
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack_channel: ${{ secrets.SLACK_CHANNEL }}
+          status: FAILED
 
   test:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
         os:
           - macos-latest
           - ubuntu-latest
 
     runs-on: ${{ matrix.os }}
-    name: ${{ fromJson('{"macos-latest":"macOS","ubuntu-latest":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }}
+    name: unit ${{ fromJson('{"macos-latest":"macOS","ubuntu-latest":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -47,15 +56,27 @@ jobs:
         run: python -m pip install .[develop]
       - name: "Run tests"
         run: hatch -v -e unit run test
+      - uses: elastic/es-perf-github-status@v2
+        if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
+        with:
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack_channel: ${{ secrets.SLACK_CHANNEL }}
+          status: FAILED
 
   rally-tracks-compat:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.11"]
+
     runs-on: ubuntu-22.04
 
+    name: rally-tracks-compat ${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
           cache: pip
           cache-dependency-path: pyproject.toml
       - uses: actions/setup-java@v3
@@ -73,10 +94,18 @@ jobs:
           # elastic/endpoint fetches assets from GitHub, authenticate to avoid
           # being rate limited
           ASSETS_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: elastic/es-perf-github-status@v2
+        if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
+        with:
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack_channel: ${{ secrets.SLACK_CHANNEL }}
+          status: FAILED
       # Artifact will show up under "Artifacts" in the "Summary" page of runs
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: rally-tracks-compat-logs
-          path: /home/runner/.rally/logs/
+          path: |
+            /home/runner/.rally/logs/
+            /home/runner/.rally/benchmarks/races/**/*.log
           if-no-files-found: error

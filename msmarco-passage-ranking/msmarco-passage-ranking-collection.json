@@ -1,0 +1,24 @@
+{
+    "mappings": {
+        "properties": {
+            "id": {
+                "type":"keyword"
+            },
+            "text": {
+                "type": "text"
+            },
+            "text_expansion_elser": {
+                "type": "rank_features"
+            },
+            "text_expansion_splade": {
+                "type": "rank_features"
+            }
+        }
+    },
+    "settings": {
+        "index": {
+            "number_of_replicas": "{{number_of_replicas | default(0)}}",
+            "number_of_shards": "{{number_of_shards | default(1)}}"
+        }
+    }
+}

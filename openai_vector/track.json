@@ -1,0 +1,44 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Benchmark for vector search using the OpenAI text-embedding-ada-002 model",
+  "indices": [
+    {
+      "name": "openai",
+      "body": "index-{{ mapping_type | default("vectors-only") }}-mapping.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "openai-initial-indexing",
+      "base-url": "https://rally-tracks.elastic.co/openai_vector",
+      "documents": [
+        {
+          "source-file": "open_ai_corpus-initial-indexing.json.bz2",
+          "document-count": 2580961,
+          "compressed-bytes": 32076749416,
+          "uncompressed-bytes": 90263571686
+        }
+      ]
+    },
+    {
+      "name": "openai-parallel-indexing",
+      "base-url": "https://rally-tracks.elastic.co/openai_vector",
+      "documents": [
+        {
+          "source-file": "open_ai_corpus-parallel-indexing.json.bz2",
+          "document-count": 100000,
+          "compressed-bytes": 1242787434,
+          "uncompressed-bytes": 3497178196
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

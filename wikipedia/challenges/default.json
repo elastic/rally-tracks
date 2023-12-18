@@ -1,0 +1,80 @@
+{
+  "name": "index-and-search",
+  "description": "Indexes wikipedia data, then executes searches.",
+  "default": true,
+  "schedule": [
+    {
+      "name": "delete-index",
+      "operation": "delete-index"
+    },
+    {
+      "name": "create-index",
+      "operation": "create-index"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": "check-cluster-health"
+    },
+    {
+      "name": "initial-documents-indexing",
+      "operation": "initial-documents-indexing",
+      "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }},
+      "clients": {{ initial_indexing_bulk_clients | default(5) | int }}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh-after-index"
+    },
+    {
+      "name": "force-merge",
+      "operation": "force-merge"
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "operation": "refresh-after-force-merge"
+    },
+    {
+      "name": "wait-until-merges-finish-after-index",
+      "operation": "wait-until-merges-finish-after-index"
+    },
+    {
+      "name": "standalone-query-string-search",
+      "operation": "query-string-search",
+      "clients": {{ standalone_search_clients | default(20) | int }},
+      "time-period": {{ standalone_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "name": "create-default-search-application",
+      "operation": "create-default-search-application"
+    },
+    {
+      "name": "default-search-application-search",
+      "operation": "default-search-application-search",
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "parallel": {
+        "completed-by": "parallel-documents-indexing-query-string-search",
+        "tasks": [
+          {
+            "name": "parallel-documents-indexing-bulk",
+            "operation": "parallel-documents-indexing",
+            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
+            "warmup-time-period": {{ parallel_indexing_bulk_warmup_time_period | default(10) | int }},
+            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+          },
+          {
+            "name": "parallel-documents-indexing-query-string-search",
+            "operation": "query-string-search",
+            "clients": {{ parallel_indexing_search_clients | default(20) | int }},
+            "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
+            "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}
+          }
+        ]
+      }
+    }
+  ]
+}

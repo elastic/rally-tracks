@@ -66,6 +66,8 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `bulk_indexing_clients` (default: 1)
 * `ingest_percentage` (default: 100)
 * `max_num_segments` (default: 1)
+* `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
+* `include_force_merge` (default: true for non-serverless clusters, false for serverless clusters): Whether to include force merge operation.
 
 ### License
 We use the same license for the data as the original data: [CC-SA-4.0](http://creativecommons.org/licenses/by-sa/4.0/).

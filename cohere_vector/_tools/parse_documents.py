@@ -23,7 +23,6 @@ def progress_bar(count, total):
 
 
 def output_pages(start_page, end_page):
-    print(str(start_page) + " " + str(end_page))
     for page in range(start_page, end_page + 1):
         start_index = (page - 1) * MAX_DOCS_PER_FILE
         end_index = start_index + MAX_DOCS_PER_FILE
@@ -68,7 +67,6 @@ def output_documents(docs_file, start_index, end_index):
 
 def parse_arguments():
     if len(sys.argv) >= 3:
-        print("hello 3")
         return (DEFAULT_MAX_DOCS, int(sys.argv[1]), int(sys.argv[2]))
 
     if len(sys.argv) >= 2:
@@ -79,7 +77,6 @@ def parse_arguments():
 if __name__ == "__main__":
     (max_documents, start_page, end_page) = parse_arguments()
     if max_documents == DEFAULT_MAX_DOCS:
-        print("output pages")
         output_pages(start_page, end_page)
     else:
         print("Outputing documents to {}.json".format(OUTPUT_FILENAME))

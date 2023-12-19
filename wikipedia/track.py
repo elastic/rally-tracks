@@ -206,27 +206,21 @@ async def create_users_and_roles(es, params):
                 username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
             )
 
-    skip_roles = 41000
+    skip_roles = 41700
     for role in ROLE_IDS[skip_roles : num_roles - 1]:
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
         try:
             await es.update_by_query(
                 index="wikipedia",
-                max_docs=50,
+                max_docs=1,
                 body={
                     "script": {
-                        "source": "if (ctx._source._allow_permissions ==null){"
-                        "ctx._source._allow_permissions =[params.role];} else "
-                        "{ctx._source._allow_permissions.add(params.role)}",
+                        "source": f"ctx._source._allow_permissions.add({role})",
                         "lang": "painless",
-                        "params": {"role": role},
                     },
                     "query": {"function_score": {"query": {"match_all": {}}, "random_score": {}}},
                 },
                 conflicts="proceed",
-                slices="auto",
-                timeout="30s",
-                request_timeout=30,
             )
         except:
             pass

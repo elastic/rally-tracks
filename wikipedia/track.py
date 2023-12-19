@@ -206,12 +206,13 @@ async def create_users_and_roles(es, params):
                 username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
             )
 
+    skip_roles = 41000
     for role in ROLE_IDS[skip_roles : num_roles - 1]:
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
         try:
             await es.update_by_query(
                 index="wikipedia",
-                max_docs=int(doc_count["count"] / 1000),
+                max_docs=50,
                 body={
                     "script": {
                         "source": "if (ctx._source._allow_permissions ==null){"

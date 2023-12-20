@@ -243,8 +243,12 @@ async def reset_indices(es, params):
     await es.update_by_query(
         index="wikipedia",
         body={
-            "query": {},
-            "script": {"source": "ctx._source._allow_permissions = new ArrayList();", "lang": "painless"},
+            "script": {
+                "source": "Random r = new Random();"
+                          "int index = r.nextInt(ctx._source._allow_permissions.length) - 1;"
+                          "ctx._source._allow_permissions=[ctx._source._allow_permissions[index]];",
+                "lang": "painless"
+            },
         },
         conflicts="proceed",
         slices="auto",

@@ -1,4 +1,8 @@
 {% import "rally.helpers" as rally with context %}
+
+{% set p_include_force_merge = (include_force_merge | default(build_flavor != "serverless")) %}
+{% set p_include_target_throughput = (include_target_throughput | default(build_flavor != "serverless")) %}
+
 {
   "version": 2,
   "description": "POIs from Geonames",

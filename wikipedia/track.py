@@ -206,21 +206,23 @@ async def create_users_and_roles(es, params):
                 username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
             )
 
-    skip_roles = 41700
+    skip_roles = 41000
     for role in ROLE_IDS[skip_roles : num_roles - 1]:
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
         try:
             await es.update_by_query(
                 index="wikipedia",
-                max_docs=1,
+                max_docs=50,
                 body={
                     "script": {
-                        "source": f"ctx._source._allow_permissions.add({role})",
+                        "source": "ctx._source._allow_permissions=[params.role];",
                         "lang": "painless",
+                        "params": {"role": role},
                     },
                     "query": {"function_score": {"query": {"match_all": {}}, "random_score": {}}},
                 },
                 conflicts="proceed",
+                slices="10",
             )
         except:
             pass
@@ -233,15 +235,15 @@ async def create_users_and_roles(es, params):
 
 
 async def reset_indices(es, params):
-    roles = await es.security.get_role()
-    for role in roles:
-        if role.startswith("managed-role-search-"):
-            await es.security.delete_role(name=role)
+#    roles = await es.security.get_role()
+#    for role in roles:
+#        if role.startswith("managed-role-search-"):
+#            await es.security.delete_role(name=role)
 
     await es.update_by_query(
         index="wikipedia",
         body={
-            "query": {"exists": {"field": "_allow_permissions"}},
+            "query": {},
             "script": {"source": "ctx._source._allow_permissions = new ArrayList();", "lang": "painless"},
         },
         conflicts="proceed",
@@ -252,9 +254,9 @@ async def reset_indices(es, params):
 
     await es.indices.refresh(index="wikipedia")
 
-    await es.security.put_user(
-        username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
-    )
+#    await es.security.put_user(
+#        username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
+#    )
 
 
 def register(registry):

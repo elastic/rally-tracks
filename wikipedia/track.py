@@ -244,16 +244,14 @@ async def reset_indices(es, params):
         index="wikipedia",
         body={
             "script": {
-                "source": "Random r = new Random();"
-                          "int index = r.nextInt(ctx._source._allow_permissions.length) - 1;"
-                          "ctx._source._allow_permissions=[ctx._source._allow_permissions[index]];",
+                "source": "ctx._source._allow_permissions = new ArrayList();",
                 "lang": "painless"
             },
         },
         conflicts="proceed",
         slices="auto",
-        timeout="60m",
-        request_timeout=3600,
+        timeout="90m",
+        request_timeout=9600,
     )
 
     await es.indices.refresh(index="wikipedia")

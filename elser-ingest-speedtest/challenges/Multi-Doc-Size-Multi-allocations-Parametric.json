@@ -20,7 +20,7 @@
         "body": {
           "description": "Pipes documents to ELSER",
           "processors": [
-            {`
+            {
               "inference": {
                 "model_id": "{{ model_id }}",
                 "target_field": "ml",

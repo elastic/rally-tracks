@@ -20,16 +20,28 @@
 {
   "name": "initial-documents-indexing",
   "operation-type": "bulk",
-  "bulk-size": {{ initial_indexing_bulk_size | default(500) | int }},
+  "bulk-size": {{ initial_indexing_bulk_size | default(250) | int }},
   "ingest-percentage": {{ initial_indexing_ingest_percentage | default(100) | int }}
 },
 {
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
-  "bulk-size": {{ parallel_indexing_bulk_size | default(500) }}
+  "bulk-size": {{ parallel_indexing_bulk_size | default(250) }}
 },
 {
   "name": "refresh-after-index",
+  "operation-type": "refresh",
+  "request-timeout": 1000,
+  "include-in-reporting": false
+},
+{
+  "name": "force-merge",
+  "operation-type": "force-merge",
+  "request-timeout": 7200,
+  "include-in-reporting": false
+},
+{
+  "name": "refresh-after-force-merge",
   "operation-type": "refresh",
   "request-timeout": 1000,
   "include-in-reporting": false

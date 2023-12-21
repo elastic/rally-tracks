@@ -21,8 +21,7 @@ $ for file in cohere-documents-*; do
 done
 ```
 
-This will build 11 `cohere-documents-XX.json` filse for the entire dataset of 32.8M documents and then bzip then. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents. This script will normalize the embeddings vector to be unit-length so that they can be indexed in an elasticsearch index.
-
+This will build 11 `cohere-documents-XX.json` file for the entire dataset of 32.8M documents and then bzip then. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
 ### Example Document
 
 ```json
@@ -30,13 +29,13 @@ This will build 11 `cohere-documents-XX.json` filse for the entire dataset of 32
   "docid": "31958810#2",
   "title": "Daybehavior",
   "text": "During 1998 and 1999 they, recorded their follow-up album with Kevin Petri, engineer on Massive Attack's debut album \"Blue Lines\" (1991). NONS, dealing with financial problems, went into bankruptcy 99 and the album was locked from being released. The band in despair decided to take a break and Arell moved to Thailand.",
-  "emb": [0.027735009072141308, 0.014094767951423247, 0.03152555797377242, ...]
+  "emb": [0.3961234986782074, 0.20130762457847595, 0.45026177167892456, ...]
 }
 ```
 
 ### Generating the queries
 
-The `queries.json` can be rebuilt using the `_tools/parse_queries.py`, this will load the queries dataset from hugging face and normalize the vectors outputing the result to the `queries.json` file.
+The `queries.json` can be rebuilt using the `_tools/parse_queries.py`, this will load the queries dataset from hugging face and will output the result to the `queries.json` file.
 
 ### Parameters
 

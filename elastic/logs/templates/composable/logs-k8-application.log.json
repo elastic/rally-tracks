@@ -11,9 +11,11 @@
             "limit": "10000"
           }
         },
-        "refresh_interval": "5s",
+        {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+        "number_of_routing_shards": "30",
         "number_of_shards": "{{ number_of_shards | default(1) }}",
         "number_of_replicas": "{{ number_of_replicas | default(1) }}",
+        {%- endif -%}{# non-serverless-index-settings-marker-end #}
         "query": {
           "default_field": [
             "message"
@@ -22,7 +24,7 @@
         {%- if disable_pipelines is not true %}
         "default_pipeline": "logs-k8-app",
         {%- endif %}
-        "number_of_routing_shards": "30"
+        "refresh_interval": "5s"
       }
     },
     "mappings": {

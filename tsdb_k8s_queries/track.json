@@ -1,8 +1,8 @@
 {% import "rally.helpers" as rally with context %}
 
-{% set search_iterations = 20 %} 
-{% set search_warmup_iterations = 50 %}
-{% set target_interval = 4 %}
+{% set search_iterations = search_iterations | default(20) %} 
+{% set search_warmup_iterations = search_warmup_iterations | default(50) %}
+{% set target_interval = target_interval | default(4) %}
 {% set touch_bulk_indexing_clients = touch_bulk_indexing_clients | default(3) %}
 {% set touch_bulk_size = touch_bulk_size | default(50) %}
 
@@ -37,25 +37,25 @@
   "corpora": [
     {
       "name": "k8s-pod",
-      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally4",
+      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally5",
       "documents": [
         {
           "target-data-stream": "k8s-pod",
           "source-file": "doc-ds-metrics-kubernetes.pod.json.bz2",
           "document-count": 8640000,
-          "uncompressed-bytes": 31339505643
+          "uncompressed-bytes": 30597876007
         }
       ]
     },
     {
       "name": "k8s-container",
-      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally4",
+      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally5",
       "documents": [
         {
           "target-data-stream": "k8s-container",
           "source-file": "doc-ds-metrics-kubernetes.container.json.bz2",
           "document-count": 8640000,
-          "uncompressed-bytes": 34722047029
+          "uncompressed-bytes": 33839101752
         }
       ]
     }

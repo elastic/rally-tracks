@@ -12,7 +12,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"
@@ -41,6 +43,7 @@
           "name": "refresh-after-index",
           "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -57,6 +60,7 @@
         {
           "operation": "wait-until-merges-finish"
         },
+        {% endif %}
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",
@@ -72,17 +76,20 @@
           "warmup-iterations": 50,
           "iterations": 100
         },
+        {% if p_include_target_throughput %}
         {
           "operation": "default",
           "warmup-iterations": 50,
           "iterations": 100,
           "target-throughput": 3
         },
+        {% endif %}
         {
           "operation": "default_1k",
           "warmup-iterations": 50,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 3
+          {%- endif %}
         },
         {
           "operation": "range",
@@ -119,7 +126,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"
@@ -147,7 +156,8 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
-        },
+        }
+        {% if p_include_force_merge %},
         {
           "operation": {
             "operation-type": "force-merge",
@@ -164,6 +174,7 @@
         {
           "operation": "wait-until-merges-finish"
         }
+        {% endif %}
       ]
     },
     {
@@ -179,7 +190,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s",
@@ -209,7 +222,8 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
-        },
+        }
+        {% if p_include_force_merge %},
         {
           "operation": {
             "operation-type": "force-merge",
@@ -226,6 +240,7 @@
         {
           "operation": "wait-until-merges-finish"
         }
+        {% endif %}
       ]
     },
     {
@@ -241,9 +256,11 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.number_of_shards": {{number_of_shards | default(1)}},
               "index.number_of_replicas": {{number_of_replicas | default(0)}},
               "index.store.type": "{{store_type | default('fs')}}"
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
             }{%- endif %}
           }
@@ -269,7 +286,8 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh"
-        },
+        }
+        {% if p_include_force_merge %},
         {
           "operation": {
             "operation-type": "force-merge",
@@ -286,6 +304,7 @@
         {
           "operation": "wait-until-merges-finish"
         }
+        {% endif %}
       ]
     },
     {
@@ -301,7 +320,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.store.type": "{{store_type | default('fs')}}"
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
             }{%- endif %}
           }
@@ -341,7 +362,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"
@@ -537,6 +560,7 @@
           "name": "refresh-after-index",
           "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -553,6 +577,7 @@
         {
           "operation": "wait-until-merges-finish"
         },
+        {% endif %}
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",
@@ -599,7 +624,9 @@
             "index": "nyc_taxis",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"
@@ -762,7 +789,9 @@
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
               "index.translog.flush_threshold_size": "4g",
+                {% endif %}
               {%- endif -%}{# non-serverless-index-settings-marker-end #}
               "index.codec": "best_compression",
               "index.refresh_interval": "30s"
@@ -904,7 +933,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_passenger_count_esql_shard_partitioning",
+          "operation": "avg_passenger_count_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -922,7 +951,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_passenger_count_filtered_esql_shard_partitioning",
+          "operation": "avg_passenger_count_filtered_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -940,7 +969,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_tip_percent_esql_shard_partitioning",
+          "operation": "avg_tip_percent_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -958,7 +987,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_amount_group_by_integer_esql_shard_partitioning",
+          "operation": "avg_amount_group_by_integer_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -976,7 +1005,7 @@
           "iterations": 50
         },
         {
-          "operation": "avg_amount_group_by_keyword_esql_shard_partitioning",
+          "operation": "avg_amount_group_by_keyword_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -994,7 +1023,7 @@
           "iterations": 50
         },
         {
-          "operation": "count_group_by_keyword_esql_shard_partitioning",
+          "operation": "count_group_by_keyword_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1018,7 +1047,7 @@
           "iterations": 50
         },
         {
-          "operation": "multi_terms-keyword_esql_shard_partitioning",
+          "operation": "multi_terms-keyword_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1036,7 +1065,7 @@
           "iterations": 50
         },
         {
-          "operation": "sort_by_ts_esql_shard_partitioning",
+          "operation": "sort_by_ts_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1054,7 +1083,7 @@
           "iterations": 50
         },
         {
-          "operation": "date_histogram_calendar_interval_esql_shard_partitioning",
+          "operation": "date_histogram_calendar_interval_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1072,7 +1101,7 @@
           "iterations": 50
         },        
         {
-          "operation": "date_histogram_fixed_interval_esql_shard_partitioning",
+          "operation": "date_histogram_fixed_interval_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
@@ -1090,7 +1119,7 @@
           "iterations": 50
         },
         {
-          "operation": "date_histogram_fixed_interval_with_metrics_esql_shard_partitioning",
+          "operation": "date_histogram_fixed_interval_with_metrics_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50

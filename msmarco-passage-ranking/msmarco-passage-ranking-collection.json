@@ -1,10 +1,16 @@
 {
     "mappings": {
         "properties": {
+            "id": {
+                "type":"keyword"
+            },
             "text": {
                 "type": "text"
             },
-            "text_expansion": {
+            "text_expansion_elser": {
+                "type": "rank_features"
+            },
+            "text_expansion_splade": {
                 "type": "rank_features"
             }
         }

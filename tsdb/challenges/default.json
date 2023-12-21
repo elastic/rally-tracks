@@ -111,50 +111,65 @@
         {
           "operation": "default",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "default_1k",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "date-histo-entire-range",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
         {% if index_mode | default('time_series') is equalto 'time_series' and skip_running_tsdb_aggs is not defined %}
         ,{
           "operation": "date-histo-memory-usage-hour",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "date-histo-memory-usage-day",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "auto-date-histo-memory-usage-100",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "auto-date-histo-memory-usage-1000",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "terms-container-name-memory-usage",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "terms-container-image-memory-usage",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
         {% endif %}
+        ,{
+          "operation": "esql-fetch-500",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        }
       ]
     },
     {
@@ -262,16 +277,19 @@
         {
           "operation": "date-histo-entire-range-1m",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "date-histo-entire-range-1h",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "date-histo-entire-range-1d",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
       ]

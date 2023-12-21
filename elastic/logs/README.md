@@ -259,7 +259,7 @@ The following parameters are available:
 * `random_seed` (default: 13) - Integer used to determine the order of query execution. The interval between workflow executions, as well as the actions within them, is based on an exponentially distributed random variable. Seeding this process ensures execution is deterministic across different executions.
 * `query_min_date` (default: `2020-01-01`) - Minimum datetime to execute queries over (such as yyyy-MM-dd or yyyy-MM-ddThh:mm:ss.zzzZ). Affects ranges and date_histograms.  Must be less than `query_max_date` (or `query_max_date_start`).
 * `query_max_date` (default: `2020-01-02`) - Maximum datetime to execute queries over (such as yyyy-MM-dd or yyyy-MM-ddThh:mm:ss.zzzZ). Affects ranges and date_histograms. Cannot be configured when `query_max_date_start` is also defined.
-* `query_clients` (default: 1) - for the `logging-indexing-querying` challenge, this allows the number of clients per workflow to be adjusted.
+* `search_clients` (default: 1) - The number of clients per workflow that issue search requests.
 * `query_max_date_start` (optional) - Maximum datetime to execute queries over, at the beginning of a query workflow task. Increments with the time elapsed as the benchmark executes. Cannot be configured when `query_max_date` is also defined.
 * `query_average_interval` (optional) - Average time interval for queries to use. If unset, we use the durations and intervals set in the original action definitions.
 * `query_request_params` (optional) - A map of query parameters that will be used with any querying.

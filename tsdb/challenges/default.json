@@ -164,6 +164,12 @@
           "iterations": 100
         }
         {% endif %}
+        ,{
+          "operation": "esql-fetch-500",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        }
       ]
     },
     {

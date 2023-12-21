@@ -197,29 +197,29 @@ async def create_users_and_roles(es, params):
     num_roles = params["roles"]
     skip_roles = params["skip_roles"]
 
-    user = None
-    try:
-        user = await es.security.get_user(username=USER_AUTH["username"])
-    except:
-        if not user:
-            await es.security.put_user(
-                username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
-            )
+#    user = None
+#    try:
+#        user = await es.security.get_user(username=USER_AUTH["username"])
+#    except:
+#        if not user:
+#            await es.security.put_user(
+#                username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
+#            )
 
-    skip_roles = 41000
+    skip_roles = 0
     for role in ROLE_IDS[skip_roles : num_roles - 1]:
         await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
         try:
             await es.update_by_query(
                 index="wikipedia",
-                max_docs=1,
+                max_docs=100,
                 body={
                     "script": {
                         "source": "ctx._source._allow_permissions=[params.role];",
                         "lang": "painless",
                         "params": {"role": role},
                     },
-                    "query": {"function_score": {"query": {"match_all": {}}, "random_score": {}}},
+                    "query": {"bool": {"must_not": {"exists": {"field": "_allow_permissions"}}}},
                 },
                 conflicts="proceed",
                 slices="10",

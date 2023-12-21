@@ -54,6 +54,15 @@
         "include-in-reporting": false
       }
     },
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+    {
+      "name": "post-ingest-sleep-after-index",
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ post_ingest_sleep_duration|default(30) }}
+      }
+    },
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {
       "parallel": {
         "warmup-time-period": 10,
@@ -95,6 +104,15 @@
         "include-in-reporting": false
       }
     },
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+    {
+      "name": "post-ingest-sleep-after-update",
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ post_ingest_sleep_duration|default(30) }}
+      }
+    },
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {
       "name": "knn-search-10-100_multiple_segments",
       "operation": "knn-search-10-100",
@@ -141,6 +159,15 @@
         "include-in-reporting": false
       }
     },
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+    {
+      "name": "post-ingest-sleep",
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ post_ingest_sleep_duration|default(30) }}
+      }
+    },
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {
       "name": "knn-search-10-100",
       "operation": "knn-search-10-100",
@@ -160,7 +187,16 @@
       "iterations": 1000
     },
     {
-      "operation": "knn-recall-10-100"
+      "name": "knn-recall-10-100",
+      "operation": {
+          "name": "knn-recall-10-100",
+          "operation-type": "knn-recall",
+          "param-source": "knn-recall-param-source",
+          "k": 10,
+          "num-candidates": 100,
+          "include-in-reporting": false,
+          "invalidate-vector-store": true
+      }
     },
     {
       "operation": "knn-recall-100-1000"

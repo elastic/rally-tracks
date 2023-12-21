@@ -102,6 +102,15 @@
             "include-in-reporting": false
           }
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "name": "delete-transform-group-by-user",
           "operation": {
@@ -126,8 +135,8 @@
           "operation": {
             "operation-type": "wait-for-transform",
             "transform-id": "transform-group-by-user",
-            "transform-timeout": 3600,
-            "timeout": "60m"
+            "transform-timeout": 5400,
+            "timeout": "90m"
           }
         },
         {
@@ -154,8 +163,8 @@
           "operation": {
             "operation-type": "wait-for-transform",
             "transform-id": "transform-group-by-hour",
-            "transform-timeout": 3600,
-            "timeout": "60m"
+            "transform-timeout": 5400,
+            "timeout": "90m"
           }
         }
       ]
@@ -211,6 +220,15 @@
             "include-in-reporting": false
           }
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "operation": "frequent_items_all_100",
           "warmup-iterations": 3,

@@ -55,6 +55,8 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
 * `max_num_segments` (default: not set): An integer specifying the max amount of segments the force-merge operation should use.
 * `include_aggs` (default: false): A boolean defining whether the 'aggs' specific tasks will be executed when running the `default` challenge.
+* `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+* `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 
 ### License
 

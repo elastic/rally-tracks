@@ -9,7 +9,9 @@
   "operation": {
     "operation-type": "create-index",
     "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       "index.store.type": "{{store_type | default('fs')}}",
+      {%- endif -%}{# non-serverless-index-settings-marker-end #}
       "index.codec": "best_compression"
     }{%- endif %}
   }

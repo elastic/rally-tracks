@@ -19,10 +19,15 @@ def doc_generator(f):
             namespaces = parse_namespaces(element)
 
 
+def get_doc_meta(doc_data, op_type="index"):
+    return {op_type: {"_index": "wikipedia", "_id": doc_data["title"]}}
+
+
 def to_json(f):
     with bz2.BZ2File(f, "r") as fp:
-        for doc in doc_generator(fp):
-            print(json.dumps(doc))
+        for doc_data in doc_generator(fp):
+            print(json.dumps(get_doc_meta(doc_data)))
+            print(json.dumps(doc_data))
 
 
 def parse_namespaces(element) -> dict:

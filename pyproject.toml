@@ -1,11 +1,11 @@
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = ["hatchling<=1.18.0", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project.optional-dependencies]
 develop = [
-    "hatch==1.3.1",
-    "hatchling==1.6.0",
+    "hatch==1.7.0",
+    "hatchling==1.18.0",
     "black==23.3.0",
     "isort==5.12.0",
     "pre-commit==3.3.3",
@@ -26,6 +26,7 @@ requires-python = ">=3.8"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
+  "/.buildkite",
   "/.github",
   "/.ci",
 ]
@@ -48,10 +49,14 @@ test = "pytest"
 [tool.hatch.envs.it.scripts]
 test = "pytest it --log-cli-level=INFO"
 
+[tool.hatch.envs.it_serverless.scripts]
+test_user = "pytest -s it_serverless --log-cli-level=INFO"
+test_operator = "pytest -s it_serverless --log-cli-level=INFO --operator"
+
 [tool.pytest.ini_options]
 # set to true for more verbose output of tests
 log_cli = false
-addopts = "--verbose --color=yes --ignore=it"
+addopts = "--verbose --color=yes --ignore=it --ignore=it_serverless"
 junit_family = "xunit2"
 junit_logging = "all"
 asyncio_mode = "strict"

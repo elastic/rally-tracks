@@ -3,6 +3,7 @@
       "description": "Indexes the whole document corpus.",
       "default": true,
       "schedule": [
+        {# non-serverless-cluster-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
         {
           "name":"increase-max_buckets_setting",
           "tags": ["setup"],
@@ -18,6 +19,7 @@
             "include-in-reporting": false
           }
         },
+        {%- endif -%}{# non-serverless-cluster-settings-marker-end #}
         {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
         {
           "name": "create-all-templates",
@@ -97,53 +99,77 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "operation": "default",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "default_1k",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "date-histo-entire-range",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
         {% if index_mode | default('time_series') is equalto 'time_series' and skip_running_tsdb_aggs is not defined %}
         ,{
           "operation": "date-histo-memory-usage-hour",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "date-histo-memory-usage-day",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "auto-date-histo-memory-usage-100",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "auto-date-histo-memory-usage-1000",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "terms-container-name-memory-usage",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "terms-container-image-memory-usage",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
         {% endif %}
+        ,{
+          "operation": "esql-fetch-500",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        }
       ]
     },
     {
@@ -210,6 +236,15 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "name": "block-source-index-writes",
           "operation": {
@@ -242,16 +277,19 @@
         {
           "operation": "date-histo-entire-range-1m",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "date-histo-entire-range-1h",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
         {
           "operation": "date-histo-entire-range-1d",
           "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
       ]

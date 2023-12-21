@@ -34,6 +34,7 @@
           "name": "refresh-after-index",
           "operation": "refresh"
         },
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",
@@ -59,29 +60,43 @@
             "include-in-reporting": false
           }
         },
+        {% endif %}
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "operation": "polygon",
           "warmup-iterations": 200,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 2
+          {%- endif %}
         },
         {
           "operation": "bbox",
           "warmup-iterations": 200,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 2
+          {%- endif %}
         },
         {
           "operation": "distance",
           "warmup-iterations": 200,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 5
+          {%- endif %}
         },
         {
           "operation": "distanceRange",
           "warmup-iterations": 200,
-          "iterations": 100,
+          "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 0.5
+          {%- endif %}
         },
         {
           "operation": "geoGrid_geohash",
@@ -149,7 +164,8 @@
         {
         "name": "refresh-after-index",
         "operation": "refresh"
-        },
+        }
+        {% if p_include_force_merge %},
         {
           "operation": {
             "operation-type": "force-merge",
@@ -175,6 +191,7 @@
             "include-in-reporting": false
           }
         }
+        {% endif %}
       ]
     },
     {
@@ -188,9 +205,11 @@
           "operation": {
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-              "index.refresh_interval": "30s",
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
               "index.number_of_shards": {{number_of_shards | default(6)}},
-              "index.translog.flush_threshold_size": "4g"
+              "index.translog.flush_threshold_size": "4g",
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
+              "index.refresh_interval": "30s"
             }{%- endif %}
           }
         },
@@ -215,7 +234,8 @@
         {
         "name": "refresh-after-index",
         "operation": "refresh"
-        },
+        }
+        {% if p_include_force_merge %},
         {
           "operation": {
             "operation-type": "force-merge",
@@ -241,5 +261,6 @@
             "include-in-reporting": false
           }
         }
+        {% endif %}
       ]
     }

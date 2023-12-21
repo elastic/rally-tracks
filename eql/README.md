@@ -16,6 +16,8 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
 * `cluster` (default: '') Cluster name configured on the target ES host as a remote cluster to allow execution of CCS queries.
+* `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+* `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 
 ### Query Selection
 

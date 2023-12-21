@@ -21,14 +21,17 @@
         },
         "clients": {{ p_bulk_indexing_clients }},
         "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
-      },
+      }
+      {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
       {
         "name": "compression-stats",
         "operation": {
           "operation-type": "compression-statistics",
           "param-source": "create-datastream-source"
         }
-      },
+      }
+      {%- endif -%}{# non-serverless-index-statistics-marker-end #}
+      ,
     {% endif %}
     {
       "name": "logging-queries",
@@ -48,7 +51,7 @@
               },
               "think-time-interval": {{ p_user_think_time }},
               "workflow-interval": {{ p_user_workflow_time }},
-              "clients": 1,
+              "clients": {{ p_search_clients }},
               "schedule": "workflow-scheduler"
             }{{ ", " if not loop.last else "" }}
           {% endfor %}
@@ -56,53 +59,159 @@
       }
     },
     {
+      "operation": "esql_basic_count_group_0_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_1_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_2_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_3_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_4_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_time_range_and_date_histogram_two_groups_pre_filter_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_time_range_and_date_histogram_two_groups_post_filter_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_dissect_duration_and_stats_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "count"]
+    },
+    {
       "operation": "esql_basic_count_group_1",
       "clients": 1,
       "warmup-iterations": 10,
       "iterations": 50,
-      "tags": ["esql"]
+      "tags": ["esql", "count"]
     },
     {
       "operation": "esql_basic_count_group_2",
       "clients": 1,
       "warmup-iterations": 5,
       "iterations": 20,
-      "tags": ["esql"]
+      "tags": ["esql", "count"]
     },
     {
       "operation": "esql_basic_count_group_3",
       "clients": 1,
       "warmup-iterations": 5,
       "iterations": 10,
-      "tags": ["esql"]
+      "tags": ["esql", "count"]
     },
     {
       "operation": "esql_basic_count_group_4",
       "clients": 1,
       "warmup-iterations": 5,
       "iterations": 10,
-      "tags": ["esql"]
+      "tags": ["esql", "count"]
     },
     {
       "operation": "esql_time_range_and_date_histogram_two_groups_pre_filter",
       "clients": 1,
       "warmup-iterations": 5,
       "iterations": 20,
-      "tags": ["esql"]
+      "tags": ["esql", "date_histogram"]
     },
     {
       "operation": "esql_time_range_and_date_histogram_two_groups_post_filter",
       "clients": 1,
       "warmup-iterations": 5,
       "iterations": 20,
-      "tags": ["esql"]
+      "tags": ["esql", "date_histogram"]
     },
     {
       "operation": "esql_dissect_duration_and_stats",
       "clients": 1,
       "warmup-iterations": 5,
       "iterations": 20,
-      "tags": ["esql"]
-    }
+      "tags": ["esql", "dissect"]
+    }{%- if build_flavor != "serverless" or serverless_operator == true %},
+    {
+      "operation": "disable_query_cache",
+      "tags": ["esql", "settings"]
+    },
+    {
+      "operation": "search_basic_count_group_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "count", "search"]
+    },
+    {
+      "operation": "search_basic_count_group_1",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "count", "search"]
+    },
+    {
+      "operation": "search_basic_count_group_2",
+      "clients": 1,
+      "warmup-iterations": 2,
+      "iterations": 5,
+      "tags": ["esql", "count", "search"]
+    },
+    {
+      "operation": "search_basic_count_group_3",
+      "clients": 1,
+      "warmup-iterations": 1,
+      "iterations": 3,
+      "tags": ["esql", "count", "search"]
+    },
+    {
+      "operation": "search_basic_count_group_4",
+      "clients": 1,
+      "warmup-iterations": 1,
+      "iterations": 3,
+      "tags": ["esql", "count", "search"]
+    },
+    {
+      "operation": "enable_query_cache",
+      "tags": ["esql", "settings"]
+    }{%- endif %}
   ]
 }

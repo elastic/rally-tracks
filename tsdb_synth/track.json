@@ -2,10 +2,11 @@
 {
   "version": 2,
   "description": "synthetic time series dataset for tsid hashing benchmarks",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
   "composable-templates": [
     {
-      "name": "index-template",
-      "index-pattern": "tsdb_*",
+      "name": "tsdb-template",
+      "index-pattern": "tsdb_synth*",
       "delete-matching-indices": true,
       "template": "index-template.json"
     }
@@ -15,6 +16,14 @@
       "name": "tsdb_synth"
     }
   ],
+  {%- else %}
+  "indices": [
+    {
+      "name": "tsdb_synth",
+      "body": "index.json"
+    }
+  ],
+  {%- endif %}
   "corpora": [
     {
       "name": "tsdb_synth",

@@ -1,0 +1,557 @@
+{% import "rally.helpers" as rally with context %}
+{# TODO By default, source_mode should be "synthetic" if index_mode == "time_series" else "stored" #}
+{% set p_source_mode = (source_mode | default("synthetic")) %}
+{
+  "settings": {
+    "index": {
+      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+      "number_of_shards": {{number_of_shards | default(1)}},
+      "number_of_replicas": {{number_of_replicas | default(0)}},
+      "requests.cache.enable": false,
+      {%- endif -%}{# non-serverless-index-settings-marker-end #}
+      "codec": "{{codec | default('default')}}",
+      "mode": "{{index_mode | default('time_series')}}",
+      {% if refresh_interval %}
+      "refresh_interval": "{{refresh_interval}}",
+      {% endif %}
+      {% if index_mode | default('time_series') is equalto 'time_series' %}
+      "routing_path": [
+        "def_dim"
+      ],
+      "time_series": {
+        "start_time": "2000-01-01T00:00:00.000Z",
+        "end_time": "9999-01-01T00:00:00.000Z"
+      },
+      {% endif %}
+      "mapping.total_fields.limit": 10000
+    }
+  },
+  "mappings": {
+    "_meta": {
+      "beat": "metricbeat",
+      "version": "7.6.2"
+    },
+    "_source": {
+      "mode": {{ p_source_mode | tojson }}
+    },
+    "dynamic_templates": [
+      {
+        "labels": {
+          "path_match": "labels.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "container.labels": {
+          "path_match": "container.labels.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "dns.answers": {
+          "path_match": "dns.answers.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "log.syslog": {
+          "path_match": "log.syslog.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "fields": {
+          "path_match": "fields.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "docker.container.labels": {
+          "path_match": "docker.container.labels.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "kubernetes.labels.*": {
+          "path_match": "kubernetes.labels.*",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "kubernetes.annotations.*": {
+          "path_match": "kubernetes.annotations.*",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "aws.tags.*": {
+          "path_match": "aws.tags.*",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "aws.dimensions.*": {
+          "path_match": "aws.dimensions.*",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "aws.*.metrics.*.*": {
+          "path_match": "aws.*.metrics.*.*",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "azure.resource.tags.*": {
+          "path_match": "azure.resource.tags.*",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "azure.dimensions.*": {
+          "path_match": "azure.dimensions.*",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "azure.compute_vm.*.*": {
+          "path_match": "azure.compute_vm.*.*",
+          "mapping": {
+            "type": "float"
+          }
+        }
+      },
+      {
+        "azure.compute_vm_scaleset.*.*": {
+          "path_match": "azure.compute_vm_scaleset.*.*",
+          "mapping": {
+            "type": "float"
+          }
+        }
+      },
+      {
+        "azure.monitor.metrics.*.*": {
+          "path_match": "azure.monitor.metrics.*.*",
+          "mapping": {
+            "type": "float"
+          }
+        }
+      },
+      {
+        "azure.storage.*.*": {
+          "path_match": "azure.storage.*.*",
+          "mapping": {
+            "type": "float"
+          }
+        }
+      },
+      {
+        "coredns.stats.dns.request.duration.ns.bucket.*": {
+          "path_match": "coredns.stats.dns.request.duration.ns.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "coredns.stats.dns.request.size.bytes.bucket.*": {
+          "path_match": "coredns.stats.dns.request.size.bytes.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "coredns.stats.dns.response.size.bytes.bucket.*": {
+          "path_match": "coredns.stats.dns.response.size.bytes.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "docker.cpu.core.*.pct": {
+          "path_match": "docker.cpu.core.*.pct",
+          "mapping": {
+            "scaling_factor": 1000,
+            "type": "scaled_float"
+          }
+        }
+      },
+      {
+        "docker.cpu.core.*.norm.pct": {
+          "path_match": "docker.cpu.core.*.norm.pct",
+          "mapping": {
+            "scaling_factor": 1000,
+            "type": "scaled_float"
+          }
+        }
+      },
+      {
+        "docker.cpu.core.*.ticks": {
+          "path_match": "docker.cpu.core.*.ticks",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "docker.event.actor.attributes": {
+          "path_match": "docker.event.actor.attributes.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "docker.image.labels": {
+          "path_match": "docker.image.labels.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "docker.memory.stats.*": {
+          "path_match": "docker.memory.stats.*",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "etcd.disk.wal_fsync_duration.ns.bucket.*": {
+          "path_match": "etcd.disk.wal_fsync_duration.ns.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "etcd.disk.backend_commit_duration.ns.bucket.*": {
+          "path_match": "etcd.disk.backend_commit_duration.ns.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.apiserver.http.request.duration.us.percentile.*": {
+          "path_match": "kubernetes.apiserver.http.request.duration.us.percentile.*",
+          "match_mapping_type": "double",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "kubernetes.apiserver.http.request.size.bytes.percentile.*": {
+          "path_match": "kubernetes.apiserver.http.request.size.bytes.percentile.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.apiserver.http.response.size.bytes.percentile.*": {
+          "path_match": "kubernetes.apiserver.http.response.size.bytes.percentile.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.apiserver.request.latency.bucket.*": {
+          "path_match": "kubernetes.apiserver.request.latency.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.apiserver.request.duration.us.bucket.*": {
+          "path_match": "kubernetes.apiserver.request.duration.us.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.controllermanager.http.request.duration.us.percentile.*": {
+          "path_match": "kubernetes.controllermanager.http.request.duration.us.percentile.*",
+          "match_mapping_type": "double",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "kubernetes.controllermanager.http.request.size.bytes.percentile.*": {
+          "path_match": "kubernetes.controllermanager.http.request.size.bytes.percentile.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.controllermanager.http.response.size.bytes.percentile.*": {
+          "path_match": "kubernetes.controllermanager.http.response.size.bytes.percentile.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.proxy.http.request.duration.us.percentile.*": {
+          "path_match": "kubernetes.proxy.http.request.duration.us.percentile.*",
+          "match_mapping_type": "double",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "kubernetes.proxy.http.request.size.bytes.percentile.*": {
+          "path_match": "kubernetes.proxy.http.request.size.bytes.percentile.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.proxy.http.response.size.bytes.percentile.*": {
+          "path_match": "kubernetes.proxy.http.response.size.bytes.percentile.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.proxy.sync.rules.duration.us.bucket.*": {
+          "path_match": "kubernetes.proxy.sync.rules.duration.us.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.proxy.sync.networkprogramming.duration.us.bucket.*": {
+          "path_match": "kubernetes.proxy.sync.networkprogramming.duration.us.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.scheduler.http.request.duration.us.percentile.*": {
+          "path_match": "kubernetes.scheduler.http.request.duration.us.percentile.*",
+          "match_mapping_type": "double",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "kubernetes.scheduler.http.request.size.bytes.percentile.*": {
+          "path_match": "kubernetes.scheduler.http.request.size.bytes.percentile.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.scheduler.http.response.size.bytes.percentile.*": {
+          "path_match": "kubernetes.scheduler.http.response.size.bytes.percentile.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.scheduler.scheduling.e2e.duration.us.bucket.*": {
+          "path_match": "kubernetes.scheduler.scheduling.e2e.duration.us.bucket.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "kubernetes.scheduler.scheduling.duration.seconds.percentile.*": {
+          "path_match": "kubernetes.scheduler.scheduling.duration.seconds.percentile.*",
+          "match_mapping_type": "double",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "munin.metrics.*": {
+          "path_match": "munin.metrics.*",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "prometheus.labels.*": {
+          "path_match": "prometheus.labels.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "prometheus.metrics.*": {
+          "path_match": "prometheus.metrics.*",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "sql.metrics.numeric.*": {
+          "path_match": "sql.metrics.numeric.*",
+          "match_mapping_type": "double",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "sql.metrics.string.*": {
+          "path_match": "sql.metrics.string.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "statsd.*.count": {
+          "path_match": "statsd.*.count",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "statsd.*.*": {
+          "path_match": "statsd.*.*",
+          "mapping": {
+            "type": "float"
+          }
+        }
+      },
+      {
+        "system.process.env": {
+          "path_match": "system.process.env.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "system.process.cgroup.cpuacct.percpu": {
+          "path_match": "system.process.cgroup.cpuacct.percpu.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "system.raid.disks.states.*": {
+          "path_match": "system.raid.disks.states.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "traefik.health.response.status_codes.*": {
+          "path_match": "traefik.health.response.status_codes.*",
+          "match_mapping_type": "long",
+          "mapping": {
+            "type": "long"
+          }
+        }
+      },
+      {
+        "vsphere.virtualmachine.custom_fields": {
+          "path_match": "vsphere.virtualmachine.custom_fields.*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      },
+      {
+        "strings_as_keyword": {
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword"{% if p_source_mode != "synthetic" %},"ignore_above": 1024{% endif %}
+          }
+        }
+      }
+    ],
+    "date_detection": false,
+    {{ rally.collect(parts="index-mappings.json") }}
+  }
+}

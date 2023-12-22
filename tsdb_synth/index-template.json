@@ -48,160 +48,532 @@
       }
     },
     "mappings": {
-      "properties": {
-        "@timestamp": {
-            "type": "date"
+      "_meta": {
+        "beat": "metricbeat",
+        "version": "7.6.2"
+      },
+      "_source": {
+        "mode": {{ p_source_mode | tojson }}
+      },
+      "dynamic_templates": [
+        {
+          "labels": {
+            "path_match": "labels.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
         },
-        "def_dim": {
-            "type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %},
-            "time_series_dimension": "true"
-            {% endif %}
+        {
+          "container.labels": {
+            "path_match": "container.labels.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
         },
-        "counter": {
-            "type": "long"{% if index_mode | default('time_series') is equalto 'time_series' %},
-            "time_series_metric": "counter"
-            {% endif %}
+        {
+          "dns.answers": {
+            "path_match": "dns.answers.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
         },
-        "gauge": {
-            "type": "double"{% if index_mode | default('time_series') is equalto 'time_series' %},
-            "time_series_metric": "gauge"
-            {% endif %}
+        {
+          "log.syslog": {
+            "path_match": "log.syslog.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
         },
-        "key": {
-            "type": "keyword"
+        {
+          "fields": {
+            "path_match": "fields.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
         },
-        "val": {
-            "type": "integer"
+        {
+          "docker.container.labels": {
+            "path_match": "docker.container.labels.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
         },
-        "d_ufseibmjnkguynqfyclevvweebkoxqgvspbbngkvtrsegqtwuyel_001": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_xnbbwadzlsmascuwfgmgezvpqdpxlhdbthcppsajhqbsakeyuhxoaiatvqrryxq_002": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_blzajgeqnkncwuxcvtynuzkzopovmspftvxsdctqebzuomkiwjcieo_003": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_qqnjuveqimaxewfvzdzardfuacdpiaitamagmvibwf_004": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_xipvxrsjoijnsuevivtolfykfocpfssuvmcfpsyt_005": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_akjodkyqfl_006": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_nnwotohljrhizujqcrtkxgmlsrmapuoriceoahjmjcxfqauloo_007": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_cadwiklfhhxnbepowpaoeexvdijgyhzaloxwrmvddctbcumvm_008": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_rxkywkwqguca_009": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_eisgvcnksbawsvd_010": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_wbgmzlirkitlvhgpziaihplhoneywqajuaurcnksivljjanmubmgswzkw_011": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_bjcrwryofdaefmutnmtycncwnp_012": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_tmdopgrw_013": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_dnysvciuvgtqgkeeqcuuffpnpiqumehnkkfchidmkacmef_014": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_trmmtvdzuglsnbutbuylldxmpyvioh_015": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_qtotzmjpdvrholegtddixzmhuklxpfkwdnqwicggtvuigppyzrovqf_016": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_jdokldxavpnsrmdedowxerks_017": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_hupbcujkmlecyeqixxuttowzctihnbexraglwwrixvdod_018": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_aqcxnjgteaazeywfa_019": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_vzawzvycpgzqjncnnvkmuwinzyaroepfyzfdnhvgen_020": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ppmjbulaiztsnhlcafqxmnaqtrkortvrhyxnylvtebslysmjzqvlxmeutyjrby_021": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_uwkxqgjcagzfkgscpnkd_022": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_aooyeqoyxulxzrliepbrgzxxbpjsybnsifurktorcjufj_023": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_rkjjdrnfrihsybkzauxvuyn_024": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_zzjvqkhnfuyjqmfyqycevcwrhxqkdvgfkvtxfdt_025": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_egoqbcrosickbczvyubmtgwehqwcjsskwkinrppfids_026": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_nsietpfxulkyrcyzscaasqlmdzktpou_027": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_xtkktnwqqpvbcorrfvxbcyinwlupjozrkmtewwzlgagswwiqhruqzujxojtue_028": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_gqxiwdeqjnccmzifzsavjlodzhccyzzsqopwzqvejgrbcsywpyetkpsehxwff_029": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_glmaozbqzpgmtvcrjutdmfc_030": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_pkvmdemjmfqzpaxxtiwypfclqpnltyvngxfjljsvkwxgapisjyvihlzrydgtl_031": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_vearqgikeibzckvljimabmtrgyacygtmzidufsnrruuxbkkhndkuiran_032": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_dpbpucerm_033": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_kgglppzibjgtilurxllbeeannpgmjupwosd_034": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_mfcwnfpwfiivsrpofmkfaddhktppfvfoq_035": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_icykvfpdxfqlaoqliamasxbaaoxixlwagovgfvuhtfx_036": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_dxynmwoxwtbeilsnmdbsordapgjmoetkijslzugydyjpnxfbgnwirjsjcm_037": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_bpksasvwxerwnwbuilzgvomsejcwvirkgikxymfbmdxovzjrqccsdavkess_038": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_fbskkemblnpczurtbabaomiezpulzjqbu_039": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_zljayrez_040": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_vyflfcdkqaqmzzafrwpsijldmnznekeeyclgqgyscfmwjgpjebxdisobvuzowzg_041": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_bplubclwrchjkurzuhyiafioenrnprgghebiaygggrkguqcihtxl_042": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_mwyuwbmyqjjuqvxhtgxpkbdalevlbtjowkfsm_043": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_zszslmzdkjictecjcjvrwfmnw_044": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_orgqbnoltihxfrghmqhfjdjpxskzpkdtovkyjsqagsmglwnjrymhmbxwwega_045": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_mfalfoicnoodvcvftkicuztnbcbrwkhwicupjkrcqgezsstj_046": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_pvqnuxsuaajhpsdlqpcawwpuvsjwvswrqgpkrqpcaumv_047": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_gupwiidxrmpoptpzg_048": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ezvzczzzkabvuepjnrjt_049": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_agmgfljrkslzymtjsqsxckuamkfkfmpsihyuvkdxvrcxyrvglwrcq_050": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_pfwxfjkpwkyoomzlfmcerdpqcmwbbnigqodmbyevvehcsvsger_051": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_qjjrgdicrrbb_052": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ayssroaqgoimnavyzohoqirjunvxfrvuqbroecpltibcujmigywq_053": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_xnzfyznysgokvlcvhburbgqwjfjzy_054": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ktgforazlqhrvgzvadyszuzkqqljjehnceylojxuqq_055": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ebxhkvisfyddafshzteafrpbpyxrcylvtnqvtpuyrbsoc_056": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_orsmhbwikbcwfxcmzskqdaqissfwilxrnzjynvrgceoptqpmjkgammmg_057": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_iyvedzjtmpclftsopznfipqdgidhdihd_058": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_mdyqxhdovbabgevnathxsqdvolqpadzfsoyeqcmsrrufhkxvmkwrabeisika_059": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_dvhkskmzmvtbaqtuimlgxkdmevrvkvbdoozqzstvdaccgizdxegcismuohvydv_060": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_wfhzvefualtakquglnvnfprgjuvrdlqzoegbxceawutkqmmmcsaftxciffjo_061": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_wzxuxyzjrrhnuvknbwdbxcxxziscojebtkaqvtrftohxselpshaxj_062": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_evgytuyrdqdhbcwijozzmeqtrnyvyqoqzsmp_063": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_xhfoxicrnpkbtqwphinpcwhdkcpbgqlpzonmmhoymrwlojatsu_064": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_erfsrejpcqazbbplfslaajubskdhcibmw_065": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_vvejaixmuxnnnxpnwnmregbwnkptblapykgzdczlpidoxqno_066": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_vegcmknltgrkfrxlmqzurpkuuhmiuiikpxzrcid_067": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_lxxhbhtcvzkoeswmoxizlkgzbfcthzepnrfvflfuwgyxypoujvvpsovaedlxigt_068": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_synpuqsgphcjhbuvnjjesqzwkdadikxqci_069": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_mlouyrisesaywnuxwctwuzupoopsrylgpvtsg_070": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_gstjsaggntqwugbzikeksujuyt_071": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_jsxyvyvgffldldyconidbtyfrvnisqsviychbaghpqdzzjz_072": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_slmlekdogwuyznlfzvflifsuxonfigpxyhpcadxof_073": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_zcxqaqfebivrbpnhgm_074": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_rgugqihpjcxlhglimkxruzpgzmcusnqwmnrzkfjahetbqpbtrmenudxnp_075": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_wucgvjqlfgupikliqfbqzrhicewcz_076": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_jfmfmjzsoluwljufgzdlskazqxjenjuzlyqoiavpcntzghonrlp_077": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_wyldzmvvrvjbkielxdbyjythgrahlwvgkxcubcajmeoearrikakmcsthdke_078": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_iarzgzcozvmkubufwrdwwuhhpbopdqhmbjiecpbbhdgrrkuhivhfsyni_079": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_rrdutmsokqmomnhtctniorumhjxuwpmpbuswhbdktuissmfcpzbrcxndntxn_080": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_qxaccsklvqjebsjwfbxnjcdnlhmoizvllxvkz_081": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_dklsivejoouqdcl_082": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_rolvyswdillwdausp_083": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_myqckvrvsmncbudocvixuewjywrkcdkscam_084": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_pluxuunglukbgjzcfaztqrhkngxdpfbicbgvxpcgpoamsrlswr_085": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_mlamwfmidvxhwohrtypcxwnvmlxfqviwqpexdoly_086": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_tswgxygdchjyqchjgncnrjhrzewhfusgfuavqjpttgy_087": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_mkxjegmjlzkkwzuaagket_088": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_jvzcvudaqy_089": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ndljtwayqimwxvpv_090": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_pdbrwzfkxdigwojaslwkoyhwdpuybvsowivjbuwkldkadtaxbros_091": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_eqahosohrurcs_092": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_djlimaqszvyheetenvrevzgnkrrtsxsl_093": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_kmpejulimytkrjczozfghforsychlbaysbrwrecfbawujny_094": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_nbslhdzmdeqanexovwmjgkocvrg_095": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_egldfzguunvjvoe_096": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_kmhhervu_097": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_kalqxdkiwtedrorvvrolmxwp_098": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ckxrhzavmsumfrnggqimvfoymzjguvpjanjctlwjlyegaiohikad_099": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_xzvgddcctnwfhpebzkxgruzrcfjadtwchikthvsvce_100": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_qudmdawmeyctcipeottybgepwerwitmrirnilvrcgxgyuntnrehmpnepcam_101": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_tpuknqhtrar_102": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_xhuhjbuevjylmmyoztqcqsdfmsbkttxxcgxyqgust_103": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_hftdsrzzdrbtmbska_104": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_pakcihdwycgvpsvtrqheavgspqkyxrkd_105": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_aznyanfwxokcomewgfcjpe_106": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_yarvhfrpetlhvpcaolhslhymgkwkhmmjlwlhnimvv_107": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_adsloyvqxcithmxkigtgttlhmfxfmxkbjddyeqgrimblwjdse_108": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_nbgwlbtqnperafzfrdshrisjvinagydmanucoebstqslbupqftrpsgqtc_109": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_eomnifgshvuj_110": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ttmpvutlcbddpachzoavrrakgcjfmqqmarfvbpkhxtrqewd_111": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_icgzivtjfwtrjtlmkxiayblroqujoapolpjldsrxuoiecdiiutys_112": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_msrslyxeeioakoqtxarcejhmmaquoietjhneyks_113": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_psybipczrhsymii_114": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_cvciybuuydrodukczp_115": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_rdmgfxyidmktyulcsdnehcsdkgqptzyqnjfuwgiksycxcjqvztolrwxnheiz_116": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ckgvgaiagassnuftbvm_117": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_xgawtepdmjtclkfhnreoyrrpzrimxyrjbxsegdanrvmpxokkpgwmtsrnmg_118": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_cfzzvuvzlldhfuudvgfz_119": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_heonoqtezapfykjeafldgufpdzorgprayzmuqyomqxs_120": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_vavkrppflewbbgpmbyi_121": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_fdgpdkqfpoaohyfkvcftacp_122": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_pisbrwfpvpcrwnawhlnvnfrgvholisawqa_123": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_wrwvqjahlxmpybcfrqrqjhfqykfkuur_124": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_faapharfxdlxuesunslqkfrmvvzggcgvtjbxedetojocnukhfxsoltckxsxhj_125": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_zynorwvbvpusmwktuxkbulhbfcnnhtscqaetmbdvcpnbqkum_126": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_ghfyoyozjwzgiwppedxemouhftmsakgjlyotbybommexuve_127": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}},
-        "d_dvretyeczsbaiabqdxrkdfwgneifefnxedasvwcshjeirqdrvyj_128": {"type": "keyword"{% if index_mode | default('time_series') is equalto 'time_series' %}, "time_series_dimension": {{enable_more_dimensions | default("false")}}{% endif %}}
-      }
+        {
+          "kubernetes.labels.*": {
+            "path_match": "kubernetes.labels.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "kubernetes.annotations.*": {
+            "path_match": "kubernetes.annotations.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "aws.tags.*": {
+            "path_match": "aws.tags.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "aws.dimensions.*": {
+            "path_match": "aws.dimensions.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "aws.*.metrics.*.*": {
+            "path_match": "aws.*.metrics.*.*",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "azure.resource.tags.*": {
+            "path_match": "azure.resource.tags.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "azure.dimensions.*": {
+            "path_match": "azure.dimensions.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "azure.compute_vm.*.*": {
+            "path_match": "azure.compute_vm.*.*",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "azure.compute_vm_scaleset.*.*": {
+            "path_match": "azure.compute_vm_scaleset.*.*",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "azure.monitor.metrics.*.*": {
+            "path_match": "azure.monitor.metrics.*.*",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "azure.storage.*.*": {
+            "path_match": "azure.storage.*.*",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "coredns.stats.dns.request.duration.ns.bucket.*": {
+            "path_match": "coredns.stats.dns.request.duration.ns.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "coredns.stats.dns.request.size.bytes.bucket.*": {
+            "path_match": "coredns.stats.dns.request.size.bytes.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "coredns.stats.dns.response.size.bytes.bucket.*": {
+            "path_match": "coredns.stats.dns.response.size.bytes.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "docker.cpu.core.*.pct": {
+            "path_match": "docker.cpu.core.*.pct",
+            "mapping": {
+              "scaling_factor": 1000,
+              "type": "scaled_float"
+            }
+          }
+        },
+        {
+          "docker.cpu.core.*.norm.pct": {
+            "path_match": "docker.cpu.core.*.norm.pct",
+            "mapping": {
+              "scaling_factor": 1000,
+              "type": "scaled_float"
+            }
+          }
+        },
+        {
+          "docker.cpu.core.*.ticks": {
+            "path_match": "docker.cpu.core.*.ticks",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "docker.event.actor.attributes": {
+            "path_match": "docker.event.actor.attributes.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "docker.image.labels": {
+            "path_match": "docker.image.labels.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "docker.memory.stats.*": {
+            "path_match": "docker.memory.stats.*",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "etcd.disk.wal_fsync_duration.ns.bucket.*": {
+            "path_match": "etcd.disk.wal_fsync_duration.ns.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "etcd.disk.backend_commit_duration.ns.bucket.*": {
+            "path_match": "etcd.disk.backend_commit_duration.ns.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.apiserver.http.request.duration.us.percentile.*": {
+            "path_match": "kubernetes.apiserver.http.request.duration.us.percentile.*",
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "kubernetes.apiserver.http.request.size.bytes.percentile.*": {
+            "path_match": "kubernetes.apiserver.http.request.size.bytes.percentile.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.apiserver.http.response.size.bytes.percentile.*": {
+            "path_match": "kubernetes.apiserver.http.response.size.bytes.percentile.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.apiserver.request.latency.bucket.*": {
+            "path_match": "kubernetes.apiserver.request.latency.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.apiserver.request.duration.us.bucket.*": {
+            "path_match": "kubernetes.apiserver.request.duration.us.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.controllermanager.http.request.duration.us.percentile.*": {
+            "path_match": "kubernetes.controllermanager.http.request.duration.us.percentile.*",
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "kubernetes.controllermanager.http.request.size.bytes.percentile.*": {
+            "path_match": "kubernetes.controllermanager.http.request.size.bytes.percentile.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.controllermanager.http.response.size.bytes.percentile.*": {
+            "path_match": "kubernetes.controllermanager.http.response.size.bytes.percentile.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.proxy.http.request.duration.us.percentile.*": {
+            "path_match": "kubernetes.proxy.http.request.duration.us.percentile.*",
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "kubernetes.proxy.http.request.size.bytes.percentile.*": {
+            "path_match": "kubernetes.proxy.http.request.size.bytes.percentile.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.proxy.http.response.size.bytes.percentile.*": {
+            "path_match": "kubernetes.proxy.http.response.size.bytes.percentile.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.proxy.sync.rules.duration.us.bucket.*": {
+            "path_match": "kubernetes.proxy.sync.rules.duration.us.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.proxy.sync.networkprogramming.duration.us.bucket.*": {
+            "path_match": "kubernetes.proxy.sync.networkprogramming.duration.us.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.scheduler.http.request.duration.us.percentile.*": {
+            "path_match": "kubernetes.scheduler.http.request.duration.us.percentile.*",
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "kubernetes.scheduler.http.request.size.bytes.percentile.*": {
+            "path_match": "kubernetes.scheduler.http.request.size.bytes.percentile.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.scheduler.http.response.size.bytes.percentile.*": {
+            "path_match": "kubernetes.scheduler.http.response.size.bytes.percentile.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.scheduler.scheduling.e2e.duration.us.bucket.*": {
+            "path_match": "kubernetes.scheduler.scheduling.e2e.duration.us.bucket.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "kubernetes.scheduler.scheduling.duration.seconds.percentile.*": {
+            "path_match": "kubernetes.scheduler.scheduling.duration.seconds.percentile.*",
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "munin.metrics.*": {
+            "path_match": "munin.metrics.*",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "prometheus.labels.*": {
+            "path_match": "prometheus.labels.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "prometheus.metrics.*": {
+            "path_match": "prometheus.metrics.*",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "sql.metrics.numeric.*": {
+            "path_match": "sql.metrics.numeric.*",
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "sql.metrics.string.*": {
+            "path_match": "sql.metrics.string.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "statsd.*.count": {
+            "path_match": "statsd.*.count",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "statsd.*.*": {
+            "path_match": "statsd.*.*",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "system.process.env": {
+            "path_match": "system.process.env.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "system.process.cgroup.cpuacct.percpu": {
+            "path_match": "system.process.cgroup.cpuacct.percpu.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "system.raid.disks.states.*": {
+            "path_match": "system.raid.disks.states.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "traefik.health.response.status_codes.*": {
+            "path_match": "traefik.health.response.status_codes.*",
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "vsphere.virtualmachine.custom_fields": {
+            "path_match": "vsphere.virtualmachine.custom_fields.*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "strings_as_keyword": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"{% if p_source_mode != "synthetic" %},"ignore_above": 1024{% endif %}
+            }
+          }
+        }
+      ],
+      "date_detection": false,
+      {{ rally.collect(parts="index-mappings.json") }}
     }
   }
 }

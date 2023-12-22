@@ -84,12 +84,13 @@
         {
           "name": "refresh-after-force-merge",
           "operation": "refresh"
-        },
+        }
+        {%- if ingest_mode is defined and ingest_mode != "data_stream" %},
         {
           "name": "block-source-index-writes",
           "operation": {
             "operation-type": "raw-request",
-            "path": "/_all/_block/write",
+            "path": "/tsdb_synth/_block/write",
             "method": "PUT"
           }
         },
@@ -114,5 +115,6 @@
             "fixed-interval": "1d"
           }
         }
+        {%- endif %}
       ]
     }

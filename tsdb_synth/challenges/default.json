@@ -3,7 +3,7 @@
       "description": "Indexes the whole document corpus and runs downsampling",
       "default": true,
       "schedule": [
-        {%- if ingest_mode is defined and ingest_mode != "data_stream" %},
+        {%- if ingest_mode is defined and ingest_mode != "data_stream" %}
         {
           "operation": {
             "operation-type": "delete-index",

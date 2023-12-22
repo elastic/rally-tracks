@@ -212,7 +212,7 @@ async def create_users_and_roles(es, params):
         try:
             await es.update_by_query(
                 index="wikipedia",
-                max_docs=100,
+                max_docs=30,
                 body={
                     "script": {
                         "source": "ctx._source._allow_permissions=[params.role];",

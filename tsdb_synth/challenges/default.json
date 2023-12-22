@@ -89,7 +89,7 @@
           "name": "block-source-index-writes",
           "operation": {
             "operation-type": "raw-request",
-            "path": "/tsdb_synth/_block/write",
+            "path": "/_all/_block/write",
             "method": "PUT"
           }
         },

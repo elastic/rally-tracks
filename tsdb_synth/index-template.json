@@ -2,13 +2,10 @@
 
 {
   "index_patterns": [
-    "tsdb_*"
+    "tsdb_synth*"
   ],
   "data_stream": {},
   "template": {
-    "lifecycle": {
-      "enabled": false
-    },
     "settings": {
       "index": {
         "number_of_shards": {{number_of_shards | default(1)}},

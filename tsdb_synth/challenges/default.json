@@ -3,14 +3,13 @@
       "description": "Indexes the whole document corpus and runs downsampling",
       "default": true,
       "schedule": [
-        {%- if ingest_mode is defined and ingest_mode != "data_stream" %}
         {
           "operation": {
             "operation-type": "delete-index",
-            "index": ["tsdb_synth-1m", "tsdb_synth-1h", "tsdb_synth-1d"]
+            "index": ["_all"]
           }
         },
-        {%- endif %}
+        {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
         {
           "name": "create-all-templates",
           "operation": {
@@ -20,6 +19,7 @@
             }
           }
         },
+        {%- endif %}
         {
           "name": "check-cluster-health",
           "operation": {

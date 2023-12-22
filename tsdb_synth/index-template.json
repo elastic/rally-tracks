@@ -1,5 +1,6 @@
 {% import "rally.helpers" as rally with context %}
-
+{# TODO By default, source_mode should be "synthetic" if index_mode == "time_series" else "stored" #}
+{% set p_source_mode = (source_mode | default("synthetic")) %}
 {
   "index_patterns": [
     "tsdb_synth*"

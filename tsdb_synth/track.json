@@ -30,7 +30,9 @@
       "base-url": "https://storage.googleapis.com/rally-tracks/tsdb_synth/",
       "documents": [
         {
+          {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
           "target-data-stream": "tsdb_synth",
+          {%- endif %}
           "source-file": "documents.json.bz2",
           "document-count": 3145728,
           "compressed-bytes": 80735788640,

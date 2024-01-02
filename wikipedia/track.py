@@ -216,14 +216,9 @@ async def create_users_and_roles(es, params):
     skip_roles = params["skip_roles"]
 
     for n in range(0, 10):
-        user = None
-        try:
-            user = await es.security.get_user(username=USERS[n]["username"])
-        except:
-            if not user:
-                await es.security.put_user(
-                    username=USERS["username"][n], params={"password":
-                        USERS["password"][n], "roles": []}
+        await es.security.put_user(
+                username=USERS[n]["username"], params={"password":
+                    USERS[n]["password"], "roles": []}
                 )
 
 #    skip_roles = 0
@@ -280,7 +275,7 @@ async def reset_indices(es, params):
     for n in range(0, 10):
         await es.security.put_user(
             username=USERS[n]["username"], params={"password":
-                USERS["password"][n], "roles": []}
+                USERS[n]["password"], "roles": []}
         )
 
 

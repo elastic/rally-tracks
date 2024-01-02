@@ -7,12 +7,20 @@ from base64 import b64encode
 from os import getcwd
 from os.path import dirname
 from typing import Iterator, List
+from itertools import isslice
 
 from esrally.track.params import ParamSource
 
 def create_basic_auth_header(username, password):
     token = b64encode(f"{username}:{password}".encode('utf-8')).decode("ascii")
     return f'Basic {token}'
+
+def batched(iterable, n):
+    if n < 1:
+        raise ValueError('n must be at least one')
+    it = iter(iterable)
+    while batch := tuple(islice(it, n)):
+        yield batch
 
 QUERIES_DIRNAME: str = dirname(__file__)
 QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"
@@ -24,8 +32,18 @@ QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 with open(f"{QUERIES_DIRNAME}/roles.json") as f:
     ROLE_IDS = json.load(f)
 
-USER_AUTH = {"username": "wikiuser", "password": "ujd_rbh5quw7GWC@pjc"}
-AUTH_HEADER = create_basic_auth_header(**USER_AUTH)
+USERS = [
+    {"username": "wikiuser", "password": "ujd_rbh5quw7GWC@pjc"},
+    {"username": "wikiuser2", "password": "rifkTVBgF4VZddsvdAjr"},
+    {"username": "wikiuser3", "password": "o3wPWTRNgNQdaJT7nwD4"},
+    {"username": "wikiuser4", "password": "YfWjd4ARMnPQ9DLN6YQq"},
+    {"username": "wikiuser5", "password": "YYHyxHv8Z9TAVJGdjsZ4"},
+    {"username": "wikiuser6", "password": "oze9ZH3dmVuMnECzDkN8"},
+    {"username": "wikiuser7", "password": "iKj9Z83373TgUEexhQAP"},
+    {"username": "wikiuser8", "password": "FpLoH3RQaqMpf6dH4yQ4"},
+    {"username": "wikiuser9", "password": "3AgqUPmos4bEd6wt98xq"},
+    {"username": "wikiuser10", "password": "W96vkvrcTZcLwbVTvedW"},
+]
 ROLE_TEMPLATE = {
     "indices": [
         {
@@ -151,7 +169,7 @@ class SearchApplicationSearchParamSourceWithUser(QueryIteratorParamSource):
             query = next(self._queries_iterator)
             return {
                 "method": "POST",
-                "headers": {"Authorization": AUTH_HEADER},
+                "headers": {"Authorization": create_basic_auth_header(**random.choice(USERS))},
                 "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
                 "body": {
                     "params": {
@@ -197,41 +215,44 @@ async def create_users_and_roles(es, params):
     num_roles = params["roles"]
     skip_roles = params["skip_roles"]
 
-#    user = None
-#    try:
-#        user = await es.security.get_user(username=USER_AUTH["username"])
-#    except:
-#        if not user:
-#            await es.security.put_user(
-#                username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
-#            )
-
-    skip_roles = 0
-    for role in ROLE_IDS[skip_roles : num_roles - 1]:
-        await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
+    for n in range(0, 10):
+        user = None
         try:
-            await es.update_by_query(
-                index="wikipedia",
-                max_docs=30,
-                body={
-                    "script": {
-                        "source": "ctx._source._allow_permissions=[params.role];",
-                        "lang": "painless",
-                        "params": {"role": role},
-                    },
-                    "query": {"bool": {"must_not": {"exists": {"field": "_allow_permissions"}}}},
-                },
-                conflicts="proceed",
-                slices="10",
-            )
+            user = await es.security.get_user(username=USERS[n]["username"])
         except:
-            pass
+            if not user:
+                await es.security.put_user(
+                    username=USERS["username"][n], params={"password":
+                        USERS["password"][n], "roles": []}
+                )
 
-    await es.security.put_user(
-        username=USER_AUTH["username"], params={"roles": ROLE_IDS[0 : num_roles - 1] + ['app-admin']}
-    )
+#    skip_roles = 0
+#    for role in ROLE_IDS[skip_roles : num_roles - 1]:
+#        await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
+#        try:
+#            await es.update_by_query(
+#                index="wikipedia",
+#                max_docs=30,
+#                body={
+#                    "script": {
+#                        "source": "ctx._source._allow_permissions=[params.role];",
+#                        "lang": "painless",
+#                        "params": {"role": role},
+#                    },
+#                    "query": {"bool": {"must_not": {"exists": {"field": "_allow_permissions"}}}},
+#                },
+#                conflicts="proceed",
+#                slices="10",
+#            )
+#        except:
+#            pass
 
-    await es.indices.refresh(index="wikipedia")
+    for n, roles in batched(ROLE_IDS):
+        await es.security.put_user(
+            username=USERS[n]["username"], params={"roles": roles}
+        )
+
+    #await es.indices.refresh(index="wikipedia")
 
 
 async def reset_indices(es, params):
@@ -240,25 +261,27 @@ async def reset_indices(es, params):
 #        if role.startswith("managed-role-search-"):
 #            await es.security.delete_role(name=role)
 
-    await es.update_by_query(
-        index="wikipedia",
-        body={
-            "script": {
-                "source": "ctx._source._allow_permissions = new ArrayList();",
-                "lang": "painless"
-            },
-        },
-        conflicts="proceed",
-        slices="10",
-        timeout="90m",
-        request_timeout=9600,
-    )
-
-    await es.indices.refresh(index="wikipedia")
-
-#    await es.security.put_user(
-#        username=USER_AUTH["username"], params={"password": USER_AUTH["password"], "roles": []}
+#    await es.update_by_query(
+#        index="wikipedia",
+#        body={
+#            "script": {
+#                "source": "ctx._source._allow_permissions = new ArrayList();",
+#                "lang": "painless"
+#            },
+#        },
+#        conflicts="proceed",
+#        slices="10",
+#        timeout="90m",
+#        request_timeout=9600,
 #    )
+#
+#    await es.indices.refresh(index="wikipedia")
+
+    for n in range(0, 10):
+        await es.security.put_user(
+            username=USERS[n]["username"], params={"password":
+                USERS["password"][n], "roles": []}
+        )
 
 
 def register(registry):

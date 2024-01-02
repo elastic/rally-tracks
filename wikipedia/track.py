@@ -7,7 +7,7 @@ from base64 import b64encode
 from os import getcwd
 from os.path import dirname
 from typing import Iterator, List
-from itertools import isslice
+from itertools import islice
 
 from esrally.track.params import ParamSource
 

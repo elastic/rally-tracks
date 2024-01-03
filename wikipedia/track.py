@@ -246,7 +246,8 @@ async def create_users_and_roles(es, params):
 
     for n, roles in batched(ROLE_IDS, int(len(ROLE_IDS)/10)):
         await es.security.put_user(
-            username=USERS[n]["username"], params={"roles": roles + ['app-admin#']}
+            username=USERS[n]["username"], params={"roles": roles +
+                ('app-admin#')}
         )
 
     #await es.indices.refresh(index="wikipedia")

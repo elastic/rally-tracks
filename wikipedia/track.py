@@ -19,8 +19,10 @@ def batched(iterable, n):
     if n < 1:
         raise ValueError('n must be at least one')
     it = iter(iterable)
+    i = 0
     while batch := tuple(islice(it, n)):
-        yield batch
+        yield i, batch
+        i = i + 1
 
 QUERIES_DIRNAME: str = dirname(__file__)
 QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"
@@ -242,7 +244,7 @@ async def create_users_and_roles(es, params):
 #        except:
 #            pass
 
-    for n, roles in enumerate(batched(ROLE_IDS, 10)):
+    for n, roles in batched(ROLE_IDS, 10):
         await es.security.put_user(
             username=USERS[n]["username"], params={"roles": roles}
         )

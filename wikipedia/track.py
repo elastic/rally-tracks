@@ -245,6 +245,7 @@ async def create_users_and_roles(es, params):
 #            pass
 
     for n, roles in batched(ROLE_IDS, 10):
+        print(n)
         await es.security.put_user(
             username=USERS[n]["username"], params={"roles": roles}
         )

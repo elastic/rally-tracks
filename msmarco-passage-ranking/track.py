@@ -183,9 +183,6 @@ class QueryParamsSource:
             "body": query,
         }
 
-
-# For each query this will generate the weighted terms query, a pruned version and a rescored pruned version of the same query.
-# These queries can then be executed and compared for accuracy.
 class WeightedRecallParamSource:
     def __init__(self, track, params, **kwargs):
         if len(track.indices) == 1:
@@ -216,7 +213,7 @@ class WeightedRecallParamSource:
     def params(self):
         return {
             "index": self._index_name,
-            "cache": self._params.get("cache", False),
+            "cache": self._cache,
             "top_k": self._top_k,
             "num_candidates": self._num_candidates,
             "queries": self._queries,
@@ -225,6 +222,8 @@ class WeightedRecallParamSource:
         }
 
 
+# For each query this will generate the weighted terms query, a pruned version and a rescored pruned version of the same query.
+# These queries can then be executed and compared for accuracy.
 class WeightedTermsRecallRunner:
     async def __call__(self, es, params):
         recall_total = 0

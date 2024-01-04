@@ -301,8 +301,6 @@ class WeightedTermsRecallRunner:
             else None
         )
 
-    def get_relevance_info(result):
-
     def __repr__(self, *args, **kwargs):
         return "weighted_terms_recall"
 

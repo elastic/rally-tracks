@@ -1,14 +1,14 @@
-from collections import defaultdict
-
 import csv
 import json
 import logging
 import os
+from collections import defaultdict
 
 import pytrec_eval as pe
 
 Qrels = dict[str, dict[str, int]]
 Results = dict[str, dict[str, float]]
+
 
 def calc_ndcg(qrels: Qrels, results: Results, k_list: list) -> dict:
     for qid, rels in results.items():
@@ -19,9 +19,7 @@ def calc_ndcg(qrels: Qrels, results: Results, k_list: list) -> dict:
     scores = defaultdict(float)
 
     metrics = ["ndcg_cut"]
-    pytrec_strings = {
-        f"{metric}.{','.join([str(k) for k in k_list])}" for metric in metrics
-    }
+    pytrec_strings = {f"{metric}.{','.join([str(k) for k in k_list])}" for metric in metrics}
     evaluator = pe.RelevanceEvaluator(qrels, pytrec_strings)
     pytrec_scores = evaluator.evaluate(results)
 
@@ -40,6 +38,7 @@ def calc_ndcg(qrels: Qrels, results: Results, k_list: list) -> dict:
 
     return scores
 
+
 def read_qrels(qrels_input_file):
     qrels = defaultdict(dict)
     with open(qrels_input_file, "r") as input_file:
@@ -49,23 +48,27 @@ def read_qrels(qrels_input_file):
             qrels[query_id][doc_id] = int(score)
     return qrels
 
+
 def generate_weighted_terms_query(text_expansion_field, query_expansion, boost=1.0):
     return {
         "query": {
             "bool": {
                 "should": [
-                    {"term": {f"{text_expansion_field}": {"value": f"{key}", "boost": value}}}
-                    for key, value in query_expansion.items()
+                    {"term": {f"{text_expansion_field}": {"value": f"{key}", "boost": value}}} for key, value in query_expansion.items()
                 ],
                 "boost": boost,
             }
         }
     }
 
+
 def generate_bm25_query(text_field, query, boost=1.0):
     return {"query": {"match": {f"{text_field}": {"query": query, "boost": boost}}}}
 
-def generate_combine_bm25_weighted_terms_query(text_field, text_expansion_field, query, query_boost, query_expansion, query_expansion_boost):
+
+def generate_combine_bm25_weighted_terms_query(
+    text_field, text_expansion_field, query, query_boost, query_expansion, query_expansion_boost
+):
     return {
         "query": {
             "bool": {
@@ -77,21 +80,19 @@ def generate_combine_bm25_weighted_terms_query(text_field, text_expansion_field,
         }
     }
 
+
 def generate_pruned_query(field, query_expansion, boost=1.0):
     return {
         "query": {
             "weighted_tokens": {
                 f"{field}": {
                     "tokens": query_expansion,
-                    "pruning_config": {
-                        "tokens_freq_ratio_threshold": 5,
-                        "tokens_weight_threshold": 0.4,
-                        "only_score_pruned_tokens": False
-                    }
+                    "pruning_config": {"tokens_freq_ratio_threshold": 5, "tokens_weight_threshold": 0.4, "only_score_pruned_tokens": False},
                 }
             }
         }
     }
+
 
 def generate_rescored_pruned_query(field, query_expansion, num_candidates, boost=1.0):
     return {
@@ -99,31 +100,27 @@ def generate_rescored_pruned_query(field, query_expansion, num_candidates, boost
             "weighted_tokens": {
                 f"{field}": {
                     "tokens": query_expansion,
-                    "pruning_config": {
-                        "tokens_freq_ratio_threshold": 5,
-                        "tokens_weight_threshold": 0.4,
-                        "only_score_pruned_tokens": False
-                    }
+                    "pruning_config": {"tokens_freq_ratio_threshold": 5, "tokens_weight_threshold": 0.4, "only_score_pruned_tokens": False},
                 }
             }
         },
-        "rescore" : {
-        "window_size" : num_candidates,
-          "query" : {
-            "rescore_query" : {
-              "weighted_tokens" : {
-                f"{field}": {
-                    "tokens": query_expansion,
-                    "pruning_config": {
-                        "tokens_freq_ratio_threshold": 5,
-                        "tokens_weight_threshold": 0.4,
-                        "only_score_pruned_tokens": True
+        "rescore": {
+            "window_size": num_candidates,
+            "query": {
+                "rescore_query": {
+                    "weighted_tokens": {
+                        f"{field}": {
+                            "tokens": query_expansion,
+                            "pruning_config": {
+                                "tokens_freq_ratio_threshold": 5,
+                                "tokens_weight_threshold": 0.4,
+                                "only_score_pruned_tokens": True,
+                            },
+                        }
                     }
                 }
-            }
-          }
-        }
-      }
+            },
+        },
     }
 
 
@@ -164,13 +161,24 @@ class QueryParamsSource:
             query = generate_bm25_query(text_field=self._text_field, query=query_obj["query"], boost=1)
         elif self._query_strategy == "text_expansion":
             if self._prune is False:
-                query = generate_weighted_terms_query(text_expansion_field=self._text_expansion_field, query_expansion=query_obj[self._text_expansion_field], boost=1)
+                query = generate_weighted_terms_query(
+                    text_expansion_field=self._text_expansion_field, query_expansion=query_obj[self._text_expansion_field], boost=1
+                )
             elif self._rescore is True:
-                query = generate_rescored_pruned_query(field=self._text_expansion_field, query_expansion=query_obj[self._text_expansion_field], num_candidates=self._num_candidates, boost=1)
+                query = generate_rescored_pruned_query(
+                    field=self._text_expansion_field,
+                    query_expansion=query_obj[self._text_expansion_field],
+                    num_candidates=self._num_candidates,
+                    boost=1,
+                )
             else:
-                query = generate_pruned_query(field=self._text_expansion_field, query_expansion=query_obj[self._text_expansion_field], boost=1)
+                query = generate_pruned_query(
+                    field=self._text_expansion_field, query_expansion=query_obj[self._text_expansion_field], boost=1
+                )
         elif self._query_strategy == "hybrid":
-            query = generate_combine_bm25_weighted_terms_query(self._text_field, self._text_expansion_field, query_obj["query"], 1, query_obj[self._text_expansion_field], 1)
+            query = generate_combine_bm25_weighted_terms_query(
+                self._text_field, self._text_expansion_field, query_obj["query"], 1, query_obj[self._text_expansion_field], 1
+            )
         else:
             raise Exception(f"The query strategy \\`{self._query_strategy}]\\` is not implemented")
 
@@ -182,6 +190,7 @@ class QueryParamsSource:
             "track_total_hits": self._track_total_hits,
             "body": query,
         }
+
 
 class WeightedRecallParamSource:
     def __init__(self, track, params, **kwargs):
@@ -206,8 +215,7 @@ class WeightedRecallParamSource:
             self._queries = json.load(file)
         self._qrels = read_qrels(os.path.join(cwd, self._qrels_file))
 
-    def partition(self, partition_index,
-                  total_partitions):
+    def partition(self, partition_index, total_partitions):
         return self
 
     def params(self):
@@ -244,18 +252,15 @@ class WeightedTermsRecallRunner:
                 size=params["top_k"],
             )
             pruned_result = await es.search(
-                body=generate_pruned_query(params["text_expansion_field"],
-                                                          query[params["text_expansion_field"]],
-                                                          1),
+                body=generate_pruned_query(params["text_expansion_field"], query[params["text_expansion_field"]], 1),
                 index=params["index"],
                 request_cache=params["cache"],
                 size=params["top_k"],
             )
             pruned_rescored_result = await es.search(
-                body=generate_rescored_pruned_query(params["text_expansion_field"],
-                                                            query[params["text_expansion_field"]],
-                                                            params["num_candidates"],
-                                                            1),
+                body=generate_rescored_pruned_query(
+                    params["text_expansion_field"], query[params["text_expansion_field"]], params["num_candidates"], 1
+                ),
                 index=params["index"],
                 request_cache=params["cache"],
                 size=params["top_k"],
@@ -279,14 +284,14 @@ class WeightedTermsRecallRunner:
             for doc_id in pruned_rescored_hits:
                 pruned_rescored_results[query_id][doc_id] = 1
 
-        control_relevance = calc_ndcg(params["qrels"], weighted_term_results, [10,100])
-        pruned_relevance = calc_ndcg(params["qrels"], pruned_results, [10,100])
-        pruned_rescored_relevance = calc_ndcg(params["qrels"], pruned_rescored_results, [10,100])
+        control_relevance = calc_ndcg(params["qrels"], weighted_term_results, [10, 100])
+        pruned_relevance = calc_ndcg(params["qrels"], pruned_results, [10, 100])
+        pruned_rescored_relevance = calc_ndcg(params["qrels"], pruned_rescored_results, [10, 100])
 
         return (
             {
-                "avg_recall": float(recall_total / exact_total),    # Calculated on pruned/rescored hits
-                "min_recall": min_recall,                           # Calculated on pruned/rescored hits
+                "avg_recall": float(recall_total / exact_total),  # Calculated on pruned/rescored hits
+                "min_recall": min_recall,  # Calculated on pruned/rescored hits
                 "top_k": params["top_k"],
                 "num_candidates": params["num_candidates"],
                 "control_ndcg_10": control_relevance["ndcg_cut@10"],

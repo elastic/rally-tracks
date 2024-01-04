@@ -10,6 +10,8 @@ develop = [
     "isort==5.12.0",
     "pre-commit==3.3.3",
     "pip==22.2",
+    "pytrec_eval",
+    "numpy",
 ]
 
 [tool.hatch.metadata]
@@ -40,6 +42,8 @@ dependencies = [
 [tool.hatch.envs.unit]
 extra-dependencies = [
     "geneve==0.0.3",
+    "pytrec_eval",
+    "numpy",
     "elastic-package-assets @ git+https://github.com/elastic/package-assets.git@main"
 ]
 

@@ -2,6 +2,10 @@
 {
   "version": 2,
   "description": "Benchmark bm25, semantic and hybrid search on the MS MARCO passage dataset",
+  "dependencies": [
+    "pytrec_eval",
+    "numpy"
+  ],
   "indices": [
     {
       "name": "msmarco-passage-ranking-collection",

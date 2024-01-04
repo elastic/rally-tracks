@@ -109,6 +109,14 @@
 {%- endfor %}
 {% for name, info in time_intervals.items() %}
 {
+  "name": "esql_cpu_usage_per_pod_{{name}}",
+  "operation-type": "esql",
+  "detailed-results": {{detailed_results | default("false")}},
+  "query": "FROM k8s-* | eval by_interval = date_trunc({{ info[2] }}, @timestamp), start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS avg(kubernetes.pod.cpu.usage.limit.pct) BY kubernetes.pod.name, by_interval | LIMIT 10000"
+},
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
+{
   "name": "memory_usage_per_pod_{{name}}",
   "data-stream": "k8s-*",
   "operation-type": "search",
@@ -198,6 +206,14 @@
       }
     }
   }  
+},
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
+{
+  "name": "esql_memory_usage_per_pod_{{name}}",
+  "operation-type": "esql",
+  "detailed-results": {{detailed_results | default("false")}},
+  "query": "FROM k8s-* | eval by_interval = date_trunc({{ info[2] }}, @timestamp), start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS avg(kubernetes.pod.memory.usage.node.pct) BY kubernetes.pod.name, by_interval | LIMIT 10000"
 },
 {%- endfor %}
 {% for name, info in time_intervals.items() %}
@@ -295,6 +311,14 @@
 {%- endfor %}
 {% for name, info in time_intervals.items() %}
 {
+  "name": "esql_average_container_cpu_{{name}}",
+  "operation-type": "esql",
+  "detailed-results": {{detailed_results | default("false")}},
+  "query": "FROM k8s-* | eval by_interval = date_trunc({{ info[2] }}, @timestamp), start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS avg(kubernetes.container.cpu.usage.core.ns) BY kubernetes.container.name, by_interval | LIMIT 10000"
+},
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
+{
   "name": "average_container_memory_usage_{{name}}",
   "data-stream": "k8s-*",
   "operation-type": "search",
@@ -384,6 +408,14 @@
       }
     }
   }
+},
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
+{
+  "name": "esql_average_container_memory_usage_{{name}}",
+  "operation-type": "esql",
+  "detailed-results": {{detailed_results | default("false")}},
+  "query": "FROM k8s-* | eval by_interval = date_trunc({{ info[2] }}, @timestamp), start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS avg(kubernetes.container.memory.usage.bytes) BY kubernetes.container.name, by_interval | LIMIT 10000"
 },
 {%- endfor %}
 {% for name, info in time_intervals.items() %}
@@ -482,6 +514,14 @@
 {%- endfor %}
 {% for name, info in time_intervals.items() %}
 {
+  "name": "esql_cpu_usage_per_container_{{name}}",
+  "operation-type": "esql",
+  "detailed-results": {{detailed_results | default("false")}},
+  "query": "FROM k8s-* | eval by_interval = date_trunc({{ info[2] }}, @timestamp), start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS avg(kubernetes.container.cpu.usage.node.pct) BY kubernetes.container.name, by_interval | LIMIT 10000"
+},
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
+{
   "name": "memory_usage_per_container_{{name}}",
   "data-stream": "k8s-*",
   "operation-type": "search",
@@ -575,6 +615,14 @@
 {%- endfor %}
 {% for name, info in time_intervals.items() %}
 {
+  "name": "esql_memory_usage_per_container_{{name}}",
+  "operation-type": "esql",
+  "detailed-results": {{detailed_results | default("false")}},
+  "query": "FROM k8s-* | eval by_interval = date_trunc({{ info[2] }}, @timestamp), start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS avg(kubernetes.container.memory.usage.node.pct) BY kubernetes.container.name, by_interval | LIMIT 10000"
+},
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
+{
   "name": "unique_deployment_count_{{name}}",
   "data-stream": "k8s-*",
   "operation-type": "search",
@@ -638,6 +686,14 @@
       }
     }
   }  
+},
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
+{
+  "name": "esql_unique_deployment_count_{{name}}",
+  "operation-type": "esql",
+  "detailed-results": {{detailed_results | default("false")}},
+  "query": "FROM k8s-* | eval start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS count_distinct(kubernetes.deployment.name)"
 },
 {%- endfor %}
 {% for name, info in time_intervals.items() %}
@@ -718,6 +774,14 @@
         }
       }
     } 
+},
+{%- endfor %}
+{% for name, info in time_intervals.items() %}
+{
+  "name": "esql_percentile_cpu_usage_per_container_{{name}}",
+  "operation-type": "esql",
+  "detailed-results": {{detailed_results | default("false")}},
+  "query": "FROM k8s-* | eval by_interval = date_trunc({{ info[2] }}, @timestamp), start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS percentile(kubernetes.container.cpu.usage.nanocores, 95) BY by_interval | LIMIT 10000"
 },
 {%- endfor %}
 {% for name, info in time_intervals.items() %}

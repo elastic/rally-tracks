@@ -36,7 +36,7 @@ with open(f"{QUERIES_DIRNAME}/users.json") as f:
     USER_NAMES = json.load(f)
 
 USERS = [
-    {"username": v, "password": "ujd_rbh5quw7GWC@pjc"} for k in USER_NAMES
+    {"username": v, "password": "ujd_rbh5quw7GWC@pjc"} for v in USER_NAMES
 ]
 ROLE_TEMPLATE = {
     "indices": [

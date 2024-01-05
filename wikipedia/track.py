@@ -40,7 +40,7 @@ ROLE_TEMPLATE = {
     "indices": [
         {
             "names": ["wikipedia*"],
-            "privileges": ["read,all"],
+            "privileges": ["read", "all"],
             "query": {
                 "template": {
                     "source": """{

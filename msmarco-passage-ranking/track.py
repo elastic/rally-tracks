@@ -4,13 +4,13 @@ import logging
 import os
 from collections import defaultdict
 
-import pytrec_eval as pe
-
 Qrels = dict[str, dict[str, int]]
 Results = dict[str, dict[str, float]]
 
 
 def calc_ndcg(qrels: Qrels, results: Results, k_list: list) -> dict:
+    import pytrec_eval as pe
+
     for qid, rels in results.items():
         for pid in list(rels):
             if qid == pid:

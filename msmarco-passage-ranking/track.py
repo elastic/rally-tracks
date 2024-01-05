@@ -43,8 +43,7 @@ def read_qrels(qrels_input_file):
     qrels = defaultdict(dict)
     with open(qrels_input_file, "r") as input_file:
         tsv_reader = csv.reader(input_file, delimiter="\t")
-        for row in tsv_reader:
-            query_id, doc_id, score = row
+        for query_id, doc_id, score in tsv_reader:
             qrels[query_id][doc_id] = int(score)
     return qrels
 
@@ -88,6 +87,7 @@ def generate_pruned_query(field, query_expansion, boost=1.0):
                 f"{field}": {
                     "tokens": query_expansion,
                     "pruning_config": {"tokens_freq_ratio_threshold": 5, "tokens_weight_threshold": 0.4, "only_score_pruned_tokens": False},
+                    "boost": boost,
                 }
             }
         }
@@ -101,6 +101,7 @@ def generate_rescored_pruned_query(field, query_expansion, num_candidates, boost
                 f"{field}": {
                     "tokens": query_expansion,
                     "pruning_config": {"tokens_freq_ratio_threshold": 5, "tokens_weight_threshold": 0.4, "only_score_pruned_tokens": False},
+                    "boost": boost,
                 }
             }
         },

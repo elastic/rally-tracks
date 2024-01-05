@@ -1,3 +1,4 @@
+import asyncio
 import csv
 import math
 import random
@@ -7,7 +8,7 @@ from base64 import b64encode
 from os import getcwd
 from os.path import dirname
 from typing import Iterator, List
-from itertools import islice
+from itertools import chain, islice
 
 from esrally.track.params import ParamSource
 
@@ -31,26 +32,17 @@ SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
-with open(f"{QUERIES_DIRNAME}/roles.json") as f:
-    ROLE_IDS = json.load(f)
+with open(f"{QUERIES_DIRNAME}/users.json") as f:
+    USER_NAMES = json.load(f)
 
 USERS = [
-    {"username": "wikiuser", "password": "ujd_rbh5quw7GWC@pjc"},
-    {"username": "wikiuser2", "password": "rifkTVBgF4VZddsvdAjr"},
-    {"username": "wikiuser3", "password": "o3wPWTRNgNQdaJT7nwD4"},
-    {"username": "wikiuser4", "password": "YfWjd4ARMnPQ9DLN6YQq"},
-    {"username": "wikiuser5", "password": "YYHyxHv8Z9TAVJGdjsZ4"},
-    {"username": "wikiuser6", "password": "oze9ZH3dmVuMnECzDkN8"},
-    {"username": "wikiuser7", "password": "iKj9Z83373TgUEexhQAP"},
-    {"username": "wikiuser8", "password": "FpLoH3RQaqMpf6dH4yQ4"},
-    {"username": "wikiuser9", "password": "3AgqUPmos4bEd6wt98xq"},
-    {"username": "wikiuser10", "password": "W96vkvrcTZcLwbVTvedW"},
+    {"username": v, "password": "ujd_rbh5quw7GWC@pjc"} for k in USER_NAMES
 ]
 ROLE_TEMPLATE = {
     "indices": [
         {
             "names": ["wikipedia*"],
-            "privileges": ["read"],
+            "privileges": ["read,all"],
             "query": {
                 "template": {
                     "source": """{
@@ -70,7 +62,7 @@ ROLE_TEMPLATE = {
                     {
                       "terms_set": {
                         "_allow_permissions.keyword": {
-                          "terms": {{#toJson}}_user.roles{{/toJson}},
+                          "terms": {{#toJson}}_user.metadata.documents-id{{/toJson}},
                           "minimum_should_match": 1
                         }
                       }
@@ -85,6 +77,7 @@ ROLE_TEMPLATE = {
         }
     ]
 }
+SOURCES = ['source-ed298d3e-457c-44df-b7c6-04638be4231a', 'source-8ad2a217-3813-40ce-8185-a5480a64aa3b', 'source-cd5fa06b-b9fb-43ea-9dea-1670315de46f', 'source-c2f59700-3dd6-49d4-b629-cbc626e78225', 'source-9707d274-c0cf-46f0-89cc-185375c6498b', 'source-7cb12757-5363-467b-a858-aeb274709d05', 'source-8ee293d4-5e3a-448e-84f5-43cd2f1b87ab', 'source-ea094ca8-4e20-445f-b87b-2dac5d5418a7', 'source-79c4ebce-cf52-49b6-9e3e-5dec0ad433e2', 'source-fae4090e-7040-442c-a4c7-5bcc2f4bff1c', 'source-6b4cf72b-ca41-4cb5-9db3-17308550755e', 'source-bf153937-e8b5-4d34-8801-4e57e8edfcf0', 'source-b6c92fdd-5b47-47e6-9e68-2b307ea2284d', 'source-ecd147f2-2a8f-4dd1-ac59-f8b85637797a', 'source-a2f7e3d0-af2a-4bce-ae17-789c0d20955f', 'source-3d134d50-29a7-4d0e-be8e-1e8e28cbeb3d', 'source-fc9ef042-2e1e-43db-9fdf-a096a4b2a65f', 'source-96d7b53d-6795-4c4e-ba8a-5e6de200039d', 'source-ed2078ef-e496-4cb9-a8fa-7442122f9f1b', 'source-b5c71063-be85-4f55-b185-5042c3360728']
 
 
 def query_samples(k: int, random_seed: int = None) -> List[str]:
@@ -208,56 +201,49 @@ class QueryParamSource(QueryIteratorParamSource):
 
 
 async def create_users_and_roles(es, params):
-    # For now we'll just work with one user with all the roles
-    # num_users = params['users']
+    num_roles = int(params["roles"])
+
+    for users_batch in batched(USERS[:(num_roles - 1)], 100):
+        role_coros = (
+            es.security.put_role(
+                name=f"managed-role-search-{user}",
+                body=ROLE_TEMPLATE,
+                refresh="wait_for")
+            for user in users_batch
+            )
+        users_coros = (
+            es.security.put_user(
+                username=user["username"],
+                params={
+                    "password": user["password"],
+                    "roles": [f"managed-role-search-{user}"],
+                    "metadata": { "documents-id": SOURCES}}
+                )
+            for user in users_batch
+            )
+        await asyncio.gather(*chain(role_coros, users_coros))
+
+    await es.update_by_query(
+        index="wikipedia",
+        body={
+            "script": {
+                "source": "ctx._source._allow_permissions=params.sources;",
+                "lang": "painless",
+                "params": {"sources": SOURCES},
+            },
+        },
+        conflicts="proceed",
+        slices="24",
+    )
 
     await es.indices.refresh(index="wikipedia")
-    doc_count = await es.count(index="wikipedia")
-
-    num_roles = params["roles"]
-    skip_roles = params["skip_roles"]
-
-    for n in range(0, 10):
-        await es.security.put_user(
-                username=USERS[n]["username"], params={"password":
-                    USERS[n]["password"], "roles": []}
-                )
-
-#    skip_roles = 0
-#    for role in ROLE_IDS[skip_roles : num_roles - 1]:
-#        await es.security.put_role(name=role, body=ROLE_TEMPLATE, refresh="wait_for")
-#        try:
-#            await es.update_by_query(
-#                index="wikipedia",
-#                max_docs=30,
-#                body={
-#                    "script": {
-#                        "source": "ctx._source._allow_permissions=[params.role];",
-#                        "lang": "painless",
-#                        "params": {"role": role},
-#                    },
-#                    "query": {"bool": {"must_not": {"exists": {"field": "_allow_permissions"}}}},
-#                },
-#                conflicts="proceed",
-#                slices="10",
-#            )
-#        except:
-#            pass
-
-    for n, roles in batched(ROLE_IDS, int(len(ROLE_IDS)/10)):
-        await es.security.put_user(
-            username=USERS[n]["username"], params={"roles": roles +
-                ('app-admin',)}
-        )
-
-    #await es.indices.refresh(index="wikipedia")
 
 
 async def reset_indices(es, params):
-#    roles = await es.security.get_role()
-#    for role in roles:
-#        if role.startswith("managed-role-search-"):
-#            await es.security.delete_role(name=role)
+    roles = await es.security.get_role()
+    for role in roles:
+        if role.startswith("managed-role-search-"):
+            await es.security.delete_role(name=role)
 
 #    await es.update_by_query(
 #        index="wikipedia",
@@ -274,12 +260,6 @@ async def reset_indices(es, params):
 #    )
 #
 #    await es.indices.refresh(index="wikipedia")
-
-    for n in range(0, 10):
-        await es.security.put_user(
-            username=USERS[n]["username"], params={"password":
-                USERS[n]["password"], "roles": []}
-        )
 
 
 def register(registry):

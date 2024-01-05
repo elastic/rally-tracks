@@ -204,7 +204,7 @@ async def create_users_and_roles(es, params):
     for users_batch in batched(USERS[:(num_roles - 1)], 100):
         role_coros = (
             es.security.put_role(
-                name=f"managed-role-search-{user}",
+                name=f"managed-role-search-{user['username']}",
                 body=ROLE_TEMPLATE,
                 refresh="wait_for")
             for user in users_batch
@@ -214,7 +214,7 @@ async def create_users_and_roles(es, params):
                 username=user["username"],
                 params={
                     "password": user["password"],
-                    "roles": [f"managed-role-search-{user}"],
+                    "roles": [f"managed-role-search-{user['username']}"],
                     "metadata": { "documents-id": SOURCES}}
                 )
             for user in users_batch

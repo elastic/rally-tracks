@@ -8,6 +8,8 @@ To compare search performance, the following strategies are employed:
 
 It's important to highlight that the text-expansion and hybrid strategies are dependent on a dataset that has undergone query token expansion.
 
+Additional properties can be sent in to `text_expansion` and `hybrid`: `prune` will prune insignificant tokens from the text expansion query and `rescore` will issue a rescore query that rescores with the pruned tokens. Both of these values default to `false`.
+
 ### Example Document
 
 Documents adhere to the [JSON Lines format](https://jsonlines.org/).

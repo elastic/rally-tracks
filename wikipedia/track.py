@@ -20,10 +20,8 @@ def batched(iterable, n):
     if n < 1:
         raise ValueError('n must be at least one')
     it = iter(iterable)
-    i = 0
     while batch := tuple(islice(it, n)):
-        yield i, batch
-        i = i + 1
+        yield batch
 
 QUERIES_DIRNAME: str = dirname(__file__)
 QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"

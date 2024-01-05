@@ -3,12 +3,13 @@ import json
 import logging
 import os
 from collections import defaultdict
+from typing import Dict
 
-Qrels = dict[str, dict[str, int]]
-Results = dict[str, dict[str, float]]
+Qrels = Dict[str, Dict[str, int]]
+Results = Dict[str, Dict[str, float]]
 
 
-def calc_ndcg(qrels: Qrels, results: Results, k_list: list) -> dict:
+def calc_ndcg(qrels: Qrels, results: Results, k_list: list):
     import pytrec_eval as pe
 
     for qid, rels in results.items():

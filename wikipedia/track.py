@@ -156,7 +156,7 @@ class SearchApplicationSearchParamSourceWithUser(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self.search_application_params = SearchApplicationParams(track, params)
-        self.users = int(params.get('users'))
+        self.users = int(params.get('users', 0))
 
     def params(self):
         try:

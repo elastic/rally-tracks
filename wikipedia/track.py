@@ -156,13 +156,15 @@ class SearchApplicationSearchParamSourceWithUser(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self.search_application_params = SearchApplicationParams(track, params)
+        self.users = int(params.get('users'))
 
     def params(self):
         try:
             query = next(self._queries_iterator)
             return {
                 "method": "POST",
-                "headers": {"Authorization": create_basic_auth_header(**random.choice(USERS))},
+                "headers": {"Authorization":
+                    create_basic_auth_header(**random.choice(USERS[:(self.users - 1)]))},
                 "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
                 "body": {
                     "params": {

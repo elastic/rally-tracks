@@ -91,7 +91,8 @@
       "operation": "default-search-application-search-with-user",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
+      "users": 1000
     },
     {
       "parallel": {
@@ -109,7 +110,8 @@
       "operation": "default-search-application-search-with-user",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
+      "users": 1000
           }
         ]
       }
@@ -124,7 +126,8 @@
       "operation": "default-search-application-search-with-user",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
+      "users": 100000
     },
     {
       "parallel": {
@@ -142,7 +145,8 @@
       "operation": "default-search-application-search-with-user",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
+      "users": 100000
     }
         ]
       }
@@ -157,7 +161,8 @@
       "operation": "default-search-application-search-with-user",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
+      "users": 500000
     },
     {
       "parallel": {
@@ -175,7 +180,8 @@
       "operation": "default-search-application-search-with-user",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
+      "users": 500000
     }
         ]
       }

@@ -69,9 +69,22 @@
   "param-source": "search-application-search-param-source"
 },
 {
-  "name": "default-search-application-search-with-user",
+  "name": "default-search-application-search-with-1000-users",
   "operation-type": "raw-request",
-  "param-source": "search-application-search-param-source-with-user"
+  "param-source": "search-application-search-param-source-with-user",
+  "users": 1000
+},
+{
+  "name": "default-search-application-search-with-100000-users",
+  "operation-type": "raw-request",
+  "param-source": "search-application-search-param-source-with-user",
+  "users": 100000
+},
+{
+  "name": "default-search-application-search-with-500000-users",
+  "operation-type": "raw-request",
+  "param-source": "search-application-search-param-source-with-user",
+  "users": 500000
 },
 {
   "name": "query-string-search",

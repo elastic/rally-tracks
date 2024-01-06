@@ -88,11 +88,10 @@
     },
     {
       "name": "default-search-application-search-with-1000-roles",
-      "operation": "default-search-application-search-with-user",
+      "operation": "default-search-application-search-with-1000-users",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
-      "users": 1000
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     },
     {
       "parallel": {
@@ -107,11 +106,10 @@
           },
           {
       "name": "parallel-search-application-search-with-1000-roles",
-      "operation": "default-search-application-search-with-user",
+      "operation": "default-search-application-search-with-1000-users",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
-      "users": 1000
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
           }
         ]
       }
@@ -123,11 +121,10 @@
     },
     {
       "name": "default-search-application-search-with-with-100000-roles",
-      "operation": "default-search-application-search-with-user",
+      "operation": "default-search-application-search-with-100000-users",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
-      "users": 100000
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     },
     {
       "parallel": {
@@ -142,11 +139,10 @@
           },
           {
       "name": "parallel-search-application-search-with-with-100000-roles",
-      "operation": "default-search-application-search-with-user",
+      "operation": "default-search-application-search-with-100000-users",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
-      "users": 100000
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     }
         ]
       }
@@ -158,11 +154,10 @@
     },
     {
       "name": "default-search-application-search-with-500000-roles",
-      "operation": "default-search-application-search-with-user",
+      "operation": "default-search-application-search-with-500000-users",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
-      "users": 500000
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     },
     {
       "parallel": {
@@ -177,11 +172,10 @@
           },
           {
       "name": "parallel-search-application-search-with-500000-roles",
-      "operation": "default-search-application-search-with-user",
+      "operation": "default-search-application-search-with-500000-users",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }},
-      "users": 500000
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     }
         ]
       }

@@ -120,7 +120,7 @@
       "clients": 1
     },
     {
-      "name": "default-search-application-search-with-with-100000-roles",
+      "name": "default-search-application-search-with-100000-roles",
       "operation": "default-search-application-search-with-100000-users",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},
@@ -128,7 +128,7 @@
     },
     {
       "parallel": {
-        "completed-by": "parallel-search-application-search-with-with-100000-roles",
+        "completed-by": "parallel-search-application-search-with-100000-roles",
         "tasks": [
           {
             "name": "parallel-documents-indexing-bulk-with-100000-roles",
@@ -138,7 +138,7 @@
             "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
           },
           {
-      "name": "parallel-search-application-search-with-with-100000-roles",
+      "name": "parallel-search-application-search-with-100000-roles",
       "operation": "default-search-application-search-with-100000-users",
       "clients": {{ application_search_clients | default(10) | int }},
       "time-period": {{ application_search_time_period | default(300) | int }},

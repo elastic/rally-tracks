@@ -243,7 +243,7 @@ async def create_users_and_roles(es, params):
 async def reset_indices(es, params):
     for users_batch in batched(USERS, 100):
         users_coros = (
-            es.security.delete_user(name=user['username'])
+            es.security.delete_user(username=user['username'])
             for user in users_batch
             )
         role_coros = (

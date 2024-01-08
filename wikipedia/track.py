@@ -241,10 +241,16 @@ async def create_users_and_roles(es, params):
 
 
 async def reset_indices(es, params):
-    roles = await es.security.get_role()
-    for role in roles:
-        if role.startswith("managed-role-search-"):
-            await es.security.delete_role(name=role)
+    for users_batch in batched(USERS[:(num_roles - 1)], 100):
+        users_coros = (
+            await es.security.delete_user(name=user['username'])
+            for user in users_batch
+            )
+        role_coros = (
+            await es.security.delete_role(name=f"managed-role-search-{user['username']}")
+            for user in users_batch
+            )
+        await asyncio.gather(*chain(role_coros, users_coros))
 
 #    await es.update_by_query(
 #        index="wikipedia",

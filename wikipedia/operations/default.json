@@ -75,6 +75,12 @@
   "users": 1000
 },
 {
+  "name": "default-search-application-search-with-10000-users",
+  "operation-type": "raw-request",
+  "param-source": "search-application-search-param-source-with-user",
+  "users": 10000
+},
+{
   "name": "default-search-application-search-with-100000-users",
   "operation-type": "raw-request",
   "param-source": "search-application-search-param-source-with-user",
@@ -98,6 +104,14 @@
   "operation-type": "create_users_and_roles",
     "skip_roles": 0,
     "roles": 1000,
+  "include-in-reporting": true,
+  "request-timeout": 3600
+},
+{
+  "name": "create-10000-roles",
+  "operation-type": "create_users_and_roles",
+    "skip_roles": 0,
+    "roles": 10000,
   "include-in-reporting": true,
   "request-timeout": 3600
 },

@@ -115,6 +115,39 @@
       }
     },
     {
+      "name": "create-10000-roles",
+      "operation": "create-10000-roles",
+      "clients": 1
+    },
+    {
+      "name": "default-search-application-search-with-10000-roles",
+      "operation": "default-search-application-search-with-10000-users",
+      "clients": {{ application_search_clients | default(10) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "parallel": {
+        "completed-by": "parallel-search-application-search-with-10000-roles",
+        "tasks": [
+          {
+            "name": "parallel-documents-indexing-bulk-with-10000-roles",
+            "operation": "parallel-documents-indexing",
+            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
+            "warmup-time-period": {{ parallel_indexing_bulk_warmup_time_period | default(10) | int }},
+            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+          },
+          {
+      "name": "parallel-search-application-search-with-10000-roles",
+      "operation": "default-search-application-search-with-10000-users",
+      "clients": {{ application_search_clients | default(10) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+          }
+        ]
+      }
+    },
+    {
       "name": "create-100000-roles",
       "operation": "create-100000-roles",
       "clients": 1

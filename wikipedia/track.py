@@ -223,12 +223,13 @@ async def create_users_and_roles(es, params):
                 )
             for user in users_batch
             )
-        await asyncio.gather(*chain(role_coros, users_coros))
+        await asyncio.gather(role_coros)
     await es.security.put_user(
             username=USERS[0]["username"],
             params={
                 "password": USERS[0]["password"],
-                "metadata": { "documents-id": SOURCES}}
+                "roles": ['app-admin']
+                }
             )
 
     await es.update_by_query(

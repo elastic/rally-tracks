@@ -61,6 +61,42 @@
       "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     },
     {
+      "name": "standalone-query-string-search-2",
+      "operation": "query-string-search",
+      "clients": {{ standalone_search_clients | default(10) | int }},
+      "time-period": {{ standalone_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "name": "create-default-search-application",
+      "operation": "create-default-search-application"
+    },
+    {
+      "name": "default-search-application-search-2",
+      "operation": "default-search-application-search",
+      "clients": {{ application_search_clients | default(10) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "name": "standalone-query-string-search-3",
+      "operation": "query-string-search",
+      "clients": {{ standalone_search_clients | default(10) | int }},
+      "time-period": {{ standalone_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "name": "create-default-search-application",
+      "operation": "create-default-search-application"
+    },
+    {
+      "name": "default-search-application-search-3",
+      "operation": "default-search-application-search",
+      "clients": {{ application_search_clients | default(10) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
       "parallel": {
         "completed-by": "parallel-documents-indexing-query-string-search",
         "tasks": [

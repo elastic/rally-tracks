@@ -165,7 +165,8 @@ class SearchApplicationSearchParamSourceWithUser(QueryIteratorParamSource):
             query = next(self._queries_iterator)
             return {
                 "method": "POST",
-                "headers": {"Authorization": create_basic_auth_header(**random.choice(USERS[:self.users]))},
+                "headers": {"Authorization":
+                    create_basic_auth_header(**USERS[0])},
                 "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
                 "body": {
                     "params": {
@@ -223,6 +224,12 @@ async def create_users_and_roles(es, params):
             for user in users_batch
             )
         await asyncio.gather(*chain(role_coros, users_coros))
+    await es.security.put_user(
+            username=USERS[0]["username"],
+            params={
+                "password": USERS[0]["password"],
+                "metadata": { "documents-id": SOURCES}}
+            )
 
     await es.update_by_query(
         index="wikipedia",

@@ -223,7 +223,7 @@ async def create_users_and_roles(es, params):
                 )
             for user in users_batch
             )
-        await asyncio.gather(role_coros)
+        await asyncio.gather(*role_coros)
     await es.security.put_user(
             username=USERS[0]["username"],
             params={

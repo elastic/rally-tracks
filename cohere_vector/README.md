@@ -54,4 +54,4 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - parallel_indexing_search_target_throughput (default: 100)
  - post_ingest_sleep (default: false): Whether to pause after ingest and prior to subsequent operations.
  - post_ingest_sleep_duration (default: 30): Sleep duration in seconds.
- - standalone_search_iterations: (default: 10000)
+ - standalone_search_iterations (default: 10000)

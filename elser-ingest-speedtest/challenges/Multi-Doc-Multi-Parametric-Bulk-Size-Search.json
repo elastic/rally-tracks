@@ -63,7 +63,7 @@
     {%- for l_doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_delta) %}
 
     {%- set p_bulk_size = bulk_size | default(100) %}
-    {%- for l_bulk_size_multiplioer in range(1, 17, 2) %}
+    {%- for l_bulk_size_multiplier in range(1, 17, 2) %}
     {%- set bulk_size_mult_int = (l_bulk_size_multiplier/10)*(p_max_doc_size/l_doc_size) | round %}
     {%- set adj_bulk_size = p_bulk_size*bulk_size_mult_int | default(100) %}
 

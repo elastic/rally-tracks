@@ -3,13 +3,13 @@
   "description": "Test the throughput of ELSER in various scenarios",
   "default": false,
   "schedule": [
-    {%- set model_id = model_id | default('default') %}
+    {%- set p_model_id = model_id | default('default') %}
     {
       "name": "put elser",
       "operation": {
         "operation-type": "put-elser",
         "include-in-reporting": false,
-        "model_id": "{{ model_id }}"
+        "model_id": "{{ p_model_id }}"
       }
     },
     {
@@ -22,7 +22,7 @@
           "processors": [
             {
               "inference": {
-                "model_id": "{{ model_id }}",
+                "model_id": "{{ p_model_id }}",
                 "target_field": "ml",
                 "field_map": {
                   "body": "text_field"
@@ -60,38 +60,38 @@
     {%- set p_max_doc_size = max_doc_size | default(128) %}
     {%- set p_doc_size_delta = doc_size_delta | default(128) %}
 
-    {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_delta) %}
+    {%- for l_doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_delta) %}
 
-    {%- set bulk_size = bulk_size | default(100) %}
-    {%- for bulk_size_multiplier in range(1, 17, 2) %}
-    {%- set bulk_size_mult_int = (bulk_size_multiplier/10)*(p_max_doc_size/doc_size) | round %}
-    {%- set adj_bulk_size = bulk_size*bulk_size_mult_int | default(100) %}
+    {%- set p_bulk_size = bulk_size | default(100) %}
+    {%- for l_bulk_size_multiplioer in range(1, 17, 2) %}
+    {%- set bulk_size_mult_int = (l_bulk_size_multiplier/10)*(p_max_doc_size/l_doc_size) | round %}
+    {%- set adj_bulk_size = p_bulk_size*bulk_size_mult_int | default(100) %}
 
     {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
 
-    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size"%}
+    {%- set itr_keys = l_doc_size ~ "-doc-size--" ~ l_num_allocations ~ "-allocations--" ~ adj_bulk_size ~ "-bulk-size"%}
 
     {
       "operation": "create-index",
       "name": "loop-create-index-{{ itr_keys }}"
     },
     {
-      "name": "stop any existing trained model deployment of {{ model_id }}--{{ itr_keys }}",
+      "name": "stop any existing trained model deployment of {{ p_model_id }}--{{ itr_keys }}",
       "operation": {
         "operation-type": "stop-trained-model-deployment",
         "include-in-reporting": false,
-        "model_id": "{{ model_id }}"
+        "model_id": "{{ p_model_id }}"
       }
     },
     {
-      "name": "start new trained model deployment of {{ model_id }} with {{ itr_keys }}",
+      "name": "start new trained model deployment of {{ p_model_id }} with {{ itr_keys }}",
       "operation": {
         "operation-type": "start-trained-model-deployment",
         "number_of_allocations": {{ l_num_allocations | default(1) }},
         "threads_per_allocation": {{ threads_per_allocation | default(1) }},
         "queue_capacity": {{ queue_capacity | default(200000) }},
         "include-in-reporting": false,
-        "model_id": "{{ model_id }}"
+        "model_id": "{{ p_model_id }}"
       }
     },
     {
@@ -100,7 +100,7 @@
       "operation": {
         "operation-type": "bulk",
         "ingest-percentage": {{ ingest_percentage | default(100) }},
-        "corpora": "size{{ doc_size }}-small-bert-vocab-whole-words",
+        "corpora": "size{{ l_doc_size }}-small-bert-vocab-whole-words",
         "bulk-size": {{ adj_bulk_size | default(100) }},
         "pipeline": "{{ pipeline_name | default('default-pipeline')}}",
         "request-timeout": 60.0,
@@ -120,7 +120,7 @@
       "operation": {
         "operation-type": "delete-elser",
         "include-in-reporting": false,
-        "model_id": "{{ model_id }}"
+        "model_id": "{{ p_model_id }}"
       }
     }
   ]

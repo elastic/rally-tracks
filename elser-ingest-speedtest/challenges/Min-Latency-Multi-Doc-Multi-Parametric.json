@@ -3,13 +3,13 @@
   "description": "Test the throughput of ELSER in various scenarios",
   "default": false,
   "schedule": [
-    {%- set model_id = model_id | default('default') %}
+    {%- set p_model_id = model_id | default('default') %}
     {
       "name": "put elser",
       "operation": {
         "operation-type": "put-elser",
         "include-in-reporting": false,
-        "model_id": "{{ model_id }}"
+        "model_id": "{{ p_model_id }}"
       }
     },
     {
@@ -22,7 +22,7 @@
           "processors": [
             {
               "inference": {
-                "model_id": "{{ model_id }}",
+                "model_id": "{{ p_model_id }}",
                 "target_field": "ml",
                 "field_map": {
                   "body": "text_field"
@@ -59,48 +59,48 @@
     {%- set p_min_doc_size = min_doc_size | default(128) %}
     {%- set p_max_doc_size = max_doc_size | default(128) %}
     {%- set p_doc_size_delta = doc_size_delta | default(128) %}
-    {%- set bulk_size = 1 %}
-    {%- set bulk_indexing_clients = 1 %}
+    {%- set p_bulk_size = 1 %}
+    {%- set p_bulk_indexing_clients = 1 %}
 
 
-    {%- for doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_delta) %}
+    {%- for l_doc_size in range(p_min_doc_size, p_max_doc_size + 1, p_doc_size_delta) %}
 
     {%- for l_num_allocations in range(p_min_number_of_allocations, p_max_number_of_allocations + 1, 1) %}
     {%- for l_num_threads in [1, 2, 4, 8, 16] %}
 
-    {%- set itr_keys = doc_size ~ "-doc-size--" ~ l_num_threads ~ "-threads--" ~ l_num_allocations ~ "-allocations--" ~ bulk_size ~ "-bulk-size"%}
+    {%- set itr_keys = l_doc_size ~ "-doc-size--" ~ l_num_threads ~ "-threads--" ~ l_num_allocations ~ "-allocations--" ~ p_bulk_size ~ "-bulk-size"%}
 
     {
       "operation": "create-index",
       "name": "loop-create-index-{{ itr_keys }}"
     },
     {
-      "name": "stop any existing trained model deployment of {{ model_id }}--{{ itr_keys }}",
+      "name": "stop any existing trained model deployment of {{ p_model_id }}--{{ itr_keys }}",
       "operation": {
         "operation-type": "stop-trained-model-deployment",
         "include-in-reporting": false,
-        "model_id": "{{ model_id }}"
+        "model_id": "{{ p_model_id }}"
       }
     },
     {
-      "name": "start new trained model deployment of {{ model_id }} with {{ itr_keys }}",
+      "name": "start new trained model deployment of {{ p_model_id }} with {{ itr_keys }}",
       "operation": {
         "operation-type": "start-trained-model-deployment",
         "number_of_allocations": {{ l_num_allocations | default(1) }},
         "threads_per_allocation": {{ l_num_threads | default(1) }},
         "queue_capacity": {{ queue_capacity | default(200000) }},
         "include-in-reporting": false,
-        "model_id": "{{ model_id }}"
+        "model_id": "{{ p_model_id }}"
       }
     },
     {
-      "name": "bulk--{{ itr_keys }}--{{ bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent",
-      "clients": {{ bulk_indexing_clients }},
+      "name": "bulk--{{ itr_keys }}--{{ p_bulk_indexing_clients }}-clients--{{ ingest_percentage }}-ingest-percent",
+      "clients": {{ p_bulk_indexing_clients }},
       "operation": {
         "operation-type": "bulk",
         "ingest-percentage": {{ ingest_percentage | default(100) }},
-        "corpora": "size{{ doc_size }}-small-bert-vocab-whole-words",
-        "bulk-size": {{  bulk_size }},
+        "corpora": "size{{ l_doc_size }}-small-bert-vocab-whole-words",
+        "bulk-size": {{  p_bulk_size }},
         "pipeline": "{{ pipeline_name | default('default-pipeline')}}",
         "request-timeout": 60.0,
         "include-in-reporting": true
@@ -119,7 +119,7 @@
       "operation": {
         "operation-type": "delete-elser",
         "include-in-reporting": false,
-        "model_id": "{{ model_id }}"
+        "model_id": "{{ p_model_id }}"
       }
     }
   ]

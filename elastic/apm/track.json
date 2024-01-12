@@ -43,7 +43,9 @@
         "operation-type": "bulk",
         "bulk-size": {{bulk_size|default(1, true)}}
       },
-      "clients": {{bulk_clients|default(1, true)}}
+      "clients": {{bulk_clients|default(1, true)}},
+      "iterations": {{bulk_iterations|default(1, true)}},
+      "target-throughput": 100
     },
     {
       "operation": {

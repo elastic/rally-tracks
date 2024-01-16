@@ -37,25 +37,25 @@
   "corpora": [
     {
       "name": "k8s-pod",
-      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally5",
+      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally6",
       "documents": [
         {
           "target-data-stream": "k8s-pod",
           "source-file": "doc-ds-metrics-kubernetes.pod.json.bz2",
           "document-count": 8640000,
-          "uncompressed-bytes": 30597876007
+          "uncompressed-bytes": 30745930145
         }
       ]
     },
     {
       "name": "k8s-container",
-      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally5",
+      "base-url": "https://storage.googleapis.com/cloudnative-rally/rally6",
       "documents": [
         {
           "target-data-stream": "k8s-container",
           "source-file": "doc-ds-metrics-kubernetes.container.json.bz2",
           "document-count": 8640000,
-          "uncompressed-bytes": 33839101752
+          "uncompressed-bytes": 34018636880
         }
       ]
     }

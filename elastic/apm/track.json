@@ -33,7 +33,7 @@
       "operation": {
         "operation-type": "cluster-health",
         "request-params": {
-          "wait_for_status": "{{expected_cluster_health}}"
+          "wait_for_status": "yellow"
         },
         "retry-until-success": true
       }

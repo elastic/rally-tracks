@@ -1,7 +1,6 @@
 import json
 import sys
 
-import numpy as np
 from datasets import DownloadMode, load_dataset
 
 DATASET_NAME: str = f"Cohere/miracl-en-corpus-22-12"
@@ -48,16 +47,9 @@ def output_documents(docs_file, start_index, end_index):
 
     progress_bar(doc_count, dataset_size)
     for doc in docs:
-        v = np.array(doc["emb"])
-        v_unit = v / np.linalg.norm(v)
         docs_file.write(
             json.dumps(
-                {
-                    "docid": doc["docid"],
-                    "title": doc["title"],
-                    "text": doc["text"],
-                    "emb": v_unit.tolist(),
-                },
+                {"docid": doc["docid"], "title": doc["title"], "text": doc["text"], "emb": doc["emb"]},
                 ensure_ascii=True,
             )
         )

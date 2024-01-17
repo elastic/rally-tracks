@@ -2,10 +2,31 @@ import functools
 import json
 import logging
 import os
+import statistics
 from collections import defaultdict
-from typing import Dict, List
+from typing import Any, Dict, List
 
 logger = logging.getLogger(__name__)
+
+
+def extract_vector_operations_count(knn_result):
+    vector_operations_count = 0
+    profile = knn_result["profile"]
+    for shard in profile["shards"]:
+        assert len(shard["dfs"]["knn"]) == 1
+        knn_search = shard["dfs"]["knn"][0]
+        if "vector_operations_count" in knn_search:
+            vector_operations_count += knn_search["vector_operations_count"]
+    return vector_operations_count
+
+
+def compute_percentile(data: List[Any], percentile):
+    size = len(data)
+    if size <= 0:
+        return None
+    sorted_data = sorted(data)
+    index = int(round(percentile * size / 100)) - 1
+    return sorted_data[max(min(index, size - 1), 0)]
 
 
 def load_query_vectors(queries_file) -> Dict[int, List[float]]:
@@ -45,11 +66,15 @@ async def extract_exact_neighbors(
 
 
 class KnnVectorStore:
+    @staticmethod
+    def empty_store():
+        return defaultdict(lambda: defaultdict(list))
+
     def __init__(self, queries_file: str, vector_field: str):
         assert queries_file and vector_field
         self._query_vectors = load_query_vectors(queries_file)
         self._vector_field = vector_field
-        self._store = defaultdict(lambda: defaultdict(list))
+        self._store = KnnVectorStore.empty_store()
 
     async def get_neighbors_for_query(self, index: str, query_id: int, size: int, request_cache: bool, client) -> List[str]:
         try:
@@ -64,10 +89,14 @@ class KnnVectorStore:
             logger.exception(f"Failed to compute nearest neighbors for '{query_id}'. Returning empty results instead.", ex)
             return []
 
-    async def load_exact_neighbors(self, index: str, query_id: str, max_size: int, request_cache: bool, client):
+    async def load_exact_neighbors(self, index: str, query_id: int, max_size: int, request_cache: bool, client):
         if query_id not in self._query_vectors:
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
         return await extract_exact_neighbors(self._query_vectors[query_id], index, max_size, self._vector_field, request_cache, client)
+
+    def invalidate_all(self):
+        logger.info("Invalidating all entries from knn-vector-store")
+        self._store = KnnVectorStore.empty_store()
 
     def get_query_vectors(self) -> Dict[int, List[float]]:
         if len(self._query_vectors) == 0:
@@ -169,6 +198,7 @@ class KnnRecallParamSource:
             "num_candidates": self._params.get("num-candidates", 100),
             "target_k": self._target_k,
             "knn_vector_store": KnnVectorStore.get_instance(self._queries_file, self._vector_field),
+            "invalidate_vector_store": self._params.get("invalidate-vector-store", False),
         }
 
 
@@ -185,8 +215,12 @@ class KnnRecallRunner:
         recall_total = 0
         exact_total = 0
         min_recall = k
+        nodes_visited = []
 
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
+        invalidate_vector_store: bool = params["invalidate_vector_store"]
+        if invalidate_vector_store:
+            knn_vector_store.invalidate_all()
         for query_id, query_vector in knn_vector_store.get_query_vectors().items():
             knn_result = await es.search(
                 body={
@@ -197,6 +231,7 @@ class KnnRecallRunner:
                         "num_candidates": num_candidates,
                     },
                     "_source": False,
+                    "profile": True,
                 },
                 index=index,
                 request_cache=request_cache,
@@ -205,6 +240,8 @@ class KnnRecallRunner:
             knn_hits = [hit["_id"] for hit in knn_result["hits"]["hits"]]
             script_hits = await knn_vector_store.get_neighbors_for_query(index, query_id, target_k, request_cache, es)
             script_hits = script_hits[:k]
+            vector_operations_count = extract_vector_operations_count(knn_result)
+            nodes_visited.append(vector_operations_count)
             current_recall = len(set(knn_hits).intersection(set(script_hits)))
             recall_total += current_recall
             exact_total += len(script_hits)
@@ -216,6 +253,8 @@ class KnnRecallRunner:
                 "min_recall": min_recall,
                 "k": k,
                 "num_candidates": num_candidates,
+                "avg_nodes_visited": statistics.mean(nodes_visited) if any([x > 0 for x in nodes_visited]) else None,
+                "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99) if any([x > 0 for x in nodes_visited]) else None,
             }
             if exact_total > 0
             else None

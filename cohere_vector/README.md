@@ -55,3 +55,4 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - post_ingest_sleep (default: false): Whether to pause after ingest and prior to subsequent operations.
  - post_ingest_sleep_duration (default: 30): Sleep duration in seconds.
  - standalone_search_iterations (default: 10000)
+ - vector_index_type (default: "hnsw"): The index kind for storing the vectors.

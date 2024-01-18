@@ -42,13 +42,13 @@ class TestTrackRepository:
         "so_vector",
         # "sql", (no support for test mode)
         "tsdb",
-        # TODO fix after https://github.com/elastic/rally-tracks/pull/513
-        # "tsdb_k8s_queries",
+        "tsdb_k8s_queries",
     ]
 
     skip_challenges = {
         "nyc_taxis": ["esql"],
         "tsdb": ["downsample"],
+        "tsdb_k8s_queries": ["esql"],
     }
     skip_challenges_user = {
         "k8s_metrics": ["append-no-conflicts-metrics-with-fast-refresh", "fast-refresh-index-only", "fast-refresh-index-with-search"],

@@ -104,7 +104,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: rally-tracks-compat-logs
+          name: rally-tracks-compat-logs-${{ matrix.python-version }}
           path: |
             /home/runner/.rally/logs/
             /home/runner/.rally/benchmarks/races/**/*.log

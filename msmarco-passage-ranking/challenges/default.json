@@ -26,10 +26,9 @@
       }
     },
     {
-      "operation": {        
-        "include-in-reporting": false,
+      "operation": {
         "operation-type": "bulk",
-        "bulk-size": {{bulk_size | default(5000)}},
+        "bulk-size": {{bulk_size | default(500)}},
         "ingest-percentage": {{ingest_percentage | default(100)}}
       },
       "clients": {{bulk_indexing_clients | default(8)}}
@@ -56,40 +55,98 @@
       }
     },
     {
+      "name": "text-expansion-search-maxwand-enabled",
       "operation": "text-expansion-search-maxwand-enabled",
       "warmup-iterations": 100,
       "iterations": 1000,
-      "clients": {{search_client | default(1)}}
+      "clients": {{search_clients | default(1)}}
     },
     {
+      "name": "text-expansion-search-maxwand-disabled",
       "operation": "text-expansion-search-maxwand-disabled",
       "warmup-iterations": 100,
       "iterations": 1000,
       "clients": {{search_clients | default(1)}}
     },
     {
+      "name": "text-expansion-splade-search-maxwand-enabled",
+      "operation": "text-expansion-splade-search-maxwand-enabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
+      "name": "text-expansion-splade-search-maxwand-disabled",
+      "operation": "text-expansion-splade-search-maxwand-disabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
+      "name": "pruned-text-expansion-search-maxwand-enabled",
+      "operation": "pruned-text-expansion-search-maxwand-enabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
+      "name": "pruned-text-expansion-search-maxwand-disabled",
+      "operation": "pruned-text-expansion-search-maxwand-disabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
+      "name": "pruned-rescored-text-expansion-search-maxwand-enabled",
+      "operation": "pruned-rescored-text-expansion-search-maxwand-enabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "num_candidates": 100,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
+      "name": "pruned-rescored-text-expansion-search-maxwand-disabled",
+      "operation": "pruned-rescored-text-expansion-search-maxwand-disabled",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "num_candidates": 100,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
+      "name": "bm25-search-maxwand-enabled",
       "operation": "bm25-search-maxwand-enabled",
       "warmup-iterations": 100,
       "iterations": 1000,
       "clients": {{search_clients | default(1)}}
     },
     {
+      "name": "bm25-search-maxwand-disabled",
       "operation": "bm25-search-maxwand-disabled",
       "warmup-iterations": 100,
       "iterations": 1000,
       "clients": {{search_clients | default(1)}}
     },
     {
+      "name": "hybrid-search-maxwand-enabled",
       "operation": "hybrid-search-maxwand-enabled",
       "warmup-iterations": 100,
       "iterations": 1000,
       "clients": {{search_clients | default(1)}}
     },
     {
+      "name": "hybrid-search-maxwand-disabled",
       "operation": "hybrid-search-maxwand-disabled",
       "warmup-iterations": 100,
       "iterations": 1000,
       "clients": {{search_clients | default(1)}}
+    },
+    {
+      "name": "pruned-weighted-terms-recall-10-10",
+      "operation": "pruned-weighted-terms-recall-10-10"
+    },
+    {
+      "name": "pruned-weighted-terms-recall-10-100",
+      "operation": "pruned-weighted-terms-recall-10-100"
     }
   ]
 }

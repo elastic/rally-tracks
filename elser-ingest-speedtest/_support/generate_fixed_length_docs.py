@@ -1,8 +1,8 @@
 import json
 import random
 
-DOCUMENT_FIXED_LENGTH = 256
-DOCUMENT_COUNT = 1000000
+DOCUMENT_FIXED_LENGTH = 16
+DOCUMENT_COUNT = 10000
 
 with open("bert_vocab_whole_words.json") as word_file:
     word_list = json.load(word_file)

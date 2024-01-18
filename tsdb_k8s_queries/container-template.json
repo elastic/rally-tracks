@@ -9,16 +9,13 @@
       "settings": {
         "index": {
           {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+            {# Note: put serverless restricted index settings in this if block #}
           "number_of_shards": {{number_of_shards | default(1)}},
           "number_of_replicas": {{number_of_replicas | default(0)}},
-          "query": {
-            "default_field": [
-              "message"
-            ]
-          },
           "requests.cache.enable": false,
           {%- endif -%}{# non-serverless-index-settings-marker-end #}
           {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" -%}
+            {# Note: put serverless blocked index settings in this if block #}
           "routing": {
             "allocation": {
               "include": {
@@ -35,6 +32,7 @@
             "name": "metrics"
           },
           {%- endif -%}{# non-serverless-index-settings-marker-end #}
+            {# Note: index settings which can be applied freely in serverless begin here #}
           "mapping": {
             "total_fields": {
               "limit": "10000"
@@ -42,6 +40,7 @@
           },
           "query": {
             "default_field": [
+              "message",
               "cloud.account.id",
               "cloud.availability_zone",
               "cloud.instance.id",

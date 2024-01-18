@@ -1,0 +1,144 @@
+{
+  "name": "transform",
+  "description": "Create and run a few transforms",
+  "default": false,
+  "schedule": [
+    {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+    {
+      "name": "delete-all-data-streams",
+      "operation": {
+        "operation-type": "delete-data-stream"
+      }
+    },
+    {
+      "name": "delete-all-templates",
+      "operation": {
+        "operation-type": "delete-composable-template"
+      }
+    },
+    {
+      "name": "create-all-templates",
+      "operation": {
+        "operation-type": "create-composable-template",
+        "request-params": {
+          "create": "true"
+        }
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {%- else %}
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "github-archive",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {%- endif %}
+    {
+      "operation": "index",
+      "warmup-time-period": 240,
+      "clients": {{bulk_indexing_clients | default(8)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "delete-transform-group-by-hour",
+      "operation": {
+        "operation-type": "delete-transform",
+        "transform-id": "transform-group-by-hour",
+        "force": true
+      }
+    },
+    {
+      "operation": "create-transform-group-by-hour"
+    },
+    {
+      "name": "start-transform-group-by-hour",
+      "operation": {
+        "operation-type": "start-transform",
+        "transform-id": "transform-group-by-hour"
+      }
+    },
+    {
+      "name": "delete-transform-issue-comments",
+      "operation": {
+        "operation-type": "delete-transform",
+        "transform-id": "transform-issue-comments",
+        "force": true
+      }
+    },
+    {
+      "operation": "create-transform-issue-comments"
+    },
+    {
+      "name": "start-transform-issue-comments",
+      "operation": {
+        "operation-type": "start-transform",
+        "transform-id": "transform-issue-comments"
+      }
+    },
+    {
+      "name": "delete-transform-repo-commits",
+      "operation": {
+        "operation-type": "delete-transform",
+        "transform-id": "transform-repo-commits",
+        "force": true
+      }
+    },
+    {
+      "operation": "create-transform-repo-commits"
+    },
+    {
+      "name": "start-transform-repo-commits",
+      "operation": {
+        "operation-type": "start-transform",
+        "transform-id": "transform-repo-commits"
+      }
+    }
+  ]
+}

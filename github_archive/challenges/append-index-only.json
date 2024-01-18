@@ -1,7 +1,6 @@
 {
-  "name": "append-no-conflicts",
-  "description": "Index the document corpus and search",
-  "default": true,
+  "name": "append-index-only",
+  "description": "Index the document corpus",
   "schedule": [
     {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
     {
@@ -62,22 +61,6 @@
       "operation": "index",
       "warmup-time-period": 240,
       "clients": {{bulk_indexing_clients | default(8)}}
-    },
-    {
-      "name": "refresh-after-index",
-      "operation": "refresh"
-    },
-    {
-      "operation": "default",
-      "warmup-iterations": 50,
-      "iterations": 100,
-      "target-throughput": 3
-    },
-    {
-      "operation": "default_1k",
-      "warmup-iterations": 50,
-      "iterations": 100,
-      "target-throughput": 3
     }
   ]
 }

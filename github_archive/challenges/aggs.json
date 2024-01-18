@@ -1,7 +1,7 @@
 {
-  "name": "append-no-conflicts",
-  "description": "Index the document corpus and search",
-  "default": true,
+  "name": "aggs",
+  "description": "Index the document corpus and execute some aggregations.",
+  "default": false,
   "schedule": [
     {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
     {
@@ -68,16 +68,13 @@
       "operation": "refresh"
     },
     {
-      "operation": "default",
-      "warmup-iterations": 50,
-      "iterations": 100,
-      "target-throughput": 3
+      "operation": {
+        "operation-type": "force-merge",
+        "request-timeout": 7200
+      }
     },
     {
-      "operation": "default_1k",
-      "warmup-iterations": 50,
-      "iterations": 100,
-      "target-throughput": 3
+      "operation": "async-search-aggs"
     }
   ]
 }

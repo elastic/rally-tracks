@@ -100,34 +100,34 @@
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
-  "name": "create-1000-roles",
+  "name": "create-1000-users",
   "operation-type": "create_users_and_roles",
     "skip_roles": 0,
-    "roles": 1000,
+    "users": 1000,
   "include-in-reporting": true,
   "request-timeout": 3600
 },
 {
-  "name": "create-10000-roles",
+  "name": "create-10000-users",
   "operation-type": "create_users_and_roles",
     "skip_roles": 0,
-    "roles": 10000,
+    "users": 10000,
   "include-in-reporting": true,
   "request-timeout": 3600
 },
 {
-  "name": "create-100000-roles",
+  "name": "create-100000-users",
   "operation-type": "create_users_and_roles",
     "skip_roles": 1000,
-    "roles": 100000,
+    "users": 100000,
   "include-in-reporting": true,
   "request-timeout": 3600
 },
 {
-  "name": "create-500000-roles",
+  "name": "create-500000-users",
   "operation-type": "create_users_and_roles",
     "skip_roles": 100000,
-    "roles": 500000,
+    "users": 500000,
   "include-in-reporting": true,
   "request-timeout": 3600
 },
@@ -137,3 +137,8 @@
   "include-in-reporting": false,
   "request-timeout": 3600
 }
+{
+  "name": "search-with-user",
+  "operation-type": "raw-request",
+  "param-source": "search-param-source-with-user"
+},

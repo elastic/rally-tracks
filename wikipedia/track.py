@@ -193,13 +193,10 @@ class SearchParamSourceWithUser(QueryIteratorParamSource):
                     "headers": {"Authorization": create_basic_auth_header(**next(self.users))},
                     "path": "/wikipedia/_search",
                     "body": {
-                        "query": {
+                        "params": {
                             "query_string": query,
-                            "exists" : {
-                                "field": "_allow_permissions"
-                                }
-                            }
-                        }
+                            },
+                        },
                     }
         except StopIteration:
             self._queries_iterator = iter(self._sample_queries)

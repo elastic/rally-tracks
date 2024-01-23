@@ -254,7 +254,7 @@ async def create_users_and_roles(es, params):
     for i in range(0, half_docs_num):
         permissions = None
         while permissions not in existing_permissions:
-            permissions = [u['username'] for u in sample(USERS[:num_users], k=half_docs_num)]
+            permissions = [u['username'] for u in random.sample(USERS[:num_users], k=half_docs_num)]
             existing_permissions.append(dict.fromkeys(permissions))
 
         await es.update_by_query(

@@ -254,8 +254,9 @@ async def create_users_and_roles(es, params):
     for i in range(0, half_docs_num):
         permissions = None
         while permissions not in existing_permissions:
-            permissions = [u['username'] for u in random.sample(USERS[:num_users], k=half_docs_num)]
-            existing_permissions.append(dict.fromkeys(permissions))
+            permissions = {u['username']:None for u in
+                    random.sample(USERS[:num_users], k=half_docs_num)}
+            existing_permissions.append(permissions)
 
         await es.update_by_query(
             index="wikipedia",
@@ -264,7 +265,7 @@ async def create_users_and_roles(es, params):
                 "script": {
                     "source": "ctx._source._allow_permissions=params.permissions;",
                     "lang": "painless",
-                    "params": {"permissions": permissions},
+                    "params": {"permissions": permissions.keys()},
                 },
                 "query": {
                     "bool": {

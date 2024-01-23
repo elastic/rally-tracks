@@ -252,6 +252,7 @@ async def create_users_and_roles(es, params):
     half_docs_num = int(num_users / 2)
     existing_permissions = []
     for i in range(0, half_docs_num):
+        permissions = None
         while permissions not in existing_permissions:
             permissions = [u['username'] for u in sample(USERS[:num_users], k=half_docs_num)]
             existing_permissions.append(dict.fromkeys(permissions))

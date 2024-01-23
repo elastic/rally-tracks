@@ -301,8 +301,13 @@ async def reset_indices(es, params):
             "script": {
                 "source": "ctx._source._allow_permissions = new ArrayList();",
                 "lang": "painless"
+                },
+            "query": {
+                "exists" : {
+                    "field": "_allow_permissions"
+                    }
+                }
             },
-        },
         conflicts="proceed",
         slices="auto",
         timeout="90m",

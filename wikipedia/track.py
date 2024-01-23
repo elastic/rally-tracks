@@ -243,7 +243,7 @@ async def create_users_and_roles(es, params):
                 params={
                     "password": user["password"],
                     "roles": ["managed-role-search"],
-                    "metadata": { "documents-id": f"{username}-source"}}
+                    "metadata": { "documents-id": f"{user['username']}-source"}}
                 )
             for user in users_batch
             )
@@ -253,7 +253,7 @@ async def create_users_and_roles(es, params):
     existing_permissions = []
     for i in range(0, half_docs_num):
         while permissions not in existing_permissions:
-            permissions = sample(USERS[:num_users], k=half_docs_num)
+            permissions = [u['username'] for u in sample(USERS[:num_users], k=half_docs_num)]
             existing_permissions.append(dict.fromkeys(permissions))
 
         await es.update_by_query(
@@ -266,8 +266,12 @@ async def create_users_and_roles(es, params):
                     "params": {"permissions": permissions},
                 },
                 "query": {
-                    "exists" : {
-                        "field": "_allow_permissions"
+                    "bool": {
+                        "must_not": {
+                            "exists" : {
+                                "field": "_allow_permissions"
+                                }
+                            }
                         }
                     }
                 },

@@ -196,7 +196,7 @@ class SearchParamSourceWithUser(QueryIteratorParamSource):
                             "bool": {
                                 "must": [
                                     {
-                                        "query_string": query
+                                        "query_string": { "query": query }
                                         }
                                     ],
                                 "filter": [

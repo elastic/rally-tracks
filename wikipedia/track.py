@@ -60,7 +60,7 @@ ROLE_TEMPLATE = {
                     {
                       "terms_set": {
                         "_allow_permissions.keyword": {
-                          "terms": {{#toJson}}user.metadata.documents-id{{/toJson}},
+                          "terms": {{#toJson}}_user.metadata.documents-id{{/toJson}},
                           "minimum_should_match": 1
                         }
                       }

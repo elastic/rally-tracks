@@ -188,12 +188,14 @@ class SearchParamSourceWithUser(QueryIteratorParamSource):
         try:
             query = next(self._queries_iterator)
             return {
-                    "method": "POST",
+                    "method": "GET",
                     "headers": {"Authorization": create_basic_auth_header(**next(self.users))},
                     "path": "/wikipedia/_search",
                     "body": {
-                        "params": {
-                            "query_string": query
+                        "query": {
+                            "query_string": {
+                                "query": query
+                                }
                             }
                         }
                     }

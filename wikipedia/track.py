@@ -267,18 +267,16 @@ async def create_users_and_roles(es, params):
                 },
                 "query": {
                     "bool": {
-                        "must_not": [
+                        "must_not": {
                             {
                                 "exists" : {
                                     "field": "_allow_permissions"
                                     }
                                 }
-                            ]
+                            }
                         }
                     }
                 },
-            conflicts="proceed",
-            slices="auto",
         )
 
     await es.indices.refresh(index="wikipedia")

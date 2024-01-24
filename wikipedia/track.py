@@ -187,26 +187,14 @@ class SearchParamSourceWithUser(QueryIteratorParamSource):
     def params(self):
         try:
             query = next(self._queries_iterator)
+            query = ['_exists_:_allowed_permissions'] + query
             return {
                     "method": "POST",
                     "headers": {"Authorization": create_basic_auth_header(**next(self.users))},
                     "path": "/wikipedia/_search",
                     "body": {
-                        "query": {
-                            "bool": {
-                                "must": [
-                                    {
-                                        "query_string": { "query": query }
-                                        }
-                                    ],
-                                "filter": [
-                                    {
-                                        "exists" : {
-                                            "field": "_allow_permissions"
-                                            }
-                                        }
-                                    ]
-                                }
+                        "params": {
+                            "query_string": query
                             }
                         }
                     }

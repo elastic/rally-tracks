@@ -241,7 +241,7 @@ async def create_users_and_roles(es, params):
                 params={
                     "password": user["password"],
                     "roles": ["managed-role-search"],
-                    "metadata": { "documents-id": user['username']}}
+                    "metadata": { "documents-id": [user['username']]}}
                 )
             for user in users_batch
             )

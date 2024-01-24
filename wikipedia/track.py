@@ -187,7 +187,6 @@ class SearchParamSourceWithUser(QueryIteratorParamSource):
     def params(self):
         try:
             query = next(self._queries_iterator)
-            query = '_exists_:_allowed_permissions AND ' + query
             return {
                     "method": "POST",
                     "headers": {"Authorization": create_basic_auth_header(**next(self.users))},

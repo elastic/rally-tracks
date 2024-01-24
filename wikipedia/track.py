@@ -181,6 +181,7 @@ class SearchApplicationSearchParamSourceWithUser(QueryIteratorParamSource):
 class SearchParamSourceWithUser(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
+        self.search_application_params = SearchApplicationParams(track, params)
 
         self.users = iter(USERS)
 
@@ -188,14 +189,12 @@ class SearchParamSourceWithUser(QueryIteratorParamSource):
         try:
             query = next(self._queries_iterator)
             return {
-                    "method": "GET",
+                    "method": "POST",
                     "headers": {"Authorization": create_basic_auth_header(**next(self.users))},
-                    "path": "/wikipedia/_search",
+                    "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
                     "body": {
-                        "query": {
-                            "query_string": {
-                                "query": query
-                                }
+                        "params": {
+                            "query_string": query
                             }
                         }
                     }

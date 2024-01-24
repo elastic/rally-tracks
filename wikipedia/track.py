@@ -265,7 +265,7 @@ async def create_users_and_roles(es, params):
                 "script": {
                     "source": "ctx._source._allow_permissions=params.permissions;",
                     "lang": "painless",
-                    "params": {"permissions": permissions.keys()},
+                    "params": {"permissions": list(permissions.keys())},
                 },
                 "query": {
                     "bool": {

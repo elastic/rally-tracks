@@ -268,10 +268,8 @@ async def create_users_and_roles(es, params):
                 "query": {
                     "bool": {
                         "must_not": {
-                            {
-                                "exists" : {
-                                    "field": "_allow_permissions"
-                                    }
+                            "exists" : {
+                                "field": "_allow_permissions"
                                 }
                             }
                         }

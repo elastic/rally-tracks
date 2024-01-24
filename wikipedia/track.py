@@ -276,8 +276,7 @@ async def create_users_and_roles(es, params):
                     }
                 },
         )
-
-    await es.indices.refresh(index="wikipedia")
+        await es.indices.refresh(index="wikipedia")
 
 
 async def reset_indices(es, params):

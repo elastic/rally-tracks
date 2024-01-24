@@ -193,9 +193,21 @@ class SearchParamSourceWithUser(QueryIteratorParamSource):
                     "path": "/wikipedia/_search",
                     "body": {
                         "query": {
-                            "query_string": query,
-                            "exists" : {
-                                "field": "_allow_permissions"
+                            "bool": {
+                                "filter": {
+                                    "bool": {
+                                        "must": [
+                                            {
+                                                "query_string": query
+                                                },
+                                            {
+                                                "exists" : {
+                                                    "field": "_allow_permissions"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
                                 }
                             }
                         }

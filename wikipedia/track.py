@@ -275,7 +275,6 @@ async def create_users_and_roles(es, params):
                         }
                     }
                 },
-            cache=False
         )
 
     await es.indices.refresh(index="wikipedia")

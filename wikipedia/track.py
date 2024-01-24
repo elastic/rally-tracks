@@ -194,20 +194,18 @@ class SearchParamSourceWithUser(QueryIteratorParamSource):
                     "body": {
                         "query": {
                             "bool": {
-                                "filter": {
-                                    "bool": {
-                                        "must": [
-                                            {
-                                                "query_string": query
-                                                },
-                                            {
-                                                "exists" : {
-                                                    "field": "_allow_permissions"
-                                                    }
-                                                }
-                                            ]
+                                "must": [
+                                    {
+                                        "query_string": query
                                         }
-                                    }
+                                    ],
+                                "filter": [
+                                    {
+                                        "exists" : {
+                                            "field": "_allow_permissions"
+                                            }
+                                        }
+                                    ]
                                 }
                             }
                         }

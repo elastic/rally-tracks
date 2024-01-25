@@ -21,7 +21,7 @@
         "index": true,
         "similarity": "dot_product",
         "index_options": {
-          "type": {{ vector_index_type | default("hnsw") }}
+          "type": {{ vector_index_type | default("hnsw") | tojson }}
         }
       }
     }

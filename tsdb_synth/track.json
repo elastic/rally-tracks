@@ -2,37 +2,18 @@
 {
   "version": 2,
   "description": "synthetic time series dataset for tsid hashing benchmarks",
-  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "composable-templates": [
-    {
-      "name": "tsdb-template",
-      "index-pattern": "tsdb_synth*",
-      "delete-matching-indices": true,
-      "template": "index-template.json"
-    }
-  ],
-  "data-streams": [
-    {
-      "name": "data_stream_tsdb_synth"
-    }
-  ],
-  {%- else %}
   "indices": [
     {
-      "name": "index_tsdb_synth",
+      "name": "tsdb_synth",
       "body": "index.json"
     }
   ],
-  {%- endif %}
   "corpora": [
     {
       "name": "tsdb_synth",
       "base-url": "https://storage.googleapis.com/rally-tracks/tsdb_synth/",
       "documents": [
         {
-          {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-          "target-data-stream": "tsdb_synth",
-          {%- endif %}
           "source-file": "documents.json.bz2",
           "document-count": 3145728,
           "compressed-bytes": 80735788640,

@@ -170,6 +170,18 @@ The versioning (v2 here) ensures that nobody will use an old version of that cor
 Finally, as shown above, you can now then generate the 1k documents version, run pbzip2 on both
 versions and upload the two resulting files to AWS.
 
+### Dimensions
+
+The dataset includes 8 dimension fields, all of them of type `keyword`:
+* `kubernetes.container.id` with cardinality 22560
+* `kubernetes.container.name` with cardinality 307
+* `kubernetes.node.name` with cardinality 67
+* `kubernetes.pod.name` with cardinality 21890
+* `metricset.name` with cardinality 9
+* `kubernetes.event.involved_object.uid` with cardinality 41089
+* `kubernetes.system.container` with cardinality 3
+* `kubernetes.volume.name` with cardinality 198
+
 
 ### Parameters
 

@@ -13,13 +13,13 @@
   ],
   "data-streams": [
     {
-      "name": "tsdb_synth"
+      "name": "data_stream_tsdb_synth"
     }
   ],
   {%- else %}
   "indices": [
     {
-      "name": "tsdb_synth",
+      "name": "index_tsdb_synth",
       "body": "index.json"
     }
   ],

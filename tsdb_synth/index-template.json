@@ -3,9 +3,8 @@
 {% set p_source_mode = (source_mode | default("synthetic")) %}
 {
   "index_patterns": [
-    "tsdb_synth*"
+    "data_stream_tsdb_synth*"
   ],
-  "data_stream": {},
   "template": {
     "settings": {
       "index": {

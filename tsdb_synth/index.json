@@ -4,17 +4,11 @@
 {
   "settings": {
     "index": {
-      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       "number_of_shards": {{number_of_shards | default(1)}},
       "number_of_replicas": {{number_of_replicas | default(0)}},
       "requests.cache.enable": false,
-      {%- endif -%}{# non-serverless-index-settings-marker-end #}
       "codec": "{{codec | default('default')}}",
-      "mode": "{{index_mode | default('time_series')}}",
-      {% if refresh_interval %}
-      "refresh_interval": "{{refresh_interval}}",
-      {% endif %}
-      {% if index_mode | default('time_series') is equalto 'time_series' %}
+      "mode": "time_series",
       "routing_path": [
         "def_dim"
       ],
@@ -22,7 +16,6 @@
         "start_time": "2000-01-01T00:00:00.000Z",
         "end_time": "9999-01-01T00:00:00.000Z"
       },
-      {% endif %}
       "mapping.total_fields.limit": 10000
     }
   },

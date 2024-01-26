@@ -246,6 +246,9 @@ The following parameters are available:
 * `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
 * `initial_indices_count` (default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
 * `ingest_percentage` (default: 100) - The percentage of data to be ingested.
+* `index_sorting` (default: unset): Whether index sorting should be used. Accepted values: `hostname` and `timestamp`. 
+* `synthetic_source_mode` (default: `false`): Whether to enable synthetic source.
+* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
 
 ### Querying parameters
 

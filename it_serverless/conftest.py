@@ -156,7 +156,8 @@ def project_config(project, tmpdir_factory):
     else:
         raise ValueError("Timed out waiting for Elasticsearch")
 
-    # Create API key to test Rally with a public user
+    # Create API key to test Rally with a public user privileges
+    print("Waiting for API key")
     for _ in range(3):
         try:
             api_key = es.security.create_api_key(name="public-api-key")
@@ -166,6 +167,23 @@ def project_config(project, tmpdir_factory):
             time.sleep(10)
     else:
         raise ValueError("Timed out waiting for API key")
+
+    # Confirm API key is working fine
+    print("Testing API key")
+    for _ in range(3):
+        try:
+            es = Elasticsearch(
+                f"https://{rally_target_host}",
+                api_key=api_key.body["encoded"],
+                request_timeout=10,
+            )
+            info = es.info()
+            break
+        except Exception as e:
+            print(f"API verification failed with {type(e)}")
+            time.sleep(10)
+    else:
+        raise ValueError("Timed out verifying API key")
 
     project_config = ServerlessProjectConfig(
         rally_target_host,

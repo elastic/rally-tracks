@@ -3,16 +3,37 @@
       "description": "Indexes the whole document corpus and runs downsampling",
       "default": true,
       "schedule": [
+        {# non-serverless-cluster-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+        {
+          "name":"increase-max_buckets_setting",
+          "tags": ["setup"],
+          "operation": {
+            "operation-type": "raw-request",
+            "method": "PUT",
+            "path": "/_cluster/settings",
+            "body": {
+              "transient": {
+                "search.max_buckets" : 300000
+              }
+            },
+            "include-in-reporting": false
+          }
+        },
+        {%- endif -%}{# non-serverless-cluster-settings-marker-end #}
+        {
+          "operation": "delete-index"
+        },
         {
           "operation": {
-            "operation-type": "delete-index",
-            "index": ["tsdb_synth"]
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
           }
         },
         {
           "name": "check-cluster-health",
           "operation": {
             "operation-type": "cluster-health",
+            "index": "tsdb_synth",
             "request-params": {
               "wait_for_status": "{{cluster_health | default('green')}}",
               "wait_for_no_relocating_shards": "true"
@@ -23,17 +44,17 @@
         {
           "operation": "index",
           "warmup-time-period": 240,
-          "clients": {{bulk_indexing_clients | default(8)}}
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
           "name": "refresh-after-index",
           "operation": "refresh"
         },
         {
-          "name": "force-merge",
           "operation": {
             "operation-type": "force-merge",
-            "request-timeout": 15000{%- if force_merge_max_num_segments is defined %},
+            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}
           }
@@ -42,9 +63,9 @@
           "name": "wait-until-merges-finish",
           "operation": {
             "operation-type": "index-stats",
-            "index": "tsdb_synth",
+            "index": "_all",
             "condition": {
-              "path": "tsdb_synth.total.merges.current",
+              "path": "_all.total.merges.current",
               "expected-value": 0
             },
             "retry-until-success": true,
@@ -55,6 +76,15 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "name": "block-source-index-writes",
           "operation": {

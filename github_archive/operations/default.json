@@ -1,14 +1,21 @@
 {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-{% set p_index_source = 'gharchive' %}
+    {%- set p_index_source = 'gharchive' %}
 {%- else %}
-{% set p_index_source = 'github-archive' %}
+    {%- set p_index_source = 'github-archive' %}
 {%- endif %}
-
+{%- set p_conflicts = conflicts %}
+{%- set p_conflict_probability = conflict_probability | default(25) %}
+{%- set p_on_conflict = on_conflict | default('index') %}
 {
   "name": "index",
   "operation-type": "bulk",
   "bulk-size": {{bulk_size | default(5000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
+  {%- if conflicts is defined %},
+  "conflicts": "{{p_conflicts}}",
+  "on-conflict": "{{p_on_conflict}}"
+  "conflict-probability": {{p_conflict_probability}}
+  {%- endif %}
 },
 {
   "name": "default",

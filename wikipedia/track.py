@@ -255,7 +255,7 @@ async def create_users_and_roles(es, params):
             permissions = [u['username'] for u in
                     random.sample(USERS[:num_users], k=half_docs_num)]
 
-            permission_hash = hash(sorted(permissions).join('|'))
+            permission_hash = hash('|'.join(sorted(permissions)))
             if permission_hash not in existing_permissions:
                 existing_permissions.append(permission_hash)
                 break

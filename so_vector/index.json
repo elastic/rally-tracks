@@ -33,7 +33,10 @@
         "type": "dense_vector",
         "dims" : 768,
         "index" : true,
-        "similarity": "dot_product"
+        "similarity": "dot_product",
+        "index_options": {
+          "type": {{ vector_index_type | default("hnsw") | tojson }}
+        }
       },
       "acceptedAnswerId": {
         "type": "keyword"

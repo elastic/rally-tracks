@@ -19,6 +19,61 @@
           "uncompressed-bytes": 2047692483
         }
       ]
+    },
+    {
+      "name": "size16-small-bert-vocab-whole-words",
+      "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
+      "documents": [
+        {
+          "source-file": "16_document_set.json",
+          "document-count": 10000,
+          "uncompressed-bytes": 1389658
+        }
+      ]
+    },
+    {
+      "name": "size128-small-bert-vocab-whole-words",
+      "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
+      "documents": [
+        {
+          "source-file": "128_document_set.json",
+          "document-count": 10000,
+          "uncompressed-bytes": 10298519
+        }
+      ]
+    },
+    {
+      "name": "size256-small-bert-vocab-whole-words",
+      "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
+      "documents": [
+        {
+          "source-file": "256_document_set.json",
+          "document-count": 10000,
+          "uncompressed-bytes": 20479981
+        }
+      ]
+    },
+    {
+      "name": "size384-small-bert-vocab-whole-words",
+      "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
+      "documents": [
+        {
+          "source-file": "384_document_set.json",
+          "document-count": 10000,
+          "uncompressed-bytes": 30656450
+        }
+      ]
+    },
+    {
+      "name": "size512-small-bert-vocab-whole-words",
+      "base-url": "https://storage.googleapis.com/rally-tracks/elser-speedtest/",
+      "documents": [
+        {
+          "source-file": "512_document_set.json",
+          "document-count": 10000,
+          "uncompressed-bytes": 40826235
+        }
+      ]
     }
   ],
   "challenges": [

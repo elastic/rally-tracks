@@ -19,7 +19,10 @@
         "element_type": "float",
         "dims": 768,
         "index": true,
-        "similarity": "max_inner_product"
+        "similarity": "max_inner_product",
+        "index_options": {
+          "type": {{ vector_index_type | default("hnsw") | tojson }}
+        }
       }
     }
   }

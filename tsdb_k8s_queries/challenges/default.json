@@ -1,6 +1,6 @@
     {
       "name": "append-no-conflicts",
-      "description": "Indexes the whole document corpus.",
+      "description": "Indexes the datasets, then runs esql queries while inserting the same dataset with a different tsid",
       "default": true,
       "schedule": [
         {

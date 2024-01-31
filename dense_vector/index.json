@@ -19,7 +19,7 @@
         "index" : true,
         "similarity": "dot_product",
         "index_options": {
-          "type": "hnsw",
+          "type": {{ vector_index_type | default("hnsw") | tojson }},
           "m": 32,
           "ef_construction": 100
         }

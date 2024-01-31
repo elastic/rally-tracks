@@ -1,0 +1,285 @@
+{
+    "name": "esql",
+    "description": "Indexes the datasets, then runs esql queries while inserting the same dataset with a different ",
+    "default": false,
+    "schedule": [
+      {
+        "name": "delete-all-datastreams",
+        "operation": {
+          "operation-type": "delete-data-stream"
+        }
+      },
+      {
+        "name": "delete-all-composable-templates",
+        "operation": {
+          "operation-type": "delete-composable-template"
+        }
+      },
+      {
+        "name": "create-all-templates",
+        "operation": {
+          "operation-type": "create-composable-template",
+          "request-params": {
+            "create": "true"
+          }
+        }
+      },
+      {
+        "name": "put-timestamp-pipeline",
+        "operation": {
+          "operation-type": "put-pipeline",
+          "id": "timestamp_pipeline",
+          "body": {
+            "processors": [
+                {
+                    "set": {
+                        "field": "@timestamp",
+                        "value": {{'"{{_ingest.timestamp}}"'}}
+                    }
+                },
+                {
+                  "script": {
+                    "source": "Random r  = new Random();ctx['kubernetes']['pod']['uid'] = 'value-' + r.nextLong();"
+                  }
+                }
+            ]
+          }
+        }
+      },
+      {
+        "name": "check-cluster-health",
+        "operation": {
+          "operation-type": "cluster-health",
+          "request-params": {
+            "wait_for_status": "{{cluster_health | default('green')}}",
+            "wait_for_no_relocating_shards": "true"
+          },
+          "retry-until-success": true
+        }
+      },
+      {
+        "operation": "index-container",
+        "warmup-time-period": 240,
+        "clients": {{bulk_indexing_clients | default(8)}}
+      },
+      {
+        "operation": "index-pod",
+        "warmup-time-period": 240,
+        "clients": {{bulk_indexing_clients | default(8)}}
+      },
+      {
+        "name": "refresh-after-index",
+        "operation": "refresh"
+      },
+      {
+        "operation": {
+          "operation-type": "force-merge",
+          "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+          "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+          {%- endif %}
+        }
+      },
+      {
+        "name": "wait-until-merges-finish",
+        "operation": {
+          "operation-type": "index-stats",
+          "index": "_all",
+          "condition": {
+            "path": "_all.total.merges.current",
+            "expected-value": 0
+          },
+          "retry-until-success": true,
+          "include-in-reporting": false
+        }
+      },
+      {
+        "name": "refresh-after-force-merge",
+        "operation": "refresh"
+      },
+      {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+      {
+        "name": "post-ingest-sleep",
+        "operation": {
+          "operation-type": "sleep",
+          "duration": {{ post_ingest_sleep_duration|default(30) }}
+        }
+      },
+      {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+      {% for name, info in time_intervals.items() %}
+      {
+        "parallel": {
+          "completed-by": "esql_cpu_usage_per_pod_{{name}}",
+          "clients": 2,
+          "tasks": [
+            {
+              "name": "esql_touch-pod-1-{{name}}",
+              "operation": "touch-pod-index",
+              "clients": {{touch_bulk_indexing_clients}}
+            },
+            {
+              "operation": "esql_cpu_usage_per_pod_{{name}}",
+              "warmup-iterations": {{search_warmup_iterations}},
+              "iterations": {{search_iterations}},
+              "target-interval": {{target_interval}},
+              "clients": 1
+            }
+          ]
+        }
+      },
+      {%- endfor %}
+      {% for name, info in time_intervals.items() %}
+      {
+        "parallel": {
+          "completed-by": "esql_memory_usage_per_pod_{{name}}",
+          "clients": 2,
+          "tasks": [
+            {
+              "name": "esql_touch-pod-2-{{name}}",
+              "operation": "touch-pod-index",
+              "clients": {{touch_bulk_indexing_clients}}
+            },
+            {
+              "operation": "esql_memory_usage_per_pod_{{name}}",
+              "warmup-iterations": {{search_warmup_iterations}},
+              "iterations": {{search_iterations}},
+              "target-interval": {{target_interval}},
+              "clients": 1
+            }
+          ]
+        }
+      },
+      {%- endfor %}
+      {% for name, info in time_intervals.items() %}
+      {
+        "parallel": {
+          "completed-by": "esql_average_container_cpu_{{name}}",
+          "clients": 2,
+          "tasks": [
+            {
+              "name": "esql_touch-container-1-{{name}}",
+              "operation": "touch-container-index",
+              "clients": {{touch_bulk_indexing_clients}}
+            },
+            {
+              "operation": "esql_average_container_cpu_{{name}}",
+              "warmup-iterations": {{search_warmup_iterations}},
+              "iterations": {{search_iterations}},
+              "target-interval": {{target_interval}},
+              "clients": 1
+            }
+          ]
+        }
+      },
+      {%- endfor %}
+      {% for name, info in time_intervals.items() %}
+      {
+        "parallel": {
+          "completed-by": "esql_average_container_memory_usage_{{name}}",
+          "clients": 2,
+          "tasks": [
+            {
+              "name": "esql_touch-container-2-{{name}}",
+              "operation": "touch-container-index",
+              "clients": {{touch_bulk_indexing_clients}}
+            },
+            {
+              "operation": "esql_average_container_memory_usage_{{name}}",
+              "warmup-iterations": {{search_warmup_iterations}},
+              "iterations": {{search_iterations}},
+              "target-interval": {{target_interval}},
+              "clients": 1
+            }
+          ]
+        }
+      },
+      {%- endfor %}
+      {% for name, info in time_intervals.items() %}
+      {
+        "parallel": {
+          "completed-by": "esql_cpu_usage_per_container_{{name}}",
+          "clients": 2,
+          "tasks": [
+            {
+              "name": "esql_touch-container-3-{{name}}",
+              "operation": "touch-container-index",
+              "clients": {{touch_bulk_indexing_clients}}
+            },
+            {
+              "operation": "esql_cpu_usage_per_container_{{name}}",
+              "warmup-iterations": {{search_warmup_iterations}},
+              "iterations": {{search_iterations}},
+              "target-interval": {{target_interval}},
+              "clients": 1
+            }
+          ]
+        }
+      },
+      {%- endfor %}
+      {% for name, info in time_intervals.items() %}
+      {
+        "parallel": {
+          "completed-by": "esql_memory_usage_per_container_{{name}}",
+          "clients": 2,
+          "tasks": [
+            {
+              "name": "esql_touch-container-4-{{name}}",
+              "operation": "touch-container-index",
+              "clients": {{touch_bulk_indexing_clients}}
+            },
+            {
+              "operation": "esql_memory_usage_per_container_{{name}}",
+              "warmup-iterations": {{search_warmup_iterations}},
+              "iterations": {{search_iterations}},
+              "target-interval": {{target_interval}},
+              "clients": 1
+            }
+          ]
+        }
+      },
+      {%- endfor %}
+      {% for name, info in time_intervals.items() %}
+      {
+        "parallel": {
+          "completed-by": "esql_unique_deployment_count_{{name}}",
+          "clients": 2,
+          "tasks": [
+            {
+              "name": "eslq_touch-pod-5-{{name}}",
+              "operation": "touch-pod-index",
+              "clients": {{touch_bulk_indexing_clients}}
+            },
+            {
+              "operation": "esql_unique_deployment_count_{{name}}",
+              "warmup-iterations": {{search_warmup_iterations}},
+              "iterations": {{search_iterations}},
+              "target-interval": {{target_interval}},
+              "clients": 1
+            }
+          ]
+        }
+      },
+      {%- endfor %}
+      {% for name, info in time_intervals.items() %}
+      {
+        "parallel": {
+          "completed-by": "esql_percentile_cpu_usage_per_container_{{name}}",
+          "clients": 2,
+          "tasks": [
+            {
+              "name": "esql_touch-container-5-{{name}}",
+              "operation": "touch-container-index",
+              "clients": {{touch_bulk_indexing_clients}}
+            },
+            {
+              "operation": "esql_percentile_cpu_usage_per_container_{{name}}",
+              "warmup-iterations": {{search_warmup_iterations}},
+              "iterations": {{search_iterations}},
+              "target-interval": {{target_interval}},
+              "clients": 1
+            }
+          ]
+        }
+      }{{ ", " if not loop.last else "" }}
+      {%- endfor %}
+    ]
+  }

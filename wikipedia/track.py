@@ -183,14 +183,13 @@ class SearchParamSourceWithUser(QueryIteratorParamSource):
         super().__init__(track, params, **kwargs)
         self.search_application_params = SearchApplicationParams(track, params)
 
-        self.users = iter(USERS)
-
     def params(self):
         try:
             query = next(self._queries_iterator)
             return {
                     "method": "POST",
-                    "headers": {"Authorization": create_basic_auth_header(**next(self.users))},
+                    "headers": {"Authorization":
+                        create_basic_auth_header(username='435b173a-8283-4dc2-9c62-00f871866594', password='ujd_rbh5quw7GWC@pjc')},
                     "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
                     "body": {
                         "params": {
@@ -229,23 +228,16 @@ class QueryParamSource(QueryIteratorParamSource):
 async def create_users_and_roles(es, params):
     num_users = int(params["users"])
 
-    await es.security.put_role(
-        name="managed-role-search",
-        body=ROLE_TEMPLATE,
-        refresh="wait_for")
+    await es.security.put_user(
+        username='435b173a-8283-4dc2-9c62-00f871866594',
+        params={
+            "password": 'ujd_rbh5quw7GWC@pjc',
+            "roles": ["managed-role-search"],
+            "metadata": { "documents-id": ['435b173a-8283-4dc2-9c62-00f871866594']}}
+        )
 
-    for users_batch in batched(USERS[0:num_users], 100):
-        users_coros = (
-            es.security.put_user(
-                username=user["username"],
-                params={
-                    "password": user["password"],
-                    "roles": ["managed-role-search"],
-                    "metadata": { "documents-id": [user['username']]}}
-                )
-            for user in users_batch
-            )
-        await asyncio.gather(*users_coros)
+    if params.get('skip_perms'):
+        return
 
     half_docs_num = int(num_users / 2)
     existing_permissions = []

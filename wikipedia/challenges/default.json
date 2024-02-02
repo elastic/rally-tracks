@@ -148,6 +148,32 @@
       }
     },
     {
+      "name": "create-1-user",
+      "operation": "create-1-user",
+      "clients": 1
+    },
+    {
+      "name": "create-1-user-and-permissions",
+      "operation": "create-1-user-and-permissions",
+      "clients": 1
+    },
+    {
+      "name": "search-with-1-user-no-cache",
+      "operation": "search-with-user",
+      "clients": 1,
+      "iterations": 1000,
+      "warmup-iterations": 10,
+      "cache": false
+    },
+    {
+      "name": "search-with-1-user-cache",
+      "operation": "search-with-user",
+      "clients": 1,
+      "iterations": 1000,
+      "warmup-iterations": 10,
+      "cache": true
+    },
+    {
       "name": "create-100000-users",
       "operation": "create-100000-users",
       "clients": 1

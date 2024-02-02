@@ -100,6 +100,22 @@
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
+  "name": "create-1-user-and-permissions",
+  "operation-type": "create_users_and_roles",
+    "skip_perms": false,
+    "users": 10000,
+  "include-in-reporting": true,
+  "request-timeout": 3600
+},
+{
+  "name": "create-1-user",
+  "operation-type": "create_users_and_roles",
+    "skip_perms": true,
+    "users": 1,
+  "include-in-reporting": true,
+  "request-timeout": 3600
+},
+{
   "name": "create-1000-users",
   "operation-type": "create_users_and_roles",
     "skip_roles": 0,

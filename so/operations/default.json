@@ -166,7 +166,7 @@
         "size": 0,
         "aggs": {
           "fi": {
-            "frequent_items": {
+            "frequent_item_sets": {
               "minimum_set_size": 2,
               "minimum_support": 0.01,
               "size": 100,
@@ -217,7 +217,7 @@
         "size": 0,
         "aggs": {
           "fi": {
-            "frequent_items": {
+            "frequent_item_sets": {
               "minimum_set_size": 2,
               "minimum_support": 0.01,
               "size": 10,
@@ -262,7 +262,7 @@
         "size": 0,
         "aggs": {
           "fi": {
-            "frequent_items": {
+            "frequent_item_sets": {
               "minimum_set_size": 2,
               "minimum_support": 0.005,
               "size": 1000,

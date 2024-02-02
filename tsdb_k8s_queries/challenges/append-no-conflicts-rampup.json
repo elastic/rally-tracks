@@ -120,13 +120,6 @@
             "time-period": {{search_time_period | default(150)}}
           },
           {
-            "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_status_per_pod_{{name}}",
-            "operation": "status_per_pod_{{name}}",
-            "iterations": {{search_iterations}},
-            "target-interval": {{target_interval}},
-            "time-period": {{search_time_period | default(150)}}
-          },
-          {
             "name": "{{task_label}}{{split_touch_bulk_indexing_clients}}_tx_network_usage_per_pod_{{name}}",
             "operation": "tx_network_usage_per_pod_{{name}}",
             "iterations": {{search_iterations}},

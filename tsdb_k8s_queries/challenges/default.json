@@ -152,28 +152,6 @@
         {% for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "status_per_pod_{{name}}",
-            "clients": 2,
-            "tasks": [
-              {
-                "name": "touch-pod-3-{{name}}",
-                "operation": "touch-pod-index",
-                "clients": {{touch_bulk_indexing_clients}}
-              },
-              {
-                "operation": "status_per_pod_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}},
-                "target-interval": {{target_interval}},
-                "clients": 1
-              }
-            ]
-          }
-        },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
-        {
-          "parallel": {
             "completed-by": "tx_network_usage_per_pod_{{name}}",
             "clients": 2,
             "tasks": [

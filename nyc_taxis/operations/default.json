@@ -1176,13 +1176,13 @@
     {
       "name": "sort_by_ts_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000",
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | keep pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000",
       "body": { "pragma": { "data_partitioning": "segment" } }
     },
     {
       "name": "sort_by_ts_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000",
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | keep pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000",
       "body": { "pragma": { "data_partitioning": "doc" } }
     },
     {
@@ -1414,7 +1414,7 @@
     {
       "name": "sort_by_ts_esql_limit_0",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | sort pickup_datetime desc | project pickup_datetime, dropoff_datetime, trip_distance | LIMIT 0"
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | keep pickup_datetime, dropoff_datetime, trip_distance | LIMIT 0"
     },
     {
       "name": "date_histogram_calendar_interval_esql_limit_0",

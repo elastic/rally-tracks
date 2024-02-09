@@ -11,6 +11,7 @@ To begin indexing, the track initiates `index_clients` clients, each executing `
 Consequently, the total number of documents indexed by the track is calculated as follows: `index_clients` * `index_iterations` * `index_bulk_size`.
 
 Each document in the bulk is assigned a random vector of dimensions `dims` and a random partition ID.
+The resulting index is sorted on the partition id. This helps make sure vectors are close together when we do filtered searches.
 
 ## Search Operations
 

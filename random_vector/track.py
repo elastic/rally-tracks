@@ -1,6 +1,7 @@
-from esrally.track.params import ParamSource
-import numpy as np
 import random
+
+import numpy as np
+from esrally.track.params import ParamSource
 
 
 class RandomBulkParamSource(ParamSource):
@@ -36,11 +37,7 @@ def generate_knn_query(query_vector, partition_id, k):
             "query_vector": query_vector,
             "k": k,
             "num_candidates": k,
-            "filter": {
-                "term": {
-                    "partition_id": partition_id
-                }
-            }
+            "filter": {"term": {"partition_id": partition_id}},
         }
     }
 
@@ -49,17 +46,8 @@ def generate_script_query(query_vector, partition_id):
     return {
         "query": {
             "script_score": {
-                "query": {
-                    "term": {
-                        "partition_id": partition_id
-                    }
-                },
-                "script": {
-                    "source": "cosineSimilarity(params.query_vector, 'emb') + 1.0",
-                    "params": {
-                        "query_vector": query_vector
-                    }
-                }
+                "query": {"term": {"partition_id": partition_id}},
+                "script": {"source": "cosineSimilarity(params.query_vector, 'emb') + 1.0", "params": {"query_vector": query_vector}},
             }
         }
     }
@@ -92,15 +80,7 @@ class RandomSearchParamSource:
             query = generate_script_query(query_vec, partition_id)
         else:
             query = generate_knn_query(query_vec, partition_id, self._topk)
-
-        return {
-            "index": self._index_name,
-            "cache": self._cache,
-            "size": self._top_k,
-            "_source_excludes": ["emb"],
-            "body": query
-        }
-        return request
+        return {"index": self._index_name, "cache": self._cache, "size": self._top_k, "_source_excludes": ["emb"], "body": query}
 
 
 def register(registry):

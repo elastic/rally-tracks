@@ -1,0 +1,64 @@
+{
+  "name": "random-indexing",
+  "description": "Create an index and index doc with random content into it.",
+  "default": true,
+  "schedule": [
+    {
+      "name": "delete-index",
+      "operation": "delete-index"
+    },
+    {
+      "name": "create-index",
+      "operation": "create-index"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": "check-cluster-health"
+    },
+    {
+      "name": "random-indexing",
+      "operation": "random-bulk-indexing",
+      "clients": {{ index_clients | default(1) | int }},
+      "iterations": {{ index_iterations | default(1000) | int }},
+      "bulk-size": {{ index_bulk_size | default(1000)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "script-score-filtered-search-single-client",
+      "operation": "brute-force-filtered-search",
+      "script": true,
+      "warmup-iterations": 100,
+      "iterations": {{ search_iterations | default(1000) | int }}
+    },
+    {
+      "name": "script-score-filtered-search-multiple-client",
+      "operation": "brute-force-filtered-search",
+      "script": true,
+      "warmup-iterations": 100,
+      "iterations": {{ search_iterations | default(1000) | int }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "knn-filtered-search-single-client",
+      "operation": "brute-force-filtered-search",
+      "script": false,
+      "warmup-iterations": 100,
+      "iterations": {{ search_iterations | default(10000) | int }}
+    },
+    {
+      "name": "knn-filtered-search-multiple-client",
+      "operation": "brute-force-filtered-search",
+      "script": false,
+      "warmup-iterations": 100,
+      "iterations": {{ search_iterations | default(1000) | int }},
+      "clients": {{ search_clients | default(8) | int }}
+    }
+  ]
+}

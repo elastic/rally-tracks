@@ -1,0 +1,315 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 1,
+  "description": "Benchmark for vector search with Cohere ms-marco2 english-v3 data",
+  "indices": [
+    {
+      "name": "cohere-english-v3",
+      "body": "index-{{ mapping_type | default("vectors-only") }}-mapping.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "cohere-initial-indexing",
+      "base-url": "https://rally-tracks.elastic.co/cohere-msmarco-v2-embed-english-v3",
+      "documents": [
+        {
+          "source-file": "cohere-documents-01.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-02.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-03.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-04.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-05.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-06.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-07.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-08.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-09.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-10.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-11.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-12.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-13.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-14.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-15.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-16.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-17.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-18.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-19.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-20.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-21.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-22.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-23.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-24.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-25.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-26.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-27.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-28.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-29.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-30.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-31.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-32.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-33.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-34.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-35.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-36.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-37.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-38.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-39.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-40.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-41.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-42.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-43.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-44.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        },
+        {
+          "source-file": "cohere-documents-45.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        }
+        },
+        {
+          "source-file": "cohere-documents-46.json.bz2",
+          "document-count": 3000000,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        }
+      ]
+    },
+    {
+      "name": "cohere-parallel-indexing",
+      "base-url": "https://rally-tracks.elastic.co/cohere-msmarco-v2-embed-english-v3",
+      "documents": [
+        {
+          "source-file": "cohere-documents-47.json.bz2",
+          "document-count": 16797321,
+          "compressed-bytes": CHANGEME,
+          "uncompressed-bytes": CHANGEME
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

@@ -75,6 +75,8 @@ class RandomSearchParamSource:
         return self
 
     def params(self):
+        import numpy as np
+
         partition_id = random.randint(0, self._partitions)
         query_vec = np.random.rand(self._dims).tolist()
         if self._script:

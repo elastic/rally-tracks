@@ -21,7 +21,7 @@
         "index": true,
         "similarity": "max_inner_product",
         "index_options": {
-          "type": {{ vector_index_type | default("hnsw") | tojson }}
+          "type": {{ vector_index_type | default("int8_hnsw") | tojson }}
         }
       }
     }

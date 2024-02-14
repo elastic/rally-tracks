@@ -1,14 +1,6 @@
 {
   "version": 2,
   "description": "Elastic APM benchmark for Rally",
-  "composable-templates": [
-    {
-        "name": "my-default-index-template",
-        "index-pattern": "*-apm*",
-        "delete-matching-indices": true,
-        "template": "component-template.json"
-    }
-  ],
   "data-streams": [
     {"name": "traces-apm*"},
     {"name": "metrics-apm*"},
@@ -42,7 +34,7 @@
       "operation": {
         "operation-type": "cluster-health",
         "request-params": {
-          "wait_for_status": "green"
+          "wait_for_status": "yellow"
         },
         "retry-until-success": true
       }

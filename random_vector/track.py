@@ -13,6 +13,7 @@ class RandomBulkParamSource(ParamSource):
 
     def params(self):
         import numpy as np
+        
         bulk_data = []
         for _ in range(self._bulk_size):
             vec = np.random.rand(self._dims)

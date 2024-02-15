@@ -219,6 +219,7 @@ The following parameters are available:
 * `end_date` (default: `2020-01-02` ) - The end date of the data. This value minus the `start_date` will determine the time range assigned to the data and also directly impact the total volume indexed. Must be greater than the `start_date`.
 * `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
 * `lifecycle` (default: unset to fall back on Serverless detection) - Specifies the lifecycle management feature to use for data streams. Use `ilm` for index lifecycle management or `dlm` for data lifecycle management. By default, `dlm` will be used for benchmarking Serverless Elasticsearch.
+* `workflow-request-cache` (default: `true`) - Explicit control of request cache query parameter in searches executed in a workflow. This can be further overriden at an operation level with `request-cache` parameter.
 
 ### Data Download Parameters
 
@@ -249,6 +250,7 @@ The following parameters are available:
 * `index_sorting` (default: unset): Whether index sorting should be used. Accepted values: `hostname` and `timestamp`. 
 * `synthetic_source_mode` (default: `false`): Whether to enable synthetic source.
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
+* `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 
 ### Querying parameters
 
@@ -264,6 +266,7 @@ The following parameters are available:
 * `query_average_interval` (optional) - Average time interval for queries to use. If unset, we use the durations and intervals set in the original action definitions.
 * `query_request_params` (optional) - A map of query parameters that will be used with any querying.
 * `query_workflows` (optional) - A list of workflows to execute. By default, all workflows are used.
+* `include_esql_queries` (default: true for non-serverless clusters, false for serverless clusters): Whether to include ESQL and ESQL-related queries.
 
 ### Snapshot parameters
 * `snapshot_counts` (default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).

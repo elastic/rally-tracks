@@ -49,7 +49,7 @@ def output_documents(docs_file, start_index, end_index):
     for doc in docs:
         docs_file.write(
             json.dumps(
-                {"docid": doc["docid"], "title": doc["title"], "text": doc["text"], "emb": doc["emb"]},
+                {"docid": doc["_id"], "title": doc["title"], "text": doc["text"], "emb": doc["emb"]},
                 ensure_ascii=True,
             )
         )

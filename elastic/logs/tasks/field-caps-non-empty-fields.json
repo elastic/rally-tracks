@@ -1,0 +1,13 @@
+{
+  "name": "field-caps-exclude-empty-fields",
+  "operation": {
+    "operation-type": "field-caps",
+    "index": "auditbeat*",
+    "request-params": {
+      "include_empty_fields": false
+    }
+  },
+  "iterations": 200,
+  "warmup-iterations": 10,
+  "clients": 2
+}

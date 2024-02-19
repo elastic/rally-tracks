@@ -1,8 +1,7 @@
 {
   "name": "field-caps-exclude-empty-fields",
   "operation": {
-    "operation-type": "field-caps",
-    "base-operation-type": "raw-request",
+    "operation-type": "raw-request",
     "method": "GET",
     "path": "/auditbeat*/_field_caps?fields=*&include_empty_fields=false"
   },

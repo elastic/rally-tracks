@@ -622,6 +622,25 @@ async def test_detailed_results():
         assert param_source.workflows[i][1]["requests"][2]["detailed-results"]
 
 
+@pytest.mark.asyncio
+async def test_request_cache():
+    param_source = WorkflowSelectorParamSource(
+        track=StaticTrack(parameters={"workflow-request-cache": True}),
+        params={
+            "workflow": "a",
+            "workflows-folder": "tests/parameter_sources/resources/workflows",
+            "task-offset": 0,
+        },
+    )
+    assert param_source.workflows[0][0] == "5"
+    assert "cache" in param_source.workflows[0][1]["requests"][0]["stream"][0]
+    # all workflows in workflows/a are identical
+    for i in range(5):
+        assert param_source.workflows[i][1]["requests"][0]["stream"][0]["cache"] == "true"
+        assert param_source.workflows[i][1]["requests"][1]["stream"][0]["cache"] == "true"
+        assert param_source.workflows[i][1]["requests"][2]["cache"] == "true"
+
+
 def test_seeding():
     seed = 15
     param_source = WorkflowSelectorParamSource(

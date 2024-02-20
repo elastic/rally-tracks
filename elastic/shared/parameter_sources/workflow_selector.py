@@ -68,6 +68,7 @@ class WorkflowSelectorParamSource:
             "workflow-target",
             track.selected_challenge_or_default.parameters.get("workflow-target"),
         )
+        self._request_cache = params.get("request-cache", track.selected_challenge_or_default.parameters.get("workflow-request-cache"))
         self._max_time_interval = timedelta.min
         # sorted to ensure natural sort order that respects numerics
         for action_filename in sorted(
@@ -98,6 +99,9 @@ class WorkflowSelectorParamSource:
                 if self._workflow_target:
                     # override captured query targets with enabled integrations
                     self.set_target_index(action)
+                if self._request_cache is not None:
+                    # set request cache in search operations
+                    self.set_request_cache(action)
                 request_params = params.get("request-params", {})
                 WorkflowSelectorParamSource.stringify_bool(request_params)
                 if request_params:
@@ -184,6 +188,17 @@ class WorkflowSelectorParamSource:
         elif isinstance(action, list):
             for value in action:
                 self.set_detailed_results(value)
+
+    def set_request_cache(self, action):
+        if isinstance(action, dict):
+            if "operation-type" in action and action["operation-type"] == "search":
+                action["cache"] = str(self._request_cache).lower()
+            else:
+                for _, value in action.items():
+                    self.set_request_cache(value)
+        elif isinstance(action, list):
+            for value in action:
+                self.set_request_cache(value)
 
     def set_request_params(self, action, request_params):
         if isinstance(action, dict):

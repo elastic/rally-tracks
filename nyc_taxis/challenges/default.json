@@ -1442,3 +1442,11 @@
         {{ rally.collect(parts="common/autoscale-schedule.json") }}
       ]
     }
+    {
+      "name": "autoscale-v2",
+      "description": "Bulk index with configurable steps",
+      "default": false,
+      "schedule": [
+        {{ rally.collect(parts="common/autoscale-v2-schedule.json") }}
+      ]
+    }

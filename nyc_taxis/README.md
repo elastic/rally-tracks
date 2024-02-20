@@ -78,6 +78,15 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `include_force_merge` (default: true for non-serverless clusters, false for serverless clusters): Whether to include force merge operation.
 * `include_target_throughput` (default: true for non-serverless clusters, false for serverless clusters): Whether to apply target throughput.
 
+### Parameters specific to autoscale-v2 challenge
+
+This challenge is intended for serverless index tier autoscaler testing. It consists of configurable number of steps provided with array parameters.
+Note: `include_target_throughput` parameter is ignored in this challenge.
+
+* `as_clients` (default: []): An array with the number of indexing clients to be used in each step.
+* `as_time_periods` (default: []): An array with time period of every step. Time period is divided in halves. The first half is configured as warm-up.
+* `as_target_throughputs` (default: []): An array with target throughput of each step, expressed in requests/s. Please use `bulk_size` parameter to translate this into docs/s. Target throughput is not configured if the values specified in this array are negative.
+
 ### License
 
 According to the [Open Data Law](https://opendata.cityofnewyork.us/open-data-law/) this data is available as public domain.

@@ -84,7 +84,7 @@ This challenge is intended for serverless index tier autoscaler testing. It cons
 Note: `include_target_throughput` parameter is ignored in this challenge.
 
 * `as_clients` (default: []): An array with the number of indexing clients to be used in each step.
-* `as_time_periods` (default: []): An array with time period of every step. Time period is divided in halves. The first half is configured as warm-up.
+* `as_time_periods` (default: []): An array with time period, in seconds, of every step. Time period is divided in halves. The first half is configured as warm-up.
 * `as_target_throughputs` (default: []): An array with target throughput of each step, expressed in requests/s. Please use `bulk_size` parameter to translate this into docs/s. Target throughput is not configured if the values specified in this array are negative.
 
 ### License

@@ -5,6 +5,12 @@
     "operation-type": "put-settings",
     "body": {
       "persistent": {
+        {% if p_dsl_poll_interval %}
+        "data_streams.lifecycle.poll_interval": "{{ dsl_poll_interval }}",
+        {% endif %}
+        {% if p_dsl_default_rollover %}
+        "cluster.lifecycle.default.rollover": "{{ dsl_default_rollover }}",
+        {% endif %}
         "cluster.max_shards_per_node":500000,
         "cluster.routing.allocation.node_concurrent_recoveries":200,
         "cluster.routing.allocation.node_initial_primaries_recoveries":100

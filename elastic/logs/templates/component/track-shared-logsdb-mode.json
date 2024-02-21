@@ -9,7 +9,9 @@
             "sort.field": [ "@timestamp", "host.name" ],
             "sort.order": [ "desc", "asc" ]
           {% endif %}
+          {# non-serverless-cluster-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
             "codec": {{ p_index_codec }}
+          {%- endif -%}{# non-serverless-cluster-settings-marker-end #}
         }
       },
       "mappings": {

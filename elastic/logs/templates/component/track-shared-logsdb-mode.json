@@ -2,6 +2,9 @@
     "template": {
       "settings": {
         "index": {
+          {# non-serverless-cluster-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+            "codec": {{ p_index_codec }}
+          {%- endif -%}{# non-serverless-cluster-settings-marker-end #}
           {% if index_sorting == "hostname" %}
             "sort.field": [ "host.name", "@timestamp" ],
             "sort.order": [ "asc", "desc" ]
@@ -9,9 +12,6 @@
             "sort.field": [ "@timestamp", "host.name" ],
             "sort.order": [ "desc", "asc" ]
           {% endif %}
-          {# non-serverless-cluster-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-            "codec": {{ p_index_codec }}
-          {%- endif -%}{# non-serverless-cluster-settings-marker-end #}
         }
       },
       "mappings": {

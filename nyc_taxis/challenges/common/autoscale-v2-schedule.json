@@ -27,9 +27,10 @@
     "retry-until-success": true
   }
 }
-{%- set p_as_clients = (as_clients | default([]))%}
-{%- set p_as_time_periods = (as_time_periods | default([]))%}
-{%- set p_as_target_throughputs = (as_target_throughputs | default([]))%}
+{%- set p_as_clients = (as_clients | default([8,16,32]))%}
+{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([300,300,300]))%}
+{%- set p_as_time_periods = (as_time_periods | default([300,300,300]))%}
+{%- set p_as_target_throughputs = (as_target_throughputs | default([2,4,8]))%}
 {%- set p_bulk_size = (bulk_size | default(5000))%}
 {%- for i in range(as_clients|length) %},
   {%- if p_as_target_throughputs[i] < 0 %}
@@ -42,8 +43,8 @@
     "bulk-size": {{p_bulk_size}},
     "looped": true
   },
-  "warmup-time-period": {{(p_as_time_periods[i] / 2)|int}},
-  "time-period": {{(p_as_time_periods[i] / 2)|int}}
+  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+  "time-period": {{p_as_time_periods[i]}}
 }
   {%- else %}
 {
@@ -55,8 +56,8 @@
     "bulk-size": {{p_bulk_size}},
     "looped": true
   },
-  "warmup-time-period": {{(p_as_time_periods[i] / 2)|int}},
-  "time-period": {{(p_as_time_periods[i] / 2)|int}},
+  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+  "time-period": {{p_as_time_periods[i]}},
   "target-throughput": {{p_as_target_throughputs[i]}}
 }
   {%- endif %}

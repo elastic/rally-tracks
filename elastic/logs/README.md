@@ -32,11 +32,11 @@ The only currently supported generation mode is `Raw`. This simulates traffic as
 **Important Note**: When specifying corpus ratios, these refer to the ratios of original raw data. For the logging use case, we use the `message` field to estimate the number of bytes of the original raw log line. When a log message is converted to JSON it inherently increases in size due to the associated notation overhead. The Elastic agent adds further meta fields e.g. `host_name`, which cause this size to increase further. This "raw to JSON expansion factor" N, means that 1GB of raw data will actually equate to NGB of JSON on disk. The actual ratios of the final JSON for each corpus may also be different: as different corpus have different JSON fields, and thus raw to JSON expansion factors, causing the ratios of the final JSON to diverge from the original corpus ratios. For common questions regards this see the [FAQ](#faq).
 
 The volume of data to index is controlled through the parameter `raw_data_volume_per_day` and the time span between via `start_date` and `end_date` - see [Data Indexing](#3-data-indexing). As described above, `raw_data_volume_per_day` represents the volume of original data to index and not the total JSON e.g. for logging this represents the volume of raw log files on disk to simulate.
-	
+
 The original corpora datasets are very verbose. We therefore also remove some fields to ensure datasets are representative for a use case. The fields removed are configurable - see [Changing the Datasets](#changing-the-datasets).
-		
+
 Whilst the volume of data generated is inferred by the volume per day and time range specified, a limit can also be placed on the [maximum data](#data-generation-parameters) generated in this stage. This specifies an upper limit on the volume of disk space to use for file generation - corpus ratios will still be respected within this limit. Additionally, the [number of threads](#data-generation-parameters) used for data generation is configurable and can be used to improve speed of generation assuming sufficient I/O is available.
-		
+
 Note: By default, downloaded and generated data is re-used on subsequent runs if the data exists on disk and track parameters which influence data generation have not changed. This saves unnecessary computation which can be expensive for tests involving larger data volumes. The current parameters which impact data generation are:
 
 - raw_data_volume_per_day
@@ -96,7 +96,7 @@ To accomplish different behaviors in the query phase(s) of a given challenge, we
     "query_min_date": "2020-01-01",
     "query_max_date": "2020-01-02"
 }
-``` 
+```
 The above configuration is equivalent to the defaults for these values. This type of configuration best serves the following conditions:
 * The challenge separately executes the indexing and querying phases, or executes only a query phase against an already-populated Elasticsearch. This is because data is indexed sequentially into Elasticsearch, and if these tasks were executed in parallel, early queries may be hitting empty time ranges until indexing catches up to where the query ranges are defined.
 * The actions within the desired workflows have ranges and intervals which reflect exactly the timeframes needed for querying. For example, a `range` query with `"@timestamp.gte": "2020-12-01T10:17:41.983Z"` and `"@timestamp.lte": "2020-12-01T12:17:41.983Z"` reflects a desired query timeframe of 2 hours. This action would retain its absolute range, and be updated dynamically to be:
@@ -213,12 +213,13 @@ Note that `query_max_date_start` cannot be defined in conjunction with `query_ma
 
 The following parameters are available:
 
-* `raw_data_volume_per_day` (default: `0.1GB`) - The volume of raw data to index per day. 
+* `raw_data_volume_per_day` (default: `0.1GB`) - The volume of raw data to index per day.
 * `wait_for_status` (default: `green `) - The track creates Data Streams prior to indexing. All created Data Streams must at least reach this status before indexing commences. Reduce to `yellow` for clusters where green isn't possible e.g. single node.
 * `start_date` (default: `2020-01-01` ) - The start date of the data. The `end_date` minus this value will determine the time range assigned to the data and also directly impact the total volume indexed. Must be less than the `end_date`.
 * `end_date` (default: `2020-01-02` ) - The end date of the data. This value minus the `start_date` will determine the time range assigned to the data and also directly impact the total volume indexed. Must be greater than the `start_date`.
 * `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
 * `lifecycle` (default: unset to fall back on Serverless detection) - Specifies the lifecycle management feature to use for data streams. Use `ilm` for index lifecycle management or `dlm` for data lifecycle management. By default, `dlm` will be used for benchmarking Serverless Elasticsearch.
+* `workflow-request-cache` (default: `true`) - Explicit control of request cache query parameter in searches executed in a workflow. This can be further overriden at an operation level with `request-cache` parameter.
 
 ### Data Download Parameters
 
@@ -242,14 +243,15 @@ The following parameters are available:
 * `runtime_indexing_clients`(default: bulk_indexing_clients) - for the simoutaneous indexing and querying challenge (`logging-indexing-querying`) this allows a different number of clients to be used in runtime vs the initial bulk load.
 * `bulk_size` (default: 1000) - The number of documents to send per indexing request.
 * `runtime_bulk_size` (default: bulk_size) - The number of documents to send per indexing request during the runtime phase of `logging-indexing-querying`challenge.
-* `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 
+* `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible.
 * `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
 * `initial_indices_count` (default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
 * `ingest_percentage` (default: 100) - The percentage of data to be ingested.
-* `index_sorting` (default: unset): Whether index sorting should be used. Accepted values: `hostname` and `timestamp`. 
+* `index_sorting` (default: unset): Whether index sorting should be used. Accepted values: `hostname` and `timestamp`.
 * `synthetic_source_mode` (default: `false`): Whether to enable synthetic source.
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
 * `index_codec` (default: `best_compression`) - The index codec to use, one of `best_compression` or `best_speed`.
+* `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 
 ### Querying parameters
 
@@ -265,12 +267,13 @@ The following parameters are available:
 * `query_average_interval` (optional) - Average time interval for queries to use. If unset, we use the durations and intervals set in the original action definitions.
 * `query_request_params` (optional) - A map of query parameters that will be used with any querying.
 * `query_workflows` (optional) - A list of workflows to execute. By default, all workflows are used.
+* `include_esql_queries` (default: true for non-serverless clusters, false for serverless clusters): Whether to include ESQL and ESQL-related queries.
 
 ### Snapshot parameters
 * `snapshot_counts` (default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
 * `snapshot_repo_name` (default: `logging`) - Snapshot repository name.
 * `snapshot_repo_type` (default: `s3`) - Other valid choices can be `gcs` and `azure`.
-* `snapshot_repo_settings` (default: 
+* `snapshot_repo_settings` (default:
 ```
 {
     "bucket": snapshot_bucket | default("test-bucket"),
@@ -323,13 +326,13 @@ In order to optimise indexing throughput, users may wish to consider modifying t
 
 This challenge simulates Kibana load via so-called workflows. Workflows execute concurrently at random intervals, and each workflow executes their actions sequentially until completion. An exponentially distributed random delay occurs between each action - the mean of this distribution can be controlled through the parameter `think_time_interval`. This simulates the user pausing and thinking between actions. A random delay (also exponentially distributed and controlled via a parameter `workflow_time_interval`) occurs between executing workflows. This is the main parameter users should use to control individual levels of user activity. Queries will be issued for the period specified by the parameter `query_time_period`. No indexing will occur.
 
-Users of this track may use this challenge to execute queries on an existing index for which bulk indexing has completed e.g. after using the challenge `#Logging Indexing`. 
+Users of this track may use this challenge to execute queries on an existing index for which bulk indexing has completed e.g. after using the challenge `#Logging Indexing`.
 
 Be aware that queries containing time ranges will respect the `start_date` specified for the track. i.e. When a query is executed, any date ranges will be modified and assume the current time is the `start_date` + `time since challenge executed`. We recommend using absolute dates where possible and ensuring you have data for the entire time period of execution given that this is constantly moving forward. Any relative dates will be resolved on track initialization.
 
 ### Logging Indexing and Querying (logging-indexing-querying)
 
-This challenge executes indexing and querying concurrently. Queries will be issued until indexing completes. Indexing can either be throttled or unthrottled. 
+This challenge executes indexing and querying concurrently. Queries will be issued until indexing completes. Indexing can either be throttled or unthrottled.
 
 Note: If the indexing load is higher than the cluster can support, a time lag will start to occur on the indexed documents. This may result in queries returning with no hits as the expected data has yet to be indexed.
 
@@ -341,10 +344,10 @@ Note that this challenge requires you to be able to successfully create a snapsh
 
 ### Many Shards Quantitative (many-shards-quantitative)
 
-This challenge aims to get more specific numbers of what we can support in terms of indices count. It creates initial 
+This challenge aims to get more specific numbers of what we can support in terms of indices count. It creates initial
 set of indices as before and then index to small set of data streams. These data streams will almost never
 rollover (rollover based on size with 100gb as `max_size`). This is supposed to be run with multiple values of
-`initial_indices_count` parameter (0k, 5k, 10k, 20k, 25k, 30k etc), to find when we observe slowdown of more than 20% 
+`initial_indices_count` parameter (0k, 5k, 10k, 20k, 25k, 30k etc), to find when we observe slowdown of more than 20%
 compared baseline or there are other symptoms that we are in bad shape (excessive GC collection etc).
 
 Users of this track may use this challenge as base for nightly tests in regard to indices count (`initial_indices_count=20k`
@@ -386,7 +389,7 @@ The following is for advanced users only and should be done in exceptional circu
 
 ### Ratios
 
-By default, the track generates a dataset by sampling the source corpora randomly according to defined ratios. These ratios can be changed through the parameter `integration_ratios`. 
+By default, the track generates a dataset by sampling the source corpora randomly according to defined ratios. These ratios can be changed through the parameter `integration_ratios`.
 
 This parameter must be passed as a dictionary where the top level keys represent the integration names. Each integration in turn has its own dictionary with a `corpora` object.  This object describes the corpora associated with the integration as well as the ratios to use when generating the dataset.  The ratios values are recalculated to a percentage of the total data generated. Changing this value requires the user to understand which corpora are associated with which integrations - this thus represents an advanced use case.
 
@@ -413,7 +416,7 @@ As an example, consider the following for the integrations `kafka` and `nginx`:
 Note how in this case, the ratios associated with the corpora sum to 1 i.e. `0.25+0.25+0.1+0.1+0.3 = 1.0` allowing for easier calculation of the data distribution but this is not required. For cases when all integration rations do not add up to 1, [data_generator.py processor](https://github.com/elastic/rally-tracks/blob/e86cbff0666eb3c6a62afe109cb90581fc69f8b0/elastic/shared/track_processors/data_generator.py#LL252C15-L252C15) will recalculate the ratios.  
 
 
-The parameter `integration_ratios` is best set via a track parameter file as described here [here](https://esrally.readthedocs.io/en/stable/command_line_reference.html#track-params). 
+The parameter `integration_ratios` is best set via a track parameter file as described here [here](https://esrally.readthedocs.io/en/stable/command_line_reference.html#track-params).
 
 ### Remove Fields
 
@@ -455,34 +458,34 @@ For snapshot integration tests, specify a target S3 bucket which contains the de
 ## FAQ
 
 1. How much disk space do I need?
-	
+
 	Disk space is consumed by both the original downloaded corpora and the generated corpus.
-		
+
 	When specifying a `raw_data_volume_per_day` you are actually asking for the volume of raw data to simulate e.g. for log files, the volume of logs on disk. When a log message is converted to JSON it inherently increases its size due to the associated notation overhead. The Elastic agent adds further meta fields e.g. `host_name`, which cause this size to increase further. This "raw to JSON expansion factor" N, means that 1GB of raw data will equate to NGB of JSON on disk. Furthermore, this factor is different from different corpuses - as they have different meta fields and common enrichments. On average, we estimate this factor to be approximately 10x - but its subject to changes in the Elastic agent and the metadata enrichment the user chooses to enable at source. The parameter `max_generated_corpus_size` is therefore critical - this places an upper limit on the JSON data generated. In most cases this will be the limiting factor on data generation.
-		
+
 	Therefore, allow the sum of the following:
-		
+
 	* `max_total_download_gb` which defaults to `2 * num of corpus` (18 corpus currently) or `36gb` by default. At minimum `1gb` per corpus will be downloaded, irrespective of this value, requiring at least `18gb` of disk space. Note: `max_total_download_gb` will be rounded upto a multiple of the number of corpora e.g. `30` with be converted to `36`.
-	* Allow `min((end_date - start_date) * raw_data_volume_per_day * 10, max_generated_corpus_size)` for generated. 
-	
+	* Allow `min((end_date - start_date) * raw_data_volume_per_day * 10, max_generated_corpus_size)` for generated.
+
 2. How much data will be sent to my cluster during indexing?
-	
+
 	Similar to data generation, the associated expansion of converting raw messages to JSON means that more data will be sent to Elasticsearch then the value of `raw_data_volume_per_day` * `(end_date - start_date)`. We estimate this expansion factor to be around 10x based on the default corpus ratios. This value is highly variable across different corpora - if you modify the corpus ratios the expansion factor may therefore increase or decrease accordingly.
-	
-3. Why is more data generated and sent than specified by `raw_data_volume_per_day` * `(end_date - start_date)`? 
+
+3. Why is more data generated and sent than specified by `raw_data_volume_per_day` * `(end_date - start_date)`?
 
 	See question (2)
 
 4. Can data be indexed more than once? Do I need to think about duplication?
-	
+
 	Duplication in data has the potential to cause higher levels of index compression in Elasticsearch than would be experienced in real world cases. To ensure testing is as accurate as possible we aim to minimise this effect but incorrect track usage can cause it to occur.
-	 
+
 	Data can occur in several stages of the track, most of which you can eliminate with sufficient disk resources:
-	
+
 	- Prior to indexing this track uses downloaded data for each corpus to generate a file with the specified corpus ratios. The volume of data downloaded can be limited by the parameter `max_total_download_gb`. This volume is shared equally across the corpora. A user can intentionally limit the downloaded volume to conserve disk space. If they inturn generate a file which requires more data for a corpus than has been downloaded, the track will reuse the downloaded source data - effectively causing duplication of documents in the generated file. At which point this occurs is difficult to predict - it will depend on the `max_total_download_gb`, corpus ratios and volume of data requested for generation (approximately `min(raw_data_volume_per_day * (end_date - start_date) * 10, max_generated_corpus_size)`. For very large generation sizes data will be inevitably be reused i.e. you will exhaust the available download corpus datasets. As a rule of thumb, we recommended setting `max_total_download_gb` to approximately `min(raw_data_volume_per_day * (end_date - start_date) * 10, max_generated_corpus_size) * 2.0` (assuming default corpus ratios).
-	
+
 	- Users can limit the size of the generated file using the parameter `max_generated_corpus_size`, in order to conserve disk space. Should this value be less than the required data needing indexing, the track will reuse the generated data - looping over it and inturn causing data duplication in Elasticsearch. The duplication caused by this behaviour converges to 0 as `max_generated_corpus_size` approaches approximately `raw_data_volume_per_day * (end_date - start_date) * 10` (assuming default corpus ratios).
-	
+
 5. How do I create a scenario where data is bulk loaded, and once sufficient volume is available, before querying and indexing occurs concurrently?
 
 
@@ -497,6 +500,3 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
-
-

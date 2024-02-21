@@ -1,0 +1,64 @@
+{
+  "name": "delete-index",
+  "operation": {
+    "operation-type": "delete-index"
+  }
+},
+{
+  "name": "create-index",
+  "operation": {
+    "operation-type": "create-index",
+    "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+      "index.store.type": "{{store_type | default('fs')}}",
+      {%- endif -%}{# non-serverless-index-settings-marker-end #}
+      "index.codec": "best_compression"
+    }{%- endif %}
+  }
+},
+{
+  "name": "check-cluster-health",
+  "operation": {
+    "operation-type": "cluster-health",
+    "index": "nyc_taxis",
+    "request-params": {
+      "wait_for_status": "{{cluster_health | default('green')}}"
+    },
+    "retry-until-success": true
+  }
+}
+{%- set p_as_clients = (as_clients | default([8,16,32]))%}
+{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([300,300,300]))%}
+{%- set p_as_time_periods = (as_time_periods | default([300,300,300]))%}
+{%- set p_as_target_throughputs = (as_target_throughputs | default([2,4,8]))%}
+{%- set p_bulk_size = (bulk_size | default(5000))%}
+{%- for i in range(as_clients|length) %},
+  {%- if p_as_target_throughputs[i] < 0 %}
+{
+  "name": "bulk-{{loop.index}}-c{{p_as_clients[i]}}-b{{p_bulk_size}}",
+  "clients": {{p_as_clients[i]}},
+  "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+  "operation": {
+    "operation-type": "bulk",
+    "bulk-size": {{p_bulk_size}},
+    "looped": true
+  },
+  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+  "time-period": {{p_as_time_periods[i]}}
+}
+  {%- else %}
+{
+  "name": "bulk-{{loop.index}}-c{{p_as_clients[i]}}-b{{p_bulk_size}}-t{{p_as_target_throughputs[i]}}",
+  "clients": {{p_as_clients[i]}},
+  "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+  "operation": {
+    "operation-type": "bulk",
+    "bulk-size": {{p_bulk_size}},
+    "looped": true
+  },
+  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+  "time-period": {{p_as_time_periods[i]}},
+  "target-throughput": {{p_as_target_throughputs[i]}}
+}
+  {%- endif %}
+{%- endfor %}

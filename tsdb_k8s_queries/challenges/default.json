@@ -152,28 +152,6 @@
         {% for name, info in time_intervals.items() %}
         {
           "parallel": {
-            "completed-by": "status_per_pod_{{name}}",
-            "clients": 2,
-            "tasks": [
-              {
-                "name": "touch-pod-3-{{name}}",
-                "operation": "touch-pod-index",
-                "clients": {{touch_bulk_indexing_clients}}
-              },
-              {
-                "operation": "status_per_pod_{{name}}",
-                "warmup-iterations": {{search_warmup_iterations}},
-                "iterations": {{search_iterations}},
-                "target-interval": {{target_interval}},
-                "clients": 1
-              }
-            ]
-          }
-        },
-        {%- endfor %}
-        {% for name, info in time_intervals.items() %}
-        {
-          "parallel": {
             "completed-by": "tx_network_usage_per_pod_{{name}}",
             "clients": 2,
             "tasks": [
@@ -325,5 +303,106 @@
           }
         }{{ ", " if not loop.last else "" }}
         {%- endfor %}
+      ]
+    },
+    {
+      "name": "append-no-conflicts-index-only",
+      "description": "A challenge centered just around storage. Indexes the two data sets and runs a force merge after that.",
+      "default": false,
+      "schedule": [
+        {
+          "name": "delete-all-datastreams",
+          "operation": {
+            "operation-type": "delete-data-stream"
+          }
+        },
+        {
+          "name": "delete-all-composable-templates",
+          "operation": {
+            "operation-type": "delete-composable-template"
+          }
+        },
+        {
+          "name": "create-all-templates",
+          "operation": {
+            "operation-type": "create-composable-template",
+            "request-params": {
+              "create": "true"
+            }
+          }
+        },
+        {
+          "name": "put-timestamp-pipeline",
+          "operation": {
+            "operation-type": "put-pipeline",
+            "id": "timestamp_pipeline",
+            "body": {
+              "processors": [
+                  {
+                      "set": {
+                          "field": "@timestamp",
+                          "value": {{'"{{_ingest.timestamp}}"'}}
+                      }
+                  },
+                  {
+                    "script": {
+                      "source": "Random r  = new Random();ctx['kubernetes']['pod']['uid'] = 'value-' + r.nextLong();"
+                    }
+                  }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "index-container",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "operation": "index-pod",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}}
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh"
+        },
+        {
+          "name": "wait-until-index-merges-fininshes",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 14400,
+            "max-num-segments": 1
+          }
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh"
+        }
       ]
     }

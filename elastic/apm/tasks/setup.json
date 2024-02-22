@@ -15,12 +15,7 @@
     "operation-type": "delete-composable-template"
   }
 },
-{
-  "name": "delete-all-component-templates",
-  "operation": {
-    "operation-type": "delete-component-template"
-  }
-},
+{# create or update apm@settings template #}
 {        
   "name": "create-all-component-templates",
   "operation": {
@@ -31,7 +26,10 @@
 {
   "name": "create-all-composable-templates",
   "operation": {
-    "operation-type": "create-composable-template"
+    "operation-type": "create-composable-template",
+    "request-params": {
+      "create": "true"
+    }
   }
 },
 {

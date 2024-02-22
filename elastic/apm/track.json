@@ -1,6 +1,31 @@
 {
   "version": 2,
   "description": "Elastic APM benchmark for Rally",
+  "composable-templates": [
+    {
+      "name": "apm-index-template",
+      "index-pattern": "*-apm*",
+      "template": "index-template.json"
+    }
+  ],
+  "component-templates": [
+    {
+      "name": "traces-apm@custom",
+      "template": "component-template.json"
+    },
+    {
+      "name": "metrics-apm@custom",
+      "template": "component-template.json"
+    },
+    {
+      "name": "logs-apm@custom",
+      "template": "component-template.json"
+    },
+    {
+      "name": "common-apm@custom",
+      "template": "component-template.json"
+    }
+  ],
   "data-streams": [
     {"name": "traces-apm*"},
     {"name": "metrics-apm*"},
@@ -19,26 +44,7 @@
     }
   ],
   "schedule": [
-    {
-      "name": "delete-all-data-streams",
-      "operation": {
-        "operation-type": "delete-data-stream",
-        "data-stream": [
-          "traces-apm*",
-          "metrics-apm*",
-          "logs-apm*"
-        ]
-      }
-    },
-    {
-      "operation": {
-        "operation-type": "cluster-health",
-        "request-params": {
-          "wait_for_status": "yellow"
-        },
-        "retry-until-success": true
-      }
-    },
+    {% include "tasks/setup.json" %},
     {
       "operation": {
         "operation-type": "bulk",

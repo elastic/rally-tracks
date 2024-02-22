@@ -20,6 +20,7 @@
 {% set p_query_warmup_time_period = (query_warmup_time_period | default(120)) %}
 {% set p_query_time_period = (query_time_period | default(900)) %}
 {% set p_query_request_params = (query_request_params | default({}))%}
+{% set p_include_esql_queries = (include_esql_queries | default(build_flavor != "serverless")) %}
 
 {% set p_throttle_indexing = (throttle_indexing | default(false)) %}
 {% set p_max_download_gb = (max_total_download_gb | default(2 * num_corpus)) %}
@@ -41,6 +42,8 @@
 {% set p_restore_data_streams = (restore_data_streams | default("logs-*")) %}
 {% set p_snapshot_metadata = (snapshot_metadata | default({}))%}
 {% set p_snapshot_rename_suffix = (snapshot_rename_suffix | default("") ) %}
+{% set p_dsl_poll_interval = (dsl_poll_interval | default(false) ) %}
+{% set p_dsl_default_rollover = (dsl_default_rollover | default(false) ) %}
 
 {% set p_worker_threads_enabled = (worker_threads_enabled | default(true))  %}
 
@@ -146,7 +149,8 @@
     "wait-for-status": "{{ wait_for_status | default('green') }}",
     "force-data-generation": {{ force_data_generation | default(false) | tojson }},
     "detailed-results": {{ detailed_results | default(false) | tojson }},
-    "number-of-workflows": {{ p_num_query_workflows }}
+    "number-of-workflows": {{ p_num_query_workflows }},
+    "workflow-request-cache": {{ workflow_request_cache | default(true) | tojson }}
   },
   "data-streams": [
     {

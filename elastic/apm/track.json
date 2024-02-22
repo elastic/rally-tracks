@@ -1,0 +1,52 @@
+{
+  "version": 2,
+  "description": "Elastic APM benchmark for Rally",
+  "composable-templates": [
+    {
+      "name": "apm-index-template",
+      "index-pattern": "*-apm*",
+      "template": "index-template.json"
+    }
+  ],
+  "component-templates": [
+    {
+      "name": "apm@settings",
+      "template": "settings-template.json"
+    }
+  ],
+  "data-streams": [
+    {"name": "traces-apm*"},
+    {"name": "metrics-apm*"},
+    {"name": "logs-apm*"}
+  ],
+  "corpora": [
+    {
+      "name": "apm-events", 
+      "documents": [{
+        "base-url": "https://rally-tracks.elastic.co/apm",
+        "source-file": "documents.ndjson.bz2",
+        "document-count": 19557,
+        "uncompressed-bytes": 54917896,
+        "includes-action-and-meta-data": true
+      }]
+    }
+  ],
+  "schedule": [
+    {% include "tasks/setup.json" %},
+    {
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size|default(1, true)}}
+      },
+      "clients": {{bulk_clients|default(1, true)}},
+      "iterations": {{bulk_iterations|default(1, true)}},
+      "target-throughput": 100
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": 1
+      }
+    }
+  ]
+}

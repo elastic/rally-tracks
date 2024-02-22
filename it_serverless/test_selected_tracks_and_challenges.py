@@ -27,6 +27,7 @@ class TestTrackRepository:
         "cohere_vector",
         # "dense_vector", (slow)
         "eql",
+        "elastic/apm",
         "geonames",
         "geopoint",
         "geopointshape",

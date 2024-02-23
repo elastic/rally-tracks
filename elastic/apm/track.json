@@ -10,7 +10,19 @@
   ],
   "component-templates": [
     {
-      "name": "apm@settings",
+      "name": "traces-apm@custom",
+      "template": "settings-template.json"
+    },
+    {
+      "name": "metrics-apm@custom",
+      "template": "settings-template.json"
+    },
+    {
+      "name": "logs-apm@custom",
+      "template": "settings-template.json"
+    },
+    {
+      "name": "common-apm@custom",
       "template": "settings-template.json"
     }
   ],

@@ -1,0 +1,34 @@
+{
+  "name": "delete-index",
+  "operation-type": "delete-index",
+  "include-in-reporting": false
+},
+{
+  "name": "create-index",
+  "operation-type": "create-index",
+  "include-in-reporting": false
+},
+{
+  "name": "check-cluster-health",
+  "operation-type": "cluster-health",
+  "request-params": {
+    "wait_for_status": "green"
+  },
+  "retry-until-success": true,
+  "include-in-reporting": false
+},
+{
+  "name": "random-bulk-indexing",
+  "operation-type": "bulk",
+  "param-source": "random-bulk-param-source",
+  "dims": {{dims | default(128)}},
+  "partitions": {{partitions | default(1000)}}
+},
+{
+  "name": "brute-force-filtered-search",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "dims": {{dims | default(128)}},
+  "partitions": {{partitions | default(1000)}}
+}
+

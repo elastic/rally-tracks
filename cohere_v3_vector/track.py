@@ -1,7 +1,8 @@
+import bz2
 import json
 import os
 
-QUERIES_FILENAME: str = "queries.json"
+QUERIES_FILENAME: str = "queries.json.bz2"
 
 
 class KnnParamSource:
@@ -19,7 +20,7 @@ class KnnParamSource:
         self._queries = []
 
         cwd = os.path.dirname(__file__)
-        with open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
+        with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
             for vector_query in queries_file:
                 self._queries.append(json.loads(vector_query))
         self._iters = 0

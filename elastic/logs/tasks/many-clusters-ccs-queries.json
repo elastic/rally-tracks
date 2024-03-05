@@ -55,6 +55,16 @@
         },
         "target-interval": {{ p_user_think_time }},
         "schedule": "poisson"
+      },
+      {
+        "name": "field-caps-exclude-empty-fields",
+        "operation": {
+          "operation-type": "raw-request",
+          "path": {{ "/%s/_field_caps?fields=*&include_empty_fields=false" | format(target_index) | tojson }},
+          "method": "GET"
+        },
+        "target-interval": {{ p_user_think_time }},
+        "schedule": "poisson"
       }
     ]
   }

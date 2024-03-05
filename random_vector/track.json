@@ -1,0 +1,20 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmarking filtered search on random vectors",
+  "indices": [
+    {
+      "name": "index",
+      "body": "index-mapping.json"
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ],
+  "dependencies": [
+    "numpy"
+  ]
+}

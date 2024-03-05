@@ -1,0 +1,21 @@
+{
+  "name": "field-caps-index-filter",
+  "operation": {
+    "operation-type": "raw-request",
+    "method": "POST",
+    "path": "/auditbeat*/_field_caps?fields=*",
+    "body": {
+      "index_filter": {
+        "range": {
+          "@timestamp": {
+            "gte": "2020-01-01T00:00:00",
+            "lte": "now/d"
+          }
+        }
+      }
+    }
+  },
+  "iterations": 200,
+  "warmup-iterations": 10,
+  "clients": 2
+}

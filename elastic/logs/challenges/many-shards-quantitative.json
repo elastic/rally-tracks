@@ -84,6 +84,8 @@
       }
     },
     {% include "tasks/field-caps.json" %},
-    {% include "tasks/field-caps-non-empty-fields.json" %}
+    {% include "tasks/field-caps-non-empty-fields.json" %},
+    {% include "tasks/field-caps-index-filter.json" %},
+    {% include "tasks/field-caps-index-filter-empty-fields.json" %}
   ]
 }

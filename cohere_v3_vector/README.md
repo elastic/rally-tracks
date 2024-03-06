@@ -45,7 +45,7 @@ This will build 47 `cohere-documents-XX.json` file for the entire dataset of 138
 The `queries.json` can be rebuilt using the `_tools/generate_queries.py`, this will stream a partial training dataset from hugging face, call the Cohere generate API for each to get a question based on it, and then call the Cohere embed API for the question, and store the embeddings in `queries.json`.
 This will take a very long time, maybe grab a ☕️ ?
 
-You will need a production API key from (Cohere)[https://dashboard.cohere.com/api-keys], as the trial keys are heavily rate-limited:
+You will need a production API key from [Cohere](https://dashboard.cohere.com/api-keys), as the trial keys are heavily rate-limited:
 
 ```console
 $ export COHERE_API_KEY='abcdefghijklmnopqrstuvwxyz'

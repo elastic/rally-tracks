@@ -1,0 +1,76 @@
+{
+  "name": "index-and-search",
+  "description": "Index the document corpus and perform additional searches",
+  "schedule": [
+    {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+    {
+      "name": "delete-all-data-streams",
+      "operation": {
+        "operation-type": "delete-data-stream"
+      }
+    },
+    {
+      "name": "delete-all-templates",
+      "operation": {
+        "operation-type": "delete-composable-template"
+      }
+    },
+    {
+      "name": "create-all-templates",
+      "operation": {
+        "operation-type": "create-composable-template",
+        "request-params": {
+          "create": "true"
+        }
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {%- else %}
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "github-archive",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {%- endif %}
+    {
+      "operation": "index",
+      "warmup-time-period": 240,
+      "clients": {{bulk_indexing_clients | default(8)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {
+      "operation": "bool_query",
+      "time-period": 1800,
+      "warmup-time-period": 300,
+      "clients": {{search_clients | default(8)}}
+    }
+  ]
+}

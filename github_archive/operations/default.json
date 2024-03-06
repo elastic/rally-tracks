@@ -35,4 +35,111 @@
     },
     "size": 1000
   }
+},
+{
+  "name": "bool_query",
+  "operation-type": "search",
+  "body": {
+    "size": 100,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "range": {
+              "created_at": {
+                "lte": "2021-10-07T23:59:58Z",
+                "gt": "2021-10-06T23:59:58Z"
+              }
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "match": {
+                    "public": true
+                  }
+                },
+                {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "terms": {
+                          "type": [
+                            "IssueCommentEvent"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "match": {
+                          "payload.action": "opened"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "field": "org.url"
+                        }
+                      },
+                      {
+                        "exists": {
+                          "field": "payload.pull_request"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "must_not": [
+          {
+            "match": {
+              "has_issues": false
+            }
+          },
+          {
+            "bool": {
+              "must": [
+                {
+                  "match": {
+                    "repo.visibility": "public"
+                  }
+                },
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "match": {
+                          "pull_request.state": "open"
+                        }
+                      },
+                      {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "exists":{
+                                "field": "pull_request.merged_at"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
 }

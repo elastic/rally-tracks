@@ -429,11 +429,41 @@ Showing details for track [github_archive]:
 * Compressed Size: 7.6 GB
 * Uncompressed Size: 107.3 GB
 
+=============================
+Challenge [append-index-only]
+=============================
+
+Index the document corpus
+
+Schedule:
+----------
+
+1. delete-index
+2. create-index
+3. cluster-health
+4. index (8 clients)
+
+============================
+Challenge [index-and-search]
+============================
+
+Index the document corpus and perform additional searches
+
+Schedule:
+----------
+
+1. delete-index
+2. create-index
+3. cluster-health
+4. index (8 clients)
+5. refresh-after-index
+6. bool_query (8 clients)
+
 ================================================
 Challenge [append-no-conflicts] (run by default)
 ================================================
 
-Index the document corpus
+Index the document corpus and search
 
 Schedule:
 ----------
@@ -445,49 +475,6 @@ Schedule:
 5. refresh-after-index
 6. default
 7. default_1k
-
-================
-Challenge [aggs]
-================
-
-Index the document corpus and execute some aggregations.
-
-Schedule:
-----------
-
-1. delete-index
-2. create-index
-3. cluster-health
-4. index (8 clients)
-5. refresh-after-index
-6. force-merge
-7. simulate-dashboard
-
-=====================
-Challenge [transform]
-=====================
-
-Create and run a few transforms
-
-Schedule:
-----------
-
-1. delete-index
-2. create-index
-3. cluster-health
-4. index (8 clients)
-5. refresh-after-index
-6. force-merge
-7. wait-until-merges-finish
-8. delete-transform-group-by-hour
-9. create-transform-group-by-hour
-10. start-transform-group-by-hour
-11. delete-transform-issue-comments
-12. create-transform-issue-comments
-13. start-transform-issue-comments
-14. delete-transform-repo-commits
-15. create-transform-repo-commits
-16. start-transform-repo-commits
 ```
 
 ### License

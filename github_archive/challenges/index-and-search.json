@@ -70,7 +70,7 @@
       "operation": "add_filter_alias"
     },
     {%- set p_search_clients=search_clients | default(8) %}
-    {%- set num_search_clients=search_clients//2 %}
+    {%- set num_search_clients=p_search_clients//2 %}
     {
       "parallel": {
         "time-period": {{search_time_period | default(1800)}},

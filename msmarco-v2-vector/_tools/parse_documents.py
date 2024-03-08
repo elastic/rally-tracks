@@ -1,6 +1,8 @@
 import json
 import sys
 
+import numpy
+import vg
 from datasets import DownloadMode, load_dataset
 
 DATASET_NAME: str = f"Cohere/msmarco-v2-embed-english-v3"
@@ -47,9 +49,10 @@ def output_documents(docs_file, start_index, end_index):
 
     progress_bar(doc_count, dataset_size)
     for doc in docs:
+        normalized_vector = vg.normalize(numpy.array(doc["emb"])).tolist()
         docs_file.write(
             json.dumps(
-                {"docid": doc["_id"], "title": doc["title"], "text": doc["text"], "emb": doc["emb"]},
+                {"docid": doc["_id"], "title": doc["title"], "text": doc["text"], "emb": normalized_vector},
                 ensure_ascii=True,
             )
         )

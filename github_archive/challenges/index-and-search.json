@@ -67,7 +67,7 @@
       "operation": "refresh"
     },
     {
-      "operation": "bool_query",
+      "operation": "filter_query",
       "time-period": {{search_time_period | default(1800)}},
       "warmup-time-period": {{search_warmup_time_period | default(300)}},
       "clients": {{search_clients | default(8)}}

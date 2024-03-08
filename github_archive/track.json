@@ -27,7 +27,7 @@
   {%- endif %}
   "corpora": [
     {
-      "name": "github_archive",
+      "name": "github_archive1",
       "base-url": "https://rally-tracks.elastic.co/github_archive",
       "documents": [
         {
@@ -53,7 +53,13 @@
           "document-count": 3266945,
           "compressed-bytes": 1348701622,
           "uncompressed-bytes": 15284906890
-        },
+        }
+      ]
+    },
+    {
+    "name": "github_archive2",
+      "base-url": "https://rally-tracks.elastic.co/github_archive",
+      "documents": [
         {
           "source-file": "documents-20211005.json.bz2",
           "document-count": 3826969,

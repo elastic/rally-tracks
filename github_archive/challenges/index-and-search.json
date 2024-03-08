@@ -58,7 +58,7 @@
     },
     {%- endif %}
     {
-      "operation": "index",
+      "operation": "index_corpora1",
       "warmup-time-period": 240,
       "clients": {{bulk_indexing_clients | default(8)}}
     },
@@ -67,10 +67,33 @@
       "operation": "refresh"
     },
     {
-      "operation": "filter_query",
-      "time-period": {{search_time_period | default(1800)}},
-      "warmup-time-period": {{search_warmup_time_period | default(300)}},
-      "clients": {{search_clients | default(8)}}
+      "operation": "add_filter_alias"
+    },
+    {
+      "parallel": {
+        "clients": {{search_clients | default(8)}},
+        "time-period": {{search_time_period | default(1800)}},
+        "tasks": [
+          {
+            "operation": {
+              "operation-type": "bulk",
+              "name": "bulk_index_and_search_corpora2",
+              "corpora": "github_archive2",
+              "bulk-size": 50
+            },
+            "clients": 1,
+            "target-throughput": 10
+          },
+          {
+            "operation": "alias_bool_query_1",
+            "warmup-time-period": {{search_warmup_time_period | default(300)}}
+          },
+          {
+            "operation": "alias_bool_query_2",
+            "warmup-time-period": {{search_warmup_time_period | default(300)}}
+          }
+        ]
+      }
     }
   ]
 }

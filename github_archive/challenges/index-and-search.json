@@ -79,10 +79,10 @@
             "operation": {
               "operation-type": "bulk",
               "name": "index_corpora2",
-              "corpora": "github_archive2"
+              "corpora": "github_archive2",
+              "bulk-size": 5
             },
             "clients": 1,
-            "bulk-size": 5,
             "target-throughput": "10 docs/s"
           },
           {

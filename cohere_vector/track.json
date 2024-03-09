@@ -1,5 +1,5 @@
 {% import "rally.helpers" as rally with context %}
-
+{% set _base_url = (base_url | default("https://rally-tracks.elastic.co/cohere-miracl-en-corpus-22-12")) %}
 {
   "version": 2,
   "description": "Benchmark for vector search with Cohere Wikipedia data",
@@ -12,7 +12,7 @@
   "corpora": [
     {
       "name": "cohere-initial-indexing",
-      "base-url": "https://rally-tracks.elastic.co/cohere-miracl-en-corpus-22-12",
+      "base-url": "{{_base_url}}",
       "documents": [
         {
           "source-file": "cohere-documents-01.json.bz2",

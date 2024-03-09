@@ -1,4 +1,5 @@
 {% import "rally.helpers" as rally with context %}
+{% set _base_url = (base_url | default( "https://rally-tracks.elastic.co/wikipedia")) %}
 {
   "version": 2,
   "description": "Benchmark for search with Wikipedia data",
@@ -12,7 +13,7 @@
     {
       "name": "wikipedia",
       "includes-action-and-meta-data": true,
-      "base-url": "https://rally-tracks.elastic.co/wikipedia",
+      "base-url": "{{_base_url}}",
       "documents": [
         {
           "source-file": "pages.json.bz2",

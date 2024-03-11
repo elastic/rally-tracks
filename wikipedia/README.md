@@ -45,6 +45,8 @@ python3 _tools/parse_clicks.py --year 2023 --month 6 --lang en > queries.csv
 ### Parameters
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
+- General settings:
+  - `base_url` (default: `https://rally-tracks.elastic.co/wikipedia`): Specifies the bucket path from where to download the data set.
 - Index settings:
   - `number_of_replicas` (default: `0`)
   - `number_of_shards` (default: `1`)

@@ -41,6 +41,7 @@ The `queries.json` can be rebuilt using the `_tools/parse_queries.py`, this will
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 
+ - base_url (default: `https://rally-tracks.elastic.co/cohere-miracl-en-corpus-22-12`): Specifies the bucket path from where to download the data set.
  - initial_indexing_bulk_indexing_clients (default: 5)
  - initial_indexing_ingest_percentage (default: 100)
  - initial_indexing_bulk_size (default: 500)

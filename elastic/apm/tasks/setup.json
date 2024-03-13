@@ -15,14 +15,12 @@
     "operation-type": "delete-composable-template"
   }
 },
-{# create or update apm@settings template #}
-{        
+{
   "name": "create-all-component-templates",
   "operation": {
     "operation-type": "create-component-template"
   }
 },
-{# create placeholder index template when not exists #}
 {
   "name": "create-all-composable-templates",
   "operation": {

@@ -3,6 +3,8 @@ import json
 from os import environ
 
 import ir_datasets
+import numpy
+import vg
 from cohere import AsyncClient
 
 DATASET_NAME: str = "msmarco-passage-v2/train"
@@ -12,7 +14,7 @@ MAX_DOCS = 12_000
 
 async def retrieve_embed_for_query(co, text):
     response = await co.embed(texts=[text], model="embed-english-v3.0", input_type="search_query")
-    return response.embeddings[0]
+    return vg.normalize(numpy.array(response.embeddings[0])).tolist()
 
 
 async def output_queries(queries_file):

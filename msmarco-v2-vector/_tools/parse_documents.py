@@ -1,6 +1,6 @@
 import json
 import sys
-from multiprocessing import Pool
+from concurrent.futures import ProcessPoolExecutor as Pool
 
 from datasets import DownloadMode, load_dataset
 
@@ -24,19 +24,17 @@ def progress_bar(count, total):
 
 
 def output_pages(start_page, end_page):
-    pool = Pool(processes=50)
-    for page in range(start_page, end_page + 1):
-        start_index = (page - 1) * MAX_DOCS_PER_FILE
-        end_index = start_index + MAX_DOCS_PER_FILE
-        if end_index > TOTAL_DOCS:
-            end_index = TOTAL_DOCS
-        output_filename = f"{OUTPUT_FILENAME}-{page:02d}.json"
-        print(f"Outputing page {page} documents to {output_filename}")
-        pool.apply_async(output_documents, (output_filename, start_index, end_index))
-    pool.join()
+    with Pool(max_workers=50) as pool:
+        for page in range(start_page, end_page + 1):
+            start_index = (page - 1) * MAX_DOCS_PER_FILE
+            end_index = start_index + MAX_DOCS_PER_FILE
+            if end_index > TOTAL_DOCS:
+                end_index = TOTAL_DOCS
+            pool.submit(output_documents, f"{OUTPUT_FILENAME}-{page:02d}.json", start_index, end_index)
 
 
 def output_documents(output_filename, start_index, end_index):
+    print(f"Outputing documents to {output_filename}")
     with open(output_filename, "w") as docs_file:
         doc_count = 0
         dataset_size = end_index - start_index

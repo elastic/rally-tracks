@@ -1,5 +1,6 @@
 import json
 import sys
+from multiprocessing import Pool
 
 from datasets import DownloadMode, load_dataset
 
@@ -23,6 +24,7 @@ def progress_bar(count, total):
 
 
 def output_pages(start_page, end_page):
+    pool = Pool(processes=50)
     for page in range(start_page, end_page + 1):
         start_index = (page - 1) * MAX_DOCS_PER_FILE
         end_index = start_index + MAX_DOCS_PER_FILE
@@ -30,33 +32,34 @@ def output_pages(start_page, end_page):
             end_index = TOTAL_DOCS
         output_filename = f"{OUTPUT_FILENAME}-{page:02d}.json"
         print(f"Outputing page {page} documents to {output_filename}")
-        with open(output_filename, "w") as documents_file:
-            output_documents(documents_file, start_index, end_index)
+        pool.apply_async(output_documents, (output_filename, start_index, end_index))
+    pool.join()
 
 
-def output_documents(docs_file, start_index, end_index):
-    doc_count = 0
-    dataset_size = end_index - start_index
-    print(f"Parsing {dataset_size} documents from {DATASET_NAME} [{start_index}:{end_index}]")
-    docs = load_dataset(
-        DATASET_NAME,
-        split=f"train[{start_index}:{end_index}]",
-        num_proc=DATASET_DL_PROCS,
-        download_mode=DownloadMode.REUSE_DATASET_IF_EXISTS,
-    )
-
-    progress_bar(doc_count, dataset_size)
-    for doc in docs:
-        docs_file.write(
-            json.dumps(
-                {"docid": doc["_id"], "title": doc["title"], "text": doc["text"], "emb": doc["emb"]},
-                ensure_ascii=True,
-            )
+def output_documents(output_filename, start_index, end_index):
+    with open(output_filename, "w") as docs_file:
+        doc_count = 0
+        dataset_size = end_index - start_index
+        print(f"Parsing {dataset_size} documents from {DATASET_NAME} [{start_index}:{end_index}]")
+        docs = load_dataset(
+            DATASET_NAME,
+            split=f"train[{start_index}:{end_index}]",
+            num_proc=DATASET_DL_PROCS,
+            download_mode=DownloadMode.REUSE_DATASET_IF_EXISTS,
         )
-        docs_file.write("\n")
-        doc_count += 1
-        if doc_count % PROGRESS_EVERY == 0:
-            progress_bar(doc_count, dataset_size)
+
+        progress_bar(doc_count, dataset_size)
+        for doc in docs:
+            docs_file.write(
+                json.dumps(
+                    {"docid": doc["_id"], "title": doc["title"], "text": doc["text"], "emb": doc["emb"]},
+                    ensure_ascii=True,
+                )
+            )
+            docs_file.write("\n")
+            doc_count += 1
+            if doc_count % PROGRESS_EVERY == 0:
+                progress_bar(doc_count, dataset_size)
     print(f"Wrote {doc_count} documents to output file.")
 
 

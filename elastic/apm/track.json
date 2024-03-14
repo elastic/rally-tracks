@@ -51,7 +51,7 @@
       },
       "clients": {{bulk_clients|default(1, true)}},
       "warmup-time-period": {{bulk_warmup_period|default(0, true)}},
-      "time-period": {{bulk_time_period|default(10, true)}},
+      "time-period": {{bulk_time_period|default(1, true)}},
       "target-throughput": 100
     },
     {

@@ -1091,9 +1091,6 @@
       "name": "avg_amount_group_by_keyword_esql_segment_partitioning",
       "operation-type": "esql",
       "query" : "FROM nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
-  {# non-serverless-segment-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      "body": { "pragma": { "data_partitioning": "segment" } }
-  {%- endif -%}{# non-serverless-segment-partitioning-marker-end #}
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
     {
@@ -1123,9 +1120,6 @@
       "name": "count_group_by_keyword_esql_segment_partitioning",
       "operation-type": "esql",
       "query" : "FROM nyc_taxis | stats count=count(*) by rate_code_id | sort count desc",
-  {# non-serverless-segment-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      "body": { "pragma": { "data_partitioning": "segment" } }
-  {%- endif -%}{# non-serverless-segment-partitioning-marker-end #}
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
     {
@@ -1172,9 +1166,6 @@
       "name": "avg_passenger_count_filtered_esql_segment_partitioning",
       "operation-type": "esql",
       "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
-  {# non-serverless-segment-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      "body": { "pragma": { "data_partitioning": "segment" } }
-  {%- endif -%}{# non-serverless-segment-partitioning-marker-end #}
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
     {
@@ -1217,9 +1208,6 @@
       "name": "date_histogram_calendar_interval_esql_segment_partitioning",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
-  {# non-serverless-segment-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      "body": { "pragma": { "data_partitioning": "segment" } }
-  {%- endif -%}{# non-serverless-segment-partitioning-marker-end #}
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
     {
@@ -1233,9 +1221,6 @@
       "name": "date_histogram_fixed_interval_esql_segment_partitioning",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
-  {# non-serverless-segment-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      "body": { "pragma": { "data_partitioning": "segment" } }
-  {%- endif -%}{# non-serverless-segment-partitioning-marker-end #}
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
     {
@@ -1295,9 +1280,6 @@
       "name": "date_histogram_fixed_interval_with_metrics_esql_segment_partitioning",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
-  {# non-serverless-segment-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      "body": { "pragma": { "data_partitioning": "segment" } }
-  {%- endif -%}{# non-serverless-segment-partitioning-marker-end #}
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
     {
@@ -1338,9 +1320,6 @@
       "name": "multi_terms-keyword_esql_segment_partitioning",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-02-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id",
-  {# non-serverless-segment-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      "body": { "pragma": { "data_partitioning": "segment" } }
-  {%- endif -%}{# non-serverless-segment-partitioning-marker-end #}
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
     {

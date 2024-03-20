@@ -1182,7 +1182,7 @@
     {
       "name": "sort_by_ts_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000",
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000"
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
     {

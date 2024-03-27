@@ -97,6 +97,11 @@
       "template": "./templates/component/track-custom-mappings.json"
     },
     {
+      "name": "track-data-stream-lifecycle",
+      "template": "./templates/component/track-data-stream-lifecycle.json"
+    }
+    {# non-serverless-component-templates-marker-start #}{%- if build_flavor != "serverless" -%},
+    {
       "name": ".fleet_agent_id_verification-1",
       "template": "./templates/component/.fleet_agent_id_verification-1.json",
       "template-path": "component_template"
@@ -218,10 +223,18 @@
       "template": "./templates/component/logs-endpoint.events.registry@custom.json",
       "template-path": "component_template"
     }
+    {%- endif -%}{# non-serverless-component-templates-marker-end #}
   ],
   "composable-templates": [
+    {
+      "name": "track-empty-index-template",
+      "index-pattern": "track-empty-index-template",
+      "delete-matching-indices": false,
+      "template": "./templates/composable/track-empty-index-template.json"
+    }
 {% for integration in p_integration_ratios.keys() %}
-{% if integration == "logs-endpoint" %}
+  {% if integration == "logs-endpoint" and build_flavor != "serverless" %}
+    {{ "," if loop.first else "" }}
     {
         "name": "logs-endpoint.events.file",
         "index-pattern": "logs-endpoint.events.file-*",
@@ -264,14 +277,15 @@
         "template": "./templates/composable/logs-endpoint.events.security.json",
         "template-path": "index_template"
     }{{ ", " if not loop.last else "" }}
-{% else %}
+  {% elif integration != "logs-endpoint" %}
+    {{ "," if loop.first else "" }}
     {
       "name": "{{ integration }}",
       "index-pattern": "{{ integration + "-*" }}",
       "delete-matching-indices": false,
       "template": "{{ "./templates/composable/security-" + integration + ".json" }}"
     }{{ ", " if not loop.last else "" }}
-{% endif %}
+  {% endif %}
 {% endfor %}
   ],
   "corpora": [

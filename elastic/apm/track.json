@@ -49,11 +49,20 @@
         "looped": true,
         "ingest-percentage": {{ingest_percentage|default(100)}}
       },
-      "clients": {{bulk_clients|default(1, true)}},
+      "clients": {{bulk_clients|default(10, true)}},
       "warmup-time-period": {{bulk_warmup_period|default(0, true)}},
       "time-period": {{bulk_time_period|default(1, true)}},
       "target-throughput": 100
     },
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+    {
+      "name": "post-ingest-sleep-after-index",
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ post_ingest_sleep_duration|default(30) }}
+      }
+    },
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {
       "operation": {
         "operation-type": "force-merge",

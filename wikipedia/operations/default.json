@@ -26,7 +26,8 @@
 {
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
-  "bulk-size": {{ parallel_indexing_bulk_size | default(250) }}
+  "bulk-size": {{ parallel_indexing_bulk_size | default(250) }},
+  "looped": true
 },
 {
   "name": "refresh-after-index",

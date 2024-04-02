@@ -23,7 +23,7 @@ done
 
 # Zip each document file for uploading
 $ for file in cohere-documents-*; do
-  pv $file | bzip2 -k >> $file.bz2
+  bzip2 -k $file
 done
 $ ls -1 cohere-documents-* > files.txt
 ```

@@ -19,7 +19,7 @@
            {% if p_dsl_poll_interval %}
              "data_streams.lifecycle.poll_interval": "{{ dsl_poll_interval }}",
            {% endif %}
-           "data_streams.auto_sharding.excludes": "{{ ds_autosharding_excludes }}", 
+           "data_streams.auto_sharding.excludes": "{{ ds_autosharding_excludes | list }}", 
             "data_streams.auto_sharding.increase_shards.cooldown": "{{ ds_autosharding_increase_cooldown }}",
             "data_streams.auto_sharding.decrease_shards.cooldown": "{{ ds_autosharding_decrease_cooldown }}",
 	    "cluster.auto_sharding.min_write_threads": "{{ ds_autosharding_min_threads }}",

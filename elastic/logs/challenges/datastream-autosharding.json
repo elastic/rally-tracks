@@ -1,0 +1,75 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "datastream-autosharding",
+  "description": "Indexes logs un-throttled, for a specified time period and volume per day",
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {% set p_ds_autosharding_excludes = (ds_autosharding_excludes | default([]) ) %}
+    {% set p_ds_autosharding_increase_cooldown = (ds_autosharding_increase_cooldown | default("270s") ) %}
+    {% set p_ds_autosharding_decrease_cooldown = (ds_autosharding_decrease_cooldown | default("3d") ) %}
+    {% set p_ds_autosharding_min_threads = (ds_autosharding_min_threads | default(2) ) %}
+    {% set p_ds_autosharding_max_threads = (ds_autosharding_max_threads | default(32) ) %}
+    {
+      "name":"update-autosharding-settings",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "put-settings",
+        "body": {
+          "persistent": {
+           {% if p_dsl_poll_interval %}
+             "data_streams.lifecycle.poll_interval": "{{ dsl_poll_interval }}",
+           {% endif %}
+           "data_streams.auto_sharding.excludes": "{{ ds_autosharding_excludes }}", 
+            "data_streams.auto_sharding.increase_shards.cooldown": "{{ ds_autosharding_increase_cooldown }}",
+            "data_streams.auto_sharding.decrease_shards.cooldown": "{{ ds_autosharding_decrease_cooldown }}",
+	    "cluster.auto_sharding.min_write_threads": "{{ ds_autosharding_min_threads }}",
+	    "cluster.auto_sharding.max_write_threads": "{{ ds_autosharding_max_threads }}"
+          }
+        }
+      }
+    }
+    {%- set p_as_clients = (as_clients | default([8,16,32]))%}
+    {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([300,300,300]))%}
+    {%- set p_as_time_periods = (as_time_periods | default([300,300,300]))%}
+    {%- set p_as_target_throughputs = (as_target_throughputs | default([2,4,8]))%}
+    {%- set p_bulk_size = (bulk_size | default(5000))%}
+    {%- for i in range(as_clients|length) %},
+      {%- if p_as_target_throughputs[i] < 0 %}
+      {
+        "name": "bulk-{{loop.index}}-c{{p_as_clients[i]}}-b{{p_bulk_size}}",
+        "clients": {{p_as_clients[i]}},
+        "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+        "operation": {
+          "operation-type": "raw-bulk",
+          "param-source": "processed-source",
+          "time-format": "milliseconds",
+          "profile": "fixed_interval",
+          "bulk-size": {{ p_bulk_size }},
+          "detailed-results": true,
+          "looped": true
+        },
+        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+        "time-period": {{p_as_time_periods[i]}}
+      }
+      {%- else %}
+      {
+        "name": "bulk-{{loop.index}}-c{{p_as_clients[i]}}-b{{p_bulk_size}}-t{{p_as_target_throughputs[i]}}",
+        "clients": {{p_as_clients[i]}},
+        "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+        "operation": {
+          "operation-type": "raw-bulk",
+          "param-source": "processed-source",
+          "time-format": "milliseconds",
+          "profile": "fixed_interval",
+          "bulk-size": {{ p_bulk_size }},
+          "detailed-results": true,
+          "looped": true
+        },
+        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+        "time-period": {{p_as_time_periods[i]}},
+        "target-throughput": {{p_as_target_throughputs[i]}}
+      }
+      {%- endif %}
+    {%- endfor %}
+  ]
+}

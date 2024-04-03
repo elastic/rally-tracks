@@ -2,7 +2,7 @@
 
 This track benchmarks
 
-The dataset is derived from a dump of wikipedia availaible here:
+The dataset is derived from a dump of Wikipedia available here:
 https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2.
 
 Each page is formatted into a JSON document with the following fields:
@@ -10,11 +10,11 @@ Each page is formatted into a JSON document with the following fields:
 title: Page title
 namespace: Optional namespace for the page. [Namespaces](https://en.wikipedia.org/wiki/Wikipedia:Namespace) allow for the organization and separation of content pages from administration pages.
 content: Page content.
-redirect: If the page is a redirect, the target of the redirection. In this case content is empty.
+redirect: If the page is a redirect, the target of the redirection. In this case, the content is empty.
 
 Fields that do not have values have been left out.
 
-### Generating the documents dataset
+### Generating the document dataset
 
 To regenerate the dataset from scratch, first download and unzip an archive
 of Wikipedia dumps from [this link](https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2) (~21GB).
@@ -25,7 +25,7 @@ Then run this command:
 python _tools/parse_documents.py <path_to_xml_file> | pbzip2 -9 -k -m2000 > pages.json.bz2
 ```
 
-### Generating clickstream probability ditribution
+### Generating clickstream probability distribution
 
 To generate the probability distribution of the most frequent queries in a specific month from the Wikimedia clickstream, please execute the following command
 
@@ -64,7 +64,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
   - `application_search_clients` (default: `20`)
   - `application_search_time_period` (default: `300`)
   - `application_search_warmup_time_period` (default: `10`)
-- Concurrent searcgh & indexing:
+- Concurrent search & indexing:
   - `parallel_indexing_bulk_clients` (default: `1`)
   - `parallel_indexing_bulk_size` (default: `500`)
   - `parallel_indexing_bulk_warmup_time_period` (default: `10`)

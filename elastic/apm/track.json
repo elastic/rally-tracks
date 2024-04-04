@@ -46,7 +46,8 @@
         "operation-type": "bulk",
         "bulk-size": {{bulk_size|default(1, true)}},
         "detailed-results": true,
-        "looped": true
+        "looped": true,
+        "ingest-percentage": {{ingest_percentage|default(100)}}
       },
       "clients": {{bulk_clients|default(1, true)}},
       "warmup-time-period": {{bulk_warmup_period|default(0, true)}},

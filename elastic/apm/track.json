@@ -46,12 +46,11 @@
         "operation-type": "bulk",
         "bulk-size": {{bulk_size|default(1, true)}},
         "detailed-results": true,
-        "looped": true,
-        "ingest-percentage": {{ingest_percentage|default(100)}}
+        "looped": true
       },
       "clients": {{bulk_clients|default(1, true)}},
       "warmup-time-period": {{bulk_warmup_period|default(0, true)}},
-      "time-period": {{bulk_time_period|default(10, true)}},
+      "time-period": {{bulk_time_period|default(1, true)}},
       "target-throughput": 100
     },
     {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
@@ -68,6 +67,11 @@
         "operation-type": "force-merge",
         "max-num-segments": 1
       }
+    },
+    {
+      "name": "delete-all-datastreams",
+      "tags": ["setup"],
+      "operation": "delete-data-stream"
     }
   ]
 }

@@ -199,4 +199,19 @@
       "name": "esql_from_all_limit_50",
       "operation-type": "esql",
       "query": "FROM * | LIMIT 50"
+    },
+    {
+      "name": "esql_from_logs_limit_50",
+      "operation-type": "esql",
+      "query": "FROM logs-* | LIMIT 50"
+    },
+    {
+      "name": "esql_from_logs-postgres_limit_50",
+      "operation-type": "esql",
+      "query": "FROM logs-postgres* | LIMIT 50"
+    },
+    {
+      "name": "esql_topn_from_index_keep",
+      "operation-type": "esql",
+      "query": "topN (FROM logs-* | SORT @timestamp | LIMIT 1000 | KEEP @timestamp, id)"
     }

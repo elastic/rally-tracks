@@ -64,14 +64,7 @@
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {
-      "operation": {
-        "operation-type": "force-merge",
-        "max-num-segments": 1
-      }
-    },
-    {
       "name": "delete-all-datastreams",
-      "tags": ["setup"],
       "operation": "delete-data-stream"
     }
   ]

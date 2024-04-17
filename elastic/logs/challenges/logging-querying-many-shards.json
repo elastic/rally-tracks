@@ -6,6 +6,7 @@
     "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
   },
   "schedule": [
+    {% include "tasks/many-shards-setup.json" %},
     {% include "tasks/index-setup.json" %},
     {% if bulk_start_date and bulk_end_date %}
       {

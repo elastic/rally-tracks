@@ -1,0 +1,170 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "categorize-text",
+  "description": "Checks the performance of the categorize text aggregation",
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {
+      "operation": {
+        "name": "categorize_text_shard_size_10",
+        "operation-type": "search",
+        "index": "logs-*",
+        "body": {
+          "query": {
+            "exists": {
+              "field": "message"
+            }
+          },
+          "aggs": {
+            "categories.message": {
+             "categorize_text": {
+                "field": "message",
+                "shard_size": 10
+              }
+            }
+          }
+        }
+      },
+      "clients": 8,
+      "warmup-iterations": 10,
+      "iterations": 100,
+      "target-throughput": 100
+    },
+    {
+      "operation": {
+        "name": "categorize_text_shard_size_100",
+        "operation-type": "search",
+        "index": "logs-*",
+        "body": {
+          "query": {
+            "exists": {
+              "field": "message"
+            }
+          },
+          "aggs": {
+            "categories.message": {
+              "categorize_text": {
+                "field": "message",
+                "shard_size": 100
+              }
+            }
+          }
+        }
+      },
+      "clients": 8,
+      "warmup-iterations": 10,
+      "iterations": 100,
+      "target-throughput": 100
+    },
+    {
+      "operation": {
+        "name": "categorize_text_shard_size_1000",
+        "operation-type": "search",
+        "index": "logs-*",
+        "body": {
+          "query": {
+            "exists": {
+              "field": "message"
+            }
+          },
+          "aggs": {
+            "categories.message": {
+              "categorize_text": {
+                "field": "message",
+                "shard_size": 1000
+              }
+            }
+          }
+        }
+      },
+      "clients": 8,
+      "warmup-iterations": 10,
+      "iterations": 100,
+      "target-throughput": 100
+    },
+    {
+      "operation": {
+        "name": "categorize_text_sampler_shard_size_10",
+        "operation-type": "search",
+        "index": "logs-*",
+        "body": {
+          "query": {
+            "exists": {
+              "field": "message"
+            }
+          },
+          "aggs": {
+            "sample": {
+              "sampler": {
+                "shard_size": 10
+              },
+              "aggs": {
+                "categories.message": {
+                  "categorize_text": {
+                    "field": "message"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "operation": {
+        "name": "categorize_text_sampler_shard_size_100",
+        "operation-type": "search",
+        "index": "logs-*",
+        "body": {
+          "query": {
+            "exists": {
+              "field": "message"
+            }
+          },
+          "aggs": {
+            "sample": {
+              "sampler": {
+                "shard_size": 100
+              },
+              "aggs": {
+                "categories.message": {
+                  "categorize_text": {
+                    "field": "message"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "operation": {
+        "name": "categorize_text_sampler_shard_size_1000",
+        "operation-type": "search",
+        "index": "logs-*",
+        "body": {
+          "query": {
+            "exists": {
+              "field": "message"
+            }
+          },
+          "aggs": {
+            "sample": {
+              "sampler": {
+                "shard_size": 1000
+              },
+              "aggs": {
+                "categories.message": {
+                  "categorize_text": {
+                    "field": "message"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

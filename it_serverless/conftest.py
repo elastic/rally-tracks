@@ -204,3 +204,14 @@ def pytest_generate_tests(metafunc):
         operator = metafunc.config.getoption("operator")
         label = "operator" if operator else "user"
         metafunc.parametrize("operator", [operator], ids=[label])
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "operator_only: mark test for operator only")
+
+
+def pytest_collection_modifyitems(config, items):
+    skip = pytest.mark.skip()
+    for item in items:
+        if not config.getoption("operator") and "operator_only" in item.keywords:
+            item.add_marker(skip)

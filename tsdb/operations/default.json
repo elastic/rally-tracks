@@ -24,6 +24,77 @@
   }
 },
 {
+  "name": "search_by_doc_id",
+  "operation-type": "search",
+  "detailed-results": true,
+  "assertions": [
+    {
+      "property": "hits",
+      "condition": "==",
+      "value": 4
+    }
+  ],
+  "body": {
+    "query": {
+      "terms": {
+        "_id": [
+          "xqRz7JSW4hGturbiAAABeRwHA58",
+          "QBJ7zzj0pGd4pRawAAABeR1ZbMQ",
+          "OWcU2UA5Xj8-fOqdAAABeRrCsc0",
+          "yarBSucyUHsSS-x8AAABeRrCsc0"
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "get-xqRz7JSW4hGturbiAAABeRwHA58",
+  "operation-type": "raw-request",
+  "method": "GET",
+  "path": "/tsdb/_doc/xqRz7JSW4hGturbiAAABeRwHA58"
+},
+{
+  "name": "get-QBJ7zzj0pGd4pRawAAABeR1ZbMQ",
+  "operation-type": "raw-request",
+  "method": "GET",
+  "path": "/tsdb/_doc/QBJ7zzj0pGd4pRawAAABeR1ZbMQ"
+},
+{
+  "name": "get-OWcU2UA5Xj8-fOqdAAABeRrCsc0",
+  "operation-type": "raw-request",
+  "method": "GET",
+  "path": "/tsdb/_doc/OWcU2UA5Xj8-fOqdAAABeRrCsc0"
+},
+{
+  "name": "get-yarBSucyUHsSS-x8AAABeRrCsc0",
+  "operation-type": "raw-request",
+  "method": "GET",
+  "path": "/tsdb/_doc/yarBSucyUHsSS-x8AAABeRrCsc0"
+},
+{
+  "name": "mget",
+  "operation-type": "raw-request",
+  "path": "/tsdb/_mget",
+  "method": "GET",
+  "body": {
+    "docs": [
+      {
+        "_index": "tsdb",
+        "_id": "xqRz7JSW4hGturbiAAABeRwHA58"
+      },{
+        "_index": "tsdb",
+        "_id": "QBJ7zzj0pGd4pRawAAABeR1ZbMQ"
+      },{
+        "_index": "tsdb",
+        "_id": "OWcU2UA5Xj8-fOqdAAABeRrCsc0"
+      },{
+        "_index": "tsdb",
+        "_id": "yarBSucyUHsSS-x8AAABeRrCsc0"
+      }
+    ]
+  }
+},
+{
   "name": "date-histo-entire-range-1m",
   "operation-type": "search",
   "index": "tsdb-1m",

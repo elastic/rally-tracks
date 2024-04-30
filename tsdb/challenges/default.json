@@ -284,7 +284,7 @@
     },
     {
       "name": "low-latency",
-      "description": "Indexes the whole document corpus and executed low-latency queries as a separate challenge. Assertions might result in race failure.",
+      "description": "Indexes the whole document corpus and executes low-latency queries as a separate challenge. Assertions might result in race failure.",
       "schedule": [
         {# non-serverless-cluster-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
         {

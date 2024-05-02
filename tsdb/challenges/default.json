@@ -380,30 +380,14 @@
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
+        {% for doc_id in p_document_ids %}
         {
-          "operation": "get-iDH7i8eakdbK877gAAABeRl9KLI",
+          "operation": "get-{{doc_id}}",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
-        {
-          "operation": "get-kKKPKRU4dO9K65O1AAABeRl9KLI",
-          "warmup-iterations": 50,
-          "clients": {{ search_clients | default(1) | int }},
-          "iterations": 100
-        },
-        {
-          "operation": "get-m3hDF7ZzOutzSPPOAAABeRl9KLI",
-          "warmup-iterations": 50,
-          "clients": {{ search_clients | default(1) | int }},
-          "iterations": 100
-        },
-        {
-          "operation": "get-PEmhv9AzEQsjTKPAAAABeRl9KLI",
-          "warmup-iterations": 50,
-          "clients": {{ search_clients | default(1) | int }},
-          "iterations": 100
-        },
+        {% endfor %}
         {
           "operation": "mget",
           "warmup-iterations": 50,

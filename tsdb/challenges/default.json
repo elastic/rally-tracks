@@ -286,23 +286,6 @@
       "name": "low-latency",
       "description": "Indexes the whole document corpus and executes low-latency queries as a separate challenge. Assertions might result in race failure.",
       "schedule": [
-        {# non-serverless-cluster-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-        {
-          "name":"increase-max_buckets_setting",
-          "tags": ["setup"],
-          "operation": {
-            "operation-type": "raw-request",
-            "method": "PUT",
-            "path": "/_cluster/settings",
-            "body": {
-              "transient": {
-                "search.max_buckets" : 300000
-              }
-            },
-            "include-in-reporting": false
-          }
-        },
-        {%- endif -%}{# non-serverless-cluster-settings-marker-end #}
         {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
         {
           "name": "create-all-templates",

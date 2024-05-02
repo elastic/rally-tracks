@@ -284,7 +284,7 @@
     },
     {
       "name": "low-latency",
-      "description": "Indexes the whole document corpus and executes low-latency queries as a separate challenge. Assertions might result in race failure.",
+      "description": "Indexes the whole document corpus and executes low-latency queries. Assertions might result in race failure.",
       "schedule": [
         {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
         {

@@ -70,7 +70,7 @@
       {%- endif %}
       ,
     {% endif %}
-    {%- set p_as_clients = (as_clients | default([16,32,64,96,2]))%}
+    {%- set p_as_search_clients = (as_search_clients | default([16,32,64,96,2]))%}
     {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([60,60,60,60,60]))%}
     {%- set p_as_time_periods = (as_time_periods | default([150,300,300,600,900]))%}
     {%- set p_as_user_think_time_periods = (as_user_think_time_periods | default([1,1,1,1,1]))%}
@@ -79,10 +79,10 @@
 "apache", "system/auth", "system/syslog/dashboard", "system/syslog/lens", "mysql/dashboard", "redis", "mysql/lens",
 "postgresql/overview", "postgresql/duration"])) %}
     {% set p_query_request_params = (query_request_params | default({}))%}
-    {%- for i in range(p_as_clients|length) %}
+    {%- for i in range(p_as_search_clients|length) %}
     {% set outer_loop = loop %}
     {
-      "name": "logging-queries-{{loop.index}}-c{{p_as_clients[i]}}",
+      "name": "logging-queries-{{loop.index}}-c{{p_as_search_clients[i]}}",
       "parallel": {
         "time-period": {{ p_as_time_periods[i] }},
         "warmup-time-period": {{p_as_warmup_time_periods[i]}},
@@ -99,7 +99,7 @@
               },
               "think-time-interval": {{ p_as_user_think_time_periods[i] }},
               "workflow-interval": {{ p_as_user_workflow_time_periods[i] }},
-              "clients": {{ p_as_clients[i] }},
+              "clients": {{ p_as_search_clients[i] }},
               "schedule": "workflow-scheduler"
             }{{ ", " if not loop.last else "" }}
           {% endfor %}

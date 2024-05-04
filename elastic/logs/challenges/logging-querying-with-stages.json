@@ -84,7 +84,7 @@
     {%- set p_as_time_periods = (as_time_periods | default([900,900,900]))%}
     {%- set p_as_user_think_time_periods = (as_user_think_time_periods | default([1,1,1]))%}
     {%- set p_as_user_workflow_time_periods = (as_user_workflow_time_periods | default([1,1,1]))%}
-    {%- for i in range(as_clients|length) %},
+    {%- for i in range(p_as_clients|length) %},
     {
       "name": "logging-queries-{{loop-index}}-c{{p_as_clients[i]}}",
       "parallel": {

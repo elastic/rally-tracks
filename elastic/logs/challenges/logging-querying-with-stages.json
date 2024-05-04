@@ -80,6 +80,7 @@
 "postgresql/overview", "postgresql/duration"])) %}
     {% set p_query_request_params = (query_request_params | default({}))%}
     {%- for i in range(p_as_clients|length) %}
+    {% set outer_loop = loop %}
     {
       "name": "logging-queries-{{loop.index}}-c{{p_as_clients[i]}}",
       "parallel": {
@@ -88,7 +89,7 @@
         "tasks": [
           {% for workflow in p_query_workflows %}
             {
-              "name": {{workflow | tojson }},
+	      "name": "{{workflow}}-{{ outer_loop.index }}-{{loop.index }}",
               "operation": {
                 "operation-type": "composite",
                 "param-source": "workflow-selector",

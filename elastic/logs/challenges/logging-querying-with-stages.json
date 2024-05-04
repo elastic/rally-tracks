@@ -70,11 +70,15 @@
       {%- endif %}
       ,
     {% endif %}
-    {%- set p_as_clients = (as_clients | default([8,16,32]))%}
-    {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([300,300,300]))%}
-    {%- set p_as_time_periods = (as_time_periods | default([900,900,900]))%}
-    {%- set p_as_user_think_time_periods = (as_user_think_time_periods | default([1,1,1]))%}
-    {%- set p_as_user_workflow_time_periods = (as_user_workflow_time_periods | default([1,1,1]))%}
+    {%- set p_as_clients = (as_clients | default([8,16,48,96,2]))%}
+    {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([60,60,60,60,60]))%}
+    {%- set p_as_time_periods = (as_time_periods | default([150,300,300,600,900]))%}
+    {%- set p_as_user_think_time_periods = (as_user_think_time_periods | default([1,1,1,1,1]))%}
+    {%- set p_as_user_workflow_time_periods = (as_user_workflow_time_periods | default([1,1,1,1,1]))%}
+    {% set p_query_workflows = (query_workflows | default(["discover/search", "discover/visualize", "kafka", "nginx",
+"apache", "system/auth", "system/syslog/dashboard", "system/syslog/lens", "mysql/dashboard", "redis", "mysql/lens",
+"postgresql/overview", "postgresql/duration"])) %}
+    {% set p_query_request_params = (query_request_params | default({}))%}
     {%- for i in range(p_as_clients|length) %}
     {
       "name": "logging-queries-{{loop.index}}-c{{p_as_clients[i]}}",

@@ -68,15 +68,6 @@
         "operation": "refresh"
       }
       {%- endif %}
-      {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      {
-        "name": "compression-stats",
-        "operation": {
-          "operation-type": "compression-statistics",
-          "param-source": "create-datastream-source"
-        }
-      }
-      {%- endif -%}{# non-serverless-index-statistics-marker-end #}
       ,
     {% endif %}
     {%- set p_as_clients = (as_clients | default([8,16,32]))%}
@@ -84,7 +75,7 @@
     {%- set p_as_time_periods = (as_time_periods | default([900,900,900]))%}
     {%- set p_as_user_think_time_periods = (as_user_think_time_periods | default([1,1,1]))%}
     {%- set p_as_user_workflow_time_periods = (as_user_workflow_time_periods | default([1,1,1]))%}
-    {%- for i in range(p_as_clients|length) %},
+    {%- for i in range(p_as_clients|length) %}
     {
       "name": "logging-queries-{{loop.index}}-c{{p_as_clients[i]}}",
       "parallel": {
@@ -109,7 +100,7 @@
           {% endfor %}
         ]
       }
-    }
+    }{{ ", " if not loop.last else "" }}
     {%- endfor %}
   ]
 }

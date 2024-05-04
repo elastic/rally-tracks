@@ -84,7 +84,7 @@
       "name": "logging-queries-{{loop.index}}-c{{p_as_clients[i]}}",
       "parallel": {
         "time-period": {{ p_as_time_periods[i] }},
-        "warmup-time-period": {{p_as_warmup_time_periods[i]}}
+        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
         "tasks": [
           {% for workflow in p_query_workflows %}
             {

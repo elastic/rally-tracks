@@ -77,6 +77,7 @@
         }
       }
       {%- endif -%}{# non-serverless-index-statistics-marker-end #}
+      ,
     {% endif %}
     {%- set p_as_clients = (as_clients | default([8,16,32]))%}
     {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([300,300,300]))%}
@@ -108,7 +109,7 @@
           {% endfor %}
         ]
       }
-    }{{ ", " if not loop.last else "" }}
+    }
     {%- endfor %}
   ]
 }

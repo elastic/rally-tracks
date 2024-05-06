@@ -1,0 +1,9 @@
+{
+    "upstream": "elastic/rally-tracks",
+    "targetBranches": ["8.15"],
+    "branchLabelMapping": {
+        "^v(\\d+).(\\d+)": "$1.$2"
+      },
+    "prDescription": "{defaultPrDescription}\n\n<!--BACKPORT {commits} BACKPORT-->"
+
+}

@@ -86,6 +86,15 @@
     {% include "tasks/field-caps.json" %},
     {% include "tasks/field-caps-non-empty-fields.json" %},
     {% include "tasks/field-caps-index-filter.json" %},
-    {% include "tasks/field-caps-index-filter-empty-fields.json" %}
+    {% include "tasks/field-caps-index-filter-empty-fields.json" %}{%- if p_include_esql_queries %},
+    {
+      "operation": "esql_from_all_limit_50",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql", "limit50"]
+    }
+    {%- endif %}
+
   ]
 }

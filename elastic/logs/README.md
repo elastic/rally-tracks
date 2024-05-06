@@ -375,6 +375,22 @@ Indexes logs to the default (local) cluster, snapshots the resulting data stream
 
 Note that this challenge requires you to be able to successfully create a snapshot repository using the `snapshot_repo_name`, `snapshot_repo_type`, and `snapshot_repo_settings` track parameters.
 
+### Parameters specific to datastream-autosharding challenge
+
+This challenge is intended for serverless data streams auto sharding testing. It consists of configurable number of steps provided with array parameters.
+Note: `include_target_throughput` parameter is ignored in this challenge.
+
+* `as_clients` (default: [8,16,32]): An array with the number of indexing clients to be used in each step.
+* `as_warmup_time_periods` (default: [300,300,300]): An array with warm-up time period, in seconds, of every step.
+* `as_time_periods` (default: [300,300,300]): An array with time period, in seconds, of every step.
+* `as_target_throughputs` (default: [2,4,8]): An array with target throughput of each step, expressed in requests/s. Please use `bulk_size` parameter to translate this into docs/s. Target throughput is not configured if the values specified in this array are negative.
+* `ds_autosharding_excludes` (default: []) a list of data stream name patterns to exclude from auto sharding.
+* `ds_autosharding_increase_cooldown` (default: "270s") A time value indicating the amount of time to cooldown before increasing the number of shards.
+* `ds_autosharding_decrease_cooldown` (default: "3d") A time value indicating the amount of time to cooldown before decreasing the number of shards.
+* `ds_autosharding_min_threads` (default: 2) The minimum number of write threads in the auto *scaling* function.
+* `ds_autosharding_max_threads` (default: 32) The maximum number of write threads in the auto *scaling* function.
+* `dsl_poll_interval` (default: "5m") A time value indicating the interval data stream lifecycle runs at. This is relevant in the context of auto sharding as data stream lifecycle periodically triggers the rollover operations that will recalcualte and implement the (auto)sharding scheme.
+
 ## Changing the Datasets
 
 The generated dataset is influenced by 2 key configurations:

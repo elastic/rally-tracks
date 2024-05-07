@@ -213,5 +213,5 @@
     {
       "name": "esql_topn_from_index_keep",
       "operation-type": "esql",
-      "query": "topN (FROM logs-* | SORT @timestamp | LIMIT 1000 | KEEP @timestamp, id)"
+      "query": "FROM logs-* | SORT @timestamp | LIMIT 1000 | KEEP @timestamp, id"
     }

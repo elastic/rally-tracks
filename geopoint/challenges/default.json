@@ -141,8 +141,8 @@
         },
         {
           "operation": "polygon-within-esql",
-          "warmup-iterations": 100,
-          "iterations": 50,
+          "warmup-iterations": 200,
+          "iterations": 100,
           "tags": ["polygon", "esql"]
         },
         {
@@ -150,6 +150,30 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-centroid",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "centroid"]
+        },
+        {
+          "operation": "polygon-centroid-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "centroid", "esql"]
+        },
+        {
+          "operation": "centroid",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["centroid"]
+        },
+        {
+          "operation": "centroid-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["centroid", "esql"]
         },
         {
           "operation": "bbox-intersects",

@@ -10,9 +10,11 @@
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
   },
   "mappings": {
+    {%- if build_flavor != "serverless" -%}
     "_source": {
       "excludes": ["titleVector"]
     },
+    {%- endif -%}
     "properties": {
       "userId": {
         "type": "keyword"

@@ -456,6 +456,11 @@
       }
     },
     {
+      "name": "bbox-contains-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Contains(shape, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
+    },
+    {
       "name": "bbox-disjoint",
       "operation-type": "search",
       "index": "osm*",
@@ -474,6 +479,11 @@
       }
     },
     {
+      "name": "bbox-disjoint-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Disjoint(shape, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
+    },
+    {
       "name": "bbox-within",
       "operation-type": "search",
       "index": "osm*",
@@ -490,7 +500,12 @@
           }
         }
       }
-    },            
+    },
+    {
+      "name": "bbox-within-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Within(shape, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
+    },
     {
       "name": "mvt-hits",
       "operation-type": "search",

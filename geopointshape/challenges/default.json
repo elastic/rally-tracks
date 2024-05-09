@@ -80,7 +80,6 @@
           "operation": "polygon-intersects",
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 2,
           "tags": ["polygon"]
         },
         {
@@ -153,7 +152,6 @@
           "operation": "bbox-intersects",
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 2,
           "tags": ["bbox"]
         },
         {

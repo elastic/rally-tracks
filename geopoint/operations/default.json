@@ -215,6 +215,11 @@
       "query": "FROM osmgeopoints | STATS centroid=ST_CENTROID_AGG(location)"
     },
     {
+      "name": "centroid-to_geopoint-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | STATS centroid=ST_CENTROID_AGG(TO_GEOPOINT(location))"
+    },
+    {
       "name": "bbox-intersects",
       "operation-type": "search",
       "index": "osmgeopoints",

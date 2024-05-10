@@ -176,6 +176,12 @@
           "tags": ["centroid", "esql"]
         },
         {
+          "operation": "centroid-to_geopoint-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["centroid", "esql"]
+        },
+        {
           "operation": "bbox-intersects",
           "warmup-iterations": 200,
           "iterations": 100,

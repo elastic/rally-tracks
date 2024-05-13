@@ -8,6 +8,18 @@
           "tags": ["setup"]
         },
         {
+          "name": "delete-index-osmgeopoints",
+          "operation": "delete-index",
+          "index": "osmgeopoints",
+          "tags": ["setup"]
+        },
+        {
+          "name": "delete-index-osmgeoshapes",
+          "operation": "delete-index",
+          "index": "osmgeoshapes",
+          "tags": ["setup"]
+        },
+        {
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}

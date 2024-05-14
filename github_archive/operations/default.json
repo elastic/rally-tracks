@@ -1,11 +1,3 @@
-{%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-    {%- set p_index_source = 'gharchive' %}
-{%- else %}
-    {%- set p_index_source = 'github-archive' %}
-{%- endif %}
-{%- set p_conflicts = conflicts %}
-{%- set p_conflict_probability = conflict_probability | default(25) %}
-{%- set p_on_conflict = on_conflict | default('index') %}
 {
   "name": "index",
   "operation-type": "bulk",

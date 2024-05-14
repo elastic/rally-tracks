@@ -1,0 +1,54 @@
+{
+  "operation": {
+    "name": "delete-index-gharchive",
+    "operation-type": "delete-index",
+    "index": "gharchive"
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "delete-all-data-streams",
+    "operation-type": "delete-data-stream"
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "delete-all-templates",
+    "operation-type": "delete-composable-template"
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "create-all-templates",
+    "operation-type": "create-composable-template",
+    "request-params": {
+      "create": "true"
+    }
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "wait-for-cluster-health-status {{cluster_health}}",
+    "operation-type": "cluster-health",
+    "request-params": {
+      "wait_for_status": "{{cluster_health | default('green')}}",
+      "wait_for_no_relocating_shards": "true"
+    },
+    "retry-until-success": true
+  },
+  "tags": [
+    "setup"
+  ]
+}

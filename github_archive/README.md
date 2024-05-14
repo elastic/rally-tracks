@@ -1,8 +1,10 @@
-## GitHub Archive Track
+# GitHub Archive Track
 
 This is a Rally track using data from the [GH Archive](https://www.gharchive.org/) project for events ranging from `2021-10-01T00:00:00Z` to `2021-10-07T23:59:58Z`. All event data is indexed in its raw form as it exists in the source. When using the `data_stream` ingest mode, the `created_at` field is copied to `@timestamp` using the `copy_to` index mapping parameter.
 
-<details><summary>Example Document</summary>
+## Example Document
+
+<details><summary>PullRequestEvent</summary>
 
 ```json
 {
@@ -403,7 +405,7 @@ This is a Rally track using data from the [GH Archive](https://www.gharchive.org
   ```
 </details>
 
-### Track Parameters
+## Track Parameters
 
 Track parameters are specified using `--track-params`; e.g., `--track-params="bulk_size:1000,ingest_percentage:75"`
 
@@ -411,17 +413,33 @@ Track parameters are specified using `--track-params`; e.g., `--track-params="bu
 | --- | --- | --- |
 | `bulk_size` | `5000` | Number of batched documents per bulk request |
 | `bulk_indexing_clients` | `8` | Number of clients issuing bulk indexing requests |
+| `cluster_health` | `green` | Minimum cluster status required before proceeding to bulk indexing. Valid values are `green`, `yellow`, and `red`. |
 | `codec` | `default` | The index compression codec to use. Use `best_compression` for higher compression at the cost of CPU. |
-| `ingest_mode` | `index` | Set to `data_stream` to index to a data stream, otherwise, use a standard index. |
-| `ingest_percentage` | `100` | A number between 0 and 100 representing how much of the document corpus should be indexed |
+| `conflicts` | unset | The type of conflicts to simulate during bulk indexing. Valid values are `sequential` and `random`.  See the `conflicts` property in the [bulk operation documentation](https://esrally.readthedocs.io/en/latest/track.html#bulk) for details. This parameter is incompatible with data stream indexing. |
+| `conflict_probability` | `25` | A number between `0` and `100` defining the percentage of documents to replace on concflict. See the `conflict-probability` property in the [bulk operation documentation](https://esrally.readthedocs.io/en/latest/track.html#bulk) for details. This parameter is incompatible with data stream indexing. |
+| `on_conflict` | `index` | Valid values are `index` and `update`. Specifies if Rally should perform a new indexing action or update existing documents on id conflicts. See the `on-conflict` property in the [bulk operation documentation](https://esrally.readthedocs.io/en/latest/track.html#bulk) for details. This parameter is incompatible with data stream indexing. |
+| `data_stream_ingest` | `false` | By default, the track ingests to a standard index. A value of `true` ingests to a data stream.
+| `ingest_percentage` | `100` | A number between 0 and 100 representing how much of the document corpus should be indexed. |
 | `max_page_search_size` | `500` | Defines the initial composite aggregation page size for each checkpoint when creating transforms. |
 | `number_of_shards` | `1` | Set the number of index primary shards. |
 | `number_of_replicas` | `0` | Set the number of replica shards per primary. |
-| `source_enabled` | `true` | Set to `false` to disable storing the `_source` field in the index. |
+| `refresh_interval` | unest | Set the index refresh interval. |
+| `runtime_bulk_indexing_clients` | `5` | The number of bulk indexing clients to use during parallel indexing and search tasks. |
+| `runtime_search_clients` | `8` | The number of search clients to use during parallel indexing and search tasks. |
 
-### Track Info
+## Track Info
+
+### Standard index
 
 ```shell
+
+    ____        ____
+   / __ \____ _/ / /_  __
+  / /_/ / __ `/ / / / / /
+ / _, _/ /_/ / / / /_/ /
+/_/ |_|\__,_/_/_/\__, /
+                /____/
+
 Showing details for track [github_archive]:
 
 * Description: GitHub timeline from gharchive.org
@@ -439,9 +457,10 @@ Schedule:
 ----------
 
 1. delete-index
-2. create-index
-3. cluster-health
-4. index (8 clients)
+2. delete-data-stream-gharchive
+3. create-index
+4. wait-for-cluster-health-status 
+5. index (8 clients)
 
 ============================
 Challenge [index-and-search]
@@ -453,11 +472,16 @@ Schedule:
 ----------
 
 1. delete-index
-2. create-index
-3. cluster-health
-4. index (8 clients)
-5. refresh-after-index
-6. bool_query (8 clients)
+2. delete-data-stream-gharchive
+3. create-index
+4. wait-for-cluster-health-status 
+5. index_corpora1 (8 clients)
+6. refresh-after-index
+7. add_filter_alias
+8. 3 parallel tasks (9 clients):
+	8.1 index_corpora2
+	8.2 alias_bool_query_1 (4 clients)
+	8.3 alias_bool_query_2 (4 clients)
 
 ================================================
 Challenge [append-no-conflicts] (run by default)
@@ -469,12 +493,89 @@ Schedule:
 ----------
 
 1. delete-index
-2. create-index
-3. cluster-health
-4. index (8 clients)
-5. refresh-after-index
-6. default
-7. default_1k
+2. delete-data-stream-gharchive
+3. create-index
+4. wait-for-cluster-health-status 
+5. index (8 clients)
+6. refresh-after-index
+7. default
+8. default_1k
+```
+
+### Data streams
+
+```shell
+
+    ____        ____
+   / __ \____ _/ / /_  __
+  / /_/ / __ `/ / / / / /
+ / _, _/ /_/ / / / /_/ /
+/_/ |_|\__,_/_/_/\__, /
+                /____/
+
+Showing details for track [github_archive]:
+
+* Description: GitHub timeline from gharchive.org
+* Documents: 21,435,282
+* Compressed Size: 7.6 GB
+* Uncompressed Size: 107.3 GB
+
+=============================
+Challenge [append-index-only]
+=============================
+
+Index the document corpus
+
+Schedule:
+----------
+
+1. delete-index-gharchive
+2. delete-all-data-streams
+3. delete-all-templates
+4. create-all-templates
+5. wait-for-cluster-health-status 
+6. index (8 clients)
+
+============================
+Challenge [index-and-search]
+============================
+
+Index the document corpus and perform additional searches
+
+Schedule:
+----------
+
+1. delete-index-gharchive
+2. delete-all-data-streams
+3. delete-all-templates
+4. create-all-templates
+5. wait-for-cluster-health-status 
+6. index_corpora1 (8 clients)
+7. refresh-after-index
+8. add_filter_alias
+9. 3 parallel tasks (9 clients):
+	9.1 index_corpora2
+	9.2 alias_bool_query_1 (4 clients)
+	9.3 alias_bool_query_2 (4 clients)
+
+================================================
+Challenge [append-no-conflicts] (run by default)
+================================================
+
+Index the document corpus and search
+
+Schedule:
+----------
+
+1. delete-index-gharchive
+2. delete-all-data-streams
+3. delete-all-templates
+4. create-all-templates
+5. wait-for-cluster-health-status 
+6. index (8 clients)
+7. refresh-after-index
+8. default
+9. default_1k
 ```
 
 ### License

@@ -391,6 +391,11 @@ Note: `include_target_throughput` parameter is ignored in this challenge.
 * `ds_autosharding_max_threads` (default: 32) The maximum number of write threads in the auto *scaling* function.
 * `dsl_poll_interval` (default: "5m") A time value indicating the interval data stream lifecycle runs at. This is relevant in the context of auto sharding as data stream lifecycle periodically triggers the rollover operations that will recalcualte and implement the (auto)sharding scheme.
 
+### Categorize Text (categorize-text)
+
+Runs the categorize-text aggregation with varying values of shard-size and with/without the use of a sampler
+aggregation. The challenge targets a specific set of indices by way of an index alias.
+
 ## Changing the Datasets
 
 The generated dataset is influenced by 2 key configurations:

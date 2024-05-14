@@ -424,7 +424,8 @@ Track parameters are specified using `--track-params`; e.g., `--track-params="bu
 | `number_of_shards` | `1` | Set the number of index primary shards. |
 | `number_of_replicas` | `0` | Set the number of replica shards per primary. |
 | `refresh_interval` | unest | Set the index refresh interval. |
-| `runtime_bulk_indexing_clients` | `5` | The number of bulk indexing clients to use during parallel indexing and search tasks. |
+| `runtime_bulk_indexing_clients` | `1` | The number of bulk indexing clients to use during parallel indexing and search tasks. |
+| `runtime_bulk_size` | `5` | The number of batched documents per bulk request to use during parallel indexing and search tasks. |
 | `runtime_search_clients` | `8` | The number of search clients to use during parallel indexing and search tasks. |
 
 ## Track Info
@@ -432,14 +433,6 @@ Track parameters are specified using `--track-params`; e.g., `--track-params="bu
 ### Standard index
 
 ```shell
-
-    ____        ____
-   / __ \____ _/ / /_  __
-  / /_/ / __ `/ / / / / /
- / _, _/ /_/ / / / /_/ /
-/_/ |_|\__,_/_/_/\__, /
-                /____/
-
 Showing details for track [github_archive]:
 
 * Description: GitHub timeline from gharchive.org
@@ -466,7 +459,7 @@ Schedule:
 Challenge [index-and-search]
 ============================
 
-Index the document corpus and perform additional searches
+Index the document corpus, then perform parallel indexing and search operations
 
 Schedule:
 ----------
@@ -483,11 +476,11 @@ Schedule:
 	8.2 alias_bool_query_1 (4 clients)
 	8.3 alias_bool_query_2 (4 clients)
 
-================================================
-Challenge [append-no-conflicts] (run by default)
-================================================
+=========================================
+Challenge [append-index] (run by default)
+=========================================
 
-Index the document corpus and search
+Index a document corpus, then search
 
 Schedule:
 ----------
@@ -505,14 +498,6 @@ Schedule:
 ### Data streams
 
 ```shell
-
-    ____        ____
-   / __ \____ _/ / /_  __
-  / /_/ / __ `/ / / / / /
- / _, _/ /_/ / / / /_/ /
-/_/ |_|\__,_/_/_/\__, /
-                /____/
-
 Showing details for track [github_archive]:
 
 * Description: GitHub timeline from gharchive.org
@@ -540,7 +525,7 @@ Schedule:
 Challenge [index-and-search]
 ============================
 
-Index the document corpus and perform additional searches
+Index the document corpus, then perform parallel indexing and search operations
 
 Schedule:
 ----------
@@ -558,11 +543,11 @@ Schedule:
 	9.2 alias_bool_query_1 (4 clients)
 	9.3 alias_bool_query_2 (4 clients)
 
-================================================
-Challenge [append-no-conflicts] (run by default)
-================================================
+=========================================
+Challenge [append-index] (run by default)
+=========================================
 
-Index the document corpus and search
+Index a document corpus, then search
 
 Schedule:
 ----------

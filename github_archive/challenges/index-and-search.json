@@ -1,6 +1,6 @@
 {
   "name": "index-and-search",
-  "description": "Index the document corpus and perform additional searches",
+  "description": "Index the document corpus, then perform parallel indexing and search operations",
   "schedule": [
     {%- if p_data_stream %}
     {{ rally.collect(parts="../schedules/setup_data_stream.json") }}
@@ -30,9 +30,9 @@
             "operation": {
               "operation-type": "bulk",
               "corpora": "github_archive2",
-              "bulk-size": {{runtime_bulk_indexing_clients | default(5)}}
+              "bulk-size": {{runtime_bulk_size | default(5)}}
             },
-            "clients": 1,
+            "clients": {{runtime_bulk_indexing_clients | default(1)}},
             "target-throughput": "10 docs/s"
           },
           {

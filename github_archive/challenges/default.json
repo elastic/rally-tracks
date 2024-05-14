@@ -1,6 +1,6 @@
 {
-  "name": "append-no-conflicts",
-  "description": "Index the document corpus and search",
+  "name": "append-index",
+  "description": "Index a document corpus, then search",
   "default": true,
   "schedule": [
     {%- if p_data_stream %}

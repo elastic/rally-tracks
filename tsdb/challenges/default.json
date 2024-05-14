@@ -281,4 +281,118 @@
           "iterations": 100
         }
       ]
+    },
+    {
+      "name": "low-latency",
+      "description": "Indexes the whole document corpus and executes low-latency queries. Assertions might result in race failure.",
+      "schedule": [
+        {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+        {
+          "name": "create-all-templates",
+          "operation": {
+            "operation-type": "create-composable-template",
+            "request-params": {
+              "create": "true"
+            }
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {%- else %}
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{index_settings | default({}) | tojson}}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "tsdb",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {%- endif %}
+        {
+          "operation": "index",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh"
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+            {%- endif %}
+          }
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh"
+        },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+        {
+          "operation": "search_by_doc_id",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {% for doc_id in p_document_ids %}
+        {
+          "operation": "get-{{doc_id}}",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {% endfor %}
+        {
+          "operation": "mget",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        }
+      ]
     }

@@ -108,29 +108,29 @@
     {
       "operation": "esql_from_all_limit_50",
       "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
+      "warmup-iterations": 10,
+      "iterations": 50,
       "tags": ["esql", "limit50"]
     },
     {
       "operation": "esql_from_logs_limit_50",
       "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
+      "warmup-iterations": 10,
+      "iterations": 50,
       "tags": ["esql", "limit50"]
     },
     {
       "operation": "esql_from_logs_postgres_limit_50",
       "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
+      "warmup-iterations": 10,
+      "iterations": 50,
       "tags": ["esql", "limit50"]
     },
     {
       "operation": "esql_topn_from_index_keep",
       "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
+      "warmup-iterations": 10,
+      "iterations": 50,
       "tags": ["esql", "topn"]
     }{%- if build_flavor != "serverless" or serverless_operator == true %},
     {

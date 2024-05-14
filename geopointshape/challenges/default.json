@@ -4,13 +4,15 @@
       "default": true,
       "schedule": [
         {
-          "operation": "delete-index"
+          "operation": "delete-index",
+          "tags": ["setup"]
         },
         {
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
-          }
+          },
+          "tags": ["setup"]
         },
         {
           "name": "check-cluster-health",
@@ -22,28 +24,33 @@
               "wait_for_no_relocating_shards": "true"
             },
             "retry-until-success": true
-          }
+          },
+          "tags": ["setup"]
         },
         {
           "operation": "index-append",
           "warmup-time-period": 120,
           "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+          "tags": ["setup"]
         },
         {
           "name": "refresh-after-index",
-          "operation": "refresh"
+          "operation": "refresh",
+          "tags": ["setup"]
         },
         {
           "operation": {
             "operation-type": "force-merge",
             "max-num-segments": {{ max_num_segments | default(1) }},
             "request-timeout": 7200
-          }
+          },
+          "tags": ["setup"]
         },
         {
           "name": "refresh-after-force-merge",
-          "operation": "refresh"
+          "operation": "refresh",
+          "tags": ["setup"]
         },
         {
           "name": "wait-until-merges-finish",
@@ -56,7 +63,8 @@
             },
             "retry-until-success": true,
             "include-in-reporting": false
-          }
+          },
+          "tags": ["setup"]
         },
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
@@ -64,50 +72,129 @@
           "operation": {
             "operation-type": "sleep",
             "duration": {{ post_ingest_sleep_duration|default(30) }}
-          }
+          },
+          "tags": ["setup"]
         },
         {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
-          "operation": "polygon",
+          "operation": "polygon-intersects",
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 2
+          "tags": ["polygon"]
         },
         {
-          "operation": "bbox",
+          "operation": "polygon-intersects-esql",
           "warmup-iterations": 200,
           "iterations": 100,
-          "target-throughput": 2
+          "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-intersects-count-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-contains",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon"]
+        },
+        {
+          "operation": "polygon-contains-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-contains-count-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-disjoint",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon"]
+        },
+        {
+          "operation": "polygon-disjoint-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-disjoint-count-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-within",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon"]
+        },
+        {
+          "operation": "polygon-within-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-within-count-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "bbox-intersects",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["bbox"]
+        },
+        {
+          "operation": "bbox-intersects-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["bbox", "esql"]
         },
         {
           "operation": "geoGrid_geohash",
           "warmup-iterations": 200,
-          "iterations": 100
+          "iterations": 100,
+          "tags": ["geo_grid"]
         },
         {
           "operation": "geoGrid_geotile",
           "warmup-iterations": 200,
-          "iterations": 100
+          "iterations": 100,
+          "tags": ["geo_grid"]
         },
         {
           "operation": "geoGrid_geohex",
           "warmup-iterations": 200,
-          "iterations": 100
+          "iterations": 100,
+          "tags": ["geo_grid"]
         },
         {
           "operation": "geoGrid_aggs_geohash",
           "warmup-iterations": 200,
-          "iterations": 100
+          "iterations": 100,
+          "tags": ["geo_grid"]
         },
         {
           "operation": "geoGrid_aggs_geotile",
           "warmup-iterations": 200,
-          "iterations": 100
+          "iterations": 100,
+          "tags": ["geo_grid"]
         },
         {
           "operation": "geoGrid_aggs_geohex",
           "warmup-iterations": 200,
-          "iterations": 100
+          "iterations": 100,
+          "tags": ["geo_grid"]
         }
       ]
     },

@@ -1,3 +1,4 @@
+{% set p_document_ids = (document_ids | default(["iDH7i8eakdbK877gAAABeRl9KLI", "kKKPKRU4dO9K65O1AAABeRl9KLI", "m3hDF7ZzOutzSPPOAAABeRl9KLI", "PEmhv9AzEQsjTKPAAAABeRl9KLI"])) %}
 {
   "name": "index",
   "operation-type": "bulk",
@@ -21,6 +22,54 @@
       "match_all": {}
     },
     "size": 1000
+  }
+},
+{
+  "name": "search_by_doc_id",
+  "operation-type": "search",
+  "detailed-results": true,
+  "assertions": [
+    {
+      "property": "hits",
+      "condition": "==",
+      "value": {{ p_document_ids|length }}
+    }
+  ],
+  "body": {
+    "query": {
+      "terms": {
+        "_id": [
+          {% for doc_id in p_document_ids %}
+          {{doc_id | tojson}}
+          {{ ", " if not loop.last else "" }}
+          {% endfor %}
+        ]
+      }
+    }
+  }
+},
+{% for doc_id in p_document_ids %}
+{
+  "name": "get-{{doc_id}}",
+  "operation-type": "raw-request",
+  "method": "GET",
+  "path": "/tsdb/_doc/{{doc_id}}"
+},
+{% endfor %}
+{
+  "name": "mget",
+  "operation-type": "raw-request",
+  "path": "/tsdb/_mget",
+  "method": "GET",
+  "body": {
+    "docs": [
+      {% for doc_id in p_document_ids %}
+      {
+        "_index": "tsdb",
+        "_id": {{doc_id | tojson}}
+      }{{ ", " if not loop.last else "" }}
+      {% endfor %}
+    ]
   }
 },
 {

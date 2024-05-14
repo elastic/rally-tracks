@@ -331,6 +331,14 @@
         },
         {%- endif %}
         {
+          "operation": "delete-doc-id-pipeline",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-doc-id-pipeline",
+          "tags": ["setup"]
+        },
+        {
           "operation": "index",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},

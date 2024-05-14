@@ -8,15 +8,19 @@
           "tags": ["setup"]
         },
         {
-          "name": "delete-index-osmgeopoints",
-          "operation": "delete-index",
-          "index": "osmgeopoints",
+          "operation": {
+            "name": "delete-index-osmgeopoints",
+            "operation-type": "delete-index",
+            "index": "osmgeopoints"
+          },
           "tags": ["setup"]
         },
         {
-          "name": "delete-index-osmgeoshapes",
-          "operation": "delete-index",
-          "index": "osmgeoshapes",
+          "operation": {
+            "name": "delete-index-osmgeoshapes",
+            "operation-type": "delete-index",
+            "index": "osmgeoshapes"
+          },
           "tags": ["setup"]
         },
         {

@@ -70,8 +70,8 @@
         }
       },
       "clients": 8,
-      "warmup-iterations": 10,
-      "iterations": 100,
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(10) }},
       "target-throughput": 100
     },
     {
@@ -100,7 +100,11 @@
             }
           }
         }
-      }
+      },
+      "clients": 8,
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(10) }},
+      "target-throughput": 100
     },
     {% endfor %}
     {

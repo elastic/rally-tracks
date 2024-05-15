@@ -78,32 +78,26 @@
       {
         "name": "default_no_target",
         "operation": "default",
-        "iterations": 100,
         "clients": {{p_as_search_clients[i]}}
       },
       {
         "operation": "default_1k",
-        "iterations": 100,
         "clients": {{p_as_search_clients[i]}}
       },
       {
         "operation": "range",
-        "iterations": 100,
         "clients": {{p_as_search_clients[i]}}
       },
       {
         "operation": "distance_amount_agg",
-        "iterations": 50,
         "clients": {{p_as_search_clients[i]}}
       },
       {
         "operation": "autohisto_agg",
-        "iterations": 100,
         "clients": {{p_as_search_clients[i]}}
       },
       {
         "operation": "date_histogram_agg",
-        "iterations": 500,
         "clients": {{p_as_search_clients[i]}}
       }
     ]

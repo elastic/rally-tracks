@@ -1,124 +1,118 @@
 {
-  "name": "index-and-search-with-stages",
-  "description": "Index the document corpus and perform additional searches allowing for configuring a set of steps where a different number of search clients can be configured for every step",
-  "schedule": [
-    {
-      "operation": "delete-index"
+  "operation": "delete-index"
+},
+{
+  "operation": {
+    "operation-type": "create-index",
+    "index": "nyc_taxis",
+    "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+        {% if p_include_non_serverless_index_settings %}
+      "index.translog.flush_threshold_size": "4g",
+        {% endif %}
+      {%- endif -%}{# non-serverless-index-settings-marker-end #}
+      "index.codec": "best_compression",
+      "index.refresh_interval": "30s"
+    }{%- endif %}
+  }
+},
+{
+  "name": "check-cluster-health",
+  "operation": {
+    "operation-type": "cluster-health",
+    "index": "nyc_taxis",
+    "request-params": {
+      "wait_for_status": "{{cluster_health | default('green')}}",
+      "wait_for_no_relocating_shards": "true"
     },
-    {
-      "operation": {
-        "operation-type": "create-index",
-        "index": "nyc_taxis",
-        "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
-          {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-            {% if p_include_non_serverless_index_settings %}
-          "index.translog.flush_threshold_size": "4g",
-            {% endif %}
-          {%- endif -%}{# non-serverless-index-settings-marker-end #}
-          "index.codec": "best_compression",
-          "index.refresh_interval": "30s"
-        }{%- endif %}
+    "retry-until-success": true
+  }
+},
+{
+  "operation": "index",
+  "warmup-time-period": 240,
+  "clients": {{bulk_indexing_clients | default(8)}},
+  "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+},
+{
+  "name": "refresh-after-index",
+  "operation": "refresh"
+},
+{% if p_include_force_merge %}
+{
+  "operation": {
+    "operation-type": "force-merge",
+    "index": "nyc_taxis",
+    "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+    "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+    {%- endif %}
+  }
+},
+{
+  "name": "refresh-after-force-merge",
+  "operation": "refresh"
+},
+{
+  "operation": "wait-until-merges-finish"
+},
+{% endif %}
+{# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+{
+  "name": "post-ingest-sleep",
+  "operation": {
+    "operation-type": "sleep",
+    "duration": {{ post_ingest_sleep_duration|default(30) }}
+  }
+},
+{%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+{%- set p_as_search_clients = (as_search_clients | default([16,32,64,96,2]))%}
+{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([60,60,60,60,60]))%}
+{%- set p_as_time_periods = (as_time_periods | default([150,300,300,600,900]))%}
+{%- for i in range(p_as_search_clients|length) %}
+{
+  "name": "queries-{{loop.index}}-c{{p_as_search_clients[i]}}",
+  "parallel": {
+    "time-period": {{ p_as_time_periods[i] }},
+    "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+    "tasks": [
+      {
+        "name": "default_no_target",
+        "operation": "default",
+        "warmup-iterations": 50,
+        "iterations": 100,
+        "clients": {{p_as_search_clients[i]}}
+      },
+      {
+        "operation": "default_1k",
+        "warmup-iterations": 50,
+        "iterations": 100,
+        "clients": {{p_as_search_clients[i]}}
+      },
+      {
+        "operation": "range",
+        "warmup-iterations": 50,
+        "iterations": 100,
+        "clients": {{p_as_search_clients[i]}}
+      },
+      {
+        "operation": "distance_amount_agg",
+        "warmup-iterations": 50,
+        "iterations": 50,
+        "clients": {{p_as_search_clients[i]}}
+      },
+      {
+        "operation": "autohisto_agg",
+        "warmup-iterations": 50,
+        "iterations": 100,
+        "clients": {{p_as_search_clients[i]}}
+      },
+      {
+        "operation": "date_histogram_agg",
+        "warmup-iterations": 500,
+        "iterations": 500,
+        "clients": {{p_as_search_clients[i]}}
       }
-    },
-    {
-      "name": "check-cluster-health",
-      "operation": {
-        "operation-type": "cluster-health",
-        "index": "nyc_taxis",
-        "request-params": {
-          "wait_for_status": "{{cluster_health | default('green')}}",
-          "wait_for_no_relocating_shards": "true"
-        },
-        "retry-until-success": true
-      }
-    },
-    {
-      "operation": "index",
-      "warmup-time-period": 240,
-      "clients": {{bulk_indexing_clients | default(8)}},
-      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
-    },
-    {
-      "name": "refresh-after-index",
-      "operation": "refresh"
-    },
-    {% if p_include_force_merge %}
-    {
-      "operation": {
-        "operation-type": "force-merge",
-        "index": "nyc_taxis",
-        "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
-        "max-num-segments": {{ force_merge_max_num_segments | tojson }}
-        {%- endif %}
-      }
-    },
-    {
-      "name": "refresh-after-force-merge",
-      "operation": "refresh"
-    },
-    {
-      "operation": "wait-until-merges-finish"
-    },
-    {% endif %}
-    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
-    {
-      "name": "post-ingest-sleep",
-      "operation": {
-        "operation-type": "sleep",
-        "duration": {{ post_ingest_sleep_duration|default(30) }}
-      }
-    },
-    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
-    {%- set p_as_search_clients = (as_search_clients | default([16,32,64,96,2]))%}
-    {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([60,60,60,60,60]))%}
-    {%- set p_as_time_periods = (as_time_periods | default([150,300,300,600,900]))%}
-    {%- for i in range(p_as_search_clients|length) %}
-    {
-      "name": "queries-{{loop.index}}-c{{p_as_search_clients[i]}}",
-      "parallel": {
-        "time-period": {{ p_as_time_periods[i] }},
-        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-        "tasks": [
-          {
-            "name": "default_no_target",
-            "operation": "default",
-            "warmup-iterations": 50,
-            "iterations": 100,
-	    "clients": {{p_as_search_clients[i]}}
-          },
-          {
-            "operation": "default_1k",
-            "warmup-iterations": 50,
-            "iterations": 100,
-	    "clients": {{p_as_search_clients[i]}}
-          },
-          {
-            "operation": "range",
-            "warmup-iterations": 50,
-	    "iterations": 100,
-	    "clients": {{p_as_search_clients[i]}}
-          },
-          {
-            "operation": "distance_amount_agg",
-            "warmup-iterations": 50,
-            "iterations": 50,
-	    "clients": {{p_as_search_clients[i]}}
-          },
-          {
-            "operation": "autohisto_agg",
-            "warmup-iterations": 50,
-            "iterations": 100,
-	    "clients": {{p_as_search_clients[i]}}
-          },
-          {
-            "operation": "date_histogram_agg",
-            "warmup-iterations": 500,
-            "iterations": 500,
-	    "clients": {{p_as_search_clients[i]}}
-          }
-        ]
-      }
-    }
-    {%- endfor %}
-  ]
+    ]
+  }
 }
+{%- endfor %}

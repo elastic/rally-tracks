@@ -11,9 +11,17 @@
           "operation": {
             "name": "delete-index-osmgeopoints",
             "operation-type": "delete-index",
-            "index": "osmgeo*"
+            "index": "osmgeopoints"
           },
-          "tags": ["setup", "external"]
+          "tags": ["setup"]
+        },
+        {
+          "operation": {
+            "name": "delete-index-osmgeoshapes",
+            "operation-type": "delete-index",
+            "index": "osmgeoshapes"
+          },
+          "tags": ["setup"]
         },
         {
           "operation": {

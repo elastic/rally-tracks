@@ -95,23 +95,28 @@
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "default_1k-{{loop.index}}",
+        "name": "default_1k-{{loop.index}}",
+	"operation": "default_1k",
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "range-{{loop.index}}",
+        "name": "range-{{loop.index}}",
+        "operation": "range",
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "distance_amount_agg-{{loop.index}}",
+        "name": "distance_amount_agg-{{loop.index}}",
+        "operation": "distance_amount_agg",
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "autohisto_agg-{{loop.index}}",
+        "name": "autohisto_agg-{{loop.index}}",
+        "operation": "autohisto_agg",
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "date_histogram_agg-{{loop.index}}",
+        "name": "date_histogram_agg-{{loop.index}}",
+        "operation": "date_histogram_agg",
         "clients": {{p_as_search_clients[i]}}
       }
     ]

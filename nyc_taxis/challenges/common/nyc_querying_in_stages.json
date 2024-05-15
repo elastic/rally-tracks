@@ -76,28 +76,28 @@
     "warmup-time-period": {{p_as_warmup_time_periods[i]}},
     "tasks": [
       {
-        "name": "default_no_target",
+        "name": "default_no_target-{{loop.index}}",
         "operation": "default",
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "default_1k",
+        "operation": "default_1k-{{loop.index}}",
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "range",
+        "operation": "range-{{loop.index}}",
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "distance_amount_agg",
+        "operation": "distance_amount_agg-{{loop.index}}",
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "autohisto_agg",
+        "operation": "autohisto_agg-{{loop.index}}",
         "clients": {{p_as_search_clients[i]}}
       },
       {
-        "operation": "date_histogram_agg",
+        "operation": "date_histogram_agg-{{loop.index}}",
         "clients": {{p_as_search_clients[i]}}
       }
     ]

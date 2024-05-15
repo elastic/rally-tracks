@@ -1,12 +1,8 @@
 {
-  "name": "append-index-only",
+  "name": "index-only",
   "description": "Index the document corpus",
   "schedule": [
-    {%- if p_data_stream %}
-    {{ rally.collect(parts="../schedules/setup_data_stream.json") }}
-    {%- else %}
-    {{ rally.collect(parts="../schedules/setup_standard_index.json") }}
-    {% endif -%},
+    {{ rally.collect(parts="../common/schedule_setup.json") }},
     {
       "operation": "index",
       "warmup-time-period": 240,

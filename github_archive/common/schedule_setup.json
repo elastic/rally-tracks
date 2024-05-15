@@ -1,0 +1,98 @@
+{%- if p_data_stream %}
+{
+  "operation": {
+    "name": "delete-index-gharchive",
+    "operation-type": "delete-index",
+    "index": "gharchive"
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "delete-all-data-streams",
+    "operation-type": "delete-data-stream"
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "delete-all-templates",
+    "operation-type": "delete-composable-template"
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "create-all-templates",
+    "operation-type": "create-composable-template",
+    "request-params": {
+      "create": "true"
+    }
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "wait-for-cluster-health-status-{{p_cluster_health}}",
+    "operation-type": "cluster-health",
+    "request-params": {
+      "wait_for_status": "{{p_cluster_health}}",
+      "wait_for_no_relocating_shards": "true"
+    },
+    "retry-until-success": true
+  },
+  "tags": [
+    "setup"
+  ]
+}
+{%- else %}
+{
+  "operation": {
+    "operation-type": "delete-index"
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "delete-data-stream-gharchive",
+    "operation-type": "delete-data-stream",
+    "data-stream": "gharchive"
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "operation-type": "create-index",
+    "settings": {{ index_settings | default({}) | tojson }}
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "operation": {
+    "name": "wait-for-cluster-health-status-{{p_cluster_health}}",
+    "operation-type": "cluster-health",
+    "request-params": {
+      "wait_for_status": "{{p_cluster_health}}",
+      "wait_for_no_relocating_shards": "true"
+    },
+    "retry-until-success": true
+  },
+  "tags": [
+    "setup"
+  ]
+}
+{% endif -%}

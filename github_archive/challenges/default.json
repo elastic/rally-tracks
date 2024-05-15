@@ -1,13 +1,9 @@
 {
-  "name": "append-index",
-  "description": "Index a document corpus, then search",
+  "name": "index-and-search",
+  "description": "Index the document corpus and search",
   "default": true,
   "schedule": [
-    {%- if p_data_stream %}
-    {{ rally.collect(parts="../schedules/setup_data_stream.json") }}
-    {%- else %}
-    {{ rally.collect(parts="../schedules/setup_standard_index.json") }}
-    {% endif -%},
+    {{ rally.collect(parts="../common/schedule_setup.json") }},
     {
       "operation": "index",
       "warmup-time-period": 240,

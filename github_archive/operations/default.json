@@ -174,8 +174,8 @@
     "actions": [
       {
         "add": {
-          "index": "github-archive",
-          "alias": "github-archive-alias",
+          "index": "gharchive",
+          "alias": "gharchive-alias",
           "filter": {
             "bool": {
               "must": [
@@ -279,7 +279,7 @@
 {
   "name": "alias_bool_query_1",
   "operation-type": "search",
-  "index": "github-archive-alias",
+  "index": "gharchive-alias",
   "body": {
     "size": 100,
     "query": {
@@ -353,7 +353,7 @@
 {
   "name": "alias_bool_query_2",
   "operation-type": "search",
-  "index": "github-archive-alias",
+  "index": "gharchive-alias",
   "body": {
     "query": {
       "bool": {

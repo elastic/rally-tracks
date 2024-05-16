@@ -39,9 +39,9 @@
       "bulk-size": {{polygon_bulk_size | default(100)}},
       "ingest-percentage": {{ingest_percentage | default(100)}},
       "corpora": "default-polygons"
-    },            
+    },
     {
-      "name": "polygon-intersects",
+      "name": "polygon-intersects-orig",
       "operation-type": "search",
       "index": "osm*",
       "body": {
@@ -63,12 +63,157 @@
           }
         }
       }
-    }, 
+    },
+    {
+      "name": "polygon-intersects",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 10,
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-intersects-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | LIMIT 10"
+    },
+    {
+      "name": "polygon-intersects-count",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              }
+            }
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+               "field": "size"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-intersects-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(size)"
+    },
+    {
+      "name": "polygon-intersects-oresund",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 10,
+        "query": {
+          "geo_shape": {
+            "ignore_unmapped": true,
+            "shape": {
+              "relation": "intersects",
+              "shape": {
+                "coordinates": [[
+                  [12.5706, 55.45074],
+                  [12.04631, 55.70469],
+                  [12.06618, 55.7991],
+                  [12.68098, 55.93474],
+                  [13.48894, 55.88091],
+                  [13.60262, 55.68478],
+                  [13.44479, 55.32661],
+                  [12.64235, 55.32723],
+                  [12.5706, 55.45074]
+                ]],
+                "type": "Polygon"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-intersects-oresund-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON((12.5706 55.45074, 12.04631 55.70469, 12.06618 55.7991, 12.68098 55.93474, 13.48894 55.88091, 13.60262 55.68478, 13.44479 55.32661, 12.64235 55.32723, 12.5706 55.45074))\")) | LIMIT 10"
+    },
+    {
+      "name": "polygon-intersects-oresund-count",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "ignore_unmapped": true,
+            "shape": {
+              "relation": "intersects",
+              "shape": {
+                "coordinates": [[
+                  [12.5706, 55.45074],
+                  [12.04631, 55.70469],
+                  [12.06618, 55.7991],
+                  [12.68098, 55.93474],
+                  [13.48894, 55.88091],
+                  [13.60262, 55.68478],
+                  [13.44479, 55.32661],
+                  [12.64235, 55.32723],
+                  [12.5706, 55.45074]
+                ]],
+                "type": "Polygon"
+              }
+            }
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "size"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-intersects-oresund-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON((12.5706 55.45074, 12.04631 55.70469, 12.06618 55.7991, 12.68098 55.93474, 13.48894 55.88091, 13.60262 55.68478, 13.44479 55.32661, 12.64235 55.32723, 12.5706 55.45074))\")) | STATS count=COUNT(size)"
+    },
     {
       "name": "polygon-contains",
       "operation-type": "search",
       "index": "osm*",
       "body": {
+        "size": 10,
         "query": {
           "geo_shape": {
             "shape": {
@@ -88,12 +233,56 @@
           }
         }
       }
-    },      
+    },
+    {
+      "name": "polygon-contains-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Contains(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | LIMIT 10"
+    },
+    {
+      "name": "polygon-contains-count",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "contains"
+            }
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "size"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-contains-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Contains(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(size)"
+    },
     {
       "name": "polygon-disjoint",
       "operation-type": "search",
       "index": "osm*",
       "body": {
+        "size": 10,
         "query": {
           "geo_shape": {
             "shape": {
@@ -115,10 +304,54 @@
       }
     },
     {
+      "name": "polygon-disjoint-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Disjoint(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | LIMIT 10"
+    },
+    {
+      "name": "polygon-disjoint-count",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "disjoint"
+            }
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "size"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-disjoint-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Disjoint(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(size)"
+    },
+    {
       "name": "polygon-within",
       "operation-type": "search",
       "index": "osm*",
       "body": {
+        "size": 10,
         "query": {
           "geo_shape": {
             "shape": {
@@ -138,7 +371,50 @@
           }
         }
       }
-    },   
+    },
+    {
+      "name": "polygon-within-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Within(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | LIMIT 10"
+    },
+    {
+      "name": "polygon-within-count",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "within"
+            }
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "size"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-within-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Within(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(size)"
+    },
     {
       "name": "bbox-intersects",
       "operation-type": "search",
@@ -155,6 +431,11 @@
           }
         }
       }
+    },
+    {
+      "name": "bbox-intersects-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
     },
     {
       "name": "bbox-contains", 
@@ -175,6 +456,11 @@
       }
     },
     {
+      "name": "bbox-contains-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Contains(shape, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
+    },
+    {
       "name": "bbox-disjoint",
       "operation-type": "search",
       "index": "osm*",
@@ -193,6 +479,11 @@
       }
     },
     {
+      "name": "bbox-disjoint-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Disjoint(shape, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
+    },
+    {
       "name": "bbox-within",
       "operation-type": "search",
       "index": "osm*",
@@ -209,7 +500,12 @@
           }
         }
       }
-    },            
+    },
+    {
+      "name": "bbox-within-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Within(shape, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
+    },
     {
       "name": "mvt-hits",
       "operation-type": "search",

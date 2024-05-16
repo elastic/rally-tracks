@@ -4,8 +4,7 @@ import json
 import os
 import statistics
 from collections import defaultdict
-from typing import Any, List
-from typing import Dict
+from typing import Any, Dict, List
 
 Qrels = Dict[str, Dict[str, int]]
 Results = Dict[str, Dict[str, float]]
@@ -80,9 +79,7 @@ def get_rescore_query(vec, window_size):
                     },
                     "script": {
                         "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
-                        "params": {
-                            "query_vector": vec
-                        }
+                        "params": {"query_vector": vec}
                     }
                 }
             }
@@ -119,23 +116,18 @@ class KnnParamSource:
         top_k = self._params.get("k", 10)
         num_candidates = self._params.get("num-candidates", 50)
         num_rescore = self._params.get("num-rescore", 0)
-        query_vec = self._queries[self._iters]['emb']
+        query_vec = self._queries[self._iters]["emb"]
         result = {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
             "size": top_k,
             "body": {
-                "knn": {
-                    "field": "emb",
-                    "query_vector": query_vec,
-                    "k": max(top_k, num_rescore),
-                    "num_candidates": num_candidates
-                },
+                "knn": {"field": "emb", "query_vector": query_vec, "k": max(top_k, num_rescore), "num_candidates": num_candidates},
                 "_source": False,
             }
         }
         if num_rescore > 0:
-            result["body"]['rescore'] = get_rescore_query(query_vec, num_rescore)
+            result["body"]["rescore"] = get_rescore_query(query_vec, num_rescore)
         if "filter" in self._params:
             result["body"]["knn"]["filter"] = self._params["filter"]
 
@@ -180,7 +172,7 @@ class KnnRecallRunner:
         request_cache = params["cache"]
 
         cwd = os.path.dirname(__file__)
-        qrels = read_qrels(os.path.join(cwd, 'qrels.tsv'))
+        qrels = read_qrels(os.path.join(cwd, "qrels.tsv"))
         results = defaultdict(dict)
         recall_total = 0
         exact_total = 0
@@ -189,11 +181,11 @@ class KnnRecallRunner:
         with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
             for line in queries_file:
                 query = json.loads(line)
-                query_id = query['query_id']
+                query_id = query["query_id"]
                 body = {
                     "knn": {
                         "field": "emb",
-                        "query_vector": query['emb'],
+                        "query_vector": query["emb"],
                         "k": max(top_k, num_rescore),
                         "num_candidates": num_candidates,
                     },
@@ -202,19 +194,14 @@ class KnnRecallRunner:
                     "profile": True,
                 }
                 if num_rescore > 0:
-                    body['rescore'] = get_rescore_query(query['emb'], num_rescore)
-                knn_result = await es.search(
-                    index=index,
-                    request_cache=request_cache,
-                    size=top_k,
-                    body=body
-                )
+                    body["rescore"] = get_rescore_query(query["emb"], num_rescore)
+                knn_result = await es.search(index=index, request_cache=request_cache, size=top_k, body=body)
                 knn_hits = []
                 for hit in knn_result["hits"]["hits"]:
-                    doc_id = hit['fields']['docid'][0]
+                    doc_id = hit["fields"]["docid"][0]
                     results[query_id][doc_id] = hit["_score"]
                     knn_hits.append(doc_id)
-                recall_hits = query['ids'][:top_k]
+                recall_hits = query["ids"][:top_k]
                 vector_operations_count = extract_vector_operations_count(knn_result)
                 nodes_visited.append(vector_operations_count)
                 current_recall = len(set(knn_hits).intersection(set(recall_hits)))

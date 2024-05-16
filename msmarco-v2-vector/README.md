@@ -54,6 +54,7 @@ $ python _tools/parse_queries.py
 Given the size of the corpus, the true top N values used for recall operations have been approximated offline for each query as follows:
 ```
 {
+    "size": 100,
     "knn": {
         "field": "emb", 
         "query_vector": query['emb'],

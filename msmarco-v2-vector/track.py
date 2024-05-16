@@ -10,7 +10,7 @@ Qrels = Dict[str, Dict[str, int]]
 Results = Dict[str, Dict[str, float]]
 
 QUERIES_FILENAME: str = "queries.json.bz2"
-
+QUERIES_RECALL_FILENAME: str = "queries-recall.json.bz2"
 
 def extract_vector_operations_count(knn_result):
     vector_operations_count = 0
@@ -175,7 +175,7 @@ class KnnRecallRunner:
         exact_total = 0
         min_recall = top_k
         nodes_visited = []
-        with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
+        with bz2.open(os.path.join(cwd, QUERIES_RECALL_FILENAME), "r") as queries_file:
             for line in queries_file:
                 query = json.loads(line)
                 query_id = query["query_id"]
@@ -198,7 +198,7 @@ class KnnRecallRunner:
                     doc_id = hit["fields"]["docid"][0]
                     results[query_id][doc_id] = hit["_score"]
                     knn_hits.append(doc_id)
-                recall_hits = query["ids"][:top_k]
+                recall_hits = ["123"] #query["ids"][:top_k]
                 vector_operations_count = extract_vector_operations_count(knn_result)
                 nodes_visited.append(vector_operations_count)
                 current_recall = len(set(knn_hits).intersection(set(recall_hits)))

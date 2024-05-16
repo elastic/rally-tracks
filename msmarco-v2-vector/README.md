@@ -1,9 +1,8 @@
 ## msmarco-v2 vector track
 
 This track benchmarks the dataset from [Cohere/msmarco-v2-embed-english-v3](https://huggingface.co/datasets/Cohere/msmarco-v2-embed-english-v3).
-
-Given the size of this dataset 138.3M documents with 1024 dimension vectors you
-need a cluster with at least 60GB of total RAM available to run performant HNSW queries.
+The corpus contains the original 138M passages of the [MSMARCO (passage, version 2)](https://ir-datasets.com/msmarco-passage-v2.html) corpus embedded
+into 1024 dimensional vectors with the [Cohere `embed-english-v3.0` model](https://cohere.com/blog/introducing-embed-v3).
 
 ### Generating the document dataset
 
@@ -52,6 +51,40 @@ $ export COHERE_API_KEY='abcdefghijklmnopqrstuvwxyz'
 $ python _tools/parse_queries.py
 ```
 
+Given the size of the corpus, the true top N values used for recall operations have been approximated offline for each query as follows:
+```
+{
+    "knn": {
+        "field": "emb", 
+        "query_vector": query['emb'],
+        "k": 10000,
+        "num_candidates": 10000
+    },
+    "rescore": {
+        "window_size": 10000,
+        "query": {
+            "query_weight": 0,
+                "rescore_query": {
+                    "script_score": {
+                        "query": {
+                            "match_all": {}
+                        },
+                    "script": { 
+                        "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
+                        "params": {
+                            "query_vector": vec
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+This means that the computed recall is measured against the system's best possible approximate neighbor run rather than the actual top N.
+
+For the relevance metrics, the `qrels.tsv` file contains annotations for all the queries listed in `queries.json`. This file is generated from the original training data available at [ir_datasets/msmarco_passage_v2](https://ir-datasets.com/msmarco-passage-v2.html#msmarco-passage-v2/train).
+
 ### Parameters
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
@@ -71,3 +104,5 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
  - `standalone_search_iterations` (default: 10000)
  - `vector_index_type` (default: "int8_hnsw"): The index kind for storing the vectors.
+ - `index_refresh_interval` (default: unset): The index refresh interval.
+ - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.

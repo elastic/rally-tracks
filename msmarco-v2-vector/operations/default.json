@@ -22,8 +22,78 @@
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
   "corpora": "msmarco-v2-parallel-indexing",
-  "bulk-size": {{parallel_indexing_bulk_size | default(500)}},
+  "bulk-size": {{parallel_indexing_bulk_size | default(50)}},
   "ingest-percentage": {{parallel_indexing_ingest_percentage | default(100)}}
+},
+{
+  "name": "knn-search-10-20-20",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 20,
+  "num-rescore": 20
+},
+{
+  "name": "knn-search-10-50-20",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 50,
+  "num-rescore": 20
+},
+{
+  "name": "knn-search-10-100-20",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 100,
+  "num-rescore": 20
+},
+{
+  "name": "knn-search-10-100-40",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 100,
+  "num-rescore": 40
+},
+{
+  "name": "knn-search-10-200-20",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 200,
+  "num-rescore": 20
+},
+{
+  "name": "knn-search-10-500-20",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 500,
+  "num-rescore": 20
+},
+{
+  "name": "knn-search-10-1000-20",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 1000,
+  "num-rescore": 20
+},
+{
+  "name": "knn-search-10-20",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 20
+},
+{
+  "name": "knn-search-10-50",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 50
 },
 {
   "name": "knn-search-10-100",
@@ -33,9 +103,279 @@
   "num-candidates": 100
 },
 {
+  "name": "knn-search-10-200",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 200
+},
+{
+  "name": "knn-search-10-500",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 500
+},
+{
+  "name": "knn-search-10-1000",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 1000
+},
+{
+  "name": "knn-search-100-120-120",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 120,
+  "num-rescore": 120
+},
+{
+  "name": "knn-search-100-200-120",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 200,
+  "num-rescore": 120
+},
+{
+  "name": "knn-search-100-500-120",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 500,
+  "num-rescore": 120
+},
+{
+  "name": "knn-search-100-1000-120",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 1000,
+  "num-rescore": 120
+},
+{
+  "name": "knn-search-100-1000-200",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 1000,
+  "num-rescore": 200
+},
+{
+  "name": "knn-search-100-120",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 120
+},
+{
+  "name": "knn-search-100-200",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 200
+},
+{
+  "name": "knn-search-100-500",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num-candidates": 500
+},
+{
   "name": "knn-search-100-1000",
   "operation-type": "search",
   "param-source": "knn-param-source",
   "k": 100,
   "num-candidates": 1000
+},
+{
+  "name": "knn-recall-10-20-20",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 20,
+  "num-rescore": 20,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-50-20",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 50,
+  "num-rescore": 20,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-100-20",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 100,
+  "num-rescore": 20,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-100-40",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 100,
+  "num-rescore": 40,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-200-20",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 200,
+  "num-rescore": 20,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-500-20",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 500,
+  "num-rescore": 20,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-1000-20",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 1000,
+  "num-rescore": 20,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-20",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 20,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-50",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 50,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-100",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 100,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-200",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 200,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-500",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 500,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-10-1000",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num-candidates": 1000,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-120-120",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 120,
+  "num-rescore": 120,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-200-120",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 200,
+  "num-rescore": 120,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-500-120",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 500,
+  "num-rescore": 120,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-1000-120",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 1000,
+  "num-rescore": 120,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-1000-200",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 1000,
+  "num-rescore": 200,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-120",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 120,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-200",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 200,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-500",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 500,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-recall-100-1000",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num-candidates": 1000,
+  "include-in-reporting": false
 }

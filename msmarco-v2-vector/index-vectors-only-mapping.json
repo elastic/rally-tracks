@@ -1,19 +1,36 @@
 {
   "settings": {
     {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    "index": {
+      {%- if index_refresh_interval is defined %}
+      "index_refresh_interval": {{ index_refresh_interval | tojson }},
+      {%- endif %}
       {% if preload_pagecache %}
-    "index.store.preload": [ "vec", "vex", "vem"],
+      "store.preload": [ "vec", "vex", "vem"],
       {% endif %}
-    "index.number_of_shards": {{number_of_shards | default(1)}},
-    "index.number_of_replicas": {{number_of_replicas | default(0)}}
+      "number_of_shards": {{number_of_shards | default(1)}},
+      "number_of_replicas": {{number_of_replicas | default(0)}}
+      {% if aggressive_merge_policy %},
+      "merge": {
+        "policy": {
+          "max_merged_segment": "25gb",
+          "floor_segment": "1gb",
+          "segments_per_tier": 5
+        }
+      }
+      {% endif %}
+    }
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
   },
   "mappings": {
     "dynamic": false,
     "_source": {
-      "enabled": false
+      "excludes": ["emb"]
     },
     "properties": {
+      "docid": {
+        "type": "keyword"
+      },
       "emb": {
         "type": "dense_vector",
         "element_type": "float",

@@ -339,10 +339,10 @@
           "tags": ["setup"]
         },
         {
-          "operation": "index",
+          "operation": "index-with-doc-id-gen-pipeline",
           "warmup-time-period": 240,
-          "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "name": "refresh-after-index",

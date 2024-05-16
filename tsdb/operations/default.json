@@ -1,4 +1,4 @@
-{% set p_document_ids = (document_ids | default(["gS4gXAQ2PymeYUeeAAABeRl9KLI", "RsqXDZi2PmyLnlR_AAABeRl9KLI", "Vc8ytLUcdMYQHBSXAAABeRl9KLI", "rrRboS8C1s3V__3rAAABeRl9KLI"])) %}
+{% set p_document_ids = (document_ids | default(["Rpgg6gSYETjE4x8VrIAPNQ==", "AVdIG3TktHA+a3U2gW29QA==", "DeiNU57QgAml0UMiPg7hWA==", "3o6jhoyitLP3RPjSAEMRgQ=="])) %}
 {
   "name": "delete-doc-id-pipeline",
   "operation-type": "raw-request",
@@ -18,8 +18,8 @@
         "fingerprint": {
           "fields": [
             "@timestamp",
-            "kubernetes.pod.name",
             "metricset.name",
+            "kubernetes.pod.name",
             "kubernetes.container.id",
             "kubernetes.container.name",
             "kubernetes.volume.name",
@@ -27,9 +27,10 @@
             "kubernetes.system.container",
             "kubernetes.event.involved_object.uid"
           ],
-          "target_field": "_id",
           "salt": "17",
-          "method": "MurmurHash3"
+          "target_field": "_id",
+          "method": "MurmurHash3",
+          "ignore_missing": true
         }
       }
     ]
@@ -40,6 +41,13 @@
   "operation-type": "bulk",
   "bulk-size": {{bulk_size | default(5000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
+},
+{
+  "name": "index-with-doc-id-gen-pipeline",
+  "operation-type": "bulk",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}},
+  "pipeline": "doc_id_gen"
 },
 {
   "name": "default",

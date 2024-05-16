@@ -74,16 +74,14 @@ def get_rescore_query(vec, window_size):
             "query_weight": 0,
             "rescore_query": {
                 "script_score": {
-                    "query": {
-                        "match_all": {}
-                    },
+                    "query": {"match_all": {}},
                     "script": {
                         "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
-                        "params": {"query_vector": vec}
-                    }
+                        "params": {"query_vector": vec},
+                    },
                 }
-            }
-        }
+            },
+        },
     }
 
 
@@ -124,7 +122,7 @@ class KnnParamSource:
             "body": {
                 "knn": {"field": "emb", "query_vector": query_vec, "k": max(top_k, num_rescore), "num_candidates": num_candidates},
                 "_source": False,
-            }
+            },
         }
         if num_rescore > 0:
             result["body"]["rescore"] = get_rescore_query(query_vec, num_rescore)
@@ -148,7 +146,6 @@ class KnnRecallParamSource:
         self._cache = params.get("cache", False)
         self._params = params
         self.infinite = True
-
 
     def partition(self, partition_index, total_partitions):
         return self

@@ -1,9 +1,53 @@
-{% set p_document_ids = (document_ids | default(["iDH7i8eakdbK877gAAABeRl9KLI", "kKKPKRU4dO9K65O1AAABeRl9KLI", "m3hDF7ZzOutzSPPOAAABeRl9KLI", "PEmhv9AzEQsjTKPAAAABeRl9KLI"])) %}
+{% set p_document_ids = (document_ids | default(["Rpgg6gSYETjE4x8VrIAPNQ==", "AVdIG3TktHA+a3U2gW29QA==", "DeiNU57QgAml0UMiPg7hWA==", "3o6jhoyitLP3RPjSAEMRgQ=="])) %}
+{
+  "name": "delete-doc-id-pipeline",
+  "operation-type": "raw-request",
+  "ignore": [404],
+  "include-in-reporting": false,
+  "method": "DELETE",
+  "path": "/_ingest/pipeline/doc_id_gen"
+},
+{
+  "name": "create-doc-id-pipeline",
+  "operation-type": "raw-request",
+  "method": "PUT",
+  "path": "/_ingest/pipeline/doc_id_gen",
+  "body": {
+    "processors": [
+      {
+        "fingerprint": {
+          "fields": [
+            "@timestamp",
+            "metricset.name",
+            "kubernetes.pod.name",
+            "kubernetes.container.id",
+            "kubernetes.container.name",
+            "kubernetes.volume.name",
+            "kubernetes.node.name",
+            "kubernetes.system.container",
+            "kubernetes.event.involved_object.uid"
+          ],
+          "salt": "17",
+          "target_field": "_id",
+          "method": "MurmurHash3",
+          "ignore_missing": true
+        }
+      }
+    ]
+  }
+},
 {
   "name": "index",
   "operation-type": "bulk",
   "bulk-size": {{bulk_size | default(5000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
+},
+{
+  "name": "index-with-doc-id-gen-pipeline",
+  "operation-type": "bulk",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}},
+  "pipeline": "doc_id_gen"
 },
 {
   "name": "default",

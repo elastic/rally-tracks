@@ -331,10 +331,18 @@
         },
         {%- endif %}
         {
-          "operation": "index",
+          "operation": "delete-doc-id-pipeline",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-doc-id-pipeline",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "index-with-doc-id-gen-pipeline",
           "warmup-time-period": 240,
-          "clients": {{bulk_indexing_clients | default(8)}},
-          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+          "clients": {{bulk_indexing_clients | default(8)}}
         },
         {
           "name": "refresh-after-index",
@@ -364,17 +372,18 @@
         {
           "name": "refresh-after-force-merge",
           "operation": "refresh"
-        },
+        }
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
-        {
+        ,{
           "name": "post-ingest-sleep",
           "operation": {
             "operation-type": "sleep",
             "duration": {{ post_ingest_sleep_duration|default(30) }}
           }
-        },
+        }
         {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
-        {
+        {% if index_mode | default('time_series') is equalto 'standard' %}
+        ,{
           "operation": "search_by_doc_id",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
@@ -394,5 +403,6 @@
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
+        {%- endif %}
       ]
     }

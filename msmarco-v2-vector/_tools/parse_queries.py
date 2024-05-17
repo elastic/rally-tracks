@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import json
 from os import environ
@@ -6,10 +7,26 @@ import ir_datasets
 import numpy
 import vg
 from cohere import AsyncClient
+from elasticsearch import AsyncElasticsearch
 
 DATASET_NAME: str = "msmarco-passage-v2/train"
+RECALL_DATASET_NAME: str = "msmarco-passage-v2/trec-dl-2022/judged"
 OUTPUT_FILENAME: str = "queries.json"
-MAX_DOCS = 12_000
+OUTPUT_RECALL_FILENAME: str = "queries-recall.json"
+MAX_DOCS: int = 12_000
+REQUEST_TIMEOUT: int = 60 * 60 * 5
+
+
+def get_brute_force_query(emb):
+    return {
+        "script_score": {
+            "query": {"match_all": {}},
+            "script": {
+                "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
+                "params": {"query_vector": emb}
+            }
+        }
+    }
 
 
 async def retrieve_embed_for_query(co, text):
@@ -42,10 +59,41 @@ async def output_queries(queries_file):
     queries_file.write("\n".join(json.dumps(embed) for embed in output))
 
 
-async def main():
+async def output_recall_queries(queries_file):
+    async with AsyncElasticsearch("https://localhost:19200/", basic_auth=('esbench', 'super-secret-password'),
+                                  verify_certs=False, request_timeout=REQUEST_TIMEOUT) as es:
+        dataset = ir_datasets.load("msmarco-passage-v2/trec-dl-2022/judged")
+        async with AsyncClient(environ["COHERE_API_KEY"]) as co:
+            count = 0
+            for query in dataset.queries_iter():
+                print("processed=" + str(count))
+                emb = await retrieve_embed_for_query(co, query[1])
+                resp = await es.search(index="msmarco-v2", query=get_brute_force_query(emb), size=1000,
+                                       _source=['_none_'],
+                                       fields=["docid"])
+                ids = [(hit['fields']['docid'][0], hit['_score']) for hit in resp['hits']['hits']]
+                line = {"query_id": query[0], "text": query[1], "emb": emb, "ids": ids}
+                queries_file.write(json.dumps(line) + "\n")
+                count += 1
+
+
+async def create_queries():
     with open(OUTPUT_FILENAME, "w") as queries_file:
         await output_queries(queries_file)
 
 
+async def create_recall_queries():
+    with open(OUTPUT_RECALL_FILENAME, "w") as queries_file:
+        await output_recall_queries(queries_file)
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(description="Create queries for throughput or recall operations")
+    parser.add_argument("-t", "--throughput", help="Create queries for throughput operations", action="store_true")
+    parser.add_argument("-r", "--recall", help="Create queries for recall operations", action="store_true")
+    args = parser.parse_args()
+    loop = asyncio.get_event_loop()
+    if args.throughput:
+        loop.run_until_complete(create_queries())
+    if args.recall:
+        loop.run_until_complete(create_recall_queries())

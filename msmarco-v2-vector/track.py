@@ -101,8 +101,8 @@ class KnnParamSource:
 
         cwd = os.path.dirname(__file__)
         with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
-            for query in queries_file:
-                self._queries.append(json.loads(query))
+            for vector_query in queries_file:
+                self._queries.append(json.loads(vector_query))
         self._iters = 0
         self._maxIters = len(self._queries)
         self.infinite = True
@@ -114,7 +114,7 @@ class KnnParamSource:
         top_k = self._params.get("k", 10)
         num_candidates = self._params.get("num-candidates", 50)
         num_rescore = self._params.get("num-rescore", 0)
-        query_vec = self._queries[self._iters]["emb"]
+        query_vec = self._queries[self._iters]
         result = {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
@@ -198,7 +198,9 @@ class KnnRecallRunner:
                     doc_id = hit["fields"]["docid"][0]
                     results[query_id][doc_id] = hit["_score"]
                     knn_hits.append(doc_id)
-                recall_hits = ["123"] #query["ids"][:top_k]
+                recall_hits = []
+                for i in range(top_k):
+                    recall_hits += query["ids"][i][0]
                 vector_operations_count = extract_vector_operations_count(knn_result)
                 nodes_visited.append(vector_operations_count)
                 current_recall = len(set(knn_hits).intersection(set(recall_hits)))

@@ -41,50 +41,25 @@ This will build 47 `cohere-documents-XX.json` file for the entire dataset of 138
 
 ### Generating the queries
 
-The `queries.json` can be rebuilt using the `_tools/parse_queries.py`, this will load the msmarco v2 passages queries dataset, and then call the Cohere embed API for each query, and store the embeddings in `queries.json`.
+The `queries.json` can be rebuilt using `_tools/parse_queries.py -t`, this will load the msmarco v2 passages queries dataset, and then call the Cohere embed API for each query, and store the embeddings in `queries.json`.
 This will take a very long time, maybe grab a ☕️ ?
 
 You will need a production API key from [Cohere](https://dashboard.cohere.com/api-keys), as the trial keys are heavily rate-limited:
 
 ```console
 $ export COHERE_API_KEY='abcdefghijklmnopqrstuvwxyz'
-$ python _tools/parse_queries.py
+$ python _tools/parse_queries.py -t
 ```
 
-Given the size of the corpus, the true top N values used for recall operations have been approximated offline for each query as follows:
-```
-{
-    "size": 100,
-    "knn": {
-        "field": "emb", 
-        "query_vector": query['emb'],
-        "k": 10000,
-        "num_candidates": 10000
-    },
-    "rescore": {
-        "window_size": 10000,
-        "query": {
-            "query_weight": 0,
-                "rescore_query": {
-                    "script_score": {
-                        "query": {
-                            "match_all": {}
-                        },
-                    "script": { 
-                        "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
-                        "params": {
-                            "query_vector": vec
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-```
-This means that the computed recall is measured against the system's best possible approximate neighbor run rather than the actual top N.
+### Generating the queries for the recall operation
 
-For the relevance metrics, the `qrels.tsv` file contains annotations for all the queries listed in `queries.json`. This file is generated from the original training data available at [ir_datasets/msmarco_passage_v2](https://ir-datasets.com/msmarco-passage-v2.html#msmarco-passage-v2/train).
+The `queries-recall.json` can be rebuilt using `_tools/parse_queries.py -r`, this will load the msmarco v2 passages test queries, and then call the Cohere embed API for each query, store the embeddings in `queries-recall.json` as well as the true top 1000 for each query computed with brute force.
+For the relevance metrics, the `qrels.tsv` file contains annotations for all the queries listed in `queries.json`. This file is copied from the original training data available at [msmarco-passage-v2/trec-dl-2022/judged](https://ir-datasets.com/msmarco-passage-v2.html#msmarco-passage-v2).
+
+```console
+$ export COHERE_API_KEY='abcdefghijklmnopqrstuvwxyz'
+$ python _tools/parse_queries.py -t
+```
 
 ### Parameters
 

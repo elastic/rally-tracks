@@ -42,7 +42,6 @@ async def output_queries(queries_file):
     async with AsyncClient(environ["COHERE_API_KEY"]) as co:
         co_queries = []
         for query in dataset.queries_iter():
-            print(query)
             co_queries.append(query.text)
 
             # Run our async requests every 100 queries *or* as soon as we

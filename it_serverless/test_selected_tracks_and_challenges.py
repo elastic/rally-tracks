@@ -34,6 +34,7 @@ class TestTrackRepository:
         "geoshape",
         "http_logs",
         # "k8s_metrics", (slow)
+        "msmarco-v2-vector",
         "nested",
         "noaa",
         "nyc_taxis",

@@ -60,7 +60,7 @@ async def output_queries(queries_file):
 
 async def output_recall_queries(queries_file):
     async with AsyncElasticsearch(
-        "https://localhost:19200/", basic_auth=('esbench', 'super-secret-password'), verify_certs=False, request_timeout=REQUEST_TIMEOUT
+        "https://localhost:19200/", basic_auth=("esbench", "super-secret-password"), verify_certs=False, request_timeout=REQUEST_TIMEOUT
     ) as es:
         dataset = ir_datasets.load("msmarco-passage-v2/trec-dl-2022/judged")
         async with AsyncClient(environ["COHERE_API_KEY"]) as co:
@@ -70,7 +70,7 @@ async def output_recall_queries(queries_file):
                 resp = await es.search(
                     index="msmarco-v2", query=get_brute_force_query(emb), size=1000, _source=["_none_"], fields=["docid"]
                 )
-                ids = [(hit['fields']['docid'][0], hit["_score"]) for hit in resp['hits']['hits']]
+                ids = [(hit["fields"]["docid"][0], hit["_score"]) for hit in resp["hits"]["hits"]]
                 line = {"query_id": query[0], "text": query[1], "emb": emb, "ids": ids}
                 queries_file.write(json.dumps(line) + "\n")
                 count += 1

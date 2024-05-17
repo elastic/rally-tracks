@@ -66,7 +66,6 @@ async def output_recall_queries(queries_file):
         async with AsyncClient(environ["COHERE_API_KEY"]) as co:
             count = 0
             for query in dataset.queries_iter():
-                print("processed=" + str(count))
                 emb = await retrieve_embed_for_query(co, query[1])
                 resp = await es.search(index="msmarco-v2", query=get_brute_force_query(emb), size=1000,
                                        _source=['_none_'],

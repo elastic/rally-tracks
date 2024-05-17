@@ -200,7 +200,7 @@ class KnnRecallRunner:
                     knn_hits.append(doc_id)
                 recall_hits = []
                 for i in range(top_k):
-                    recall_hits += query["ids"][i][0]
+                    recall_hits.append(query["ids"][i][0])
                 vector_operations_count = extract_vector_operations_count(knn_result)
                 nodes_visited.append(vector_operations_count)
                 current_recall = len(set(knn_hits).intersection(set(recall_hits)))

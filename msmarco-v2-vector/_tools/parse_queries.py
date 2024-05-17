@@ -23,8 +23,8 @@ def get_brute_force_query(emb):
             "query": {"match_all": {}},
             "script": {
                 "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
-                "params": {"query_vector": emb}
-            }
+                "params": {"query_vector": emb},
+            },
         }
     }
 
@@ -59,16 +59,17 @@ async def output_queries(queries_file):
 
 
 async def output_recall_queries(queries_file):
-    async with AsyncElasticsearch("https://localhost:19200/", basic_auth=('esbench', 'super-secret-password'),
-                                  verify_certs=False, request_timeout=REQUEST_TIMEOUT) as es:
+    async with AsyncElasticsearch(
+            "https://localhost:19200/", basic_auth=('esbench', 'super-secret-password'), verify_certs=False, request_timeout=REQUEST_TIMEOUT
+    ) as es:
         dataset = ir_datasets.load("msmarco-passage-v2/trec-dl-2022/judged")
         async with AsyncClient(environ["COHERE_API_KEY"]) as co:
             count = 0
             for query in dataset.queries_iter():
                 emb = await retrieve_embed_for_query(co, query[1])
-                resp = await es.search(index="msmarco-v2", query=get_brute_force_query(emb), size=1000,
-                                       _source=['_none_'],
-                                       fields=["docid"])
+                resp = await es.search(
+                    index="msmarco-v2", query=get_brute_force_query(emb), size=1000, _source=['_none_'], fields=["docid"]
+                )
                 ids = [(hit['fields']['docid'][0], hit['_score']) for hit in resp['hits']['hits']]
                 line = {"query_id": query[0], "text": query[1], "emb": emb, "ids": ids}
                 queries_file.write(json.dumps(line) + "\n")

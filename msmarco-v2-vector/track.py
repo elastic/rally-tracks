@@ -212,7 +212,7 @@ class KnnRecallRunner:
                 exact_total += len(recall_hits)
                 min_recall = min(min_recall, current_recall)
         relevance_res = calc_ndcg(qrels, results, [top_k])
-        best_relevance_res = calc_ndcg(qrels, results, [top_k])
+        best_relevance_res = calc_ndcg(qrels, best_results, [top_k])
         return (
             {
                 f"best_ndcg_{top_k}": best_relevance_res[f"ndcg_cut@{top_k}"],

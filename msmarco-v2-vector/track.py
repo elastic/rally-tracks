@@ -172,6 +172,7 @@ class KnnRecallRunner:
         cwd = os.path.dirname(__file__)
         qrels = read_qrels(os.path.join(cwd, "qrels.tsv"))
         results = defaultdict(dict)
+        best_results = defaultdict(dict)
         recall_total = 0
         exact_total = 0
         min_recall = top_k
@@ -201,7 +202,9 @@ class KnnRecallRunner:
                     knn_hits.append(doc_id)
                 recall_hits = []
                 for i in range(top_k):
-                    recall_hits.append(query["ids"][i][0])
+                    doc_id, score = query["ids"][i]
+                    recall_hits.append(doc_id)
+                    best_results[query_id][doc_id] = score
                 vector_operations_count = extract_vector_operations_count(knn_result)
                 nodes_visited.append(vector_operations_count)
                 current_recall = len(set(knn_hits).intersection(set(recall_hits)))
@@ -209,8 +212,10 @@ class KnnRecallRunner:
                 exact_total += len(recall_hits)
                 min_recall = min(min_recall, current_recall)
         relevance_res = calc_ndcg(qrels, results, [top_k])
+        best_relevance_res = calc_ndcg(qrels, results, [top_k])
         return (
             {
+                f"best_ndcg_{top_k}": best_relevance_res[f"ndcg_cut@{top_k}"],
                 f"ndcg_{top_k}": relevance_res[f"ndcg_cut@{top_k}"],
                 "avg_recall": recall_total / exact_total,
                 "min_recall": min_recall,

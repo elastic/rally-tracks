@@ -32,6 +32,7 @@ class TestTrackRepository:
         "geopoint",
         "geopointshape",
         "geoshape",
+        "github_archive",
         "http_logs",
         # "k8s_metrics", (slow)
         "nested",

@@ -1,0 +1,12 @@
+{
+  "name": "index-only",
+  "description": "Index the document corpus",
+  "schedule": [
+    {{ rally.collect(parts="../common/schedule_setup.json") }},
+    {
+      "operation": "index",
+      "warmup-time-period": 240,
+      "clients": {{bulk_indexing_clients | default(8)}}
+    }
+  ]
+}

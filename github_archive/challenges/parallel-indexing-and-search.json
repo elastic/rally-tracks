@@ -1,0 +1,53 @@
+{
+  "name": "parallel-indexing-and-search",
+  "description": "Index the document corpus and perform additional searches",
+  "schedule": [
+    {{ rally.collect(parts="../common/schedule_setup.json") }},
+    {
+      "operation": "index_corpora1",
+      "warmup-time-period": 240,
+      "clients": {{bulk_indexing_clients | default(8)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {
+      "operation": "add_filter_alias"
+    },
+    {%- set p_runtime_search_clients=runtime_search_clients | default(8) %}
+    {%- set search_clients=p_runtime_search_clients//2 %}
+    {
+      "parallel": {
+        "time-period": {{search_time_period | default(1800)}},
+        "tasks": [
+          {
+            "operation": {
+              "name": "index_corpora2_parallel_task",
+              "operation-type": "bulk",
+              "corpora": "github_archive2",
+              "bulk-size": {{runtime_bulk_size | default(100)}}
+              {%- if conflicts is defined %},
+              "conflicts": "{{p_conflicts}}",
+              "on-conflict": "{{p_on_conflict}}",
+              "conflict-probability": {{p_conflict_probability}}
+              {%- endif %}
+            },
+            "clients": {{runtime_bulk_indexing_clients | default(8)}},
+            "target-throughput": "10 docs/s"
+          },
+          {
+            "operation": "alias_bool_query_1",
+            "warmup-time-period": {{search_warmup_time_period | default(300)}},
+            "clients": {{search_clients}}
+          },
+          {
+            "operation": "alias_bool_query_2",
+            "warmup-time-period": {{search_warmup_time_period | default(300)}},
+            "clients": {{search_clients}}
+          }
+        ]
+      }
+    }
+  ]
+}

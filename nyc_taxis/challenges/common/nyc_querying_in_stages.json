@@ -82,6 +82,7 @@
 {%- set p_as_search_clients = (as_search_clients | default([16,32,64,96,2]))%}
 {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([60,60,60,60,60]))%}
 {%- set p_as_time_periods = (as_time_periods | default([150,300,300,600,900]))%}
+{%- set p_as_search_target_throughput = (as_search_target_throughput | default(3))%}
 {%- for i in range(p_as_search_clients|length) %}
 {
   "name": "queries-{{loop.index}}-c{{p_as_search_clients[i]}}",
@@ -92,32 +93,44 @@
       {
         "name": "default_no_target-{{loop.index}}",
         "operation": "default",
-        "clients": {{p_as_search_clients[i]}}
+	"clients": {{p_as_search_clients[i]}}{% if p_as_search_target_throughput %},
+        "target-throughput": {{p_as_search_target_throughput }}
+        {%- endif %}
       },
       {
         "name": "default_1k-{{loop.index}}",
 	"operation": "default_1k",
-        "clients": {{p_as_search_clients[i]}}
+	"clients": {{p_as_search_clients[i]}}{% if p_as_search_target_throughput %},
+        "target-throughput": {{p_as_search_target_throughput }}
+        {%- endif %}
       },
       {
         "name": "range-{{loop.index}}",
         "operation": "range",
-        "clients": {{p_as_search_clients[i]}}
+	"clients": {{p_as_search_clients[i]}}{% if p_as_search_target_throughput %},
+        "target-throughput": {{p_as_search_target_throughput }}
+        {%- endif %}
       },
       {
         "name": "distance_amount_agg-{{loop.index}}",
         "operation": "distance_amount_agg",
-        "clients": {{p_as_search_clients[i]}}
+	"clients": {{p_as_search_clients[i]}}{% if p_as_search_target_throughput %},
+        "target-throughput": {{p_as_search_target_throughput }}
+        {%- endif %}
       },
       {
         "name": "autohisto_agg-{{loop.index}}",
         "operation": "autohisto_agg",
-        "clients": {{p_as_search_clients[i]}}
+	"clients": {{p_as_search_clients[i]}}{% if p_as_search_target_throughput %},
+        "target-throughput": {{p_as_search_target_throughput }}
+        {%- endif %}
       },
       {
         "name": "date_histogram_agg-{{loop.index}}",
         "operation": "date_histogram_agg",
-        "clients": {{p_as_search_clients[i]}}
+	"clients": {{p_as_search_clients[i]}}{% if p_as_search_target_throughput %},
+        "target-throughput": {{p_as_search_target_throughput }}
+        {%- endif %}
       }
     ]
   }

@@ -194,13 +194,31 @@
           "tags": ["bbox", "esql"]
         },
         {
-          "operation": "distance",
+          "operation": "distanceFilter",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["distance"]
+        },
+        {
+          "operation": "distanceSort",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["distance"]
+        },
+        {
+          "operation": "distanceFilterSort",
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["distance"]
         },
         {
           "operation": "distanceRange",
+          "warmup-iterations": 40,
+          "iterations": 20,
+          "tags": ["distance"]
+        },
+        {
+          "operation": "distanceFilterRange",
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["distance"]

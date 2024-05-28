@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import json
+import sys
 from os import environ
 
 import ir_datasets

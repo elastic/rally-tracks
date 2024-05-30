@@ -11,7 +11,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `queue_capacity` (default: 1024)
 * `bulk_size` (default: 100)
 * `bulk_indexing_clients` (default: 1)
-* `ingest_percentage` (default: 100)
+* `ingest_percentage` (default: challenge dependent)
 
 ### Challenges
 This rally track includes a challenge for each version of the ELSER model:

@@ -195,104 +195,56 @@
   ],
   "component-templates": [
     {
-        "name": ".fleet_component_template-1",
-        "template": "./templates/component/.fleet_component_template-1.json"
+        "name": "..fleet_agent_id_verification-1",
+        "template": "./templates/component/..fleet_agent_id_verification-1.json"
     },
     {
-        "name": "logs-apache.access@settings",
-        "template": "./templates/component/logs-apache.access@settings.json"
+        "name": "logs-apache.access@package",
+        "template": "./templates/component/logs-apache.access@package.json"
     },
     {
-        "name": "logs-apache.access@custom",
-        "template": "./templates/component/logs-apache.access@custom.json"
+        "name": "logs-apache.error@package",
+        "template": "./templates/component/logs-apache.error@package.json"
     },
     {
-        "name": "logs-apache.error@settings",
-        "template": "./templates/component/logs-apache.error@settings.json"
+        "name": "logs-kafka.log@package",
+        "template": "./templates/component/logs-kafka.log@package.json"
     },
     {
-        "name": "logs-apache.error@custom",
-        "template": "./templates/component/logs-apache.error@custom.json"
+        "name": "logs-mysql.error@package",
+        "template": "./templates/component/logs-mysql.error@package.json"
     },
     {
-        "name": "logs-kafka.log@settings",
-        "template": "./templates/component/logs-kafka.log@settings.json"
+        "name": "logs-mysql.slowlog@package",
+        "template": "./templates/component/logs-mysql.slowlog@package.json"
     },
     {
-        "name": "logs-kafka.log@custom",
-        "template": "./templates/component/logs-kafka.log@custom.json"
+        "name": "logs-nginx.access@package",
+        "template": "./templates/component/logs-nginx.access@package.json"
     },
     {
-        "name": "logs-mysql.error@settings",
-        "template": "./templates/component/logs-mysql.error@settings.json"
+        "name": "logs-nginx.error@package",
+        "template": "./templates/component/logs-nginx.error@package.json"
     },
     {
-        "name": "logs-mysql.error@custom",
-        "template": "./templates/component/logs-mysql.error@custom.json"
+        "name": "logs-postgresql.log@package",
+        "template": "./templates/component/logs-postgresql.log@package.json"
     },
     {
-        "name": "logs-mysql.slowlog@settings",
-        "template": "./templates/component/logs-mysql.slowlog@settings.json"
+        "name": "logs-redis.log@package",
+        "template": "./templates/component/logs-redis.log@package.json"
     },
     {
-        "name": "logs-mysql.slowlog@custom",
-        "template": "./templates/component/logs-mysql.slowlog@custom.json"
+        "name": "logs-redis.slowlog@package",
+        "template": "./templates/component/logs-redis.slowlog@package.json"
     },
     {
-        "name": "logs-nginx.access@settings",
-        "template": "./templates/component/logs-nginx.access@settings.json"
+        "name": "logs-system.auth@package",
+        "template": "./templates/component/logs-system.auth@package.json"
     },
     {
-        "name": "logs-nginx.access@custom",
-        "template": "./templates/component/logs-nginx.access@custom.json"
-    },
-    {
-        "name": "logs-nginx.error@settings",
-        "template": "./templates/component/logs-nginx.error@settings.json"
-    },
-    {
-        "name": "logs-nginx.error@custom",
-        "template": "./templates/component/logs-nginx.error@custom.json"
-    },
-    {
-        "name": "logs-postgresql.log@settings",
-        "template": "./templates/component/logs-postgresql.log@settings.json"
-    },
-    {
-        "name": "logs-postgresql.log@custom",
-        "template": "./templates/component/logs-postgresql.log@custom.json"
-    },
-    {
-        "name": "logs-redis.log@settings",
-        "template": "./templates/component/logs-redis.log@settings.json"
-    },
-    {
-        "name": "logs-redis.log@custom",
-        "template": "./templates/component/logs-redis.log@custom.json"
-    },
-    {
-        "name": "logs-redis.slowlog@settings",
-        "template": "./templates/component/logs-redis.slowlog@settings.json"
-    },
-    {
-        "name": "logs-redis.slowlog@custom",
-        "template": "./templates/component/logs-redis.slowlog@custom.json"
-    },
-    {
-        "name": "logs-system.auth@settings",
-        "template": "./templates/component/logs-system.auth@settings.json"
-    },
-    {
-        "name": "logs-system.auth@custom",
-        "template": "./templates/component/logs-system.auth@custom.json"
-    },
-    {
-        "name": "logs-system.syslog@settings",
-        "template": "./templates/component/logs-system.syslog@settings.json"
-    },
-    {
-        "name": "logs-system.syslog@custom",
-        "template": "./templates/component/logs-system.syslog@custom.json"
+        "name": "logs-system.syslog@package",
+        "template": "./templates/component/logs-system.syslog@package.json"
     },
     {
         "name": "track-custom-mappings",

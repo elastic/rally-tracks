@@ -1,0 +1,48 @@
+{
+  "description": "Pipeline for parsing redis slowlog logs",
+  "processors": [
+    {
+      "pipeline": {
+        "name": "global@custom",
+        "ignore_missing_pipeline": true,
+        "description": "[Fleet] Global pipeline for all data streams"
+      }
+    },
+    {
+      "pipeline": {
+        "name": "logs@custom",
+        "ignore_missing_pipeline": true,
+        "description": "[Fleet] Pipeline for all data streams of type `logs`"
+      }
+    },
+    {
+      "pipeline": {
+        "name": "logs-redis.integration@custom",
+        "ignore_missing_pipeline": true,
+        "description": "[Fleet] Pipeline for all data streams of type `logs` defined by the `redis` integration"
+      }
+    },
+    {
+      "pipeline": {
+        "name": "logs-redis.slowlog@custom",
+        "ignore_missing_pipeline": true,
+        "description": "[Fleet] Pipeline for the `redis.slowlog` dataset"
+      }
+    }
+  ],
+  "on_failure": [
+    {
+      "set": {
+        "field": "error.message",
+        "value": "{{ _ingest.on_failure_message }}"
+      }
+    }
+  ],
+  "_meta": {
+    "managed_by": "fleet",
+    "managed": true,
+    "package": {
+      "name": "redis"
+    }
+  }
+}

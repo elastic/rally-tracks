@@ -1,11 +1,13 @@
 {
     "template": {
       "settings": {
+        {% if index_mode %}
         "index": {
-          {% if index_mode %}
-            "index.mode": {{ index_mode | tojson }}
-          {% endif %}
+            "mode": {{ index_mode | tojson }},
+            "sort.field": [ "host.name", "@timestamp" ],
+            "sort.order": [ "asc", "desc" ]
         }
+        {% endif %}
       }
     }
   }

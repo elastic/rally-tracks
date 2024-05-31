@@ -151,26 +151,26 @@ def project_config(project, tmpdir_factory):
 
             break
         except Exception as e:
-            print(f"GET / Failed with {type(e)}")
+            print(f"GET / Failed with {str(e)}")
             time.sleep(10)
     else:
         raise ValueError("Timed out waiting for Elasticsearch")
 
     # Create API key to test Rally with a public user privileges
     print("Waiting for API key")
-    for _ in range(3):
+    for _ in range(18):
         try:
             api_key = es.security.create_api_key(name="public-api-key")
             break
         except Exception as e:
-            print(f"API create failed with {type(e)}")
+            print(f"API create failed with {str(e)}")
             time.sleep(10)
     else:
         raise ValueError("Timed out waiting for API key")
 
     # Confirm API key is working fine
     print("Testing API key")
-    for _ in range(3):
+    for _ in range(18):
         try:
             es = Elasticsearch(
                 f"https://{rally_target_host}",
@@ -180,7 +180,7 @@ def project_config(project, tmpdir_factory):
             info = es.info()
             break
         except Exception as e:
-            print(f"API verification failed with {type(e)}")
+            print(f"API verification failed with {str(e)}")
             time.sleep(10)
     else:
         raise ValueError("Timed out verifying API key")

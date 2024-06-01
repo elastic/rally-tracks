@@ -196,67 +196,84 @@
   "component-templates": [
     {
         "name": ".fleet_agent_id_verification-1",
-        "template": "./templates/component/.fleet_agent_id_verification-1.json"
+        "template": "./templates/component/.fleet_agent_id_verification-1.json",
+        "template-path": "component_template"
+
     },
     {
         "name": ".fleet_globals-1",
-        "template": "./templates/component/.fleet_globals-1.json"
+        "template": "./templates/component/.fleet_globals-1.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-apache.access@package",
-        "template": "./templates/component/logs-apache.access@package.json"
+        "template": "./templates/component/logs-apache.access@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-apache.error@package",
-        "template": "./templates/component/logs-apache.error@package.json"
+        "template": "./templates/component/logs-apache.error@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-kafka.log@package",
-        "template": "./templates/component/logs-kafka.log@package.json"
+        "template": "./templates/component/logs-kafka.log@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-mysql.error@package",
-        "template": "./templates/component/logs-mysql.error@package.json"
+        "template": "./templates/component/logs-mysql.error@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-mysql.slowlog@package",
-        "template": "./templates/component/logs-mysql.slowlog@package.json"
+        "template": "./templates/component/logs-mysql.slowlog@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-nginx.access@package",
-        "template": "./templates/component/logs-nginx.access@package.json"
+        "template": "./templates/component/logs-nginx.access@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-nginx.error@package",
-        "template": "./templates/component/logs-nginx.error@package.json"
+        "template": "./templates/component/logs-nginx.error@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-postgresql.log@package",
-        "template": "./templates/component/logs-postgresql.log@package.json"
+        "template": "./templates/component/logs-postgresql.log@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-redis.log@package",
-        "template": "./templates/component/logs-redis.log@package.json"
+        "template": "./templates/component/logs-redis.log@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-redis.slowlog@package",
-        "template": "./templates/component/logs-redis.slowlog@package.json"
+        "template": "./templates/component/logs-redis.slowlog@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-system.auth@package",
-        "template": "./templates/component/logs-system.auth@package.json"
+        "template": "./templates/component/logs-system.auth@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "logs-system.syslog@package",
-        "template": "./templates/component/logs-system.syslog@package.json"
+        "template": "./templates/component/logs-system.syslog@package.json",
+        "template-path": "component_template"
     },
     {
         "name": "track-custom-mappings",
-        "template": "./templates/component/track-custom-mappings.json"
+        "template": "./templates/component/track-custom-mappings.json",
+        "template-path": "component_template"
     },
     {
         "name": "track-custom-shared-settings",
-        "template": "./templates/component/track-custom-shared-settings.json"
+        "template": "./templates/component/track-custom-shared-settings.json",
+        "template-path": "component_template"
     },
     {
         "name": "auditbeat-mappings",
@@ -276,79 +293,92 @@
         "name": "logs-kafka.log",
         "index-pattern": "logs-kafka.log-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-kafka.log.json"
+        "template": "./templates/composable/logs-kafka.log.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-nginx.access",
         "index-pattern": "logs-nginx.access-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-nginx.access.json"
+        "template": "./templates/composable/logs-nginx.access.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-nginx.error",
         "index-pattern": "logs-nginx.error-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-nginx.error.json"
+        "template": "./templates/composable/logs-nginx.error.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-k8-application.log",
         "index-pattern": "logs-k8-application.log-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-k8-application.log.json"
+        "template": "./templates/composable/logs-k8-application.log.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-mysql.slowlog",
         "index-pattern": "logs-mysql.slowlog-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-mysql.slowlog.json"
+        "template": "./templates/composable/logs-mysql.slowlog.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-mysql.error",
         "index-pattern": "logs-mysql.error-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-mysql.error.json"
+        "template": "./templates/composable/logs-mysql.error.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-system.auth",
         "index-pattern": "logs-system.auth-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-system.auth.json"
+        "template": "./templates/composable/logs-system.auth.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-system.syslog",
         "index-pattern": "logs-system.syslog-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-system.syslog.json"
+        "template": "./templates/composable/logs-system.syslog.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-postgresql.log",
         "index-pattern": "logs-postgresql.log-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-postgresql.log.json"
+        "template": "./templates/composable/logs-postgresql.log.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-apache.access",
         "index-pattern": "logs-apache.access-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-apache.access.json"
+        "template": "./templates/composable/logs-apache.access.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-apache.error",
         "index-pattern": "logs-apache.error-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-apache.error.json"
+        "template": "./templates/composable/logs-apache.error.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-redis.log",
         "index-pattern": "logs-redis.log-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-redis.log.json"
+        "template": "./templates/composable/logs-redis.log.json",
+        "template-path": "index_template"
     },
     {
         "name": "logs-redis.slowlog",
         "index-pattern": "logs-redis.slowlog-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-redis.slowlog.json"
+        "template": "./templates/composable/logs-redis.slowlog.json",
+        "template-path": "index_template"
     },
     {
         "name": "auditbeat",

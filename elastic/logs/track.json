@@ -267,13 +267,11 @@
     },
     {
         "name": "track-custom-mappings",
-        "template": "./templates/component/track-custom-mappings.json",
-        "template-path": "component_template"
+        "template": "./templates/component/track-custom-mappings.json"
     },
     {
         "name": "track-custom-shared-settings",
-        "template": "./templates/component/track-custom-shared-settings.json",
-        "template-path": "component_template"
+        "template": "./templates/component/track-custom-shared-settings.json"
     },
     {
         "name": "auditbeat-mappings",
@@ -314,8 +312,7 @@
         "name": "logs-k8-application.log",
         "index-pattern": "logs-k8-application.log-*",
         "delete-matching-indices": false,
-        "template": "./templates/composable/logs-k8-application.log.json",
-        "template-path": "index_template"
+        "template": "./templates/composable/logs-k8-application.log.json"
     },
     {
         "name": "logs-mysql.slowlog",

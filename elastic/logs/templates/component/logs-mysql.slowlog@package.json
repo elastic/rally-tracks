@@ -4,9 +4,6 @@
     "template": {
       "settings": {
         "index": {
-          "lifecycle": {
-            "name": "logs"
-          },
           {%- if disable_pipelines is not true %}
           "default_pipeline": "logs-mysql.slowlog-1.19.0",
           {%- endif %}

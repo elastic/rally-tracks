@@ -63,161 +63,16 @@
       "operation": "knn-search-100-1000",
       "warmup-iterations": 1000,
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
+    }
+    {%- for i in range(p_search_ops,|length) %},
     {
-      "name": "standalone-search-knn-10-20-multiple-clients",
-      "operation": "knn-search-10-20",
+      "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-multiple-clients",
+      "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}",
       "warmup-iterations": 1000,
       "clients": {{ standalone_search_clients | default(8) | int }},
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-50-multiple-clients",
-      "operation": "knn-search-10-50",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-100-multiple-clients",
-      "operation": "knn-search-10-100",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-200-multiple-clients",
-      "operation": "knn-search-10-200",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-500-multiple-clients",
-      "operation": "knn-search-10-500",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-1000-multiple-clients",
-      "operation": "knn-search-10-1000",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-20-20-multiple-clients",
-      "operation": "knn-search-10-20-20",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-50-20-multiple-clients",
-      "operation": "knn-search-10-50-20",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-100-20-multiple-clients",
-      "operation": "knn-search-10-100-20",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-100-40-multiple-clients",
-      "operation": "knn-search-10-100-40",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-200-20-multiple-clients",
-      "operation": "knn-search-10-200-20",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-500-20-multiple-clients",
-      "operation": "knn-search-10-500-20",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-10-1000-20-multiple-clients",
-      "operation": "knn-search-10-1000-20",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-100-120-multiple-clients",
-      "operation": "knn-search-100-120",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-100-200-multiple-clients",
-      "operation": "knn-search-100-200",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-100-500-multiple-clients",
-      "operation": "knn-search-100-500",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-100-1000-multiple-clients",
-      "operation": "knn-search-100-1000",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-100-120-120-multiple-clients",
-      "operation": "knn-search-100-120-120",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-100-200-120-multiple-clients",
-      "operation": "knn-search-100-200-120",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-100-500-120-multiple-clients",
-      "operation": "knn-search-100-500-120",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-100-1000-120-multiple-clients",
-      "operation": "knn-search-100-1000-120",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "standalone-search-knn-100-1000-200-multiple-clients",
-      "operation": "knn-search-100-1000-200",
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
+    }
+    {%- endfor %},
     {
       "parallel": {
         "tasks": [
@@ -238,72 +93,11 @@
           }
         ]
       }
-    },
-    {
-      "operation": "knn-recall-10-20"
-    },
-    {
-      "operation": "knn-recall-10-50"
-    },
-    {
-      "operation": "knn-recall-10-100"
-    },
-    {
-      "operation": "knn-recall-10-200"
-    },
-    {
-      "operation": "knn-recall-10-500"
-    },
-    {
-      "operation": "knn-recall-10-1000"
-    },
-    {
-      "operation": "knn-recall-10-20-20"
-    },
-    {
-      "operation": "knn-recall-10-50-20"
-    },
-    {
-      "operation": "knn-recall-10-100-20"
-    },
-    {
-      "operation": "knn-recall-10-100-40"
-    },
-    {
-      "operation": "knn-recall-10-200-20"
-    },
-    {
-      "operation": "knn-recall-10-500-20"
-    },
-    {
-      "operation": "knn-recall-10-1000-20"
-    },
-    {
-      "operation": "knn-recall-100-120"
-    },
-    {
-      "operation": "knn-recall-100-200"
-    },
-    {
-      "operation": "knn-recall-100-500"
-    },
-    {
-      "operation": "knn-recall-100-1000"
-    },
-    {
-      "operation": "knn-recall-100-120-120"
-    },
-    {
-      "operation": "knn-recall-100-200-120"
-    },
-    {
-      "operation": "knn-recall-100-500-120"
-    },
-    {
-      "operation": "knn-recall-100-1000-120"
-    },
-    {
-      "operation": "knn-recall-100-1000-200"
     }
+    {%- for i in range(p_search_ops,|length) %},
+    {
+      "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+    }
+    {%- endfor %}
   ]
 }

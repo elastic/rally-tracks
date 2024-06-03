@@ -58,7 +58,7 @@ For the relevance metrics, the `qrels.tsv` file contains annotations for all the
 
 ```console
 $ export COHERE_API_KEY='abcdefghijklmnopqrstuvwxyz'
-$ python _tools/parse_queries.py -t
+$ python _tools/parse_queries.py -r
 ```
 
 ### Parameters

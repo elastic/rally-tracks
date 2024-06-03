@@ -41,7 +41,7 @@ class TestTrackRepository:
         "percolator",
         "pmc",
         "so",
-        "so_vector",
+        # "so_vector", (excludes in _source)
         # "sql", (no support for test mode)
         "tsdb",
         "tsdb_k8s_queries",

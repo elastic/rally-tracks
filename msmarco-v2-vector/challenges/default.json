@@ -53,14 +53,14 @@
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {
-      "name": "standalone-search-knn-10-100-single-client",
-      "operation": "knn-search-10-100",
+      "name": "standalone-search-knn-10-100-20-single-client",
+      "operation": "knn-search-10-100-20",
       "warmup-iterations": 1000,
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
     },
     {
-      "name": "standalone-knn-search-100-1000-single-client",
-      "operation": "knn-search-100-1000",
+      "name": "standalone-knn-search-100-1000-120-single-client",
+      "operation": "knn-search-100-1000-120",
       "warmup-iterations": 1000,
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
     }
@@ -85,8 +85,8 @@
             "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
           },
           {
-            "name": "parallel-documents-indexing-search-knn-10-100",
-            "operation": "knn-search-10-100",
+            "name": "parallel-documents-indexing-search-knn-10-100-0",
+            "operation": "knn-search-10-100-0",
             "warmup-time-period": 60,
             "clients": {{ parallel_indexing_search_clients | default(1) | int }},
             "time-period": {{ parallel_indexing_time_period | default(3600) | int }}

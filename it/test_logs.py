@@ -59,10 +59,7 @@ class TestLogs:
         assert ret == 0
 
     def test_logs_disable_pipelines(self, es_cluster, rally):
-        custom = {
-            "number_of_replicas": 0,
-            "disable_pipelines": "true"
-        }
+        custom = {"number_of_replicas": 0, "disable_pipelines": "true"}
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-indexing",

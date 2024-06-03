@@ -7,7 +7,9 @@
           "lifecycle": {
             "name": "logs"
           },
+          {%- if disable_pipelines is not true %}
           "default_pipeline": "logs-apache.access-1.18.0",
+          {%- endif %}
           "mapping": {
             "total_fields": {
               "limit": "10000"

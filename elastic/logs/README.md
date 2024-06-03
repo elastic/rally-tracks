@@ -244,7 +244,7 @@ The following parameters are available:
 * `bulk_size` (default: 1000) - The number of documents to send per indexing request.
 * `runtime_bulk_size` (default: bulk_size) - The number of documents to send per indexing request during the runtime phase of `logging-indexing-querying`challenge.
 * `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 
-* `disable_pipelines` (default: `false`) - Prevent installing ingest node pauditbeatipelines. This parameter is experimental and is to be used with indexing-only challenges.
+* `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
 * `initial_indices_count` (default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
 * `ingest_percentage` (default: 100) - The percentage of data to be ingested.
 * `index_sorting` (default: unset): Whether index sorting should be used. Accepted values: `hostname` and `timestamp`. 

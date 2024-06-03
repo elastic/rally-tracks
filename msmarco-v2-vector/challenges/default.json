@@ -64,7 +64,7 @@
       "warmup-iterations": 1000,
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
     }
-    {%- for i in range(p_search_ops,|length) %},
+    {%- for i in range(p_search_ops|length) %},
     {
       "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-multiple-clients",
       "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}",
@@ -94,7 +94,7 @@
         ]
       }
     }
-    {%- for i in range(p_search_ops,|length) %},
+    {%- for i in range(p_search_ops|length) %},
     {
       "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
     }

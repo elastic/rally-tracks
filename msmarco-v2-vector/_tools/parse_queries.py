@@ -91,7 +91,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create queries for throughput or recall operations")
     parser.add_argument("-t", "--throughput", help="Create queries for throughput operations", action="store_true")
     parser.add_argument("-r", "--recall", help="Create queries for recall operations", action="store_true")
-    
+
     if len(sys.argv) == 1:
         # Neither -t or -r was called, show the options
         parser.print_help(sys.stderr)

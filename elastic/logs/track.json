@@ -266,6 +266,54 @@
         "template-path": "component_template"
     },
     {
+        "name": "logs-apache.access@custom",
+        "template": "./templates/component/logs-apache.access@custom.json"
+    },
+    {
+        "name": "logs-apache.error@custom",
+        "template": "./templates/component/logs-apache.error@cutsom.json"
+    },
+    {
+        "name": "logs-kafka.log@custom",
+        "template": "./templates/component/logs-kafka.log@custom.json"
+    },
+    {
+        "name": "logs-mysql.error@custom",
+        "template": "./templates/component/logs-mysql.error@custom.json"
+    },
+    {
+        "name": "logs-mysql.slowlog@custom",
+        "template": "./templates/component/logs-mysql.slowlog@custom.json"
+    },
+    {
+        "name": "logs-nginx.access@custom",
+        "template": "./templates/component/logs-nginx.access@custom.json"
+    },
+    {
+        "name": "logs-nginx.error@custom",
+        "template": "./templates/component/logs-nginx.error@custom.json"
+    },
+    {
+        "name": "logs-postgresql.log@custom",
+        "template": "./templates/component/logs-postgresql.log@custom.json"
+    },
+    {
+        "name": "logs-redis.log@custom",
+        "template": "./templates/component/logs-redis.log@custom.json"
+    },
+    {
+        "name": "logs-redis.slowlog@custom",
+        "template": "./templates/component/logs-redis.slowlog@custom.json"
+    },
+    {
+        "name": "logs-system.auth@custom",
+        "template": "./templates/component/logs-system.auth@custom.json"
+    },
+    {
+        "name": "logs-system.syslog@custom",
+        "template": "./templates/component/logs-system.syslog@custom.json"
+    },
+    {
         "name": "track-custom-mappings",
         "template": "./templates/component/track-custom-mappings.json"
     },

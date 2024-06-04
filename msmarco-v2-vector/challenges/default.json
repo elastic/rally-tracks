@@ -54,14 +54,24 @@
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {%- for i in range(p_search_ops|length) %},
     {
-      "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-single-client",
-      "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}",
+      {%- if p_search_ops[i][2] > 0 -%}
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-single-client",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+      {%- else -%}
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-single-client",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+      {%- endif -%},
       "warmup-iterations": 1000,
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
     },
     {
-      "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-multiple-clients",
-      "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}",
+      {%- if p_search_ops[i][2] > 0 -%}
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-multiple-clients",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+      {%- else -%}
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-multiple-clients",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+      {%- endif -%},
       "warmup-iterations": 1000,
       "clients": {{ standalone_search_clients | default(8) | int }},
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
@@ -79,8 +89,8 @@
             "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
           },
           {
-            "name": "parallel-documents-indexing-search-knn-10-100-0",
-            "operation": "knn-search-10-100-0",
+            "name": "parallel-documents-indexing-search-knn-10-100",
+            "operation": "knn-search-10-100",
             "warmup-time-period": 60,
             "clients": {{ parallel_indexing_search_clients | default(1) | int }},
             "time-period": {{ parallel_indexing_time_period | default(3600) | int }}
@@ -90,7 +100,11 @@
     }
     {%- for i in range(p_search_ops|length) %},
     {
-      "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+      {%- if p_search_ops[i][2] > 0 -%}
+        "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+      {%- else -%}
+        "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+      {%- endif -%}
     }
     {%- endfor %}
   ]

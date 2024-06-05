@@ -152,7 +152,7 @@ class TestLogs:
         assert ret == 0
 
     def test_logs_many_shards_quantitative(self, es_cluster, rally):
-        custom = {"number_of_shards": 0}
+        custom = {"number_of_shards": 4}
         ret = rally.race(
             track="elastic/logs",
             challenge="many-shards-quantitative",

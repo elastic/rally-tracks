@@ -71,7 +71,8 @@
             "operation": "query-string-search",
             "clients": {{ parallel_indexing_search_clients | default(20) | int }},
             "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
-            "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}
+            "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }},
+            "target-throughput": {{ parallel_indexing_target_throughput | default(100) | int }}
           }
         ]
       }

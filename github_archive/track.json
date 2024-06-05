@@ -1,0 +1,93 @@
+{% import "rally.helpers" as rally with context %}
+{%- set p_data_stream = data_stream | default(false) %}
+{%- set p_conflict_probability = conflict_probability | default(25) %}
+{%- set p_on_conflict = on_conflict | default('index') %}
+{%- set p_cluster_health = cluster_health | default('green') %}
+{
+  "version": 2,
+  "description": "GitHub timeline from gharchive.org",
+  {%- if p_data_stream %}
+  "composable-templates": [
+    {
+      "name": "github-archive-template",
+      "index-pattern": "gharchive*",
+      "delete-matching-indices": true,
+      "template": "index-template.json"
+    }
+  ],
+  "data-streams": [
+    {
+      "name": "gharchive"
+    }
+  ],
+  {%- else %}
+  "indices": [
+    {
+      "name": "gharchive",
+      "body": "index.json"
+    }
+  ],
+  {%- endif %}
+  "corpora": [
+    {
+      "name": "github_archive1",
+      "base-url": "https://rally-tracks.elastic.co/github_archive",
+      "documents": [
+        {
+          "source-file": "documents-20211001.json.bz2",
+          "document-count": 3192091,
+          "compressed-bytes": 1272081164,
+          "uncompressed-bytes": 14306403313
+        },
+        {
+          "source-file": "documents-20211002.json.bz2",
+          "document-count": 2323080,
+          "compressed-bytes": 719389272,
+          "uncompressed-bytes": 7679081286
+        },
+        {
+          "source-file": "documents-20211003.json.bz2",
+          "document-count": 2320724,
+          "compressed-bytes": 695471626,
+          "uncompressed-bytes": 7396539597
+        },
+        {
+          "source-file": "documents-20211004.json.bz2",
+          "document-count": 3266945,
+          "compressed-bytes": 1348701622,
+          "uncompressed-bytes": 15284906890
+        }
+      ]
+    },
+    {
+    "name": "github_archive2",
+      "base-url": "https://rally-tracks.elastic.co/github_archive",
+      "documents": [
+        {
+          "source-file": "documents-20211005.json.bz2",
+          "document-count": 3826969,
+          "compressed-bytes": 1549445903,
+          "uncompressed-bytes": 21545736732
+        },
+        {
+          "source-file": "documents-20211006.json.bz2",
+          "document-count": 5472599,
+          "compressed-bytes": 2188947365,
+          "uncompressed-bytes": 45523396046
+        },
+        {
+          "source-file": "documents-20211007.json.bz2",
+          "document-count": 1032874,
+          "compressed-bytes": 354275829,
+          "uncompressed-bytes": 3441940945
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

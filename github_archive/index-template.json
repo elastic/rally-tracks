@@ -1,0 +1,27 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "index_patterns": ["gharchive"],
+  "data_stream": {},
+  "template": {
+    "settings": {
+      "index": {
+        {# non-serverless-index-settings-marker-start #}
+        {%- if build_flavor != "serverless" or serverless_operator == true -%}
+        "number_of_replicas": "{{number_of_replicas | default(0)}}",
+        "number_of_shards": "{{number_of_shards | default(1)}}",
+        "requests.cache.enable": false,
+        {% endif -%}
+        {# non-serverless-index-settings-marker-end #}
+        {%- if refresh_interval -%}
+        "refresh_interval": {{ refresh_interval | tojson }}
+        {% endif -%}
+        "codec": "{{codec | default('default')}}",
+        "mapping.total_fields.limit": 10000
+      }
+    },
+    "mappings": {
+      {{ rally.collect(parts="index-mappings.json") }}
+    }
+  }
+}

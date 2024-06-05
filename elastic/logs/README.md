@@ -247,8 +247,7 @@ The following parameters are available:
 * `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
 * `initial_indices_count` (default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
 * `ingest_percentage` (default: 100) - The percentage of data to be ingested.
-* `index_sorting` (default: unset): Whether index sorting should be used. Accepted values: `hostname` and `timestamp`. 
-* `synthetic_source_mode` (default: `false`): Whether to enable synthetic source.
+* `index_mode` (default: unset): What index mode to use. Accepted values: `standard` and `logs`. 
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 
@@ -390,6 +389,11 @@ Note: `include_target_throughput` parameter is ignored in this challenge.
 * `ds_autosharding_min_threads` (default: 2) The minimum number of write threads in the auto *scaling* function.
 * `ds_autosharding_max_threads` (default: 32) The maximum number of write threads in the auto *scaling* function.
 * `dsl_poll_interval` (default: "5m") A time value indicating the interval data stream lifecycle runs at. This is relevant in the context of auto sharding as data stream lifecycle periodically triggers the rollover operations that will recalcualte and implement the (auto)sharding scheme.
+
+### Categorize Text (categorize-text)
+
+Runs the categorize-text aggregation with varying values of shard-size and with/without the use of a sampler
+aggregation. The challenge targets a specific set of indices by way of an index alias.
 
 ## Changing the Datasets
 

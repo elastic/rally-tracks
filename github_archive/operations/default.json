@@ -1,0 +1,414 @@
+{
+  "name": "index",
+  "operation-type": "bulk",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}}
+  {%- if conflicts is defined %},
+  "conflicts": "{{p_conflicts}}",
+  "on-conflict": "{{p_on_conflict}}",
+  "conflict-probability": {{p_conflict_probability}}
+  {%- endif %}
+},
+{
+  "name": "index_corpora1",
+  "corpora": "github_archive1",
+  "operation-type": "bulk",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}}
+  {%- if conflicts is defined %},
+  "conflicts": "{{p_conflicts}}",
+  "on-conflict": "{{p_on_conflict}}",
+  "conflict-probability": {{p_conflict_probability}}
+  {%- endif %}
+},
+{
+  "name": "index_corpora2",
+  "corpora": "github_archive2",
+  "operation-type": "bulk",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}}
+  {%- if conflicts is defined %},
+  "conflicts": "{{p_conflicts}}",
+  "on-conflict": "{{p_on_conflict}}",
+  "conflict-probability": {{p_conflict_probability}}
+  {%- endif %}
+},
+{
+  "name": "default",
+  "operation-type": "search",
+  "body": {
+    "query": {
+      "match_all": {}
+    }
+  }
+},
+{
+  "name": "default_1k",
+  "operation-type": "search",
+  "body": {
+    "query": {
+      "match_all": {}
+    },
+    "size": 1000
+  }
+},
+{
+  "name": "filter_query",
+  "operation-type": "search",
+  "body": {
+    "size": 100,
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [
+                {
+                  "range": {
+                    "created_at": {
+                      "lte": {{query_end_timestamp | default('2021-10-01T12:00:00Z') | tojson}},
+                      "gte": {{query_start_timestamp | default('2021-10-01T10:00:00Z') | tojson}}
+                    }
+                  }
+                },
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "match": {
+                          "public": true
+                        }
+                      },
+                      {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "terms": {
+                                "type": [
+                                  "IssueCommentEvent"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "match": {
+                                "payload.action": "opened"
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "org.url"
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "payload.pull_request"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "must_not": [
+                {
+                  "match": {
+                    "has_issues": false
+                  }
+                },
+                {
+                  "bool": {
+                    "must": [
+                      {
+                        "match": {
+                          "repo.visibility": "public"
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "match": {
+                                "pull_request.state": "open"
+                              }
+                            },
+                            {
+                              "bool": {
+                                "must_not": [
+                                  {
+                                    "exists": {
+                                      "field": "pull_request.merged_at"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "add_filter_alias",
+  "operation-type": "raw-request",
+  "path": "/_aliases",
+  "method": "POST",
+  "body": {
+    "actions": [
+      {
+        "add": {
+          "index": "gharchive",
+          "alias": "gharchive-alias",
+          "filter": {
+            "bool": {
+              "must": [
+                {
+                  "range": {
+                    "created_at": {
+                      "lte": {{query_end_timestamp | default('2021-10-01T12:00:00Z') | tojson}},
+                      "gte": {{query_start_timestamp | default('2021-10-01T10:00:00Z') | tojson}}
+                    }
+                  }
+                },
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "bool": {
+                          "must_not": [
+                            {
+                              "terms": {
+                                "type": [
+                                  "IssueCommentEvent"
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "match": {
+                                "payload.action": "opened"
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "org.url"
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "payload.pull_request"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "must_not": [
+                {
+                  "match": {
+                    "has_issues": false
+                  }
+                },
+                {
+                  "bool": {
+                    "must": [
+                      {
+                        "match": {
+                          "repo.visibility": "public"
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "match": {
+                                "pull_request.state": "open"
+                              }
+                            },
+                            {
+                              "bool": {
+                                "must_not": [
+                                  {
+                                    "exists": {
+                                      "field": "pull_request.merged_at"
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+},
+{
+  "name": "alias_bool_query_1",
+  "operation-type": "search",
+  "index": "gharchive-alias",
+  "body": {
+    "size": 100,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "terms": {
+              "id": [
+                "18239600139",
+                "18239588536",
+                "18239476623",
+                "18239476625",
+                "18239476638",
+                "18239476640",
+                "18239476642",
+                "18239476669",
+                "18239476671",
+                "18239476682",
+                "18239476716",
+                "18239476718",
+                "18239476769",
+                "18239476770",
+                "18239476774",
+                "18239476780",
+                "18239476809",
+                "18239476820",
+                "18239476868",
+                "18239476981",
+                "18239476895",
+                "18239476899",
+                "18239476915",
+                "18239476931",
+                "18239476932",
+                "18239476937",
+                "18239476947",
+                "18239476949",
+                "18239476950",
+                "18239476957",
+                "18239476962",
+                "18239476968",
+                "18239477015",
+                "18239477024",
+                "18239477030",
+                "18239477038",
+                "18239477045",
+                "18239477254",
+                "18239477081",
+                "18239477091",
+                "18239477096",
+                "18239477097",
+                "18239477106",
+                "18239477107",
+                "18239477113",
+                "18239477122",
+                "18239477136",
+                "18239477137",
+                "18239477141",
+                "18239477151",
+                "18239477167",
+                "18239477267"
+              ],
+              "boost": 1.0
+            }
+          }
+        ],
+        "boost": 1.0
+      }
+    }
+  }
+},
+{
+  "name": "alias_bool_query_2",
+  "operation-type": "search",
+  "index": "gharchive-alias",
+  "body": {
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "bool": {
+              "should": [
+                {
+                  "match": {
+                    "type": {
+                      "query": "PushEvent"
+                    }
+                  }
+                }
+              ],
+              "minimum_should_match": "1",
+              "boost": 1.0
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "match": {
+                    "public": {
+                      "query": true
+                    }
+                  }
+                }
+              ],
+              "minimum_should_match": "1",
+              "boost": 1.0
+            }
+          },
+          {
+            "bool": {
+              "must_not": [
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "match": {
+                          "actor.id": "60766317"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "minimum_should_match": "1",
+              "boost": 1.0
+            }
+          }
+        ]
+      }
+    }
+  }
+}

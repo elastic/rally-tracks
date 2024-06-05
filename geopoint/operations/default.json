@@ -15,28 +15,214 @@
       "recency": {{recency | default(0)}}
     },
     {
-      "name": "polygon",
+      "name": "polygon-intersects",
       "operation-type": "search",
+      "index": "osmgeopoints",
       "body": {
+        "size": 10,
         "query": {
-          "geo_polygon": {
+          "geo_shape": {
             "location": {
-              "points": [
-                [-0.1, 49.0],
-                [5.0, 48.0],
-                [15.0, 49.0],
-                [14.0, 60.0],
-                [-0.1, 61.0],
-                [-0.1, 49.0]
-              ]
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              }
             }
           }
         }
       }
     },
     {
-      "name": "bbox",
+      "name": "polygon-intersects-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | LIMIT 10"
+    },
+    {
+      "name": "polygon-intersects-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(*)"
+    },
+    {
+      "name": "polygon-contains",
       "operation-type": "search",
+      "index": "osmgeopoints",
+      "body": {
+        "size": 10,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "contains"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-contains-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Contains(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | LIMIT 10"
+    },
+    {
+      "name": "polygon-contains-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Contains(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(*)"
+    },
+    {
+      "name": "polygon-disjoint",
+      "operation-type": "search",
+      "index": "osmgeopoints",
+      "body": {
+        "size": 10,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "disjoint"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-disjoint-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Disjoint(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | LIMIT 10"
+    },
+    {
+      "name": "polygon-disjoint-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Disjoint(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(*)"
+    },
+    {
+      "name": "polygon-within",
+      "operation-type": "search",
+      "index": "osmgeopoints",
+      "body": {
+        "size": 10,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "within"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-within-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Within(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | LIMIT 10"
+    },
+    {
+      "name": "polygon-within-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Within(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(*)"
+    },
+    {
+      "name": "polygon-centroid",
+      "operation-type": "search",
+      "index": "osmgeopoints",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              }
+            }
+          }
+        },
+        "aggs": {
+          "centroid": {
+            "geo_centroid": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-centroid-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS centroid=ST_CENTROID_AGG(location)"
+    },
+    {
+      "name": "centroid",
+      "operation-type": "search",
+      "index": "osmgeopoints",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "centroid": {
+            "geo_centroid": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "centroid-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | STATS centroid=ST_CENTROID_AGG(location)"
+    },
+    {
+      "name": "centroid-to_geopoint-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | STATS centroid=ST_CENTROID_AGG(TO_GEOPOINT(location))"
+    },
+    {
+      "name": "bbox-intersects",
+      "operation-type": "search",
+      "index": "osmgeopoints",
       "body": {
         "query": {
           "geo_bounding_box": {
@@ -49,15 +235,62 @@
       }
     },
     {
-      "name": "distance",
+      "name": "bbox-intersects-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
+    },
+    {
+      "name": "distanceFilter",
       "operation-type": "search",
       "body": {
         "query": {
           "geo_distance": {
-            "distance": "200km",
+            "distance": "400km",
             "location": [7.0, 55.0]
           }
         }
+      }
+    },
+    {
+      "name": "distanceSort",
+      "operation-type": "search",
+      "body": {
+        "sort" : [
+          {
+            "_geo_distance" : {
+              "pin.location" : [-7.0, 55.0],
+              "order" : "asc",
+              "unit" : "km",
+              "mode" : "min",
+              "distance_type" : "arc",
+              "ignore_unmapped": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "distanceFilterSort",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_distance": {
+            "distance": "400km",
+            "location": [7.0, 55.0]
+          }
+        },
+        "sort" : [
+          {
+            "_geo_distance" : {
+              "pin.location" : [-7.0, 55.0],
+              "order" : "asc",
+              "unit" : "km",
+              "mode" : "min",
+              "distance_type" : "arc",
+              "ignore_unmapped": true
+            }
+          }
+        ]
       }
     },
     {
@@ -75,8 +308,59 @@
               "unit": "km",
               "ranges": [
                 {
+                  "from": 0,
+                  "to": 100
+                },
+                {
+                  "from": 100,
+                  "to": 200
+                },
+                {
                   "from": 200,
+                  "to": 300
+                },
+                {
+                  "from": 300,
                   "to": 400
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterRange",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_distance": {
+            "distance": "400km",
+            "location": [7.0, 55.0]
+          }
+        },
+        "aggs": {
+          "geo_distance_range_agg": {
+            "geo_distance": {
+              "field": "location",
+              "origin": "55.0, 7.0",
+              "unit": "km",
+              "ranges": [
+                {
+                "from": 0,
+                "to": 100
+                },
+                {
+                "from": 100,
+                "to": 200
+                },
+                {
+                "from": 200,
+                "to": 300
+                },
+                {
+                "from": 300,
+                "to": 400
                 }
               ]
             }

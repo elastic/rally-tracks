@@ -1,14 +1,58 @@
 {% import "rally.helpers" as rally %}
+{% set shard_size_list = [10, 100, 1000] %}
 {
   "name": "categorize-text",
   "description": "Checks the performance of the categorize text aggregation",
   "schedule": [
     {% include "tasks/index-setup.json" %},
     {
+      "name": "bulk-index",
       "operation": {
-        "name": "categorize_text_shard_size_10",
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "bulk-size": {{ p_bulk_size }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients }}{% if p_throttle_indexing %},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "schedule": "timestamp-throttler",
+      "max-delay-secs": 1
+      {% endif %}
+    },
+    {
+      "operation": {
+        "name": "create-categorize-text-index-alias",
+        "include-in-reporting": false,
+        "operation-type": "raw-request",
+        "method": "POST",
+        "path": "/_aliases",
+        "body": {
+          "actions": [
+            {
+              "add": {
+                "indices": [
+                  "logs-redis.log-default",
+                  "logs-apache.error-default",
+                  "logs-k8-application.log-default",
+                  "logs-system.syslog-default",
+                  "logs-redis.slowlog-default",
+                  "logs-kafka.log-default"
+                  ],
+                "alias": "categorize-text-index-alias"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {% for shard_size in shard_size_list %}
+    {
+      "operation": {
+        "name": "categorize_text_shard_size_{{ shard_size }}",
         "operation-type": "search",
-        "index": "logs-*",
+        "index": "categorize-text-index-alias",
         "body": {
           "query": {
             "exists": {
@@ -19,74 +63,22 @@
             "categories.message": {
              "categorize_text": {
                 "field": "message",
-                "shard_size": 10
+                "shard_size": {{ shard_size }}
               }
             }
           }
         }
       },
       "clients": 8,
-      "warmup-iterations": 10,
-      "iterations": 100,
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(10) }},
       "target-throughput": 100
     },
     {
       "operation": {
-        "name": "categorize_text_shard_size_100",
+        "name": "categorize_text_sampler_shard_size_{{ shard_size }}",
         "operation-type": "search",
-        "index": "logs-*",
-        "body": {
-          "query": {
-            "exists": {
-              "field": "message"
-            }
-          },
-          "aggs": {
-            "categories.message": {
-              "categorize_text": {
-                "field": "message",
-                "shard_size": 100
-              }
-            }
-          }
-        }
-      },
-      "clients": 8,
-      "warmup-iterations": 10,
-      "iterations": 100,
-      "target-throughput": 100
-    },
-    {
-      "operation": {
-        "name": "categorize_text_shard_size_1000",
-        "operation-type": "search",
-        "index": "logs-*",
-        "body": {
-          "query": {
-            "exists": {
-              "field": "message"
-            }
-          },
-          "aggs": {
-            "categories.message": {
-              "categorize_text": {
-                "field": "message",
-                "shard_size": 1000
-              }
-            }
-          }
-        }
-      },
-      "clients": 8,
-      "warmup-iterations": 10,
-      "iterations": 100,
-      "target-throughput": 100
-    },
-    {
-      "operation": {
-        "name": "categorize_text_sampler_shard_size_10",
-        "operation-type": "search",
-        "index": "logs-*",
+        "index": "categorize-text-index-alias",
         "body": {
           "query": {
             "exists": {
@@ -96,7 +88,7 @@
           "aggs": {
             "sample": {
               "sampler": {
-                "shard_size": 10
+                "shard_size": {{ shard_size }}
               },
               "aggs": {
                 "categories.message": {
@@ -108,61 +100,36 @@
             }
           }
         }
-      }
+      },
+      "clients": 8,
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(10) }},
+      "target-throughput": 100
     },
+    {% endfor %}
     {
       "operation": {
-        "name": "categorize_text_sampler_shard_size_100",
-        "operation-type": "search",
-        "index": "logs-*",
+        "name": "remove-categorize-text-index-alias",
+        "include-in-reporting": false,
+        "operation-type": "raw-request",
+        "method": "POST",
+        "path": "/_aliases",
         "body": {
-          "query": {
-            "exists": {
-              "field": "message"
-            }
-          },
-          "aggs": {
-            "sample": {
-              "sampler": {
-                "shard_size": 100
-              },
-              "aggs": {
-                "categories.message": {
-                  "categorize_text": {
-                    "field": "message"
-                  }
-                }
+          "actions": [
+            {
+              "remove": {
+                "indices": [
+                  "logs-redis.log-default",
+                  "logs-apache.error-default",
+                  "logs-k8-application.log-default",
+                  "logs-system.syslog-default",
+                  "logs-redis.slowlog-default",
+                  "logs-kafka.log-default"
+                  ],
+                "alias": "categorize-text-index-alias"
               }
             }
-          }
-        }
-      }
-    },
-    {
-      "operation": {
-        "name": "categorize_text_sampler_shard_size_1000",
-        "operation-type": "search",
-        "index": "logs-*",
-        "body": {
-          "query": {
-            "exists": {
-              "field": "message"
-            }
-          },
-          "aggs": {
-            "sample": {
-              "sampler": {
-                "shard_size": 1000
-              },
-              "aggs": {
-                "categories.message": {
-                  "categorize_text": {
-                    "field": "message"
-                  }
-                }
-              }
-            }
-          }
+          ]
         }
       }
     }

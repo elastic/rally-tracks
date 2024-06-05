@@ -1,21 +1,13 @@
 {
     "template": {
       "settings": {
+        {% if index_mode %}
         "index": {
-          {% if index_sorting == "hostname" %}
+            "mode": {{ index_mode | tojson }},
             "sort.field": [ "host.name", "@timestamp" ],
-            "sort.order": [ "asc", "desc" ]
-          {% elif index_sorting == "timestamp" %}
-            "sort.field": [ "@timestamp", "host.name" ],
-            "sort.order": [ "desc", "asc" ]
-          {% endif %}
+            "sort.order": [ "asc", "desc" ],
+            "sort.missing": ["_first", "_last"]
         }
-      },
-      "mappings": {
-        {% if synthetic_source_mode | default(false) is true %}
-            "_source": {
-                "mode": "synthetic"
-            }
         {% endif %}
       }
     }

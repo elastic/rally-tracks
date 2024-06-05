@@ -150,3 +150,12 @@ class TestLogs:
             track_params=params(updates=custom),
         )
         assert ret == 0
+
+    def test_logs_many_shards_quantitative(self, es_cluster, rally):
+        custom = {"number_of_shards": 0}
+        ret = rally.race(
+            track="elastic/logs",
+            challenge="many-shards-quantitative",
+            track_params=params(updates=custom),
+        )
+        assert ret == 0

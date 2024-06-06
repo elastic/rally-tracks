@@ -65,6 +65,8 @@ $ python _tools/parse_queries.py -r
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 
+ - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.
+ - `index_refresh_interval` (default: unset): The index refresh interval.
  - `initial_indexing_bulk_indexing_clients` (default: 5)
  - `initial_indexing_ingest_percentage` (default: 100)
  - `initial_indexing_bulk_size` (default: 500)
@@ -73,13 +75,10 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `number_of_replicas` (default: 0)
  - `parallel_indexing_bulk_clients` (default: 1)
  - `parallel_indexing_bulk_target_throughput` (default: 1)
- - `parallel_indexing_time_period` (default: 1800)
  - `parallel_indexing_search_clients` (default: 3)
  - `parallel_indexing_search_target_throughput` (default: 100)
  - `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
  - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
+ - `search_ops` (default: [(10, 20, 0), (10, 20, 20), (10, 50, 0), (10, 50, 20), (10, 100, 0), (10, 100, 20), (10, 200, 0), (10, 200, 20), (10, 500, 0), (10, 500, 20), (10, 1000, 0), (10, 1000, 20), (100, 120, 0), (100, 120, 120), (100, 200, 0), (100, 200, 120), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]): The search and recall operations to run (k, ef_search, num_rescore).
  - `standalone_search_iterations` (default: 10000)
  - `vector_index_type` (default: "int8_hnsw"): The index kind for storing the vectors.
- - `index_refresh_interval` (default: unset): The index refresh interval.
- - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.
- - `search_ops` (default: [(10, 20, 0), (10, 20, 20), (10, 50, 0), (10, 50, 20), (10, 100, 0), (10, 100, 20), (10, 200, 0), (10, 200, 20), (10, 500, 0), (10, 500, 20), (10, 1000, 0), (10, 1000, 20), (100, 120, 0), (100, 120, 120), (100, 200, 0), (100, 200, 120), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]): The search and recall operations to run (k, ef_search, num_rescore).

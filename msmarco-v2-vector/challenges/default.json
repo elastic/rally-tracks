@@ -79,13 +79,13 @@
     {%- endfor %},
     {
       "parallel": {
+        "completed-by": "parallel-documents-indexing-bulk",
         "tasks": [
           {
             "name": "parallel-documents-indexing-bulk",
             "operation": "parallel-documents-indexing",
             "warmup-time-period": 60,
             "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
-            "time-period": {{ parallel_indexing_time_period | default(3600) | int }},
             "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
           },
           {
@@ -93,7 +93,6 @@
             "operation": "knn-search-10-100",
             "warmup-time-period": 60,
             "clients": {{ parallel_indexing_search_clients | default(1) | int }},
-            "time-period": {{ parallel_indexing_time_period | default(3600) | int }}
           }
         ]
       }

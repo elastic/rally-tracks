@@ -1,0 +1,669 @@
+{
+  "name": "logs-system.auth@package",
+  "component_template": {
+    "template": {
+      "settings": {
+        "index": {
+          {%- if disable_pipelines is not true %}
+          "default_pipeline": "logs-system.auth-1.58.1",
+          {%- endif %}
+          "mapping": {
+            "total_fields": {
+              "limit": "10000"
+            }
+          },
+          "query": {
+            "default_field": [
+              "cloud.account.id",
+              "cloud.availability_zone",
+              "cloud.instance.id",
+              "cloud.instance.name",
+              "cloud.machine.type",
+              "cloud.provider",
+              "cloud.region",
+              "cloud.project.id",
+              "cloud.image.id",
+              "container.id",
+              "container.image.name",
+              "container.name",
+              "host.os.version",
+              "host.os.build",
+              "host.os.codename",
+              "host.os.family",
+              "host.os.full",
+              "host.os.kernel",
+              "host.os.name",
+              "host.os.platform",
+              "host.type",
+              "host.architecture",
+              "host.domain",
+              "host.hostname",
+              "host.id",
+              "host.mac",
+              "host.name",
+              "input.type",
+              "event.action",
+              "event.category",
+              "event.code",
+              "event.kind",
+              "event.outcome",
+              "event.provider",
+              "event.type",
+              "ecs.version",
+              "error.message",
+              "group.id",
+              "group.name",
+              "message",
+              "log.file.path",
+              "log.syslog.facility.name",
+              "log.syslog.severity.name",
+              "log.syslog.appname",
+              "log.syslog.hostname",
+              "log.syslog.procid",
+              "log.syslog.version",
+              "process.name",
+              "related.hosts",
+              "related.user",
+              "source.address",
+              "source.as.organization.name",
+              "source.domain",
+              "source.geo.city_name",
+              "source.geo.continent_name",
+              "source.geo.country_iso_code",
+              "source.geo.country_name",
+              "source.geo.region_iso_code",
+              "source.geo.region_name",
+              "user.effective.name",
+              "user.id",
+              "user.name",
+              "tags",
+              "system.auth.ssh.method",
+              "system.auth.ssh.signature",
+              "system.auth.ssh.event",
+              "system.auth.sudo.error",
+              "system.auth.sudo.tty",
+              "system.auth.sudo.pwd",
+              "system.auth.sudo.user",
+              "system.auth.sudo.command",
+              "system.auth.useradd.home",
+              "system.auth.useradd.shell",
+              "system.auth.syslog.version",
+              "version"
+            ]
+          }
+        }
+      },
+      "mappings": {
+        "dynamic_templates": [
+          {
+            "container.labels": {
+              "path_match": "container.labels.*",
+              "mapping": {
+                "type": "keyword"
+              },
+              "match_mapping_type": "string"
+            }
+          }
+        ],
+        "properties": {
+          "container": {
+            "dynamic": true,
+            "type": "object",
+            "properties": {
+              "image": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "labels": {
+                "dynamic": true,
+                "type": "object"
+              }
+            }
+          },
+          "process": {
+            "properties": {
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword",
+                "fields": {
+                  "text": {
+                    "type": "match_only_text"
+                  }
+                }
+              },
+              "pid": {
+                "type": "long"
+              }
+            }
+          },
+          "log": {
+            "properties": {
+              "file": {
+                "properties": {
+                  "path": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "offset": {
+                "type": "long"
+              },
+              "syslog": {
+                "properties": {
+                  "severity": {
+                    "properties": {
+                      "code": {
+                        "type": "long"
+                      },
+                      "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "hostname": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "appname": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "procid": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "priority": {
+                    "type": "long"
+                  },
+                  "facility": {
+                    "properties": {
+                      "code": {
+                        "type": "long"
+                      },
+                      "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "version": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
+          },
+          "source": {
+            "properties": {
+              "geo": {
+                "properties": {
+                  "continent_name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "region_iso_code": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "city_name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "country_iso_code": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "country_name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "location": {
+                    "type": "geo_point"
+                  },
+                  "region_name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "as": {
+                "properties": {
+                  "number": {
+                    "type": "long"
+                  },
+                  "organization": {
+                    "properties": {
+                      "name": {
+                        "ignore_above": 1024,
+                        "type": "keyword",
+                        "fields": {
+                          "text": {
+                            "type": "match_only_text"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "address": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "port": {
+                "type": "long"
+              },
+              "domain": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "ip": {
+                "type": "ip"
+              }
+            }
+          },
+          "error": {
+            "properties": {
+              "message": {
+                "type": "match_only_text"
+              }
+            }
+          },
+          "message": {
+            "type": "match_only_text"
+          },
+          "version": {
+            "ignore_above": 1024,
+            "type": "keyword"
+          },
+          "tags": {
+            "ignore_above": 1024,
+            "type": "keyword"
+          },
+          "cloud": {
+            "properties": {
+              "availability_zone": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "image": {
+                "properties": {
+                  "id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "instance": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "provider": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "machine": {
+                "properties": {
+                  "type": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "project": {
+                "properties": {
+                  "id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "region": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "account": {
+                "properties": {
+                  "id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
+          },
+          "input": {
+            "properties": {
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "@timestamp": {
+            "ignore_malformed": false,
+            "type": "date"
+          },
+          "system": {
+            "properties": {
+              "auth": {
+                "properties": {
+                  "ssh": {
+                    "properties": {
+                      "method": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "dropped_ip": {
+                        "type": "ip"
+                      },
+                      "signature": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "event": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "sudo": {
+                    "properties": {
+                      "tty": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "error": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "pwd": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "user": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "command": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "syslog": {
+                    "properties": {
+                      "version": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "useradd": {
+                    "properties": {
+                      "shell": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "home": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "ecs": {
+            "properties": {
+              "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "related": {
+            "properties": {
+              "hosts": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "ip": {
+                "type": "ip"
+              },
+              "user": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "data_stream": {
+            "properties": {
+              "namespace": {
+                "type": "constant_keyword"
+              },
+              "type": {
+                "type": "constant_keyword",
+                "value": "logs"
+              },
+              "dataset": {
+                "type": "constant_keyword"
+              }
+            }
+          },
+          "host": {
+            "properties": {
+              "hostname": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "os": {
+                "properties": {
+                  "build": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "kernel": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "codename": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "text": {
+                        "type": "match_only_text"
+                      }
+                    }
+                  },
+                  "family": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "version": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "platform": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "full": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "text": {
+                        "type": "match_only_text"
+                      }
+                    }
+                  }
+                }
+              },
+              "containerized": {
+                "type": "boolean"
+              },
+              "domain": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "ip": {
+                "type": "ip"
+              },
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "mac": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "architecture": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "event": {
+            "properties": {
+              "code": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "original": {
+                "index": false,
+                "type": "keyword",
+                "doc_values": false
+              },
+              "created": {
+                "type": "date"
+              },
+              "kind": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "module": {
+                "type": "constant_keyword",
+                "value": "system"
+              },
+              "type": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "sequence": {
+                "type": "long"
+              },
+              "ingested": {
+                "type": "date"
+              },
+              "provider": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "action": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "category": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "dataset": {
+                "type": "constant_keyword",
+                "value": "system.auth"
+              },
+              "outcome": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "user": {
+            "properties": {
+              "effective": {
+                "properties": {
+                  "name": {
+                    "ignore_above": 1024,
+                    "type": "keyword",
+                    "fields": {
+                      "text": {
+                        "type": "match_only_text"
+                      }
+                    }
+                  }
+                }
+              },
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword",
+                "fields": {
+                  "text": {
+                    "type": "match_only_text"
+                  }
+                }
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "group": {
+            "properties": {
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    },
+    "_meta": {
+      "package": {
+        "name": "system"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    }
+  }
+}

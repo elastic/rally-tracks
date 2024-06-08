@@ -58,6 +58,15 @@ class TestLogs:
         )
         assert ret == 0
 
+    def test_logs_disable_pipelines(self, es_cluster, rally):
+        custom = {"number_of_replicas": 0, "disable_pipelines": "true"}
+        ret = rally.race(
+            track="elastic/logs",
+            challenge="logging-indexing",
+            track_params=params(updates=custom),
+        )
+        assert ret == 0
+
     def test_logs_disk_usage(self, es_cluster, rally):
         custom = {"number_of_shards": 4}
         ret = rally.race(
@@ -138,6 +147,15 @@ class TestLogs:
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-querying",
+            track_params=params(updates=custom),
+        )
+        assert ret == 0
+
+    def test_logs_many_shards_quantitative(self, es_cluster, rally):
+        custom = {"number_of_shards": 4}
+        ret = rally.race(
+            track="elastic/logs",
+            challenge="many-shards-quantitative",
             track_params=params(updates=custom),
         )
         assert ret == 0

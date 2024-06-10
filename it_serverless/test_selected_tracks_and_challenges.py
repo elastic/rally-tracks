@@ -35,13 +35,14 @@ class TestTrackRepository:
         "github_archive",
         "http_logs",
         # "k8s_metrics", (slow)
+        "msmarco-v2-vector",
         "nested",
         "noaa",
         "nyc_taxis",
         "percolator",
         "pmc",
         "so",
-        "so_vector",
+        # "so_vector", (excludes in _source)
         # "sql", (no support for test mode)
         "tsdb",
         "tsdb_k8s_queries",

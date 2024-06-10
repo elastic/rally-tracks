@@ -92,7 +92,7 @@
             "name": "parallel-documents-indexing-search-knn-10-100",
             "operation": "knn-search-10-100",
             "warmup-time-period": 60,
-            "clients": {{ parallel_indexing_search_clients | default(1) | int }},
+            "clients": {{ parallel_indexing_search_clients | default(1) | int }}
           }
         ]
       }

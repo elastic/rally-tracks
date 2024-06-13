@@ -214,4 +214,49 @@
       "name": "esql_topn_from_index_keep",
       "operation-type": "esql",
       "query": "FROM logs-* | SORT @timestamp | LIMIT 1000 | KEEP @timestamp"
-    }
+    },
+    {
+      "name": "esql_avg_doc_size",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS AVG(rally.doc_size)"
+    },
+    {
+      "name": "esql_avg_compression",
+      "operation-type": "esql",
+      "query": "FROM logs-* | EVAL compression = rally.doc_size::DOUBLE / rally.message_size | STATS AVG(compression)"
+    },
+    {
+      "name": "esql_avg_amount_group_by_integer",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS AVG(rally.message_size) BY b = BUCKET(rally.doc_size, 1000.) | SORT b"
+    },
+    {
+      "name": "esql_avg_amount_group_by_keyword",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS AVG(rally.message_size) BY cloud.machine.type"
+    },
+    {
+      "name": "esql_count_group_by_keyword",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS count(*) BY cloud.machine.type"
+    },
+    {
+      "name": "esql_sort_by_ts",
+      "operation-type": "esql",
+      "query": "FROM logs-* | SORT @timestamp DESC | KEEP @timestamp, host.name, log.offset | LIMIT 1000"
+    },
+    {
+      "name": "esql_date_histogram_fixed_interval",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS COUNT(*) BY b=BUCKET(@timestamp, 1 WEEK) | SORT b"
+    },
+    {
+      "name": "esql_date_histogram_fixed_interval_with_metrics",
+      "operation-type": "esql",
+      "query": "FROM logs-* | EVAL every10days = DATE_TRUNC(10 DAYS, @timestamp) | STATS min=MIN(log.offset), max=MAX(log.offset), avg=AVG(log.offset) BY every10days | SORT every10days"
+    },
+    {
+      "name": "esql_multi_terms_keyword",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS c=COUNT(@timestamp) BY cloud.machine.type, cloud.provider, cloud.region"
+    },

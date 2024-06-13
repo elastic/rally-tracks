@@ -106,13 +106,6 @@
       }
     }{%- if p_include_esql_queries %},
     {
-      "operation": "esql_from_all_limit_50",
-      "clients": 1,
-      "warmup-iterations": 10,
-      "iterations": 50,
-      "tags": ["esql", "limit50"]
-    },
-    {
       "operation": "esql_from_logs_limit_50",
       "clients": 1,
       "warmup-iterations": 10,
@@ -120,62 +113,68 @@
       "tags": ["esql", "limit50"]
     },
     {
-      "operation": "esql_from_logs_postgres_limit_50",
+      "operation": "esql_avg_doc_size",
       "clients": 1,
       "warmup-iterations": 10,
       "iterations": 50,
-      "tags": ["esql", "limit50"]
+      "tags": ["esql", "avg"]
     },
     {
-      "operation": "esql_topn_from_index_keep",
+      "operation": "esql_avg_compression",
       "clients": 1,
       "warmup-iterations": 10,
       "iterations": 50,
-      "tags": ["esql", "topn"]
-    }{%- if build_flavor != "serverless" or serverless_operator == true %},
-    {
-      "operation": "disable_query_cache",
-      "tags": ["esql", "settings"]
+      "tags": ["esql", "avg"]
     },
     {
-      "operation": "search_basic_count_group_0",
+      "operation": "esql_avg_amount_group_by_integer",
       "clients": 1,
       "warmup-iterations": 10,
       "iterations": 50,
-      "tags": ["esql", "count", "search"]
+      "tags": ["esql", "avg", "groupby"]
     },
     {
-      "operation": "search_basic_count_group_1",
+      "operation": "esql_avg_amount_group_by_keyword",
       "clients": 1,
       "warmup-iterations": 10,
       "iterations": 50,
-      "tags": ["esql", "count", "search"]
+      "tags": ["esql", "avg", "groupby"]
     },
     {
-      "operation": "search_basic_count_group_2",
+      "operation": "esql_count_group_by_keyword",
       "clients": 1,
-      "warmup-iterations": 2,
-      "iterations": 5,
-      "tags": ["esql", "count", "search"]
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "count", "groupby"]
     },
     {
-      "operation": "search_basic_count_group_3",
+      "operation": "esql_sort_by_ts",
       "clients": 1,
-      "warmup-iterations": 1,
-      "iterations": 3,
-      "tags": ["esql", "count", "search"]
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "sort"]
     },
     {
-      "operation": "search_basic_count_group_4",
+      "operation": "esql_date_histogram_fixed_interval",
       "clients": 1,
-      "warmup-iterations": 1,
-      "iterations": 3,
-      "tags": ["esql", "count", "search"]
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "histogram"]
     },
     {
-      "operation": "enable_query_cache",
-      "tags": ["esql", "settings"]
-    }{%- endif %}
+      "operation": "esql_date_histogram_fixed_interval_with_metrics",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "histogram"]
+    },
+    {
+      "operation": "esql_multi_terms_keyword",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "histogram"]
+    }
     {%- endif %}
   ]
 }

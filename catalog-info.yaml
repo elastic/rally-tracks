@@ -50,6 +50,8 @@ spec:
       repository: elastic/rally-tracks
       teams:
         es-perf: {}
+        elasticsearch-team:
+          access_level: BUILD_AND_READ
         everyone:
           access_level: READ_ONLY
 
@@ -84,5 +86,7 @@ spec:
           message: periodic it serverless
       teams:
         es-perf: {}
+        elasticsearch-team:
+          access_level: BUILD_AND_READ
         everyone:
           access_level: READ_ONLY

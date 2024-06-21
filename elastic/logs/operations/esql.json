@@ -196,24 +196,9 @@
       "query": "FROM logs-postgres* | DISSECT message \"duration: %{query_duration} ms\" | EVAL query_duration_num = TO_DOUBLE(query_duration) | STATS avg_duration = AVG(query_duration_num) | LIMIT 0"
     },
     {
-      "name": "esql_from_all_limit_50",
-      "operation-type": "esql",
-      "query": "FROM * | LIMIT 50"
-    },
-    {
       "name": "esql_from_logs_limit_50",
       "operation-type": "esql",
       "query": "FROM logs-* | LIMIT 50"
-    },
-    {
-      "name": "esql_from_logs_postgres_limit_50",
-      "operation-type": "esql",
-      "query": "FROM logs-postgres* | LIMIT 50"
-    },
-    {
-      "name": "esql_topn_from_index_keep",
-      "operation-type": "esql",
-      "query": "FROM logs-* | SORT @timestamp | LIMIT 1000 | KEEP @timestamp"
     },
     {
       "name": "esql_avg_doc_size",
@@ -259,4 +244,4 @@
       "name": "esql_multi_terms_keyword",
       "operation-type": "esql",
       "query": "FROM logs-* | STATS c=COUNT(@timestamp) BY cloud.machine.type, cloud.provider, cloud.region"
-    },
+    }

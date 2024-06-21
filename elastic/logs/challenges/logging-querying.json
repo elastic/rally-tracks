@@ -80,6 +80,25 @@
       ,
     {% endif %}
     {
+      "operation": "discovery-search-request-size-100",
+      "clients": 1,
+      "warmup-iterations": 0,
+      "iterations": 50
+    },
+    {
+      "operation": "discovery-search-request-size-500",
+      "clients": 1,
+      "warmup-iterations": 0,
+      "iterations": 50
+    },
+
+    {
+      "operation": "discovery-search-request-size-1000",
+      "clients": 1,
+      "warmup-iterations": 0,
+      "iterations": 50
+    },
+    {
       "name": "logging-queries",
       "parallel": {
         "time-period": {{ p_query_time_period }},

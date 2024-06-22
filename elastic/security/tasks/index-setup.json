@@ -6,6 +6,7 @@
     "param-source": "add-track-path"
   }
 },
+{# non-serverless-project-settings-marker-start #}{%- if build_flavor != "serverless" -%}
 {
   "name": "insert-ilm",
   "tags": ["setup"],
@@ -14,6 +15,7 @@
     "param-source": "add-track-path"
   }
 },
+{%- endif -%}{# non-serverless-project-settings-marker-end #}
 {
   "name": "delete-all-datastreams",
   "tags": ["setup"],
@@ -47,8 +49,10 @@
     "param-source": "composable-template-source",
     "settings": {
       "index": {
+        {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
         "number_of_shards": {{ p_number_of_shards }},
         "number_of_replicas": {{ p_number_of_replicas }}
+        {%- endif -%}{# non-serverless-index-settings-marker-end #}
       }
     },
     "remove-routing-shards": true,

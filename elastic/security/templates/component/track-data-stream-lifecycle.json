@@ -1,0 +1,15 @@
+{
+  "template": {
+{% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
+    "settings": {
+      "index": {
+        "lifecycle": {
+          "name": "security"
+        }
+      }
+    }
+{%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
+    "lifecycle": {}
+{%- endif -%}
+  }
+}

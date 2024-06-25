@@ -203,22 +203,22 @@
     {
       "name": "esql_avg_doc_size",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS AVG(rally.doc_size)"
+      "query": "FROM logs-* | WHERE @timestamp >= \"2020-08-17T00:00:00.000Z\"::DATETIME | STATS AVG(rally.doc_size)"
     },
     {
       "name": "esql_avg_compression",
       "operation-type": "esql",
-      "query": "FROM logs-* | EVAL compression = rally.doc_size::DOUBLE / rally.message_size | STATS AVG(compression)"
+      "query": "FROM logs-* | WHERE @timestamp >= \"2020-08-17T00:00:00.000Z\"::DATETIME | EVAL compression = rally.doc_size::DOUBLE / rally.message_size | STATS AVG(compression)"
     },
     {
       "name": "esql_avg_amount_group_by_integer",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS AVG(rally.message_size) BY b = BUCKET(rally.doc_size, 1000.) | SORT b"
+      "query": "FROM logs-* | WHERE @timestamp >= \"2020-08-17T00:00:00.000Z\"::DATETIME | STATS AVG(rally.message_size) BY b = BUCKET(rally.doc_size, 1000.) | SORT b"
     },
     {
       "name": "esql_avg_amount_group_by_keyword",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS AVG(rally.message_size) BY cloud.machine.type"
+      "query": "FROM logs-* | WHERE @timestamp >= \"2020-08-17T00:00:00.000Z\"::DATETIME | STATS AVG(rally.message_size) BY cloud.machine.type"
     },
     {
       "name": "esql_count_group_by_keyword",

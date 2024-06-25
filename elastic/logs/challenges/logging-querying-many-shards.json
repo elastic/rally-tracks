@@ -115,29 +115,29 @@
     {
       "operation": "esql_avg_doc_size",
       "clients": 1,
-      "warmup-iterations": 10,
-      "iterations": 50,
+      "warmup-iterations": 1,
+      "iterations": 1,
       "tags": ["esql", "avg"]
     },
     {
       "operation": "esql_avg_compression",
       "clients": 1,
-      "warmup-iterations": 10,
-      "iterations": 50,
+      "warmup-iterations": 1,
+      "iterations": 1,
       "tags": ["esql", "avg"]
     },
     {
       "operation": "esql_avg_amount_group_by_integer",
       "clients": 1,
-      "warmup-iterations": 10,
-      "iterations": 50,
+      "warmup-iterations": 1,
+      "iterations": 1,
       "tags": ["esql", "avg", "groupby"]
     },
     {
       "operation": "esql_avg_amount_group_by_keyword",
       "clients": 1,
-      "warmup-iterations": 10,
-      "iterations": 50,
+      "warmup-iterations": 1,
+      "iterations": 1,
       "tags": ["esql", "avg", "groupby"]
     },
     {

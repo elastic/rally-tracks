@@ -56,6 +56,73 @@
       "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
     },
     {
+      "name":"update-query-rules-settings",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/_cluster/settings",
+        "body": {
+          "persistent": {
+            "xpack.applications.rules.max_rules_per_ruleset" : 1000
+          }
+        },
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "create-query-ruleset-1",
+      "operation": "create-query-ruleset-1",
+      "ruleset_id": "ruleset_1",
+      "ruleset_size": 1
+    },
+    {
+      "name": "create-query-ruleset-10",
+      "operation": "create-query-ruleset-10",
+      "ruleset_id": "ruleset_10",
+      "ruleset_size": 10
+    },
+    {
+      "name": "create-query-ruleset-100",
+      "operation": "create-query-ruleset-100",
+      "ruleset_id": "ruleset_100",
+      "ruleset_size": 100
+    },
+    {
+      "name": "create-query-ruleset-1000",
+      "operation": "create-query-ruleset-1000",
+      "ruleset_id": "ruleset_1000",
+      "ruleset_size": 1000
+    },
+    {
+      "name": "query-rules-search-1",
+      "operation": "query-rules-search-1",
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "name": "query-rules-search-10",
+      "operation": "query-rules-search-10",
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "name": "query-rules-search-100",
+      "operation": "query-rules-search-100",
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "name": "query-rules-search-1000",
+      "operation": "query-rules-search-1000",
+      "clients": {{ application_search_clients | default(20) | int }},
+      "time-period": {{ application_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+    },
+    {
       "parallel": {
         "completed-by": "parallel-documents-indexing-query-string-search",
         "tasks": [

@@ -252,6 +252,277 @@
       }
     },
     {
+      "name": "distanceFilter-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) <= 400000 | LIMIT 10"
+    },
+    {
+      "name": "distanceFilterEQ",
+      "operation-type": "search",
+      "body": {
+        "size": 10,
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "geo_shape": {
+                  "location": {
+                    "shape": { "type": "circle", "radius": "73204.78m", "coordinates": [7, 55] },
+                    "relation": "intersects"
+                  }
+                }
+              },
+              {
+                "geo_shape": {
+                  "location": {
+                    "shape": { "type": "circle", "radius": "73204.77m", "coordinates": [7, 55] },
+                    "relation": "disjoint"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterEQ-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) == 73204.77053637545 | LIMIT 10"
+    },
+    {
+      "name": "distanceFilterGTE",
+      "operation-type": "search",
+      "body": {
+        "size": 10,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": { "type": "circle", "radius": "400km", "coordinates": [7.0, 55.0] },
+              "relation": "disjoint"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterGTE-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) >= 400000 | LIMIT 10"
+    },
+    {
+      "name": "distanceFilter10kGTE",
+      "operation-type": "search",
+      "body": {
+        "size": 10000,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": { "type": "circle", "radius": "400km", "coordinates": [7.0, 55.0] },
+              "relation": "disjoint"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilter10kGTE-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) >= 400000 | LIMIT 10000"
+    },
+    {
+      "name": "distanceFilterCount100",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_distance": {
+            "distance": "100km",
+            "location": [7.0, 55.0]
+          }
+        },
+        "aggs": {
+          "count": {
+          "value_count": {
+            "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterCount100-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) <= 100000 | STATS count=COUNT(*)"
+    },
+    {
+      "name": "distanceFilterCount100x200",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "geo_shape": {
+                  "location": {
+                    "shape": { "type": "circle", "radius": "200km", "coordinates": [7, 55] },
+                    "relation": "intersects"
+                  }
+                }
+              },
+              {
+                "geo_shape": {
+                  "location": {
+                    "shape": { "type": "circle", "radius": "100km", "coordinates": [7, 55] },
+                    "relation": "disjoint"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterCount100x200-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) >= 100000 AND ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) <= 200000 | STATS count=COUNT(*)"
+    },
+    {
+      "name": "distanceFilterCount200",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_distance": {
+            "distance": "200km",
+            "location": [7.0, 55.0]
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterCount200-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) <= 200000 | STATS count=COUNT(*)"
+    },
+    {
+      "name": "distanceFilterCount200x300",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+              "geo_shape": {
+                "location": {
+                    "shape": { "type": "circle", "radius": "300km", "coordinates": [7, 55] },
+                    "relation": "intersects"
+                  }
+                }
+              },
+              {
+                "geo_shape": {
+                  "location": {
+                    "shape": { "type": "circle", "radius": "200km", "coordinates": [7, 55] },
+                    "relation": "disjoint"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterCount200x300-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) >= 200000 AND ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) <= 300000 | STATS count=COUNT(*)"
+    },
+    {
+      "name": "distanceFilterCount300",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "geo_distance": {
+            "distance": "300km",
+            "location": [7.0, 55.0]
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterCount300-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) <= 300000 | STATS count=COUNT(*)"
+    },
+    {
+      "name": "distanceFilterCount300x400",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "geo_shape": {
+                  "location": {
+                    "shape": { "type": "circle", "radius": "400km", "coordinates": [7, 55] },
+                    "relation": "intersects"
+                  }
+                }
+              },
+              {
+                "geo_shape": {
+                  "location": {
+                    "shape": { "type": "circle", "radius": "300km", "coordinates": [7, 55] },
+                    "relation": "disjoint"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterCount300x400-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) >= 300000 AND ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) <= 400000 | STATS count=COUNT(*)"
+    },
+    {
       "name": "distanceSort",
       "operation-type": "search",
       "body": {
@@ -268,6 +539,11 @@
           }
         ]
       }
+    },
+    {
+      "name": "distanceSort-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL distance = ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) | SORT distance ASC | LIMIT 10"
     },
     {
       "name": "distanceFilterSort",
@@ -292,6 +568,11 @@
           }
         ]
       }
+    },
+    {
+      "name": "distanceFilterSort-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints  | EVAL distance = ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) | WHERE distance <= 400000 | SORT distance ASC | LIMIT 10"
     },
     {
       "name": "distanceRange",

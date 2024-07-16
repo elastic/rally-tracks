@@ -158,9 +158,9 @@ class QueryRulesSearchParamSource(QueryIteratorParamSource):
                 "path": "/_search",
                 "body": {
                     "query": {
-                        "rule_query": {
+                        "rule": {
                             "match_criteria": {"rule_key": random.choice(["match", "no-match"])},
-                            "ruleset_id": self.query_ruleset_params.ruleset_id,
+                            "ruleset_ids": [self.query_ruleset_params.ruleset_id],
                             "organic": {"query_string": {"query": query, "default_field": self._params["search-fields"]}},
                         }
                     },
@@ -180,7 +180,6 @@ class PinnedSearchParamSource(QueryIteratorParamSource):
     def params(self):
         try:
             query = next(self._queries_iterator)
-            # TODO Update this to use current syntax with 8.15.0+
             return {
                 "method": "POST",
                 "path": "/_search",

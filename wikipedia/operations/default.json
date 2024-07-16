@@ -134,6 +134,13 @@
   "ruleset_id": "ruleset_1000"
 },
 {
+  "name": "pinned-search",
+  "operation-type": "raw-request",
+  "param-source": "pinned-search-param-source",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
   "name": "query-string-search",
   "operation-type": "search",
   "param-source": "query-string-search",

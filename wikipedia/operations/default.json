@@ -70,6 +70,77 @@
   "param-source": "search-application-search-param-source"
 },
 {
+  "name": "create-query-ruleset-1",
+  "operation-type": "raw-request",
+  "param-source": "create-query-ruleset-param-source",
+  "include-in-reporting": false,
+  "ruleset_id": "ruleset_1",
+  "ruleset_size": 1
+},
+{
+  "name": "create-query-ruleset-10",
+  "operation-type": "raw-request",
+  "param-source": "create-query-ruleset-param-source",
+  "include-in-reporting": false,
+  "ruleset_id": "ruleset_10",
+  "ruleset_size": 10
+},
+{
+  "name": "create-query-ruleset-100",
+  "operation-type": "raw-request",
+  "param-source": "create-query-ruleset-param-source",
+  "include-in-reporting": false,
+  "ruleset_id": "ruleset_100",
+  "ruleset_size": 100
+},
+{
+  "name": "create-query-ruleset-1000",
+  "operation-type": "raw-request",
+  "param-source": "create-query-ruleset-param-source",
+  "include-in-reporting": false,
+  "ruleset_id": "ruleset_1000",
+  "ruleset_size": 1000
+},
+{
+  "name": "query-rules-search-1",
+  "operation-type": "raw-request",
+  "param-source": "query-rules-search-param-source",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}",
+  "ruleset_id": "ruleset_1"
+},
+{
+  "name": "query-rules-search-10",
+  "operation-type": "raw-request",
+  "param-source": "query-rules-search-param-source",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}",
+  "ruleset_id": "ruleset_10"
+},
+{
+  "name": "query-rules-search-100",
+  "operation-type": "raw-request",
+  "param-source": "query-rules-search-param-source",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}",
+  "ruleset_id": "ruleset_100"
+},
+{
+  "name": "query-rules-search-1000",
+  "operation-type": "raw-request",
+  "param-source": "query-rules-search-param-source",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}",
+  "ruleset_id": "ruleset_1000"
+},
+{
+  "name": "pinned-search",
+  "operation-type": "raw-request",
+  "param-source": "pinned-search-param-source",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
   "name": "query-string-search",
   "operation-type": "search",
   "param-source": "query-string-search",

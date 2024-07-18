@@ -44,7 +44,7 @@
 {% set p_snapshot_rename_suffix = (snapshot_rename_suffix | default("") ) %}
 {% set p_dsl_poll_interval = (dsl_poll_interval | default(false) ) %}
 {% set p_dsl_default_rollover = (dsl_default_rollover | default(false) ) %}
-
+{% set p_skip_fleet_globals = (skip_fleet_globals | default(false) ) %}
 {% set p_worker_threads_enabled = (worker_threads_enabled | default(true))  %}
 
 {% set es_version = "7.13.2" %}
@@ -200,11 +200,13 @@
         "template-path": "component_template"
 
     },
+    {% if p_skip_fleet_globals == false %}
     {
         "name": ".fleet_globals-1",
         "template": "./templates/component/.fleet_globals-1.json",
         "template-path": "component_template"
     },
+    {% endif %}
     {
         "name": "logs-apache.access@package",
         "template": "./templates/component/logs-apache.access@package.json",

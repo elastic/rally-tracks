@@ -122,9 +122,8 @@
             "rename_replacement": "$1{{ p_snapshot_rename_suffix }}-{{ snapshot_restore_iter }}"
           }
         }
-      } {{ ", " if not loop.last else "" }}
+      },
       {% endfor %}
-      ,
       {
         "name": "reset-recovery-settings-to-defaults",
         "operation": {

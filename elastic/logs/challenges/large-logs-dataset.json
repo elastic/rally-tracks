@@ -122,15 +122,9 @@
             "rename_replacement": "$1{{ p_snapshot_rename_suffix }}-{{ snapshot_restore_iter }}"
           }
         }
-      },
-      {
-        "name": "wait-for-snapshot-recovery-{{ p_snapshot_name }}",
-        "operation": {
-          "operation-type": "wait-for-recovery",
-          "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
-        }
-      }
-      {% endfor %},
+      } {{ ", " if not loop.last else "" }}
+      {% endfor %}
+      ,
       {
         "name": "reset-recovery-settings-to-defaults",
         "operation": {

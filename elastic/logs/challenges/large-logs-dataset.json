@@ -104,42 +104,51 @@
         "name": "refresh-after-force-merge",
         "index": "logs-*",
         "operation": "refresh"
-      },
+      }
       {%- endif %}
-      {% for snapshot_restore_iter in range(p_snapshot_restore_counts) %}
+      {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
       {
-        "name": "recover-snapshot-{{ p_snapshot_name }}-{{ snapshot_restore_iter }}",
+        "name": "compression-stats",
         "operation": {
-          "operation-type": "restore-snapshot",
-          "repository": {{ p_snapshot_repo_name | tojson }},
-          "snapshot": {{ p_snapshot_name | tojson }},
-          "wait-for-completion": true,
-          "body": {
-            "indices": {{ p_restore_data_streams | tojson }},
-            "ignore_unavailable": true,
-            "include_global_state": false,
-            "rename_pattern": "(.+)",
-            "rename_replacement": "$1{{ p_snapshot_rename_suffix }}-{{ snapshot_restore_iter }}"
-          }
+          "operation-type": "compression-statistics",
+          "param-source": "create-datastream-source"
         }
-      },
-      {% endfor %}
-      {
-        "name": "reset-recovery-settings-to-defaults",
-        "operation": {
-          "operation-type": "raw-request",
-          "method": "PUT",
-          "path": "/_cluster/settings",
-          "body": {
-            "transient": {
-              "indices.recovery.max_bytes_per_sec": null,
-              "cluster.routing.allocation.node_concurrent_recoveries": null
-            }
-          }
-        }
-      },
+      }
+      {%- endif -%}{# non-serverless-index-statistics-marker-end #}
       ,
     {% endif %}
+    {% for snapshot_restore_iter in range(p_snapshot_restore_counts) %}
+    {
+      "name": "recover-snapshot-{{ p_snapshot_name }}-{{ snapshot_restore_iter }}",
+      "operation": {
+        "operation-type": "restore-snapshot",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": true,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "rename_pattern": "(.+)",
+          "rename_replacement": "$1{{ p_snapshot_rename_suffix }}-{{ snapshot_restore_iter }}"
+        }
+      }
+    },
+    {% endfor %}
+    {
+      "name": "reset-recovery-settings-to-defaults",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/_cluster/settings",
+        "body": {
+          "transient": {
+            "indices.recovery.max_bytes_per_sec": null,
+            "cluster.routing.allocation.node_concurrent_recoveries": null
+          }
+        }
+      }
+    },
     {
       "operation": "discovery-search-request-size-100",
       "clients": 1,

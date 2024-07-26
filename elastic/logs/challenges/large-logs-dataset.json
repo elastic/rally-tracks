@@ -104,7 +104,7 @@
         "name": "refresh-after-force-merge",
         "index": "logs-*",
         "operation": "refresh"
-      }
+      },
       {%- endif %}
       {% for snapshot_restore_iter in range(p_snapshot_restore_counts) %}
       {

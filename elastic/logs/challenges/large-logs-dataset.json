@@ -113,7 +113,7 @@
           "operation-type": "restore-snapshot",
           "repository": {{ p_snapshot_repo_name | tojson }},
           "snapshot": {{ p_snapshot_name | tojson }},
-          "wait-for-completion": false,
+          "wait-for-completion": true,
           "body": {
             "indices": {{ p_restore_data_streams | tojson }},
             "ignore_unavailable": true,

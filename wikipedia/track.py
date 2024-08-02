@@ -29,10 +29,11 @@ def query_samples(k: int, random_seed: int = None) -> List[str]:
         random.seed(random_seed)
 
         return random.choices(queries, weights=probabilities, k=k)
-    
+
+
 # ids file was created with the following command: grep _index pages-1k.json | jq .index._id | tr -d '"' | grep -v null > ids.txt
 def ids_samples() -> list[str]:
-    with open(SAMPLE_IDS_FILENAME, 'r') as file:
+    with open(SAMPLE_IDS_FILENAME, "r") as file:
         ids = {line.strip() for line in file}
     for i in range(100):
         ids.add(f"missing-id-{i}")
@@ -151,7 +152,7 @@ class CreateQueryRulesetParamSource(ParamSource):
             rules.append(rule)
 
         return {"method": "PUT", "path": f"{QUERY_RULES_ENDPOINT}/{self.query_ruleset_params.ruleset_id}", "body": {"rules": rules}}
-    
+
 
 class QueryRulesSearchParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):

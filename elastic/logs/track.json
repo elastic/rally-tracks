@@ -196,13 +196,13 @@
     }
   ],
   "component-templates": [
+    {% if p_skip_fleet_globals == false %}
     {
         "name": ".fleet_agent_id_verification-1",
         "template": "./templates/component/.fleet_agent_id_verification-1.json",
         "template-path": "component_template"
 
     },
-    {% if p_skip_fleet_globals == false %}
     {
         "name": ".fleet_globals-1",
         "template": "./templates/component/.fleet_globals-1.json",

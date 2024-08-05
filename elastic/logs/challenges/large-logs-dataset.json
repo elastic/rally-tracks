@@ -15,7 +15,10 @@
         "body": {
           "transient": {
             "indices.recovery.max_bytes_per_sec": {{ p_recovery_max_bytes_per_sec | tojson}},
-            "cluster.routing.allocation.node_concurrent_recoveries": {{ p_node_concurrent_recoveries | tojson }}
+            "cluster.routing.allocation.node_concurrent_recoveries": {{ p_node_concurrent_recoveries | tojson}}
+          },
+          "persistent": {
+            "cluster.max_shards_per_node":500000,
           }
         }
       }
@@ -93,15 +96,6 @@
         "operation": "refresh"
       }
       {%- endif %}
-      {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      {
-        "name": "compression-stats",
-        "operation": {
-          "operation-type": "compression-statistics",
-          "param-source": "create-datastream-source"
-        }
-      }
-      {%- endif -%}{# non-serverless-index-statistics-marker-end #}
       ,
     {% endif %}
     {
@@ -120,6 +114,14 @@
       }
     },
     {
+      "name": "wait-for-snapshot-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "wait-for-snapshot-create",
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "repository": {{ p_snapshot_repo_name | tojson }}
+      }
+    },
+    {
       "name": "mount-searchable-snapshot",
       "operation": {
         "operation-type": "mount-searchable-snapshot",
@@ -134,7 +136,7 @@
     },
     {% for snapshot_restore_iter in range(p_snapshot_restore_counts) %}
     {
-      "name": "recover-snapshot-{{ p_snapshot_name }}-{{ snapshot_restore_iter }}",
+      "name": "restore-snapshot-{{ p_snapshot_name }}-{{ snapshot_restore_iter }}",
       "operation": {
         "operation-type": "restore-snapshot",
         "repository": {{ p_snapshot_repo_name | tojson }},
@@ -162,6 +164,18 @@
             "cluster.routing.allocation.node_concurrent_recoveries": null
           }
         }
+      }
+    },
+    {
+      "name": "wait-for-snapshot-restoring",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "_all",
+        "request-params": {
+          "wait_for_status": "{{wait_for_status | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
       }
     },
     {

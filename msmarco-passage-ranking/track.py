@@ -81,43 +81,24 @@ def generate_combine_bm25_weighted_terms_query(
 
 
 def generate_pruned_query(field, query_expansion, boost=1.0):
-    return {
-        "query": {
-            "weighted_tokens": {
-                f"{field}": {
-                    "tokens": query_expansion,
-                    "pruning_config": {"tokens_freq_ratio_threshold": 5, "tokens_weight_threshold": 0.4, "only_score_pruned_tokens": False},
-                    "boost": boost,
-                }
-            }
-        }
-    }
+    return {"query": {"sparse_vector": {"field": field, "query_vector": query_expansion, "prune": True, "boost": boost}}}
 
 
 def generate_rescored_pruned_query(field, query_expansion, num_candidates, boost=1.0):
     return {
-        "query": {
-            "weighted_tokens": {
-                f"{field}": {
-                    "tokens": query_expansion,
-                    "pruning_config": {"tokens_freq_ratio_threshold": 5, "tokens_weight_threshold": 0.4, "only_score_pruned_tokens": False},
-                    "boost": boost,
-                }
-            }
-        },
+        "query": {"sparse_vector": {"field": field, "query_vector": query_expansion, "prune": True, "boost": boost}},
         "rescore": {
             "window_size": num_candidates,
             "query": {
                 "rescore_query": {
-                    "weighted_tokens": {
-                        f"{field}": {
-                            "tokens": query_expansion,
-                            "pruning_config": {
-                                "tokens_freq_ratio_threshold": 5,
-                                "tokens_weight_threshold": 0.4,
-                                "only_score_pruned_tokens": True,
-                            },
-                        }
+                    "sparse_vector": {
+                        "field": field,
+                        "query_vector": query_expansion,
+                        "prune": True,
+                        "pruning_config": {
+                            "only_score_pruned_tokens": True,
+                        },
+                        "boost": boost,
                     }
                 }
             },

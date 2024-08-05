@@ -1,0 +1,180 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-querying-many-shards",
+  "description": "Applies a query workload. Ensures data streams exist so queries can be run, but does not remove existing data.",
+  "parameters": {
+    "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
+  },
+  "schedule": [
+    {% include "tasks/many-shards-setup.json" %},
+    {% if bulk_start_date and bulk_end_date %}
+      {
+        "name": "bulk-index",
+        "operation": {
+          "operation-type": "raw-bulk",
+          "param-source": "processed-source",
+          "time-format": "milliseconds",
+          "profile": "fixed_interval",
+          "init-load": true,
+          "bulk-size": {{ p_bulk_size }},
+          "detailed-results": true
+        },
+        "clients": {{ p_bulk_indexing_clients }},
+        "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+      }
+      {%- if force_merge_max_num_segments is defined %},
+      {
+        "name": "refresh-after-index",
+        "index": "logs-*",
+        "operation": "refresh"
+      },
+      {
+        "name": "wait-until-index-merges-fininshes",
+        "operation": {
+          "operation-type": "index-stats",
+          "index": "logs-*",
+          "condition": {
+            "path": "_all.total.merges.current",
+            "expected-value": 0
+          },
+          "retry-until-success": true,
+          "include-in-reporting": false
+        },
+        "tags": ["wait"]
+      },
+      {
+        "operation": {
+          "operation-type": "force-merge",
+          "index": "logs-*",
+          "request-timeout": 36000,
+          "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+        }
+      },
+      {
+        "name": "wait-until-merges-finish",
+        "operation": {
+          "operation-type": "index-stats",
+          "index": "logs-*",
+          "condition": {
+            "path": "_all.total.merges.current",
+            "expected-value": 0
+          },
+          "retry-until-success": true,
+          "include-in-reporting": false
+        }
+      },
+      {
+        "name": "refresh-after-force-merge",
+        "index": "logs-*",
+        "operation": "refresh"
+      }
+      {%- endif %}
+      {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
+      {
+        "name": "compression-stats",
+        "operation": {
+          "operation-type": "compression-statistics",
+          "param-source": "create-datastream-source"
+        }
+      }
+      {%- endif -%}{# non-serverless-index-statistics-marker-end #}
+      ,
+    {% endif %}
+    {
+      "name": "logging-queries",
+      "parallel": {
+        "time-period": {{ p_query_time_period }},
+        "warmup-time-period": {{ p_query_warmup_time_period }},
+        "tasks": [
+          {% for workflow in p_query_workflows %}
+            {
+              "name": {{workflow | tojson }},
+              "operation": {
+                "operation-type": "composite",
+                "param-source": "workflow-selector",
+                "workflow": {{workflow | tojson }},
+                "task-offset": {{ loop.index }},
+                "request-params": {{ p_query_request_params | tojson(indent=2) }}
+              },
+              "think-time-interval": {{ p_user_think_time }},
+              "workflow-interval": {{ p_user_workflow_time }},
+              "clients": {{ p_search_clients }},
+              "schedule": "workflow-scheduler"
+            }{{ ", " if not loop.last else "" }}
+          {% endfor %}
+        ]
+      }
+    }{%- if p_include_esql_queries %},
+    {
+      "operation": "esql_from_logs_limit_50",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit50"]
+    },
+    {
+      "operation": "esql_avg_doc_size",
+      "clients": 1,
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "tags": ["esql", "avg"]
+    },
+    {
+      "operation": "esql_avg_compression",
+      "clients": 1,
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "tags": ["esql", "avg"]
+    },
+    {
+      "operation": "esql_avg_amount_group_by_integer",
+      "clients": 1,
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "tags": ["esql", "avg", "groupby"]
+    },
+    {
+      "operation": "esql_avg_amount_group_by_keyword",
+      "clients": 1,
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "tags": ["esql", "avg", "groupby"]
+    },
+    {
+      "operation": "esql_count_group_by_keyword",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "count", "groupby"]
+    },
+    {
+      "operation": "esql_sort_by_ts",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "sort"]
+    },
+    {
+      "operation": "esql_date_histogram_fixed_interval",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "histogram"]
+    },
+    {
+      "operation": "esql_date_histogram_fixed_interval_with_metrics",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "histogram"]
+    },
+    {
+      "operation": "esql_multi_terms_keyword",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "histogram"]
+    }
+    {%- endif %}
+  ]
+}

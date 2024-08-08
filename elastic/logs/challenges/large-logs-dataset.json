@@ -18,7 +18,7 @@
             "cluster.routing.allocation.node_concurrent_recoveries": {{ p_node_concurrent_recoveries | tojson}}
           },
           "persistent": {
-            "clustemax_shards_per_noder.":500000,
+            "cluster.max_shards_per_node":500000,
             "cluster.routing.allocation.node_concurrent_recoveries":200,
             "cluster.routing.allocation.node_initial_primaries_recoveries":100
           }

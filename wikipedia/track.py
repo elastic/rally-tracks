@@ -197,7 +197,7 @@ class PinnedSearchParamSource(QueryIteratorParamSource):
                     "query": {
                         "pinned": {
                             "organic": {"query_string": {"query": query, "default_field": self._params["search-fields"]}},
-                            "ids": [self.ids],
+                            "ids": [random.choice(self.ids)],
                         }
                     },
                     "size": self._params["size"],

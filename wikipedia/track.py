@@ -32,7 +32,7 @@ def query_samples(k: int, random_seed: int = None) -> List[str]:
 
 
 # ids file was created with the following command: grep _index pages-1k.json | jq .index._id | tr -d '"' | grep -v null > ids.txt
-def ids_samples() -> list[str]:
+def ids_samples() -> List[str]:
     with open(SAMPLE_IDS_FILENAME, "r") as file:
         ids = {line.strip() for line in file}
     for i in range(100):

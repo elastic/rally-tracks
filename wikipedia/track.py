@@ -10,6 +10,7 @@ from esrally.track.params import ParamSource
 
 QUERIES_DIRNAME: str = dirname(__file__)
 QUERIES_FILENAME: str = f"{QUERIES_DIRNAME}/queries.csv"
+SAMPLE_IDS_FILENAME: str = f"{QUERIES_DIRNAME}/ids.txt"
 
 SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 QUERY_RULES_ENDPOINT: str = "/_query_rules"
@@ -28,6 +29,15 @@ def query_samples(k: int, random_seed: int = None) -> List[str]:
         random.seed(random_seed)
 
         return random.choices(queries, weights=probabilities, k=k)
+
+
+# ids file was created with the following command: grep _index pages-1k.json | jq .index._id | tr -d '"' | grep -v null > ids.txt
+def ids_samples() -> List[str]:
+    with open(SAMPLE_IDS_FILENAME, "r") as file:
+        ids = {line.strip() for line in file}
+    for i in range(100):
+        ids.add(f"missing-id-{i}")
+    return list(ids)
 
 
 class SearchApplicationParams:
@@ -130,14 +140,14 @@ class CreateQueryRulesetParamSource(ParamSource):
         return self
 
     def params(self):
+        ids = ids_samples()
         rules = []
         for i in range(self.query_ruleset_params.ruleset_size):
-            # Note: `AccessibleComputing` is one of the _ids indexed in the dataset
             rule = {
                 "rule_id": "rule_{{i}}",
-                "type": "pinned",
+                "type": random.choice(["pinned", "exclude"]),
                 "criteria": [{"type": "exact", "metadata": "rule_key", "values": [random.choice(["match", "no-match"])]}],
-                "actions": {"ids": [random.choice(["AccessibleComputing", "pinned-miss"])]},
+                "actions": {"ids": [random.choice(ids)]},
             }
             rules.append(rule)
 
@@ -152,7 +162,6 @@ class QueryRulesSearchParamSource(QueryIteratorParamSource):
     def params(self):
         try:
             query = next(self._queries_iterator)
-            # TODO Update this to use current syntax with 8.15.0+
             return {
                 "method": "POST",
                 "path": "/_search",
@@ -176,6 +185,7 @@ class PinnedSearchParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self.query_ruleset_params = QueryRulesetParams(track, params)
+        self.ids = ids_samples()
 
     def params(self):
         try:
@@ -187,7 +197,7 @@ class PinnedSearchParamSource(QueryIteratorParamSource):
                     "query": {
                         "pinned": {
                             "organic": {"query_string": {"query": query, "default_field": self._params["search-fields"]}},
-                            "ids": [random.choice(["AccessibleComputing", "pinned-miss"])],
+                            "ids": [random.choice(self.ids)],
                         }
                     },
                     "size": self._params["size"],

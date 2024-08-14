@@ -1,6 +1,6 @@
 {% import "rally.helpers" as rally %}
 {
-  "name": "large-logs-dataset",
+  "name": "logging-large-dataset",
   "description": "Applies a query workload after replicating data to increase the datset size. Ensures data streams exist so queries can be run, but does not remove existing data.",
   "parameters": {
     "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
@@ -22,17 +22,6 @@
             "cluster.routing.allocation.node_concurrent_recoveries":200,
             "cluster.routing.allocation.node_initial_primaries_recoveries":100
           }
-        }
-      }
-    },
-    {
-      "name": "register-snapshot-repository",
-      "operation": {
-        "operation-type": "create-snapshot-repository",
-        "repository": "{{ p_snapshot_repo_name }}",
-        "body": {
-          "type": {{ p_snapshot_repo_type | tojson }},
-          "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
         }
       }
     },
@@ -101,10 +90,16 @@
       ,
     {% endif %}
     {
+        "name": "execute_slm_policy",
+        "operation-type": "raw-request",
+        "method": "POST",
+        "path": "/_slm/policy/obs-policy/_execute",
+    },
+    {
       "name": "create-snapshot-{{ p_snapshot_name }}",
       "operation": {
         "operation-type": "create-snapshot",
-        "repository": {{ p_snapshot_repo_name | tojson }},
+        "repository": "backup",
         "snapshot": {{ p_snapshot_name | tojson }},
         "wait-for-completion": false,
         "body": {
@@ -120,7 +115,7 @@
       "operation": {
         "operation-type": "wait-for-snapshot-create",
         "snapshot": {{ p_snapshot_name | tojson }},
-        "repository": {{ p_snapshot_repo_name | tojson }}
+        "repository": "backup"
       }
     },
     {
@@ -128,7 +123,7 @@
       "operation": {
         "operation-type": "mount-searchable-snapshot",
         "repository": "{{ p_snapshot_repo_name }}",
-        "snapshot": "{{ p_snapshot_name }}",
+        "snapshot": "backup",
         "index_pattern": ".ds-logs-*",
         "rename_pattern": "^.ds-",
         "rename_replacement": "",
@@ -138,10 +133,10 @@
     },
     {% for snapshot_restore_iter in range(p_snapshot_restore_counts) %}
     {
-      "name": "restore-snapshot-{{ p_snapshot_name }}-{{ snapshot_restore_iter }}",
+      "name": "restore-snapshot-{{ snapshot_restore_iter }}",
       "operation": {
         "operation-type": "restore-snapshot",
-        "repository": {{ p_snapshot_repo_name | tojson }},
+        "repository": "backup",
         "snapshot": {{ p_snapshot_name | tojson }},
         "wait-for-completion": true,
         "body": {

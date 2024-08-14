@@ -50,7 +50,7 @@
 {% set es_version = "7.13.2" %}
 
 {% set p_snapshot_restore_counts = (snapshot_restore_counts | default(100) ) %}
-{% set p_skip_fleet_globals = (skip_fleet_globals | default(false) ) %}
+{% set p_skip_deleting_templates = (skip_deleting_templates | default(false) ) %}
 
 {% set p_integration_ratios = (integration_ratios | default({
     "kafka": {
@@ -197,14 +197,12 @@
     }
   ],
   "component-templates": [
-    {% if p_skip_fleet_globals == false %}
     {
         "name": ".fleet_agent_id_verification-1",
         "template": "./templates/component/.fleet_agent_id_verification-1.json",
         "template-path": "component_template"
 
     },
-    {% endif %}
     {
         "name": ".fleet_globals-1",
         "template": "./templates/component/.fleet_globals-1.json",

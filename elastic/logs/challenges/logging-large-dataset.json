@@ -125,7 +125,7 @@
       "operation": {
         "operation-type": "mount-searchable-snapshot",
         "repository": "backup",
-        "snapshot": "{{ p_snapshot_name }}"
+        "snapshot": "{{ p_snapshot_name }}",
         "index_pattern": ".ds-logs-*",
         "rename_pattern": "^.ds-",
         "rename_replacement": "",

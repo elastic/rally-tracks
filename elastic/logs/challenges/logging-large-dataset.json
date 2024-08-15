@@ -120,19 +120,6 @@
         "repository": "backup"
       }
     },
-    {
-      "name": "mount-searchable-snapshot",
-      "operation": {
-        "operation-type": "mount-searchable-snapshot",
-        "repository": "backup",
-        "snapshot": "{{ p_snapshot_name }}",
-        "index_pattern": ".ds-logs-*",
-        "rename_pattern": "^.ds-",
-        "rename_replacement": "",
-        "storage": "shared_cache",
-        "ignore_index_settings": ["index.hidden"]
-      }
-    },
     {% for snapshot_restore_iter in range(p_snapshot_restore_counts) %}
     {
       "name": "restore-snapshot-{{ snapshot_restore_iter }}",

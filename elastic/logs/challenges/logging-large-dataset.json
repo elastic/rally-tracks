@@ -124,7 +124,7 @@
       "name": "mount-searchable-snapshot",
       "operation": {
         "operation-type": "mount-searchable-snapshot",
-        "repository": "{{ p_snapshot_repo_name }}",
+        "repository": "backup",
         "snapshot": "backup",
         "index_pattern": ".ds-logs-*",
         "rename_pattern": "^.ds-",

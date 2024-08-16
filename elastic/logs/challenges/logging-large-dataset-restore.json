@@ -1,0 +1,104 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-large-dataset-restore",
+  "description": "Applies a query workload after replicating data to increase the datset size. Ensures data streams exist so queries can be run, but does not remove existing data.",
+  "parameters": {
+    "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
+  },
+  "schedule": [
+    {
+      "name": "tune-recovery-settings",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/_cluster/settings",
+        "body": {
+          "transient": {
+            "indices.recovery.max_bytes_per_sec": {{ p_recovery_max_bytes_per_sec | tojson}},
+            "cluster.routing.allocation.node_concurrent_recoveries": {{ p_node_concurrent_recoveries | tojson}}
+          },
+          "persistent": {
+            "cluster.max_shards_per_node":500000,
+            "cluster.routing.allocation.node_concurrent_recoveries":200,
+            "cluster.routing.allocation.node_initial_primaries_recoveries":100
+          }
+        }
+      }
+    },
+    {
+      "name": "execute_slm_policy",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "POST",
+        "path": "/_slm/policy/obs-policy/_execute"
+      }
+    },
+    {
+      "name": "create-snapshot-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "create-snapshot",
+        "repository": "backup",
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": false,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "metadata": {{ p_snapshot_metadata | tojson }}
+        }
+      }
+    },
+    {
+      "name": "wait-for-snapshot-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "wait-for-snapshot-create",
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "repository": "backup"
+      }
+    },
+    {% for snapshot_restore_iter in range(p_snapshot_restore_counts) %}
+    {
+      "name": "restore-snapshot-{{ snapshot_restore_iter }}",
+      "operation": {
+        "operation-type": "restore-snapshot",
+        "repository": "backup",
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": true,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "rename_pattern": "(.+)",
+          "rename_replacement": "$1{{ p_snapshot_rename_suffix }}-{{ snapshot_restore_iter }}"
+        }
+      }
+    },
+    {% endfor %}
+    {
+      "name": "reset-recovery-settings-to-defaults",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/_cluster/settings",
+        "body": {
+          "transient": {
+            "indices.recovery.max_bytes_per_sec": null,
+            "cluster.routing.allocation.node_concurrent_recoveries": null
+          }
+        }
+      }
+    },
+    {
+      "name": "wait-for-snapshot-restoring",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "_all",
+        "request-params": {
+          "wait_for_status": "{{wait_for_status | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    }  
+  ]
+}

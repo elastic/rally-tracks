@@ -50,6 +50,7 @@
           {% endfor %}
         ]
       }
+    },
     {
       "operation": "esql_basic_count_group_0_limit_0",
       "clients": 1,
@@ -205,4 +206,5 @@
       "operation": "enable_query_cache",
       "tags": ["esql", "settings"]
     }
+  ]
 }

@@ -6,7 +6,6 @@
     "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
   },
   "schedule": [
-    {% include "tasks/index-setup.json" %},
     {
       "operation": "discovery-search-request-size-100",
       "clients": 1,

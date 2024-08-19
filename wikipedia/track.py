@@ -206,7 +206,8 @@ class PinnedSearchParamSource(QueryIteratorParamSource):
         except StopIteration:
             self._queries_iterator = iter(self._sample_queries)
             return self.params()
-        
+
+
 class RetrieverParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
@@ -217,35 +218,23 @@ class RetrieverParamSource(QueryIteratorParamSource):
     def params(self):
 
         standard_retriever = {
-            "standard": {
-                "query": {
-                    "query_string": {
-                        "query": next(self._queries_iterator), "default_field": self._params["search-fields"]
-                    }
-                }
-            }
+            "standard": {"query": {"query_string": {"query": next(self._queries_iterator), "default_field": self._params["search-fields"]}}}
         }
-        
+
         retriever = standard_retriever
-        if (self._rerank):
-            retriever = {
-                self._reranker: {
-                    "retriever": standard_retriever
-                }
-            }
-        
+        if self._rerank:
+            retriever = {self._reranker: {"retriever": standard_retriever}}
+
         try:
             return {
                 "method": "POST",
                 "path": f"/{self._index_name}/_search",
-                "body": {
-                    "retriever": retriever,
-                    "size": self._params["size"]
-                },
+                "body": {"retriever": retriever, "size": self._params["size"]},
             }
         except StopIteration:
             self._queries_iterator = iter(self._sample_queries)
             return self.params()
+
 
 def register(registry):
     registry.register_param_source("query-string-search", QueryParamSource)

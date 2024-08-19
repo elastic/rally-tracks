@@ -149,6 +149,20 @@
           }
         ]
       }
+    },
+    {
+      "name": "standalone-retriever-search",
+      "operation": "retriever-search",
+      "clients": {{ standalone_search_clients | default(20) | int }},
+      "time-period": {{ standalone_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+    },
+    {
+      "name": "standalone-retriever-search-with-rerank",
+      "operation": "retriever-search-with-rerank",
+      "clients": {{ standalone_search_clients | default(20) | int }},
+      "time-period": {{ standalone_search_time_period | default(300) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
     }
   ]
 }

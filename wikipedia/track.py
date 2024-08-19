@@ -223,7 +223,7 @@ class RetrieverParamSource(QueryIteratorParamSource):
 
         retriever = standard_retriever
         if self._rerank:
-            retriever = {self._reranker: {"retriever": standard_retriever}}
+            retriever = {self._reranker: {"retriever": standard_retriever, "field": self._params["search-fields"]}}
 
         try:
             return {

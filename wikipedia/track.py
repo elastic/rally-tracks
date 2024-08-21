@@ -208,6 +208,35 @@ class PinnedSearchParamSource(QueryIteratorParamSource):
             return self.params()
 
 
+class RetrieverParamSource(QueryIteratorParamSource):
+    def __init__(self, track, params, **kwargs):
+        super().__init__(track, params, **kwargs)
+        self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
+        self._search_fields = self._params["search-fields"]
+        self._rerank = params.get("rerank", False)
+        self._reranker = params.get("reranker", "random_reranker")
+        self._size = params.get("size", 20)
+
+    def params(self):
+        standard_retriever = {
+            "standard": {"query": {"query_string": {"query": next(self._queries_iterator), "default_field": self._search_fields}}}
+        }
+
+        retriever = standard_retriever
+        if self._rerank:
+            retriever = {self._reranker: {"retriever": standard_retriever, "field": self._search_fields, "rank_window_size": self._size}}
+
+        try:
+            return {
+                "method": "POST",
+                "path": f"/{self._index_name}/_search",
+                "body": {"retriever": retriever, "size": self._size},
+            }
+        except StopIteration:
+            self._queries_iterator = iter(self._sample_queries)
+            return self.params()
+
+
 def register(registry):
     registry.register_param_source("query-string-search", QueryParamSource)
     registry.register_param_source("create-search-application-param-source", CreateSearchApplicationParamSource)
@@ -215,3 +244,4 @@ def register(registry):
     registry.register_param_source("create-query-ruleset-param-source", CreateQueryRulesetParamSource)
     registry.register_param_source("query-rules-search-param-source", QueryRulesSearchParamSource)
     registry.register_param_source("pinned-search-param-source", PinnedSearchParamSource)
+    registry.register_param_source("retriever-search", RetrieverParamSource)

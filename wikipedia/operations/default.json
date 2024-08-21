@@ -146,4 +146,20 @@
   "param-source": "query-string-search",
   "size" : {{ query_string_search_page_size | default(20) | int }},
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "retriever-search",
+  "operation-type": "raw-request",
+  "param-source": "retriever-search",
+  "size" : {{ retriever_search_page_size | default(20) | int }},
+  "search-fields" : "{{ retriever_search_fields | default("*") }}"
+},
+{
+  "name": "retriever-search-with-rerank",
+  "operation-type": "raw-request",
+  "param-source": "retriever-search",
+  "size" : {{ retriever_search_page_size | default(20) | int }},
+  "search-fields" : "{{ retriever_search_fields | default("*") }}",
+  "rerank": "True",
+  "reranker": "random_reranker"
 }

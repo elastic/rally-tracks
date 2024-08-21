@@ -218,7 +218,6 @@ class RetrieverParamSource(QueryIteratorParamSource):
         self._size = params.get("size", 20)
 
     def params(self):
-
         standard_retriever = {
             "standard": {"query": {"query_string": {"query": next(self._queries_iterator), "default_field": self._search_fields}}}
         }

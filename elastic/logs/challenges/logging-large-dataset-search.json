@@ -136,13 +136,6 @@
       "tags": ["esql", "count"]
     },
     {
-      "operation": "esql_basic_count_group_4",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 10,
-      "tags": ["esql", "count"]
-    },
-    {
       "operation": "esql_time_range_and_date_histogram_two_groups_pre_filter",
       "clients": 1,
       "warmup-iterations": 5,
@@ -190,13 +183,6 @@
     },
     {
       "operation": "search_basic_count_group_3",
-      "clients": 1,
-      "warmup-iterations": 1,
-      "iterations": 3,
-      "tags": ["esql", "count", "search"]
-    },
-    {
-      "operation": "search_basic_count_group_4",
       "clients": 1,
       "warmup-iterations": 1,
       "iterations": 3,

@@ -129,13 +129,6 @@
       "tags": ["esql", "date_histogram"]
     },
     {
-      "operation": "esql_time_range_and_date_histogram_two_groups_post_filter",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
-      "tags": ["esql", "date_histogram"]
-    },
-    {
       "operation": "esql_dissect_duration_and_stats",
       "clients": 1,
       "warmup-iterations": 5,

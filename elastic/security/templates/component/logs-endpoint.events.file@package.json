@@ -5,19 +5,11 @@
       "settings": {
         "index": {
           {% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
-              "settings": {
-                "index": {
-                  "lifecycle": {
-                    "name": "logs"
-                  }
-                }
-              }
+            "lifecycle": {
+              "name": "logs"
+            },
           {%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
-          "settings": {
-            "index": {
-              "lifecycle": {}
-            }
-          },
+              "lifecycle": {},
           {%- endif -%}
           "codec": "best_compression",
           "mapping": {

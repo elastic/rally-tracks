@@ -8,6 +8,7 @@
 {% set p_bulk_indexing_clients = (bulk_indexing_clients | default(8))%}
 {% set p_number_of_shards = (number_of_shards | default(1)) %}
 {% set p_number_of_replicas = (number_of_replicas | default(1)) %}
+{% set p_skip_fleet_globals = (skip_fleet_globals | default(false) ) %}
 {% set p_integration_ratios = (integration_ratios | default({
     "auditbeat": {
       "corpora": {
@@ -96,6 +97,7 @@
       "name": "track-custom-mappings",
       "template": "./templates/component/track-custom-mappings.json"
     },
+    {% if p_skip_fleet_globals == false %}
     {
       "name": ".fleet_agent_id_verification-1",
       "template": "./templates/component/.fleet_agent_id_verification-1.json",
@@ -110,6 +112,7 @@
       "template": "./templates/component/.fleet_globals-1.json",
       "template-path": "component_template"
     },
+    {% endif %}
     {
       "name": "logs-endpoint.events.file@mappings",
       "template": "./templates/component/logs-endpoint.events.file@mappings.json"

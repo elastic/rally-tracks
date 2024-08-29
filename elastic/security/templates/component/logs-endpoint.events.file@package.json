@@ -4,9 +4,21 @@
     "template": {
       "settings": {
         "index": {
-          "lifecycle": {
-            "name": "logs"
+          {% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
+              "settings": {
+                "index": {
+                  "lifecycle": {
+                    "name": "logs"
+                  }
+                }
+              }
+          {%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
+          "settings": {
+            "index": {
+              "lifecycle": {}
+            }
           },
+          {%- endif -%}
           "codec": "best_compression",
           "mapping": {
             "total_fields": {

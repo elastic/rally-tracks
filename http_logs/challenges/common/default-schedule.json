@@ -1,9 +1,37 @@
         {
-          "operation": "delete-index"
+          "operation": {
+            "name": "delete-data-stream",
+            "operation-type": "delete-data-stream",
+            "only-if-exists": false,
+            "data-stream": ["logs-181998", "logs-191998", "logs-201998", "logs-211998", "logs-221998", "logs-231998", "logs-241998", "reindexed-logs"]
+          }
         },
         {
           "operation": {
-            "operation-type": "create-index",
+            "name": "delete-index",
+            "operation-type": "delete-index",
+            "only-if-exists": false,
+            "index": ["logs-181998", "logs-191998", "logs-201998", "logs-211998", "logs-221998", "logs-231998", "logs-241998", "reindexed-logs"]
+          }
+        },
+        {
+          "operation" : {
+            "name": "delete-all-index-templates",
+            "operation-type": "delete-composable-template"
+          }
+        },
+        {
+          "operation": {
+            "name": "create-all-templates",
+            "operation-type": "create-composable-template"
+          }
+        },
+        {
+          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
+            {%- set indexing_operation_type = "create-data-stream" %}
+          {%- endif %}
+          "operation": {
+            "operation-type": {{ indexing_operation_type | default("create-index") | tojson }},
             "settings": {{index_settings | default({}) | tojson}}
           }
         },

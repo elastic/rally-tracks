@@ -1,11 +1,9 @@
 {% import "rally.helpers" as rally with context %}
 {%- if runtime_fields is defined %}
-  {%- set index_body = 'index-runtime-fields.json' %}
   {%- set query_range_ts_start = "1998-05-01T00:00:00Z" %}
   {%- set query_range_ts_end = "1998-05-02T00:00:00Z" %}
   {%- set search_after_ts = "1998-06-10" %}
 {% else %}
-  {%- set index_body = 'index.json' %}
   {%- set query_range_ts_start = "893980800" %}
   {%- set query_range_ts_end = "894067200" %}
   {%- set search_after_ts = "897436800" %}
@@ -56,7 +54,6 @@
     }
   ],
   "corpora": [
-      {%- if ingest_pipeline is defined and ingest_pipeline == "grok" or runtime_fields is defined %}
         {
           "name": "http_logs_unparsed",
           "base-url": "https://rally-tracks.elastic.co/http_logs",
@@ -111,8 +108,7 @@
             "uncompressed-bytes": 20563705716
           }
         ]
-      }
-    {%- else %}
+      },
       {
         "name": "http_logs",
         "base-url": "https://rally-tracks.elastic.co/http_logs",
@@ -168,7 +164,6 @@
           }
         ]
       }
-    {%- endif %}
   ],
   "operations": [
     {{ rally.collect(parts="operations/*.json") }}

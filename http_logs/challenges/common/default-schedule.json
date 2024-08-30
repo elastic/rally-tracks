@@ -27,7 +27,7 @@
           }
         },
         {
-          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
+          {%- if p_index_mode == "logsdb" or index_type == "data_stream" %}
             {%- set indexing_operation_type = "create-data-stream" %}
           {%- endif %}
           "operation": {

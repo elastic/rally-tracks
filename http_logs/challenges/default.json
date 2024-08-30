@@ -3,38 +3,14 @@
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After that a couple of queries are run.",
       "default": true,
       "schedule": [
-        {{ rally.collect(parts="common/default-schedule.json") }},
-        {
-          {%- if p_index_mode == "logsdb" or index_type == "data_stream" %}
-            {%- set indexing_operation_type = "create-data-stream" %}
-          {%- endif %}
-          "operation": {
-            "operation-type": {{ indexing_operation_type | default("create-index") | tojson }},
-            "settings": {{index_settings | default({}) | tojson}}
-          },
-          "tags": [
-            "setup"
-          ]
-        }
+        {{ rally.collect(parts="common/default-schedule.json") }}
       ]
     },
     {
       "name": "runtime-fields",
       "description": "Indexes the whole document corpus using scripts to extract fields. Set the track param `runtime_fields` to `true`.",
       "schedule": [
-        {{ rally.collect(parts="common/default-schedule.json") }},
-        {
-          {%- if p_index_mode == "logsdb" or index_type == "data_stream" %}
-            {%- set indexing_operation_type = "create-data-stream" %}
-          {%- endif %}
-          "operation": {
-            "operation-type": {{ indexing_operation_type | default("create-index") | tojson }},
-            "settings": {{index_settings | default({}) | tojson}}
-          },
-          "tags": [
-            "setup"
-          ]
-        }
+        {{ rally.collect(parts="common/default-schedule.json") }}
       ]
     },
     {
@@ -43,7 +19,7 @@
       "schedule": [
         {{ rally.collect(parts="common/setup-schedule.json") }},
         {
-          {%- if p_index_mode == "logsdb" or index_type == "data_stream" %}
+          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
             {%- set indexing_operation_type = "create-data-stream" %}
           {%- endif %}
           "operation": {
@@ -107,7 +83,7 @@
       "schedule": [
         {{ rally.collect(parts="common/setup-schedule.json") }},
         {
-          {%- if p_index_mode == "logsdb" or index_type == "data_stream" %}
+          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
             {%- set indexing_operation_type = "create-data-stream" %}
           {%- endif %}
           "operation": {
@@ -174,7 +150,7 @@
       "schedule": [
         {{ rally.collect(parts="common/setup-schedule.json") }},
         {
-          {%- if p_index_mode == "logsdb" or index_type == "data_stream" %}
+          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
             {%- set indexing_operation_type = "create-data-stream" %}
           {%- endif %}
           "operation": {
@@ -308,7 +284,7 @@
       "schedule": [
         {{ rally.collect(parts="common/setup-schedule.json") }},
         {
-          {%- if p_index_mode == "logsdb" or index_type == "data_stream" %}
+          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
             {%- set indexing_operation_type = "create-data-stream" %}
           {%- endif %}
           "operation": {

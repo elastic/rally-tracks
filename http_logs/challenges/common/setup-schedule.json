@@ -5,9 +5,7 @@
     "only-if-exists": false,
     "data-stream": ["logs-181998", "logs-191998", "logs-201998", "logs-211998", "logs-221998", "logs-231998", "logs-241998", "reindexed-logs"]
   },
-  "tags": [
-    "setup"
-  ]
+  "tags": ["setup"]
 },
 {
   "operation": {
@@ -16,25 +14,19 @@
     "only-if-exists": false,
     "index": ["logs-181998", "logs-191998", "logs-201998", "logs-211998", "logs-221998", "logs-231998", "logs-241998", "reindexed-logs"]
   },
-  "tags": [
-    "setup"
-  ]
+  "tags": ["setup"]
 },
 {
   "operation" : {
     "name": "delete-all-index-templates",
     "operation-type": "delete-composable-template"
   },
-  "tags": [
-    "setup"
-  ]
+  "tags": ["setup"]
 },
 {
   "operation": {
     "name": "create-all-templates",
     "operation-type": "create-composable-template"
   },
-  "tags": [
-    "setup"
-  ]
+  "tags": ["setup"]
 }

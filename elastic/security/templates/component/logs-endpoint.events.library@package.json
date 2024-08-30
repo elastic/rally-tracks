@@ -4,7 +4,7 @@
     "template": {
       "settings": {
         "index": {
-          {{% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
+          {% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
             "lifecycle": {
               "name": "logs"
             },

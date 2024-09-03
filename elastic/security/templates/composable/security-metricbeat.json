@@ -14208,7 +14208,9 @@
                   }
                 },
                 "message" : {
+                  {% if index_mode != "logsdb" %}
                   "copy_to" : "message",
+                  {% endif %}
                   "norms" : false,
                   "type" : "text"
                 },

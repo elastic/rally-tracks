@@ -46,7 +46,7 @@ class WorkflowSelectorParamSource:
         self.infinite = True
         self.workflows = []
         self.workflow_handlers = {}
-        workflow_folder = os.path.join(track.root, params.get("workflows-folder", track.selected_challenge_or_default.parameters.get("workflow-folder")))
+        workflow_folder = os.path.join(track.root, params.get("workflows-folder", track.selected_challenge_or_default.parameters.get("workflow-folder", "workflows")))
         self.workflow = mandatory(params, "workflow", "composite")
         # prefer the seed passed by partition if more than 1 client
         self.task_offset = mandatory(params, "task-offset", "composite")

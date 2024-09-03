@@ -544,11 +544,7 @@
                 "include_unmapped": true
               },
               {
-                {% if index_mode != "logsdb" %}
-                "field": "message",
-                {% else %}
                 "field": "kubernetes.event.message",
-                {% endif %}
                 "include_unmapped": true
               },
               {

@@ -1,16 +1,16 @@
 {
   "name": "/app/security/*?{query}",
-  "id": "Open `Events` sub-tab",
+  "id": "Open `External Alerts` sub-tab",
   "requests": [
     {
       "stream": [
         {
           "name": "sleep",
           "operation-type": "sleep",
-          "duration": 0.483325
+          "duration": 0.173328
         },
         {
-          "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - hosts - 8.1",
+          "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 11.1",
           "operation-type": "search",
           "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
           "request-params": {
@@ -21,9 +21,9 @@
           },
           "body": {
             "aggregations": {
-              "eventActionGroup": {
+              "alertsGroup": {
                 "terms": {
-                  "field": "event.action",
+                  "field": "event.module",
                   "missing": "All others",
                   "order": {
                     "_count": "desc"
@@ -31,7 +31,7 @@
                   "size": 10
                 },
                 "aggs": {
-                  "events": {
+                  "alerts": {
                     "date_histogram": {
                       "field": "@timestamp",
                       "fixed_interval": "112500ms",
@@ -51,9 +51,65 @@
                   {
                     "bool": {
                       "must": [],
-                      "filter": [],
+                      "filter": [
+                        {
+                          "bool": {
+                            "filter": [
+                              {
+                                "bool": {
+                                  "should": [
+                                    {
+                                      "bool": {
+                                        "should": [
+                                          {
+                                            "exists": {
+                                              "field": "source.ip"
+                                            }
+                                          }
+                                        ],
+                                        "minimum_should_match": 1
+                                      }
+                                    },
+                                    {
+                                      "bool": {
+                                        "should": [
+                                          {
+                                            "exists": {
+                                              "field": "destination.ip"
+                                            }
+                                          }
+                                        ],
+                                        "minimum_should_match": 1
+                                      }
+                                    }
+                                  ],
+                                  "minimum_should_match": 1
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ],
                       "should": [],
                       "must_not": []
+                    }
+                  },
+                  {
+                    "bool": {
+                      "filter": [
+                        {
+                          "bool": {
+                            "should": [
+                              {
+                                "match": {
+                                  "event.kind": "alert"
+                                }
+                              }
+                            ],
+                            "minimum_should_match": 1
+                          }
+                        }
+                      ]
                     }
                   },
                   {
@@ -78,10 +134,10 @@
         {
           "name": "sleep",
           "operation-type": "sleep",
-          "duration": 0.484995
+          "duration": 0.174008
         },
         {
-          "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - hosts - 8.2",
+          "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 11.2",
           "operation-type": "search",
           "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
           "request-params": {
@@ -409,7 +465,63 @@
                   {
                     "bool": {
                       "must": [],
-                      "filter": [],
+                      "filter": [
+                        {
+                          "bool": {
+                            "filter": [
+                              {
+                                "bool": {
+                                  "should": [
+                                    {
+                                      "match": {
+                                        "event.kind": "alert"
+                                      }
+                                    }
+                                  ],
+                                  "minimum_should_match": 1
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "bool": {
+                            "filter": [
+                              {
+                                "bool": {
+                                  "should": [
+                                    {
+                                      "bool": {
+                                        "should": [
+                                          {
+                                            "exists": {
+                                              "field": "source.ip"
+                                            }
+                                          }
+                                        ],
+                                        "minimum_should_match": 1
+                                      }
+                                    },
+                                    {
+                                      "bool": {
+                                        "should": [
+                                          {
+                                            "exists": {
+                                              "field": "destination.ip"
+                                            }
+                                          }
+                                        ],
+                                        "minimum_should_match": 1
+                                      }
+                                    }
+                                  ],
+                                  "minimum_should_match": 1
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ],
                       "should": [],
                       "must_not": []
                     }
@@ -430,7 +542,7 @@
               }
             },
             "from": 0,
-            "size": 100,
+            "size": 25,
             "track_total_hits": true,
             "sort": [
               {
@@ -446,14 +558,6 @@
                 "include_unmapped": true
               },
               {
-                "field": "message",
-                "include_unmapped": true
-              },
-              {
-                "field": "host.name",
-                "include_unmapped": true
-              },
-              {
                 "field": "event.module",
                 "include_unmapped": true
               },
@@ -462,19 +566,31 @@
                 "include_unmapped": true
               },
               {
-                "field": "event.action",
+                "field": "event.category",
                 "include_unmapped": true
               },
               {
-                "field": "user.name",
+                "field": "event.severity",
                 "include_unmapped": true
               },
               {
-                "field": "source.ip",
+                "field": "observer.name",
                 "include_unmapped": true
               },
               {
-                "field": "destination.ip",
+                "field": "host.name",
+                "include_unmapped": true
+              },
+              {
+                "field": "kubernetes.event.message",
+                "include_unmapped": true
+              },
+              {
+                "field": "agent.id",
+                "include_unmapped": true
+              },
+              {
+                "field": "agent.type",
                 "include_unmapped": true
               },
               {
@@ -562,7 +678,19 @@
                 "include_unmapped": true
               },
               {
-                "field": "event.category",
+                "field": "event.action",
+                "include_unmapped": true
+              },
+              {
+                "field": "user.name",
+                "include_unmapped": true
+              },
+              {
+                "field": "source.ip",
+                "include_unmapped": true
+              },
+              {
+                "field": "destination.ip",
                 "include_unmapped": true
               },
               {
@@ -638,10 +766,6 @@
                 "include_unmapped": true
               },
               {
-                "field": "event.severity",
-                "include_unmapped": true
-              },
-              {
                 "field": "event.start",
                 "include_unmapped": true
               },
@@ -651,10 +775,6 @@
               },
               {
                 "field": "event.type",
-                "include_unmapped": true
-              },
-              {
-                "field": "agent.type",
                 "include_unmapped": true
               },
               {

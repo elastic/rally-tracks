@@ -10,6 +10,7 @@
 {% set p_number_of_shards = (number_of_shards | default(1)) %}
 {% set p_number_of_replicas = (number_of_replicas | default(1)) %}
 {% set p_skip_fleet_globals = (skip_fleet_globals | default(false) ) %}
+{% set p_index_mode = (index_mode | default('standard') ) %}
 {% set p_integration_ratios = (integration_ratios | default({
     "auditbeat": {
       "corpora": {

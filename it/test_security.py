@@ -16,6 +16,7 @@
 # under the License.
 
 import pytest
+import requests
 
 pytest_rally = pytest.importorskip("pytest_rally")
 
@@ -53,6 +54,11 @@ class TestSecurity:
             },
         )
         assert ret == 0
+        response = requests.get(
+            f"http://127.0.0.1:19200/.ds-metricbeat-*,.ds-packetbeat-*, .ds-auditbeat-*, .ds-filebeat-*, .ds-heartbeat-*"
+        )
+        for index in response.json():
+            assert response.json().get(index).get("settings", {}).get("index", {}).get("mode") == "logsdb"
 
     def test_security_generate_alerts_source_events(self, es_cluster, rally):
         ret = rally.race(track="elastic/security", challenge="generate-alerts-source-events", track_params={"number_of_replicas": "0"})

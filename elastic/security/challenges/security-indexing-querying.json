@@ -31,6 +31,9 @@
                 "operation-type": "composite",
                 "param-source": "workflow-selector",
                 "workflow": {{workflow | tojson }},
+                {% if p_index_mode == "logsdb" %}
+                "workflows-folder": "workflows-logsdb",
+                {% endif %}
                 "task-offset": {{ loop.index }},
                 "request-params": {{ query_request_params | default({}) | tojson(indent=2) }}
               },

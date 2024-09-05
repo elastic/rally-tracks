@@ -14212,11 +14212,10 @@
                   }
                 },
                 "message" : {
-                  {% if index_mode != "logsdb" %}
                   "copy_to" : "message",
-                  {% endif %}
                   "norms" : false,
-                  "type" : "text"
+                  "type" : "text",
+                  "store": true
                 },
                 "type" : {
                   "ignore_above" : 1024,

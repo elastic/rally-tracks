@@ -18,7 +18,7 @@
       "clients": {{ p_bulk_indexing_clients }},
       "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
     },
-    {%- if force_merge_max_num_segments is defined %},
+    {%- if force_merge_max_num_segments is defined %}
     {
       "name": "refresh-after-index",
       "index": "logs-*",
@@ -62,7 +62,7 @@
       "name": "refresh-after-force-merge",
       "index": "logs-*",
       "operation": "refresh"
-    }
+    },
     {%- endif %}
     {
       "name": "kibana-queries",

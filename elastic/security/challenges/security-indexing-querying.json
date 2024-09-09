@@ -21,35 +21,19 @@
     {%- if force_merge_max_num_segments is defined %}
     {
       "name": "refresh-after-index",
-      "index": "logs-*",
       "operation": "refresh"
-    },
-    {
-      "name": "wait-until-index-merges-fininshes",
-      "operation": {
-        "operation-type": "index-stats",
-        "index": "logs-*",
-        "condition": {
-          "path": "_all.total.merges.current",
-          "expected-value": 0
-        },
-        "retry-until-success": true,
-        "include-in-reporting": false
-      }
     },
     {
       "operation": {
         "operation-type": "force-merge",
-        "index": "logs-*",
         "request-timeout": 36000,
         "max-num-segments": {{ force_merge_max_num_segments | tojson }}
       }
     },
     {
-      "name": "wait-until-merges-finish",
+      "name": "wait-until-merge-finish",
       "operation": {
         "operation-type": "index-stats",
-        "index": "logs-*",
         "condition": {
           "path": "_all.total.merges.current",
           "expected-value": 0
@@ -60,7 +44,6 @@
     },
     {
       "name": "refresh-after-force-merge",
-      "index": "logs-*",
       "operation": "refresh"
     },
     {%- endif %}

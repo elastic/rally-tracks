@@ -4,6 +4,9 @@
         {% if index_mode %}
         "index": {
             "mode": {{ index_mode | tojson }},
+            "mapping": {
+                "synthetic_source_keep": "arrays"
+            },
             "sort.field": [ "host.name", "@timestamp" ],
             "sort.order": [ "asc", "desc" ],
             "sort.missing": ["_first", "_last"]

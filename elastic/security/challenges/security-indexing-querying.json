@@ -18,6 +18,35 @@
       "clients": {{ p_bulk_indexing_clients }},
       "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
     },
+    {%- if force_merge_max_num_segments is defined %}
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "request-timeout": 36000,
+        "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+      }
+    },
+    {
+      "name": "wait-until-merge-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "operation": "refresh"
+    },
+    {%- endif %}
     {
       "name": "kibana-queries",
       "parallel": {

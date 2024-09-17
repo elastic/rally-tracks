@@ -21,6 +21,9 @@
       }
     },
     "composed_of": [
+      "logs@mappings",
+      "logs@settings",
+      "ecs@mappings",
       ".logs-endpoint.actions@package",
       ".logs-endpoint.actions@custom",
       ".fleet_globals-1",

@@ -51,7 +51,6 @@
     "wait-for-status": "{{ wait_for_status | default('green') }}",
     "force-data-generation": {{ force_data_generation | default(false) | tojson }},
     "detailed-results": {{ detailed_results | default(false) | tojson }},
-    "workflow-folder": {{ p_workflow_folder | default('workflows') | tojson }},
     "workflow-target": "{{ p_integration_ratios.keys() | list | join('-*,') ~ '-*' }}",
     "number-of-workflows": {{ p_num_query_workflows }},
     "raw-data-volume-per-day": "{{ raw_data_volume_per_day | default('0.1GB') }}",

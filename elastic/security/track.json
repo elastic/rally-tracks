@@ -3,6 +3,7 @@
 {% set p_corpora_uri_base = (corpora_uri_base | default("https://rally-tracks.elastic.co")) %}
 {% set p_query_workflows = (query_workflows | default(["hosts", "overview", "network"])) %}
 {% set p_num_query_workflows = p_query_workflows | length %}
+{% set p_workflow_folder = workflow_folder | default('workflows') %}
 {% set p_workflow_time_interval = (workflow_time_interval | default(30)) %}
 {% set p_user_workflow_time = p_workflow_time_interval * p_num_query_workflows %}
 {% set p_bulk_indexing_clients = (bulk_indexing_clients | default(8))%}
@@ -50,6 +51,7 @@
     "wait-for-status": "{{ wait_for_status | default('green') }}",
     "force-data-generation": {{ force_data_generation | default(false) | tojson }},
     "detailed-results": {{ detailed_results | default(false) | tojson }},
+    "workflow-folder": {{ p_workflow_folder | default('workflows') | tojson }},
     "workflow-target": "{{ p_integration_ratios.keys() | list | join('-*,') ~ '-*' }}",
     "number-of-workflows": {{ p_num_query_workflows }},
     "raw-data-volume-per-day": "{{ raw_data_volume_per_day | default('0.1GB') }}",

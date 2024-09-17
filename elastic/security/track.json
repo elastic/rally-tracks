@@ -3,7 +3,6 @@
 {% set p_corpora_uri_base = (corpora_uri_base | default("https://rally-tracks.elastic.co")) %}
 {% set p_query_workflows = (query_workflows | default(["hosts", "overview", "network"])) %}
 {% set p_num_query_workflows = p_query_workflows | length %}
-{% set p_workflow_folder = workflow_folder | default('workflows') %}
 {% set p_workflow_time_interval = (workflow_time_interval | default(30)) %}
 {% set p_user_workflow_time = p_workflow_time_interval * p_num_query_workflows %}
 {% set p_bulk_indexing_clients = (bulk_indexing_clients | default(8))%}

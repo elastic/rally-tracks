@@ -3,13 +3,12 @@
 {% set p_corpora_uri_base = (corpora_uri_base | default("https://rally-tracks.elastic.co")) %}
 {% set p_query_workflows = (query_workflows | default(["hosts", "overview", "network"])) %}
 {% set p_num_query_workflows = p_query_workflows | length %}
-{% set p_workflow_folder = workflow_folder | default('workflows') %}
 {% set p_workflow_time_interval = (workflow_time_interval | default(30)) %}
 {% set p_user_workflow_time = p_workflow_time_interval * p_num_query_workflows %}
 {% set p_bulk_indexing_clients = (bulk_indexing_clients | default(8))%}
 {% set p_number_of_shards = (number_of_shards | default(1)) %}
 {% set p_number_of_replicas = (number_of_replicas | default(1)) %}
-{% set p_skip_delete_component_template = (skip_delete_component_template | default(false) ) %}
+{% set p_skip_fleet_globals = (skip_fleet_globals | default(false) ) %}
 {% set p_integration_ratios = (integration_ratios | default({
     "auditbeat": {
       "corpora": {
@@ -51,7 +50,6 @@
     "wait-for-status": "{{ wait_for_status | default('green') }}",
     "force-data-generation": {{ force_data_generation | default(false) | tojson }},
     "detailed-results": {{ detailed_results | default(false) | tojson }},
-    "workflow-folder": {{ p_workflow_folder | default('workflows') | tojson }},
     "workflow-target": "{{ p_integration_ratios.keys() | list | join('-*,') ~ '-*' }}",
     "number-of-workflows": {{ p_num_query_workflows }},
     "raw-data-volume-per-day": "{{ raw_data_volume_per_day | default('0.1GB') }}",
@@ -103,7 +101,7 @@
       "name": "track-custom-mappings",
       "template": "./templates/component/track-custom-mappings.json"
     },
-    {% if p_skip_delete_component_template == false %}
+    {% if p_skip_fleet_globals == false %}
     {
       "name": ".fleet_agent_id_verification-1",
       "template": "./templates/component/.fleet_agent_id_verification-1.json",
@@ -123,13 +121,11 @@
       "name": "logs-endpoint.events.file@mappings",
       "template": "./templates/component/logs-endpoint.events.file@mappings.json"
     },
-    {% if p_skip_delete_component_template == false %}
     {
       "name": "logs-endpoint.events.file@package",
       "template": "./templates/component/logs-endpoint.events.file@package.json",
       "template-path": "component_template"
     },
-    {% endif %}
     {
       "name": "logs-endpoint.events.file@settings",
       "template": "./templates/component/logs-endpoint.events.file@settings.json"

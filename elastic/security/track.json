@@ -301,7 +301,7 @@
         "delete-matching-indices": false,
         {% if index_mode == "logsdb" %}
         "template": "./templates/composable-logsdb/logs-endpoint.events.security.json",
-        { %else %}
+        {% else %}
         "template": "./templates/composable/logs-endpoint.events.security.json",
         {% endif %}
         "template-path": "index_template"

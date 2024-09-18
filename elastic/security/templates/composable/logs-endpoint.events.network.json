@@ -21,6 +21,9 @@
       }
     },
     "composed_of": [
+      "logs@mappings",
+      "logs@settings",
+      "ecs@mappings",
       "logs-endpoint.events.network@package",
       "logs-endpoint.events.network@custom",
       ".fleet_globals-1",

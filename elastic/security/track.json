@@ -109,132 +109,59 @@
       "name": "track-custom-mappings",
       "template": "./templates/component/track-custom-mappings.json"
     },
+    {
+      "name": "ecs@mappings",
+      "template": "./templates/component/ecs@mappings.json"
+    },
+    {
+      "name": "logs@mappings",
+      "template": "./templates/component/logs@mappings.json"
+    },
+    {
+      "name": "logs@settings",
+      "template": "./templates/component/logs@settings.json"
+    },
     {% if p_skip_delete_component_template == false %}
     {
       "name": ".fleet_agent_id_verification-1",
-      "template": "./templates/component/.fleet_agent_id_verification-1.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": ".fleet_component_template-1",
-      "template": "./templates/component/.fleet_component_template-1.json"
+      "template": "./templates/component/.fleet_agent_id_verification-1.json"
     },
     {
       "name": ".fleet_globals-1",
-      "template": "./templates/component/.fleet_globals-1.json",
-      "template-path": "component_template"
+      "template": "./templates/component/.fleet_globals-1.json"
     },
     {% endif %}
-    {
-      "name": "logs-endpoint.events.file@mappings",
-      "template": "./templates/component/logs-endpoint.events.file@mappings.json"
-    },
     {% if p_skip_delete_component_template == false %}
     {
       "name": "logs-endpoint.events.file@package",
       "template": "./templates/component/logs-endpoint.events.file@package.json",
       "template-path": "component_template"
     },
-    {% endif %}
     {
-      "name": "logs-endpoint.events.file@settings",
-      "template": "./templates/component/logs-endpoint.events.file@settings.json"
-    },
-    {
-      "name": "logs-endpoint.events.file@custom",
-      "template": "./templates/component/logs-endpoint.events.file@custom.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs-endpoint.events.library@mappings",
-      "template": "./templates/component/logs-endpoint.events.file@mappings.json"
+      "name": "logs-endpoint.events.file@package",
+      "template": "./templates/component/logs-endpoint.events.file@package.json"
     },
     {
       "name": "logs-endpoint.events.library@package",
-      "template": "./templates/component/logs-endpoint.events.library@package.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs-endpoint.events.library@settings",
-      "template": "./templates/component/logs-endpoint.events.library@settings.json"
-    },
-    {
-      "name": "logs-endpoint.events.library@custom",
-      "template": "./templates/component/logs-endpoint.events.library@custom.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs-endpoint.events.network@mappings",
-      "template": "./templates/component/logs-endpoint.events.network@mappings.json"
+      "template": "./templates/component/logs-endpoint.events.library@package.json"
     },
     {
       "name": "logs-endpoint.events.network@package",
-      "template": "./templates/component/logs-endpoint.events.network@package.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs-endpoint.events.network@settings",
-      "template": "./templates/component/logs-endpoint.events.network@settings.json"
-    },
-    {
-      "name": "logs-endpoint.events.network@custom",
-      "template": "./templates/component/logs-endpoint.events.network@custom.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs-endpoint.events.process@mappings",
-      "template": "./templates/component/logs-endpoint.events.process@mappings.json"
+      "template": "./templates/component/logs-endpoint.events.network@package.json"
     },
     {
       "name": "logs-endpoint.events.process@package",
-      "template": "./templates/component/logs-endpoint.events.process@package.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs-endpoint.events.process@settings",
-      "template": "./templates/component/logs-endpoint.events.process@settings.json"
-    },
-    {
-      "name": "logs-endpoint.events.process@custom",
-      "template": "./templates/component/logs-endpoint.events.process@custom.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs-endpoint.events.security@mappings",
-      "template": "./templates/component/logs-endpoint.events.security@mappings.json"
-    },
-    {
-      "name": "logs-endpoint.events.security@package",
-      "template": "./templates/component/logs-endpoint.events.security@package.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs-endpoint.events.security@settings",
-      "template": "./templates/component/logs-endpoint.events.security@settings.json"
-    },
-    {
-      "name": "logs-endpoint.events.security@custom",
-      "template": "./templates/component/logs-endpoint.events.security@custom.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs-endpoint.events.registry@mappings",
-      "template": "./templates/component/logs-endpoint.events.registry@mappings.json"
+      "template": "./templates/component/logs-endpoint.events.process@package.json"
     },
     {
       "name": "logs-endpoint.events.registry@package",
-      "template": "./templates/component/logs-endpoint.events.registry@package.json",
-      "template-path": "component_template"
+      "template": "./templates/component/logs-endpoint.events.registry@package.json"
     },
     {
-      "name": "logs-endpoint.events.registry@settings",
-      "template": "./templates/component/logs-endpoint.events.registry@settings.json"
-    },
-    {
-      "name": "logs-endpoint.events.registry@custom",
-      "template": "./templates/component/logs-endpoint.events.registry@custom.json",
-      "template-path": "component_template"
+      "name": "logs-endpoint.events.security@package",
+      "template": "./templates/component/logs-endpoint.events.security@package.json"
     }
+    {% endif %}
   ],
   {% endif %}
   "composable-templates": [

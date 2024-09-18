@@ -1,0 +1,31 @@
+{
+  "name": "logs@mappings",
+  "component_template": {
+    "template": {
+      "mappings": {
+        "date_detection": false,
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "data_stream.namespace": {
+            "type": "constant_keyword"
+          },
+          "data_stream.dataset": {
+            "type": "constant_keyword"
+          },
+          "data_stream.type": {
+            "type": "constant_keyword",
+            "value": "logs"
+          }
+        }
+      }
+    },
+    "version": 12,
+    "_meta": {
+      "managed": true,
+      "description": "default mappings for the logs index template installed by x-pack"
+    },
+    "deprecated": false
+  }
+}

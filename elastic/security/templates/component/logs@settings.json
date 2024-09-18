@@ -1,0 +1,29 @@
+{
+  "name": "logs@settings",
+  "component_template": {
+    "template": {
+      "settings": {
+        "index": {
+          "lifecycle": {
+            "name": "logs"
+          },
+          "mode": "standard",
+          "codec": "best_compression",
+          "default_pipeline": "logs@default-pipeline",
+          "mapping": {
+            "total_fields": {
+              "ignore_dynamic_beyond_limit": "true"
+            },
+            "ignore_malformed": "true"
+          }
+        }
+      }
+    },
+    "version": 12,
+    "_meta": {
+      "managed": true,
+      "description": "default settings for the logs index template installed by x-pack"
+    },
+    "deprecated": false
+  }
+}

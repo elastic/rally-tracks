@@ -19,7 +19,9 @@
     "composed_of": [
       "logs@mappings",
       "logs@settings",
+      {% if build_flavor != "serverless" %}
       "logs-endpoint.events.file@package",
+      {% endif %}
       "ecs@mappings",
       ".fleet_globals-1",
       ".fleet_agent_id_verification-1",

@@ -4,119 +4,14 @@
     "template": {
       "settings": {
         "index": {
-          {% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
-            "lifecycle": {
-              "name": "logs"
-            },
-          {%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
-              "lifecycle": {},
-          {%- endif -%}
-          "codec": "best_compression",
+          "lifecycle": {
+            "name": "logs"
+          },
+          "default_pipeline": "logs-endpoint.events.network-8.15.1",
           "mapping": {
             "total_fields": {
-              "limit": "10000"
+              "limit": "1000"
             }
-          },
-          "query": {
-            "default_field": [
-              "message",
-              "agent.id",
-              "agent.type",
-              "agent.version",
-              "destination.address",
-              "destination.as.organization.name",
-              "destination.domain",
-              "destination.geo.city_name",
-              "destination.geo.continent_code",
-              "destination.geo.continent_name",
-              "destination.geo.country_iso_code",
-              "destination.geo.country_name",
-              "destination.geo.name",
-              "destination.geo.postal_code",
-              "destination.geo.region_iso_code",
-              "destination.geo.region_name",
-              "destination.geo.timezone",
-              "destination.registered_domain",
-              "destination.top_level_domain",
-              "dns.Ext.options",
-              "dns.question.name",
-              "dns.question.registered_domain",
-              "dns.question.subdomain",
-              "dns.question.top_level_domain",
-              "dns.question.type",
-              "ecs.version",
-              "event.action",
-              "event.category",
-              "event.code",
-              "event.dataset",
-              "event.hash",
-              "event.id",
-              "event.kind",
-              "event.module",
-              "event.outcome",
-              "event.provider",
-              "event.type",
-              "group.Ext.real.id",
-              "group.Ext.real.name",
-              "group.domain",
-              "group.id",
-              "group.name",
-              "host.architecture",
-              "host.domain",
-              "host.hostname",
-              "host.id",
-              "host.mac",
-              "host.name",
-              "host.os.Ext.variant",
-              "host.os.family",
-              "host.os.full",
-              "host.os.kernel",
-              "host.os.name",
-              "host.os.platform",
-              "host.os.version",
-              "host.type",
-              "http.request.body.content",
-              "http.response.Ext.version",
-              "http.response.body.content",
-              "network.community_id",
-              "network.direction",
-              "network.iana_number",
-              "network.protocol",
-              "network.transport",
-              "network.type",
-              "process.Ext.ancestry",
-              "process.entity_id",
-              "process.executable",
-              "process.name",
-              "source.address",
-              "source.as.organization.name",
-              "source.domain",
-              "source.geo.city_name",
-              "source.geo.continent_code",
-              "source.geo.continent_name",
-              "source.geo.country_iso_code",
-              "source.geo.country_name",
-              "source.geo.name",
-              "source.geo.postal_code",
-              "source.geo.region_iso_code",
-              "source.geo.region_name",
-              "source.geo.timezone",
-              "source.registered_domain",
-              "source.top_level_domain",
-              "user.Ext.real.id",
-              "user.Ext.real.name",
-              "user.domain",
-              "user.email",
-              "user.full_name",
-              "user.group.Ext.real.id",
-              "user.group.Ext.real.name",
-              "user.group.domain",
-              "user.group.id",
-              "user.group.name",
-              "user.hash",
-              "user.id",
-              "user.name"
-            ]
           }
         }
       },
@@ -144,6 +39,105 @@
               "Ext": {
                 "properties": {
                   "ancestry": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "code_signature": {
+                    "type": "nested",
+                    "properties": {
+                      "valid": {
+                        "type": "boolean"
+                      },
+                      "trusted": {
+                        "type": "boolean"
+                      },
+                      "subject_name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "exists": {
+                        "type": "boolean"
+                      },
+                      "status": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  }
+                }
+              },
+              "parent": {
+                "properties": {
+                  "group_leader": {
+                    "properties": {
+                      "entity_id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "entity_id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "group_leader": {
+                "properties": {
+                  "entity_id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "session_leader": {
+                "properties": {
+                  "entity_id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "code_signature": {
+                "properties": {
+                  "valid": {
+                    "type": "boolean"
+                  },
+                  "signing_id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "trusted": {
+                    "type": "boolean"
+                  },
+                  "subject_name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "exists": {
+                    "type": "boolean"
+                  },
+                  "team_id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "status": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  }
+                }
+              },
+              "entry_leader": {
+                "properties": {
+                  "parent": {
+                    "properties": {
+                      "entity_id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "entity_id": {
                     "ignore_above": 1024,
                     "type": "keyword"
                   }
@@ -254,7 +248,7 @@
                         "type": "keyword",
                         "fields": {
                           "text": {
-                            "type": "text"
+                            "type": "match_only_text"
                           }
                         }
                       }
@@ -395,7 +389,7 @@
                         "type": "keyword",
                         "fields": {
                           "text": {
-                            "type": "text"
+                            "type": "match_only_text"
                           }
                         }
                       }
@@ -434,7 +428,7 @@
             }
           },
           "message": {
-            "type": "text"
+            "type": "match_only_text"
           },
           "network": {
             "properties": {
@@ -471,6 +465,7 @@
             }
           },
           "@timestamp": {
+            "ignore_malformed": false,
             "type": "date"
           },
           "ecs": {
@@ -529,6 +524,10 @@
                     }
                   },
                   "family": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "type": {
                     "ignore_above": 1024,
                     "type": "keyword"
                   },
@@ -602,10 +601,10 @@
                       },
                       "content": {
                         "ignore_above": 1024,
-                        "type": "keyword",
+                        "type": "wildcard",
                         "fields": {
                           "text": {
-                            "type": "text"
+                            "type": "match_only_text"
                           }
                         }
                       }
@@ -636,10 +635,10 @@
                       },
                       "content": {
                         "ignore_above": 1024,
-                        "type": "keyword",
+                        "type": "wildcard",
                         "fields": {
                           "text": {
-                            "type": "text"
+                            "type": "match_only_text"
                           }
                         }
                       }
@@ -732,7 +731,7 @@
                 "type": "keyword",
                 "fields": {
                   "text": {
-                    "type": "text"
+                    "type": "match_only_text"
                   }
                 }
               },
@@ -745,7 +744,7 @@
                 "type": "keyword",
                 "fields": {
                   "text": {
-                    "type": "text"
+                    "type": "match_only_text"
                   }
                 }
               },

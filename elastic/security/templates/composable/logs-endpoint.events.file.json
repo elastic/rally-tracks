@@ -5,11 +5,7 @@
       "logs-endpoint.events.file-*"
     ],
     "template": {
-      "settings": {
-        "index": {
-          "default_pipeline": "logs-endpoint.events.file-8.2.0"
-        }
-      },
+      "settings": {},
       "mappings": {
         "_meta": {
           "package": {
@@ -21,8 +17,11 @@
       }
     },
     "composed_of": [
+      "logs@mappings",
+      "logs@settings",
       "logs-endpoint.events.file@package",
       "logs-endpoint.events.file@custom",
+      "ecs@mappings",
       ".fleet_globals-1",
       ".fleet_agent_id_verification-1",
       "track-shared-logsdb-mode"
@@ -38,6 +37,9 @@
     "data_stream": {
       "hidden": false,
       "allow_custom_routing": false
-    }
+    },
+    "ignore_missing_component_templates": [
+      "logs-endpoint.events.file@custom"
+    ]
   }
 }

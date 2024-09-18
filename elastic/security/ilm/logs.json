@@ -5,15 +5,16 @@
         "min_age": "0ms",
         "actions": {
           "rollover": {
-            "max_primary_shard_size": "50gb",
-            "max_age": "30d"
+            "max_age": "30d",
+            "max_primary_shard_size": "50gb"
           }
         }
       }
     },
     "_meta": {
-      "description": "default policy for the logs index template installed by x-pack",
-      "managed": true
-    }
+      "managed": true,
+      "description": "default policy for the logs index template installed by x-pack"
+    },
+    "deprecated": true
   }
 }

@@ -39,7 +39,7 @@
 %}
 
 {
-  "version": 2,
+  "version": 3,
   "description": "Track for simulating Elastic Security workloads",
   "parameters": {
     "random-seed": {{ random_seed | default(13) | int }},

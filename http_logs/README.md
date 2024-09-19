@@ -42,6 +42,8 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `number_of_shards` (default: 5)
 * `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index.
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
+* `index_mode` (default: unset): Set to `logsdb` to enable indexing to [logs data streams](https://www.elastic.co/guide/en/elasticsearch/reference/master/logs-data-stream.html). If not enabled, Rally will not use logs data streams.
+* `index_type` (default: unset): Set to `data_stream` to enable indexing to data streams. `index_type` is not required when `index_mode` is set to `logsdb`.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `ingest_pipeline`: Only applicable for `--challenge=append-index-only-with-ingest-pipeline`, selects which ingest
 node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'geoip'`. For example: `--challenge=append-index-only-with-ingest-pipeline --track-params="ingest_pipeline:'baseline'" `

@@ -17,14 +17,18 @@
       "name": "append-no-conflicts-index-only",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
       "schedule": [
+        {{ rally.collect(parts="common/setup-schedule.json") }},
         {
-          "operation": "delete-index"
-        },
-        {
+          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
+            {%- set indexing_operation_type = "create-data-stream" %}
+          {%- endif %}
           "operation": {
-            "operation-type": "create-index",
+            "operation-type": {{ indexing_operation_type | default("create-index") | tojson }},
             "settings": {{index_settings | default({}) | tojson}}
-          }
+          },
+          "tags": [
+            "setup"
+          ]
         },
         {
           "name": "check-cluster-health",
@@ -77,17 +81,21 @@
       "name": "append-sorted-no-conflicts",
       "description": "Indexes the whole document corpus in an index sorted by timestamp field in descending order (most recent first) and using a setup that will lead to a lower indexing throughput than the default settings. Document ids are unique so all index operations are append only.",
       "schedule": [
+        {{ rally.collect(parts="common/setup-schedule.json") }},
         {
-          "operation": "delete-index"
-        },
-        {
+          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
+            {%- set indexing_operation_type = "create-data-stream" %}
+          {%- endif %}
           "operation": {
-            "operation-type": "create-index",
+            "operation-type": {{ indexing_operation_type | default("create-index") | tojson }},
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
               "index.sort.field": "@timestamp",
               "index.sort.order": "desc"
             }{%- endif %}
-          }
+          },
+          "tags": [
+            "setup"
+          ]
         },
         {
           "name": "check-cluster-health",
@@ -140,14 +148,21 @@
       "name": "append-index-only-with-ingest-pipeline",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. Runs the documents through an ingest node pipeline to parse the http logs. May require --elasticsearch-plugins='ingest-geoip' ",
       "schedule": [
+        {{ rally.collect(parts="common/setup-schedule.json") }},
         {
-          "operation": "delete-index"
-        },
-        {
+          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
+            {%- set indexing_operation_type = "create-data-stream" %}
+          {%- endif %}
           "operation": {
-            "operation-type": "create-index",
-            "settings": {{index_settings | default({}) | tojson}}
-          }
+            "operation-type": {{ indexing_operation_type | default("create-index") | tojson }},
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              "index.sort.field": "@timestamp",
+              "index.sort.order": "desc"
+            }{%- endif %}
+          },
+          "tags": [
+            "setup"
+          ]
         },
         {
           "name": "check-cluster-health",
@@ -201,10 +216,9 @@
     },
     {
       "name": "update",
+      "description": "Perform bulk update operations. The update challenge is for standard index use only.",
       "schedule": [
-        {
-          "operation": "delete-index"
-        },
+        {{ rally.collect(parts="common/setup-schedule.json") }},
         {
           "operation": {
             "operation-type": "create-index",
@@ -268,14 +282,21 @@
       "name": "append-no-conflicts-index-reindex-only",
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After indexing, same data are reindexed.",
       "schedule": [
+        {{ rally.collect(parts="common/setup-schedule.json") }},
         {
-          "operation": "delete-index"
-        },
-        {
+          {%- if index_mode == "logsdb" or index_type == "data_stream" %}
+            {%- set indexing_operation_type = "create-data-stream" %}
+          {%- endif %}
           "operation": {
-            "operation-type": "create-index",
-            "settings": {{index_settings | default({}) | tojson}}
-          }
+            "operation-type": {{ indexing_operation_type | default("create-index") | tojson }},
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              "index.sort.field": "@timestamp",
+              "index.sort.order": "desc"
+            }{%- endif %}
+          },
+          "tags": [
+            "setup"
+          ]
         },
         {
           "name": "check-cluster-health",

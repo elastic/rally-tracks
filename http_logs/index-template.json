@@ -1,30 +1,84 @@
 {
-  "settings": {
-    {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-    "index.number_of_shards": {{ number_of_shards | default(5) }},
-    "index.number_of_replicas": {{ number_of_replicas | default(0) }},
-    "index.requests.cache.enable": false
-    {%- endif -%}{# non-serverless-index-settings-marker-end #}
-  },
-  "mappings": {
-    "dynamic": "strict",
-    "_source": {
-      "enabled": {{ source_enabled | default(true) | tojson }}
+  "priority": 101,
+  "index_patterns": ["logs-*", "reindexed-logs"],
+  {%- if index_mode == "logsdb" or index_type == "data_stream" %}
+  "data_stream": {},
+  {%- endif %}
+  "template": {
+    "settings": {
+      {%- if index_mode %}
+      "mode": {{ index_mode | tojson }},
+      {%- endif -%}
+      {# non-serverless-index-settings-marker-start -#}
+      {%- if build_flavor != "serverless" %}
+      "index.number_of_replicas": {{ number_of_replicas | default(0) | tojson }},
+      {%- endif -%}
+      {%- if build_flavor != "serverless" or serverless_operator == true %}
+      "index.number_of_shards": {{ number_of_shards | default(5) | tojson }},
+      "index.requests.cache.enable": false
+      {%- endif -%}
+      {# non-serverless-index-settings-marker-end #}
     },
-    "properties": {
-      "@timestamp": {
-        "format": "strict_date_optional_time",
-        "type": "date"
+    "mappings": {
+      "dynamic": "strict",
+      {%- if index_mode != "logsdb" %}
+      "_source": {
+        "enabled": {{ source_enabled | default(true) | tojson }}
       },
-      "message": {
-        "type": "wildcard",
-        "fields": {
-          "keyword": {
-            "type": "keyword"
+      {%- endif %}
+      "properties": {
+        "@timestamp": {
+          {%- if (ingest_pipeline is defined and ingest_pipeline == "grok") or runtime_fields is defined %}
+          "format": "strict_date_optional_time",
+          {%- else %}
+          "format": "epoch_second",
+          {%- endif %}
+          "type": "date"
+        },
+        {%- if runtime_fields is defined %}
+        "message": {
+          "type": "wildcard",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          }
+      },
+        {%- else %}
+        "message": {
+          "type": "keyword",
+          "index": false,
+          "doc_values": false
+        },
+        {%- endif %}
+        "clientip": {
+          "type": "ip"
+        },
+        "request": {
+          "type": "match_only_text",
+          "fields": {
+            "raw": {
+              "ignore_above": 256,
+              "type": "keyword"
+            }
+          }
+        },
+        "status": {
+          "type": "integer"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "geoip" : {
+          "properties" : {
+            "country_name": { "type": "keyword" },
+            "city_name": { "type": "keyword" },
+            "location" : { "type" : "geo_point" }
           }
         }
       }
-    },
+    }
+    {%- if runtime_fields is defined %},
     "runtime": {
       {%- set sources = [('source', 'message.source'), ('wildcard', 'message'), ('keyword', 'message.keyword')] %}
       {%- for source_type, field in sources %}
@@ -97,6 +151,6 @@
         "type": "keyword",
         "script": "emit(params._source.message)"
       }
-    }
+    }{% endif %}
   }
 }

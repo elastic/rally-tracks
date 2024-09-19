@@ -18,9 +18,12 @@
   },
   "mappings": {
     "dynamic": "strict",
+    {% if enable_logsdb %}
+    {%- else %}
     "_source": {
       "enabled": {{ source_enabled | default(true) | tojson }}
     },
+    {%- endif %}
     "properties": {
       "@timestamp": {
         {%- if ingest_pipeline is defined and ingest_pipeline == "grok" %}

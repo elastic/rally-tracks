@@ -83,6 +83,7 @@ The following parameters are available:
 
 * `wait_for_status` (default: `green`) - The track creates Data Streams prior to indexing. All created Data Streams must at least reach this status before indexing commences. Reduce to `yellow` for clusters where green isn't possible e.g. single node.
 * `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
+* `index_mode` (default: unset) - A parameter meant to be used internally which defines one of the available indexing modes, "standard", "logsdb" or "time_series". If not set, "standard" is used.
 
 ### Data Generation Parameters
 

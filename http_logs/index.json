@@ -5,6 +5,16 @@
     "index.number_of_replicas": {{ number_of_replicas | default(0) }},
     "index.requests.cache.enable": false
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
+    {% if enable_logsdb %}
+      "index": {
+          "mode": "logsdb",
+          "mapping": {
+              "synthetic_source_keep": "arrays"
+          },
+          "sort.field": ["@timestamp"],
+          "sort.order":["desc"]
+      }
+    {% endif %}
   },
   "mappings": {
     "dynamic": "strict",

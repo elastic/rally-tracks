@@ -109,21 +109,6 @@
       "name": "track-custom-mappings",
       "template": "./templates/component/track-custom-mappings.json"
     },
-    {
-      "name": "ecs@mappings",
-      "template": "./templates/component/ecs@mappings.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs@mappings",
-      "template": "./templates/component/logs@mappings.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs@settings",
-      "template": "./templates/component/logs@settings.json",
-      "template-path": "component_template"
-    },
     {% if p_skip_delete_component_template == false %}
     {
       "name": ".fleet_agent_id_verification-1",

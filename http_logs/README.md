@@ -49,6 +49,8 @@ node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
 * `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
 * `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
+* `enable_logsdb` (default: false) Determines whether the logsdb index mode gets used. If set then index sorting is configured to only use `@timestamp` field and the `source_enabled` parameter will have no effect.
+* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 
 ### License
 

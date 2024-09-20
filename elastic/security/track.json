@@ -102,14 +102,9 @@
   {% else %}
   "component-templates": [
     {
-      "name": "track-shared-logsdb-mode",
-      "template": "./templates/component/track-shared-logsdb-mode.json"
-    },
-    {
       "name": "track-custom-mappings",
       "template": "./templates/component/track-custom-mappings.json"
     },
-    {% if p_skip_delete_component_template == false %}
     {
       "name": ".fleet_agent_id_verification-1",
       "template": "./templates/component/.fleet_agent_id_verification-1.json",
@@ -120,8 +115,6 @@
       "template": "./templates/component/.fleet_globals-1.json",
       "template-path": "component_template"
     },
-    {% endif %}
-    {% if p_skip_delete_component_template == false %}
     {
       "name": "logs-endpoint.events.file@package",
       "template": "./templates/component/logs-endpoint.events.file@package.json",
@@ -152,7 +145,6 @@
       "template": "./templates/component/logs-endpoint.events.security@package.json",
       "template-path": "component_template"
     }
-    {% endif %}
   ],
   {% endif %}
   "composable-templates": [

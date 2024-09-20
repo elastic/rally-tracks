@@ -23,8 +23,7 @@
       "logs-endpoint.events.library@custom",
       "ecs@mappings",
       ".fleet_globals-1",
-      ".fleet_agent_id_verification-1",
-      "track-shared-logsdb-mode"
+      ".fleet_agent_id_verification-1"
     ],
     "priority": 200,
     "_meta": {
@@ -37,9 +36,6 @@
     "data_stream": {
       "hidden": false,
       "allow_custom_routing": false
-    },
-    "ignore_missing_component_templates": [
-      "logs-endpoint.events.library@custom"
-    ]
+    }
   }
 }

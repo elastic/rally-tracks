@@ -3,7 +3,13 @@
     "settings": {
       {% if index_mode %}
       "index": {
-          "mode": {{ index_mode | tojson }}
+          "mode": {{ index_mode | tojson }},
+          "sort": {
+          "order": [
+            { "host.hostname": "desc" },
+            { "@timestamp": "desc" }
+          ]
+        }
       }
       {% endif %}
     }

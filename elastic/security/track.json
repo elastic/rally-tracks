@@ -109,6 +109,7 @@
       "name": "track-custom-mappings",
       "template": "./templates/component/track-custom-mappings.json"
     },
+    {% if p_skip_delete_component_template == false %}
     {
       "name": ".fleet_agent_id_verification-1",
       "template": "./templates/component/.fleet_agent_id_verification-1.json",
@@ -149,6 +150,7 @@
       "template": "./templates/component/logs-endpoint.events.security@package.json",
       "template-path": "component_template"
     }
+    {% endif %}
   ],
   {% endif %}
   "composable-templates": [

@@ -1,17 +1,14 @@
 {
-  "template": {
-    "settings": {
-      {% if index_mode %}
-      "index": {
-          "mode": {{ index_mode | tojson }},
-          "sort": {
-          "order": [
-            { "host.hostname": "desc" },
-            { "@timestamp": "desc" }
-          ]
+    "template": {
+      "settings": {
+        {% if index_mode %}
+        "index": {
+            "mode": {{ index_mode | tojson }},
+            "sort.field": [ "host.hostname", "@timestamp" ],
+            "sort.order": [ "asc", "desc" ],
+            "sort.missing": ["_first", "_last"]
         }
+        {% endif %}
       }
-      {% endif %}
     }
   }
-}

@@ -11,14 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     if: |
         github.event.pull_request.merged == true
-        && contains(github.event.pull_request.labels.*.name, 'backport')
-        && (
-            (github.event.action == 'labeled' && github.event.label.name == 'backport')
-            || (github.event.action == 'closed')
-        )
+        && !contains(github.event.pull_request.labels.*.name, 'backport')
     steps:
       - name: Backport Action
-        uses: sorenlouv/backport-github-action@v9.3.0
+        uses: sorenlouv/backport-github-action@v9.5.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 

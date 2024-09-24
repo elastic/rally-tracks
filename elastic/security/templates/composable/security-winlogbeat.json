@@ -5,9 +5,13 @@
   "template" : {
     "settings" : {
       "index" : {
-        "lifecycle" : {
-          "name" : "security"
-        },
+        {% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
+          "lifecycle": {
+            "name": "security"
+          },
+        {%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
+            "lifecycle": {},
+        {%- endif -%}
         "mapping" : {
           "total_fields" : {
             "limit" : "10000"
@@ -7317,7 +7321,7 @@
       }
     }
   },
-  "composed_of" : ["track-custom-mappings"],
+  "composed_of" : ["track-custom-mappings", "track-shared-logsdb-mode"],
   "priority" : 150,
   "data_stream" : { }
 }

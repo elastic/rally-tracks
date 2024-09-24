@@ -1,6 +1,5 @@
 import csv
 import json
-import logging
 import os
 from collections import defaultdict
 from typing import Dict
@@ -82,43 +81,24 @@ def generate_combine_bm25_weighted_terms_query(
 
 
 def generate_pruned_query(field, query_expansion, boost=1.0):
-    return {
-        "query": {
-            "weighted_tokens": {
-                f"{field}": {
-                    "tokens": query_expansion,
-                    "pruning_config": {"tokens_freq_ratio_threshold": 5, "tokens_weight_threshold": 0.4, "only_score_pruned_tokens": False},
-                    "boost": boost,
-                }
-            }
-        }
-    }
+    return {"query": {"sparse_vector": {"field": field, "query_vector": query_expansion, "prune": True, "boost": boost}}}
 
 
 def generate_rescored_pruned_query(field, query_expansion, num_candidates, boost=1.0):
     return {
-        "query": {
-            "weighted_tokens": {
-                f"{field}": {
-                    "tokens": query_expansion,
-                    "pruning_config": {"tokens_freq_ratio_threshold": 5, "tokens_weight_threshold": 0.4, "only_score_pruned_tokens": False},
-                    "boost": boost,
-                }
-            }
-        },
+        "query": {"sparse_vector": {"field": field, "query_vector": query_expansion, "prune": True, "boost": boost}},
         "rescore": {
             "window_size": num_candidates,
             "query": {
                 "rescore_query": {
-                    "weighted_tokens": {
-                        f"{field}": {
-                            "tokens": query_expansion,
-                            "pruning_config": {
-                                "tokens_freq_ratio_threshold": 5,
-                                "tokens_weight_threshold": 0.4,
-                                "only_score_pruned_tokens": True,
-                            },
-                        }
+                    "sparse_vector": {
+                        "field": field,
+                        "query_vector": query_expansion,
+                        "prune": True,
+                        "pruning_config": {
+                            "only_score_pruned_tokens": True,
+                        },
+                        "boost": boost,
                     }
                 }
             },
@@ -237,6 +217,7 @@ class WeightedRecallParamSource:
 class WeightedTermsRecallRunner:
     async def __call__(self, es, params):
         recall_total = 0
+        recall_with_rescore_total = 0
         exact_total = 0
         min_recall = params["top_k"]
         weighted_term_results = defaultdict(dict)
@@ -268,23 +249,28 @@ class WeightedTermsRecallRunner:
                 size=params["top_k"],
             )
 
-            weighted_terms_hits = {hit["_source"]["id"] for hit in weighted_terms_result["hits"]["hits"]}
-            pruned_hits = {hit["_source"]["id"] for hit in pruned_result["hits"]["hits"]}
-            pruned_rescored_hits = {hit["_source"]["id"] for hit in pruned_rescored_result["hits"]["hits"]}
+            weighted_terms_hits = {hit["_source"]["id"]: hit["_score"] for hit in weighted_terms_result["hits"]["hits"]}
+            pruned_hits = {hit["_source"]["id"]: hit["_score"] for hit in pruned_result["hits"]["hits"]}
+            pruned_rescored_hits = {hit["_source"]["id"]: hit["_score"] for hit in pruned_rescored_result["hits"]["hits"]}
 
             # Recall calculations as compared to the control/non-pruned hits
-            current_recall = len(weighted_terms_hits.intersection(pruned_rescored_hits))
+            weighted_terms_ids = set(weighted_terms_hits.keys())
+            pruned_ids = set(pruned_hits.keys())
+            pruned_rescored_ids = set(pruned_rescored_hits.keys())
+            current_recall_with_rescore = len(weighted_terms_ids.intersection(pruned_rescored_ids))
+            current_recall = len(weighted_terms_ids.intersection(pruned_ids))
+            recall_with_rescore_total += current_recall_with_rescore
             recall_total += current_recall
-            exact_total += len(weighted_terms_hits)
+            exact_total += len(weighted_terms_ids)
             min_recall = min(min_recall, current_recall)
 
             # Construct input to NDCG calculation based on returned hits
-            for doc_id in weighted_terms_hits:
-                weighted_term_results[query_id][doc_id] = 1
-            for doc_id in pruned_hits:
-                pruned_results[query_id][doc_id] = 1
-            for doc_id in pruned_rescored_hits:
-                pruned_rescored_results[query_id][doc_id] = 1
+            for doc_id, score in weighted_terms_hits.items():
+                weighted_term_results[query_id][doc_id] = score
+            for doc_id, score in pruned_hits.items():
+                pruned_results[query_id][doc_id] = score
+            for doc_id, score in pruned_rescored_hits.items():
+                pruned_rescored_results[query_id][doc_id] = score
 
         control_relevance = calc_ndcg(params["qrels"], weighted_term_results, [10, 100])
         pruned_relevance = calc_ndcg(params["qrels"], pruned_results, [10, 100])
@@ -292,7 +278,8 @@ class WeightedTermsRecallRunner:
 
         return (
             {
-                "avg_recall": float(recall_total / exact_total),  # Calculated on pruned/rescored hits
+                "avg_recall": float(recall_with_rescore_total / exact_total),  # Calculated on pruned/rescored hits
+                "avg_recall_without_rescore": float(recall_total / exact_total),  # Calculated on pruned hits without rescore
                 "min_recall": min_recall,  # Calculated on pruned/rescored hits
                 "top_k": params["top_k"],
                 "num_candidates": params["num_candidates"],

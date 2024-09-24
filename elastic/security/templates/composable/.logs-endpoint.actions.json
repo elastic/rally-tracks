@@ -21,10 +21,14 @@
       }
     },
     "composed_of": [
+      "logs@mappings",
+      "logs@settings",
+      "ecs@mappings",
       ".logs-endpoint.actions@package",
       ".logs-endpoint.actions@custom",
       ".fleet_globals-1",
-      ".fleet_agent_id_verification-1"
+      ".fleet_agent_id_verification-1",
+      "track-shared-logsdb-mode"
     ],
     "priority": 200,
     "_meta": {

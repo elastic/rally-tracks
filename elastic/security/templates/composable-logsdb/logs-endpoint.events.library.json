@@ -1,0 +1,44 @@
+{
+  "name": "logs-endpoint.events.library",
+  "index_template": {
+    "index_patterns": [
+      "logs-endpoint.events.library-*"
+    ],
+    "template": {
+      "settings": {},
+      "mappings": {
+        "_meta": {
+          "package": {
+            "name": "endpoint"
+          },
+          "managed_by": "fleet",
+          "managed": true
+        }
+      }
+    },
+    "composed_of": [
+      "logs@mappings",
+      "logs@settings",
+      "logs-endpoint.events.library@package",
+      "ecs@mappings",
+      ".fleet_globals-1",
+      ".fleet_agent_id_verification-1",
+      "track-shared-logsdb-mode"
+    ],
+    "priority": 200,
+    "_meta": {
+      "package": {
+        "name": "endpoint"
+      },
+      "managed_by": "fleet",
+      "managed": true
+    },
+    "data_stream": {
+      "hidden": false,
+      "allow_custom_routing": false
+      {% if build_flavor != "serverless" %},
+      "failure_store": false
+      {% endif %}
+    }
+  }
+}

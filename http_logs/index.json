@@ -5,12 +5,21 @@
     "index.number_of_replicas": {{ number_of_replicas | default(0) }},
     "index.requests.cache.enable": false
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
+    {%- if enable_logsdb %},
+    "index.mode": "logsdb",
+    "index.mapping.synthetic_source_keep": "arrays",
+    "index.sort.field": ["@timestamp"],
+    "index.sort.order":["desc"]
+    {%- endif %}
   },
   "mappings": {
     "dynamic": "strict",
+    {%- if enable_logsdb %}
+    {%- else %}
     "_source": {
       "enabled": {{ source_enabled | default(true) | tojson }}
     },
+    {%- endif %}
     "properties": {
       "@timestamp": {
         {%- if ingest_pipeline is defined and ingest_pipeline == "grok" %}

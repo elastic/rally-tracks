@@ -32,7 +32,7 @@
 {%- set p_as_time_periods = (as_time_periods | default([300,300,300]))%}
 {%- set p_as_target_throughputs = (as_target_throughputs | default([2,4,8]))%}
 {%- set p_bulk_size = (bulk_size | default(5000))%}
-{%- for i in range(as_clients|length) %},
+{%- for i in range(p_as_clients|length) %},
   {%- if p_as_target_throughputs[i] < 0 %}
 {
   "name": "bulk-{{loop.index}}-c{{p_as_clients[i]}}-b{{p_bulk_size}}",

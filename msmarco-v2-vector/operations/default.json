@@ -22,20 +22,34 @@
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
   "corpora": "msmarco-v2-parallel-indexing",
-  "bulk-size": {{parallel_indexing_bulk_size | default(500)}},
+  "bulk-size": {{parallel_indexing_bulk_size | default(50)}},
   "ingest-percentage": {{parallel_indexing_ingest_percentage | default(100)}}
-},
-{
-  "name": "knn-search-10-100",
-  "operation-type": "search",
-  "param-source": "knn-param-source",
-  "k": 10,
-  "num-candidates": 100
-},
-{
-  "name": "knn-search-100-1000",
-  "operation-type": "search",
-  "param-source": "knn-param-source",
-  "k": 100,
-  "num-candidates": 1000
 }
+{%- set p_search_ops = (search_ops | default([(10, 20, 0), (10, 20, 20), (10, 50, 0), (10, 50, 20), (10, 100, 0), (10, 100, 20), (10, 200, 0), (10, 200, 20), (10, 500, 0), (10, 500, 20), (10, 1000, 0), (10, 1000, 20), (100, 120, 0), (100, 120, 120), (100, 200, 0), (100, 200, 120), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]))%}
+{%- for i in range(p_search_ops|length) %},
+{
+  {%- if p_search_ops[i][2] > 0 -%}
+    "name": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+  {%- else -%}
+    "name": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+  {%- endif -%},
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": {{p_search_ops[i][0]}},
+  "num-candidates": {{p_search_ops[i][1]}},
+  "num-rescore": {{p_search_ops[i][2]}}
+},
+{
+  {%- if p_search_ops[i][2] > 0 -%}
+    "name": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+  {%- else -%}
+    "name": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+  {%- endif -%},
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": {{p_search_ops[i][0]}},
+  "num-candidates": {{p_search_ops[i][1]}},
+  "num-rescore": {{p_search_ops[i][2]}},
+  "include-in-reporting": false
+}
+{%- endfor %}

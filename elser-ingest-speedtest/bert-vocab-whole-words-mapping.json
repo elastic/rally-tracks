@@ -22,9 +22,11 @@
             }
         },
       "_source": {
+        {%- if build_flavor != "serverless" -%}  
         "excludes": [
           "ml.tokens"
         ]
+        {% endif %}
       }
     },
     "settings": {

@@ -200,28 +200,154 @@
           "tags": ["distance"]
         },
         {
+          "operation": "distanceFilter-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterEQ",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterEQ-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterGTE",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterGTE-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilter10kGTE",
+          "warmup-iterations": 20,
+          "iterations": 10,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilter10kGTE-esql",
+          "warmup-iterations": 20,
+          "iterations": 10,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount100",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance"]
+        },
+        {
+          "operation": "distanceFilterCount100-esql",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount100x200",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount100x200-esql",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount200",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance"]
+        },
+        {
+          "operation": "distanceFilterCount200-esql",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount200x300",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount200x300-esql",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount300",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance"]
+        },
+        {
+          "operation": "distanceFilterCount300-esql",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount300x400",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount300x400-esql",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
           "operation": "distanceSort",
           "warmup-iterations": 200,
           "iterations": 100,
-          "tags": ["distance"]
+          "tags": ["distance", "sort"]
+        },
+        {
+          "operation": "distanceSort-esql",
+          "warmup-iterations": 1,
+          "iterations": 1,
+          "tags": ["distance", "esql", "sort"]
         },
         {
           "operation": "distanceFilterSort",
           "warmup-iterations": 200,
           "iterations": 100,
-          "tags": ["distance"]
+          "tags": ["distance", "sort"]
+        },
+        {
+          "operation": "distanceFilterSort-esql",
+          "warmup-iterations": 1,
+          "iterations": 1,
+          "tags": ["distance", "esql", "sort"]
         },
         {
           "operation": "distanceRange",
           "warmup-iterations": 40,
           "iterations": 20,
-          "tags": ["distance"]
+          "tags": ["distance", "aggs"]
         },
         {
           "operation": "distanceFilterRange",
           "warmup-iterations": 200,
           "iterations": 100,
-          "tags": ["distance"]
+          "tags": ["distance", "aggs"]
         },
         {
           "operation": "geoGrid_geohash",

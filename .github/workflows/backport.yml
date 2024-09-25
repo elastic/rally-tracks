@@ -15,6 +15,7 @@ jobs:
     steps:
       - name: Backport Action
         uses: sorenlouv/backport-github-action@v9.5.1
+        continue-on-error: true
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 

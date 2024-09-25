@@ -120,6 +120,7 @@
       "template": "./templates/component/.fleet_globals-1.json",
       "template-path": "component_template"
     },
+    {% endif %}
     {
       "name": "logs-endpoint.events.file@package",
       "template": "./templates/component/logs-endpoint.events.file@package.json",
@@ -150,7 +151,6 @@
       "template": "./templates/component/logs-endpoint.events.security@package.json",
       "template-path": "component_template"
     }
-    {% endif %}
   ],
   {% endif %}
   "composable-templates": [

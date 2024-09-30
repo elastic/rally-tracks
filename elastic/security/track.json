@@ -92,14 +92,6 @@
 {% endif %}
 {% endfor %}
   ],
-  {% if index_mode == "logsdb" %}
-  "component-templates": [
-    {
-      "name": "track-shared-logsdb-mode",
-      "template": "./templates/component/track-shared-logsdb-mode.json"
-    }
-  ],
-  {% else %}
   "component-templates": [
     {
       "name": "track-shared-logsdb-mode",
@@ -152,7 +144,6 @@
       "template-path": "component_template"
     }
   ],
-  {% endif %}
   "composable-templates": [
 {% for integration in p_integration_ratios.keys() %}
 {% if integration == "logs-endpoint" %}

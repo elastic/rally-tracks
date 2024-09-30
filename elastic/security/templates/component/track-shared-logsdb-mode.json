@@ -4,9 +4,14 @@
         {% if index_mode %}
         "index": {
             "mode": {{ index_mode | tojson }},
+            {% if p_synthetic_source_keep and p_synthetic_source_keep != 'none' %}
+            "mapping": {
+                "synthetic_source_keep": "{{ p_synthetic_source_keep }}"
+            },
+            {% endif %}
             "sort.field": [ "host.hostname", "@timestamp" ],
             "sort.order": [ "asc", "desc" ],
-            "sort.missing": ["_first", "_last"]
+            "sort.missing": ["_first", "_last"],
         }
         {% endif %}
       }

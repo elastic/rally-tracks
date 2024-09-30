@@ -4,9 +4,11 @@
         {% if index_mode %}
         "index": {
             "mode": {{ index_mode | tojson }},
+            {% if p_synthetic_source_keep and p_synthetic_source_keep != 'none' %}
             "mapping": {
-                "synthetic_source_keep": "arrays"
+                "synthetic_source_keep": "{{ p_synthetic_source_keep }}"
             }
+            {% endif %}
         }
         {% endif %}
       }

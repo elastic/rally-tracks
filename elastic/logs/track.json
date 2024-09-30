@@ -21,7 +21,7 @@
 {% set p_query_time_period = (query_time_period | default(900)) %}
 {% set p_query_request_params = (query_request_params | default({}))%}
 {% set p_include_esql_queries = (include_esql_queries | default(build_flavor != "serverless")) %}
-{% set p_synthetic_source_keep = (synthetic_source_keep | default)}
+{% set p_synthetic_source_keep = (synthetic_source_keep | default) %}
 
 {% set p_throttle_indexing = (throttle_indexing | default(false)) %}
 {% set p_max_download_gb = (max_total_download_gb | default(2 * num_corpus)) %}

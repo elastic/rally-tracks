@@ -4,12 +4,11 @@
         {% if index_mode %}
         "index": {
             "mode": {{ index_mode | tojson }},
+            {% if synthetic_source_keep and synthetic_source_keep != 'none' %}
             "mapping": {
-                "synthetic_source_keep": "arrays"
-            },
-            "sort.field": [ "host.name", "@timestamp" ],
-            "sort.order": [ "asc", "desc" ],
-            "sort.missing": ["_first", "_last"]
+                "synthetic_source_keep": "{{ synthetic_source_keep }}"
+            }
+            {% endif %}
         }
         {% endif %}
       }

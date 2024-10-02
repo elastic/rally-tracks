@@ -3,10 +3,12 @@
       "settings": {
         {% if index_mode %}
         "index": {
-            "mode": {{ index_mode | tojson }},
-            "mapping": {
-                "synthetic_source_keep": "arrays"
+            "mode": {{ index_mode | tojson }}
+            {% if synthetic_source_keep and synthetic_source_keep != 'none' %}
+            ,"mapping": {
+                "synthetic_source_keep": "{{ synthetic_source_keep }}"
             }
+            {% endif %}
         }
         {% endif %}
       }

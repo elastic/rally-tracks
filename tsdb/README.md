@@ -203,6 +203,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
 * `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 * `document_ids`: documentd IDs to use for search, get and mget apis in the `low-latency` challenge. If empty, a default set of 4 values is used.
+* `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
 
 ### License
 

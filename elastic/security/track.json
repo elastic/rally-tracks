@@ -362,7 +362,9 @@
   ],
   "dependencies": [
     "geneve==0.2.0",
-    "pyyaml"
+    "pyyaml",
+    "elastic-transport==8.4.1",
+    "elasticsearch==8.6.1"
   ],
   "challenges": [
     {{ rally.collect(parts="challenges/*.json") }}

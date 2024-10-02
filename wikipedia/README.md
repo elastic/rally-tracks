@@ -16,13 +16,13 @@ Fields that do not have values have been left out.
 
 ### Generating the document dataset
 
-To regenerate the dataset from scratch, first download and unzip an archive
+To regenerate the dataset from scratch, first download an archive
 of Wikipedia dumps from [this link](https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2) (~21GB).
 
 Then run this command:
 
 ```bash
-python _tools/parse_documents.py <path_to_xml_file> | pbzip2 -9 -k -m2000 > pages.json.bz2
+python _tools/parse_documents.py <path_to_xml_bz2_file> | pbzip2 -9 -k -m2000 > pages.json.bz2
 ```
 
 ### Generating clickstream probability distribution

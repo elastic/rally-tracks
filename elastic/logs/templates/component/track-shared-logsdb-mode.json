@@ -3,9 +3,9 @@
       "settings": {
         {% if index_mode %}
         "index": {
-            "mode": {{ index_mode | tojson }},
+            "mode": {{ index_mode | tojson }}
             {% if synthetic_source_keep and synthetic_source_keep != 'none' %}
-            "mapping": {
+            ,"mapping": {
                 "synthetic_source_keep": "{{ synthetic_source_keep }}"
             }
             {% endif %}

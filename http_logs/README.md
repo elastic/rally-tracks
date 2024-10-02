@@ -51,6 +51,7 @@ node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'
 * `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 * `enable_logsdb` (default: false) Determines whether the logsdb index mode gets used. If set then index sorting is configured to only use `@timestamp` field and the `source_enabled` parameter will have no effect.
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
+* `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
 
 ### License
 

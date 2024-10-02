@@ -9,7 +9,7 @@
                 "synthetic_source_keep": "{{ synthetic_source_keep }}"
             },
             {% endif %}
-            "sort.field": [ "host.hostname", "@timestamp" ],
+            "sort.field": [ "host.id", "@timestamp" ],
             "sort.order": [ "asc", "desc" ],
             "sort.missing": ["_first", "_last"]
         }

@@ -47,12 +47,14 @@
   "operation": {
     "operation-type": "create-composable-template",
     "param-source": "composable-template-source",
+    {% if build_flavor != "serverless" %}
     "settings": {
       "index": {
         "number_of_shards": {{ p_number_of_shards }},
         "number_of_replicas": {{ p_number_of_replicas }}
       }
     },
+    {% endif %}
     "remove-routing-shards": true,
     "remove-pipelines": false
   }

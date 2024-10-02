@@ -102,6 +102,10 @@
   {% else %}
   "component-templates": [
     {
+      "name": "track-shared-logsdb-mode",
+      "template": "./templates/component/track-shared-logsdb-mode.json"
+    },
+    {
       "name": "track-custom-mappings",
       "template": "./templates/component/track-custom-mappings.json"
     },

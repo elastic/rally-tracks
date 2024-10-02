@@ -31,7 +31,12 @@
           "end_time": "2021-05-01T00:00:00.000Z"
         },
         {% endif %}
-        "mapping.total_fields.limit": 10000
+        "mapping": {
+          {% if synthetic_source_keep %}
+          "synthetic_source_keep": "{{synthetic_source_keep}}",
+          {% endif %}
+          "total_fields.limit": 10000
+        }
       }
     },
     "mappings": {

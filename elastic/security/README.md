@@ -102,6 +102,9 @@ The following parameters are available:
 * `bulk_indexing_clients` (default: 8) - The number of clients issuing indexing requests.
 * `bulk_size` (default: 50) - The number of documents to send per indexing request.
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `security-indexing-querying` track.
+* `index_mode` (default: unset): What index mode to use. Accepted values: `standard` and `logsdb`. 
+* `logs_endpoint_from_kibana` (default: false): Skip creation of endpoint templates. Used when templates are expected from kibana. 
+* `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 
 ### Querying parameters
 

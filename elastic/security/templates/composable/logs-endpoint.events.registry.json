@@ -22,7 +22,8 @@
       "logs-endpoint.events.registry@package",
       "ecs@mappings",
       ".fleet_globals-1",
-      ".fleet_agent_id_verification-1"
+      ".fleet_agent_id_verification-1",
+      "track-shared-logsdb-mode"
     ],
     "priority": 200,
     "_meta": {
@@ -35,6 +36,9 @@
     "data_stream": {
       "hidden": false,
       "allow_custom_routing": false
+      {% if build_flavor != "serverless" %},
+      "failure_store": false
+      {% endif %}
     }
   }
 }

@@ -9,6 +9,7 @@
 {% set p_number_of_shards = (number_of_shards | default(1)) %}
 {% set p_number_of_replicas = (number_of_replicas | default(1)) %}
 {% set p_skip_delete_component_template = (skip_delete_component_template | default(false) ) %}
+{% set p_logs_endpoint_from_kibana = (logs_endpoint_from_kibana | default(false) ) %}
 {% set p_integration_ratios = (integration_ratios | default({
     "auditbeat": {
       "corpora": {
@@ -92,11 +93,15 @@
 {% endif %}
 {% endfor %}
   ],
-  {% if index_mode == "logsdb" %}
+  {% if p_logs_endpoint_from_kibana %}
   "component-templates": [
     {
       "name": "track-shared-logsdb-mode",
       "template": "./templates/component/track-shared-logsdb-mode.json"
+    },
+    {
+      "name": "track-custom-mappings",
+      "template": "./templates/component/track-custom-mappings.json"
     }
   ],
   {% else %}
@@ -160,66 +165,42 @@
         "name": "logs-endpoint.events.file",
         "index-pattern": "logs-endpoint.events.file-*",
         "delete-matching-indices": false,
-        {% if index_mode == "logsdb" %}
-        "template": "./templates/composable-logsdb/logs-endpoint.events.file.json",
-        {% else %}
         "template": "./templates/composable/logs-endpoint.events.file.json",
-        {% endif %}
         "template-path": "index_template"
     },
     {
         "name": "logs-endpoint.events.library",
         "index-pattern": "logs-endpoint.events.library-*",
         "delete-matching-indices": false,
-        {% if index_mode == "logsdb" %}
-        "template": "./templates/composable-logsdb/logs-endpoint.events.library.json",
-        {% else %}
         "template": "./templates/composable/logs-endpoint.events.library.json",
-        {% endif %}
         "template-path": "index_template"
     },
     {
         "name": "logs-endpoint.events.network",
         "index-pattern": "logs-endpoint.events.network-*",
         "delete-matching-indices": false,
-        {% if index_mode == "logsdb" %}
-        "template": "./templates/composable-logsdb/logs-endpoint.events.network.json",
-        {% else %}
         "template": "./templates/composable/logs-endpoint.events.network.json",
-        {% endif %}
         "template-path": "index_template"
     },
     {
         "name": "logs-endpoint.events.process",
         "index-pattern": "logs-endpoint.events.process-*",
         "delete-matching-indices": false,
-        {% if index_mode == "logsdb" %}
-        "template": "./templates/composable-logsdb/logs-endpoint.events.process.json",
-        {% else %}
         "template": "./templates/composable/logs-endpoint.events.process.json",
-        {% endif %}
         "template-path": "index_template"
     },
     {
         "name": "logs-endpoint.events.registry",
         "index-pattern": "logs-endpoint.events.registry-*",
         "delete-matching-indices": false,
-        {% if index_mode == "logsdb" %}
-        "template": "./templates/composable-logsdb/logs-endpoint.events.registry.json",
-        {% else %}
         "template": "./templates/composable/logs-endpoint.events.registry.json",
-        {% endif %}
         "template-path": "index_template"
     },
     {
         "name": "logs-endpoint.events.security",
         "index-pattern": "logs-endpoint.events.security-*",
         "delete-matching-indices": false,
-        {% if index_mode == "logsdb" %}
-        "template": "./templates/composable-logsdb/logs-endpoint.events.security.json",
-        {% else %}
         "template": "./templates/composable/logs-endpoint.events.security.json",
-        {% endif %}
         "template-path": "index_template"
     }{{ ", " if not loop.last else "" }}
 {% else %}

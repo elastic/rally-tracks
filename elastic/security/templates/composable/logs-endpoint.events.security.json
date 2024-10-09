@@ -5,11 +5,7 @@
       "logs-endpoint.events.security-*"
     ],
     "template": {
-      "settings": {
-        "index": {
-          "default_pipeline": "logs-endpoint.events.security-8.2.0"
-        }
-      },
+      "settings": {},
       "mappings": {
         "_meta": {
           "package": {
@@ -23,9 +19,8 @@
     "composed_of": [
       "logs@mappings",
       "logs@settings",
-      "ecs@mappings",
       "logs-endpoint.events.security@package",
-      "logs-endpoint.events.security@custom",
+      "ecs@mappings",
       ".fleet_globals-1",
       ".fleet_agent_id_verification-1",
       "track-shared-logsdb-mode"
@@ -41,6 +36,9 @@
     "data_stream": {
       "hidden": false,
       "allow_custom_routing": false
+      {% if build_flavor != "serverless" %},
+      "failure_store": false
+      {% endif %}
     }
   }
 }

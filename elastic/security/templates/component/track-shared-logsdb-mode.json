@@ -5,9 +5,10 @@
         "index": {
             "mode": {{ index_mode | tojson }},
             {% if synthetic_source_keep and synthetic_source_keep != 'none' %}
-            "mapping": {
-                "synthetic_source_keep": "{{ synthetic_source_keep }}"
-            },
+            "mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson}},
+            {% endif %}
+            {% if source_mode %}
+            "mapping.source.mode": {{ source_mode | tojson }},
             {% endif %}
             "sort.field": [ "host.id", "@timestamp" ],
             "sort.order": [ "asc", "desc" ],

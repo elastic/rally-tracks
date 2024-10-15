@@ -35,9 +35,6 @@
           {% if synthetic_source_keep %}
           "synthetic_source_keep": "{{synthetic_source_keep}}",
           {% endif %}
-          {% if p_source_mode %}
-          "source.mode": {{ p_source_mode | tojson }},
-          {% endif %}
           "total_fields.limit": 10000
         }
       }
@@ -46,6 +43,9 @@
       "_meta": {
         "beat": "metricbeat",
         "version": "7.6.2"
+      },
+      "_source": {
+        "mode": {{ p_source_mode | tojson }}
       },
       "dynamic_templates": [
         {

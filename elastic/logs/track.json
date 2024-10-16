@@ -29,6 +29,12 @@
 
 {% set p_recovery_max_bytes_per_sec = (recovery_max_bytes_per_sec | default(-1)) %}
 {% set p_node_concurrent_recoveries = (node_concurrent_recoveries | default(2)) %}
+{% set p_skip_esql_ccs_remote_clusters = (skip_esql_ccs_remote_clusters | default(true)) %}
+{% if p_skip_esql_ccs_remote_clusters %}
+  {% set p_esql_target_prefix = "" %}
+{% else %}
+  {% set p_esql_target_prefix = "remote*:" %}
+{% endif %}
 {% set p_snapshot_repo_name = (snapshot_repo_name | default("logging")) %}
 {% set p_snapshot_repo_type = (snapshot_repo_type | default("s3")) %}
 {% set p_snapshot_repo_settings = (snapshot_repo_settings | default({

@@ -2,7 +2,7 @@
 
 This track assesses the search performance of the dataset available at [mteb/dbpedia](https://huggingface.co/datasets/mteb/dbpedia).
 To compare search performance, the following strategies are employed:
-* `default`: This is a straightforward strategy that involves indexing the text fields using a standard analyzer and querying using a `match_all` query. No custom analysis is used.
+* `default`: This is a straightforward strategy that involves indexing the text fields using a standard analyzer and querying using a `multi_match` query. No custom analysis is used.
 * `english-analyzed`: In this strategy, we perform the same test as with `default` but with a basic custom english analyzer applied.
 
 
@@ -25,7 +25,7 @@ When a single document is pretty printed, it takes the following example format:
 
 ### Example Query
 
-Queries are structured within a JSON array, where each individual object signifies a unique 'query' and its corresponding expansion achieved through ELSER v2, which is stored pre-computed in the 'text_expansion_elser' field.:
+Queries are structured within a JSON array, where each individual object signifies a unique 'query'.
 
 <details>
   <summary><i>Example query object</i></summary>

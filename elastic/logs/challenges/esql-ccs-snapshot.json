@@ -34,7 +34,7 @@
     },
     {% if p_skip_esql_ccs_remote_clusters %}
       {
-        "name": "check-cluster-health",
+        "name": "check-cluster-health-local",
         "operation": {
           "operation-type": "cluster-health",
           "index": "_all",

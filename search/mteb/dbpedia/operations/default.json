@@ -1,7 +1,33 @@
 {
+   "name": "default-text-search",
+   "operation-type": "search",
+   "param-source": "query_param_source",
+   "query_source": "queries.json",
+   "size": 100,
+   "title_field": "title",
+   "title_boost": 10,
+   "text_field": "text",
+   "text_boost": 1,
+   "track_total_hits": false,
+   "include_in_reporting": true
+},
+{
+   "name": "english-analyzed-text-search",
+   "operation-type": "search",
+   "param-source": "query_param_source",
+   "query_source": "queries.json",
+   "size": 100,
+   "title_field": "english_analyzed_title",
+   "title_boost": 10,
+   "text_field": "english_analyzed_text",
+   "text_boost": 1,
+   "track_total_hits": false,
+   "include_in_reporting": true
+},
+{
    "name": "default-text-search-relevance",
    "operation-type": "text_search_relevance",
-   "param-source": "query_param_source",
+   "param-source": "relevance_param_source",
    "query_source": "queries.json",
    "qrels_source": "test.tsv",
    "title_field": "title",
@@ -14,7 +40,7 @@
 {
    "name": "english-analyzed-text-search-relevance",
    "operation-type": "text_search_relevance",
-   "param-source": "query_param_source",
+   "param-source": "relevance_param_source",
    "query_source": "queries.json",
    "qrels_source": "test.tsv",
    "title_field": "english_analyzed_title",

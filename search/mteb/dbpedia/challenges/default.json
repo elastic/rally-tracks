@@ -55,6 +55,20 @@
       }
     },
     {
+      "name": "default-text-search",
+      "operation": "default-text-search",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
+      "name": "english-analyzed-text-search",
+      "operation": "english-analyzed-text-search",
+      "warmup-iterations": 100,
+      "iterations": 1000,
+      "clients": {{search_clients | default(1)}}
+    },
+    {
       "name": "default-text-search-relevance",
       "operation": "default-text-search-relevance"
     },

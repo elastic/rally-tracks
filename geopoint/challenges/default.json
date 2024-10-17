@@ -284,9 +284,21 @@
           "tags": ["distance", "esql"]
         },
         {
+          "operation": "distanceFilterCount200x300-alt",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
           "operation": "distanceFilterCount200x300-esql",
           "warmup-iterations": 50,
           "iterations": 50,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount200x300-esql-evals",
+          "warmup-iterations": 10,
+          "iterations": 10,
           "tags": ["distance", "esql"]
         },
         {
@@ -315,14 +327,14 @@
         },
         {
           "operation": "distanceSort",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["distance", "sort"]
         },
         {
           "operation": "distanceSort-esql",
-          "warmup-iterations": 1,
-          "iterations": 1,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["distance", "esql", "sort"]
         },
         {
@@ -333,8 +345,8 @@
         },
         {
           "operation": "distanceFilterSort-esql",
-          "warmup-iterations": 1,
-          "iterations": 1,
+          "warmup-iterations": 200,
+          "iterations": 100,
           "tags": ["distance", "esql", "sort"]
         },
         {

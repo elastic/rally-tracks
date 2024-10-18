@@ -1,9 +1,10 @@
     {
       "name": "enable_query_cache",
       "include-in-reporting": false,
-      "operation-type": "raw-request",
+      "operation-type": "multi-cluster-wrapper",
+      "base-operation-type": "raw-request",
       "method": "PUT",
-      "path": "/{{p_esql_target_prefix}}logs-*/_settings",
+      "path": "/logs-*/_settings",
       "body": {
         "index.requests.cache.enable": true
       }
@@ -11,9 +12,10 @@
     {
       "name": "disable_query_cache",
       "include-in-reporting": false,
-      "operation-type": "raw-request",
+      "operation-type": "multi-cluster-wrapper",
+      "base-operation-type": "raw-request",
       "method": "PUT",
-      "path": "/{{p_esql_target_prefix}}logs-*/_settings",
+      "path": "/logs-*/_settings",
       "body": {
         "index.requests.cache.enable": false
       }

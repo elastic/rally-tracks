@@ -1,8 +1,12 @@
     {
       "name": "enable_query_cache",
       "include-in-reporting": false,
-      "operation-type": "multi-cluster-wrapper",
-      "base-operation-type": "raw-request",
+      {% if p_skip_esql_ccs_remote_clusters %}
+        "operation-type": "raw-request",
+      {% else %}
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "raw-request",
+      {% endif %}
       "method": "PUT",
       "path": "/logs-*/_settings",
       "body": {
@@ -12,8 +16,12 @@
     {
       "name": "disable_query_cache",
       "include-in-reporting": false,
-      "operation-type": "multi-cluster-wrapper",
-      "base-operation-type": "raw-request",
+      {% if p_skip_esql_ccs_remote_clusters %}
+        "operation-type": "raw-request",
+      {% else %}
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "raw-request",
+      {% endif %}
       "method": "PUT",
       "path": "/logs-*/_settings",
       "body": {

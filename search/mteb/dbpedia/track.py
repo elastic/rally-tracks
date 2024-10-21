@@ -131,7 +131,7 @@ class RelevanceParamsSource:
         self._title_boost = params.get("title_boost", 5)
         self._text_boost = params.get("text_boost", 1)
         self._query_file = params.get("query_source", "queries.json")
-        self._qrels_file = params.get("qrels_file", "dev.tsv")
+        self._qrels_file = params.get("qrels_source", "test.tsv")
         self._params = params
         self.infinite = True
 

@@ -10,9 +10,6 @@
     {% if synthetic_source_keep %}
     "index.mapping.synthetic_source_keep": "{{synthetic_source_keep}}",
     {% endif %}
-    {% if source_mode %}
-    "index.mapping.source.mode": {{ source_mode | tojson }},
-    {% endif %}
     "index.sort.field": ["@timestamp"],
     "index.sort.order":["desc"]
     {%- endif %}
@@ -23,6 +20,9 @@
     {%- else %}
     "_source": {
       "enabled": {{ source_enabled | default(true) | tojson }}
+      {% if source_mode %}
+      "mode": {{ source_mode | tojson }},
+      {% endif %}
     },
     {%- endif %}
     "properties": {

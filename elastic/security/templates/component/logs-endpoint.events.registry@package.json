@@ -11,94 +11,11 @@
           {%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
               "lifecycle": {},
           {%- endif -%}
-          "codec": "best_compression",
+          "default_pipeline": "logs-endpoint.events.registry-8.15.1",
           "mapping": {
             "total_fields": {
-              "limit": "10000"
+              "limit": "1000"
             }
-          },
-          "query": {
-            "default_field": [
-              "message",
-              "agent.id",
-              "agent.type",
-              "agent.version",
-              "destination.geo.city_name",
-              "destination.geo.continent_code",
-              "destination.geo.continent_name",
-              "destination.geo.country_iso_code",
-              "destination.geo.country_name",
-              "destination.geo.name",
-              "destination.geo.postal_code",
-              "destination.geo.region_iso_code",
-              "destination.geo.region_name",
-              "destination.geo.timezone",
-              "ecs.version",
-              "event.action",
-              "event.category",
-              "event.code",
-              "event.dataset",
-              "event.hash",
-              "event.id",
-              "event.kind",
-              "event.module",
-              "event.outcome",
-              "event.provider",
-              "event.type",
-              "group.Ext.real.id",
-              "group.Ext.real.name",
-              "group.domain",
-              "group.id",
-              "group.name",
-              "host.architecture",
-              "host.domain",
-              "host.hostname",
-              "host.id",
-              "host.mac",
-              "host.name",
-              "host.os.Ext.variant",
-              "host.os.family",
-              "host.os.full",
-              "host.os.kernel",
-              "host.os.name",
-              "host.os.platform",
-              "host.os.version",
-              "host.type",
-              "process.Ext.ancestry",
-              "process.entity_id",
-              "process.executable",
-              "process.name",
-              "registry.data.bytes",
-              "registry.data.strings",
-              "registry.data.type",
-              "registry.hive",
-              "registry.key",
-              "registry.path",
-              "registry.value",
-              "source.geo.city_name",
-              "source.geo.continent_code",
-              "source.geo.continent_name",
-              "source.geo.country_iso_code",
-              "source.geo.country_name",
-              "source.geo.name",
-              "source.geo.postal_code",
-              "source.geo.region_iso_code",
-              "source.geo.region_name",
-              "source.geo.timezone",
-              "user.Ext.real.id",
-              "user.Ext.real.name",
-              "user.domain",
-              "user.email",
-              "user.full_name",
-              "user.group.Ext.real.id",
-              "user.group.Ext.real.name",
-              "user.group.domain",
-              "user.group.id",
-              "user.group.name",
-              "user.hash",
-              "user.id",
-              "user.name"
-            ]
           }
         }
       },
@@ -119,7 +36,7 @@
                 "properties": {
                   "strings": {
                     "ignore_above": 1024,
-                    "type": "keyword"
+                    "type": "wildcard"
                   },
                   "bytes": {
                     "ignore_above": 1024,
@@ -164,6 +81,57 @@
                   "ancestry": {
                     "ignore_above": 1024,
                     "type": "keyword"
+                  },
+                  "code_signature": {
+                    "type": "nested",
+                    "properties": {
+                      "valid": {
+                        "type": "boolean"
+                      },
+                      "trusted": {
+                        "type": "boolean"
+                      },
+                      "subject_name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "exists": {
+                        "type": "boolean"
+                      },
+                      "status": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  }
+                }
+              },
+              "code_signature": {
+                "properties": {
+                  "valid": {
+                    "type": "boolean"
+                  },
+                  "signing_id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "trusted": {
+                    "type": "boolean"
+                  },
+                  "subject_name": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "exists": {
+                    "type": "boolean"
+                  },
+                  "team_id": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "status": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
                   }
                 }
               },
@@ -186,6 +154,41 @@
               },
               "thread": {
                 "properties": {
+                  "Ext": {
+                    "properties": {
+                      "call_stack_summary": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "call_stack": {
+                        "properties": {
+                          "symbol_info": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "callsite_trailing_bytes": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "protection": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "callsite_leading_bytes": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "allocation_private_bytes": {
+                            "type": "unsigned_long"
+                          }
+                        },
+                        "enabled": true
+                      },
+                      "hardware_breakpoint_set": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
                   "id": {
                     "type": "long"
                   }
@@ -314,14 +317,34 @@
             }
           },
           "message": {
-            "type": "text"
+            "type": "match_only_text"
           },
           "@timestamp": {
+            "ignore_malformed": false,
             "type": "date"
           },
           "ecs": {
             "properties": {
               "version": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
+          "Effective_process": {
+            "properties": {
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "pid": {
+                "type": "long"
+              },
+              "entity_id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "executable": {
                 "ignore_above": 1024,
                 "type": "keyword"
               }
@@ -375,6 +398,10 @@
                     }
                   },
                   "family": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "type": {
                     "ignore_above": 1024,
                     "type": "keyword"
                   },
@@ -517,7 +544,7 @@
                 "type": "keyword",
                 "fields": {
                   "text": {
-                    "type": "text"
+                    "type": "match_only_text"
                   }
                 }
               },
@@ -530,7 +557,7 @@
                 "type": "keyword",
                 "fields": {
                   "text": {
-                    "type": "text"
+                    "type": "match_only_text"
                   }
                 }
               },

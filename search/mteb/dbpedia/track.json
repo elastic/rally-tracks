@@ -1,0 +1,35 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark text search relevance with different configurations",
+  "dependencies": [
+    "pytrec_eval==0.5",
+    "numpy"
+  ],
+  "indices": [
+    {
+      "name": "dbpedia-ranking-collection",
+      "body": "dbpedia-ranking-collection.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "dbpedia",
+      "base-url": "https://rally-tracks.elastic.co/search/mteb/dbpedia",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 4635922,
+          "compressed-bytes": 457869350,
+          "uncompressed-bytes": 1787414603
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

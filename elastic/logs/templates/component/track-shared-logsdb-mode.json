@@ -16,7 +16,7 @@
       "mappings": {
         {% if source_mode %}
         "_source": {
-          "mapping.source.mode": {{ source_mode | tojson }}
+          "mode": {{ source_mode | tojson }}
         }
         {% endif %}
       }

@@ -20,6 +20,9 @@
     {%- else %}
     "_source": {
       "enabled": {{ source_enabled | default(true) | tojson }}
+      {% if source_mode %}
+      "mode": {{ source_mode | tojson }},
+      {% endif %}
     },
     {%- endif %}
     "properties": {

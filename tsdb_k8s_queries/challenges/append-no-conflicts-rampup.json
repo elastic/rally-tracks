@@ -41,6 +41,14 @@
                 "script": {
                   "source": "Random r  = new Random();ctx['kubernetes']['pod']['uid'] = 'value-' + r.nextLong();"
                 }
+              },
+              {
+                "script": {
+                  "description": "Add time when event was ingested (and remove sub-seconds to improve storage efficiency)",
+                  "tag": "truncate-subseconds-event-ingested",
+                  "ignore_failure": true,
+                  "source": "if (ctx.event == null) { ctx.event = [:]; }\n ctx.event.ingested = metadata().now.withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);"
+                }
               }
           ]
         }

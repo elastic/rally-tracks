@@ -358,11 +358,15 @@
                     }
                   },
                   {
-                    "script": {
-                      "description": "Add time when event was ingested (and remove sub-seconds to improve storage efficiency)",
-                      "tag": "truncate-subseconds-event-ingested",
-                      "ignore_failure": true,
-                      "source": "if (ctx.event == null) { ctx.event = [:]; }\n ctx.event.ingested = metadata().now.withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);"
+                    "set": {
+                      "field": "event.ingested",
+                      "value": "2024-10-28T17:59:14Z"
+                    }
+                  },
+                  {
+                    "set": {
+                      "field": "scenario",
+                      "value": "fixed-timestamp-event-ingested"
                     }
                   }
               ]

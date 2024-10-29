@@ -221,6 +221,7 @@ The following parameters are available:
 * `lifecycle` (default: unset to fall back on Serverless detection) - Specifies the lifecycle management feature to use for data streams. Use `ilm` for index lifecycle management or `dlm` for data lifecycle management. By default, `dlm` will be used for benchmarking Serverless Elasticsearch.
 * `workflow-request-cache` (default: `true`) - Explicit control of request cache query parameter in searches executed in a workflow. This can be further overriden at an operation level with `request-cache` parameter.
 * `synthetic_source_keep` (default: unset) - Allows overriding the default synthetic source behaviour for all field types with the following values: `none` (equivalent to unset) - no source is stored, `arrays` - source stored as is only for multi-value (array) fields.
+* `source_mode` (default: unset) - Specifies the source mode to be used.
 
 ### Data Download Parameters
 

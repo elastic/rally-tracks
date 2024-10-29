@@ -45,7 +45,7 @@
           "retry-until-success": true
         }
       },
-    {% else %}
+    {% else %}{# if p_skip_esql_ccs_remote_clusters ... #}
       {# mutate a copy so as not to override in other challenges. shallow copy is ok since we're changing a top-level element.' #}
         {% set many_clusters_snapshot_repo_settings = p_snapshot_repo_settings.copy() %}
       {# randomize base path to avoid clashes when running concurrent benchmarks #}
@@ -161,7 +161,7 @@
           }
         }
       },
-    {% endif %}
+    {% endif %}{# if p_skip_esql_ccs_remote_clusters ... #}
     {% include "tasks/many-clusters-esql-ccs-queries.json" %}
   ]
 }

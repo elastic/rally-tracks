@@ -454,7 +454,7 @@
       }
     },
     {
-      "name": "distanceFilterCount200x300-alt",
+      "name": "distanceFilterCount200x300-must_not",
       "operation-type": "search",
       "body": {
         "query": {
@@ -480,6 +480,41 @@
                       }
                     }
                   ]
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distanceFilterCount200x300-filter",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "filter": [
+              {
+              "geo_shape": {
+                "location": {
+                    "shape": { "type": "circle", "radius": "300km", "coordinates": [7, 55] },
+                    "relation": "intersects"
+                  }
+                }
+              },
+              {
+                "geo_shape": {
+                  "location": {
+                    "shape": { "type": "circle", "radius": "200km", "coordinates": [7, 55] },
+                    "relation": "disjoint"
+                  }
                 }
               }
             ]
@@ -592,6 +627,11 @@
       "query": "FROM osmgeopoints | EVAL distance = ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) | SORT distance ASC | LIMIT 10"
     },
     {
+      "name": "distanceSort-esql-partial",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL distance = ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")), loc = location::string | SORT distance ASC, loc ASC | LIMIT 10"
+    },
+    {
       "name": "distanceFilterSort",
       "operation-type": "search",
       "body": {
@@ -619,6 +659,11 @@
       "name": "distanceFilterSort-esql",
       "operation-type": "esql",
       "query": "FROM osmgeopoints  | EVAL distance = ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")) | WHERE distance <= 400000 | SORT distance ASC | LIMIT 10"
+    },
+    {
+      "name": "distanceFilterSort-esql-partial",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints  | EVAL distance = ST_Distance(location, TO_GEOPOINT(\"POINT(7.0 55.0)\")), loc = location::string | WHERE distance <= 400000 | SORT distance ASC, loc ASC | LIMIT 10"
     },
     {
       "name": "distanceRange",

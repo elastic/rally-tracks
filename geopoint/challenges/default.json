@@ -279,14 +279,20 @@
         },
         {
           "operation": "distanceFilterCount200x300",
-          "warmup-iterations": 50,
-          "iterations": 50,
+          "warmup-iterations": 200,
+          "iterations": 200,
           "tags": ["distance", "esql"]
         },
         {
-          "operation": "distanceFilterCount200x300-alt",
-          "warmup-iterations": 50,
-          "iterations": 50,
+          "operation": "distanceFilterCount200x300-must_not",
+          "warmup-iterations": 200,
+          "iterations": 200,
+          "tags": ["distance", "esql"]
+        },
+        {
+          "operation": "distanceFilterCount200x300-filter",
+          "warmup-iterations": 200,
+          "iterations": 200,
           "tags": ["distance", "esql"]
         },
         {
@@ -338,6 +344,12 @@
           "tags": ["distance", "esql", "sort"]
         },
         {
+          "operation": "distanceSort-esql-partial",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["distance", "esql", "sort"]
+        },
+        {
           "operation": "distanceFilterSort",
           "warmup-iterations": 200,
           "iterations": 100,
@@ -345,6 +357,12 @@
         },
         {
           "operation": "distanceFilterSort-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["distance", "esql", "sort"]
+        },
+        {
+          "operation": "distanceFilterSort-esql-partial",
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["distance", "esql", "sort"]

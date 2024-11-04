@@ -279,20 +279,14 @@
         },
         {
           "operation": "distanceFilterCount200x300",
-          "warmup-iterations": 200,
-          "iterations": 200,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["distance", "esql"]
         },
         {
-          "operation": "distanceFilterCount200x300-must_not",
-          "warmup-iterations": 200,
-          "iterations": 200,
-          "tags": ["distance", "esql"]
-        },
-        {
-          "operation": "distanceFilterCount200x300-filter",
-          "warmup-iterations": 200,
-          "iterations": 200,
+          "operation": "distanceFilterCount200x300-alt",
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["distance", "esql"]
         },
         {

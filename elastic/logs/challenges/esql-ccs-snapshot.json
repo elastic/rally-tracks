@@ -2,6 +2,9 @@
 {
   "name": "esql-ccs-snapshot",
   "description": "Indexes logs to the local cluster, and runs ESQL queries either locally or across remote clusters via CCS. Data replicated via snapshot/restore.",
+  "parameters": {
+    "generate-data": {{ generate_data | default('true') | tojson }}
+  },
   "schedule": [
 
     {% if not p_esql_ccs_skip_remote_clusters %}

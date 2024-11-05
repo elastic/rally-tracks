@@ -19,9 +19,9 @@
   "query_workflows": ["mysql/dashboard"],
   "query_min_date":"2021-01-01T00:30:00Z",
   "query_max_date":"2021-01-01T23:30:00Z",
-  "query_warmup_time_period":60,
+  "query_warmup_time_period":120,
   "query_time_period":200,
-  "workflow_time_interval":10,
+  "workflow_time_interval":30,
   "think_time_interval":10,
   "detailed_results":true
 }

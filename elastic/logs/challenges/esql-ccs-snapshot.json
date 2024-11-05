@@ -3,7 +3,7 @@
   "name": "esql-ccs-snapshot",
   "description": "Indexes logs to the local cluster, and runs ESQL queries either locally or across remote clusters via CCS. Data replicated via snapshot/restore.",
   "schedule": [
-    {% if not p_skip_esql_ccs_remote_clusters %}
+    {% if not p_esql_ccs_skip_remote_clusters %}
       {% include "tasks/many-clusters-setup.json" %},
     {% endif %}
     {% include "tasks/index-setup.json" %},
@@ -91,7 +91,7 @@
       },
     {% endif %}
 
-    {% if not p_skip_esql_ccs_remote_clusters %}
+    {% if not p_esql_ccs_skip_remote_clusters %}
       {% set _=many_clusters_snapshot_repo_settings.update({"readonly":true}) %}
       {
         "name": "register-snapshot-repository-on-remote-clusters",
@@ -170,7 +170,7 @@
           }
         }
       },
-    {% endif %}{# if not p_skip_esql_ccs_remote_clusters ... #}
+    {% endif %}{# if not p_esql_ccs_skip_remote_clusters ... #}
 
     {% include "tasks/many-clusters-esql-ccs-queries.json" %}
   ]

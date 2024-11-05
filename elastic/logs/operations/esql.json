@@ -1,7 +1,7 @@
     {
       "name": "enable_query_cache",
       "include-in-reporting": false,
-      {% if p_skip_esql_ccs_remote_clusters %}
+      {% if p_esql_ccs_skip_remote_clusters %}
         "operation-type": "raw-request",
       {% else %}
         "operation-type": "multi-cluster-wrapper",
@@ -17,7 +17,7 @@
     {
       "name": "disable_query_cache",
       "include-in-reporting": false,
-      {% if p_skip_esql_ccs_remote_clusters %}
+      {% if p_esql_ccs_skip_remote_clusters %}
         "operation-type": "raw-request",
       {% else %}
         "operation-type": "multi-cluster-wrapper",
@@ -33,7 +33,7 @@
     {
       "name": "restore_query_cache_default",
       "include-in-reporting": false,
-      {% if p_skip_esql_ccs_remote_clusters %}
+      {% if p_esql_ccs_skip_remote_clusters %}
         "operation-type": "raw-request",
       {% else %}
         "operation-type": "multi-cluster-wrapper",

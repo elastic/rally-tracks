@@ -35,6 +35,7 @@
 {% else %}
   {% set p_esql_target_prefix = "remote*:" %}
 {% endif %}
+{% set p_esql_ccs_include_local_snapshot = (esql_ccs_include_local_snapshot | default(not p_skip_esql_ccs_remote_clusters)) %}
 {% set p_snapshot_repo_name = (snapshot_repo_name | default("logging")) %}
 {% set p_snapshot_repo_type = (snapshot_repo_type | default("s3")) %}
 {% set p_snapshot_repo_settings = (snapshot_repo_settings | default({

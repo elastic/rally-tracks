@@ -49,7 +49,9 @@
       {# mutate a copy so as not to override in other challenges. shallow copy is ok since we're changing a top-level element.' #}
         {% set many_clusters_snapshot_repo_settings = p_snapshot_repo_settings.copy() %}
       {# randomize base path to avoid clashes when running concurrent benchmarks #}
-        {% set _=many_clusters_snapshot_repo_settings.update({"base_path":"many-clusters-"+((now|int)|string)}) %}
+        {% if 'base_path' not in many_clusters_snapshot_repo_setting %}
+          {% set _=many_clusters_snapshot_repo_settings.update({"base_path":"many-clusters-"+((now|int)|string)}) %}
+        {% endif %}
       {
         "name": "register-snapshot-repository-on-local-cluster",
         "operation": {

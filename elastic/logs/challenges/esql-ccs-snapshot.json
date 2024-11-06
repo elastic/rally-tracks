@@ -71,7 +71,7 @@
         }
       },
       {
-        "name": "create-snapshot-{{ p_snapshot_name }}",
+        "name": "create-snapshot",
         "operation": {
           "operation-type": "create-snapshot",
           "repository": {{ p_snapshot_repo_name | tojson }},
@@ -87,7 +87,7 @@
         }
       },
       {
-        "name": "wait-for-snapshot-{{ p_snapshot_name }}",
+        "name": "wait-for-snapshot",
         "operation": {
           "operation-type": "wait-for-snapshot-create",
           "snapshot": {{ p_snapshot_name | tojson }},
@@ -112,7 +112,7 @@
         }
       },
       {
-        "name": "recover-snapshot-{{ p_snapshot_name }}-on-remote-clusters",
+        "name": "recover-snapshot-on-remote-clusters",
         "operation": {
           "operation-type": "multi-cluster-wrapper",
           "base-operation-type": "restore-snapshot",
@@ -130,7 +130,7 @@
         }
       },
       {
-        "name": "wait-for-snapshot-recovery-{{ p_snapshot_name }}-on-remote-clusters",
+        "name": "wait-for-snapshot-recovery-on-remote-clusters",
         "operation": {
           "operation-type": "multi-cluster-wrapper",
           "base-operation-type": "wait-for-recovery",

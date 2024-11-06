@@ -103,6 +103,25 @@
       }
     },
     {
+      "name": "search_basic_count_group_1_no_minimized_roundtrips",
+      "operation-type": "search",
+      "index": "{{p_esql_target_prefix}}logs-*",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "count": {
+            "terms": {
+              "field": "agent.version",
+              "size": 20
+            }
+          }
+        }
+      },
+      "request-params": {
+        "ccs_minimize_roundtrips": false
+      }
+    },
+    {
       "name": "search_basic_count_group_2",
       "operation-type": "search",
       "index": "{{p_esql_target_prefix}}logs-*",
@@ -227,4 +246,91 @@
       "name": "esql_from_all_limit_50",
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}* | LIMIT 50"
+    },
+    {# ESQL scale testing #}
+    {
+      "name": "esql_from_logs_limit_50",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | LIMIT 50"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_avg_doc_size",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.doc_size)"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_avg_compression",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL compression = rally.doc_size::DOUBLE / rally.message_size | STATS AVG(compression)"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_avg_amount_group_by_integer",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.message_size) BY b = BUCKET(rally.doc_size, 1000.) | SORT b"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_avg_amount_group_by_keyword",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.message_size) BY cloud.machine.type"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_count_group_by_keyword",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count(*) BY cloud.machine.type"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_sort_by_ts",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | SORT @timestamp DESC | KEEP @timestamp, host.name, log.offset | LIMIT 1000"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_date_histogram_fixed_interval",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS COUNT(*) BY b=BUCKET(@timestamp, 1 WEEK) | SORT b"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_date_histogram_fixed_interval_with_metrics",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL every10days = DATE_TRUNC(10 DAYS, @timestamp) | STATS min=MIN(log.offset), max=MAX(log.offset), avg=AVG(log.offset) BY every10days | SORT every10days"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_multi_terms_keyword",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS c=COUNT(@timestamp) BY cloud.machine.type, cloud.provider, cloud.region"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body }}
+      {%- endif %}
+    },
+    {
+      "name": "cluster-stats-with-remotes",
+      "operation-type": "raw-request",
+      "path": "/_cluster/stats?include_remotes=true",
+      "method": "GET"
     }

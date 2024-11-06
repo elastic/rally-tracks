@@ -52,6 +52,9 @@
         "index": "_all",
         "request-params": {
           "wait_for_status": "{{cluster_health | default('green')}}",
+          {% if p_esql_ccs_local_nodes_count > 0 %}
+          "wait_for_nodes": {{ p_esql_ccs_local_nodes_count }},
+          {% endif %}
           "wait_for_no_relocating_shards": "true"
         },
         "retry-until-success": true
@@ -147,6 +150,9 @@
           "index": "_all",
           "request-params": {
             "wait_for_status": "{{wait_for_status | default('green')}}",
+            {% if p_esql_ccs_remote_nodes_count > 0 %}
+            "wait_for_nodes": {{ p_esql_ccs_remote_nodes_count }},
+            {% endif %}
             "wait_for_no_relocating_shards": "true"
           },
           "retry-until-success": true

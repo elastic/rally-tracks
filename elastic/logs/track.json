@@ -39,6 +39,8 @@
 {% set p_esql_ccs_include_local_snapshot = (esql_ccs_include_local_snapshot | default(not p_esql_ccs_skip_remote_clusters)) %}
 {% set p_esql_ccs_scaling_queries = (esql_ccs_scaling_queries | default(false)) %}
 {% set p_esql_ccs_extra_body = (esql_ccs_extra_body | default("")) %}
+{% set p_esql_ccs_local_nodes_count = (esql_ccs_local_nodes_count | default(0)) %}
+{% set p_esql_ccs_remote_nodes_count = (esql_ccs_remote_nodes_count | default(0)) %}
 
 {% set p_snapshot_repo_name = (snapshot_repo_name | default("logging")) %}
 {% set p_snapshot_repo_type = (snapshot_repo_type | default("s3")) %}

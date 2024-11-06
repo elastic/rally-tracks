@@ -253,7 +253,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | LIMIT 50"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {
@@ -261,7 +261,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.doc_size)"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {
@@ -269,7 +269,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL compression = rally.doc_size::DOUBLE / rally.message_size | STATS AVG(compression)"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {
@@ -277,7 +277,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.message_size) BY b = BUCKET(rally.doc_size, 1000.) | SORT b"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {
@@ -285,7 +285,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.message_size) BY cloud.machine.type"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {
@@ -293,7 +293,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count(*) BY cloud.machine.type"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {
@@ -301,7 +301,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | SORT @timestamp DESC | KEEP @timestamp, host.name, log.offset | LIMIT 1000"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {
@@ -309,7 +309,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | STATS COUNT(*) BY b=BUCKET(@timestamp, 1 WEEK) | SORT b"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {
@@ -317,7 +317,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL every10days = DATE_TRUNC(10 DAYS, @timestamp) | STATS min=MIN(log.offset), max=MAX(log.offset), avg=AVG(log.offset) BY every10days | SORT every10days"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {
@@ -325,7 +325,7 @@
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | STATS c=COUNT(@timestamp) BY cloud.machine.type, cloud.provider, cloud.region"
       {%- if p_esql_ccs_extra_body %},
-      "body": {{ p_esql_ccs_extra_body }}
+      "body": {{ p_esql_ccs_extra_body | tojson }}
       {%- endif %}
     },
     {

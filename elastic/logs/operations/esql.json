@@ -329,7 +329,7 @@
       {%- endif %}
     },
     {
-      "name": "cluster-stats-with-remotes",
+      "name": "cluster_stats_with_remotes",
       "operation-type": "raw-request",
       "path": "/_cluster/stats?include_remotes=true",
       "method": "GET"

@@ -336,33 +336,29 @@
     },
     {
       "name": "check-cluster-health-on-local-cluster",
-      "operation": {
-        "operation-type": "cluster-health",
-        "index": "_all",
-        "request-params": {
-          "wait_for_status": "{{cluster_health | default('green')}}",
-          {% if p_esql_ccs_local_nodes_count > 0 %}
-          "wait_for_nodes": {{ p_esql_ccs_local_nodes_count }},
-          {% endif %}
-          "wait_for_no_relocating_shards": "true"
-        },
-        "retry-until-success": true
-      }
+      "operation-type": "cluster-health",
+      "index": "_all",
+      "request-params": {
+        "wait_for_status": "{{cluster_health | default('green')}}",
+        {% if p_esql_ccs_local_nodes_count > 0 %}
+        "wait_for_nodes": {{ p_esql_ccs_local_nodes_count }},
+        {% endif %}
+        "wait_for_no_relocating_shards": "true"
+      },
+      "retry-until-success": true
     },
     {
       "name": "check-cluster-health-on-remote-clusters",
-      "operation": {
-        "operation-type": "multi-cluster-wrapper",
-        "base-operation-type": "cluster-health",
-        "ignore-clusters": ["default"],
-        "index": "_all",
-        "request-params": {
+      "operation-type": "multi-cluster-wrapper",
+      "base-operation-type": "cluster-health",
+      "ignore-clusters": ["default"],
+      "index": "_all",
+      "request-params": {
         "wait_for_status": "{{wait_for_status | default('green')}}",
         {% if p_esql_ccs_remote_nodes_count > 0 %}
         "wait_for_nodes": {{ p_esql_ccs_remote_nodes_count }},
         {% endif %}
         "wait_for_no_relocating_shards": "true"
-        },
-        "retry-until-success": true
-      }
+      },
+      "retry-until-success": true
     }

@@ -45,11 +45,6 @@
         {% set _=many_clusters_snapshot_repo_settings.update({"base_path":"many-clusters-"+((now|int)|string)}) %}
       {% endif %}
 
-    {
-      "name": "check-cluster-health-on-local-cluster",
-      "operation": "check-cluster-health-on-local-cluster"
-    },
-
     {% if p_esql_ccs_include_local_snapshot %}
       {
         "name": "register-snapshot-repository-on-local-cluster",
@@ -125,6 +120,11 @@
         }
       },
     {% endif %}
+
+    {
+      "name": "check-cluster-health-on-local-cluster",
+      "operation": "check-cluster-health-on-local-cluster"
+    },
 
     {% if not p_esql_ccs_skip_remote_clusters %}
       {% set _=many_clusters_snapshot_repo_settings.update({"readonly":true}) %}

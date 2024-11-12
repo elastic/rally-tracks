@@ -124,6 +124,10 @@
           "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
         }
       },
+      {
+        "name": "check-cluster-health-on-local-cluster-after-snapshot-restore",
+        "operation": "check-cluster-health-on-local-cluster"
+      },
     {% endif %}
 
     {% if not p_esql_ccs_skip_remote_clusters %}

@@ -37,6 +37,7 @@
   {% set p_esql_target_prefix = "remote*:" %}
 {% endif %}
 {% set p_esql_ccs_include_local_snapshot = (esql_ccs_include_local_snapshot | default(not p_esql_ccs_skip_remote_clusters)) %}
+{% set p_esql_ccs_include_local_snapshot_restore = (esql_ccs_include_local_snapshot_restore | default(false)) %}
 {% set p_esql_ccs_scaling_queries = (esql_ccs_scaling_queries | default(false)) %}
 {% set p_esql_ccs_extra_body = (esql_ccs_extra_body | default("")) %}
 {% set p_esql_ccs_local_nodes_count = (esql_ccs_local_nodes_count | default(0)) %}

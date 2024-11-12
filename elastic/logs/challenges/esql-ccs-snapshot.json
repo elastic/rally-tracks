@@ -88,6 +88,44 @@
       },
     {% endif %}
 
+    {% if p_esql_ccs_include_local_snapshot_restore %}
+      {% set _=many_clusters_snapshot_repo_settings.update({"readonly":true}) %}
+      {
+        "name": "register-snapshot-repository-on-local-cluster",
+        "operation": {
+          "operation-type": "create-snapshot-repository",
+          "repository": {{ p_snapshot_repo_name | tojson }},
+          "body": {
+            "type": {{ p_snapshot_repo_type | tojson }},
+            "settings": {{ many_clusters_snapshot_repo_settings | tojson(indent=2)}}
+          }
+        }
+      },
+      {
+        "name": "recover-snapshot-on-local-cluster",
+        "operation": {
+          "operation-type": "restore-snapshot",
+          "repository": {{ p_snapshot_repo_name | tojson }},
+          "snapshot": {{ p_snapshot_name | tojson }},
+          "wait-for-completion": false,
+          "body": {
+            "indices": {{ p_restore_data_streams | tojson }},
+            "ignore_unavailable": true,
+            "include_global_state": false,
+            "rename_pattern": "(.+)",
+            "rename_replacement": "$1{{ p_snapshot_rename_suffix }}"
+          }
+        }
+      },
+      {
+        "name": "wait-for-snapshot-recovery-on-local-cluster",
+        "operation": {
+          "operation-type": "wait-for-recovery",
+          "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+        }
+      },
+    {% endif %}
+
     {% if not p_esql_ccs_skip_remote_clusters %}
       {% set _=many_clusters_snapshot_repo_settings.update({"readonly":true}) %}
       {

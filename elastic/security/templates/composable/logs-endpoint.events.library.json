@@ -5,11 +5,7 @@
       "logs-endpoint.events.library-*"
     ],
     "template": {
-      "settings": {
-        "index": {
-          "default_pipeline": "logs-endpoint.events.library-8.2.0"
-        }
-      },
+      "settings": {},
       "mappings": {
         "_meta": {
           "package": {
@@ -21,8 +17,10 @@
       }
     },
     "composed_of": [
+      "logs@mappings",
+      "logs@settings",
       "logs-endpoint.events.library@package",
-      "logs-endpoint.events.library@custom",
+      "ecs@mappings",
       ".fleet_globals-1",
       ".fleet_agent_id_verification-1",
       "track-shared-logsdb-mode"

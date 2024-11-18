@@ -257,6 +257,14 @@
       {%- endif %}
     },
     {
+      "name": "esql_avg_log_offset",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(log.offset)"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
       "name": "esql_avg_doc_size",
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.doc_size)"

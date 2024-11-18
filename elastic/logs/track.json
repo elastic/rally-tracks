@@ -29,12 +29,20 @@
 
 {% set p_recovery_max_bytes_per_sec = (recovery_max_bytes_per_sec | default(-1)) %}
 {% set p_node_concurrent_recoveries = (node_concurrent_recoveries | default(2)) %}
-{% set p_skip_esql_ccs_remote_clusters = (skip_esql_ccs_remote_clusters | default(true)) %}
-{% if p_skip_esql_ccs_remote_clusters %}
+
+{% set p_esql_ccs_skip_remote_clusters = (esql_ccs_skip_remote_clusters | default(true)) %}
+{% if p_esql_ccs_skip_remote_clusters %}
   {% set p_esql_target_prefix = "" %}
 {% else %}
   {% set p_esql_target_prefix = "remote*:" %}
 {% endif %}
+{% set p_esql_ccs_include_local_snapshot = (esql_ccs_include_local_snapshot | default(not p_esql_ccs_skip_remote_clusters)) %}
+{% set p_esql_ccs_include_local_snapshot_restore = (esql_ccs_include_local_snapshot_restore | default(false)) %}
+{% set p_esql_ccs_scaling_queries = (esql_ccs_scaling_queries | default(false)) %}
+{% set p_esql_ccs_extra_body = (esql_ccs_extra_body | default("")) %}
+{% set p_esql_ccs_local_nodes_count = (esql_ccs_local_nodes_count | default(0)) %}
+{% set p_esql_ccs_remote_nodes_count = (esql_ccs_remote_nodes_count | default(0)) %}
+
 {% set p_snapshot_repo_name = (snapshot_repo_name | default("logging")) %}
 {% set p_snapshot_repo_type = (snapshot_repo_type | default("s3")) %}
 {% set p_snapshot_repo_settings = (snapshot_repo_settings | default({

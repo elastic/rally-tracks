@@ -2,10 +2,15 @@
 {
   "name": "esql-ccs-snapshot",
   "description": "Indexes logs to the local cluster, and runs ESQL queries either locally or across remote clusters via CCS. Data replicated via snapshot/restore.",
+  "parameters": {
+    "generate-data": {{ generate_data | default('true') | tojson }}
+  },
   "schedule": [
-    {% if not p_skip_esql_ccs_remote_clusters %}
+
+    {% if not p_esql_ccs_skip_remote_clusters %}
       {% include "tasks/many-clusters-setup.json" %},
     {% endif %}
+
     {% include "tasks/index-setup.json" %},
     {
       "name": "bulk-index",
@@ -32,24 +37,20 @@
         "request-timeout": 60
       }
     },
-    {% if p_skip_esql_ccs_remote_clusters %}
-      {
-        "name": "check-cluster-health-local",
-        "operation": {
-          "operation-type": "cluster-health",
-          "index": "_all",
-          "request-params": {
-            "wait_for_status": "{{cluster_health | default('green')}}",
-            "wait_for_no_relocating_shards": "true"
-          },
-          "retry-until-success": true
-        }
-      },
-    {% else %}{# if p_skip_esql_ccs_remote_clusters ... #}
-      {# mutate a copy so as not to override in other challenges. shallow copy is ok since we're changing a top-level element.' #}
-        {% set many_clusters_snapshot_repo_settings = p_snapshot_repo_settings.copy() %}
-      {# randomize base path to avoid clashes when running concurrent benchmarks #}
+
+    {# mutate a copy so as not to override in other challenges. shallow copy is ok since we're changing a top-level element.' #}
+      {% set many_clusters_snapshot_repo_settings = p_snapshot_repo_settings.copy() %}
+    {# randomize base path to avoid clashes when running concurrent benchmarks #}
+      {% if 'base_path' not in many_clusters_snapshot_repo_settings %}
         {% set _=many_clusters_snapshot_repo_settings.update({"base_path":"many-clusters-"+((now|int)|string)}) %}
+      {% endif %}
+
+    {
+      "name": "check-cluster-health-on-local-cluster",
+      "operation": "check-cluster-health-on-local-cluster"
+    },
+
+    {% if p_esql_ccs_include_local_snapshot %}
       {
         "name": "register-snapshot-repository-on-local-cluster",
         "operation": {
@@ -61,22 +62,8 @@
           }
         }
       },
-      {% set _=many_clusters_snapshot_repo_settings.update({"readonly":true}) %}
       {
-        "name": "register-snapshot-repository-on-remote-clusters",
-        "operation": {
-          "operation-type": "multi-cluster-wrapper",
-          "base-operation-type": "create-snapshot-repository",
-          "ignore-clusters": ["default"],
-          "repository": {{ p_snapshot_repo_name | tojson }},
-          "body": {
-            "type": {{ p_snapshot_repo_type | tojson }},
-            "settings": {{ many_clusters_snapshot_repo_settings | tojson(indent=2)}}
-          }
-        }
-      },
-      {
-        "name": "create-snapshot-{{ p_snapshot_name }}",
+        "name": "create-snapshot",
         "operation": {
           "operation-type": "create-snapshot",
           "repository": {{ p_snapshot_repo_name | tojson }},
@@ -92,15 +79,74 @@
         }
       },
       {
-        "name": "wait-for-snapshot-{{ p_snapshot_name }}",
+        "name": "wait-for-snapshot",
         "operation": {
           "operation-type": "wait-for-snapshot-create",
           "snapshot": {{ p_snapshot_name | tojson }},
           "repository": {{ p_snapshot_repo_name | tojson }}
         }
       },
+    {% endif %}
+
+    {% if p_esql_ccs_include_local_snapshot_restore %}
+      {% set _=many_clusters_snapshot_repo_settings.update({"readonly":true}) %}
       {
-        "name": "recover-snapshot-{{ p_snapshot_name }}-on-remote-clusters",
+        "name": "register-snapshot-repository-on-local-cluster",
+        "operation": {
+          "operation-type": "create-snapshot-repository",
+          "repository": {{ p_snapshot_repo_name | tojson }},
+          "body": {
+            "type": {{ p_snapshot_repo_type | tojson }},
+            "settings": {{ many_clusters_snapshot_repo_settings | tojson(indent=2)}}
+          }
+        }
+      },
+      {
+        "name": "recover-snapshot-on-local-cluster",
+        "operation": {
+          "operation-type": "restore-snapshot",
+          "repository": {{ p_snapshot_repo_name | tojson }},
+          "snapshot": {{ p_snapshot_name | tojson }},
+          "wait-for-completion": false,
+          "body": {
+            "indices": {{ p_restore_data_streams | tojson }},
+            "ignore_unavailable": true,
+            "include_global_state": false,
+            "rename_pattern": "(.+)",
+            "rename_replacement": "$1{{ p_snapshot_rename_suffix }}"
+          }
+        }
+      },
+      {
+        "name": "wait-for-snapshot-recovery-on-local-cluster",
+        "operation": {
+          "operation-type": "wait-for-recovery",
+          "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+        }
+      },
+      {
+        "name": "check-cluster-health-on-local-cluster-after-snapshot-restore",
+        "operation": "check-cluster-health-on-local-cluster"
+      },
+    {% endif %}
+
+    {% if not p_esql_ccs_skip_remote_clusters %}
+      {% set _=many_clusters_snapshot_repo_settings.update({"readonly":true}) %}
+      {
+        "name": "register-snapshot-repository-on-remote-clusters",
+        "operation": {
+          "operation-type": "multi-cluster-wrapper",
+          "base-operation-type": "create-snapshot-repository",
+          "ignore-clusters": ["default"],
+          "repository": {{ p_snapshot_repo_name | tojson }},
+          "body": {
+            "type": {{ p_snapshot_repo_type | tojson }},
+            "settings": {{ many_clusters_snapshot_repo_settings | tojson(indent=2)}}
+          }
+        }
+      },
+      {
+        "name": "recover-snapshot-on-remote-clusters",
         "operation": {
           "operation-type": "multi-cluster-wrapper",
           "base-operation-type": "restore-snapshot",
@@ -118,25 +164,17 @@
         }
       },
       {
-        "name": "wait-for-snapshot-recovery-{{ p_snapshot_name }}-on-all-clusters",
+        "name": "wait-for-snapshot-recovery-on-remote-clusters",
         "operation": {
           "operation-type": "multi-cluster-wrapper",
           "base-operation-type": "wait-for-recovery",
+          "ignore-clusters": ["default"],
           "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
         }
       },
       {
-        "name": "check-cluster-health-all-clusters",
-        "operation": {
-          "operation-type": "multi-cluster-wrapper",
-          "base-operation-type": "cluster-health",
-          "index": "_all",
-          "request-params": {
-            "wait_for_status": "{{wait_for_status | default('green')}}",
-            "wait_for_no_relocating_shards": "true"
-          },
-          "retry-until-success": true
-        }
+        "name": "check-cluster-health-on-remote-clusters",
+        "operation": "check-cluster-health-on-remote-clusters"
       },
       {
           "name": "setup-bi-directional-remote-clusters",
@@ -161,7 +199,44 @@
           }
         }
       },
-    {% endif %}{# if p_skip_esql_ccs_remote_clusters ... #}
-    {% include "tasks/many-clusters-esql-ccs-queries.json" %}
+    {% endif %}{# if not p_esql_ccs_skip_remote_clusters ... #}
+
+    {% include "tasks/many-clusters-esql-ccs-queries.json" %},
+
+    {# the following cluster health checks purposefully without retries #}
+    {
+      "name": "check-cluster-health-on-local-cluster-at-completion",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "_all",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          {% if p_esql_ccs_local_nodes_count > 0 %}
+          "wait_for_nodes": {{ p_esql_ccs_local_nodes_count }},
+          {% endif %}
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": false
+      }
+    }
+    {% if not p_esql_ccs_skip_remote_clusters %},
+      {
+        "name": "check-cluster-health-on-remote-clusters-at-completion",
+        "operation": {
+          "operation-type": "multi-cluster-wrapper",
+          "base-operation-type": "cluster-health",
+          "ignore-clusters": ["default"],
+          "index": "_all",
+          "request-params": {
+            "wait_for_status": "{{wait_for_status | default('green')}}",
+            {% if p_esql_ccs_remote_nodes_count > 0 %}
+            "wait_for_nodes": {{ p_esql_ccs_remote_nodes_count }},
+            {% endif %}
+            "wait_for_no_relocating_shards": "true"
+          },
+          "retry-until-success": false
+        }
+      }
+    {% endif %}
   ]
 }

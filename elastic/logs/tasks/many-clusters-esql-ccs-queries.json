@@ -165,6 +165,13 @@
         "tags": ["esql", "limit50"]
       },
       {
+        "operation": "esql_avg_log_offset",
+        "clients": 1,
+        "warmup-iterations": 1,
+        "iterations": 1,
+        "tags": ["esql", "avg"]
+      },
+      {
         "operation": "esql_avg_doc_size",
         "clients": 1,
         "warmup-iterations": 1,

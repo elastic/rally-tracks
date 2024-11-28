@@ -351,6 +351,7 @@
         {
           "operation": {
             "operation-type": "force-merge",
+            "mode" : "polling",
             "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
             "max-num-segments": {{ force_merge_max_num_segments | tojson }}
             {%- endif %}

@@ -12,7 +12,7 @@
     "dynamic": false,
     {%- if build_flavor != "serverless" -%}
     "_source": {
-      "enabled": false
+      "mode": "synthetic"
     },
     {%- endif -%}
     "properties": {

@@ -17,23 +17,6 @@ def compute_percentile(data: List[Any], percentile):
     index = int(round(percentile * size / 100)) - 1
     return sorted_data[max(min(index, size - 1), 0)]
 
-def get_rescore_query(vec, window_size):
-    return {
-        "window_size": window_size,
-        "query": {
-            "query_weight": 0,
-            "rescore_query": {
-                "script_score": {
-                    "query": {"match_all": {}},
-                    "script": {
-                        "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
-                        "params": {"query_vector": vec},
-                    },
-                }
-            },
-        },
-    }
-
 class KnnParamSource:
     def __init__(self, track, params, **kwargs):
         # choose a suitable index: if there is only one defined for this track
@@ -64,39 +47,17 @@ class KnnParamSource:
         num_candidates = self._params.get("num-candidates", 50)
         num_rescore = self._params.get("num-rescore", 0)
         query_vec = self._queries[self._iters]
-        global_rescore = self._params.get("global-rescore", False)
-        if global_rescore:
-            result["body"] = {
-                "knn": {
-                    "field": "emb",
-                    "query_vector": query_vec,
-                    "k": max(result["size"], num_rescore),
-                    "num_candidates": max(num_candidates, num_rescore),
-                },
-                "_source": False
-            }
-            if num_rescore > 0:
-                result["body"]["rescore"] = get_rescore_query(query_vec, num_rescore)
-            if "filter" in self._params:
-                result["body"]["knn"]["filter"] = self._params["filter"]
-        else:
-            knn_query = {"knn":{
-                "field": "emb",
-                "query_vector": query_vec,
-                "k": max(result["size"], num_rescore),
-                "num_candidates": max(num_candidates, num_rescore),
-            }}
-            if "filter" in self._params:
-                knn_query["filter"] = self._params["filter"]
-            if num_rescore > 0:
-                knn_query = {"script_score": {
-                    "query": knn_query,
-                    "script": {
-                        "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
-                        "params": {"query_vector": query_vec},
-                    },
-                }}
-            result["body"] = {"query": knn_query, "_source": False}
+        knn_query = {"knn":{
+            "field": "emb",
+            "query_vector": query_vec,
+            "k": result["size"],
+            "num_candidates": num_candidates,
+        }}
+        if "filter" in self._params:
+            knn_query["knn"]["filter"] = self._params["filter"]
+        if num_rescore > 0:
+            knn_query["knn"]["rescore_vector"] = {"num_candidates_factor": num_rescore}
+        result["body"] = {"query": knn_query, "_source": False}
         self._iters += 1
         if self._iters >= self._maxIters:
             self._iters = 0
@@ -147,7 +108,6 @@ class KnnRecallParamSource:
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 50),
             "num_rescore": self._params.get("num-rescore", 0),
-            "global_rescore": self._params.get("global-rescore", False),
             "knn_vector_store": KnnVectorStore()
         }
 
@@ -155,37 +115,16 @@ class KnnRecallParamSource:
 # reads the queries, executes knn search and compares the results with the true nearest neighbors
 class KnnRecallRunner:
 
-    def get_knn_query(self, query_vec, k, num_candidates, global_rescore, num_rescore):
-        result_body = {}
-        if global_rescore:
-            result_body = {
-                "knn": {
-                    "field": "emb",
-                    "query_vector": query_vec,
-                    "k": max(k, num_rescore),
-                    "num_candidates": max(num_candidates, num_rescore),
-                },
-                "_source": False
-            }
-            if num_rescore > 0:
-                result_body["rescore"] = get_rescore_query(query_vec, num_rescore) 
-        else:
-            knn_query = {"knn":{
-                "field": "emb",
-                "query_vector": query_vec,
-                "k": max(k, num_rescore),
-                "num_candidates": max(num_candidates, num_rescore),
-            }}
-            if num_rescore > 0:
-                knn_query = {"script_score": {
-                    "query": knn_query,
-                    "script": {
-                        "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
-                        "params": {"query_vector": query_vec},
-                    },
-                }}
-            result_body = {"query": knn_query, "_source": False}
-        return result_body 
+    def get_knn_query(self, query_vec, k, num_candidates, num_rescore):
+        knn_query = {"knn":{
+            "field": "emb",
+            "query_vector": query_vec,
+            "k": k,
+            "num_candidates": num_candidates,
+        }}
+        if num_rescore > 0:
+            knn_query["knn"]["rescore_vector"] = {"num_candidates_factor": num_rescore}
+        return {"query": knn_query, "_source": False}
 
 
     async def __call__(self, es, params):
@@ -200,7 +139,7 @@ class KnnRecallRunner:
 
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
         for query_id, query_vector in enumerate(knn_vector_store.get_query_vectors()):
-            knn_body = self.get_knn_query(query_vector, k, num_candidates, params["global_rescore"], params["num_rescore"])
+            knn_body = self.get_knn_query(query_vector, k, num_candidates, params["num_rescore"])
             knn_body["_source"] = False
             knn_body["docvalue_fields"] = ["docid"]
             knn_result = await es.search(
@@ -222,7 +161,6 @@ class KnnRecallRunner:
                 "max_recall": max_recall,
                 "k": k,
                 "num_candidates": num_candidates,
-                "global_rescore": params["global_rescore"],
                 "num_rescore": params["num_rescore"]
             }
         logger.info(f"Recall results: {to_return}")

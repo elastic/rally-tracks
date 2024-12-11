@@ -55,45 +55,22 @@
     {%- for i in range(p_search_ops|length) %},
     {
       {%- if p_search_ops[i][2] > 0 -%}
-        "name": "standalone-search-knn-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-single-client",
-        "operation": "knn-search-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-single-client",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
       {%- else -%}
-        "name": "standalone-search-knn-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-single-client",
-        "operation": "knn-search-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-single-client",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
       {%- endif -%},
       "warmup-iterations": 1000,
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
     },
     {
       {%- if p_search_ops[i][2] > 0 -%}
-        "name": "standalone-search-knn-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-multiple-clients",
-        "operation": "knn-search-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-multiple-clients",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
       {%- else -%}
-        "name": "standalone-search-knn-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-multiple-clients",
-        "operation": "knn-search-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
-      {%- endif -%},
-      "warmup-iterations": 1000,
-      "clients": {{ standalone_search_clients | default(8) | int }},
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      {%- if p_search_ops[i][2] > 0 -%}
-        "name": "standalone-search-knn-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-single-client",
-        "operation": "knn-search-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
-      {%- else -%}
-        "name": "standalone-search-knn-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-single-client",
-        "operation": "knn-search-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
-      {%- endif -%},
-      "warmup-iterations": 1000,
-      "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    },
-    {
-      {%- if p_search_ops[i][2] > 0 -%}
-        "name": "standalone-search-knn-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-multiple-clients",
-        "operation": "knn-search-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
-      {%- else -%}
-        "name": "standalone-search-knn-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-multiple-clients",
-        "operation": "knn-search-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-multiple-clients",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
       {%- endif -%},
       "warmup-iterations": 1000,
       "clients": {{ standalone_search_clients | default(8) | int }},
@@ -110,16 +87,9 @@
     {%- for i in range(p_search_ops|length) %},
     {
       {%- if p_search_ops[i][2] > 0 -%}
-        "operation": "knn-recall-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+        "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
       {%- else -%}
-        "operation": "knn-recall-global-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
-      {%- endif -%}
-    },
-    {
-      {%- if p_search_ops[i][2] > 0 -%}
-        "operation": "knn-recall-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
-      {%- else -%}
-        "operation": "knn-recall-local-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+        "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
       {%- endif -%}
     }
     {%- endfor %}

@@ -1,5 +1,5 @@
 {% import "rally.helpers" as rally %}
-{% set shard_size_list = [10, 100, 1000] %}
+{% set shard_size_list = [10, 100, 1000, 1000000000] %}
 {
   "name": "categorize-text",
   "description": "Checks the performance of the categorize text aggregation",
@@ -107,6 +107,17 @@
       "target-throughput": 100
     },
     {% endfor %}
+    {
+      "operation": {
+        "name": "categorize_text_esql",
+        "operation-type": "esql",
+        "query": "FROM categorize-text-index-alias | STATS COUNT() BY CATEGORIZE(message)"
+      },
+      "clients": 8,
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(10) }},
+      "target-throughput": 100
+    },
     {
       "operation": {
         "name": "remove-categorize-text-index-alias",

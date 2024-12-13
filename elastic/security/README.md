@@ -85,6 +85,7 @@ The following parameters are available:
 * `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
 * `index_mode` (default: unset) - A parameter meant to be used internally which defines one of the available indexing modes, "standard", "logsdb" or "time_series". If not set, "standard" is used.
 * `synthetic_source_keep` (default: unset) - Allows overriding the default synthetic source behaviour for all field types with the following values: `none` (equivalent to unset) - no source is stored, `arrays` - source stored as is only for multi-value (array) fields.
+* `source_mode` (default: unset) - Specifies the source mode to be used.
 
 ### Data Generation Parameters
 
@@ -101,7 +102,9 @@ The following parameters are available:
 * `number_of_replicas` (default: 1) - The number of replicas to set per Data Stream. The same value is used for all Data Streams.
 * `bulk_indexing_clients` (default: 8) - The number of clients issuing indexing requests.
 * `bulk_size` (default: 50) - The number of documents to send per indexing request.
-* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `security-indexing-querying` track.
+* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `security-indexing-querying` track. 
+* `logs_endpoint_from_kibana` (default: false): Skip creation of endpoint templates. Used when templates are expected from kibana. 
+* `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 
 ### Querying parameters
 

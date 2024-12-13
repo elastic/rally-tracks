@@ -7,7 +7,9 @@
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
     {%- if enable_logsdb %},
     "index.mode": "logsdb",
-    "index.mapping.synthetic_source_keep": "arrays",
+    {% if synthetic_source_keep %}
+    "index.mapping.synthetic_source_keep": "{{synthetic_source_keep}}",
+    {% endif %}
     "index.sort.field": ["@timestamp"],
     "index.sort.order":["desc"]
     {%- endif %}
@@ -18,6 +20,9 @@
     {%- else %}
     "_source": {
       "enabled": {{ source_enabled | default(true) | tojson }}
+      {% if source_mode %}
+      "mode": {{ source_mode | tojson }},
+      {% endif %}
     },
     {%- endif %}
     "properties": {

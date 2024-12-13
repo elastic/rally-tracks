@@ -1,7 +1,13 @@
     {
       "name": "enable_query_cache",
       "include-in-reporting": false,
-      "operation-type": "raw-request",
+      {% if p_esql_ccs_skip_remote_clusters %}
+        "operation-type": "raw-request",
+      {% else %}
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "raw-request",
+        "ignore-clusters": ["default"],
+      {% endif %}
       "method": "PUT",
       "path": "/logs-*/_settings",
       "body": {
@@ -11,7 +17,13 @@
     {
       "name": "disable_query_cache",
       "include-in-reporting": false,
-      "operation-type": "raw-request",
+      {% if p_esql_ccs_skip_remote_clusters %}
+        "operation-type": "raw-request",
+      {% else %}
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "raw-request",
+        "ignore-clusters": ["default"],
+      {% endif %}
       "method": "PUT",
       "path": "/logs-*/_settings",
       "body": {
@@ -19,34 +31,50 @@
       }
     },
     {
+      "name": "restore_query_cache_default",
+      "include-in-reporting": false,
+      {% if p_esql_ccs_skip_remote_clusters %}
+        "operation-type": "raw-request",
+      {% else %}
+        "operation-type": "multi-cluster-wrapper",
+        "base-operation-type": "raw-request",
+        "ignore-clusters": ["default"],
+      {% endif %}
+      "method": "PUT",
+      "path": "/logs-*/_settings",
+      "body": {
+        "index.requests.cache.enable": null
+      }
+    },
+    {
       "name": "esql_basic_count_group_0",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) | SORT count DESC | LIMIT 20"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) | SORT count DESC | LIMIT 20"
     },
     {
       "name": "esql_basic_count_group_1",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) BY agent.version | SORT count DESC | LIMIT 20"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version | SORT count DESC | LIMIT 20"
     },
     {
       "name": "esql_basic_count_group_2",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) BY agent.version, agent.type | SORT count DESC | LIMIT 20"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version, agent.type | SORT count DESC | LIMIT 20"
     },
     {
       "name": "esql_basic_count_group_3",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) BY agent.version, agent.type, agent.hostname | SORT count DESC | LIMIT 20"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version, agent.type, agent.hostname | SORT count DESC | LIMIT 20"
     },
     {
       "name": "esql_basic_count_group_4",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) BY agent.version, agent.type, agent.hostname, agent.id | SORT count DESC | LIMIT 20"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version, agent.type, agent.hostname, agent.id | SORT count DESC | LIMIT 20"
     },
     {
       "name": "search_basic_count_group_0",
       "operation-type": "search",
-      "index": "logs-*",
+      "index": "{{p_esql_target_prefix}}logs-*",
       "body": {
         "size": 0,
         "aggs": {
@@ -61,7 +89,7 @@
     {
       "name": "search_basic_count_group_1",
       "operation-type": "search",
-      "index": "logs-*",
+      "index": "{{p_esql_target_prefix}}logs-*",
       "body": {
         "size": 0,
         "aggs": {
@@ -75,9 +103,28 @@
       }
     },
     {
+      "name": "search_basic_count_group_1_no_minimized_roundtrips",
+      "operation-type": "search",
+      "index": "{{p_esql_target_prefix}}logs-*",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "count": {
+            "terms": {
+              "field": "agent.version",
+              "size": 20
+            }
+          }
+        }
+      },
+      "request-params": {
+        "ccs_minimize_roundtrips": false
+      }
+    },
+    {
       "name": "search_basic_count_group_2",
       "operation-type": "search",
-      "index": "logs-*",
+      "index": "{{p_esql_target_prefix}}logs-*",
       "body":{
         "size": 0,
         "aggs": {
@@ -96,7 +143,7 @@
     {
       "name": "search_basic_count_group_3",
       "operation-type": "search",
-      "index": "logs-*",
+      "index": "{{p_esql_target_prefix}}logs-*",
       "body":{
         "size": 0,
         "aggs": {
@@ -116,7 +163,7 @@
     {
       "name": "search_basic_count_group_4",
       "operation-type": "search",
-      "index": "logs-*",
+      "index": "{{p_esql_target_prefix}}logs-*",
       "body":{
         "size": 0,
         "aggs": {
@@ -138,65 +185,188 @@
       "name": "esql_time_range_and_date_histogram_two_groups_pre_filter",
       "description": "Based on observability queries for average CPU over date histogram",
       "operation-type": "esql",
-      "query": "FROM logs-* | EVAL start_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_start_date }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_end_date }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time AND http.response.body.bytes IS NOT NULL | EVAL bucket = DATE_TRUNC(1 hour, @timestamp) | STATS avg=AVG(http.response.body.bytes), min=MIN(http.response.body.bytes), max=MAX(http.response.body.bytes) BY data_stream.dataset, bucket | KEEP data_stream.dataset, bucket, min, avg, max"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL start_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_start_date }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_end_date }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time AND http.response.body.bytes IS NOT NULL | EVAL bucket = DATE_TRUNC(1 hour, @timestamp) | STATS avg=AVG(http.response.body.bytes), min=MIN(http.response.body.bytes), max=MAX(http.response.body.bytes) BY data_stream.dataset, bucket | KEEP data_stream.dataset, bucket, min, avg, max"
     },
     {
       "name": "esql_time_range_and_date_histogram_two_groups_post_filter",
       "description": "Based on observability queries for average CPU over date histogram",
       "operation-type": "esql",
-      "query": "FROM logs-* | EVAL start_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_start_date }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_end_date }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | EVAL bucket = DATE_TRUNC(1 hour, @timestamp) | STATS avg=AVG(http.response.body.bytes), min=MIN(http.response.body.bytes), max=MAX(http.response.body.bytes) BY data_stream.dataset, bucket | WHERE min IS NOT NULL | KEEP data_stream.dataset, bucket, min, avg, max"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL start_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_start_date }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_end_date }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | EVAL bucket = DATE_TRUNC(1 hour, @timestamp) | STATS avg=AVG(http.response.body.bytes), min=MIN(http.response.body.bytes), max=MAX(http.response.body.bytes) BY data_stream.dataset, bucket | WHERE min IS NOT NULL | KEEP data_stream.dataset, bucket, min, avg, max"
     },
     {
       "name": "esql_dissect_duration_and_stats",
       "description": "Based on observability queries for duration average",
       "operation-type": "esql",
-      "query": "FROM logs-postgres* | DISSECT message \"duration: %{query_duration} ms\" | EVAL query_duration_num = TO_DOUBLE(query_duration) | STATS avg_duration = AVG(query_duration_num)"
+      "query": "FROM {{p_esql_target_prefix}}logs-postgres* | DISSECT message \"duration: %{query_duration} ms\" | EVAL query_duration_num = TO_DOUBLE(query_duration) | STATS avg_duration = AVG(query_duration_num)"
     },
     {
       "name": "esql_basic_count_group_0_limit_0",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) | SORT count DESC | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) | SORT count DESC | LIMIT 0"
     },
     {
       "name": "esql_basic_count_group_1_limit_0",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) BY agent.version | SORT count DESC | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version | SORT count DESC | LIMIT 0"
     },
     {
       "name": "esql_basic_count_group_2_limit_0",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) BY agent.version, agent.type | SORT count DESC | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version, agent.type | SORT count DESC | LIMIT 0"
     },
     {
       "name": "esql_basic_count_group_3_limit_0",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) BY agent.version, agent.type, agent.hostname | SORT count DESC | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version, agent.type, agent.hostname | SORT count DESC | LIMIT 0"
     },
     {
       "name": "esql_basic_count_group_4_limit_0",
       "operation-type": "esql",
-      "query": "FROM logs-* | STATS count=count(*) BY agent.version, agent.type, agent.hostname, agent.id | SORT count DESC | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version, agent.type, agent.hostname, agent.id | SORT count DESC | LIMIT 0"
     },
     {
       "name": "esql_time_range_and_date_histogram_two_groups_pre_filter_limit_0",
       "description": "Based on observability queries for average CPU over date histogram",
       "operation-type": "esql",
-      "query": "FROM logs-* | EVAL start_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_start_date }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_end_date }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time AND http.response.body.bytes IS NOT NULL | EVAL bucket = DATE_TRUNC(1 hour, @timestamp) | STATS avg=AVG(http.response.body.bytes), min=MIN(http.response.body.bytes), max=MAX(http.response.body.bytes) BY data_stream.dataset, bucket | KEEP data_stream.dataset, bucket, min, avg, max | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL start_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_start_date }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_end_date }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time AND http.response.body.bytes IS NOT NULL | EVAL bucket = DATE_TRUNC(1 hour, @timestamp) | STATS avg=AVG(http.response.body.bytes), min=MIN(http.response.body.bytes), max=MAX(http.response.body.bytes) BY data_stream.dataset, bucket | KEEP data_stream.dataset, bucket, min, avg, max | LIMIT 0"
     },
     {
       "name": "esql_time_range_and_date_histogram_two_groups_post_filter_limit_0",
       "description": "Based on observability queries for average CPU over date histogram",
       "operation-type": "esql",
-      "query": "FROM logs-* | EVAL start_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_start_date }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_end_date }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | EVAL bucket = DATE_TRUNC(1 hour, @timestamp) | STATS avg=AVG(http.response.body.bytes), min=MIN(http.response.body.bytes), max=MAX(http.response.body.bytes) BY data_stream.dataset, bucket | WHERE min IS NOT NULL | KEEP data_stream.dataset, bucket, min, avg, max | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL start_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_start_date }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd\",\"{{ bulk_end_date }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | EVAL bucket = DATE_TRUNC(1 hour, @timestamp) | STATS avg=AVG(http.response.body.bytes), min=MIN(http.response.body.bytes), max=MAX(http.response.body.bytes) BY data_stream.dataset, bucket | WHERE min IS NOT NULL | KEEP data_stream.dataset, bucket, min, avg, max | LIMIT 0"
     },
     {
       "name": "esql_dissect_duration_and_stats_limit_0",
       "description": "Based on observability queries for duration average",
       "operation-type": "esql",
-      "query": "FROM logs-postgres* | DISSECT message \"duration: %{query_duration} ms\" | EVAL query_duration_num = TO_DOUBLE(query_duration) | STATS avg_duration = AVG(query_duration_num) | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-postgres* | DISSECT message \"duration: %{query_duration} ms\" | EVAL query_duration_num = TO_DOUBLE(query_duration) | STATS avg_duration = AVG(query_duration_num) | LIMIT 0"
     },
     {
       "name": "esql_from_all_limit_50",
       "operation-type": "esql",
-      "query": "FROM * | LIMIT 50"
+      "query": "FROM {{p_esql_target_prefix}}* | LIMIT 50"
+    },
+    {# ESQL scale testing #}
+    {
+      "name": "esql_from_logs_limit_50",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | LIMIT 50"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_avg_log_offset",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(log.offset)"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_avg_doc_size",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.doc_size)"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_avg_compression",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL compression = rally.doc_size::DOUBLE / rally.message_size | STATS AVG(compression)"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_avg_amount_group_by_integer",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.message_size) BY b = BUCKET(rally.doc_size, 1000.) | SORT b"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_avg_amount_group_by_keyword",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.message_size) BY cloud.machine.type"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_count_group_by_keyword",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count(*) BY cloud.machine.type"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_sort_by_ts",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | SORT @timestamp DESC | KEEP @timestamp, host.name, log.offset | LIMIT 1000"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_date_histogram_fixed_interval",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS COUNT(*) BY b=BUCKET(@timestamp, 1 WEEK) | SORT b"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_date_histogram_fixed_interval_with_metrics",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL every10days = DATE_TRUNC(10 DAYS, @timestamp) | STATS min=MIN(log.offset), max=MAX(log.offset), avg=AVG(log.offset) BY every10days | SORT every10days"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "esql_multi_terms_keyword",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS c=COUNT(@timestamp) BY cloud.machine.type, cloud.provider, cloud.region"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
+      "name": "cluster_stats_with_remotes",
+      "operation-type": "raw-request",
+      "path": "/_cluster/stats?include_remotes=true",
+      "method": "GET"
+    },
+    {
+      "name": "check-cluster-health-on-local-cluster",
+      "operation-type": "cluster-health",
+      "index": "_all",
+      "request-params": {
+        "wait_for_status": "{{cluster_health | default('green')}}",
+        {% if p_esql_ccs_local_nodes_count > 0 %}
+        "wait_for_nodes": {{ p_esql_ccs_local_nodes_count }},
+        {% endif %}
+        "wait_for_no_relocating_shards": "true"
+      },
+      "retry-until-success": true
+    },
+    {
+      "name": "check-cluster-health-on-remote-clusters",
+      "operation-type": "multi-cluster-wrapper",
+      "base-operation-type": "cluster-health",
+      "ignore-clusters": ["default"],
+      "index": "_all",
+      "request-params": {
+        "wait_for_status": "{{wait_for_status | default('green')}}",
+        {% if p_esql_ccs_remote_nodes_count > 0 %}
+        "wait_for_nodes": {{ p_esql_ccs_remote_nodes_count }},
+        {% endif %}
+        "wait_for_no_relocating_shards": "true"
+      },
+      "retry-until-success": true
     }

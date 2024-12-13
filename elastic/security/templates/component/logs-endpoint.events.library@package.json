@@ -11,130 +11,11 @@
           {%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
               "lifecycle": {},
           {%- endif -%}
-          "codec": "best_compression",
+          "default_pipeline": "logs-endpoint.events.library-8.15.1",
           "mapping": {
             "total_fields": {
-              "limit": "10000"
+              "limit": "1000"
             }
-          },
-          "query": {
-            "default_field": [
-              "message",
-              "agent.id",
-              "agent.type",
-              "agent.version",
-              "destination.geo.city_name",
-              "destination.geo.continent_code",
-              "destination.geo.continent_name",
-              "destination.geo.country_iso_code",
-              "destination.geo.country_name",
-              "destination.geo.name",
-              "destination.geo.postal_code",
-              "destination.geo.region_iso_code",
-              "destination.geo.region_name",
-              "destination.geo.timezone",
-              "dll.Ext.code_signature.status",
-              "dll.Ext.code_signature.subject_name",
-              "dll.Ext.defense_evasions",
-              "dll.code_signature.signing_id",
-              "dll.code_signature.status",
-              "dll.code_signature.subject_name",
-              "dll.code_signature.team_id",
-              "dll.hash.md5",
-              "dll.hash.sha1",
-              "dll.hash.sha256",
-              "dll.hash.sha512",
-              "dll.name",
-              "dll.path",
-              "dll.pe.company",
-              "dll.pe.description",
-              "dll.pe.file_version",
-              "dll.pe.imphash",
-              "dll.pe.original_file_name",
-              "dll.pe.product",
-              "ecs.version",
-              "event.action",
-              "event.category",
-              "event.code",
-              "event.dataset",
-              "event.hash",
-              "event.id",
-              "event.kind",
-              "event.module",
-              "event.outcome",
-              "event.provider",
-              "event.type",
-              "file.Ext.code_signature.status",
-              "file.Ext.code_signature.subject_name",
-              "file.code_signature.signing_id",
-              "file.code_signature.status",
-              "file.code_signature.subject_name",
-              "file.code_signature.team_id",
-              "file.hash.md5",
-              "file.hash.sha1",
-              "file.hash.sha256",
-              "file.hash.sha512",
-              "file.name",
-              "file.path",
-              "file.pe.company",
-              "file.pe.description",
-              "file.pe.file_version",
-              "file.pe.imphash",
-              "file.pe.original_file_name",
-              "file.pe.product",
-              "group.Ext.real.id",
-              "group.Ext.real.name",
-              "group.domain",
-              "group.id",
-              "group.name",
-              "host.architecture",
-              "host.domain",
-              "host.hostname",
-              "host.id",
-              "host.mac",
-              "host.name",
-              "host.os.Ext.variant",
-              "host.os.family",
-              "host.os.full",
-              "host.os.kernel",
-              "host.os.name",
-              "host.os.platform",
-              "host.os.version",
-              "host.type",
-              "process.Ext.ancestry",
-              "process.Ext.code_signature.status",
-              "process.Ext.code_signature.subject_name",
-              "process.code_signature.signing_id",
-              "process.code_signature.status",
-              "process.code_signature.subject_name",
-              "process.code_signature.team_id",
-              "process.entity_id",
-              "process.executable",
-              "process.name",
-              "source.geo.city_name",
-              "source.geo.continent_code",
-              "source.geo.continent_name",
-              "source.geo.country_iso_code",
-              "source.geo.country_name",
-              "source.geo.name",
-              "source.geo.postal_code",
-              "source.geo.region_iso_code",
-              "source.geo.region_name",
-              "source.geo.timezone",
-              "user.Ext.real.id",
-              "user.Ext.real.name",
-              "user.domain",
-              "user.email",
-              "user.full_name",
-              "user.group.Ext.real.id",
-              "user.group.Ext.real.name",
-              "user.group.domain",
-              "user.group.id",
-              "user.group.name",
-              "user.hash",
-              "user.id",
-              "user.name"
-            ]
           }
         }
       },
@@ -186,6 +67,10 @@
                         "type": "keyword"
                       }
                     }
+                  },
+                  "protection": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
                   }
                 }
               },
@@ -237,6 +122,41 @@
               },
               "thread": {
                 "properties": {
+                  "Ext": {
+                    "properties": {
+                      "call_stack_summary": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "call_stack": {
+                        "properties": {
+                          "symbol_info": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "callsite_trailing_bytes": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "protection": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "callsite_leading_bytes": {
+                            "ignore_above": 1024,
+                            "type": "keyword"
+                          },
+                          "allocation_private_bytes": {
+                            "type": "unsigned_long"
+                          }
+                        },
+                        "enabled": true
+                      },
+                      "hardware_breakpoint_set": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
                   "id": {
                     "type": "long"
                   }
@@ -292,8 +212,53 @@
                       }
                     }
                   },
+                  "size": {
+                    "type": "unsigned_long"
+                  },
+                  "relative_file_creation_time": {
+                    "type": "double"
+                  },
                   "load_index": {
                     "type": "unsigned_long"
+                  },
+                  "device": {
+                    "properties": {
+                      "bus_type": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "volume_device_type": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "dos_name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "product_id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "vendor_id": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "nt_name": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "serial_number": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      },
+                      "file_system_type": {
+                        "ignore_above": 1024,
+                        "type": "keyword"
+                      }
+                    }
+                  },
+                  "relative_file_name_modify_time": {
+                    "type": "double"
                   }
                 }
               },
@@ -487,9 +452,10 @@
             }
           },
           "message": {
-            "type": "text"
+            "type": "match_only_text"
           },
           "@timestamp": {
+            "ignore_malformed": false,
             "type": "date"
           },
           "file": {
@@ -625,6 +591,25 @@
               }
             }
           },
+          "Effective_process": {
+            "properties": {
+              "name": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "pid": {
+                "type": "long"
+              },
+              "entity_id": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              },
+              "executable": {
+                "ignore_above": 1024,
+                "type": "keyword"
+              }
+            }
+          },
           "data_stream": {
             "properties": {
               "namespace": {
@@ -673,6 +658,10 @@
                     }
                   },
                   "family": {
+                    "ignore_above": 1024,
+                    "type": "keyword"
+                  },
+                  "type": {
                     "ignore_above": 1024,
                     "type": "keyword"
                   },
@@ -815,7 +804,7 @@
                 "type": "keyword",
                 "fields": {
                   "text": {
-                    "type": "text"
+                    "type": "match_only_text"
                   }
                 }
               },
@@ -828,7 +817,7 @@
                 "type": "keyword",
                 "fields": {
                   "text": {
-                    "type": "text"
+                    "type": "match_only_text"
                   }
                 }
               },

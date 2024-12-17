@@ -5,7 +5,7 @@
         "index": {
             "mode": {{ index_mode | tojson }}
             {% if use_synthetic_source_recovery %}
-            ,"recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}},
+            ,"recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}}
             {% endif %}
             {% if synthetic_source_keep and synthetic_source_keep != 'none' %}
             ,"mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson }}

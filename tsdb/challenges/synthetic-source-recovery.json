@@ -1,7 +1,7 @@
 {
   "name": "append-no-conflicts",
   "description": "Indexes the whole document corpus and then runs the recovery api fetching translog operations for a given target index.",
-  "default": true,
+  "default": false,
   "schedule": [
     {# non-serverless-cluster-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
     {

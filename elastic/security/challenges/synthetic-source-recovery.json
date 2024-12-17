@@ -2,6 +2,7 @@
 {
   "name": "synthetic-source-recovery",
   "description": "Indexes security data for a specified time period and volume per day and then runs the recovery api fetching translog operations for a given target index.",
+  "default": false,
   "schedule": [
     {% include "tasks/index-setup.json" %},
     {

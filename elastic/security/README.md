@@ -86,6 +86,7 @@ The following parameters are available:
 * `index_mode` (default: unset) - A parameter meant to be used internally which defines one of the available indexing modes, "standard", "logsdb" or "time_series". If not set, "standard" is used.
 * `synthetic_source_keep` (default: unset) - Allows overriding the default synthetic source behaviour for all field types with the following values: `none` (equivalent to unset) - no source is stored, `arrays` - source stored as is only for multi-value (array) fields.
 * `source_mode` (default: unset) - Specifies the source mode to be used.
+* `use_synthetic_source_recovery` (default: unset): Whether synthetic recovery source will be used.
 
 ### Data Generation Parameters
 

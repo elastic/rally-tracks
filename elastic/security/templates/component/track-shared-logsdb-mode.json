@@ -4,7 +4,7 @@
         {% if index_mode %}
         "index": {
             "mode": {{ index_mode | tojson }},
-            {% if synthetic_source_keep and synthetic_source_keep != 'none' %}
+            {% if synthetic_source_keep %}
             "mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson}},
             {% endif %}
             "sort.field": [ "host.id", "@timestamp" ],

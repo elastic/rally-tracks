@@ -8,6 +8,9 @@
       "number_of_shards": {{number_of_shards | default(1)}},
       "number_of_replicas": {{number_of_replicas | default(0)}},
       "requests.cache.enable": false,
+      {% if use_synthetic_source_recovery %}
+      "recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}},
+      {% endif %}
       {%- endif -%}{# non-serverless-index-settings-marker-end #}
       "codec": "{{codec | default('default')}}",
       "mode": "{{index_mode | default('time_series')}}",

@@ -222,6 +222,7 @@ The following parameters are available:
 * `workflow-request-cache` (default: `true`) - Explicit control of request cache query parameter in searches executed in a workflow. This can be further overriden at an operation level with `request-cache` parameter.
 * `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
 * `source_mode` (default: unset) - Specifies the source mode to be used.
+* `use_synthetic_source_recovery` (default: unset): Whether synthetic recovery source will be used.
 
 ### Data Download Parameters
 

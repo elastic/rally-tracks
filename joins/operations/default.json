@@ -25,6 +25,13 @@
       "ingest-percentage": 100
     },
     {
+    "name": "index-join-sources",
+    "operation-type": "bulk",
+    "indices": ["lookup_idx_1000_f10", "join_base_idx"],
+    "bulk-size": {{bulk_size | default(10000)}},
+    "ingest-percentage": 100
+    },
+    {
       "name": "wait-until-merges-finish",
       "operation-type": "index-stats",
       "index": "_all",

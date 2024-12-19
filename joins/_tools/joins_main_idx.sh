@@ -11,8 +11,7 @@
 # key_1_000_000: a keyword field with cardinality 1.000.000
 # key_5_000_000: a keyword field with cardinality 5.000.000
 # key_100_000_000: a keyword field with cardinality 100.000.000
-# keyword_1..100: 1000 keyword fields
-# text_1..100: 1000 text fields
+# field_1..100: 1000 text fields
 #
 #
 # By default the script produces 1000 documents, but this default is overridden by the first command line argument,
@@ -42,8 +41,7 @@ for ((id = 0; id<ndocs; id++)); do
   echo -n ', "key_5000000": "'$((id%5000000))'"'
   echo -n ', "key_100000000": "'$((id%100000000))'"'
   for ((i = 0; i<100; i++)); do
-    echo -n ', "keyword_'$i'": "this is a keyword with value '$i'"'
-    echo -n ', "text_'$i'": "this is a text with value '$i'"'
+    echo -n ', "field_'$i'": "text with value '$i'_'$id'"'
   done
   echo '}'
 done;

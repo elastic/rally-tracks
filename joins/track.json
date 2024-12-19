@@ -27,6 +27,14 @@
     {
       "name": "nyc_vendors",
       "body": "index-vendors.json"
+    },
+    {
+      "name": "join_base_idx",
+      "body": "index-join_base_idx.json"
+    },
+    {
+      "name": "lookup_idx_1000_f10",
+      "body": "index-lookup_idx_1000_f10.json"
     }
   ],
   "corpora": [
@@ -97,6 +105,34 @@
           "document-count": 2,
           "compressed-bytes": 92,
           "uncompressed-bytes": 67
+        }
+      ]
+    },
+    {
+      "name": "lookup_idx_1000_f10",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "lookup_idx_1000_f10",
+          "source-file": "lookup_idx_1000_f10.json.bz2",
+          "#COMMENT": "TODO",
+          "document-count": 1000,
+          "compressed-bytes": 1336,
+          "uncompressed-bytes": 559890
+        }
+      ]
+    },
+    {
+      "name": "join_base_idx",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "join_base_idx",
+          "source-file": "join_base_idx.json.bz2",
+          "#COMMENT": "TODO",
+          "document-count": 1000,
+          "compressed-bytes": 37788,
+          "uncompressed-bytes": 9346120
         }
       ]
     }

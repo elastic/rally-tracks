@@ -1,0 +1,25 @@
+{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
+
+{
+  "settings": {
+    {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+      {% if p_include_non_serverless_index_settings %}
+    "index.number_of_shards": 1,
+    "index.number_of_replicas": 0
+      {% endif %}
+    {%- endif -%}{# non-serverless-index-settings-marker-end #}
+  },
+  "mappings": {
+    "properties": {
+      "type": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "keyword"
+      },
+      "fare": {
+        "type": "double"
+      }
+    }
+  }
+}

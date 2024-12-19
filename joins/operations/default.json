@@ -1,0 +1,1529 @@
+    {
+      "name": "index",
+      "operation-type": "bulk",
+      "indices": ["nyc_taxis"],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+    {
+      "name": "update",
+      "operation-type": "bulk",
+      "indices": ["nyc_taxis"],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}},
+      "conflicts": "{{conflicts | default('random')}}",
+      "on-conflict": "{{on_conflict | default('update')}}",
+      "conflict-probability": {{conflict_probability | default(25)}},
+      "recency": {{recency | default(0)}},
+      "detailed-results": {{detailed_results | default(false) | tojson}}
+    },
+    {
+      "name": "index-enrich-sources",
+      "operation-type": "bulk",
+      "indices": ["nyc_rate_codes", "nyc_payment_types", "nyc_trip_types", "nyc_vendors"],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": 100
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation-type": "index-stats",
+      "index": "_all",
+      "condition": {
+        "path": "_all.total.merges.current",
+        "expected-value": 0
+      },
+      "retry-until-success": true,
+      "include-in-reporting": false
+    },
+    {
+      "name": "default",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "default_1k",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "size": 1000
+      }
+    },
+    {
+      "name": "range",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "query": {
+          "range": {
+            "total_amount": {
+              "gte": 5,
+              "lt": 15
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "distance_amount_agg",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "filter": {
+              "range": {
+                "trip_distance": {
+                  "lt": 50,
+                  "gte": 0
+                }
+              }
+            }
+          }
+        },
+        "aggs": {
+          "distance_histo": {
+            "histogram": {
+              "field": "trip_distance",
+              "interval": 1
+            },
+            "aggs": {
+              "total_amount_stats": {
+                "stats": {
+                  "field": "total_amount"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "autohisto_agg",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "01/01/2015",
+              "lte": "21/01/2015",
+              "format": "dd/MM/yyyy"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "auto_date_histogram": {
+              "field": "dropoff_datetime",
+              "buckets": 20
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_agg",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+              "dropoff_datetime": {
+              "gte": "01/01/2015",
+              "lte": "21/01/2015",
+              "format": "dd/MM/yyyy"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "calendar_interval": "day"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_calendar_interval",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "calendar_interval": "week"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_calendar_interval_with_tz",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "calendar_interval": "week",
+              "time_zone": "America/New_York"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_fixed_interval",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "fixed_interval": "10d"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_fixed_interval_with_tz",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "fixed_interval": "10d",
+              "time_zone": "America/New_York"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_fixed_interval_with_metrics",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "date_histogram": {
+              "field": "dropoff_datetime",
+              "fixed_interval": "10d"
+            },
+            "aggs": {
+              "total_amount": { "stats": { "field": "total_amount" } },
+              "tip_amount": { "stats": { "field": "tip_amount" } },
+              "trip_distance": { "stats": { "field": "trip_distance" } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "auto_date_histogram",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "auto_date_histogram": {
+              "field": "dropoff_datetime",
+              "buckets": "10",
+              "minimum_interval": "day"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "auto_date_histogram_with_tz",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "auto_date_histogram": {
+              "field": "dropoff_datetime",
+              "buckets": "10",
+              "time_zone": "America/New_York",
+              "minimum_interval": "day"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "auto_date_histogram_with_metrics",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "dropoffs_over_time": {
+            "auto_date_histogram": {
+              "field": "dropoff_datetime",
+              "buckets": "10",
+              "minimum_interval": "day"
+            },
+            "aggs": {
+              "total_amount": { "stats": { "field": "total_amount" } },
+              "tip_amount": { "stats": { "field": "tip_amount" } },
+              "trip_distance": { "stats": { "field": "trip_distance" } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-terms",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-02-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                { "vendor_id": { "terms": { "field": "vendor_id", "order": "desc" }}},
+                { "payment_type": { "terms": { "field": "payment_type", "order": "asc" }}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-histogram",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "histo": { "histogram": { "field": "total_amount", "interval": 5 } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-date_histogram-daily",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "date": { "date_histogram": { "field": "pickup_datetime", "calendar_interval": "day" } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-date_histogram-weekly",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "date": { "date_histogram": { "field": "pickup_datetime", "calendar_interval": "week" } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-date_histogram-monthly",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "date": { "date_histogram": { "field": "pickup_datetime", "calendar_interval": "month" } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-geotile_grid-precision-8",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-02-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "tile": { "geotile_grid": { "field": "pickup_location", "precision": 8 } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-geotile_grid-precision-12",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-02-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "tile": { "geotile_grid": { "field": "pickup_location", "precision": 12 } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-geotile_grid-precision-15",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-02-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                  { "tile": { "geotile_grid": { "field": "pickup_location", "precision": 15 } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sampler-keyword",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "sample": {
+            "sampler": {
+              "shard_size": 50
+            },
+            "aggs": {
+              "vendors": {
+                "terms": {
+                  "field": "vendor_id",
+                  "size": 100
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "sampler-numeric",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-03-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "sample": {
+            "sampler": {
+              "shard_size": 50
+            },
+            "aggs": {
+              "vendors": {
+                "terms": {
+                  "field": "passenger_count",
+                  "size": 100
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percentiles-tdigest-compression-default",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-01-15 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "trip_distance_percentiles": {
+            "percentiles": {
+              "field": "total_amount",
+              "percents": [70, 80, 90, 95, 99]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "percentiles-tdigest-compression-200",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-01-15 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "trip_distance_percentiles": {
+            "percentiles": {
+              "field": "total_amount",
+              "percents": [70, 80, 90, 95, 99],
+              "tdigest": {
+                "compression": 200
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "multi_terms-keyword",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-02-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "trip_type_payment_type_vendor_id": {
+            "multi_terms": {
+              "terms": [
+                { "field": "trip_type" },
+                { "field": "payment_type" },
+                { "field": "vendor_id" }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_rate_codes",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_rate_codes"
+    },
+    {
+      "name": "create-enrich-nyc_rate_codes",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_rate_codes",
+      "body": {
+        "match": {
+          "indices": "nyc_rate_codes",
+          "match_field": "id",
+          "enrich_fields": [ "name" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_rate_codes_fares",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_rate_codes_fares"
+    },
+    {
+      "name": "create-enrich-nyc_rate_codes_fares",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_rate_codes_fares",
+      "body": {
+        "match": {
+          "indices": "nyc_rate_codes",
+          "match_field": "id",
+          "enrich_fields": [ "name", "fare" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_payment_types",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_payment_types"
+    },
+    {
+      "name": "create-enrich-nyc_payment_types",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_payment_types",
+      "body": {
+        "match": {
+          "indices": "nyc_payment_types",
+          "match_field": "type",
+          "enrich_fields": [ "name" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_payment_types_fares",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_payment_types_fares"
+    },
+    {
+      "name": "create-enrich-nyc_payment_types_fares",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_payment_types_fares",
+      "body": {
+        "match": {
+          "indices": "nyc_payment_types",
+          "match_field": "type",
+          "enrich_fields": [ "name", "fare" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_trip_types",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_trip_types"
+    },
+    {
+      "name": "create-enrich-nyc_trip_types",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_trip_types",
+      "body": {
+        "match": {
+          "indices": "nyc_trip_types",
+          "match_field": "type",
+          "enrich_fields": [ "name" ]
+        }
+      }
+    },
+    {
+      "name": "delete-enrich-nyc_vendors",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_enrich/policy/nyc_vendors"
+    },
+    {
+      "name": "create-enrich-nyc_vendors",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_enrich/policy/nyc_vendors",
+      "body": {
+        "match": {
+          "indices": "nyc_vendors",
+          "match_field": "id",
+          "enrich_fields": [ "name" ]
+        }
+      }
+    },
+    {
+      "name": "execute-enrich-nyc_rate_codes",
+      "include-in-reporting": false,
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_rate_codes/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_rate_codes_fares",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_rate_codes_fares/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_payment_types",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_payment_types/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_payment_types_fares",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_payment_types_fares/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_trip_types",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_trip_types/_execute"
+    },
+    {
+      "name": "execute-enrich-nyc_vendors",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_enrich/policy/nyc_vendors/_execute"
+    },
+    {
+      "name": "delete-enrich-pipeline",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_ingest/pipeline/nyc_enrich"
+    },
+    {
+      "name": "create-enrich-pipeline",
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_ingest/pipeline/nyc_enrich",
+      "body": {
+        "processors": [
+          {
+            "enrich": {
+              "description": "Add 'rate_code' name based on 'rate_code_id'",
+              "policy_name": "nyc_rate_codes",
+              "field": "rate_code_id",
+              "target_field": "rate_code"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'rate_code' name and fare based on 'rate_code_id'",
+              "policy_name": "nyc_rate_codes_fares",
+              "field": "rate_code_id",
+              "target_field": "rate_code_fare"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'payment_type' name based on 'payment_type'",
+              "policy_name": "nyc_payment_types",
+              "field": "payment_type",
+              "target_field": "payment_type_details"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'payment_type' name and fare based on 'payment_type'",
+              "policy_name": "nyc_payment_types_fares",
+              "field": "payment_type",
+              "target_field": "payment_type_fare"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'trip_type' name based on 'trip_type'",
+              "policy_name": "nyc_trip_types",
+              "field": "trip_type",
+              "ignore_missing": true,
+              "target_field": "trip_type_details"
+            }
+          },
+          {
+            "enrich": {
+              "description": "Add 'vendor' name based on 'vendor_id'",
+              "policy_name": "nyc_vendors",
+              "field": "vendor_id",
+              "target_field": "vendor"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "avg_passenger_count_aggregation",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "avg_passenger_count": {
+            "avg": {
+              "field": "passenger_count"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "avg_passenger_count_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(passenger_count)"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "avg_passenger_count_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(passenger_count)",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "avg_tip_percent_aggregation",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "request-timeout": 120,
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "fare_amount": {
+            "gt": 0
+            }
+          }
+        },
+        "runtime_mappings": {
+          "tip_percent": {
+            "type": "double",
+            "script": {
+              "source": "emit(doc['tip_amount'].value / doc['fare_amount'].value)"
+            }
+          }
+        },
+        "aggs": {
+          "avg_tip_percent": {
+            "avg": {
+              "field": "tip_percent"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "avg_tip_percent_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | where fare_amount > 0 | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "avg_tip_percent_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | where fare_amount > 0 | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent)",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "avg_amount_group_by_integer_aggregation",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "request-timeout": 120,
+      "body": {
+        "size": 0,
+        "aggs": {
+            "by_passenger_count": {
+                "terms": {
+                    "field": "passenger_count",
+                    "order": {
+                        "_key": "asc"
+                    }
+                },
+                "aggs": {
+                    "avg_total_amount": {
+                        "avg": {
+                            "field": "total_amount"
+                        }
+                    }
+                }
+            }
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "avg_amount_group_by_integer_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "avg_amount_group_by_keyword_aggregation",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "request-timeout": 120,
+      "body": {
+        "size": 0,
+        "aggs": {
+            "by_rate_code_id": {
+                "terms": {
+                    "field": "rate_code_id",
+                    "order": {
+                        "_key": "asc"
+                    }
+                },
+                "aggs": {
+                    "avg_total_amount": {
+                        "avg": {
+                            "field": "total_amount"
+                        }
+                    }
+                }
+            }
+        }
+      }
+    },
+    {
+      "name": "avg_amount_group_by_keyword_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "avg_amount_group_by_keyword_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "count_group_by_keyword_aggregation",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "request-timeout": 120,
+      "body": {
+        "size": 0,
+        "aggs": {
+          "by_rate_code_id": {
+            "terms": {
+              "field": "rate_code_id"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "count_group_by_keyword_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats count=count(*) by rate_code_id | sort count desc"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "count_group_by_keyword_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats count=count(*) by rate_code_id | sort count desc",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "avg_passenger_count_filtered_aggregation",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "term": {
+                            "rate_code_id": "2"
+                        }
+                    },
+                    {
+                        "range": {
+                            "total_amount": {
+                                "gt": 60
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "aggs": {
+            "avg_passenger_count": {
+                "avg": {
+                    "field": "passenger_count"
+                }
+            }
+        }
+      }
+    },
+    {
+      "name": "avg_passenger_count_filtered_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "avg_passenger_count_filtered_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count)",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "sort_by_ts_query",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 1000,
+        "_source": false,
+        "fields": ["pickup_datetime", "dropoff_datetime", "trip_distance"],
+        "sort": {
+            "pickup_datetime": "desc"
+        }
+      }
+    },
+    {
+      "name": "sort_by_ts_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "sort_by_ts_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "date_histogram_calendar_interval_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "date_histogram_calendar_interval_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "date_histogram_fixed_interval_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "date_histogram_fixed_interval_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "date_histogram_fixed_interval_with_metrics_agg",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+            "range": {
+                "dropoff_datetime": {
+                    "gte": "2015-01-01 00:00:00",
+                    "lt": "2015-03-01 00:00:00"
+                }
+            }
+        },
+        "aggs": {
+            "dropoffs_over_time": {
+                "date_histogram": {
+                    "field": "dropoff_datetime",
+                    "fixed_interval": "10d"
+                },
+                "aggs": {
+                    "min_total_amount": {
+                        "min": {
+                            "field": "total_amount"
+                        }
+                    },
+                    "max_total_amount": {
+                        "max": {
+                            "field": "total_amount"
+                        }
+                    },
+                    "avg_total_amount": {
+                        "avg": {
+                            "field": "total_amount"
+                        }
+                    },
+                    "avg_trip_distance": {
+                        "avg": {
+                            "field": "trip_distance"
+                        }
+                    }
+                }
+            }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_fixed_interval_with_metrics_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "date_histogram_fixed_interval_with_metrics_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "composite_terms-keyword",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "dropoff_datetime": {
+              "gte": "2015-01-01 00:00:00",
+              "lt": "2015-02-01 00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "vedor_payment": {
+            "composite": {
+              "sources": [
+                { "trip_type": { "terms": { "field": "trip_type", "order": "asc" }}},
+                { "payment_type": { "terms": { "field": "payment_type", "order": "asc" }}},
+                { "vendor_id": { "terms": { "field": "vendor_id", "order": "asc" }}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "multi_terms-keyword_esql_segment_partitioning",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-02-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id"
+    },
+  {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "multi_terms-keyword_esql_doc_partitioning",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-02-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id",
+      "body": { "pragma": { "data_partitioning": "doc" } }
+    },
+  {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
+    {
+      "name": "esql_enrich_control",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | LIMIT 100000"
+    },
+    {
+      "name": "esql_enrich_1",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | LIMIT 100000"
+    },
+    {
+      "name": "esql_enrich_2",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 100000"
+    },
+    {
+      "name": "esql_enrich_3",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | LIMIT 100000"
+    },
+    {
+      "name": "esql_enrich_4",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | LIMIT 100000"
+    },
+    {
+      "name": "esql_enrich_rates_fares",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | LIMIT 100000"
+    },
+    {
+      "name": "esql_enrich_payments",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 100000"
+    },
+    {
+      "name": "esql_enrich_payments_fares",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | LIMIT 100000"
+    },
+    {
+      "name": "esql_stats_enrich_control",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_id"
+    },
+    {
+      "name": "esql_stats_enrich_1",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name"
+    },
+    {
+      "name": "esql_stats_enrich_2",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name"
+    },
+    {
+      "name": "esql_stats_enrich_3",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name, vendor_name"
+    },
+    {
+      "name": "esql_stats_enrich_4",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name, vendor_name, trip_type_name"
+    },
+    {
+      "name": "esql_stats_enrich_rates_fares",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_rate_code_fare=avg(rate_code_fare) BY rate_code_name"
+    },
+    {
+      "name": "esql_stats_enrich_payments",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name"
+    },
+    {
+      "name": "esql_stats_enrich_payments_fares",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name"
+    },
+    {
+      "name": "avg_passenger_count_esql_limit_0",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(passenger_count) | LIMIT 0"
+    },
+    {
+      "name": "avg_tip_percent_esql_limit_0",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | where fare_amount > 0 | eval tip_percent = tip_amount / fare_amount | stats avg(tip_percent) | LIMIT 0"
+    },
+    {
+      "name": "avg_amount_group_by_integer_esql_limit_0",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count | LIMIT 0"
+    },
+    {
+      "name": "avg_amount_group_by_keyword_esql_limit_0",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | stats avg(total_amount) by rate_code_id | sort rate_code_id | LIMIT 0"
+    },
+    {
+      "name": "avg_passenger_count_filtered_esql_limit_0",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| stats avg(passenger_count) | LIMIT 0"
+    },
+    {
+      "name": "sort_by_ts_esql_limit_0",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 0"
+    },
+    {
+      "name": "date_histogram_calendar_interval_esql_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time | LIMIT 0"
+    },
+    {
+      "name": "date_histogram_fixed_interval_esql_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time | LIMIT 0"
+    },
+    {
+      "name": "date_histogram_fixed_interval_with_metrics_esql_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(10 days, dropoff_datetime) | stats min_total_amount = min(total_amount), max_total_amount = max(total_amount), avg_total_amount = avg(total_amount), avg_trip_distance = avg(trip_distance) by dropoffs_over_time | sort dropoffs_over_time | LIMIT 0"
+    },
+    {
+      "name": "multi_terms-keyword_esql_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-02-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | stats c = count(dropoff_datetime) by trip_type, payment_type, vendor_id | LIMIT 0"
+    },
+    {
+      "name": "esql_enrich_control_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | LIMIT 0"
+    },
+    {
+      "name": "esql_enrich_1_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | LIMIT 0"
+    },
+    {
+      "name": "esql_enrich_2_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 0"
+    },
+    {
+      "name": "esql_enrich_3_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | LIMIT 0"
+    },
+    {
+      "name": "esql_enrich_4_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | LIMIT 0"
+    },
+    {
+      "name": "esql_enrich_rates_fares_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | LIMIT 0"
+    },
+    {
+      "name": "esql_enrich_payments_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | LIMIT 0"
+    },
+    {
+      "name": "esql_enrich_payments_fares_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | LIMIT 0"
+    },
+    {
+      "name": "esql_stats_enrich_control_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_id | LIMIT 0"
+    },
+    {
+      "name": "esql_stats_enrich_1_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name | LIMIT 0"
+    },
+    {
+      "name": "esql_stats_enrich_2_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name | LIMIT 0"
+    },
+    {
+      "name": "esql_stats_enrich_3_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name, vendor_name | LIMIT 0"
+    },
+    {
+      "name": "esql_stats_enrich_4_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes ON rate_code_id WITH rate_code_name=name | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | ENRICH nyc_vendors ON vendor_id WITH vendor_name=name | ENRICH nyc_trip_types ON trip_type WITH trip_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount) BY rate_code_name, payment_type_name, vendor_name, trip_type_name | LIMIT 0"
+    },
+    {
+      "name": "esql_stats_enrich_rates_fares_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_rate_codes_fares ON rate_code_id WITH rate_code_name=name, rate_code_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_rate_code_fare=avg(rate_code_fare) BY rate_code_name | LIMIT 0"
+    },
+    {
+      "name": "esql_stats_enrich_payments_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_payment_types ON payment_type WITH payment_type_name=name | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name | LIMIT 0"
+    },
+    {
+      "name": "esql_stats_enrich_payments_fares_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name | LIMIT 0"
+    }

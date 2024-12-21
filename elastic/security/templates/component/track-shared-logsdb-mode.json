@@ -7,7 +7,7 @@
             {% if use_synthetic_source_recovery %}
             "recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}},
             {% endif %}
-            {% if synthetic_source_keep and synthetic_source_keep != 'none' %}
+            {% if synthetic_source_keep %}
             "mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson}},
             {% endif %}
             "sort.field": [ "host.id", "@timestamp" ],

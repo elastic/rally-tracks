@@ -2,23 +2,18 @@
 
 {
   "settings": {
+        "index.mode": "lookup"
     {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-      {% if p_include_non_serverless_index_settings %}
-    "index.number_of_shards": 1,
-    "index.number_of_replicas": 0
-      {% endif %}
+    , "index.requests.cache.enable": false
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
   },
   "mappings": {
+    "_source": {
+      "mode": {{ source_mode | default("stored") | tojson }}
+    },
     "properties": {
-      "type": {
+      "key_1000": {
         "type": "keyword"
-      },
-      "name": {
-        "type": "keyword"
-      },
-      "fare": {
-        "type": "double"
       }
     }
   }

@@ -45,7 +45,7 @@ for ((id = 0; id<cardinality; id++)); do
     echo -n '{'
     echo -n '"key_'$cardinality'": "'$id'"'
     for ((i = 0; i<fields; i++)); do
-      echo -n ', "lookup_keyword_'$i'": "this is a keyword with value '$i'"'
+      echo -n ', "lookup_keyword_'$i'": "val '$id' rep '$repetition'"'
     done
     echo '}'
   done

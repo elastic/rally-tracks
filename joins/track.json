@@ -6,28 +6,8 @@
 
 {
   "version": 2,
-  "description": "Taxi rides in New York in 2015",
+  "description": "Indexes for JOIN tests",
   "indices": [
-    {
-      "name": "nyc_taxis",
-      "body": "index.json"
-    },
-    {
-      "name": "nyc_payment_types",
-      "body": "index-payment-types.json"
-    },
-    {
-      "name": "nyc_rate_codes",
-      "body": "index-rate-codes.json"
-    },
-    {
-      "name": "nyc_trip_types",
-      "body": "index-trip-types.json"
-    },
-    {
-      "name": "nyc_vendors",
-      "body": "index-vendors.json"
-    },
     {
       "name": "join_base_idx",
       "body": "index-join_base_idx.json"
@@ -35,79 +15,25 @@
     {
       "name": "lookup_idx_1000_f10",
       "body": "index-lookup_idx_1000_f10.json"
+    },
+    {
+      "name": "lookup_idx_100000_f10",
+      "body": "index-lookup_idx_100000_f10.json"
+    },
+    {
+      "name": "lookup_idx_200000_f10",
+      "body": "index-lookup_idx_200000_f10.json"
+    },
+    {
+      "name": "lookup_idx_500000_f10",
+      "body": "index-lookup_idx_500000_f10.json"
+    },
+    {
+      "name": "lookup_idx_1000000_f10",
+      "body": "index-lookup_idx_1000000_f10.json"
     }
   ],
   "corpora": [
-    {
-      "name": "nyc_taxis",
-      "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
-      "documents": [
-        {
-          "target-index": "nyc_taxis",
-          "source-file": "documents.json.bz2",
-          "#COMMENT": "ML benchmark rely on the fact that the document count stays constant.",
-          "document-count": 165346692,
-          "compressed-bytes": 4820107188,
-          "uncompressed-bytes": 79802445255
-        }
-      ]
-    },
-    {
-      "name": "nyc_payment_types",
-      "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
-      "documents": [
-        {
-          "target-index": "nyc_payment_types",
-          "source-file": "nyc_payment_types.json.bz2",
-          "#COMMENT": "Manually created ENRICH lookup table for payment_type field",
-          "document-count": 5,
-          "compressed-bytes": 139,
-          "uncompressed-bytes": 245
-        }
-      ]
-    },
-    {
-      "name": "nyc_rate_codes",
-      "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
-      "documents": [
-        {
-          "target-index": "nyc_rate_codes",
-          "source-file": "nyc_rate_codes.json.bz2",
-          "#COMMENT": "Manually created ENRICH lookup table for rate_code_id field",
-          "document-count": 7,
-          "compressed-bytes": 166,
-          "uncompressed-bytes": 337
-        }
-      ]
-    },
-    {
-      "name": "nyc_trip_types",
-      "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
-      "documents": [
-        {
-          "target-index": "nyc_trip_types",
-          "source-file": "nyc_trip_types.json.bz2",
-          "#COMMENT": "Manually created ENRICH lookup table for trip_type field",
-          "document-count": 2,
-          "compressed-bytes": 94,
-          "uncompressed-bytes": 75
-        }
-      ]
-    },
-    {
-      "name": "nyc_vendors",
-      "base-url": "https://rally-tracks.elastic.co/nyc_taxis",
-      "documents": [
-        {
-          "target-index": "nyc_vendors",
-          "source-file": "nyc_vendors.json.bz2",
-          "#COMMENT": "Manually created ENRICH lookup table for vendor_id field",
-          "document-count": 2,
-          "compressed-bytes": 92,
-          "uncompressed-bytes": 67
-        }
-      ]
-    },
     {
       "name": "lookup_idx_1000_f10",
       "base-url": "https://rally-tracks.elastic.co/joins",
@@ -117,8 +43,64 @@
           "source-file": "lookup_idx_1000_f10.json.bz2",
           "#COMMENT": "TODO",
           "document-count": 1000,
-          "compressed-bytes": 1336,
-          "uncompressed-bytes": 559890
+          "compressed-bytes": 11229,
+          "uncompressed-bytes": 388790
+        }
+      ]
+    },
+    {
+      "name": "lookup_idx_100000_f10",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "lookup_idx_100000_f10",
+          "source-file": "lookup_idx_100000_f10.json.bz2",
+          "#COMMENT": "TODO",
+          "document-count": 100000,
+          "compressed-bytes": 2248693,
+          "uncompressed-bytes": 41277790
+        }
+      ]
+    },
+    {
+      "name": "lookup_idx_200000_f10",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "lookup_idx_200000_f10",
+          "source-file": "lookup_idx_200000_f10.json.bz2",
+          "#COMMENT": "TODO",
+          "document-count": 200000,
+          "compressed-bytes": 4616182,
+          "uncompressed-bytes": 83777790
+        }
+      ]
+    },
+    {
+      "name": "lookup_idx_500000_f10",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "lookup_idx_500000_f10",
+          "source-file": "lookup_idx_500000_f10.json.bz2",
+          "#COMMENT": "TODO",
+          "document-count": 500000,
+          "compressed-bytes": 11826282,
+          "uncompressed-bytes": 211277790
+        }
+      ]
+    },
+    {
+      "name": "lookup_idx_1000000_f10",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "lookup_idx_1000000_f10",
+          "source-file": "lookup_idx_1000000_f10.json.bz2",
+          "#COMMENT": "TODO",
+          "document-count": 1000000,
+          "compressed-bytes": 24054261,
+          "uncompressed-bytes": 424777790
         }
       ]
     },

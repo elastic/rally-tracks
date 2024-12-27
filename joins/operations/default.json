@@ -75,4 +75,92 @@
       "name": "esql_lookup_join_100000keys_where_limit1000",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_100000_f10 on key_100000 | where lookup_keyword_0 like \"val 1*\" | limit 1000"
+    },
+
+
+    {
+      "name": "esql_lookup_join_200000keys_limit1",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_200000_f10 on key_200000 | limit 1"
+    },
+    {
+      "name": "esql_lookup_join_200000keys_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_200000_f10 on key_200000 | limit 1000"
+    },
+    {
+      "name": "esql_lookup_join_200000keys_limit10000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_200000_f10 on key_200000 | limit 10000"
+    },
+    {
+      "name": "esql_lookup_join_200000keys_where_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_200000_f10 on key_200000 | where lookup_keyword_0 like \"val 1*\" | limit 1000"
+    },
+
+
+    {
+      "name": "esql_lookup_join_500000keys_limit1",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_500000_f10 on key_500000 | limit 1"
+    },
+    {
+      "name": "esql_lookup_join_500000keys_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_500000_f10 on key_500000 | limit 1000"
+    },
+    {
+      "name": "esql_lookup_join_500000keys_limit10000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_500000_f10 on key_500000 | limit 10000"
+    },
+    {
+      "name": "esql_lookup_join_500000keys_where_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_500000_f10 on key_500000 | where lookup_keyword_0 like \"val 1*\" | limit 1000"
+    },
+
+
+    {
+      "name": "esql_lookup_join_1000000keys_limit1",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_1000000_f10 on key_1000000 | limit 1"
+    },
+    {
+      "name": "esql_lookup_join_1000000keys_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_1000000_f10 on key_1000000 | limit 1000"
+    },
+    {
+      "name": "esql_lookup_join_1000000keys_limit10000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_1000000_f10 on key_1000000 | limit 10000"
+    },
+    {
+      "name": "esql_lookup_join_1000000keys_where_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_1000000_f10 on key_1000000 | where lookup_keyword_0 like \"val 1*\" | limit 1000"
+    },
+
+
+    {
+    "name": "esql_lookup_join_5000000keys_limit1",
+    "operation-type": "esql",
+    "query": "FROM join_base_idx | lookup join lookup_idx_5000000_f10 on key_5000000 | limit 1"
+    },
+    {
+    "name": "esql_lookup_join_5000000keys_limit1000",
+    "operation-type": "esql",
+    "query": "FROM join_base_idx | lookup join lookup_idx_5000000_f10 on key_5000000 | limit 1000"
+    },
+    {
+    "name": "esql_lookup_join_5000000keys_limit10000",
+    "operation-type": "esql",
+    "query": "FROM join_base_idx | lookup join lookup_idx_5000000_f10 on key_5000000 | limit 10000"
+    },
+    {
+    "name": "esql_lookup_join_5000000keys_where_limit1000",
+    "operation-type": "esql",
+    "query": "FROM join_base_idx | lookup join lookup_idx_5000000_f10 on key_5000000 | where lookup_keyword_0 like \"val 1*\" | limit 1000"
     }

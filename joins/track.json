@@ -31,6 +31,10 @@
     {
       "name": "lookup_idx_1000000_f10",
       "body": "index-lookup_idx_1000000_f10.json"
+    },
+    {
+      "name": "lookup_idx_5000000_f10",
+      "body": "index-lookup_idx_5000000_f10.json"
     }
   ],
   "corpora": [
@@ -105,6 +109,34 @@
       ]
     },
     {
+      "name": "lookup_idx_5000000_f10",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "lookup_idx_5000000_f10",
+          "source-file": "lookup_idx_5000000_f10.json.bz2",
+          "#COMMENT": "TODO",
+          "document-count": 5000000,
+          "compressed-bytes": 125436508,
+          "uncompressed-bytes": 2172777790
+        }
+      ]
+    },
+    {
+      "name": "join_base_idx",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "join_base_idx",
+          "source-file": "join_base_idx-10M.json.bz2",
+          "#COMMENT": "TODO",
+          "document-count": 10000000,
+          "compressed-bytes": 1004521674,
+          "uncompressed-bytes": 43773344760
+        }
+      ]
+    }
+    {#
       "name": "join_base_idx",
       "base-url": "https://rally-tracks.elastic.co/joins",
       "documents": [
@@ -117,7 +149,7 @@
           "uncompressed-bytes": 9346120
         }
       ]
-    }
+    #}
   ],
   "operations": [
     {{ rally.collect(parts="operations/*.json") }}

@@ -7,7 +7,8 @@
         "lookup_idx_100000_f10",
         "lookup_idx_200000_f10",
         "lookup_idx_500000_f10",
-        "lookup_idx_1000000_f10"
+        "lookup_idx_1000000_f10",
+        "lookup_idx_5000000_f10"
       ],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": 100
@@ -29,6 +30,11 @@
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_1000_f10 on key_1000 | limit 10000"
     },
+    {
+      "name": "esql_lookup_join_1000keys_where_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_1000_f10 on key_1000 | where lookup_keyword_0 like \"val 1*\" | limit 1000"
+    },
 
 
     {
@@ -45,4 +51,9 @@
       "name": "esql_lookup_join_100000keys_limit10000",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_100000_f10 on key_100000 | limit 10000"
+    },
+    {
+      "name": "esql_lookup_join_100000keys_where_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_100000_f10 on key_100000 | where lookup_keyword_0 like \"val 1*\" | limit 1000"
     }

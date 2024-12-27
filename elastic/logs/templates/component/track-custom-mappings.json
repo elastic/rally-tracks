@@ -15,11 +15,13 @@
           }
         },
         "rally": {
-          "doc_size": {
-            "type": "long"
-          },
-          "message_size": {
-            "type": "long"
+          "properties" : {
+            "doc_size": {
+              "type": "long"
+            },
+            "message_size": {
+              "type": "long"
+            }
           }
         }
       }

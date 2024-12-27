@@ -36,7 +36,19 @@
           "tags": ["setup"]
         },
         {
-          "operation": "index-join-sources",
+          "operation": "index-base",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "index-small-lookup-indices",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "index-lookup-1m",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "index-lookup-5m",
           "tags": ["setup"]
         },
         {

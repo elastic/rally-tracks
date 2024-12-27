@@ -1,19 +1,38 @@
     {
-      "name": "index-join-sources",
+      "name": "index-base",
       "operation-type": "bulk",
       "indices": [
-        "join_base_idx",
+        "join_base_idx"
+      ],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+    {
+      "name": "index-small-lookup-indices",
+      "operation-type": "bulk",
+      "indices": [
         "lookup_idx_1000_f10",
         "lookup_idx_100000_f10",
         "lookup_idx_200000_f10",
-        "lookup_idx_500000_f10",
-        "lookup_idx_1000000_f10",
-        "lookup_idx_5000000_f10"
+        "lookup_idx_500000_f10"
       ],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": 100
     },
-
+    {
+      "name": "index-lookup-1m",
+      "operation-type": "bulk",
+      "indices": ["lookup_idx_1000000_f10"],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+    {
+      "name": "index-lookup-5m",
+      "operation-type": "bulk",
+      "indices": ["lookup_idx_5000000_f10"],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
 
     {
       "name": "esql_lookup_join_1000keys_limit1",

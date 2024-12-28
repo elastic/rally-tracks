@@ -1,6 +1,15 @@
 {
   "template" : {
     "mappings" : {
+      {% if index_mode | default('standard') is equalto 'standard' %}
+      "runtime": {
+        "rally.doc_size": {
+          "type": "long"
+        },
+        "rally.message_size": {
+          "type": "long"
+        }
+      },{% endif %}
       "properties" : {
         "event": {
           "properties": {
@@ -13,7 +22,7 @@
               "format": "strict_date_optional_time"
             }
           }
-        },
+        }{% if index_mode | default('standard') is equalto 'logsdb' %},
         "rally": {
           "properties" : {
             "doc_size": {
@@ -25,7 +34,7 @@
               "index": false
             }
           }
-        }
+        }{% endif %}
       }
     }
   },

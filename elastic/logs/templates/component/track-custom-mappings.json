@@ -17,10 +17,12 @@
         "rally": {
           "properties" : {
             "doc_size": {
-              "type": "long"
+              "type": "long",
+              "index": false
             },
             "message_size": {
-              "type": "long"
+              "type": "long",
+              "index": false
             }
           }
         }

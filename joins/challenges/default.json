@@ -271,6 +271,15 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "esql_lookup_join_1k_100k_200k_500k",
+          "tags": ["lookup", "join", "limit1000"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
         }
+
+
       ]
     }

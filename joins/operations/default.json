@@ -192,6 +192,17 @@
       "name": "esql_lookup_join_100M_keys_where_limit1000",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_100000000_f10 on key_100000000 | where lookup_keyword_0 like \"val 1*\" | limit 1000"
+    },
+
+
+
+    {
+    "name": "esql_lookup_join_1k_100k_200k_500k",
+    "operation-type": "esql",
+    "query": "FROM join_base_idx | lookup join lookup_idx_1000_f10 on key_1000 | rename lookup_keyword_0 as lk_1k | lookup join lookup_idx_100000_f10 on key_100000 | rename lookup_keyword_0 as lk_100k | lookup join lookup_idx_200000_f10 on key_200000 | rename lookup_keyword_0 as lk_200k | lookup join lookup_idx_500000_f10 on key_500000 | rename lookup_keyword_0 as lk_500k | keep id, key_1000, key_100000, key_200000, key_500000, lk_1k, lk_100k, lk_200k, lk_500k | limit 1000"
     }
+
+
+
 
 

@@ -22,11 +22,12 @@
           },
           "tags": ["setup"]
         },
-        {
+
+        {#
           "name": "check-cluster-health",
           "operation": {
             "operation-type": "cluster-health",
-            "index": "nyc_taxis",
+            "index": "join_base_idx",
             "request-params": {
               "wait_for_status": "{{cluster_health | default('green')}}",
               "wait_for_no_relocating_shards": "true"
@@ -34,7 +35,8 @@
             "retry-until-success": true
           },
           "tags": ["setup"]
-        },
+        #}
+
         {
           "operation": "index-base",
           "tags": ["setup"]
@@ -52,6 +54,10 @@
           "tags": ["setup"]
         },
         {
+          "operation": "index-lookup-100m",
+          "tags": ["setup"]
+        },
+        {
           "name": "refresh-after-index",
           "operation": "refresh",
           "tags": ["setup"]
@@ -59,28 +65,28 @@
 
 
         {
-          "operation": "esql_lookup_join_1000keys_limit1",
+          "operation": "esql_lookup_join_1k_keys_limit1",
           "tags": ["lookup", "join", "limit1"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_1000keys_limit1000",
+          "operation": "esql_lookup_join_1k_keys_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_1000keys_limit10000",
+          "operation": "esql_lookup_join_1k_keys_limit10000",
           "tags": ["lookup", "join", "limit10000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_1000keys_where_limit1000",
+          "operation": "esql_lookup_join_1k_keys_where_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
@@ -89,28 +95,28 @@
 
 
         {
-          "operation": "esql_lookup_join_100000keys_limit1",
+          "operation": "esql_lookup_join_100k_keys_limit1",
           "tags": ["lookup", "join", "limit1"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_100000keys_limit1000",
+          "operation": "esql_lookup_join_100k_keys_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_100000keys_limit10000",
+          "operation": "esql_lookup_join_100k_keys_limit10000",
           "tags": ["lookup", "join", "limit10000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_100000keys_where_limit1000",
+          "operation": "esql_lookup_join_100k_keys_where_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
@@ -119,28 +125,28 @@
 
 
         {
-          "operation": "esql_lookup_join_200000keys_limit1",
+          "operation": "esql_lookup_join_200k_keys_limit1",
           "tags": ["lookup", "join", "limit1"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_200000keys_limit1000",
+          "operation": "esql_lookup_join_200k_keys_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_200000keys_limit10000",
+          "operation": "esql_lookup_join_200k_keys_limit10000",
           "tags": ["lookup", "join", "limit10000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_200000keys_where_limit1000",
+          "operation": "esql_lookup_join_200k_keys_where_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
@@ -149,28 +155,28 @@
 
 
         {
-          "operation": "esql_lookup_join_500000keys_limit1",
+          "operation": "esql_lookup_join_500k_keys_limit1",
           "tags": ["lookup", "join", "limit1"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_500000keys_limit1000",
+          "operation": "esql_lookup_join_500k_keys_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_500000keys_limit10000",
+          "operation": "esql_lookup_join_500k_keys_limit10000",
           "tags": ["lookup", "join", "limit10000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_500000keys_where_limit1000",
+          "operation": "esql_lookup_join_500k_keys_where_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
@@ -179,28 +185,28 @@
 
 
         {
-          "operation": "esql_lookup_join_1000000keys_limit1",
+          "operation": "esql_lookup_join_1M_keys_limit1",
           "tags": ["lookup", "join", "limit1"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_1000000keys_limit1000",
+          "operation": "esql_lookup_join_1M_keys_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_1000000keys_limit10000",
+          "operation": "esql_lookup_join_1M_keys_limit10000",
           "tags": ["lookup", "join", "limit10000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_1000000keys_where_limit1000",
+          "operation": "esql_lookup_join_1M_keys_where_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
@@ -209,28 +215,58 @@
 
 
         {
-          "operation": "esql_lookup_join_5000000keys_limit1",
+          "operation": "esql_lookup_join_5M_keys_limit1",
           "tags": ["lookup", "join", "limit1"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_5000000keys_limit1000",
+          "operation": "esql_lookup_join_5M_keys_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_5000000keys_limit10000",
+          "operation": "esql_lookup_join_5M_keys_limit10000",
           "tags": ["lookup", "join", "limit10000"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_5000000keys_where_limit1000",
+          "operation": "esql_lookup_join_5M_keys_where_limit1000",
+          "tags": ["lookup", "join", "limit1000"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+
+
+        {
+          "operation": "esql_lookup_join_100M_keys_limit1",
+          "tags": ["lookup", "join", "limit1"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_lookup_join_100M_keys_limit1000",
+          "tags": ["lookup", "join", "limit1000"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_lookup_join_100M_keys_limit10000",
+          "tags": ["lookup", "join", "limit10000"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_lookup_join_100M_keys_where_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
           "warmup-iterations": 10,

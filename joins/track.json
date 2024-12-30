@@ -35,6 +35,10 @@
     {
       "name": "lookup_idx_5000000_f10",
       "body": "index-lookup_idx_5000000_f10.json"
+    },
+    {
+      "name": "lookup_idx_100000000_f10",
+      "body": "index-lookup_idx_100000000_f10.json"
     }
   ],
   "corpora": [
@@ -45,7 +49,7 @@
         {
           "target-index": "lookup_idx_1000_f10",
           "source-file": "lookup_idx_1000_f10.json.bz2",
-          "#COMMENT": "TODO",
+          "#COMMENT": "Lookup index with 1000 documents and 1000 distinct keys (keyworks, \"0\"..\"999\")",
           "document-count": 1000,
           "compressed-bytes": 11229,
           "uncompressed-bytes": 388790
@@ -59,7 +63,7 @@
         {
           "target-index": "lookup_idx_100000_f10",
           "source-file": "lookup_idx_100000_f10.json.bz2",
-          "#COMMENT": "TODO",
+          "#COMMENT": "Lookup index with 100k documents and 100k distinct keys (keyworks, \"0\"..\"99999\")",
           "document-count": 100000,
           "compressed-bytes": 2248693,
           "uncompressed-bytes": 41277790
@@ -73,7 +77,7 @@
         {
           "target-index": "lookup_idx_200000_f10",
           "source-file": "lookup_idx_200000_f10.json.bz2",
-          "#COMMENT": "TODO",
+          "#COMMENT": "Lookup index with 200k documents and 200k distinct keys (keyworks, \"0\"..\"199999\")",
           "document-count": 200000,
           "compressed-bytes": 4616182,
           "uncompressed-bytes": 83777790
@@ -87,7 +91,7 @@
         {
           "target-index": "lookup_idx_500000_f10",
           "source-file": "lookup_idx_500000_f10.json.bz2",
-          "#COMMENT": "TODO",
+          "#COMMENT": "Lookup index with 500k documents and 500k distinct keys (keyworks, \"0\"..\"499999\")",
           "document-count": 500000,
           "compressed-bytes": 11826282,
           "uncompressed-bytes": 211277790
@@ -101,7 +105,7 @@
         {
           "target-index": "lookup_idx_1000000_f10",
           "source-file": "lookup_idx_1000000_f10.json.bz2",
-          "#COMMENT": "TODO",
+          "#COMMENT": "Lookup index with 1M documents and 1M distinct keys (keyworks, \"0\"..\"999999\")",
           "document-count": 1000000,
           "compressed-bytes": 24054261,
           "uncompressed-bytes": 424777790
@@ -115,10 +119,24 @@
         {
           "target-index": "lookup_idx_5000000_f10",
           "source-file": "lookup_idx_5000000_f10.json.bz2",
-          "#COMMENT": "TODO",
+          "#COMMENT": "Lookup index with 5M documents and 5M distinct keys (keyworks, \"0\"..\"4999999\")",
           "document-count": 5000000,
           "compressed-bytes": 125436508,
           "uncompressed-bytes": 2172777790
+        }
+      ]
+    },
+    {
+      "name": "lookup_idx_100000000_f10",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "lookup_idx_100000000_f10",
+          "source-file": "lookup_idx_100000000_f10.json.bz2",
+          "#COMMENT": "Lookup index with 100M documents and 100M distinct keys (keyworks, \"0\"..\"99999999\")",
+          "document-count": 100000000,
+          "compressed-bytes": 2668827023,
+          "uncompressed-bytes": 44877777790
         }
       ]
     },

@@ -32,7 +32,7 @@ elif [ "$#" -eq 3 ]; then
     fields=$2
     repetitions=$3
 else
-  echo "This script accepts three arguments: cardinality, number of fields and number of repetitions"
+  echo "This script accepts zero or three arguments: cardinality, number of fields and number of repetitions"
   echo "eg."
   echo
   echo "./lookup_idx.sh 100 20 3"

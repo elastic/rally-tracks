@@ -154,6 +154,22 @@
         }
       ]
     }
+
+    {#
+      "name": "join_base_idx",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "join_base_idx",
+          "source-file": "join_base_idx-1B.json.bz2",
+          "#COMMENT": "TODO",
+          "document-count": 1000000000,
+          "compressed-bytes": 15141667177,
+          "uncompressed-bytes": 276170081570
+        }
+      ]
+    #}
+
     {#
       "name": "join_base_idx",
       "base-url": "https://rally-tracks.elastic.co/joins",

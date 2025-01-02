@@ -146,8 +146,8 @@
       "documents": [
         {
           "target-index": "join_base_idx",
-          "source-file": "join_base_idx-10M.json.bz2",
-          "#COMMENT": "TODO",
+          "source-file": "documents.json.bz2",
+          "#COMMENT": "This is the main index, ie. the FROM of the ES|QL queries. Below we have smaller and larger versions, up to 1B docs",
           "document-count": 10000000,
           "compressed-bytes": 1004521674,
           "uncompressed-bytes": 43773344760
@@ -162,7 +162,7 @@
         {
           "target-index": "join_base_idx",
           "source-file": "join_base_idx-1B.json.bz2",
-          "#COMMENT": "TODO",
+          "#COMMENT": "1B docs version of the main index",
           "document-count": 1000000000,
           "compressed-bytes": 15141667177,
           "uncompressed-bytes": 276170081570
@@ -177,7 +177,7 @@
         {
           "target-index": "join_base_idx",
           "source-file": "join_base_idx.json.bz2",
-          "#COMMENT": "TODO",
+          "#COMMENT": "1k docs version of the main index",
           "document-count": 1000,
           "compressed-bytes": 37788,
           "uncompressed-bytes": 9346120

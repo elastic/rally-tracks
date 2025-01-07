@@ -129,13 +129,13 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-        {
+        {#
           "operation": "esql_lookup_join_100k_keys_where_no_match",
           "tags": ["lookup", "join"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
-        },
+        #}
 
 
         {
@@ -166,13 +166,13 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-        {
+        {#
           "operation": "esql_lookup_join_200k_keys_where_no_match",
           "tags": ["lookup", "join"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
-        },
+        #}
 
 
         {
@@ -203,13 +203,13 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-        {
+        {#
           "operation": "esql_lookup_join_500k_keys_where_no_match",
           "tags": ["lookup", "join"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
-        },
+        #}
 
 
         {
@@ -240,13 +240,13 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-        {
+        {#
           "operation": "esql_lookup_join_1M_keys_where_no_match",
           "tags": ["lookup", "join"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
-        },
+        #}
 
 
         {
@@ -277,13 +277,13 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-        {
+        {#
           "operation": "esql_lookup_join_5M_keys_where_no_match",
           "tags": ["lookup", "join"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
-        },
+        #}
 
 
         {
@@ -314,13 +314,13 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-        {
+        {#
           "operation": "esql_lookup_join_100M_keys_where_no_match",
           "tags": ["lookup", "join"],
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
-        },
+        #}
 
 
         {

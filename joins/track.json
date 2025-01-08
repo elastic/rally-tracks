@@ -1,9 +1,5 @@
 {% import "rally.helpers" as rally with context %}
 
-{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
-{% set p_include_force_merge = (include_force_merge | default(build_flavor != "serverless")) %}
-{% set p_include_target_throughput = (include_target_throughput | default(build_flavor != "serverless")) %}
-
 {
   "version": 2,
   "description": "Indexes for JOIN tests",
@@ -154,36 +150,6 @@
         }
       ]
     }
-
-    {#
-      "name": "join_base_idx",
-      "base-url": "https://rally-tracks.elastic.co/joins",
-      "documents": [
-        {
-          "target-index": "join_base_idx",
-          "source-file": "join_base_idx-1B.json.bz2",
-          "#COMMENT": "1B docs version of the main index",
-          "document-count": 1000000000,
-          "compressed-bytes": 15141667177,
-          "uncompressed-bytes": 276170081570
-        }
-      ]
-    #}
-
-    {#
-      "name": "join_base_idx",
-      "base-url": "https://rally-tracks.elastic.co/joins",
-      "documents": [
-        {
-          "target-index": "join_base_idx",
-          "source-file": "join_base_idx.json.bz2",
-          "#COMMENT": "1k docs version of the main index",
-          "document-count": 1000,
-          "compressed-bytes": 37788,
-          "uncompressed-bytes": 9346120
-        }
-      ]
-    #}
   ],
   "operations": [
     {{ rally.collect(parts="operations/*.json") }}

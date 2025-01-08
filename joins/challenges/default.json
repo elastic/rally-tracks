@@ -23,7 +23,7 @@
           "tags": ["setup"]
         },
 
-        {#
+        {
           "name": "check-cluster-health",
           "operation": {
             "operation-type": "cluster-health",
@@ -35,26 +35,31 @@
             "retry-until-success": true
           },
           "tags": ["setup"]
-        #}
+        },
 
         {
           "operation": "index-base",
+          "clients": {{bulk_indexing_clients | default(8)}},
           "tags": ["setup"]
         },
         {
           "operation": "index-small-lookup-indices",
+          "clients": {{bulk_indexing_clients | default(8)}},
           "tags": ["setup"]
         },
         {
           "operation": "index-lookup-1m",
+          "clients": {{bulk_indexing_clients | default(8)}},
           "tags": ["setup"]
         },
         {
           "operation": "index-lookup-5m",
+          "clients": {{bulk_indexing_clients | default(8)}},
           "tags": ["setup"]
         },
         {
           "operation": "index-lookup-100m",
+          "clients": {{bulk_indexing_clients | default(8)}},
           "tags": ["setup"]
         },
         {

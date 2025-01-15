@@ -24,6 +24,13 @@
         {%- if disable_pipelines is not true %}
         "default_pipeline": "logs-k8-app",
         {%- endif %}
+        {% if route_on_sort_fields | default(false) is true %}
+        "sort": {
+          "field": [ "host.name", "event.code", "log.file.path", "@timestamp" ],
+          "order": [ "asc", "asc", "asc", "desc" ]
+        },
+        "logsdb.route_on_sort_fields": true,
+        {% endif %}
         "refresh_interval": "5s"
       }
     },

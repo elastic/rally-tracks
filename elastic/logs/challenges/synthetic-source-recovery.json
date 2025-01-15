@@ -5,82 +5,79 @@
   "default": false,
   "schedule": [
     {% include "tasks/index-setup.json" %},
-    {% if bulk_start_date and bulk_end_date %}
-      {
-        "name": "bulk-index",
-        "operation": {
-          "operation-type": "raw-bulk",
-          "param-source": "processed-source",
-          "time-format": "milliseconds",
-          "profile": "fixed_interval",
-          "init-load": true,
-          "bulk-size": {{ p_bulk_size }},
-          "detailed-results": true
-        },
-        "clients": {{ p_bulk_indexing_clients }},
-        "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
-      }
-      {%- if force_merge_max_num_segments is defined %},
-      {
-        "name": "refresh-after-index",
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "init-load": true,
+        "bulk-size": {{ p_bulk_size }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients }},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    }
+    {
+      "name": "refresh-after-index",
+      "index": "logs-*",
+      "operation": "refresh"
+    },
+    {
+      "name": "wait-until-index-merges-fininshes",
+      "operation": {
+        "operation-type": "index-stats",
         "index": "logs-*",
-        "operation": "refresh"
-      },
-      {
-        "name": "wait-until-index-merges-fininshes",
-        "operation": {
-          "operation-type": "index-stats",
-          "index": "logs-*",
-          "condition": {
-            "path": "_all.total.merges.current",
-            "expected-value": 0
-          },
-          "retry-until-success": true,
-          "include-in-reporting": false
-        }
-      },
-      {
-        "operation": {
-          "operation-type": "force-merge",
-          "index": "logs-*",
-          "request-timeout": 36000,
-          "max-num-segments": {{ force_merge_max_num_segments | tojson }}
-        }
-      },
-      {
-        "name": "wait-until-merges-finish",
-        "operation": {
-          "operation-type": "index-stats",
-          "index": "logs-*",
-          "condition": {
-            "path": "_all.total.merges.current",
-            "expected-value": 0
-          },
-          "retry-until-success": true,
-          "include-in-reporting": false
-        }
-      },
-      {
-        "name": "refresh-after-force-merge",
-        "index": "logs-*",
-        "operation": "refresh"
-      },
-      {%- endif %}
-      {
-        "name": "shard-recovery",
-        "operation": {
-          "operation-type": "raw-request",
-          "path": {{ "/%s/ccr/shard_changes" | format(recovery_target) | tojson }},
-          "method": "GET",
-          "request-params": {
-            "from_seq_no": {{ p_recovery_from_seq_no | tojson }},
-            "max_batch_size": {{ p_recovery_max_batch_size | tojson }},
-            "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
-            "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
-          }
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
         },
-        "warmup-iterations": 10,
-        "iterations": 100
+        "retry-until-success": true,
+        "include-in-reporting": false
       }
+    },
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "index": "logs-*",
+        "request-timeout": 36000,
+        "max-num-segments": 1
+      }
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "logs-*",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "index": "logs-*",
+      "operation": "refresh"
+    },
+    {
+      "name": "shard-recovery",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/ccr/shard_changes" | format(recovery_target) | tojson }},
+        "method": "GET",
+        "request-params": {
+          "from_seq_no": {{ p_recovery_from_seq_no | tojson }},
+          "max_batch_size": {{ p_recovery_max_batch_size | tojson }},
+          "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
+          "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
+        }
+      },
+      "warmup-iterations": 10,
+      "iterations": 100
+    }
   ]
 }

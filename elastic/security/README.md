@@ -87,6 +87,7 @@ The following parameters are available:
 * `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
 * `source_mode` (default: unset) - Specifies the source mode to be used.
 * `use_synthetic_source_recovery` (default: unset): Whether synthetic recovery source will be used.
+* `include_shard_recovery_op` (default: false): Whether the challenge includes an API call to the shard changes.
 * `recovery_target` (required) - The target index or data stream for fetching shard changes via the recovery API.
 * `recovery_from_seq_no` (default: `0`) - The sequence number from which to start fetching translog operations.
 * `recovery_poll_timeout` (default: `1m`) - The maximum time to wait for additional translog operations before returning an empty result.

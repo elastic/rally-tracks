@@ -47,6 +47,7 @@
       "operation": "refresh"
     },
     {%- endif %}
+    {% if p_include_shard_recovery_op %}
     {
       "name": "shard-recovery",
       "operation": {
@@ -63,6 +64,7 @@
       "warmup-iterations": 10,
       "iterations": 100
     },
+    {%- endif %}
     {
       "name": "kibana-queries",
       "parallel": {

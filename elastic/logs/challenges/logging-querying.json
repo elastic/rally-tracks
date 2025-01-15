@@ -82,7 +82,7 @@
       "name": "shard-recovery",
       "operation": {
         "operation-type": "raw-request",
-        "path": {{ "/%s/ccr/shard_changes" | format(recovery_target) | tojson }},
+        "path": {{ "/%s/ccr/shard_changes" | format(p_recovery_target) | tojson }},
         "method": "GET",
         "request-params": {
           "from_seq_no": {{ p_recovery_from_seq_no | tojson }},

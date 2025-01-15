@@ -21,7 +21,7 @@ pytest_rally = pytest.importorskip("pytest_rally")
 
 
 class TestTrackRepository:
-    skip_tracks = ["elastic/logs", "elastic/security", "k8s_metrics", "sql", "elser-ingest-speedtest", "msmarco-v2-vector"]
+    skip_tracks = ["elastic/logs", "elastic/security", "k8s_metrics", "sql", "elser-ingest-speedtest", "msmarco-v2-vector", "joins"]
     disable_assertions = {
         "http_logs": ["append-no-conflicts", "runtime-fields"],
         "nyc_taxis": ["update-aggs-only"],

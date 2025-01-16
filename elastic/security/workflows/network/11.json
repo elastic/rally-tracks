@@ -10,9 +10,9 @@
           "duration": 0.173328
         },
         {
-          "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 11.1",
+          "name": "Elasticsearch: POST /auditbeat-*,logs-*,winlogbeat-*/_async_search - network - 11.1",
           "operation-type": "search",
-          "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+          "index": "auditbeat-*,logs-*,winlogbeat-*",
           "request-params": {
             "batched_reduce_size": "64",
             "ignore_unavailable": "true",
@@ -137,9 +137,9 @@
           "duration": 0.174008
         },
         {
-          "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 11.2",
+          "name": "Elasticsearch: POST /auditbeat-*,logs-*,winlogbeat-*/_async_search - network - 11.2",
           "operation-type": "search",
-          "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+          "index": "auditbeat-*,logs-*,winlogbeat-*",
           "request-params": {
             "batched_reduce_size": "64",
             "ignore_unavailable": "true",

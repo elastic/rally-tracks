@@ -8,9 +8,9 @@
       "duration": 0.18767699999999998
     },
     {
-      "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 8.1",
+      "name": "Elasticsearch: POST /auditbeat-*,logs-*,winlogbeat-*/_async_search - network - 8.1",
       "operation-type": "search",
-      "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+      "index": "auditbeat-*,logs-*,winlogbeat-*",
       "request-params": {
         "batched_reduce_size": "64",
         "ignore_unavailable": "true",

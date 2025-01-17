@@ -94,13 +94,6 @@
           "iterations": 50
         },
         {
-          "operation": "esql_lookup_join_{{idx_suffix[i]}}_keys_sort_limit10000",
-          "tags": ["lookup", "join", "limit10000"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 20
-        },
-        {
           "operation": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_limit1000",
           "tags": ["lookup", "join", "limit1000"],
           "clients": 1,
@@ -108,6 +101,14 @@
           "iterations": 50
         },
 {% endfor %}
+
+        {
+          "operation": "esql_lookup_join_1k_keys_sort_limit10000",
+          "tags": ["lookup", "join", "limit10000"],
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
 
         {
           "operation": "esql_lookup_join_1k_keys_where_no_match",

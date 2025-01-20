@@ -86,8 +86,8 @@
           "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
         }
       },
-      "warmup-iterations": 10,
-      "iterations": 100
+      "warmup-iterations": 1,
+      "iterations": 10
     }
   ]
 }

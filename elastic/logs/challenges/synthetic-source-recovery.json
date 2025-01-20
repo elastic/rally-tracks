@@ -18,7 +18,7 @@
       },
       "clients": {{ p_bulk_indexing_clients }},
       "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
-    }
+    },
     {
       "name": "refresh-after-index",
       "index": "logs-*",

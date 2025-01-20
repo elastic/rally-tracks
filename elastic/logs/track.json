@@ -60,7 +60,6 @@
 {% set p_dsl_default_rollover = (dsl_default_rollover | default(false) ) %}
 {% set p_skip_fleet_globals = (skip_fleet_globals | default(false) ) %}
 
-{% set p_include_shard_recovery_op = (include_shard_recovery_op | default(false)) %}
 {% set p_recovery_target = (recovery_target | default('logs-k8-application.log-default') ) %}
 {% set p_recovery_from_seq_no = (recovery_seq_no | default(0) ) %}
 {% set p_recovery_max_batch_size = (recovery_max_batch_size | default ("32MB") ) %}

@@ -78,7 +78,6 @@
       }
       {%- endif -%}{# non-serverless-index-statistics-marker-end #},
     {% endif %}
-    {% if p_include_shard_recovery_op %}
     {
       "name": "shard-recovery",
       "operation": {
@@ -95,7 +94,6 @@
       "warmup-iterations": 10,
       "iterations": 100
     },
-    {%- endif %}
     {
       "operation": "discovery-search-request-size-100",
       "clients": 1,

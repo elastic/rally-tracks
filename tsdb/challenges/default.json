@@ -99,7 +99,6 @@
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
-        {% if p_include_shard_recovery_op %}
         {
           "name": "shard-recovery",
           "operation": {
@@ -116,7 +115,6 @@
           "warmup-iterations": 10,
           "iterations": 100
         },
-        {%- endif %}
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",

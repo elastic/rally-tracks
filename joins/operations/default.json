@@ -20,6 +20,13 @@
       "ingest-percentage": 100
     },
     {
+      "name": "index-lookup-100k_x10",
+      "operation-type": "bulk",
+      "indices": ["lookup_idx_100000_f10_x10"],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+    {
       "name": "index-lookup-1m",
       "operation-type": "bulk",
       "indices": ["lookup_idx_1000000_f10"],
@@ -84,13 +91,21 @@
 {% endfor %}
 
 
+{% for i in range(2, 7) %}
     {
-    "name": "esql_lookup_join_1k_100k_200k_500k",
-    "operation-type": "esql",
-    "query": "FROM join_base_idx | lookup join lookup_idx_1000_f10 on key_1000 | rename lookup_keyword_0 as lk_1k | lookup join lookup_idx_100000_f10 on key_100000 | rename lookup_keyword_0 as lk_100k | lookup join lookup_idx_200000_f10 on key_200000 | rename lookup_keyword_0 as lk_200k | lookup join lookup_idx_500000_f10 on key_500000 | rename lookup_keyword_0 as lk_500k | keep id, key_1000, key_100000, key_200000, key_500000, lk_1k, lk_100k, lk_200k, lk_500k | limit 1000"
+      "name": "esql_lookup_join_100k_to_{{idx_suffix[i]}}",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | rename key_100000 as key_{{key_suffix[i]}}| lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | limit 1000"
+    },
+{% endfor %}
+
+    {
+      "name": "esql_lookup_join_100k_keys_x10_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_100000_f10_x10 on key_100000 | limit 1000"
+    },
+    {
+      "name": "esql_lookup_join_1k_100k_200k_500k",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_1000_f10 on key_1000 | rename lookup_keyword_0 as lk_1k | lookup join lookup_idx_100000_f10 on key_100000 | rename lookup_keyword_0 as lk_100k | lookup join lookup_idx_200000_f10 on key_200000 | rename lookup_keyword_0 as lk_200k | lookup join lookup_idx_500000_f10 on key_500000 | rename lookup_keyword_0 as lk_500k | keep id, key_1000, key_100000, key_200000, key_500000, lk_1k, lk_100k, lk_200k, lk_500k | limit 1000"
     }
-
-
-
-
-

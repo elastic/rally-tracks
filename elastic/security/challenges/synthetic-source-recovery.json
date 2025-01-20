@@ -19,6 +19,16 @@
       "clients": {{ p_bulk_indexing_clients }}
     },
     {
+      "name": "add-retention-lease",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/seq_no/add_retention_lease" | format(p_recovery_target) | tojson }},
+        "method": "PUT"
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
+    },
+    {
       "name": "shard-recovery",
       "operation": {
         "operation-type": "raw-request",

@@ -76,23 +76,8 @@
           "param-source": "create-datastream-source"
         }
       }
-      {%- endif -%}{# non-serverless-index-statistics-marker-end #},
-      {
-        "name": "shard-recovery",
-        "operation": {
-          "operation-type": "raw-request",
-          "path": {{ "/%s/ccr/shard_changes" | format(recovery_target) | tojson }},
-          "method": "GET",
-          "request-params": {
-            "from_seq_no": {{ p_recovery_from_seq_no | tojson }},
-            "max_batch_size": {{ p_recovery_max_batch_size | tojson }},
-            "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
-            "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
-          }
-        },
-        "warmup-iterations": 10,
-        "iterations": 100
-      },
+      {%- endif -%}{# non-serverless-index-statistics-marker-end #}
+      ,
     {% endif %}
     {
       "operation": "discovery-search-request-size-100",

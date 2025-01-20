@@ -114,6 +114,16 @@
         },
 {% endfor %}
 
+{% for i in range(2, 7) %}
+        {
+          "operation": "esql_lookup_join_100k_to_{{idx_suffix[i]}}",
+          "tags": ["lookup", "join", "limit1000"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+{% endfor %}
+
         {
           "operation": "esql_lookup_join_1k_keys_where_no_match",
           "tags": ["lookup", "join"],
@@ -129,7 +139,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         }
-
 
       ]
     }

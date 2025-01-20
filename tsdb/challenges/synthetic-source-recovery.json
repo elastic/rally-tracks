@@ -91,6 +91,7 @@
       }
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
     {
       "name": "add-retention-lease",
       "operation": {
@@ -117,5 +118,6 @@
       "warmup-iterations": 10,
       "iterations": 20
     }
+    {%- endif -%}{# serverless-shard-recovery-marker-end #}
   ]
 }

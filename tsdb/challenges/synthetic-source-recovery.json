@@ -90,9 +90,10 @@
         "operation-type": "sleep",
         "duration": {{ post_ingest_sleep_duration|default(30) }}
       }
-    },
+    }
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    ,
     {
       "name": "add-retention-lease",
       "operation": {

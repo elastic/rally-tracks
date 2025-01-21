@@ -62,8 +62,9 @@
       "name": "refresh-after-force-merge",
       "index": "logs-*",
       "operation": "refresh"
-    },
+    }
     {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    ,
     {
       "name": "add-retention-lease",
       "operation": {

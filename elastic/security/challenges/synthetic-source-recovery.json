@@ -18,7 +18,7 @@
       "ingest-percentage": {{ ingest_percentage | default(100) }},
       "clients": {{ p_bulk_indexing_clients }}
     }
-    {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" -%}
     ,
     {
       "name": "add-retention-lease",

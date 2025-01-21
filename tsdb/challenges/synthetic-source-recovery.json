@@ -59,7 +59,7 @@
       "name": "refresh-after-force-merge",
       "operation": "refresh"
     }
-    {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" -%}
     ,
     {
       "name": "add-retention-lease",

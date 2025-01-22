@@ -24,6 +24,19 @@
         "retry-until-success": true
       }
     },
+    {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" -%}
+    ,
+    {
+      "name": "add-retention-lease",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/seq_no/add_retention_lease" | format(p_recovery_target) | tojson }},
+        "method": "PUT"
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
+    }
+    {%- endif -%}{# serverless-shard-recovery-marker-end #}
     {
       "operation": "index",
       "warmup-time-period": 240,
@@ -61,16 +74,6 @@
     }
     {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" -%}
     ,
-    {
-      "name": "add-retention-lease",
-      "operation": {
-        "operation-type": "raw-request",
-        "path": {{ "/%s/seq_no/add_retention_lease" | format(p_recovery_target) | tojson }},
-        "method": "PUT"
-      },
-      "warmup-iterations": 0,
-      "iterations": 1
-    },
     {
       "name": "shard-recovery",
       "operation": {

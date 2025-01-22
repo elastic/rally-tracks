@@ -1,30 +1,20 @@
 {% import "rally.helpers" as rally with context %}
 
+{% set p_recovery_target = ( recovery_target | default('tsdb') ) %}
+{% set p_recovery_from_seq_no = (recovery_seq_no | default(0) ) %}
+{% set p_recovery_max_batch_size = (recovery_max_batch_size | default ("32MB") ) %}
+{% set p_recovery_poll_timeout = (recovery_poll_timeout | default("1m")) %}
+{% set p_recovery_max_operations_count = (recovery_max_operations_count | default(1048576)) %}
+
 {
   "version": 2,
   "description": "metricbeat information for elastic-app k8s cluster",
-  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "composable-templates": [
-    {
-      "name": "tsdb-template",
-      "index-pattern": "k8s*",
-      "delete-matching-indices": true,
-      "template": "index-template.json"
-    }
-  ],
-  "data-streams": [
-    {
-      "name": "k8s"
-    }
-  ],
-  {%- else %}
   "indices": [
     {
       "name": "tsdb",
       "body": "index.json"
     }
   ],
-  {%- endif %}
   "corpora": [
     {
       "name": "tsdb",

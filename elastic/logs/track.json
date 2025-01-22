@@ -60,6 +60,12 @@
 {% set p_dsl_default_rollover = (dsl_default_rollover | default(false) ) %}
 {% set p_skip_fleet_globals = (skip_fleet_globals | default(false) ) %}
 
+{% set p_recovery_target = (recovery_target | default('logs-k8-application.log-default') ) %}
+{% set p_recovery_from_seq_no = (recovery_seq_no | default(0) ) %}
+{% set p_recovery_max_batch_size = (recovery_max_batch_size | default ("32MB") ) %}
+{% set p_recovery_poll_timeout = (recovery_poll_timeout | default("1m")) %}
+{% set p_recovery_max_operations_count = (recovery_max_operations_count | default(1048576)) %}
+
 {% set p_worker_threads_enabled = (worker_threads_enabled | default(true))  %}
 
 {% set es_version = "7.13.2" %}

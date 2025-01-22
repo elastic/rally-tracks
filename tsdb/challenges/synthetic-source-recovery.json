@@ -1,0 +1,65 @@
+{
+  "name": "synthetic-source-recovery",
+  "description": "Indexes the whole document corpus and then runs the recovery api fetching translog operations for a given target index.",
+  "default": false,
+  "schedule": [
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "tsdb",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" -%}
+    {
+      "name": "add-retention-lease",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/seq_no/add_retention_lease" | format(p_recovery_target) | tojson }},
+        "method": "PUT"
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
+    },
+    {%- endif -%}{# serverless-shard-recovery-marker-end #}
+    {
+      "operation": "index",
+      "warmup-time-period": 240,
+      "clients": {{bulk_indexing_clients | default(8)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    }
+    {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" -%}
+    ,
+    {
+      "name": "shard-recovery",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/ccr/shard_changes" | format(p_recovery_target) | tojson }},
+        "method": "GET",
+        "request-params": {
+          "from_seq_no": {{ p_recovery_from_seq_no | tojson }},
+          "max_batch_size": {{ p_recovery_max_batch_size | tojson }},
+          "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
+          "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
+        }
+      },
+      "warmup-iterations": 10,
+      "iterations": 20
+    }
+    {%- endif -%}{# serverless-shard-recovery-marker-end #}
+  ]
+}

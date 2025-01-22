@@ -25,7 +25,6 @@
       }
     },
     {# serverless-shard-recovery-marker-start #}{%- if build_flavor != "serverless" -%}
-    ,
     {
       "name": "add-retention-lease",
       "operation": {

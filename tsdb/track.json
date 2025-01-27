@@ -2,9 +2,10 @@
 
 {% set p_recovery_target = ( recovery_target | default('tsdb') ) %}
 {% set p_recovery_from_seq_no = (recovery_seq_no | default(0) ) %}
-{% set p_recovery_max_batch_size = (recovery_max_batch_size | default ("32MB") ) %}
+{% set p_recovery_small_max_batch_size = (recovery_small_max_batch_size | default ("512kB") ) %}
+{% set p_recovery_large_max_batch_size = (recovery_large_max_batch_size | default ("32MB") ) %}
 {% set p_recovery_poll_timeout = (recovery_poll_timeout | default("1m")) %}
-{% set p_recovery_max_operations_count = (recovery_max_operations_count | default(1048576)) %}
+{% set p_recovery_max_operations_count = (recovery_max_operations_count | default(16777216)) %}
 
 {
   "version": 2,

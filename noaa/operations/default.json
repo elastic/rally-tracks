@@ -1539,4 +1539,102 @@
           }
         }
       }
+    },
+    {
+      "name": "deep-terms",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "awdr": {
+            "terms": {
+              "field": "AWDR"
+            },
+            "aggs": {
+              "awnd": {
+                "terms": {
+                  "field": "AWND"
+                },
+                "aggs": {
+                  "dapr": {
+                    "terms": {
+                      "field": "DAPR"
+                    },
+                    "aggs": {
+                      "dasf": {
+                        "terms": {
+                          "field": "DASF"
+                        },
+                        "aggs": {
+                          "datn": {
+                            "terms": {
+                              "field": "DATN"
+                            },
+                            "aggs": {
+                              "datx": {
+                                "terms": {
+                                  "field": "DATX"
+                                },
+                                "aggs": {
+                                  "dwpr": {
+                                    "terms": {
+                                      "field": "DWPR"
+                                    },
+                                    "aggs": {
+                                      "evap": {
+                                        "terms": {
+                                          "field": "EVAP"
+                                        },
+                                        "aggs": {
+                                          "mdpr": {
+                                            "terms": {
+                                              "field": "MDPR"
+                                            },
+                                            "aggs": {
+                                              "mdsf": {
+                                                "terms": {
+                                                  "field": "MDSF"
+                                                },
+                                                "aggs": {
+                                                  "mdtn": {
+                                                    "terms": {
+                                                      "field": "MDTN"
+                                                    },
+                                                    "aggs": {
+                                                      "mdtx": {
+                                                        "terms": {
+                                                          "field": "MDTX"
+                                                        },
+                                                        "aggs": {
+                                                          "mnpn": {
+                                                            "terms": {
+                                                              "field": "MNPN"
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }

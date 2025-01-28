@@ -23,6 +23,7 @@
   "tags": ["setup"],
   "operation": "delete-data-stream"
 },
+{% if p_skip_deleting_templates == false %}
 {
   "name": "delete-all-composable-templates",
   "tags": ["setup"],
@@ -33,6 +34,7 @@
   "tags": ["setup"],
   "operation": "delete-component-template"
 },
+{% endif %}
 {
   "name": "create-all-component-templates",
   "tags": ["setup"],

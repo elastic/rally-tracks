@@ -4,6 +4,9 @@
         {% if index_mode %}
         "index": {
             "mode": {{ index_mode | tojson }}
+            {% if source_mode %}
+            ,"mapping.source.mode": {{ source_mode | tojson }}
+            {% endif %}
             {% if use_synthetic_source_recovery %}
             ,"recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}}
             {% endif %}
@@ -11,14 +14,6 @@
             ,"mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson }}
             {% endif %}
         }
-        {% endif %}
-      },
-      "mappings": {
-        {% if source_mode %}
-        "_source": {
-          "mode": {{ source_mode | tojson }}
-        }
-        {% endif %}
       }
     }
   }

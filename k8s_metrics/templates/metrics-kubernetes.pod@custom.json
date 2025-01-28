@@ -14,6 +14,7 @@
           {%- endif %}
           "codec": "best_compression",
           "mapping": {
+            "source.mode": "synthetic",
             "total_fields": {
               "limit": "10000"
             }
@@ -70,9 +71,6 @@
         }
       },
       "mappings": {
-        "_source": {
-          "mode": "synthetic"
-        },
         "dynamic_templates": [
           {
             "container.labels": {

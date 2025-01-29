@@ -62,9 +62,9 @@
 
 {% set p_recovery_target = (recovery_target | default('logs-k8-application.log-default') ) %}
 {% set p_recovery_from_seq_no = (recovery_seq_no | default(0) ) %}
-{% set p_recovery_from_seq_no_2 = (recovery_seq_no_2 | default(1000000) ) %}
-{% set p_recovery_from_seq_no_3 = (recovery_seq_no_3 | default(2000000) ) %}
-{% set p_recovery_from_seq_no_4 = (recovery_seq_no_4 | default(3000000) ) %}
+{% set p_recovery_from_seq_no_2 = (recovery_seq_no_2 | default(150000) ) %}
+{% set p_recovery_from_seq_no_3 = (recovery_seq_no_3 | default(300000) ) %}
+{% set p_recovery_from_seq_no_4 = (recovery_seq_no_4 | default(450000) ) %}
 {% set p_recovery_small_max_batch_size = (recovery_small_max_batch_size | default ("512kB") ) %}
 {% set p_recovery_large_max_batch_size = (recovery_large_max_batch_size | default ("32MB") ) %}
 {% set p_recovery_poll_timeout = (recovery_poll_timeout | default("1m")) %}

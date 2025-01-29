@@ -98,6 +98,22 @@
       "iterations": 1
     },
     {
+      "name": "shard-recovery-large",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/ccr/shard_changes" | format(p_recovery_target) | tojson }},
+        "method": "GET",
+        "request-params": {
+          "from_seq_no": {{ p_recovery_from_seq_no | tojson }},
+          "max_batch_size": {{ p_recovery_large_max_batch_size | tojson }},
+          "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
+          "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
+        }
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
+    },
+    {
       "name": "shard-recovery-large-2",
       "operation": {
         "operation-type": "raw-request",

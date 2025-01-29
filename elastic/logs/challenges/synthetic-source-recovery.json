@@ -46,24 +46,104 @@
           "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
         }
       },
-      "warmup-iterations": 10,
-      "iterations": 20
+      "warmup-iterations": 0,
+      "iterations": 1
     },
     {
-      "name": "shard-recovery-large",
+      "name": "shard-recovery-small_2",
       "operation": {
         "operation-type": "raw-request",
         "path": {{ "/%s/ccr/shard_changes" | format(p_recovery_target) | tojson }},
         "method": "GET",
         "request-params": {
-          "from_seq_no": {{ p_recovery_from_seq_no | tojson }},
+          "from_seq_no": {{ p_recovery_from_seq_no_2 | tojson }},
+          "max_batch_size": {{ p_recovery_small_max_batch_size | tojson }},
+          "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
+          "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
+        }
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
+    },
+    {
+      "name": "shard-recovery-large_3",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/ccr/shard_changes" | format(p_recovery_target) | tojson }},
+        "method": "GET",
+        "request-params": {
+          "from_seq_no": {{ p_recovery_from_seq_no_3 | tojson }},
           "max_batch_size": {{ p_recovery_large_max_batch_size | tojson }},
           "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
           "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
         }
       },
-      "warmup-iterations": 10,
-      "iterations": 20
+      "warmup-iterations": 0,
+      "iterations": 1
+    },
+    {
+      "name": "shard-recovery-small_4",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/ccr/shard_changes" | format(p_recovery_target) | tojson }},
+        "method": "GET",
+        "request-params": {
+          "from_seq_no": {{ p_recovery_from_seq_no_4 | tojson }},
+          "max_batch_size": {{ p_recovery_small_max_batch_size | tojson }},
+          "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
+          "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
+        }
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
+    },
+    {
+      "name": "shard-recovery-large-2",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/ccr/shard_changes" | format(p_recovery_target) | tojson }},
+        "method": "GET",
+        "request-params": {
+          "from_seq_no": {{ p_recovery_from_seq_no_2 | tojson }},
+          "max_batch_size": {{ p_recovery_large_max_batch_size | tojson }},
+          "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
+          "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
+        }
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
+    },
+    {
+      "name": "shard-recovery-large-3",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/ccr/shard_changes" | format(p_recovery_target) | tojson }},
+        "method": "GET",
+        "request-params": {
+          "from_seq_no": {{ p_recovery_from_seq_no_3 | tojson }},
+          "max_batch_size": {{ p_recovery_large_max_batch_size | tojson }},
+          "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
+          "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
+        }
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
+    },
+    {
+      "name": "shard-recovery-large-4",
+      "operation": {
+        "operation-type": "raw-request",
+        "path": {{ "/%s/ccr/shard_changes" | format(p_recovery_target) | tojson }},
+        "method": "GET",
+        "request-params": {
+          "from_seq_no": {{ p_recovery_from_seq_no_4 | tojson }},
+          "max_batch_size": {{ p_recovery_large_max_batch_size | tojson }},
+          "poll_timeout": {{ p_recovery_poll_timeout | tojson }},
+          "max_operations_count": {{ p_recovery_max_operations_count | tojson }}
+        }
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
     }
     {%- endif -%}{# serverless-shard-recovery-marker-end #}
   ]

@@ -471,7 +471,8 @@ class TestMultiClusterWrapper:
     async def test_wraps_correctly(self, mocked_runner_for, setup_es, setup_params):
         class UnitTestSingleClusterRunner:
             async def __call__(self, es, params):
-                es.test_method(params["base-runner-param"])
+                es_client = es["default"]
+                es_client.test_method(params["base-runner-param"])
                 return {"weight": 1, "unit": "ops", "test": "value"}
 
             def __str__(self):

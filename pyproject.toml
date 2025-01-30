@@ -1,15 +1,15 @@
 [build-system]
-requires = ["hatchling<=1.18.0", "hatch-vcs"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project.optional-dependencies]
 develop = [
-    "hatch==1.7.0",
-    "hatchling==1.18.0",
-    "black==23.3.0",
+    "hatch==1.14.0",
+    "hatchling==1.26.3",
+    "black==24.10.0",
     "isort==5.12.0",
     "pre-commit==3.3.3",
-    "pip==22.2",
+    "pip==24.0",
 ]
 
 [tool.hatch.metadata]
@@ -22,14 +22,18 @@ source = "vcs"
 name = "rally-tracks"
 readme = "README.md"
 dynamic = ["version"]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 [tool.hatch.build.targets.sdist]
+include = [ "*/**" ]
 exclude = [
   "/.buildkite",
   "/.github",
   "/.ci",
 ]
+
+[tool.hatch.build.targets.wheel]
+include = [ "pyproject.toml" ]
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -63,7 +67,7 @@ asyncio_mode = "strict"
 
 [tool.black]
 line-length = 140
-target-version = ['py38']
+target-version = ['py39', 'py310', 'py311', 'py312']
 
 [tool.isort]
 profile = 'black'

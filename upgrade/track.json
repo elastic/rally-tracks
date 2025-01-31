@@ -46,24 +46,12 @@
       }
     },
     {
+      "name": "restore-into-data-stream",
       "operation": {
-        "operation-type": "restore-snapshot",
+        "operation-type": "restore-into-data-stream",
         "repository": "the-snapshot-repo",
         "snapshot": "daily-snap-2025.01.30-cmb824g6s_ktgap3x8nuoq",
-        "wait-for-completion": false,
-        "body": {
-          "indices": "some-index",
-          "ignore_unavailable": false,
-          "include_global_state": false,
-          "rename_pattern": "(.+)",
-          "rename_replacement": "$1-1"
-        }
-      }
-    },
-    {
-      "operation": {
-        "operation-type": "wait-for-recovery",
-        "index": "some-index-1"
+        "num-indices": 5
       }
     }
   ]

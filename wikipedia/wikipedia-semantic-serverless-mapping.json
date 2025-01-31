@@ -1,0 +1,20 @@
+{
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "semantic_text"
+      },
+      "content": {
+        "type": "semantic_text"
+      },
+      "namespace": {
+        "ignore_above": 1024,
+        "type": "keyword"
+      },
+      "redirect": {
+        "ignore_above": 1024,
+        "type": "keyword"
+      }
+    }
+  }
+}

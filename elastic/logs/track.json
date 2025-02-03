@@ -62,50 +62,12 @@
 
 {% set p_recovery_target = (recovery_target | default('logs-k8-application.log-default') ) %}
 
-{% set p_recovery_small_from_seq_no = (recovery_seq_no | default(0) ) %}
-{% set p_recovery_small_from_seq_no_2 = (recovery_seq_no_2 | default(1000) ) %}
-{% set p_recovery_small_from_seq_no_3 = (recovery_seq_no_3 | default(2000) ) %}
-{% set p_recovery_small_from_seq_no_4 = (recovery_seq_no_4 | default(3000) ) %}
-{% set p_recovery_small_from_seq_no_5 = (recovery_seq_no_5 | default(4000) ) %}
-{% set p_recovery_small_from_seq_no_6 = (recovery_seq_no_6 | default(5000) ) %}
-{% set p_recovery_small_from_seq_no_7 = (recovery_seq_no_7 | default(6000) ) %}
-{% set p_recovery_small_from_seq_no_8 = (recovery_seq_no_8 | default(7000) ) %}
-{% set p_recovery_small_from_seq_no_9 = (recovery_seq_no_9 | default(8000) ) %}
-{% set p_recovery_small_from_seq_no_10 = (recovery_seq_no_10 | default(9000) ) %}
-{% set p_recovery_small_from_seq_no_11 = (recovery_seq_no_11 | default(10000) ) %}
-{% set p_recovery_small_from_seq_no_12 = (recovery_seq_no_12 | default(11000) ) %}
-{% set p_recovery_small_from_seq_no_13 = (recovery_seq_no_13 | default(12000) ) %}
-{% set p_recovery_small_from_seq_no_14 = (recovery_seq_no_14 | default(13000) ) %}
-{% set p_recovery_small_from_seq_no_15 = (recovery_seq_no_15 | default(14000) ) %}
-{% set p_recovery_small_from_seq_no_16 = (recovery_seq_no_16 | default(15000) ) %}
-{% set p_recovery_small_from_seq_no_17 = (recovery_seq_no_17 | default(16000) ) %}
-{% set p_recovery_small_from_seq_no_18 = (recovery_seq_no_18 | default(17000) ) %}
-{% set p_recovery_small_from_seq_no_19 = (recovery_seq_no_19 | default(18000) ) %}
-
-{% set p_recovery_large_from_seq_no = (recovery_seq_no | default(0) ) %}
-{% set p_recovery_large_from_seq_no_2 = (recovery_seq_no_2 | default(50000) ) %}
-{% set p_recovery_large_from_seq_no_3 = (recovery_seq_no_3 | default(100000) ) %}
-{% set p_recovery_large_from_seq_no_4 = (recovery_seq_no_4 | default(150000) ) %}
-{% set p_recovery_large_from_seq_no_5 = (recovery_seq_no_5 | default(200000) ) %}
-{% set p_recovery_large_from_seq_no_6 = (recovery_seq_no_6 | default(250000) ) %}
-{% set p_recovery_large_from_seq_no_7 = (recovery_seq_no_7 | default(300000) ) %}
-{% set p_recovery_large_from_seq_no_8 = (recovery_seq_no_8 | default(340000) ) %}
-{% set p_recovery_large_from_seq_no_9 = (recovery_seq_no_9 | default(400000) ) %}
-{% set p_recovery_large_from_seq_no_10 = (recovery_seq_no_10 | default(450000) ) %}
-{% set p_recovery_large_from_seq_no_11 = (recovery_seq_no_11 | default(500000) ) %}
-{% set p_recovery_large_from_seq_no_12 = (recovery_seq_no_12 | default(550000) ) %}
-{% set p_recovery_large_from_seq_no_13 = (recovery_seq_no_13 | default(600000) ) %}
-{% set p_recovery_large_from_seq_no_14 = (recovery_seq_no_14 | default(650000) ) %}
-{% set p_recovery_large_from_seq_no_15 = (recovery_seq_no_15 | default(700000) ) %}
-{% set p_recovery_large_from_seq_no_16 = (recovery_seq_no_16 | default(750000) ) %}
-{% set p_recovery_large_from_seq_no_17 = (recovery_seq_no_17 | default(800000) ) %}
-{% set p_recovery_large_from_seq_no_18 = (recovery_seq_no_18 | default(850000) ) %}
-{% set p_recovery_large_from_seq_no_19 = (recovery_seq_no_19 | default(900000) ) %}
+{% set p_recovery_from_seq_no = (recovery_seq_no | default(0) ) %}
 
 {% set p_recovery_small_max_batch_size = (recovery_small_max_batch_size | default ("512kB") ) %}
 {% set p_recovery_large_max_batch_size = (recovery_large_max_batch_size | default ("32MB") ) %}
 {% set p_recovery_poll_timeout = (recovery_poll_timeout | default("1m")) %}
-{% set p_recovery_max_operations_count = (recovery_max_operations_count | default(1000000)) %}
+{% set p_recovery_max_operations_count = (recovery_max_operations_count | default(16777216)) %}
 
 {% set p_worker_threads_enabled = (worker_threads_enabled | default(true))  %}
 

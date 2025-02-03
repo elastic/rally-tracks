@@ -47,15 +47,12 @@ from shared.track_processors.track_id_generator import TrackIdGenerator
 
 async def setup_local_remote(es, params):
     response = await es.cluster.state()
-    master_node = response['master_node']
+    master_node = response["master_node"]
     response = await es.nodes.info()
     ip = response["nodes"][master_node]["transport_address"]
     b = {"cluster.remote.local.seeds": ip}
     response = await es.cluster.put_settings(persistent=b)
-    return {
-        "weight": 1,
-        "unit": "ops"
-    }
+    return {"weight": 1, "unit": "ops"}
 
 def register(registry):
     registry.register_param_source("initial-indices-source", InitialIndicesParamSource)

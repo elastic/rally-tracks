@@ -45,6 +45,7 @@ from shared.schedulers.query import WorkflowScheduler
 from shared.track_processors import data_generator
 from shared.track_processors.track_id_generator import TrackIdGenerator
 
+
 async def setup_local_remote(es, params):
     response = await es.cluster.state()
     master_node = response["master_node"]
@@ -53,6 +54,7 @@ async def setup_local_remote(es, params):
     b = {"cluster.remote.local.seeds": ip}
     response = await es.cluster.put_settings(persistent=b)
     return {"weight": 1, "unit": "ops"}
+
 
 def register(registry):
     registry.register_param_source("initial-indices-source", InitialIndicesParamSource)

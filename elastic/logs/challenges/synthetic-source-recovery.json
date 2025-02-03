@@ -12,7 +12,9 @@
         "operation-type": "raw-request",
         "path": {{ "/%s/seq_no/add_retention_lease" | format(p_recovery_target) | tojson }},
         "method": "PUT"
-      }
+      },
+      "warmup-iterations": 0,
+      "iterations": 1
     },
     {%- endif -%}{# serverless-shard-recovery-marker-end #}
     {

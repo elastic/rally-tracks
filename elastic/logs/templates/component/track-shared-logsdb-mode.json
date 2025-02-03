@@ -5,7 +5,7 @@
         "index": {
             "mode": {{ index_mode | tojson }}
             {% if codec %}
-            ,"codec": "{{codec | default('default')}}"
+            ,"codec": "{{codec | default('best_compression')}}"
             {% endif %}
             {% if source_mode %}
             ,"mapping.source.mode": {{ source_mode | tojson }}

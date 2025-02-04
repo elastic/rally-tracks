@@ -51,8 +51,8 @@ async def setup_local_remote(es, params):
     master_node = response["master_node"]
     response = await es.nodes.info()
     ip = response["nodes"][master_node]["transport_address"]
-    b = {"cluster.remote.local.seeds": ip}
-    response = await es.cluster.put_settings(persistent=b)
+    p_settings = {"cluster.remote.local.seeds": ip}
+    response = await es.cluster.put_settings(persistent=p_settings)
     return {"weight": 1, "unit": "ops"}
 
 

@@ -1,8 +1,8 @@
 {% import "rally.helpers" as rally %}
 {% set p_follow_index_pattern = "copy-{{leader_index}}" %}
 {
-  "name": "auto-follow-pattern",
-  "description": "",
+  "name": "logging-indexing-with-ccr-enabled",
+  "description": "Configures CCR (Cross Cluster Replication) using an auto follow pattern that automatically auto follows logs-* data streams into the local cluster using a different name. After the log data set get indexed.",
   "default": false,
   "schedule": [
     {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}

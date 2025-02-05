@@ -12,9 +12,6 @@
       {% if use_synthetic_source_recovery %}
       "recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}},
       {% endif %}
-      {% if use_doc_values_sparse_index %}
-      "mapping.use_doc_values_sparse_index": {{use_doc_values_sparse_index | tojson}},
-      {% endif %}
       {%- endif -%}{# non-serverless-index-settings-marker-end #}
       "codec": "{{codec | default('default')}}",
       "mode": "{{index_mode | default('time_series')}}",

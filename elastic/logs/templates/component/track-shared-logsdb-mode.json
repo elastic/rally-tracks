@@ -16,6 +16,9 @@
             {% if synthetic_source_keep %}
             ,"mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson }}
             {% endif %}
+            {% if use_doc_values_sparse_index %}
+            ,"mapping.use_doc_values_sparse_index": {{ use_doc_values_sparse_index | tojson }}
+            {% endif %}
         }
         {% endif %}
       }

@@ -68,35 +68,35 @@
         {
           "operation": "esql_lookup_join_{{idx_suffix[i]}}_keys_limit1",
           "tags": ["lookup", "join", "limit1"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_lookup_join_{{idx_suffix[i]}}_keys_limit1000",
           "tags": ["lookup", "join", "limit1000"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_lookup_join_{{idx_suffix[i]}}_keys_limit10000",
           "tags": ["lookup", "join", "limit10000"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_lookup_join_{{idx_suffix[i]}}_keys_keep_limit10000",
           "tags": ["lookup", "join", "limit10000"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 50
         },
         {
           "operation": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_limit1000",
           "tags": ["lookup", "join", "limit1000"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 50
         },
@@ -106,7 +106,7 @@
         {
           "operation": "esql_lookup_join_100k_to_{{idx_suffix[i]}}",
           "tags": ["lookup", "join", "limit1000"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 50
         },
@@ -115,7 +115,7 @@
         {
           "operation": "esql_lookup_join_100k_keys_x10_limit1000",
           "tags": ["lookup", "join", "limit1000"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 5,
           "iterations": 50
         },
@@ -123,7 +123,7 @@
         {
           "operation": "esql_lookup_join_1k_keys_sort_limit10000",
           "tags": ["lookup", "join", "limit10000"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 5,
           "iterations": 20
         },
@@ -131,7 +131,7 @@
         {
           "operation": "esql_lookup_join_1k_keys_where_no_match",
           "tags": ["lookup", "join"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 5,
           "iterations": 20
         },
@@ -139,7 +139,7 @@
         {
           "operation": "esql_lookup_join_1k_100k_200k_500k",
           "tags": ["lookup", "join", "limit1000"],
-          "clients": 1,
+          "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 50
         }

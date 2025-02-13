@@ -35,8 +35,10 @@
           {% if synthetic_source_keep %}
           "synthetic_source_keep": "{{synthetic_source_keep}}",
           {% endif %}
-          "total_fields.limit": 10000,
+          "total_fields.limit": 10000
+          {% if p_source_mode == "synthetic" or p_source_mode == "stored" %},
           "source.mode": {{ p_source_mode | tojson }}
+          {% endif %}
         }
       }
     },

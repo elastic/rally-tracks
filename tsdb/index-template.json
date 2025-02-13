@@ -16,7 +16,9 @@
         "refresh_interval": "{{refresh_interval}}",
         {% endif %}
         "codec": "{{codec | default('default')}}",
+        {% if index_mode == "time_series" or "index_mode" == "logsdb" %}
         "mode": "{{index_mode | default('time_series')}}",
+        {% endif %}
         {% if index_mode | default('time_series') is equalto 'time_series' %}
         "routing_path": [
           "metricset.name",

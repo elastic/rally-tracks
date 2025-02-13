@@ -1,7 +1,7 @@
 {% import "rally.helpers" as rally with context %}
 {# TODO By default, source_mode should be "synthetic" if index_mode == "time_series" else "stored" #}
 {% set p_source_mode = (source_mode | default("synthetic")) %}
-{% set p_include_source_mode = (include_source_mode | default(true))) %}
+{% set p_include_source_mode = (include_source_mode | default(true)) %}
 {
   "settings": {
     "index": {

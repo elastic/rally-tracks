@@ -1,4 +1,6 @@
 {% set p_document_ids = (document_ids | default(["Rpgg6gSYETjE4x8VrIAPNQ==", "AVdIG3TktHA+a3U2gW29QA==", "DeiNU57QgAml0UMiPg7hWA==", "3o6jhoyitLP3RPjSAEMRgQ=="])) %}
+{% set p_include_time_series_aggs = (include_time_series_aggs | default(true)) %}
+
 {
   "name": "delete-doc-id-pipeline",
   "operation-type": "raw-request",

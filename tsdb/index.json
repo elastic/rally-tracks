@@ -13,11 +13,13 @@
       {% endif %}
       {%- endif -%}{# non-serverless-index-settings-marker-end #}
       "codec": "{{codec | default('default')}}",
-      "mode": "{{index_mode | default('time_series')}}",
+      {% if p_index_mode == "time_series" or p_index_mode == "logsdb" %}
+      "mode": "{{p_index_mode}}",
+      {% endif %}
       {% if refresh_interval %}
       "refresh_interval": "{{refresh_interval}}",
       {% endif %}
-      {% if index_mode | default('time_series') is equalto 'time_series' %}
+      {% if p_index_mode == "time_series" %}
       "routing_path": [
         "metricset.name",
         "kubernetes.container.name",

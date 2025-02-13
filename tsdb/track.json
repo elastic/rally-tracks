@@ -8,6 +8,7 @@
 {% set p_recovery_max_operations_count = (recovery_max_operations_count | default(16777216)) %}
 
 {% set p_include_esql_queries = (include_esql_queries | default(build_flavor != "serverless")) %}
+{% set p_index_mode = (index_mode | default("time_series")) %}
 
 {
   "version": 2,

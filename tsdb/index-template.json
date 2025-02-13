@@ -16,10 +16,10 @@
         "refresh_interval": "{{refresh_interval}}",
         {% endif %}
         "codec": "{{codec | default('default')}}",
-        {% if index_mode == "time_series" or "index_mode" == "logsdb" %}
-        "mode": "{{index_mode | default('time_series')}}",
+        {% if p_index_mode == "time_series" or p_index_mode == "logsdb" %}
+        "mode": "{{p_index_mode}}",
         {% endif %}
-        {% if index_mode | default('time_series') is equalto 'time_series' %}
+        {% if p_index_mode == "time_series" %}
         "routing_path": [
           "metricset.name",
           "kubernetes.container.name",

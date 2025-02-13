@@ -126,7 +126,7 @@
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
-        {% if index_mode | default('time_series') is equalto 'time_series' and skip_running_tsdb_aggs is not defined %}
+        {% if p_index_mode == "time_series" and skip_running_tsdb_aggs is not defined %}
         ,{
           "operation": "date-histo-memory-usage-hour",
           "warmup-iterations": 50,
@@ -385,7 +385,7 @@
           }
         }
         {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
-        {% if index_mode | default('time_series') is equalto 'standard' %}
+        {% if p_index_mode != "time_series" and p_index_mode != "logsdb" %}
         ,{
           "operation": "search_by_doc_id",
           "warmup-iterations": 50,

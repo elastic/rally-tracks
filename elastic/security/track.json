@@ -13,7 +13,34 @@
   "packetbeat",
   "winlogbeat"
 ]))%}
-
+{% set p_integration_ratios = (integration_ratios | default({
+  "auditbeat": {
+    "corpora": {
+      "auditbeat-security": 1.0
+    }
+  },
+  "filebeat": {
+    "corpora": {
+      "filebeat-security": 1.0
+    }
+  },
+  "metricbeat": {
+    "corpora": {
+      "metricbeat-security": 1.0
+    }
+  },
+  "packetbeat": {
+    "corpora": {
+      "packetbeat-security": 1.0
+    }
+  },
+  "winlogbeat": {
+    "corpora": {
+      "winlogbeat-security": 1.0
+    }
+  }
+}))
+%}
 {
   "version": 2,
   "description": "Track for simulating Elastic Security workloads",

@@ -1,6 +1,7 @@
 {% import "rally.helpers" as rally with context %}
 {# TODO By default, source_mode should be "synthetic" if index_mode == "time_series" else "stored" #}
 {% set p_source_mode = (source_mode | default("synthetic")) %}
+{% set p_include_source_mode = (include_source_mode | default(true)) %}
 {
   "index_patterns": ["k8s*"],
   "data_stream": {},
@@ -38,7 +39,7 @@
           "synthetic_source_keep": "{{synthetic_source_keep}}",
           {% endif %}
           "total_fields.limit": 10000
-          {% if p_source_mode == "synthetic" or p_source_mode == "stored" %},
+          {% if p_include_source_mode %},
           "source.mode": {{ p_source_mode | tojson }}
           {% endif %}
         }

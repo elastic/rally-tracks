@@ -9,8 +9,8 @@
 
 {% set p_include_esql_queries = (include_esql_queries | default(true)) %}
 {% set p_index_mode = (index_mode | default("time_series")) %}
-{% set p_enable_downsample_challenge = (enable_downsample_challenge | default(true)) %}
-{% set p_enable_low_latency_challenge = (enable_low_latency_challenge | default(true)) %}
+{% set p_enable_downsample_challenge = (enable_downsample_challenge | default(false)) %}
+{% set p_enable_low_latency_challenge = (enable_low_latency_challenge | default(false)) %}
 
 {
   "version": 2,

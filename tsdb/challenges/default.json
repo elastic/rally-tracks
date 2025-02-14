@@ -126,7 +126,7 @@
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
-        {% if index_mode | default('time_series') is equalto 'time_series' and skip_running_tsdb_aggs is not defined %}
+        {% if p_index_mode == "time_series" and skip_running_tsdb_aggs is not defined %}
         ,{
           "operation": "date-histo-memory-usage-hour",
           "warmup-iterations": 50,
@@ -150,16 +150,17 @@
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
-        }
+        },
         {% endif %}
-        ,{
+        {
           "operation": "esql-fetch-500",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
       ]
-    },
+    }
+    {% if p_enable_downsample_challenge %},
     {
       "name": "downsample",
       "description": "Indexes the whole document corpus and executes a few downsampling operations using different interval values",
@@ -281,7 +282,9 @@
           "iterations": 100
         }
       ]
-    },
+    }
+    {% endif %}
+    {% if p_enable_low_latency_challenge %},
     {
       "name": "low-latency",
       "description": "Indexes the whole document corpus and executes low-latency queries. Assertions might result in race failure.",
@@ -383,7 +386,7 @@
           }
         }
         {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
-        {% if index_mode | default('time_series') is equalto 'standard' %}
+        {% if p_index_mode != "time_series" and p_index_mode != "logsdb" %}
         ,{
           "operation": "search_by_doc_id",
           "warmup-iterations": 50,
@@ -407,3 +410,4 @@
         {%- endif %}
       ]
     }
+    {% endif %}

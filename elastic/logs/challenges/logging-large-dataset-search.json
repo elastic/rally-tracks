@@ -1,0 +1,155 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-large-dataset-search",
+  "description": "Applies a query workload after replicating data to increase the datset size. Ensures data streams exist so queries can be run, but does not remove existing data.",
+  "parameters": {
+    "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
+  },
+  "schedule": [
+    {
+      "operation": "discovery-search-request-size-100",
+      "clients": 1,
+      "warmup-iterations": 0,
+      "iterations": 50
+    },
+    {
+      "operation": "discovery-search-request-size-500",
+      "clients": 1,
+      "warmup-iterations": 0,
+      "iterations": 50
+    },
+
+    {
+      "operation": "discovery-search-request-size-1000",
+      "clients": 1,
+      "warmup-iterations": 0,
+      "iterations": 50
+    },
+    {
+      "name": "logging-queries",
+      "parallel": {
+        "time-period": {{ p_query_time_period }},
+        "warmup-time-period": {{ p_query_warmup_time_period }},
+        "tasks": [
+          {% for workflow in p_query_workflows %}
+            {
+              "name": {{workflow | tojson }},
+              "operation": {
+                "operation-type": "composite",
+                "param-source": "workflow-selector",
+                "workflow": {{workflow | tojson }},
+                "task-offset": {{ loop.index }},
+                "request-params": {{ p_query_request_params | tojson(indent=2) }}
+              },
+              "think-time-interval": {{ p_user_think_time }},
+              "workflow-interval": {{ p_user_workflow_time }},
+              "clients": {{ p_search_clients }},
+              "schedule": "workflow-scheduler"
+            }{{ ", " if not loop.last else "" }}
+          {% endfor %}
+        ]
+      }
+    }
+    {%- if p_include_esql_queries %}
+    ,{
+      "operation": "esql_basic_count_group_0_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_1_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_2_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_3_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_4_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_time_range_and_date_histogram_two_groups_pre_filter_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_time_range_and_date_histogram_two_groups_post_filter_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_dissect_duration_and_stats_limit_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "limit0"]
+    },
+    {
+      "operation": "esql_basic_count_group_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "count"]
+    },
+    {
+      "operation": "esql_basic_count_group_1",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "count"]
+    },
+    {
+      "operation": "esql_time_range_and_date_histogram_two_groups_pre_filter",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql", "date_histogram"]
+    },
+    {
+      "operation": "esql_dissect_duration_and_stats",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql", "dissect"]
+    },
+    {
+      "operation": "disable_query_cache",
+      "tags": ["esql", "settings"]
+    },
+    {
+      "operation": "search_basic_count_group_0",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "count", "search"]
+    },
+    {
+      "operation": "enable_query_cache",
+      "tags": ["esql", "settings"]
+    }
+    {%- endif %}
+  ]
+}

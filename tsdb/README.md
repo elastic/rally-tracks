@@ -195,6 +195,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_shards` (default: 1)
 * `refresh_interval` (default not defined)
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
+* `include_source_mode` (default: true): used to explicitly exclude `index.mapping.source.mode` setting when running with Elasticsearch v7.
 * `source_mode` (default: synthetic): Should the `_source` be `stored` to disk exactly as sent (the Elasticsearch default outside of TSDB mode), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
 * `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.

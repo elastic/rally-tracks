@@ -18,7 +18,12 @@
       "query": "FROM idx_* | limit 1000"
     },
     {
-      "name": "from_idx_limit_1",
+      "name": "from_idx_limit_10000",
       "operation-type": "esql",
-      "query": "FROM idx_* | limit 1"
+      "query": "FROM idx_* | limit 10000"
+    },
+    {
+    "name": "from_idx_limit_1",
+    "operation-type": "esql",
+    "query": "FROM idx_* | limit 1"
     }

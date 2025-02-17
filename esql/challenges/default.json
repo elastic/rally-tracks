@@ -55,6 +55,13 @@
           "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 500
+        },
+        {
+          "operation": "from_idx_limit_1",
+          "tags": ["esql_fanout"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": 500
         }
       ]
     }

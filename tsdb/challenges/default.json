@@ -159,8 +159,7 @@
           "iterations": 100
         }
       ]
-    }
-    {% if p_enable_downsample_challenge %},
+    },
     {
       "name": "downsample",
       "description": "Indexes the whole document corpus and executes a few downsampling operations using different interval values",
@@ -282,9 +281,7 @@
           "iterations": 100
         }
       ]
-    }
-    {% endif %}
-    {% if p_enable_low_latency_challenge %},
+    },
     {
       "name": "low-latency",
       "description": "Indexes the whole document corpus and executes low-latency queries. Assertions might result in race failure.",
@@ -410,4 +407,3 @@
         {%- endif %}
       ]
     }
-    {% endif %}

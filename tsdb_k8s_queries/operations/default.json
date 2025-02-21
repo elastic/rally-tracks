@@ -112,7 +112,7 @@
   "name": "esql_cpu_usage_per_pod_{{name}}",
   "operation-type": "esql",
   "detailed-results": {{detailed_results | default("false")}},
-  "query": "FROM k8s-* | eval by_interval = date_trunc({{ info[2] }}, @timestamp), start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS avg(kubernetes.pod.cpu.usage.limit.pct) BY kubernetes.pod.name, by_interval | LIMIT 10000"
+  "query": "FROM k8s-* | eval by_interval = date_trunc({{ info[2] }}, @timestamp), start_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ info[1] }}\"), end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSSX\",\"{{ end_time }}\") | WHERE @timestamp >= start_time AND @timestamp <= end_time | STATS avg(`kubernetes.pod.cpu.usage.limit.pct`) BY kubernetes.pod.name, by_interval | LIMIT 10000"
 },
 {%- endfor %}
 {% for name, info in time_intervals.items() %}

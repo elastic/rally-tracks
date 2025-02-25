@@ -1,6 +1,7 @@
 {% import "rally.helpers" as rally with context %}
 {# TODO By default, source_mode should be "synthetic" if index_mode == "time_series" else "stored" #}
 {% set p_source_mode = (source_mode | default("synthetic")) %}
+{% set p_include_source_mode = (include_source_mode | default(true)) %}
 {
   "index_patterns": ["k8s*"],
   "data_stream": {},
@@ -16,8 +17,10 @@
         "refresh_interval": "{{refresh_interval}}",
         {% endif %}
         "codec": "{{codec | default('default')}}",
-        "mode": "{{index_mode | default('time_series')}}",
-        {% if index_mode | default('time_series') is equalto 'time_series' %}
+        {% if p_index_mode == "time_series" or p_index_mode == "logsdb" %}
+        "mode": "{{p_index_mode}}",
+        {% endif %}
+        {% if p_index_mode == "time_series" %}
         "routing_path": [
           "metricset.name",
           "kubernetes.container.name",
@@ -36,6 +39,9 @@
           "synthetic_source_keep": "{{synthetic_source_keep}}",
           {% endif %}
           "total_fields.limit": 10000
+          {% if p_include_source_mode %},
+          "source.mode": {{ p_source_mode | tojson }}
+          {% endif %}
         }
       }
     },
@@ -43,9 +49,6 @@
       "_meta": {
         "beat": "metricbeat",
         "version": "7.6.2"
-      },
-      "_source": {
-        "mode": {{ p_source_mode | tojson }}
       },
       "dynamic_templates": [
         {

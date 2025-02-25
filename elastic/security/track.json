@@ -10,6 +10,11 @@
 {% set p_number_of_replicas = (number_of_replicas | default(1)) %}
 {% set p_skip_delete_component_template = (skip_delete_component_template | default(false) ) %}
 {% set p_logs_endpoint_from_kibana = (logs_endpoint_from_kibana | default(false) ) %}
+{% set p_recovery_from_seq_no = (recovery_seq_no | default(0) ) %}
+{% set p_recovery_target = ( recovery_target | default('filebeat-default') ) %}
+{% set p_recovery_max_batch_size = (recovery_max_batch_size | default ("32MB") ) %}
+{% set p_recovery_poll_timeout = (recovery_poll_timeout | default("1m")) %}
+{% set p_recovery_max_operations_count = (recovery_max_operations_count | default(1048576)) %}
 {% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
 {% set p_integration_ratios = (integration_ratios | default({
     "auditbeat": {

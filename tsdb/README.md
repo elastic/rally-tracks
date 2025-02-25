@@ -195,6 +195,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_shards` (default: 1)
 * `refresh_interval` (default not defined)
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
+* `include_source_mode` (default: true): used to explicitly exclude `index.mapping.source.mode` setting when running with Elasticsearch v7.
 * `source_mode` (default: synthetic): Should the `_source` be `stored` to disk exactly as sent (the Elasticsearch default outside of TSDB mode), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
 * `index_mode` (default: time_series): Whether to make a standard index (`standard`) or time series index (`time_series`)
 * `codec` (default: default): The codec to use compressing the index. `default` uses more space and less cpu. `best_compression` uses less space and more cpu.
@@ -205,6 +206,12 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `document_ids`: documentd IDs to use for search, get and mget apis in the `low-latency` challenge. If empty, a default set of 4 values is used.
 * `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
 * `use_synthetic_source_recovery` (default: unset): Whether synthetic recovery source will be used.
+* `recovery_target` (required) - The target index or data stream for fetching shard changes via the recovery API.
+* `recovery_from_seq_no` (default: `0`) - The sequence number from which to start fetching translog operations.
+* `recovery_poll_timeout` (default: `1m`) - The maximum time to wait for additional translog operations before returning an empty result.
+* `recovery_small_max_batch_size` (default: `4MB`) - The maximum estimated size for the batch of translog operations to return.
+* `recovery_large_max_batch_size` (default: `32MB`) - The maximum estimated size for the batch of translog operations to return.
+* `recovery_max_operations_count` (default: `16777216`) - The maximum number of translog operations to return in a single batch.
 
 ### License
 

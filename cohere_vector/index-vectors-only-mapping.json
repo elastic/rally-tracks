@@ -4,17 +4,13 @@
       {% if preload_pagecache %}
     "index.store.preload": [ "vec", "vex", "vem"],
       {% endif %}
+    "index.mapping.source.mode": "synthetic",
     "index.number_of_shards": {{number_of_shards | default(1)}},
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
   },
   "mappings": {
     "dynamic": false,
-    {%- if build_flavor != "serverless" -%}
-    "_source": {
-      "mode": "synthetic"
-    },
-    {%- endif -%}
     "properties": {
       "emb": {
         "type": "dense_vector",

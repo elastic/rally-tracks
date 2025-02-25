@@ -8,6 +8,7 @@
       {% if preload_pagecache %}
       "store.preload": [ "vec", "vex", "vem"],
       {% endif %}
+      "mapping.source.mode": "synthetic",
       "number_of_shards": {{number_of_shards | default(1)}},
       "number_of_replicas": {{number_of_replicas | default(0)}}
       {% if aggressive_merge_policy %},
@@ -24,9 +25,6 @@
   },
   "mappings": {
     "dynamic": false,
-    "_source": {
-      "mode": "synthetic"
-    },
     "properties": {
       "docid": {
         "type": "keyword"

@@ -1,0 +1,47 @@
+{% import "rally.helpers" as rally %}
+{% set p_follow_index_pattern = "copy-{{leader_index}}" %}
+{
+  "name": "logging-indexing-with-ccr-enabled",
+  "description": "Configures CCR (Cross Cluster Replication) using an auto follow pattern that automatically auto follows logs-* data streams into the local cluster using a different name. After the log data set get indexed.",
+  "default": false,
+  "schedule": [
+    {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    {
+        "name": "setup-remote-for-local",
+        "operation": {
+          "operation-type": "setup-local-remote"
+        }
+    },
+    {
+        "name": "put_auto_follow_pattern",
+        "operation": {
+          "operation-type": "raw-request",
+          "path": "/_ccr/auto_follow/my_pattern",
+          "method": "PUT",
+          "body": {
+            "remote_cluster": "local",
+            "leader_index_patterns": ["logs-*"],
+            "follow_index_pattern": "{{ p_follow_index_pattern }}"
+          }
+        }
+    },
+    {% include "tasks/index-setup.json" %},
+    {%- endif -%}{# non-serverless-index-statistics-marker-end #}
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "bulk-size": {{ p_bulk_size }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients }}{% if p_throttle_indexing %},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "schedule": "timestamp-throttler",
+      "max-delay-secs": 1
+      {% endif %}
+    }
+  ]
+}

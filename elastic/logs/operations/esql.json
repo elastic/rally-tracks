@@ -366,7 +366,8 @@
         {% if p_esql_ccs_remote_nodes_count > 0 %}
         "wait_for_nodes": {{ p_esql_ccs_remote_nodes_count }},
         {% endif %}
-        "wait_for_no_relocating_shards": "true"
+        "wait_for_no_relocating_shards": "true",
+        "timeout": "60s"
       },
       "retry-until-success": true
     }

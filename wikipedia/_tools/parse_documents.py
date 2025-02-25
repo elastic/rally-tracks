@@ -5,7 +5,7 @@ from xml.etree import cElementTree
 
 PAGE_TAG = "page"
 SITEINFO_TAG = "siteinfo"
-XML_NAMESPACES = {"": "http://www.mediawiki.org/xml/export-0.10/"}
+XML_NAMESPACES = {"": "http://www.mediawiki.org/xml/export-0.11/"}
 
 
 def doc_generator(f):

@@ -1,0 +1,38 @@
+{
+  "start_date": "2024-05-01",
+  "end_date": "2024-05-10",
+  "raw_data_volume_per_day": "10GB",
+  "integration_ratios": {
+    "logs-endpoint": {
+      "corpora": {
+        "endpoint-events-file": 0.2,
+        "endpoint-events-library": 0.1,
+        "endpoint-events-network": 0.2,
+        "endpoint-events-process": 0.3,
+        "endpoint-events-registry": 0.1,
+        "endpoint-events-security": 0.1
+      }
+    },
+    "auditbeat": {
+      "corpora": {
+        "auditbeat-security": 1.0
+      }
+    },
+    "filebeat": {
+      "corpora": {
+        "filebeat-security": 1.0
+      }
+    },
+    "metricbeat": {
+      "corpora": {
+        "metricbeat-security": 1.0
+      }
+    },
+    "winlogbeat": {
+      "corpora": {
+        "winlogbeat-security": 1.0
+      }
+    }
+  },
+  "index_mode": "logsdb"
+}

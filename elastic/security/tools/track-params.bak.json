@@ -1,0 +1,20 @@
+{
+  "start_date": "2024-05-01",
+  "end_date": "2024-05-14",
+  "raw_data_volume_per_day": "1GB",
+  "integration_ratios": {
+    "logs-endpoint": {
+      "corpora": {
+        "endpoint-events-file": 0.2,
+        "endpoint-events-library": 0.1,
+        "endpoint-events-network": 0.2,
+        "endpoint-events-process": 0.3,
+        "endpoint-events-registry": 0.1,
+        "endpoint-events-security": 0.1
+      }
+    }
+  },
+  "skip_delete_component_template": true,
+  "logs_endpoint_from_kibana": true,
+  "index_mode": "logsdb"
+}

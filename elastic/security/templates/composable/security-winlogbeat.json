@@ -5,6 +5,9 @@
   "template" : {
     "settings" : {
       "index" : {
+        {% if index_mode %}
+        "mode": {{ index_mode | tojson }},
+        {% endif %}
         {% if lifecycle == "ilm" or (not lifecycle and build_flavor == "default") %}
           "lifecycle": {
             "name": "security"

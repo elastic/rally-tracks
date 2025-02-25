@@ -5,7 +5,13 @@
       "logs-endpoint.events.network-*"
     ],
     "template": {
-      "settings": {},
+      "settings": {
+        {% if index_mode %}
+        "index": {
+          "mode": {{ index_mode | tojson }}
+        }
+        {% endif %}
+      },
       "mappings": {
         "_meta": {
           "package": {

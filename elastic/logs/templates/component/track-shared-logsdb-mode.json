@@ -16,6 +16,9 @@
             {% if synthetic_source_keep %}
             ,"mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson }}
             {% endif %}
+            {% if use_doc_values_skipper %}
+            ,"mapping.use_doc_values_skipper": {{ use_doc_values_skipper | tojson }}
+            {% endif %}
         }
         {% endif %}
       }

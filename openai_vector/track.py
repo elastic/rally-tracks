@@ -1,13 +1,14 @@
 import bz2
 import json
+import logging
 import os
 import statistics
-import logging
 from typing import Any, List
 
 logger = logging.getLogger(__name__)
 QUERIES_FILENAME: str = "queries.json.bz2"
 TRUE_KNN_FILENAME: str = "open_ai_true_top_1000.json.bz2"
+
 
 def compute_percentile(data: List[Any], percentile):
     size = len(data)
@@ -16,6 +17,7 @@ def compute_percentile(data: List[Any], percentile):
     sorted_data = sorted(data)
     index = int(round(percentile * size / 100)) - 1
     return sorted_data[max(min(index, size - 1), 0)]
+
 
 class KnnParamSource:
     def __init__(self, track, params, **kwargs):
@@ -47,12 +49,14 @@ class KnnParamSource:
         num_candidates = self._params.get("num-candidates", 50)
         num_rescore = self._params.get("num-rescore", 0)
         query_vec = self._queries[self._iters]
-        knn_query = {"knn":{
-            "field": "emb",
-            "query_vector": query_vec,
-            "k": result["size"],
-            "num_candidates": num_candidates,
-        }}
+        knn_query = {
+            "knn": {
+                "field": "emb",
+                "query_vector": query_vec,
+                "k": result["size"],
+                "num_candidates": num_candidates,
+            }
+        }
         if "filter" in self._params:
             knn_query["knn"]["filter"] = self._params["filter"]
         if num_rescore > 0:
@@ -62,6 +66,7 @@ class KnnParamSource:
         if self._iters >= self._maxIters:
             self._iters = 0
         return result
+
 
 class KnnVectorStore:
     def __init__(self):
@@ -77,13 +82,14 @@ class KnnVectorStore:
 
     def get_query_vectors(self) -> List[List[float]]:
         return self._queries
-    
+
     def get_neighbors_for_query(self, query_id: int, size: int) -> List[str]:
         if (query_id < 0) or (query_id >= len(self._query_nearest_neighbor_docids)):
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
         if (size < 0) or (size > len(self._query_nearest_neighbor_docids[query_id])):
             raise ValueError(f"Invalid size: '{size}' provided for query with id: '{query_id}'")
         return self._query_nearest_neighbor_docids[query_id][:size]
+
 
 class KnnRecallParamSource:
     def __init__(self, track, params, **kwargs):
@@ -108,24 +114,25 @@ class KnnRecallParamSource:
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 50),
             "num_rescore": self._params.get("num-rescore", 0),
-            "knn_vector_store": KnnVectorStore()
+            "knn_vector_store": KnnVectorStore(),
         }
+
 
 # Used in tandem with the KnnRecallParamSource.
 # reads the queries, executes knn search and compares the results with the true nearest neighbors
 class KnnRecallRunner:
-
     def get_knn_query(self, query_vec, k, num_candidates, num_rescore):
-        knn_query = {"knn":{
-            "field": "emb",
-            "query_vector": query_vec,
-            "k": k,
-            "num_candidates": num_candidates,
-        }}
+        knn_query = {
+            "knn": {
+                "field": "emb",
+                "query_vector": query_vec,
+                "k": k,
+                "num_candidates": num_candidates,
+            }
+        }
         if num_rescore > 0:
             knn_query["knn"]["rescore_vector"] = {"num_candidates_factor": num_rescore}
         return {"query": knn_query, "_source": False}
-
 
     async def __call__(self, es, params):
         k = params["size"]
@@ -156,15 +163,15 @@ class KnnRecallRunner:
             min_recall = min(min_recall, current_recall)
             max_recall = max(max_recall, current_recall)
         to_return = {
-                "avg_recall": recall_total / exact_total,
-                "min_recall": min_recall,
-                "max_recall": max_recall,
-                "k": k,
-                "num_candidates": num_candidates,
-                "num_rescore": params["num_rescore"]
-            }
+            "avg_recall": recall_total / exact_total,
+            "min_recall": min_recall,
+            "max_recall": max_recall,
+            "k": k,
+            "num_candidates": num_candidates,
+            "num_rescore": params["num_rescore"],
+        }
         logger.info(f"Recall results: {to_return}")
-        return (to_return)
+        return to_return
 
     def __repr__(self, *args, **kwargs):
         return "knn-recall"

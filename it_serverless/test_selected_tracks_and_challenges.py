@@ -35,7 +35,7 @@ class TestTrackRepository:
         "github_archive",
         "http_logs",
         # "k8s_metrics", (slow)
-        "msmarco-v2-vector",
+        # "msmarco-v2-vector", (slow for test mode)
         "nested",
         "noaa",
         "nyc_taxis",

@@ -7,15 +7,13 @@
       {%- endif -%}{# non-serverless-index-settings-marker-end #}
       "sort": {
         "field": "partition_id"
-      }
+      },
+      "mapping.source.mode": "synthetic"
     }
   },
   "mappings": {
     "_routing": {
       "required": true
-    },
-    "_source": {
-      "mode": "synthetic"
     },
     "properties": {
       "partition_id": {

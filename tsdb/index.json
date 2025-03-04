@@ -1,6 +1,8 @@
 {% import "rally.helpers" as rally with context %}
 {# TODO By default, source_mode should be "synthetic" if index_mode == "time_series" else "stored" #}
 {% set p_source_mode = (source_mode | default("synthetic")) %}
+{% set p_include_source_mode = (include_source_mode | default(true)) %}
+{% set p_index_mode = (index_mode | default("time_series")) %}
 {
   "settings": {
     "index": {
@@ -8,13 +10,18 @@
       "number_of_shards": {{number_of_shards | default(1)}},
       "number_of_replicas": {{number_of_replicas | default(0)}},
       "requests.cache.enable": false,
+      {% if use_synthetic_source_recovery %}
+      "recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}},
+      {% endif %}
       {%- endif -%}{# non-serverless-index-settings-marker-end #}
       "codec": "{{codec | default('default')}}",
-      "mode": "{{index_mode | default('time_series')}}",
+      {% if p_index_mode == "time_series" or p_index_mode == "logsdb" %}
+      "mode": "{{p_index_mode}}",
+      {% endif %}
       {% if refresh_interval %}
       "refresh_interval": "{{refresh_interval}}",
       {% endif %}
-      {% if index_mode | default('time_series') is equalto 'time_series' %}
+      {% if p_index_mode == "time_series" %}
       "routing_path": [
         "metricset.name",
         "kubernetes.container.name",
@@ -33,6 +40,9 @@
         "synthetic_source_keep": "{{synthetic_source_keep}}",
         {% endif %}
         "total_fields.limit": 10000
+        {% if p_include_source_mode %},
+        "source.mode": {{ p_source_mode | tojson }}
+        {% endif %}
       }
     }
   },
@@ -40,9 +50,6 @@
     "_meta": {
       "beat": "metricbeat",
       "version": "7.6.2"
-    },
-    "_source": {
-      "mode": {{ p_source_mode | tojson }}
     },
     "dynamic_templates": [
       {

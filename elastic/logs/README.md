@@ -220,8 +220,15 @@ The following parameters are available:
 * `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
 * `lifecycle` (default: unset to fall back on Serverless detection) - Specifies the lifecycle management feature to use for data streams. Use `ilm` for index lifecycle management or `dlm` for data lifecycle management. By default, `dlm` will be used for benchmarking Serverless Elasticsearch.
 * `workflow-request-cache` (default: `true`) - Explicit control of request cache query parameter in searches executed in a workflow. This can be further overriden at an operation level with `request-cache` parameter.
-* `synthetic_source_keep` (default: unset) - Allows overriding the default synthetic source behaviour for all field types with the following values: `none` (equivalent to unset) - no source is stored, `arrays` - source stored as is only for multi-value (array) fields.
+* `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
 * `source_mode` (default: unset) - Specifies the source mode to be used.
+* `use_synthetic_source_recovery` (default: unset): Whether synthetic recovery source will be used.
+* `recovery_target` (required) - The target index or data stream for fetching shard changes via the recovery API.
+* `recovery_from_seq_no` (default: `0`) - The sequence number from which to start fetching translog operations.
+* `recovery_poll_timeout` (default: `1m`) - The maximum time to wait for additional translog operations before returning an empty result.
+* `recovery_small_max_batch_size` (default: `4MB`) - The maximum estimated size for the batch of translog operations to return.
+* `recovery_large_max_batch_size` (default: `32MB`) - The maximum estimated size for the batch of translog operations to return.
+* `recovery_max_operations_count` (default: `16777216`) - The maximum number of translog operations to return in a single batch.
 
 ### Data Download Parameters
 
@@ -252,6 +259,7 @@ The following parameters are available:
 * `index_mode` (default: unset): What index mode to use. Accepted values: `standard` and `logs`. 
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
+* `codec` (default: unset): Configured the `index.codec` index setting, which controls how stored fields get stored / compressed.
 
 ### Querying parameters
 

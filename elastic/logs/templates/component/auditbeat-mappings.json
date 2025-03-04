@@ -8,6 +8,13 @@
           }
         },
         "refresh_interval": "30s",
+        {% if route_on_sort_fields | default(false) is true %}
+        "sort": {
+           "field": [ "host.name", "kubernetes.pod.uid", "log.logger", "@timestamp" ],
+           "order": [ "asc", "asc", "asc", "desc" ]
+        },
+        "logsdb.route_on_sort_fields": true,
+        {% endif %}
         {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
         "max_docvalue_fields_search": 200,
         "number_of_shards": 1,

@@ -23,7 +23,31 @@
       "query": "FROM idx_* | limit 10000"
     },
     {
-    "name": "from_idx_limit_1",
-    "operation-type": "esql",
-    "query": "FROM idx_* | limit 1"
+      "name": "from_idx_limit_1",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 1"
+    },
+    {
+      "name": "search_limit_1",
+      "operation-type": "search",
+      "index": "idx_*",
+      "body": {
+        "size": 1
+      }
+    },
+    {
+      "name": "search_limit_1000",
+      "operation-type": "search",
+      "index": "idx_*",
+      "body": {
+        "size": 1000
+      }
+    },
+    {
+      "name": "search_limit_10000",
+      "operation-type": "search",
+      "index": "idx_*",
+      "body": {
+        "size": 10000
+      }
     }

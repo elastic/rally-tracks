@@ -37,7 +37,7 @@
   "param-source": "knn-param-source",
   "k": {{p_search_ops[i][0]}},
   "num-candidates": {{p_search_ops[i][1]}},
-  "num-rescore": {{p_search_ops[i][2]}}
+  "oversample": {{p_search_ops[i][2]}}
 },
 {
   {%- if p_search_ops[i][2] > 0 -%}
@@ -49,6 +49,6 @@
   "param-source": "knn-recall-param-source",
   "k": {{p_search_ops[i][0]}},
   "num-candidates": {{p_search_ops[i][1]}},
-  "num-rescore": {{p_search_ops[i][2]}}
+  "oversample": {{p_search_ops[i][2]}}
 }
 {%- endfor %}

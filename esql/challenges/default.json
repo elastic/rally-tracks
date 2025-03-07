@@ -63,6 +63,31 @@
           "warmup-iterations": 10,
           "iterations": 100
         },
+
+
+        {
+          "operation": "from_idx_limit_1000_drop_null",
+          "tags": ["esql_fanout"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": 100
+        },
+        {
+          "operation": "from_idx_limit_10000_drop_null",
+          "tags": ["esql_fanout"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": 100
+        },
+        {
+          "operation": "from_idx_limit_1_drop_null",
+          "tags": ["esql_fanout"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": 100
+        },
+
+
         {
           "operation": "search_limit_1",
           "tags": ["esql_fanout"],

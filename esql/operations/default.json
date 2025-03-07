@@ -27,6 +27,27 @@
       "operation-type": "esql",
       "query": "FROM idx_* | limit 1"
     },
+
+    {
+    "name": "from_idx_limit_1000_drop_null",
+    "operation-type": "esql",
+    "query": "FROM idx_* | limit 1000",
+    "request-params": { "drop_null_columns": true }
+    },
+    {
+    "name": "from_idx_limit_10000_drop_null",
+    "operation-type": "esql",
+    "query": "FROM idx_* | limit 10000",
+    "request-params": { "drop_null_columns": true }
+    },
+    {
+    "name": "from_idx_limit_1_drop_null",
+    "operation-type": "esql",
+    "query": "FROM idx_* | limit 1",
+    "request-params": { "drop_null_columns": true }
+    },
+
+
     {
       "name": "search_limit_1",
       "operation-type": "search",

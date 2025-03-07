@@ -28,11 +28,11 @@
   "documents": [
     {
       "target-index": "{{idx_name}}",
-      "source-file": "lookup_idx_1000_f10.json.bz2",
-      "#COMMENT": "Lookup index with 1000 documents and 1000 distinct keys (keyworks, \"0\"..\"999\")",
-      "document-count": 1000,
-      "compressed-bytes": 11229,
-      "uncompressed-bytes": 388790
+      "source-file": "lookup_idx_100000_f10.json.bz2",
+      "#COMMENT": "Lookup index with 100k documents and 100k distinct keys (keyworks, \"0\"..\"99999\")",
+      "document-count": 100000,
+      "compressed-bytes": 2248693,
+      "uncompressed-bytes": 41277790
     }
   ]
 },
@@ -43,11 +43,11 @@
   "documents": [
       {
         "target-index": "idx_0",
-        "source-file": "lookup_idx_1000_f10.json.bz2",
-        "#COMMENT": "Lookup index with 1000 documents and 1000 distinct keys (keyworks, \"0\"..\"999\")",
-        "document-count": 1000,
-        "compressed-bytes": 11229,
-        "uncompressed-bytes": 388790
+        "source-file": "lookup_idx_100000_f10.json.bz2",
+        "#COMMENT": "Lookup index with 100k documents and 100k distinct keys (keyworks, \"0\"..\"99999\")",
+        "document-count": 100000,
+        "compressed-bytes": 2248693,
+        "uncompressed-bytes": 41277790
       }
     ]
   }

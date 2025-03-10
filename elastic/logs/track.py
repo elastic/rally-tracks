@@ -44,7 +44,9 @@ from shared.schedulers.indexing import TimestampThrottler
 from shared.schedulers.query import WorkflowScheduler
 from shared.track_processors import data_generator
 from shared.track_processors.track_id_generator import TrackIdGenerator
-
+from shared.runners.reindex_data_stream import (
+    StartReindexDataStream, WaitForReindexDataStream
+)
 
 def register(registry):
     registry.register_param_source("initial-indices-source", InitialIndicesParamSource)
@@ -88,3 +90,6 @@ def register(registry):
     registry.register_runner("configure-remote-clusters", ConfigureRemoteClusters(), async_runner=True)
     registry.register_runner("configure-ccr", ConfigureCrossClusterReplication(), async_runner=True)
     registry.register_runner("multi-cluster-wrapper", MultiClusterWrapper(), async_runner=True)
+
+    registry.register_runner("start-reindex-data-stream", StartReindexDataStream(), async_runner=True)
+    registry.register_runner("wait-for-reindex-data-stream", WaitForReindexDataStream(), async_runner=True)

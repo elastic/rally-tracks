@@ -1,17 +1,19 @@
-{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
+{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) -%}
 {
   "template": {
     "settings": {
       "index": {
-        {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-          {% if p_include_non_serverless_index_settings %}
+        {#- non-serverless-index-settings-marker-start #}
+        {%- if build_flavor != "serverless" or serverless_operator == true %}
+        {%- if p_include_non_serverless_index_settings %}
         "number_of_shards": "{{ number_of_shards | default(1) }}",
-        "number_of_replicas": "{{ number_of_replicas | default(1) }}"{%- if refresh_interval -%},{%- endif -%}
-          {% endif %}
-        {%- endif -%}{# non-serverless-index-settings-marker-end #}
-        {% if refresh_interval -%}
-        "refresh_interval": "{{ refresh_interval }}"
+        "number_of_replicas": "{{ number_of_replicas | default(1) }}"
+        {%- if refresh_interval -%},
+        "refresh_interval": {{ refresh_interval | tojson }}
         {%- endif %}
+        {%- endif %}
+        {%- endif %}
+        {#- non-serverless-index-settings-marker-end #}
       }
     }
   }

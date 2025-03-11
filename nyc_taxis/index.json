@@ -8,8 +8,8 @@
     "index.number_of_replicas": {{number_of_replicas | default(0)}},
       {% endif %}
     "index.requests.cache.enable": false,
-    "index.mapping.source.mode": {{ source_mode | default("stored") | tojson }}
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
+    "index.mapping.source.mode": {{ source_mode | default("stored") | tojson }}
   },
   "mappings": {
     "properties": {

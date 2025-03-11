@@ -48,6 +48,16 @@ from shared.runners.reindex_data_stream import (
     StartReindexDataStream, WaitForReindexDataStream
 )
 
+async def setup_local_remote(es, params):
+    response = await es.cluster.state()
+    master_node = response["master_node"]
+    response = await es.nodes.info()
+    ip = response["nodes"][master_node]["transport_address"]
+    p_settings = {"cluster.remote.local.seeds": ip}
+    response = await es.cluster.put_settings(persistent=p_settings)
+    return {"weight": 1, "unit": "ops"}
+
+
 def register(registry):
     registry.register_param_source("initial-indices-source", InitialIndicesParamSource)
     registry.register_param_source("add-track-path", parameter_sources.add_track_path)
@@ -90,6 +100,8 @@ def register(registry):
     registry.register_runner("configure-remote-clusters", ConfigureRemoteClusters(), async_runner=True)
     registry.register_runner("configure-ccr", ConfigureCrossClusterReplication(), async_runner=True)
     registry.register_runner("multi-cluster-wrapper", MultiClusterWrapper(), async_runner=True)
+
+    registry.register_runner("setup-local-remote", setup_local_remote, async_runner=True)
 
     registry.register_runner("start-reindex-data-stream", StartReindexDataStream(), async_runner=True)
     registry.register_runner("wait-for-reindex-data-stream", WaitForReindexDataStream(), async_runner=True)

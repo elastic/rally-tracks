@@ -7,6 +7,7 @@
 {% set p_recovery_poll_timeout = (recovery_poll_timeout | default("1m")) %}
 {% set p_recovery_max_operations_count = (recovery_max_operations_count | default(16777216)) %}
 
+{% set p_index_mode = (index_mode | default("time_series")) %}
 {
   "version": 2,
   "description": "metricbeat information for elastic-app k8s cluster",

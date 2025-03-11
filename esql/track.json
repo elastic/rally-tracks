@@ -1,0 +1,61 @@
+{% import "rally.helpers" as rally with context %}
+{% set n_indices = (n_indices | default(5)) %}
+{% set n_fields = (n_fields | default(500)) %}
+{
+"version": 2,
+"description": "Indexes for JOIN tests",
+"indices": [
+
+{% for i in range(1, n_indices) %}
+{% set idx_name = "idx_"+(i|string) %}
+  {
+    "name": "{{idx_name}}",
+    "body": "idx_mapping{{i%20}}.json"
+  },
+{% endfor %}
+{% set idx_name = "idx_0" %}
+  {
+    "name": "{{idx_name}}",
+    "body": "idx_mapping0.json"
+  }
+],
+"corpora": [
+{% for i in range(1, n_indices) %}
+{% set idx_name = "idx_"+(i|string) %}
+{
+  "name": "{{idx_name}}",
+  "base-url": "https://rally-tracks.elastic.co/joins",
+  "documents": [
+    {
+      "target-index": "{{idx_name}}",
+      "source-file": "lookup_idx_1000_f10.json.bz2",
+      "#COMMENT": "Lookup index with 1000 documents and 1000 distinct keys (keyworks, \"0\"..\"999\")",
+      "document-count": 1000,
+      "compressed-bytes": 11229,
+      "uncompressed-bytes": 388790
+    }
+  ]
+},
+{% endfor %}
+{
+  "name": "idx_0",
+  "base-url": "https://rally-tracks.elastic.co/joins",
+  "documents": [
+      {
+        "target-index": "idx_0",
+        "source-file": "lookup_idx_1000_f10.json.bz2",
+        "#COMMENT": "Lookup index with 1000 documents and 1000 distinct keys (keyworks, \"0\"..\"999\")",
+        "document-count": 1000,
+        "compressed-bytes": 11229,
+        "uncompressed-bytes": 388790
+      }
+    ]
+  }
+],
+"operations": [
+{{ rally.collect(parts="operations/*.json") }}
+],
+"challenges": [
+{{ rally.collect(parts="challenges/*.json") }}
+]
+}

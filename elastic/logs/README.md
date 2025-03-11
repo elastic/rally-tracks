@@ -259,6 +259,7 @@ The following parameters are available:
 * `index_mode` (default: unset): What index mode to use. Accepted values: `standard` and `logs`. 
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
+* `codec` (default: unset): Configured the `index.codec` index setting, which controls how stored fields get stored / compressed.
 
 ### Querying parameters
 

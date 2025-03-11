@@ -7,6 +7,19 @@
   },
   "schedule": [
     {
+      "name": "set-reindex-data-stream-cluster-settings",
+      "operation": {
+        "operation-type": "put-settings",
+        "body": {
+          "transient": {
+            "migrate.max_concurrent_indices_reindexed_per_data_stream": {{ p_reindex_max_concurrent_indices | tojson }},
+            "migrate.data_stream_reindex_max_request_per_second": {{ p_reindex_max_requests_per_second | tojson }}
+          }
+        },
+        "include-in-reporting": false
+      }
+    },
+    {
       "name": "register-snapshot-repository",
       "operation": {
         "operation-type": "create-snapshot-repository",
@@ -14,7 +27,8 @@
         "body": {
           "type": {{ p_snapshot_repo_type | tojson }},
           "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
-        }
+        },
+        "include-in-reporting": false
       }
     },
     {
@@ -30,14 +44,16 @@
           "include_global_state": false,
           "rename_pattern": "(.+)",
           "rename_replacement": "$1{{ p_snapshot_rename_suffix }}"
-        }
+        },
+        "include-in-reporting": false
       }
     },
     {
-    "name": "wait-for-snapshot-recovery-{{ p_snapshot_name }}",
-    "operation": {
-      "operation-type": "wait-for-recovery",
-      "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+      "name": "wait-for-snapshot-recovery-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "wait-for-recovery",
+        "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }},
+        "include-in-reporting": false
       }
     },
     {
@@ -46,7 +62,8 @@
         "operation-type": "set-shards-datastream",
         "number-of-replicas": "{{ number_of_replicas | default(1) }}",
         "param-source": "datastream-source",
-        "data-stream": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+        "data-stream": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }},
+        "include-in-reporting": false
       }
     },
     {
@@ -54,7 +71,8 @@
       "operation": {
         "operation-type": "check-datastream",
         "param-source": "datastream-source",
-        "data-stream": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+        "data-stream": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }},
+        "include-in-reporting": false
       }
     },
     {

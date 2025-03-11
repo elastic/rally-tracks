@@ -83,13 +83,12 @@ function run_test {
 #
 
 
+#  esrally race --kill-running-processes --race-id="${RACE_ID}" \
+#    --test-mode --pipeline=benchmark-only --target-host=127.0.0.1:39200 --challenge="logging-snapshot-restore" --track-path="${PWD}/../logs" --on-error=abort
+
+
   esrally race --kill-running-processes --race-id="${RACE_ID}" \
     --track-params="local-data-stream-reindex-params.json" \
-    --test-mode --pipeline=benchmark-only --target-host=127.0.0.1:39200 --challenge="logging-snapshot-restore" --track-path="${PWD}/../logs" --on-error=abort
-
-
-  esrally race --kill-running-processes --race-id="${RACE_ID}" \
-    --track-params="reindex_data_stream:logs-redis.log-default" \
     --test-mode --pipeline=benchmark-only --target-host=127.0.0.1:39200 --challenge="logging-reindex-data-stream" --track-path="${PWD}/../logs" --on-error=abort
 
 

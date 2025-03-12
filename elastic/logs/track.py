@@ -32,6 +32,10 @@ from shared.runners import datastream, snapshot
 from shared.runners.bulk import RawBulkIndex
 from shared.runners.ilm import create_ilm
 from shared.runners.pipelines import create_pipeline
+from shared.runners.reindex_data_stream import (
+    StartReindexDataStream,
+    WaitForReindexDataStream
+)
 from shared.runners.remote_cluster import (
     ConfigureCrossClusterReplication,
     ConfigureRemoteClusters,
@@ -44,9 +48,6 @@ from shared.schedulers.indexing import TimestampThrottler
 from shared.schedulers.query import WorkflowScheduler
 from shared.track_processors import data_generator
 from shared.track_processors.track_id_generator import TrackIdGenerator
-from shared.runners.reindex_data_stream import (
-    StartReindexDataStream, WaitForReindexDataStream
-)
 
 async def setup_local_remote(es, params):
     response = await es.cluster.state()

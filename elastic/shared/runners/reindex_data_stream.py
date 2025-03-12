@@ -1,30 +1,23 @@
 import asyncio
 import copy
 
-from shared.utils.track import mandatory
 from esrally.driver.runner import Runner, runner_for, unwrap
+from shared.utils.track import mandatory
 
 """
 Runners for reindexing data streams and waiting on running reindex operations.
 """
 
+
 class StartReindexDataStream(Runner):
     async def __call__(self, es, params):
         data_stream = mandatory(params, "data-stream", self)
-        body = {
-            "source": {
-                "index": data_stream
-            },
-            "mode": "upgrade"
-        }
-        await es.perform_request(
-            method="POST",
-            path=f"/_migration/reindex",
-            body=body
-        )
+        body = {"source": {"index": data_stream}, "mode": "upgrade"}
+        await es.perform_request(method="POST", path=f"/_migration/reindex", body=body)
 
     def __repr__(self, *args, **kwargs):
         return "reindex-data-stream"
+
 class WaitForReindexDataStream(Runner):
 
     def __init__(self):
@@ -40,10 +33,7 @@ class WaitForReindexDataStream(Runner):
 
         done = False
         while not done:
-            response = await es.perform_request(
-                method="GET",
-                path=f"/_migration/reindex/{data_stream}/_status"
-            )
+            response = await es.perform_request(method="GET", path=f"/_migration/reindex/{data_stream}/_status")
             done = response.get("complete", False)
             if not done:
                 await asyncio.sleep(wait_period)

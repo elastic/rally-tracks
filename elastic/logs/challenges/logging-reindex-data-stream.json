@@ -13,8 +13,7 @@
         "body": {
           "transient": {
             "migrate.max_concurrent_indices_reindexed_per_data_stream": {{ p_reindex_max_concurrent_indices | tojson }},
-            "migrate.data_stream_reindex_max_request_per_second": {{ p_reindex_max_requests_per_second | tojson }},
-            "logger.org.elasticsearch": "DEBUG"
+            "migrate.data_stream_reindex_max_request_per_second": {{ p_reindex_max_requests_per_second | tojson }}
           }
         },
         "include-in-reporting": false

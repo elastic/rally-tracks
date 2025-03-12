@@ -19,10 +19,10 @@ class StartReindexDataStream(Runner):
         return "reindex-data-stream"
 
 class WaitForReindexDataStream(Runner):
-
     def __init__(self):
         super().__init__()
         self._percent_completed = 0.0
+
     @property
     def percent_completed(self):
         return self._percent_completed

@@ -18,6 +18,7 @@ class StartReindexDataStream(Runner):
     def __repr__(self, *args, **kwargs):
         return "reindex-data-stream"
 
+
 class WaitForReindexDataStream(Runner):
     def __init__(self):
         super().__init__()

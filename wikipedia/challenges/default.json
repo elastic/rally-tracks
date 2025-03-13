@@ -38,131 +38,63 @@
       "operation": "wait-until-merges-finish-after-index"
     },
     {
+      "name": "standalone-esql-match-search",
+      "operation": "query-esql-match-search",
+      "clients": {{ standalone_search_clients | default(20) | int }},
+      "time-period": {{ standalone_search_time_period | default(1) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(0) | int }}
+    },
+    {
+      "name": "standalone-query-match-search",
+      "operation": "query-match-search",
+      "clients": {{ standalone_search_clients | default(20) | int }},
+      "time-period": {{ standalone_search_time_period | default(1) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(0) | int }}
+    },
+    {
+      "name": "standalone-esql-qstr-search",
+      "operation": "query-esql-qstr-search",
+      "query-type": "match",
+      "clients": {{ standalone_search_clients | default(20) | int }},
+      "time-period": {{ standalone_search_time_period | default(1) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(0) | int }}
+    },
+    {
       "name": "standalone-query-string-search",
       "operation": "query-string-search",
       "clients": {{ standalone_search_clients | default(20) | int }},
-      "time-period": {{ standalone_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+      "time-period": {{ standalone_search_time_period | default(1) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(0) | int }}
     },
     {
-      "name": "create-default-search-application",
-      "operation": "create-default-search-application"
-    },
-    {
-      "name": "default-search-application-search",
-      "operation": "default-search-application-search",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name":"update-query-rules-settings",
-      "tags": ["setup"],
-      "operation": {
-        "operation-type": "raw-request",
-        "method": "PUT",
-        "path": "/_cluster/settings",
-        "body": {
-          "persistent": {
-            "xpack.applications.rules.max_rules_per_ruleset" : 1000
-          }
-        },
-        "include-in-reporting": false
-      }
-    },
-    {
-      "name": "create-query-ruleset-1",
-      "operation": "create-query-ruleset-1",
-      "ruleset_id": "ruleset_1",
-      "ruleset_size": 1
-    },
-    {
-      "name": "create-query-ruleset-10",
-      "operation": "create-query-ruleset-10",
-      "ruleset_id": "ruleset_10",
-      "ruleset_size": 10
-    },
-    {
-      "name": "create-query-ruleset-100",
-      "operation": "create-query-ruleset-100",
-      "ruleset_id": "ruleset_100",
-      "ruleset_size": 100
-    },
-    {
-      "name": "create-query-ruleset-1000",
-      "operation": "create-query-ruleset-1000",
-      "ruleset_id": "ruleset_1000",
-      "ruleset_size": 1000
-    },
-    {
-      "name": "query-rules-search-1",
-      "operation": "query-rules-search-1",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "query-rules-search-10",
-      "operation": "query-rules-search-10",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "query-rules-search-100",
-      "operation": "query-rules-search-100",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "query-rules-search-1000",
-      "operation": "query-rules-search-1000",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "pinned-search",
-      "operation": "pinned-search",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "parallel": {
-        "completed-by": "parallel-documents-indexing-query-string-search",
-        "tasks": [
-          {
-            "name": "parallel-documents-indexing-bulk",
-            "operation": "parallel-documents-indexing",
-            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
-            "warmup-time-period": {{ parallel_indexing_bulk_warmup_time_period | default(10) | int }},
-            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
-          },
-          {
-            "name": "parallel-documents-indexing-query-string-search",
-            "operation": "query-string-search",
-            "clients": {{ parallel_indexing_search_clients | default(20) | int }},
-            "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
-            "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}
-          }
-        ]
-      }
-    },
-    {
-      "name": "standalone-retriever-search",
-      "operation": "retriever-search",
+      "name": "standalone-esql-kql-search",
+      "operation": "query-esql-kql-search",
+      "query-type": "match",
       "clients": {{ standalone_search_clients | default(20) | int }},
-      "time-period": {{ standalone_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+      "time-period": {{ standalone_search_time_period | default(1) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(0) | int }}
     },
     {
-      "name": "standalone-retriever-search-with-rerank",
-      "operation": "retriever-search-with-rerank",
+      "name": "standalone-query-kql-search",
+      "operation": "query-kql-search",
       "clients": {{ standalone_search_clients | default(20) | int }},
-      "time-period": {{ standalone_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+      "time-period": {{ standalone_search_time_period | default(1) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(0) | int }}
+    },
+    {
+      "name": "standalone-esql-term-search",
+      "operation": "query-esql-term-search",
+      "query-type": "match",
+      "clients": {{ standalone_search_clients | default(20) | int }},
+      "time-period": {{ standalone_search_time_period | default(1) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(0) | int }}
+    },
+    {
+      "name": "standalone-query-term-search",
+      "operation": "query-term-search",
+      "clients": {{ standalone_search_clients | default(20) | int }},
+      "time-period": {{ standalone_search_time_period | default(1) | int }},
+      "warmup-time-period": {{ standalone_search_warmup_time_period | default(0) | int }}
     }
   ]
 }

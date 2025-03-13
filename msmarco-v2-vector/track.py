@@ -99,9 +99,18 @@ class KnnParamSource:
         self._cache = params.get("cache", False)
         self._params = params
         self._queries = []
-
+        self._test_mode = track.selected_challenge_or_default.parameters.get("test-mode", False)
         cwd = os.path.dirname(__file__)
-        with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
+
+        if self._test_mode:
+            queries_filename = QUERIES_FILENAME.replace(".json.bz2", "-test.json.bz2")
+            if not os.path.exists(os.path.join(cwd, queries_filename)):
+                self.logger.warning("Test mode enabled but test queries file not found, using default queries file")
+                queries_filename = QUERIES_FILENAME
+        else:
+            queries_filename = QUERIES_FILENAME
+
+        with bz2.open(os.path.join(cwd, queries_filename), "r") as queries_file:
             for vector_query in queries_file:
                 self._queries.append(json.loads(vector_query))
         self._iters = 0
@@ -161,8 +170,10 @@ class KnnRecallParamSource:
         }
 
 
-class KnnRecallRunner:
+class KnnRecallRunner(Runner):
+
     async def __call__(self, es, params):
+        self.logger = logging.getLogger(__name__)
         top_k = params["size"]
         num_candidates = params["num_candidates"]
         num_rescore = params["num_rescore"]
@@ -177,7 +188,16 @@ class KnnRecallRunner:
         exact_total = 0
         min_recall = top_k
         nodes_visited = []
-        with bz2.open(os.path.join(cwd, QUERIES_RECALL_FILENAME), "r") as queries_file:
+        if self.test_mode:
+            queries_recall_filename = QUERIES_RECALL_FILENAME.replace(".json.bz2", "-test.json.bz2")
+            if not os.path.exists(queries_recall_filename):
+                self.logger.warning(
+                    "Test mode enabled but test queries file not found %s, using default queries file", queries_recall_filename
+                )
+                queries_recall_filename = QUERIES_RECALL_FILENAME
+        else:
+            queries_recall_filename = QUERIES_RECALL_FILENAME
+        with bz2.open(os.path.join(cwd, queries_recall_filename), "r") as queries_file:
             for line in queries_file:
                 query = json.loads(line)
                 query_id = query["query_id"]
@@ -233,6 +253,7 @@ class KnnRecallRunner:
 
 
 def register(registry):
+    config = registry.config
     registry.register_param_source("knn-param-source", KnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
-    registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)
+    registry.register_runner("knn-recall", KnnRecallRunner(config=config), async_runner=True)

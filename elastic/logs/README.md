@@ -407,7 +407,7 @@ aggregation. The challenge targets a specific set of indices by way of an index 
 
 ### Reindex Data Stream (logging-reindex-data-stream)
 
-Restores a data stream from a 7.x snapshots and reindexes all indices into version 8.x. 
+Restores a data stream from 7.x snapshots and reindexes all indices into version 8.x. 
 The snapshot parameters are used to define the correct snapshot, with `restore_data_streams` being the data stream to reindex.
 This challenge also uses the following task specific parameters:
 * `reindex_max_concurrent_indices` (default: 1) The maximum number of data stream backing indices that will be reindexed at the same time.

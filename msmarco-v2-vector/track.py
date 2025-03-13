@@ -5,6 +5,8 @@ import os
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
+from esrally.driver.runner import Runner
+from esrally.track.params import ParamSource
 
 Qrels = Dict[str, Dict[str, int]]
 Results = Dict[str, Dict[str, float]]

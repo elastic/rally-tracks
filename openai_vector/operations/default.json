@@ -24,18 +24,31 @@
   "corpora": "openai-parallel-indexing",
   "bulk-size": {{parallel_indexing_bulk_size | default(500)}},
   "ingest-percentage": {{parallel_indexing_ingest_percentage | default(100)}}
-},
-{
-  "name": "knn-search-10-100",
-  "operation-type": "search",
-  "param-source": "knn-param-source",
-  "k": 10,
-  "num-candidates": 100
-},
-{
-  "name": "knn-search-100-1000",
-  "operation-type": "search",
-  "param-source": "knn-param-source",
-  "k": 100,
-  "num-candidates": 1000
 }
+{%- set p_search_ops = (search_ops | default([(10, 20, 0), (10, 20, 1), (10, 20, 2), (10, 50, 1), (10, 50, 2), (10, 100, 1), (100, 120, 1), (100, 120, 2), (100, 200, 1), (100, 200, 2), (100, 500, 1), (100, 500, 2)]))%}
+{%- for i in range(p_search_ops|length) %},
+{
+  {%- if p_search_ops[i][2] > 0 -%}
+    "name": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+  {%- else -%}
+    "name": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+  {%- endif -%},
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": {{p_search_ops[i][0]}},
+  "num-candidates": {{p_search_ops[i][1]}},
+  "oversample": {{p_search_ops[i][2]}}
+},
+{
+  {%- if p_search_ops[i][2] > 0 -%}
+    "name": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
+  {%- else -%}
+    "name": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
+  {%- endif -%},
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": {{p_search_ops[i][0]}},
+  "num-candidates": {{p_search_ops[i][1]}},
+  "oversample": {{p_search_ops[i][2]}}
+}
+{%- endfor %}

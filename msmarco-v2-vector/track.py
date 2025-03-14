@@ -1,12 +1,12 @@
 import bz2
 import csv
 import json
+import logging
 import os
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
 from esrally.driver.runner import Runner
-from esrally.track.params import ParamSource
 
 Qrels = Dict[str, Dict[str, int]]
 Results = Dict[str, Dict[str, float]]
@@ -92,6 +92,7 @@ class KnnParamSource:
     def __init__(self, track, params, **kwargs):
         # choose a suitable index: if there is only one defined for this track
         # choose that one, but let the user always override index
+        self.logger = logging.getLogger(__name__)
         if len(track.indices) == 1:
             default_index = track.indices[0].name
         else:
@@ -101,10 +102,10 @@ class KnnParamSource:
         self._cache = params.get("cache", False)
         self._params = params
         self._queries = []
-        self._test_mode = track.selected_challenge_or_default.parameters.get("test-mode", False)
+        self.test_mode = track.selected_challenge_or_default.parameters.get("test-mode", False)
         cwd = os.path.dirname(__file__)
 
-        if self._test_mode:
+        if self.test_mode:
             queries_filename = QUERIES_FILENAME.replace(".json.bz2", "-test.json.bz2")
             if not os.path.exists(os.path.join(cwd, queries_filename)):
                 self.logger.warning("Test mode enabled but test queries file not found, using default queries file")
@@ -116,7 +117,7 @@ class KnnParamSource:
             for vector_query in queries_file:
                 self._queries.append(json.loads(vector_query))
         self._iters = 0
-        self._maxIters = len(self._queries)
+        self._max_iters = len(self._queries)
         self.infinite = True
 
     def partition(self, partition_index, total_partitions):
@@ -142,7 +143,7 @@ class KnnParamSource:
             result["body"]["knn"]["filter"] = self._params["filter"]
 
         self._iters += 1
-        if self._iters >= self._maxIters:
+        if self._iters >= self._max_iters:
             self._iters = 0
         return result
 

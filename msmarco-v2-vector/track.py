@@ -6,6 +6,7 @@ import os
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
+
 from esrally.driver.runner import Runner
 
 Qrels = Dict[str, Dict[str, int]]
@@ -174,7 +175,6 @@ class KnnRecallParamSource:
 
 
 class KnnRecallRunner(Runner):
-
     async def __call__(self, es, params):
         self.logger = logging.getLogger(__name__)
         top_k = params["size"]

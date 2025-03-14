@@ -1,0 +1,149 @@
+
+    {
+      "name": "esql_apache_match_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE data_stream.dataset: \"apache.access\" AND http.response.status_code: 404 AND user_agent.name: \"Firefox\" AND @timestamp >= \"2022-04-14T20:53:58Z\" AND @timestamp < \"2022-04-14T21:08:58Z\" @timestamp | SORT @timestamp DESC | LIMIT 20"
+    },
+    {
+      "name": "esql_kafka_match_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE data_stream.dataset: \"kafka.log\" AND kafka.log.trace.class: \"java.io.IOException\" AND @timestamp >= \"2022-04-17T21:52:08Z\" AND @timestamp < \"2022-04-18T21:52:08Z\" @timestamp | SORT @timestamp DESC | LIMIT 500"
+    },
+    {
+      "name": "search_kafka_uery",
+      "operation-type": "search",
+      "index": "{{p_esql_target_prefix}}logs-*",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "exists": {
+                        "field": "kafka.log.trace.class"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              },
+              {
+                "match_phrase": {
+                  "kafka.log.trace.class": "java.io.IOException"
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "2022-04-17T21:52:08.615Z",
+                    "lte": "2022-04-18T21:52:08.615Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "size": 500
+      }
+    },
+    {
+      "name": "esql_qstr_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE qstr(\"*:java.lang.NullPointerException\") | LIMIT 500"
+    },
+    {
+      "name": "esql_kql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE kql(\"googlebigquery\") | LIMIT 500"
+    },
+    {
+      "name": "esql_postgres_qstr_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE postgresql.log.query IS NOT NULL AND qstr(\"copy pgbench_accounts from stdin\", {\"default_fields\":\"*\"}) AND event.duration >= 200000000 AND @timestamp >= \"2022-04-19T20:13:05Z\" AND @timestamp < \"2022-04-20T20:13:05Z\" | LIMIT 100"
+    },
+    {
+      "name": "search_postrgres_query",
+      "operation-type": "search",
+      "index": "{{p_esql_target_prefix}}logs-*",
+      "body": {
+        "size": 0,
+        "query": {
+           "bool": {
+            "filter": [
+              {
+                "bool": {
+                  "filter": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "exists": {
+                              "field": "postgresql.log.query"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    },
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "range": {
+                              "event.duration": {
+                                "gte": "200000000"
+                              }
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    },
+                    {
+                      "bool": {
+                        "must_not": {
+                          "multi_match": {
+                            "type": "phrase",
+                            "query": "copy pgbench_accounts from stdin",
+                            "lenient": true
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "exists": {
+                        "field": "event.duration"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "2022-04-19T20:13:05.675Z",
+                    "lte": "2022-04-20T20:13:05.675Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        }
+      }
+    }

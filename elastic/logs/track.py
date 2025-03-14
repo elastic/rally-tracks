@@ -32,6 +32,10 @@ from shared.runners import datastream, snapshot
 from shared.runners.bulk import RawBulkIndex
 from shared.runners.ilm import create_ilm
 from shared.runners.pipelines import create_pipeline
+from shared.runners.reindex_data_stream import (
+    StartReindexDataStream,
+    WaitForReindexDataStream,
+)
 from shared.runners.remote_cluster import (
     ConfigureCrossClusterReplication,
     ConfigureRemoteClusters,
@@ -100,3 +104,6 @@ def register(registry):
     registry.register_runner("multi-cluster-wrapper", MultiClusterWrapper(), async_runner=True)
 
     registry.register_runner("setup-local-remote", setup_local_remote, async_runner=True)
+
+    registry.register_runner("start-reindex-data-stream", StartReindexDataStream(), async_runner=True)
+    registry.register_runner("wait-for-reindex-data-stream", WaitForReindexDataStream(), async_runner=True)

@@ -35,6 +35,7 @@ from shared.runners.pipelines import create_pipeline
 from shared.runners.reindex_data_stream import (
     StartReindexDataStream,
     WaitForReindexDataStream,
+    RestoreIntoDataStream,
 )
 from shared.runners.remote_cluster import (
     ConfigureCrossClusterReplication,
@@ -107,3 +108,4 @@ def register(registry):
 
     registry.register_runner("start-reindex-data-stream", StartReindexDataStream(), async_runner=True)
     registry.register_runner("wait-for-reindex-data-stream", WaitForReindexDataStream(), async_runner=True)
+    registry.register_runner("restore-into-data-stream", RestoreIntoDataStream(), async_runner=True)

@@ -1,0 +1,64 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-create-large-data-stream",
+  "description": "Create large data stream by repeatedly restoring a small data stream",
+  "parameters": {
+    "generate-data": false
+  },
+  "schedule": [
+    {
+      "name": "set-reindex-data-stream-cluster-settings",
+      "operation": {
+        "operation-type": "put-settings",
+        "body": {
+          "transient": {
+            "migrate.max_concurrent_indices_reindexed_per_data_stream": {{ p_reindex_max_concurrent_indices | tojson }},
+            "migrate.data_stream_reindex_max_request_per_second": {{ p_reindex_max_requests_per_second | tojson }}
+          }
+        },
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "register-snapshot-repository",
+      "operation": {
+        "operation-type": "create-snapshot-repository",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "body": {
+          "type": {{ p_snapshot_repo_type | tojson }},
+          "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+        },
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "restore-into-{{ p_restore_data_streams }}",
+      "operation": {
+        "operation-type": "restore-into-data-stream",
+        "data-stream":  {{ p_restore_data_streams | tojson }},
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "num-times-to-repeat": 7
+      }
+    },
+    {
+      "name": "set-shards-data-streams",
+      "operation": {
+        "operation-type": "set-shards-datastream",
+        "number-of-replicas": "{{ number_of_replicas | default(1) }}",
+        "param-source": "datastream-source",
+        "data-stream":  {{ p_restore_data_streams | tojson }},
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "wait-for-recovered-data-streams",
+      "operation": {
+        "operation-type": "check-datastream",
+        "param-source": "datastream-source",
+        "data-stream":  {{ p_restore_data_streams | tojson }},
+        "include-in-reporting": false
+      }
+    }
+  ]
+}

@@ -2,12 +2,12 @@
     {
       "name": "esql_apache_match_query",
       "operation-type": "esql",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE data_stream.dataset: \"apache.access\" AND http.response.status_code: 404 AND user_agent.name: \"Firefox\" AND @timestamp >= \"2022-04-14T20:53:58Z\" AND @timestamp < \"2022-04-14T21:08:58Z\" @timestamp | SORT @timestamp DESC | LIMIT 20"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE data_stream.dataset: \"apache.access\" AND http.response.status_code: 404 AND user_agent.name: \"Firefox\" AND @timestamp >= \"2022-04-14T20:53:58Z\" AND @timestamp < \"2022-04-14T21:08:58Z\" | SORT @timestamp DESC | LIMIT 20"
     },
     {
       "name": "esql_kafka_match_query",
       "operation-type": "esql",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE data_stream.dataset: \"kafka.log\" AND kafka.log.trace.class: \"java.io.IOException\" AND @timestamp >= \"2022-04-17T21:52:08Z\" AND @timestamp < \"2022-04-18T21:52:08Z\" @timestamp | SORT @timestamp DESC | LIMIT 500"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE data_stream.dataset: \"kafka.log\" AND kafka.log.trace.class: \"java.io.IOException\" AND @timestamp >= \"2022-04-17T21:52:08Z\" AND @timestamp < \"2022-04-18T21:52:08Z\" | SORT @timestamp DESC | LIMIT 500"
     },
     {
       "name": "search_kafka_uery",
@@ -55,7 +55,7 @@
     {
       "name": "esql_qstr_query",
       "operation-type": "esql",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE qstr(\"*:java.lang.NullPointerException\") | LIMIT 500"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE qstr(\"java.lang.NullPointerException\", {\"default_field\": \"*\"}) | LIMIT 500"
     },
     {
       "name": "esql_kql_query",
@@ -65,7 +65,7 @@
     {
       "name": "esql_postgres_qstr_query",
       "operation-type": "esql",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE postgresql.log.query IS NOT NULL AND qstr(\"copy pgbench_accounts from stdin\", {\"default_fields\":\"*\"}) AND event.duration >= 200000000 AND @timestamp >= \"2022-04-19T20:13:05Z\" AND @timestamp < \"2022-04-20T20:13:05Z\" | LIMIT 100"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE postgresql.log.query IS NOT NULL AND qstr(\"copy pgbench_accounts from stdin\", {\"default_field\":\"*\"}) AND event.duration >= 200000000 AND @timestamp >= \"2022-04-19T20:13:05Z\" AND @timestamp < \"2022-04-20T20:13:05Z\" | LIMIT 100"
     },
     {
       "name": "search_postrgres_query",

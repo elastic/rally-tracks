@@ -12,6 +12,7 @@
         "operation-type": "put-settings",
         "body": {
           "transient": {
+            "indices.lifecycle.poll_interval": "10d",
             "migrate.max_concurrent_indices_reindexed_per_data_stream": {{ p_reindex_max_concurrent_indices | tojson }},
             "migrate.data_stream_reindex_max_request_per_second": {{ p_reindex_max_requests_per_second | tojson }}
           }
@@ -39,7 +40,7 @@
         "repository": {{ p_snapshot_repo_name | tojson }},
         "snapshot": {{ p_snapshot_name | tojson }},
         "include-in-reporting": false,
-        "num-times-to-repeat": 50
+        "num-times-to-repeat": {{ p_reindex_num_times_to_repeat | tojson }}
       }
     },
     {

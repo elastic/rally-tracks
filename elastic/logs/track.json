@@ -61,6 +61,7 @@
 {% set p_skip_fleet_globals = (skip_fleet_globals | default(false) ) %}
 {% set p_reindex_max_concurrent_indices = (reindex_max_concurrent_indices | default(1) ) %}
 {% set p_reindex_max_requests_per_second = (reindex_max_requests_per_second | default(1000) ) %}
+{% set p_reindex_num_times_to_repeat = (reindex_num_times_to_repeat | default(1) ) %}
 
 {% set p_recovery_target = (recovery_target | default('logs-k8-application.log-default') ) %}
 {% set p_recovery_from_seq_no = (recovery_seq_no | default(0) ) %}

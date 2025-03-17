@@ -6,7 +6,7 @@
     "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
   },
   "schedule": [
-    {% include "tasks/index-setup.json" %},
+    {% include "tasks/many-shards-setup.json" %},
     {% if bulk_start_date and bulk_end_date %}
       {
         "name": "bulk-index",
@@ -39,7 +39,8 @@
           },
           "retry-until-success": true,
           "include-in-reporting": false
-        }
+        },
+        "tags": ["wait"]
       },
       {
         "operation": {
@@ -68,15 +69,6 @@
         "operation": "refresh"
       }
       {%- endif %}
-      {# non-serverless-index-statistics-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%},
-      {
-        "name": "compression-stats",
-        "operation": {
-          "operation-type": "compression-statistics",
-          "param-source": "create-datastream-source"
-        }
-      }
-      {%- endif -%}{# non-serverless-index-statistics-marker-end #}
       ,
     {% endif %}
     {

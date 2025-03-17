@@ -1,6 +1,6 @@
 {% import "rally.helpers" as rally %}
 {
-  "name": "logging-create-large-data-stream",
+  "name": "logging-reindex-large-data-stream",
   "description": "Create large data stream by repeatedly restoring a small data stream",
   "parameters": {
     "generate-data": false
@@ -38,7 +38,8 @@
         "data-stream":  {{ p_restore_data_streams | tojson }},
         "repository": {{ p_snapshot_repo_name | tojson }},
         "snapshot": {{ p_snapshot_name | tojson }},
-        "num-times-to-repeat": 7
+        "include-in-reporting": false,
+        "num-times-to-repeat": 50
       }
     },
     {
@@ -58,6 +59,20 @@
         "param-source": "datastream-source",
         "data-stream":  {{ p_restore_data_streams | tojson }},
         "include-in-reporting": false
+      }
+    },
+    {
+      "name": "start-data-stream-reindex-{{ p_restore_data_streams~p_snapshot_rename_suffix }}",
+      "operation": {
+        "operation-type": "start-reindex-data-stream",
+        "data-stream":  {{ p_restore_data_streams | tojson }}
+      }
+    },
+    {
+      "name": "wait-for-reindex-data-stream-{{ p_restore_data_streams~p_snapshot_rename_suffix }}",
+      "operation": {
+        "operation-type": "wait-for-reindex-data-stream",
+        "data-stream":  {{ p_restore_data_streams | tojson }}
       }
     }
   ]

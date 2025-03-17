@@ -22,11 +22,6 @@ class StartReindexDataStream(Runner):
 class WaitForReindexDataStream(Runner):
     def __init__(self):
         super().__init__()
-        self._percent_completed = 0.0
-
-    @property
-    def percent_completed(self):
-        return self._percent_completed
 
     async def __call__(self, es, params):
         data_stream = mandatory(params, "data-stream", self)
@@ -41,7 +36,6 @@ class WaitForReindexDataStream(Runner):
 
             total_requiring_upgrade = response.get("total_indices_requiring_upgrade")
             successes = response.get("successes")
-            self._percent_completed = successes / total_requiring_upgrade
 
     def __repr__(self, *args, **kwargs):
         return "wait-for-reindex-data-stream"
@@ -50,11 +44,6 @@ class WaitForReindexDataStream(Runner):
 class RestoreIntoDataStream(Runner):
     def __init__(self):
         super().__init__()
-        self._percent_completed = 0.0
-
-    @property
-    def percent_completed(self):
-        return self._percent_completed
 
     async def __call__(self, es, params):
         repo = mandatory(params, "repository", self)
@@ -64,15 +53,17 @@ class RestoreIntoDataStream(Runner):
 
         # first restore without any rename
         await self.restore(es, repo, snapshot, data_stream, "(.+)", '$1')
-        self._percent_completed += (1 / num_repeats)
 
         # since initial already has one copy, only replace n-1 times
         for num in range(num_repeats-1):
             copied_data_stream_name = data_stream + f"-copy-{num}"
             res = await self.restore(es, repo, snapshot, data_stream, "(.+)", f'$1-copy-{num}')
-            print(res)
+
+            # first rollover so can remove write index from data stream
+            await es.perform_request(method="POST", path=f"/{copied_data_stream_name}/_rollover")
+
+            # then swap each backing index into main data stream
             for index in res["snapshot"]["indices"]:
-                #for index in res.get("indices"):
                 body = {
                     "actions": [
                         {
@@ -89,8 +80,11 @@ class RestoreIntoDataStream(Runner):
                         }
                     ]
                 }
-                await es.perform_request(method="POST", path=f"/_data_stream/modify", body=body)
-            self._percent_completed += (1 / num_repeats)
+                await es.perform_request(method="POST", path=f"/_data_stream/_modify", body=body)
+                print(f"competed restore: {num}")
+
+            # finally, delete the copied data stream
+            await es.perform_request(method="DELETE", path=f"/_data_stream/{copied_data_stream_name}")
 
     def restore(self, es, repo, snapshot, data_stream, rename_pattern, rename_replacement):
         return es.snapshot.restore(

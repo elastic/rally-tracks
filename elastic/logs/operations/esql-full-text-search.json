@@ -10,7 +10,7 @@
       "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE data_stream.dataset: \"kafka.log\" AND kafka.log.trace.class: \"java.io.IOException\" AND @timestamp >= \"2022-04-17T21:52:08Z\" AND @timestamp < \"2022-04-18T21:52:08Z\" | SORT @timestamp DESC | LIMIT 500"
     },
     {
-      "name": "search_kafka_uery",
+      "name": "search_kafka_query",
       "operation-type": "search",
       "index": "{{p_esql_target_prefix}}logs-*",
       "body": {

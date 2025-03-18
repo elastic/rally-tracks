@@ -73,37 +73,37 @@
     {% endif %}
     {
       "operation": "esql_apache_match_query",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {
       "operation": "esql_kafka_match_query",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {
       "operation": "esql_qstr_query",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {
       "operation": "esql_kql_query",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {
       "operation": "esql_postgres_qstr_query",
-      "clients": 1,
-      "warmup-iterations": 5,
-      "iterations": 20,
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     }{%- if build_flavor != "serverless" or serverless_operator == true %},
     {
@@ -112,16 +112,16 @@
     },
     {
       "operation": "search_kafka_query",
-      "clients": 1,
-      "warmup-iterations": 10,
-      "iterations": 50,
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {
       "operation": "search_postrgres_query",
-      "clients": 1,
-      "warmup-iterations": 10,
-      "iterations": 50,
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {

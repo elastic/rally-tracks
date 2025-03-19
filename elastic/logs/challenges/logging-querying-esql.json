@@ -72,61 +72,82 @@
       ,
     {% endif %}
     {
-      "operation": "esql_apache_match_query",
+      "operation": "disable_query_cache",
+      "tags": ["esql", "settings"]
+    },
+    {
+      "operation": "apache_match_esql_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {
-      "operation": "esql_kafka_match_query",
+      "operation": "kafka_match_esql_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {
-      "operation": "esql_qstr_query",
+      "operation": "qstr_esql_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {
-      "operation": "esql_kql_query",
+      "operation": "kql_esql_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     },
     {
-      "operation": "esql_postgres_qstr_query",
+      "operation": "syslog_qstr_esql_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "search"]
     }{%- if build_flavor != "serverless" or serverless_operator == true %},
     {
-      "operation": "disable_query_cache",
-      "tags": ["esql", "settings"]
-    },
-    {
-      "operation": "search_kafka_query",
+      "operation": "apache_match_query_dsl_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "search"]
+      "tags": ["search"]
     },
     {
-      "operation": "search_postrgres_query",
+      "operation": "kafka_query_dsl_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "search"]
+      "tags": ["search"]
+    },
+    {
+      "operation": "qstr_query_dsl_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["search"]
+    },
+    {
+      "operation": "kql_query_dsl_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["search"]
+    },
+    {
+      "operation": "syslog_query_dsl_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["search"]
     },
     {
       "operation": "enable_query_cache",
-      "tags": ["esql", "settings"]
+      "tags": ["settings"]
     }{%- endif %}
   ]
 }

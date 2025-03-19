@@ -1,0 +1,93 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-reindex-data-stream",
+  "description": "Reindex data streams",
+  "parameters": {
+    "generate-data": false
+  },
+  "schedule": [
+    {
+      "name": "set-reindex-data-stream-cluster-settings",
+      "operation": {
+        "operation-type": "put-settings",
+        "body": {
+          "transient": {
+            "migrate.max_concurrent_indices_reindexed_per_data_stream": {{ p_reindex_max_concurrent_indices | tojson }},
+            "migrate.data_stream_reindex_max_request_per_second": {{ p_reindex_max_requests_per_second | tojson }}
+          }
+        },
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "register-snapshot-repository",
+      "operation": {
+        "operation-type": "create-snapshot-repository",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "body": {
+          "type": {{ p_snapshot_repo_type | tojson }},
+          "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+        },
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "recover-snapshot-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "restore-snapshot",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": false,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "rename_pattern": "(.+)",
+          "rename_replacement": "$1{{ p_snapshot_rename_suffix }}"
+        },
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "wait-for-snapshot-recovery-{{ p_snapshot_name }}",
+      "operation": {
+        "operation-type": "wait-for-recovery",
+        "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }},
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "set-shards-data-streams",
+      "operation": {
+        "operation-type": "set-shards-datastream",
+        "number-of-replicas": "{{ number_of_replicas | default(1) }}",
+        "param-source": "datastream-source",
+        "data-stream": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }},
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "wait-for-recovered-data-streams",
+      "operation": {
+        "operation-type": "check-datastream",
+        "param-source": "datastream-source",
+        "data-stream": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }},
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "start-data-stream-reindex-{{ p_restore_data_streams~p_snapshot_rename_suffix }}",
+      "operation": {
+        "operation-type": "start-reindex-data-stream",
+        "data-stream":  {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+      }
+    },
+    {
+      "name": "wait-for-reindex-data-stream-{{ p_restore_data_streams~p_snapshot_rename_suffix }}",
+      "operation": {
+        "operation-type": "wait-for-reindex-data-stream",
+        "data-stream":  {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+      }
+    }
+  ]
+}

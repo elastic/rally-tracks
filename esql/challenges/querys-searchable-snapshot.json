@@ -6,17 +6,17 @@
     "generate-data": false
   },
   "schedule": [
-    {
-      "name": "register-snapshot-repository",
-      "operation": {
-        "operation-type": "create-snapshot-repository",
-        "repository": "{{ p_snapshot_repo_name }}",
-        "body": {
-          "type": {{ p_snapshot_repo_type | tojson }},
-    "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
-  }
-  }
-  },
+      {
+        "name": "register-snapshot-repository",
+        "operation": {
+            "operation-type": "create-snapshot-repository",
+            "repository": "{{ p_snapshot_repo_name }}",
+            "body": {
+                "type": {{ p_snapshot_repo_type | tojson }},
+                "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+            }
+       }
+    },
     {
       "name": "mount-searchable-snapshot",
       "operation": {

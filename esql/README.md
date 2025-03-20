@@ -29,7 +29,7 @@ This track allows to overwrite the following parameters using `--track-params`:
     "client": "default",
     "base_path": snapshot_base_path | default("observability/logging"),
     "max_snapshot_bytes_per_sec": -1,
-    "readonly": snapshot_repo_readonly | default(false)
+    "readonly": snapshot_repo_readonly | default(true)
 }
 ```
 Setting that can also be set with separate parameters is `snapshot_bucket`, `snapshot_base_path` and `snapshot_repo_readonly`

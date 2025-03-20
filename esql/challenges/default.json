@@ -43,6 +43,20 @@
           "tags": ["setup"]
         },
         {
+          "operation": "from_idx_limit_1",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": 100
+        },
+        {
+          "operation": "from_idx_limit_10",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": 100
+        },
+        {
           "operation": "from_idx_limit_1000",
           "tags": ["esql_large_schema"],
           "clients":  {{query_clients | default(1)}},
@@ -56,15 +70,22 @@
           "warmup-iterations": 10,
           "iterations": 100
         },
+
+
         {
-          "operation": "from_idx_limit_1",
+          "operation": "from_idx_limit_1_drop_null",
           "tags": ["esql_large_schema"],
           "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 100
         },
-
-
+        {
+          "operation": "from_idx_limit_10_drop_null",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": 100
+        },
         {
           "operation": "from_idx_limit_1000_drop_null",
           "tags": ["esql_large_schema"],
@@ -79,17 +100,17 @@
           "warmup-iterations": 10,
           "iterations": 100
         },
+
+
         {
-          "operation": "from_idx_limit_1_drop_null",
+          "operation": "search_limit_1",
           "tags": ["esql_large_schema"],
           "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 100
         },
-
-
         {
-          "operation": "search_limit_1",
+          "operation": "search_limit_10",
           "tags": ["esql_large_schema"],
           "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,

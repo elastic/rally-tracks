@@ -239,7 +239,7 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
 
         try:
             return {
-                "query": f'FROM {self._index_name} METADATA _score | WHERE { query_body } | LIMIT { self._size } | KEEP title, _score | SORT _score DESC',
+                "query": f'FROM {self._index_name} METADATA _score | WHERE { query_body } | KEEP title, _score | SORT _score DESC | LIMIT { self._size }',
             }
 
         except StopIteration:

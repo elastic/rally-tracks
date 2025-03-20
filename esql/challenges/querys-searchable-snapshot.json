@@ -1,0 +1,38 @@
+{
+  "name": "query-searchable-snapshot",
+  "description": "Tests for searchable snapshots",
+  "default": false,
+  "parameters": {
+    "generate-data": false
+  },
+  "schedule": [
+    {
+      "name": "register-snapshot-repository",
+      "operation": {
+        "operation-type": "create-snapshot-repository",
+        "repository": "{{ p_snapshot_repo_name }}",
+        "body": {
+          "type": {{ p_snapshot_repo_type | tojson }},
+    "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+  }
+  }
+  },
+    {
+      "name": "mount-searchable-snapshot",
+      "operation": {
+        "operation-type": "mount-searchable-snapshot",
+        "repository": "{{ p_snapshot_repo_name }}",
+        "snapshot": "{{ p_snapshot_name }}",
+        "index_pattern": ".ds-logs-*",
+        "rename_pattern": "^.ds-",
+        "rename_replacement": "",
+        "storage": "shared_cache",
+        "ignore_index_settings": ["index.hidden"]
+      }
+    },
+    {
+      "operation": "from_logs_limit_1",
+      "tags": ["setup"]
+    }
+  ]
+}

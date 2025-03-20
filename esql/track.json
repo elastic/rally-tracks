@@ -1,6 +1,18 @@
 {% import "rally.helpers" as rally with context %}
 {% set n_indices = (n_indices | default(5)) %}
 {% set n_fields = (n_fields | default(500)) %}
+
+{% set p_snapshot_repo_name = (snapshot_repo_name | default("logging")) %}
+{% set p_snapshot_repo_type = (snapshot_repo_type | default("s3")) %}
+{% set p_snapshot_repo_settings = (snapshot_repo_settings | default({
+"bucket": snapshot_bucket | default("test-bucket"),
+"client": "default",
+"base_path": snapshot_base_path | default("observability/logging"),
+"max_snapshot_bytes_per_sec": -1,
+"readonly": snapshot_repo_readonly | default(false)
+}))%}
+{% set p_snapshot_name = (snapshot_name | default("logging-test")) %}
+
 {
 "version": 2,
 "description": "Indexes for JOIN tests",

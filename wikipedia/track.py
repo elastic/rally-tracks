@@ -107,6 +107,7 @@ class SearchApplicationSearchParamSource(QueryIteratorParamSource):
             self._queries_iterator = iter(self._sample_queries)
             return self.params()
 
+
 class CreateQueryRulesetParamSource(ParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
@@ -223,8 +224,6 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
         self._query_type = self._params["query-type"]
 
     def params(self):
-
-
         query = next(self._queries_iterator)
         if self._query_type == "query-string":
             query_body = f'QSTR("{ query }", {{"default_field": "{ self._search_fields }" }})'
@@ -239,12 +238,13 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
 
         try:
             return {
-                "query": f'FROM {self._index_name} METADATA _score | WHERE { query_body } | KEEP title, _score | SORT _score DESC | LIMIT { self._size }',
+                "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | KEEP title, _score | SORT _score DESC | LIMIT { self._size }",
             }
 
         except StopIteration:
             self._queries_iterator = iter(self._sample_queries)
             return self.params()
+
 
 class QueryParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
@@ -254,47 +254,16 @@ class QueryParamSource(QueryIteratorParamSource):
         self._query_type = self._params["query-type"]
 
     def params(self):
-
         try:
             query = next(self._queries_iterator)
             if self._query_type == "query-string":
                 query_body = {"query_string": {"query": query, "default_field": self._params["search-fields"]}}
             elif self._query_type == "kql":
-                query_body = { "kql": {"query": f'{ self._params["search-fields"] }:"{ query }"'} }
+                query_body = {"kql": {"query": f'{ self._params["search-fields"] }:"{ query }"'}}
             elif self._query_type == "match":
-                query_body = {
-                    "bool": {
-                        "should": [
-                            {
-                                "match": {
-                                    "title": query
-                                }
-                            },
-                            {
-                                "match": {
-                                    "content": query
-                                }
-                            }
-                        ]
-                    }
-                }
+                query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
             elif self._query_type == "term":
-                query_body = {
-                    "bool": {
-                        "should": [
-                            {
-                                "term": {
-                                    "title": query
-                                }
-                            },
-                            {
-                                "term": {
-                                    "content": query
-                                }
-                            }
-                        ]
-                    }
-                }
+                query_body = {"bool": {"should": [{"term": {"title": query}}, {"term": {"content": query}}]}}
             else:
                 raise ValueError("Unknown query type: " + self._query_type)
 

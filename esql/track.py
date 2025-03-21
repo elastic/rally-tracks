@@ -15,7 +15,40 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from shared.runners import snapshot
+import fnmatch
+import re
+
+
+async def mount(es, params):
+    repository_name = params["repository"]
+    snapshot_name = params["snapshot"]
+    index_pattern = params.get("index_pattern", "*")
+    rename_pattern = params.get("rename_pattern", "(.*)")
+    rename_replacement = params.get("rename_replacement", "\\1")
+    ignore_index_settings = params.get("ignore_index_settings")
+    storage = params.get("storage")
+    query_params = params.get("query_params", {})
+    snapshots = await es.snapshot.get(repository=repository_name, snapshot=snapshot_name)
+
+    for snapshot in snapshots["snapshots"]:
+        for index in snapshot["indices"]:
+            if fnmatch.fnmatch(index, index_pattern):
+                body = {"index": index}
+                renamed_index = re.sub(rename_pattern, rename_replacement, index)
+                if renamed_index != index:
+                    body = {"index": index, "renamed_index": renamed_index}
+
+                if ignore_index_settings:
+                    body["ignore_index_settings"] = ignore_index_settings
+
+                await es.searchable_snapshots.mount(
+                    repository=repository_name,
+                    snapshot=snapshot_name,
+                    body=body,
+                    storage=storage,
+                    wait_for_completion=True,
+                )
+
 
 def register(registry):
-  registry.register_runner("mount-searchable-snapshot", snapshot.mount, async_runner=True)
+  registry.register_runner("mount-searchable-snapshot", mount, async_runner=True)

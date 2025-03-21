@@ -165,11 +165,11 @@ class QueryParamsSource:
             raise Exception(f"The query strategy \\`{self._query_strategy}]\\` is not implemented")
 
         self._iters = (self._iters + 1) % len(self._queries)
+        query["track_total_hits"] = self._track_total_hits
+        query["size"] = self._size
         return {
             "index": self._index_name,
             "cache": self._cache,
-            "size": self._size,
-            "track_total_hits": self._track_total_hits,
             "body": query,
         }
 

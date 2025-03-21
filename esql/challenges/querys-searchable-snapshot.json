@@ -32,7 +32,10 @@
     },
     {
       "operation": "from_logs_limit_1",
-      "tags": ["setup"]
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": 10000
     }
   ]
 }

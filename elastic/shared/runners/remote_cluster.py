@@ -215,10 +215,16 @@ class MultiClusterWrapper(Runner):
             if cluster_name in params.get("ignore-clusters", []):
                 self.logger.info(f"Multi cluster wrapped runner [{base_runner}] ignoring cluster [{cluster_name}].")
                 continue
-            runner_for_op = unwrap(runner_for(base_runner))
+            runner_for_op = runner_for(base_runner)
             self.logger.info(f"Multi cluster wrapped runner [{base_runner}] executing on cluster [{cluster_name}].")
-            # just call base runner op, don't mess with 'return' values
-            coroutines.append(runner_for_op(cluster_client, params))
+            # determine type of runner and call accordingly assuming the presence of MultiClientWrapper (!)
+            # see https://github.com/elastic/rally/pull/488 and https://github.com/elastic/rally/pull/1563
+            #
+            # don't mess with 'return' values
+            if not hasattr(unwrap(runner_for_op), "multi_cluster"):
+                coroutines.append(runner_for_op({"default": cluster_client}, params))
+            else:
+                coroutines.append(runner_for_op(multi_es, params))
         await asyncio.gather(*coroutines)
 
     def __repr__(self, *args, **kwargs):

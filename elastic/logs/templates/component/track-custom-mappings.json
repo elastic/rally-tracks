@@ -1,14 +1,6 @@
 {
   "template" : {
     "mappings" : {
-      "runtime": {
-        "rally.doc_size": {
-          "type": "long"
-        },
-        "rally.message_size": {
-          "type": "long"
-        }
-      },
       "properties" : {
         "event": {
           "properties": {
@@ -19,6 +11,16 @@
             "ingested": {
               "type": "date",
               "format": "strict_date_optional_time"
+            }
+          }
+        },
+        "rally": {
+          "properties" : {
+            "doc_size": {
+              "type": "long"
+            },
+            "message_size": {
+              "type": "long"
             }
           }
         }

@@ -39,7 +39,6 @@
       {
         "name": "parallel-ingest-{{loop.index}}-c{{p_as_ingest_clients[i]}}-b{{p_ingest_bulk_size}}",
         "clients": {{p_as_ingest_clients[i]}},
-        "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
         "operation": {
           "operation-type": "bulk",
           "bulk-size": {{p_ingest_bulk_size}},

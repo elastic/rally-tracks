@@ -2,7 +2,7 @@
   "settings": {
     {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       {% if preload_pagecache %}
-    "index.store.preload": [ "vec", "vex", "vem"],
+    "index.store.preload": [ "vec", "vex", "vem", "veq", "veqm", "veb", "vebm"],
       {% endif %}
     "index.number_of_shards": {{number_of_shards | default(1)}},
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
@@ -26,7 +26,7 @@
         "index": true,
         "similarity": "dot_product",
         "index_options": {
-          "type": {{ vector_index_type | default("hnsw") | tojson }}
+          "type": {{ vector_index_type | default("int8_hnsw") | tojson }}
         }
       }
     }

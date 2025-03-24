@@ -213,7 +213,6 @@ class RetrieverParamSource(QueryIteratorParamSource):
             self._queries_iterator = iter(self._sample_queries)
             return self.params()
 
-
 # TODO Add other queries, check default fields for search. Compare them with other DSL queries
 class EsqlSearchParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
@@ -261,6 +260,8 @@ class QueryParamSource(QueryIteratorParamSource):
             elif self._query_type == "kql":
                 query_body = {"kql": {"query": f'{ self._params["search-fields"] }:"{ query }"'}}
             elif self._query_type == "match":
+                query_body = {"match": {"content": query}}
+            elif self._query_type == "multi_match":
                 query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
             elif self._query_type == "term":
                 query_body = {"bool": {"should": [{"term": {"title": query}}, {"term": {"content": query}}]}}
@@ -273,17 +274,16 @@ class QueryParamSource(QueryIteratorParamSource):
 
         return {
             "body": {
-                "_source": {"includes": ["title"]},
                 "query": query_body,
+                "size": self._params["size"],
             },
-            "size": self._params["size"],
             "index": self._index_name,
             "cache": self._cache,
         }
 
 
 def register(registry):
-    registry.register_param_source("query-search", QueryParamSource)
+    registry.register_param_source("query-string-search", QueryParamSource)
     registry.register_param_source("create-search-application-param-source", CreateSearchApplicationParamSource)
     registry.register_param_source("search-application-search-param-source", SearchApplicationSearchParamSource)
     registry.register_param_source("create-query-ruleset-param-source", CreateQueryRulesetParamSource)

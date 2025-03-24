@@ -46,7 +46,7 @@
 }
   {%- else %}
 {
-  "name": "search-{{loop.index}}-c{{p_as_clients[i]}}-s{{p_search_size}}-t{{p_as_search_target_throughputs[i]}}",
+  "name": "search-{{loop.index}}-c{{p_as_search_clients[i]}}-s{{p_search_size}}-t{{p_as_search_target_throughputs[i]}}",
   "clients": {{p_as_search_clients[i]}},
   "operation": {
     "operation-type": "search",

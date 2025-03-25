@@ -19,16 +19,11 @@
     },
     {
       "name": "mount-searchable-snapshot",
-      "include-in-reporting": false,
-      {% if p_esql_ccs_skip_remote_clusters %}
-      "operation-type": "raw-request",
-      {% else %}
-      "operation-type": "multi-cluster-wrapper",
-      "base-operation-type": "raw-request",
-      "ignore-clusters": ["default"],
-      {% endif %}
-      "method": "POST",
-      "path": "/_snapshot/logsdb-scaling-repository/logging-test/_mount"
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "POST",
+        "path": "/_snapshot/logsdb-scaling-repository/logging-test/_mount"
+      }
     },
     {
       "name": "check-cluster-health",

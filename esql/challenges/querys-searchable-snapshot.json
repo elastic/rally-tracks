@@ -19,23 +19,77 @@
     },
     {
       "name": "mount-searchable-snapshot",
-      "operation": {
-        "operation-type": "mount-searchable-snapshot",
-        "repository": "{{ p_snapshot_repo_name }}",
-        "snapshot": "{{ p_snapshot_name }}",
-        "index_pattern": ".ds-logs-*",
-        "rename_pattern": "^.ds-",
-        "rename_replacement": "",
-        "storage": "shared_cache",
-        "ignore_index_settings": ["index.hidden"]
-      }
+      "include-in-reporting": false,
+      {% if p_esql_ccs_skip_remote_clusters %}
+      "operation-type": "raw-request",
+      {% else %}
+      "operation-type": "multi-cluster-wrapper",
+      "base-operation-type": "raw-request",
+      "ignore-clusters": ["default"],
+      {% endif %}
+      "method": "POST",
+      "path":, "/_snapshot/logsdb-scaling-repository/logging-test/_mount"
     },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "_all",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      },
+      "tags": ["setup"]
+    },
+    {
+      "operation": "index-base",
+      "clients": {{bulk_indexing_clients | default(8)}},
+      "tags": ["setup"]
+    },
+
     {
       "operation": "from_logs_limit_1",
       "tags": ["esql_large_schema"],
       "clients":  {{query_clients | default(1)}},
       "warmup-iterations": 10,
-      "iterations": 10000
+      "iterations": 100
+    },
+    {
+      "operation": "from_star_limit_1",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": 100
+    },
+    {
+      "operation": "from_logs_limit_10",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": 100
+    },
+    {
+      "operation": "from_star_limit_10",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": 100
+    },
+    {
+      "operation": "from_logs_limit_1000",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": 100
+    },
+    {
+      "operation": "from_star_limit_1000",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": 100
     }
   ]
 }

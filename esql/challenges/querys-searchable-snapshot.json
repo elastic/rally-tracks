@@ -52,6 +52,13 @@
       "iterations": 100
     },
     {
+      "operation": "from_idx_limit_1",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": 100
+    },
+    {
       "operation": "from_star_limit_1",
       "tags": ["esql_large_schema"],
       "clients":  {{query_clients | default(1)}},
@@ -66,6 +73,14 @@
       "iterations": 100
     },
     {
+      "operation": "from_idx_limit_10",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": 100
+    },
+
+    {
       "operation": "from_star_limit_10",
       "tags": ["esql_large_schema"],
       "clients":  {{query_clients | default(1)}},
@@ -79,6 +94,14 @@
       "warmup-iterations": 10,
       "iterations": 100
     },
+    {
+      "operation": "from_idx_limit_1000",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": 100
+    },
+
     {
       "operation": "from_star_limit_1000",
       "tags": ["esql_large_schema"],

@@ -27,6 +27,11 @@
       "operation-type": "esql",
       "query": "FROM idx_* | limit 1"
     },
+    {
+      "name": "from_idx_limit_10",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 10"
+    },
 
     {
     "name": "from_idx_limit_1000_drop_null",

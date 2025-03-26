@@ -51,4 +51,4 @@ async def mount(es, params):
 
 
 def register(registry):
-  registry.register_runner("mount-searchable-snapshot", mount, async_runner=True)
+    registry.register_runner("mount-searchable-snapshot", mount, async_runner=True)

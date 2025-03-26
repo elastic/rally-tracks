@@ -103,13 +103,13 @@ class QueryParamsSource:
     def params(self):
         query_obj = self._queries[self._iters]
         query = generate_query(query_obj["text"], self._title_field, self._title_boost, self._text_field, self._text_boost)
+        query["track_total_hits"] = self._track_total_hits
+        query["size"] = self._size
 
         self._iters = (self._iters + 1) % len(self._queries)
         return {
             "index": self._index_name,
             "cache": self._cache,
-            "size": self._size,
-            "track_total_hits": self._track_total_hits,
             "body": query,
         }
 

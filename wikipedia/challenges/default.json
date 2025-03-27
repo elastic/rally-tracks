@@ -39,7 +39,7 @@
       },
       {
         "name": "standalone-query-string-search",
-        "operation": "query-string-search",
+        "operation": "query-search",
         "clients": {{ standalone_search_clients | default(20) | int }},
         "time-period": {{ standalone_search_time_period | default(300) | int }},
         "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
@@ -142,7 +142,7 @@
             },
             {
               "name": "parallel-documents-indexing-query-string-search",
-              "operation": "query-string-search",
+              "operation": "query-search",
               "clients": {{ parallel_indexing_search_clients | default(20) | int }},
               "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
               "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}

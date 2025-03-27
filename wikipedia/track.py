@@ -213,6 +213,7 @@ class RetrieverParamSource(QueryIteratorParamSource):
             self._queries_iterator = iter(self._sample_queries)
             return self.params()
 
+
 # TODO Add other queries, check default fields for search. Compare them with other DSL queries
 class EsqlSearchParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
@@ -283,7 +284,7 @@ class QueryParamSource(QueryIteratorParamSource):
 
 
 def register(registry):
-    registry.register_param_source("query-string-search", QueryParamSource)
+    registry.register_param_source("query-search", QueryParamSource)
     registry.register_param_source("create-search-application-param-source", CreateSearchApplicationParamSource)
     registry.register_param_source("search-application-search-param-source", SearchApplicationSearchParamSource)
     registry.register_param_source("create-query-ruleset-param-source", CreateQueryRulesetParamSource)

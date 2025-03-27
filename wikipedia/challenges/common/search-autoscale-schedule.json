@@ -35,7 +35,7 @@
   "clients": {{p_as_search_clients[i]}},
   "operation": {
     "operation-type": "search",
-    "param-source": "query-string-search",
+    "param-source": "query-search",
     "query-type": "match",
     "size" : {{p_search_size}},
     "field" : "content",
@@ -50,7 +50,7 @@
   "clients": {{p_as_search_clients[i]}},
   "operation": {
     "operation-type": "search",
-    "param-source": "query-string-search",
+    "param-source": "query-search",
     "query-type": "match",
     "size" : {{p_search_size}},
     "field" : "content",

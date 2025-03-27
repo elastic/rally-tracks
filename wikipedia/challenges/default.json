@@ -167,8 +167,16 @@
     ]
   },
   {
+    "name": "esql-full-text-functions",
+    "description": "Indexes and executes ES|QL and Query DSL full text functions queries",
+    "default": false,
+    "schedule": [
+      {{ rally.collect(parts="common/esql-full-text-functions.json") }}
+    ]
+  },
+  {
     "name": "ingest-autoscale",
-    "description": "Bulk index with configurable steps",
+    "description": "Benchmark bulk indexing with configurable steps",
     "default": false,
     "schedule": [
       {{ rally.collect(parts="common/ingest-autoscale-schedule.json") }}
@@ -176,7 +184,7 @@
   },
   {
     "name": "search-autoscale",
-    "description": "Search index with configurable steps",
+    "description": "Benchmark search queries with configurable scaling steps",
     "default": false,
     "schedule": [
       {{ rally.collect(parts="common/search-autoscale-schedule.json") }}
@@ -184,7 +192,7 @@
   },
   {
     "name": "ingest-search-autoscale",
-    "description": "Search and bulk in parallel with configurable steps",
+    "description": "Benchmark concurrent queries and bulk indexing with configurable scaling steps",
     "default": false,
     "schedule": [
       {{ rally.collect(parts="common/ingest-search-autoscale-schedule.json") }}

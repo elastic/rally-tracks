@@ -37,7 +37,7 @@
   "operation": "query-esql-match-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "time-period": {{ standalone_search_time_period | default(300) | int }},
-  "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }},
+  "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }}
 },
 {
   "name": "standalone-query-match-search",

@@ -17,7 +17,8 @@
         }
         {#- non-serverless-index-settings-marker-start #}
         {%- if build_flavor != "serverless" or serverless_operator == true %},
-        "number_of_routing_shards": "30"
+        "number_of_routing_shards": "30",
+        "refresh_interval": {{ refresh_interval | default("5s") | tojson }}
         {%- endif %}
         {#- non-serverless-index-settings-marker-end #}
         {%- if disable_pipelines is not true %},

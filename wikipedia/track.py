@@ -17,11 +17,16 @@ SEARCH_APPLICATION_ROOT_ENDPOINT: str = "/_application/search_application"
 QUERY_RULES_ENDPOINT: str = "/_query_rules"
 
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
+DEFAULT_SEED = hash(__name__)
 
 
-def query_samples(k: int, random_seed: int | None = None) -> list[str]:
+def query_samples(k: int, seed: int | None = None) -> list[str]:
     queries: list[str] = []
     probabilities: list[float] = []
+
+    if seed is None:
+        seed = DEFAULT_SEED
+    rand = random.Random(seed)
 
     with open(QUERIES_FILENAME) as queries_file:
         queries_reader = csv.reader(queries_file)
@@ -36,10 +41,7 @@ def query_samples(k: int, random_seed: int | None = None) -> list[str]:
         # This would raise StopIteration later when iterating queries using itertools.cycle.
         raise ValueError(f"No entries found in file '{QUERIES_FILENAME}'")
 
-    if random_seed is not None:
-        random.seed(random_seed)
-
-    return random.choices(queries, weights=probabilities, k=k)
+    return rand.choices(queries, weights=probabilities, k=k)
 
 
 # ids file was created with the following command: grep _index pages-1k.json | jq .index._id | tr -d '"' | grep -v null > ids.txt
@@ -83,7 +85,7 @@ class QueryRulesetParams:
 class RandomQueriesParamSource(ParamSource, metaclass=abc.ABCMeta):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
-        self._queries_it = itertools.cycle(query_samples(k=self._params.get("batch_size", 100000), random_seed=self._params.get("seed")))
+        self._queries_it = itertools.cycle(query_samples(k=self._params.get("batch_size", 100000), seed=self._params.get("seed")))
 
     def query(self):
         try:

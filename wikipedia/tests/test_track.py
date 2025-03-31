@@ -110,12 +110,12 @@ def test_QueryParamSource_params():
             "cache": True,
             "index": "dummy",
         }
-        for query in track.query_samples(2, 321)
+        for query in track.query_samples(2)
     ] * 2  # It will iterate this twice.
 
     source = track.QueryParamSource(
         track=DummyTrack(),
-        params={"batch_size": 2, "seed": 321, "query-type": "query-string", "search-fields": ["<search-fields>"], "size": 2},
+        params={"batch_size": 2, "query-type": "query-string", "search-fields": ["<search-fields>"], "size": 2},
     )
     got = [source.params() for _ in want]
     assert got == want

@@ -1,10 +1,11 @@
+from __future__ import annotations
+
+import abc
 import csv
-import math
+import itertools
 import random
 import re
-from os import getcwd
 from os.path import dirname
-from typing import Iterator, List
 
 from esrally.track.params import ParamSource
 
@@ -18,21 +19,31 @@ QUERY_RULES_ENDPOINT: str = "/_query_rules"
 QUERY_CLEAN_REXEXP = regexp = re.compile("[^0-9a-zA-Z]+")
 
 
-def query_samples(k: int, random_seed: int = None) -> List[str]:
-    with open(QUERIES_FILENAME) as queries_file:
-        csv_reader = csv.reader(queries_file)
-        next(csv_reader)
-        queries_with_probabilities = list(tuple(line) for line in csv_reader)
+def query_samples(k: int, random_seed: int | None = None) -> list[str]:
+    queries: list[str] = []
+    probabilities: list[float] = []
 
-        queries = [QUERY_CLEAN_REXEXP.sub(" ", query).lower() for query, _ in queries_with_probabilities]
-        probabilities = [float(probability) for _, probability in queries_with_probabilities]
+    with open(QUERIES_FILENAME) as queries_file:
+        queries_reader = csv.reader(queries_file)
+        # It skips the file header
+        next(queries_reader)
+        # It reads the file road by road
+        for query, probability in queries_reader:
+            queries.append(QUERY_CLEAN_REXEXP.sub(" ", query).lower())
+            probabilities.append(float(probability))
+
+    if not queries:
+        # This would raise StopIteration later when iterating queries using itertools.cycle.
+        raise ValueError(f"No entries found in file '{QUERIES_FILENAME}'")
+
+    if random_seed is not None:
         random.seed(random_seed)
 
-        return random.choices(queries, weights=probabilities, k=k)
+    return random.choices(queries, weights=probabilities, k=k)
 
 
 # ids file was created with the following command: grep _index pages-1k.json | jq .index._id | tr -d '"' | grep -v null > ids.txt
-def ids_samples() -> List[str]:
+def ids_samples() -> list[str]:
     with open(SAMPLE_IDS_FILENAME, "r") as file:
         ids = {line.strip() for line in file}
     for i in range(100):
@@ -69,43 +80,44 @@ class QueryRulesetParams:
         self.ruleset_size = params.get("ruleset_size")
 
 
-class QueryIteratorParamSource(ParamSource):
+class RandomQueriesParamSource(ParamSource, metaclass=abc.ABCMeta):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
-        self._batch_size = self._params.get("batch_size", 100000)
-        self._random_seed = self._params.get("seed", None)
-        self._sample_queries = query_samples(self._batch_size, self._random_seed)
-        self._queries_iterator = None
+        self._queries_it = itertools.cycle(query_samples(k=self._params.get("batch_size", 100000), random_seed=self._params.get("seed")))
+
+    def query(self):
+        try:
+            return next(self._queries_it)
+        except StopIteration:
+            # After using itertools.cycle this can only happen when query list is empty.
+            raise RuntimeError("queries sequence is empty")
 
     def size(self):
         return None
 
     def partition(self, partition_index, total_partitions):
-        if self._queries_iterator is None:
-            self._queries_iterator = iter(self._sample_queries)
         return self
 
+    @abc.abstractmethod
+    def params(self):
+        raise NotImplemented
 
-class SearchApplicationSearchParamSource(QueryIteratorParamSource):
+
+class SearchApplicationSearchParamSource(RandomQueriesParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self.search_application_params = SearchApplicationParams(track, params)
 
     def params(self):
-        try:
-            query = next(self._queries_iterator)
-            return {
-                "method": "POST",
-                "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
-                "body": {
-                    "params": {
-                        "query_string": query,
-                    },
+        return {
+            "method": "POST",
+            "path": f"{SEARCH_APPLICATION_ROOT_ENDPOINT}/{self.search_application_params.name}/_search",
+            "body": {
+                "params": {
+                    "query_string": self.query(),
                 },
-            }
-        except StopIteration:
-            self._queries_iterator = iter(self._sample_queries)
-            return self.params()
+            },
+        }
 
 
 class CreateQueryRulesetParamSource(ParamSource):
@@ -131,61 +143,51 @@ class CreateQueryRulesetParamSource(ParamSource):
         return {"method": "PUT", "path": f"{QUERY_RULES_ENDPOINT}/{self.query_ruleset_params.ruleset_id}", "body": {"rules": rules}}
 
 
-class QueryRulesSearchParamSource(QueryIteratorParamSource):
+class QueryRulesSearchParamSource(RandomQueriesParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self.query_ruleset_params = QueryRulesetParams(track, params)
 
     def params(self):
-        try:
-            query = next(self._queries_iterator)
-            return {
-                "method": "POST",
-                "path": "/_search",
-                "body": {
-                    "query": {
-                        "rule": {
-                            "match_criteria": {"rule_key": random.choice(["match", "no-match"])},
-                            "ruleset_ids": [self.query_ruleset_params.ruleset_id],
-                            "organic": {"query_string": {"query": query, "default_field": self._params["search-fields"]}},
-                        }
-                    },
-                    "size": self._params["size"],
+        return {
+            "method": "POST",
+            "path": "/_search",
+            "body": {
+                "query": {
+                    "rule": {
+                        "match_criteria": {"rule_key": random.choice(["match", "no-match"])},
+                        "ruleset_ids": [self.query_ruleset_params.ruleset_id],
+                        "organic": {"query_string": {"query": self.query(), "default_field": self._params["search-fields"]}},
+                    }
                 },
-            }
-        except StopIteration:
-            self._queries_iterator = iter(self._sample_queries)
-            return self.params()
+                "size": self._params["size"],
+            },
+        }
 
 
-class PinnedSearchParamSource(QueryIteratorParamSource):
+class PinnedSearchParamSource(RandomQueriesParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self.query_ruleset_params = QueryRulesetParams(track, params)
         self.ids = ids_samples()
 
     def params(self):
-        try:
-            query = next(self._queries_iterator)
-            return {
-                "method": "POST",
-                "path": "/_search",
-                "body": {
-                    "query": {
-                        "pinned": {
-                            "organic": {"query_string": {"query": query, "default_field": self._params["search-fields"]}},
-                            "ids": [random.choice(self.ids)],
-                        }
-                    },
-                    "size": self._params["size"],
+        return {
+            "method": "POST",
+            "path": "/_search",
+            "body": {
+                "query": {
+                    "pinned": {
+                        "organic": {"query_string": {"query": self.query(), "default_field": self._params["search-fields"]}},
+                        "ids": [random.choice(self.ids)],
+                    }
                 },
-            }
-        except StopIteration:
-            self._queries_iterator = iter(self._sample_queries)
-            return self.params()
+                "size": self._params["size"],
+            },
+        }
 
 
-class RetrieverParamSource(QueryIteratorParamSource):
+class RetrieverParamSource(RandomQueriesParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
@@ -195,27 +197,21 @@ class RetrieverParamSource(QueryIteratorParamSource):
         self._size = params.get("size", 20)
 
     def params(self):
-        standard_retriever = {
-            "standard": {"query": {"query_string": {"query": next(self._queries_iterator), "default_field": self._search_fields}}}
-        }
+        standard_retriever = {"standard": {"query": {"query_string": {"query": self.query(), "default_field": self._search_fields}}}}
 
         retriever = standard_retriever
         if self._rerank:
             retriever = {self._reranker: {"retriever": standard_retriever, "field": self._search_fields, "rank_window_size": self._size}}
 
-        try:
-            return {
-                "method": "POST",
-                "path": f"/{self._index_name}/_search",
-                "body": {"retriever": retriever, "size": self._size},
-            }
-        except StopIteration:
-            self._queries_iterator = iter(self._sample_queries)
-            return self.params()
+        return {
+            "method": "POST",
+            "path": f"/{self._index_name}/_search",
+            "body": {"retriever": retriever, "size": self._size},
+        }
 
 
 # TODO Add other queries, check default fields for search. Compare them with other DSL queries
-class EsqlSearchParamSource(QueryIteratorParamSource):
+class EsqlSearchParamSource(RandomQueriesParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
@@ -224,29 +220,23 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
         self._query_type = self._params["query-type"]
 
     def params(self):
-        try:
-            query = next(self._queries_iterator)
-            if self._query_type == "query-string":
-                query_body = f'QSTR("{ query }", {{"default_field": "{ self._search_fields }" }})'
-            elif self._query_type == "match":
-                query_body = f'MATCH(title, "{ query }") OR MATCH(content, "{ query }")'
-            elif self._query_type == "kql":
-                query_body = f'KQL("{ self._search_fields }:{ query }")'
-            elif self._query_type == "term":
-                query_body = f'TERM(title, "{ query }") OR TERM(content, "{ query }")'
-            else:
-                raise ValueError("Unknown query type: " + self._query_type)
-
-            return {
-                "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | KEEP title, _score | SORT _score DESC | LIMIT { self._size }",
-            }
-
-        except StopIteration:
-            self._queries_iterator = iter(self._sample_queries)
-            return self.params()
+        query = self.query()
+        if self._query_type == "query-string":
+            query_body = f'QSTR("{ query }", {{"default_field": "{ self._search_fields }" }})'
+        elif self._query_type == "match":
+            query_body = f'MATCH(title, "{ query }") OR MATCH(content, "{ query }")'
+        elif self._query_type == "kql":
+            query_body = f'KQL("{ self._search_fields }:{ query }")'
+        elif self._query_type == "term":
+            query_body = f'TERM(title, "{ query }") OR TERM(content, "{ query }")'
+        else:
+            raise ValueError("Unknown query type: " + self._query_type)
+        return {
+            "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | KEEP title, _score | SORT _score DESC | LIMIT { self._size }",
+        }
 
 
-class QueryParamSource(QueryIteratorParamSource):
+class QueryParamSource(RandomQueriesParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
@@ -254,24 +244,19 @@ class QueryParamSource(QueryIteratorParamSource):
         self._query_type = self._params["query-type"]
 
     def params(self):
-        try:
-            query = next(self._queries_iterator)
-            if self._query_type == "query-string":
-                query_body = {"query_string": {"query": query, "default_field": self._params["search-fields"]}}
-            elif self._query_type == "kql":
-                query_body = {"kql": {"query": f'{ self._params["search-fields"] }:"{ query }"'}}
-            elif self._query_type == "match":
-                query_body = {"match": {"content": query}}
-            elif self._query_type == "multi_match":
-                query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
-            elif self._query_type == "term":
-                query_body = {"bool": {"should": [{"term": {"title": query}}, {"term": {"content": query}}]}}
-            else:
-                raise ValueError("Unknown query type: " + self._query_type)
-
-        except StopIteration:
-            self._queries_iterator = iter(self._sample_queries)
-            return self.params()
+        query = self.query()
+        if self._query_type == "query-string":
+            query_body = {"query_string": {"query": query, "default_field": self._params["search-fields"]}}
+        elif self._query_type == "kql":
+            query_body = {"kql": {"query": f'{ self._params["search-fields"] }:"{ query }"'}}
+        elif self._query_type == "match":
+            query_body = {"match": {"content": query}}
+        elif self._query_type == "multi_match":
+            query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
+        elif self._query_type == "term":
+            query_body = {"bool": {"should": [{"term": {"title": query}}, {"term": {"content": query}}]}}
+        else:
+            raise ValueError("Unknown query type: " + self._query_type)
 
         return {
             "body": {

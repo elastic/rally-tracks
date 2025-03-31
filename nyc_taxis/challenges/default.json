@@ -931,9 +931,8 @@
           "operation": {
             "operation-type": "force-merge",
             "index": "nyc_taxis",
-            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
-            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
-            {%- endif %}
+            "request-timeout": 7200,
+            "max-num-segments": {{ force_merge_max_num_segments | tojson | default(5) }}
           }
         },
         {

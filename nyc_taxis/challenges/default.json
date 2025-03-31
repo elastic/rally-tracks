@@ -926,7 +926,7 @@
           "operation": "refresh",
           "tags": ["setup"]
         },
-        {% if p_include_force_merge %},
+        {% if p_include_force_merge %}
         {
           "operation": {
             "operation-type": "force-merge",

@@ -224,19 +224,19 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
         self._query_type = self._params["query-type"]
 
     def params(self):
-        query = next(self._queries_iterator)
-        if self._query_type == "query-string":
-            query_body = f'QSTR("{ query }", {{"default_field": "{ self._search_fields }" }})'
-        elif self._query_type == "match":
-            query_body = f'MATCH(title, "{ query }") OR MATCH(content, "{ query }")'
-        elif self._query_type == "kql":
-            query_body = f'KQL("{ self._search_fields }:{ query }")'
-        elif self._query_type == "term":
-            query_body = f'TERM(title, "{ query }") OR TERM(content, "{ query }")'
-        else:
-            raise ValueError("Unknown query type: " + self._query_type)
-
         try:
+            query = next(self._queries_iterator)
+            if self._query_type == "query-string":
+                query_body = f'QSTR("{ query }", {{"default_field": "{ self._search_fields }" }})'
+            elif self._query_type == "match":
+                query_body = f'MATCH(title, "{ query }") OR MATCH(content, "{ query }")'
+            elif self._query_type == "kql":
+                query_body = f'KQL("{ self._search_fields }:{ query }")'
+            elif self._query_type == "term":
+                query_body = f'TERM(title, "{ query }") OR TERM(content, "{ query }")'
+            else:
+                raise ValueError("Unknown query type: " + self._query_type)
+
             return {
                 "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | KEEP title, _score | SORT _score DESC | LIMIT { self._size }",
             }

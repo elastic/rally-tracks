@@ -220,7 +220,7 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
         self._search_fields = self._params["search-fields"]
-        self._size = params.get("size", 20)
+        self._size = params.get("size", 10)
         self._query_type = self._params["query-type"]
 
     def params(self):
@@ -250,7 +250,8 @@ class QueryParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
-        self._cache = params.get("cache", True)
+        self._cache = params.get("cache", False)
+        self._size = params.get("size", 10)
         self._query_type = self._params["query-type"]
 
     def params(self):
@@ -275,8 +276,8 @@ class QueryParamSource(QueryIteratorParamSource):
             "body": {
                 "_source": {"includes": ["title"]},
                 "query": query_body,
+                "size": self._params["size"],
             },
-            "size": self._params["size"],
             "index": self._index_name,
             "cache": self._cache,
         }

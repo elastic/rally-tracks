@@ -160,7 +160,7 @@
   "name": "query-match-search",
   "operation-type": "search",
   "param-source": "query-search",
-  "query-type": "match",
+  "query-type": "multi_match",
   "size" : {{ query_string_search_page_size | default(20) | int }},
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },

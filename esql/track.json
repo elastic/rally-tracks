@@ -12,6 +12,9 @@
 "readonly": snapshot_repo_readonly | default(true)
 }))%}
 {% set p_snapshot_name = (snapshot_name | default("logging-test")) %}
+{% set p_restore_data_streams = (restore_data_streams | default("logs-*")) %}
+{% set p_snapshot_metadata = (snapshot_metadata | default({}))%}
+{% set p_snapshot_rename_suffix = (snapshot_rename_suffix | default("") ) %}
 
 {
 "version": 2,

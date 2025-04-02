@@ -18,11 +18,19 @@
        }
     },
     {
-      "name": "mount-searchable-snapshot",
+      "name": "recover-snapshot-on-local-cluster",
       "operation": {
-        "operation-type": "raw-request",
-        "method": "POST",
-        "path": "/_snapshot/logsdb-scaling-repository/logging-test/_restore"
+        "operation-type": "restore-snapshot",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": false,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "rename_pattern": "(.+)",
+          "rename_replacement": "$1{{ p_snapshot_rename_suffix }}"
+        }
       }
     },
     {

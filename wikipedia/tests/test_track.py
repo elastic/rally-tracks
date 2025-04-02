@@ -12,7 +12,7 @@ def test_RandomQueriesParamSource_query():
     """It tests DummyRandomQueriesParamSource.query() will return the same random sequence twice by calling N*2 times query method."""
     want = track.query_samples(3, 123) * 2
 
-    source = DummyRandomQueriesParamSource(track=None, params={"batch_size": 3, "seed": 123})
+    source = DummyRandomQueriesParamSource(track=None, params={"batch_size": 3})
     got = [source.query() for _ in want]
     assert got == want
 
@@ -29,7 +29,7 @@ def test_SearchApplicationSearchParamSource_params():
         for query in track.query_samples(2, 321)
     ] * 2  # It will iterate this twice.
 
-    source = track.SearchApplicationSearchParamSource(DummyTrack(), params={"batch_size": 2, "seed": 321})
+    source = track.SearchApplicationSearchParamSource(DummyTrack(), params={"batch_size": 2})
     got = [source.params() for _ in want]
     assert got == want
 
@@ -54,7 +54,7 @@ def test_QueryRulesSearchParamSource_params():
     ] * 2  # It will iterate this twice.
 
     source = track.QueryRulesSearchParamSource(
-        track=DummyTrack(), params={"batch_size": 2, "seed": 321, "search-fields": ["<search-field>"], "size": 10}
+        track=DummyTrack(), params={"batch_size": 2, "search-fields": ["<search-field>"], "size": 10}
     )
     got = [source.params() for _ in want]
     assert want == got
@@ -76,9 +76,7 @@ def test_PinnedSearchParamSource_params():
         for query in track.query_samples(2, 321)
     ] * 2  # It will iterate this twice.
 
-    source = track.PinnedSearchParamSource(
-        track=DummyTrack(), params={"batch_size": 2, "seed": 321, "search-fields": ["<search-field>"], "size": 10}
-    )
+    source = track.PinnedSearchParamSource(track=DummyTrack(), params={"batch_size": 2, "search-fields": ["<search-field>"], "size": 10})
     got = [source.params() for _ in want]
     assert got == want
 
@@ -96,9 +94,7 @@ def test_RetrieverParamSource_params():
         for query in track.query_samples(2, 321)
     ] * 2  # It will iterate this twice.
 
-    source = track.RetrieverParamSource(
-        track=DummyTrack(), params={"batch_size": 2, "seed": 321, "search-fields": ["<search-field>"], "size": 10}
-    )
+    source = track.RetrieverParamSource(track=DummyTrack(), params={"batch_size": 2, "search-fields": ["<search-field>"], "size": 10})
     got = [source.params() for _ in want]
     assert got == want
 

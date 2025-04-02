@@ -24,10 +24,6 @@ def query_samples(k: int, seed: int | None = None) -> list[str]:
     queries: list[str] = []
     probabilities: list[float] = []
 
-    if seed is None:
-        seed = DEFAULT_SEED
-    rand = random.Random(seed)
-
     with open(QUERIES_FILENAME) as queries_file:
         queries_reader = csv.reader(queries_file)
         # It skips the file header
@@ -41,7 +37,9 @@ def query_samples(k: int, seed: int | None = None) -> list[str]:
         # This would raise StopIteration later when iterating queries using itertools.cycle.
         raise ValueError(f"No entries found in file '{QUERIES_FILENAME}'")
 
-    return rand.choices(queries, weights=probabilities, k=k)
+    if seed is None:
+        seed = DEFAULT_SEED
+    return random.Random(seed).choices(queries, weights=probabilities, k=k)
 
 
 # ids file was created with the following command: grep _index pages-1k.json | jq .index._id | tr -d '"' | grep -v null > ids.txt

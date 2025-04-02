@@ -251,7 +251,6 @@ class QueryParamSource(QueryIteratorParamSource):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
         self._cache = params.get("cache", False)
-        self._size = params.get("size")
         self._query_type = self._params["query-type"]
 
     def params(self):
@@ -262,6 +261,8 @@ class QueryParamSource(QueryIteratorParamSource):
             elif self._query_type == "kql":
                 query_body = {"kql": {"query": f'{ self._params["search-fields"] }:"{ query }"'}}
             elif self._query_type == "match":
+                query_body = {"match": {"content": query}}
+            elif self._query_type == "multi_match":
                 query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
             elif self._query_type == "term":
                 query_body = {"bool": {"should": [{"term": {"title": query}}, {"term": {"content": query}}]}}

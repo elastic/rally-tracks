@@ -1,0 +1,64 @@
+{
+  "name": "delete-index",
+  "operation": {
+    "operation-type": "delete-index"
+  }
+},
+{
+  "name": "create-index",
+  "operation": {
+    "operation-type": "create-index"
+  }
+},
+{
+  "name": "check-cluster-health",
+  "operation": "check-cluster-health"
+},
+{
+  "name": "initial-ingest",
+  "clients": {{ initial_ingest_clients | default(4) | int}},
+  "operation": {
+    "operation-type": "bulk",
+    "bulk-size": {{ initial_ingest_bulk_size | default(100) | int}},
+    "ingest-percentage": {{initial_ingest_percentage | default(100) | int}}
+  }
+}
+{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600,600,600,600,600]))%}
+{%- set p_as_time_periods = (as_time_periods | default([1800,1800,1800,1800,1800]))%}
+{%- set p_as_search_clients = (as_search_clients | default([1,2,4,8,16]))%}
+{%- set p_as_search_target_throughputs = (as_search_target_throughputs | default([-1,-1,-1,-1,-1]))%}
+{%- set p_search_size = (search_size | default(10))%}
+{%- for i in range(p_as_warmup_time_periods|length) %},
+  {%- if p_as_search_target_throughputs[i] < 0 %}
+{
+  "name": "search-{{loop.index}}-c{{p_as_search_clients[i]}}-s{{p_search_size}}",
+  "clients": {{p_as_search_clients[i]}},
+  "operation": {
+    "operation-type": "search",
+    "param-source": "query-search",
+    "query-type": "match",
+    "size" : {{p_search_size}},
+    "field" : "content",
+    "looped": true
+  },
+  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+  "time-period": {{p_as_time_periods[i]}}
+}
+  {%- else %}
+{
+  "name": "search-{{loop.index}}-c{{p_as_search_clients[i]}}-s{{p_search_size}}-t{{p_as_search_target_throughputs[i]}}",
+  "clients": {{p_as_search_clients[i]}},
+  "operation": {
+    "operation-type": "search",
+    "param-source": "query-search",
+    "query-type": "match",
+    "size" : {{p_search_size}},
+    "field" : "content",
+    "looped": true
+  },
+  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+  "time-period": {{p_as_time_periods[i]}},
+  "target-throughput": {{p_as_search_target_throughputs[i]}}
+}
+  {%- endif %}
+{%- endfor %}

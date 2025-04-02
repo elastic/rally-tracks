@@ -20,6 +20,13 @@
       "ingest-percentage": 100
     },
     {
+      "name": "index-lookup-100k",
+      "operation-type": "bulk",
+      "indices": ["lookup_idx_100000_f10"],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": 100
+    },
+    {
       "name": "index-lookup-100k_x10",
       "operation-type": "bulk",
       "indices": ["lookup_idx_100000_f10_x10"],

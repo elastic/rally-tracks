@@ -113,7 +113,6 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
   - `as_search_clients` (default: [1,2,4,8,16])
   - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
 
-
 ### License
 
 We use the same license for the data as the original data: [CC-SA-3.0](http://creativecommons.org/licenses/by-sa/3.0/).

@@ -275,6 +275,7 @@ class QueryParamSource(QueryIteratorParamSource):
 
         return {
             "body": {
+                "_source": {"includes": ["title"]},
                 "query": query_body,
                 "size": self._params["size"],
             },

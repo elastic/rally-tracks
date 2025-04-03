@@ -19,6 +19,7 @@ import copy
 from unittest import mock
 
 import pytest
+from esrally.driver.runner import MultiClientRunner
 from shared.runners.remote_cluster import (
     ConfigureCrossClusterReplication,
     ConfigureRemoteClusters,
@@ -468,7 +469,7 @@ class TestMultiClusterWrapper:
 
     @pytest.mark.asyncio
     @mock.patch("shared.runners.remote_cluster.runner_for")
-    async def test_wraps_correctly(self, mocked_runner_for, setup_es, setup_params):
+    async def test_wraps_single_cluster_runner_correctly(self, mocked_runner_for, setup_es, setup_params):
         class UnitTestSingleClusterRunner:
             async def __call__(self, es, params):
                 es.test_method(params["base-runner-param"])
@@ -477,8 +478,37 @@ class TestMultiClusterWrapper:
             def __str__(self):
                 return "UnitTestSingleClusterRunner"
 
-        base_runner = UnitTestSingleClusterRunner()
-        mocked_runner_for.return_value = base_runner
+        scr = UnitTestSingleClusterRunner()
+        # mimicks Rally runner internals, ugly but necessary
+        mocked_runner_for.return_value = MultiClientRunner(scr, str(scr), lambda es: es["default"])
+
+        mcw = MultiClusterWrapper()
+        r = await mcw(setup_es, setup_params)
+
+        for cluster_name, _ in setup_es.items():
+            # skipped clusters
+            if cluster_name not in ["cluster_0", "cluster_1"]:
+                setup_es[cluster_name].test_method.assert_has_calls([mock.call(setup_params["base-runner-param"])])
+
+    @pytest.mark.asyncio
+    @mock.patch("shared.runners.remote_cluster.runner_for")
+    async def test_wraps_multi_cluster_runner_correctly(self, mocked_runner_for, setup_es, setup_params):
+        # in this test multi-cluster wrapper is used together with multi-cluster runner creating a double loop
+        # the external loop is executed by the wrapper, while the internal by the runner
+        class UnitTestMultiClusterRunner:
+            multi_cluster = True
+
+            async def __call__(self, es, params):
+                for _, cluster_client in es.items():
+                    cluster_client.test_method(params["base-runner-param"])
+                return {"weight": len(es), "unit": "ops", "test": "value"}
+
+            def __str__(self):
+                return "UnitTestMultiClusterRunner"
+
+        mcr = UnitTestMultiClusterRunner()
+        # mimicks Rally runner internals, ugly but necessary
+        mocked_runner_for.return_value = MultiClientRunner(mcr, str(mcr), lambda es: es)
 
         mcw = MultiClusterWrapper()
         r = await mcw(setup_es, setup_params)

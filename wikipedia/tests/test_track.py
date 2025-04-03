@@ -103,7 +103,7 @@ def test_QueryParamSource_params():
     want = [
         {
             "body": {"query": {"query_string": {"default_field": ["<search-fields>"], "query": query}}, "size": 2},
-            "cache": True,
+            "cache": False,
             "index": "dummy",
         }
         for query in track.query_samples(2)

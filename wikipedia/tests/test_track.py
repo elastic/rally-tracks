@@ -4,13 +4,13 @@ from wikipedia import track
 
 
 def test_query_samples():
-    queries = track.query_samples(100, 123)
+    queries = track.query_samples(100)
     assert len(queries) == 100
 
 
 def test_RandomQueriesParamSource_query():
     """It tests DummyRandomQueriesParamSource.query() will return the same random sequence twice by calling N*2 times query method."""
-    want = track.query_samples(3, 123) * 2
+    want = track.query_samples(3) * 2
 
     source = DummyRandomQueriesParamSource(track=None, params={"batch_size": 3})
     got = [source.query() for _ in want]
@@ -26,7 +26,7 @@ def test_SearchApplicationSearchParamSource_params():
             "method": "POST",
             "path": "/_application/search_application/dummy-search-application/_search",
         }
-        for query in track.query_samples(2, 321)
+        for query in track.query_samples(2)
     ] * 2  # It will iterate this twice.
 
     source = track.SearchApplicationSearchParamSource(DummyTrack(), params={"batch_size": 2})
@@ -50,7 +50,7 @@ def test_QueryRulesSearchParamSource_params():
             "method": "POST",
             "path": "/_search",
         }
-        for query in track.query_samples(2, 321)
+        for query in track.query_samples(2)
     ] * 2  # It will iterate this twice.
 
     source = track.QueryRulesSearchParamSource(
@@ -73,7 +73,7 @@ def test_PinnedSearchParamSource_params():
             "method": "POST",
             "path": "/_search",
         }
-        for query in track.query_samples(2, 321)
+        for query in track.query_samples(2)
     ] * 2  # It will iterate this twice.
 
     source = track.PinnedSearchParamSource(track=DummyTrack(), params={"batch_size": 2, "search-fields": ["<search-field>"], "size": 10})
@@ -91,7 +91,7 @@ def test_RetrieverParamSource_params():
             "method": "POST",
             "path": "/dummy/_search",
         }
-        for query in track.query_samples(2, 321)
+        for query in track.query_samples(2)
     ] * 2  # It will iterate this twice.
 
     source = track.RetrieverParamSource(track=DummyTrack(), params={"batch_size": 2, "search-fields": ["<search-field>"], "size": 10})

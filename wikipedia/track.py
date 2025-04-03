@@ -240,7 +240,7 @@ class QueryParamSource(RandomQueriesParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
-        self._cache = params.get("cache", True)
+        self._cache = params.get("cache", False)
         self._query_type = self._params["query-type"]
 
     def params(self):

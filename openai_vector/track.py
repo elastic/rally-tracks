@@ -47,7 +47,7 @@ class KnnParamSource:
     def params(self):
         result = {"index": self._index_name, "cache": self._params.get("cache", False), "size": self._params.get("k", 10)}
         num_candidates = self._params.get("num-candidates", 50)
-        oversample = self._params.get("oversample", 0)
+        oversample = self._params.get("oversample", 3.0)
         query_vec = self._queries[self._iters]
         knn_query = {
             "knn": {
@@ -62,6 +62,7 @@ class KnnParamSource:
         if oversample > 0:
             knn_query["knn"]["rescore_vector"] = {"oversample": oversample}
         result["body"] = {"query": knn_query, "_source": False}
+        logger.info(f"KnnParamSource: {result["body"]}")
         self._iters += 1
         if self._iters >= self._maxIters:
             self._iters = 0
@@ -101,6 +102,7 @@ class KnnRecallParamSource:
         self._index_name = params.get("index", default_index)
         self._cache = params.get("cache", False)
         self._params = params
+        logger.info(f"KnnRecallParamSource: {self._params}")
         self.infinite = True
         cwd = os.path.dirname(__file__)
 
@@ -113,7 +115,7 @@ class KnnRecallParamSource:
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 50),
-            "oversample": self._params.get("oversample", 0),
+            "oversample": self._params.get("oversample", 3.0),
             "knn_vector_store": KnnVectorStore(),
         }
 
@@ -121,7 +123,7 @@ class KnnRecallParamSource:
 # Used in tandem with the KnnRecallParamSource.
 # reads the queries, executes knn search and compares the results with the true nearest neighbors
 class KnnRecallRunner:
-    def get_knn_query(self, query_vec, k, num_candidates, oversample):
+    def get_knn_query(self, query_vec, k, num_candidates, oversample=3.0):
         knn_query = {
             "knn": {
                 "field": "emb",
@@ -138,6 +140,7 @@ class KnnRecallRunner:
         k = params["size"]
         num_candidates = params["num_candidates"]
         index = params["index"]
+        oversample = params.get("oversample", 3.0)
         request_cache = params["cache"]
         recall_total = 0
         exact_total = 0
@@ -146,9 +149,10 @@ class KnnRecallRunner:
 
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
         for query_id, query_vector in enumerate(knn_vector_store.get_query_vectors()):
-            knn_body = self.get_knn_query(query_vector, k, num_candidates, params["oversample"])
+            knn_body = self.get_knn_query(query_vector, k, num_candidates, oversample)
             knn_body["_source"] = False
             knn_body["docvalue_fields"] = ["docid"]
+            logger.info(f"KnnRecallRunner: {knn_body}")
             knn_result = await es.search(
                 body=knn_body,
                 index=index,
@@ -168,7 +172,7 @@ class KnnRecallRunner:
             "max_recall": max_recall,
             "k": k,
             "num_candidates": num_candidates,
-            "oversample": params["oversample"],
+            "oversample": oversample,
         }
         logger.info(f"Recall results: {to_return}")
         return to_return

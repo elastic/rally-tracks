@@ -34,6 +34,13 @@
       }
     },
     {
+      "name": "wait-for-snapshot-recovery-on-local-cluster",
+      "operation": {
+        "operation-type": "wait-for-recovery",
+        "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+      }
+    },
+    {
       "name": "check-cluster-health",
       "operation": {
         "operation-type": "cluster-health",

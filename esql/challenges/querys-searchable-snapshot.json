@@ -24,6 +24,7 @@
         "repository": {{ p_snapshot_repo_name | tojson }},
         "snapshot": {{ p_snapshot_name | tojson }},
         "wait-for-completion": false,
+        "timeout": "10m",
         "body": {
           "indices": {{ p_restore_data_streams | tojson }},
           "ignore_unavailable": true,

@@ -1,0 +1,129 @@
+{
+  "name": "query-searchable-snapshot",
+  "description": "Tests for searchable snapshots",
+  "default": false,
+  "parameters": {
+    "generate-data": false
+  },
+  "schedule": [
+      {
+        "name": "register-snapshot-repository",
+        "operation": {
+            "operation-type": "create-snapshot-repository",
+            "repository": "{{ p_snapshot_repo_name }}",
+            "body": {
+                "type": {{ p_snapshot_repo_type | tojson }},
+                "settings": {{ p_snapshot_repo_settings | tojson(indent=2)}}
+            }
+       }
+    },
+    {
+      "name": "recover-snapshot-on-local-cluster",
+      "operation": {
+        "operation-type": "restore-snapshot",
+        "repository": {{ p_snapshot_repo_name | tojson }},
+        "snapshot": {{ p_snapshot_name | tojson }},
+        "wait-for-completion": false,
+        "request-timeout": 600.0,
+        "body": {
+          "indices": {{ p_restore_data_streams | tojson }},
+          "ignore_unavailable": true,
+          "include_global_state": false,
+          "rename_pattern": "(.+)",
+          "rename_replacement": "$1{{ p_snapshot_rename_suffix }}"
+        }
+      }
+    },
+    {
+      "name": "wait-for-snapshot-recovery-on-local-cluster",
+      "operation": {
+        "operation-type": "wait-for-recovery",
+        "index": {{ (p_restore_data_streams~p_snapshot_rename_suffix) | tojson }}
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "_all",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      },
+      "tags": ["setup"]
+    },
+    {
+      "operation": "index-base",
+      "clients": {{bulk_indexing_clients | default(8)}},
+      "tags": ["setup"]
+    },
+
+    {
+      "operation": "from_logs_limit_1",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": {{query_iterations | default(100)}}
+    },
+    {
+      "operation": "from_idx_limit_1",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": {{query_iterations | default(100)}}
+    },
+    {
+      "operation": "from_star_limit_1",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": {{query_iterations | default(100)}}
+  },
+    {
+      "operation": "from_logs_limit_10",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": {{query_iterations | default(100)}}
+    },
+    {
+      "operation": "from_idx_limit_10",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": {{query_iterations | default(100)}}
+    },
+
+    {
+      "operation": "from_star_limit_10",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": {{query_iterations | default(100)}}
+    },
+    {
+      "operation": "from_logs_limit_1000",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": {{query_iterations | default(100)}}
+    },
+    {
+      "operation": "from_idx_limit_1000",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": {{query_iterations | default(100)}}
+    },
+
+    {
+      "operation": "from_star_limit_1000",
+      "tags": ["esql_large_schema"],
+      "clients":  {{query_clients | default(1)}},
+      "warmup-iterations": 10,
+      "iterations": {{query_iterations | default(100)}}
+    }
+  ]
+}

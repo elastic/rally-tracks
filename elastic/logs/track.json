@@ -73,6 +73,9 @@
 
 {% set es_version = "7.13.2" %}
 
+{% set p_snapshot_restore_counts = (snapshot_restore_counts | default(1) ) %}
+{% set p_skip_deleting_templates = (skip_deleting_templates | default(false) ) %}
+
 {% set p_integration_ratios = (integration_ratios | default({
     "kafka": {
       "corpora": {

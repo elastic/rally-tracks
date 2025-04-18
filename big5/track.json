@@ -1,0 +1,31 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Benchmark for the Big5 workload",
+  "data-streams": [
+      {
+        "name": "logs-benchmark-dev"
+      }
+  ],
+  "corpora": [
+    {
+      "name": "big5",
+      "base-url": "https://rally-tracks.elastic.co/big5",
+      "documents": [
+        {
+          "source-file": "logs.ndjson.bz2",
+          "document-count": 1131862,
+          "compressed-bytes": 57764621,
+          "uncompressed-bytes": 1047614086
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

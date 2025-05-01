@@ -79,6 +79,8 @@ Below is the expected structure of the documents:
 
 The following parameters are available:
 
+* `number_of_shards` (default: 1) - The number of index primary shards.
+* `number_of_replicas` (default: 0) - The number of replica shards per primary.
 * `bulk_size` (default: 500) - The bulk size in number of documents.
 * `bulk_indexing_clients` (default: 1) - The number of clients issuing indexing requests.
 * `ingest_percentage` (default: 100) - A number between 0 and 100 that defines how much of the document corpus should be ingested.

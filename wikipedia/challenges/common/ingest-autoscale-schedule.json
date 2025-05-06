@@ -24,12 +24,12 @@
   }
 }
 {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600,600,600,600,600]))%}
-{%- set p_as_target_throughputs = (as_target_throughputs | default([-1,-1,-1,-1,-1]))%}
+{%- set p_as_ingest_target_throughputs = (as_ingest_target_throughputs | default([-1,-1,-1,-1,-1]))%}
 {%- set p_as_time_periods = (as_time_periods | default([1800,1800,1800,1800,1800]))%}
 {%- set p_as_ingest_clients = (as_ingest_clients | default([1,2,4,8,16]))%}
 {%- set p_ingest_bulk_size = (ingest_bulk_size | default(100))%}
 {%- for i in range(p_as_ingest_clients|length) %},
-  {%- if p_as_target_throughputs[i] < 0 %}
+  {%- if p_as_ingest_target_throughputs[i] < 0 %}
   {
     "name": "ingest-{{loop.index}}-c{{p_as_ingest_clients[i]}}-b{{p_ingest_bulk_size}}",
     "clients": {{p_as_ingest_clients[i]}},
@@ -52,7 +52,7 @@
     },
     "warmup-time-period": {{p_as_warmup_time_periods[i]}},
     "time-period": {{p_as_time_periods[i]}},
-    "target-throughput": {{p_as_target_throughputs[i]}}
+    "target-throughput": {{p_as_ingest_target_throughputs[i]}}
   }
   {%- endif %}
 {%- endfor %}

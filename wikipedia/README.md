@@ -81,9 +81,12 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
   - `initial_ingest_bulk_size` (default: 100)
 - Ingest Operations:
   - `ingest_bulk_size` (default: 100)
-  - `as_warmup_time_periods` (default: [600,600,600,600,600]) 
+  - `as_warmup_time_periods` (default: [600,600,600,600,600])
   - `as_time_periods` (default: [1800,1800,1800,1800,1800])
   - `as_ingest_clients` (default: [1,2,4,8,16])
+  - `as_ingest_target_throughputs` (default: [-1,-1,-1,-1,-1])
+
+When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 
 ### Parameters for search-autoscale challenge
 
@@ -97,6 +100,8 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
   - `as_search_clients` (default: [1,2,4,8,16])
   - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
 
+When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
+
 ### Parameters for ingest-search-autoscale challenge
 
 - Initial indexing:
@@ -108,10 +113,14 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 - Ingest Operations:
   - `ingest_bulk_size` (default: 100)
   - `as_ingest_clients` (default: [1,2,4,8,16])
+  - `as_ingest_target_throughputs` (default: [-1,-1,-1,-1,-1])
 - Search Operations:
   - `search_size` (default: 10)
   - `as_search_clients` (default: [1,2,4,8,16])
   - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
+
+When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
+When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
 
 ### License
 

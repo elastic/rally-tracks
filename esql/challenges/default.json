@@ -46,14 +46,14 @@
           "operation": "from_idx_limit_1",
           "tags": ["esql_large_schema"],
           "clients":  {{query_clients | default(1)}},
-          "warmup-iterations": 10,
+          "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "from_idx_limit_10",
           "tags": ["esql_large_schema"],
           "clients":  {{query_clients | default(1)}},
-          "warmup-iterations": 10,
+          "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}
         },
         {
@@ -76,14 +76,14 @@
           "operation": "from_idx_limit_1_drop_null",
           "tags": ["esql_large_schema"],
           "clients":  {{query_clients | default(1)}},
-          "warmup-iterations": 10,
+          "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "from_idx_limit_10_drop_null",
           "tags": ["esql_large_schema"],
           "clients":  {{query_clients | default(1)}},
-          "warmup-iterations": 10,
+          "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}
         },
         {

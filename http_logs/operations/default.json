@@ -335,6 +335,58 @@
       }
     },
     {
+      "name": "sort_size_desc",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"size" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_size_asc",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"size" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_status_desc",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"status" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_status_asc",
+      "operation-type": "search",
+      "index": "logs-*",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"status" : "asc"}
+        ]
+      }
+    },
+    {
       "name": "sort_numeric_can_match_shortcut",
       "operation-type": "search",
       "index": "logs-*",

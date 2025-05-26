@@ -195,6 +195,7 @@
           "iterations": 100,
           "target-throughput": 2
         },
+{%- if not runtime_fields is defined %}
         {
           "operation": "sort_size_desc",
           "warmup-iterations": 200,
@@ -215,7 +216,6 @@
           "warmup-iterations": 200,
           "iterations": 100
         },
-{%- if not runtime_fields is defined %}
         {
           "operation": "sort_keyword_can_match_shortcut",
           "warmup-iterations": 200,
@@ -286,14 +286,15 @@
           "warmup-iterations": 10,
           "iterations": 100,
           "target-throughput": 1
-        },
+        },       
         {
           "name": "asc-sort-with-after-timestamp-after-force-merge-1-seg",
           "operation": "asc_sort_with_after_timestamp",
           "warmup-iterations": 10,
           "iterations": 100,
           "target-throughput": 0.5
-        },
+        }
+{%- if not runtime_fields is defined %},         
         {
           "name": "sort-size-desc-after-force-merge-1-seg",
           "operation": "sort_size_desc",
@@ -318,3 +319,4 @@
           "warmup-iterations": 200,
           "iterations": 100
         }
+{%- endif %}        

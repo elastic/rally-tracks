@@ -238,7 +238,7 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
                 raise ValueError("Unknown query type: " + self._query_type)
 
             return {
-                "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | KEEP title, _score | SORT _score DESC | LIMIT { self._size }",
+                "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | SORT _score DESC | LIMIT { self._size }",
             }
 
         except StopIteration:
@@ -275,7 +275,6 @@ class QueryParamSource(QueryIteratorParamSource):
 
         return {
             "body": {
-                "_source": {"includes": ["title"]},
                 "query": query_body,
                 "size": self._params["size"],
             },

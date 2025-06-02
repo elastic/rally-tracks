@@ -197,6 +197,26 @@
         },
 {%- if not runtime_fields is defined %}
         {
+          "operation": "sort_size_desc",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "sort_size_asc",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "sort_status_desc",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "operation": "sort_status_asc",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
           "operation": "sort_keyword_can_match_shortcut",
           "warmup-iterations": 200,
           "iterations": 100,
@@ -266,7 +286,7 @@
           "warmup-iterations": 10,
           "iterations": 100,
           "target-throughput": 1
-        },
+        },       
         {
           "name": "asc-sort-with-after-timestamp-after-force-merge-1-seg",
           "operation": "asc_sort_with_after_timestamp",
@@ -274,3 +294,29 @@
           "iterations": 100,
           "target-throughput": 0.5
         }
+{%- if not runtime_fields is defined %},         
+        {
+          "name": "sort-size-desc-after-force-merge-1-seg",
+          "operation": "sort_size_desc",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "name": "sort-size-asc-after-force-merge-1-seg",
+          "operation": "sort_size_asc",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "name": "sort-status-desc-after-force-merge-1-seg",
+          "operation": "sort_status_desc",
+          "warmup-iterations": 200,
+          "iterations": 100
+        },
+        {
+          "name": "sort-status-asc-after-force-merge-1-seg",
+          "operation": "sort_status_asc",
+          "warmup-iterations": 200,
+          "iterations": 100
+        }
+{%- endif %}        

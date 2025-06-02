@@ -80,70 +80,98 @@
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "search"]
+      "tags": ["esql", "full-text"]
     },
     {
-      "operation": "kafka_match_esql_query",
+      "operation": "apache_equals_esql_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "search"]
+      "tags": ["esql", "like"]
+    },
+    {
+      "operation": "kafka_qstr_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "full-text"]
+    },
+    {
+      "operation": "kafka_like_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "like"]
     },
     {
       "operation": "qstr_esql_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "search"]
+      "tags": ["esql", "full-text"]
     },
     {
       "operation": "kql_esql_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "search"]
+      "tags": ["esql", "full-text"]
+    },
+    {
+      "operation": "kql_like_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "like"]
     },
     {
       "operation": "syslog_qstr_esql_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "search"]
+      "tags": ["esql", "full-text"]
+    },
+    {
+      "operation": "syslog_like_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "like"]
     }{%- if build_flavor != "serverless" or serverless_operator == true %},
     {
       "operation": "apache_match_query_dsl_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["search"]
+      "tags": ["search", "full-text"]
     },
     {
-      "operation": "kafka_query_dsl_query",
+      "operation": "kafka_qstr_dsl_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["search"]
+      "tags": ["search", "full-text"]
     },
     {
       "operation": "qstr_query_dsl_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["search"]
+      "tags": ["search", "full-text"]
     },
     {
       "operation": "kql_query_dsl_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["search"]
+      "tags": ["search", "full-text"]
     },
     {
       "operation": "syslog_query_dsl_query",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["search"]
+      "tags": ["search", "full-text"]
     },
     {
       "operation": "enable_query_cache",

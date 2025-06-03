@@ -1,3 +1,4 @@
+{
   "index_patterns": [
     "logs-benchmark-*"
   ],
@@ -17,7 +18,7 @@
             }
           }
         },
-        "number_of_shards": "{{ number_of_shards | default(1) }}",
+        "number_of_shards": {{ p_number_of_shards }},
         "translog": {
           "sync_interval": "30s",
           "durability": "async"
@@ -27,7 +28,7 @@
             "message"
           ]
         },
-        "number_of_replicas": "{{ number_of_replicas | default(0) }}"
+        "number_of_replicas": {{ p_number_of_replicas }}
       }
     },
     "mappings": {
@@ -201,3 +202,4 @@
       }
     }
   }
+}

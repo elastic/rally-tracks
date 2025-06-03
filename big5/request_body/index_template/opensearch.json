@@ -1,13 +1,14 @@
+{
   "index_patterns": [
     "logs-benchmark-*"
   ],
   "template": {
     "settings": {
       "index.codec": "best_compression",
-      "index.number_of_shards": "{{ number_of_shards | default(1) }}",
+      "index.number_of_shards": {{ p_number_of_shards }},
       "index.translog.sync_interval": "30s",
       "index.translog.durability": "async",
-      "index.number_of_replicas": "{{ number_of_replicas | default(0) }}"
+      "index.number_of_replicas": {{ p_number_of_replicas }}
     },
     "mappings": {
       "properties": {
@@ -170,3 +171,4 @@
       "name": "@timestamp"
     }
   }
+}

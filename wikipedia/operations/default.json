@@ -184,7 +184,7 @@
   "name": "query-esql-match-phrase-search",
   "operation-type": "esql",
   "param-source": "esql-search",
-  "query-type": "multi_match",
+  "query-type": "match_phrase",
   "size" : {{ query_string_search_page_size | default(20) | int }},
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },

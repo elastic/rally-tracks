@@ -151,6 +151,8 @@
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         },
+        {% endif %}
+        {% if p_index_mode == "time_series" and run_esql_aggs is defined %}
         {
           "operation": "esql-memory-usage-hour",
           "warmup-iterations": 50,

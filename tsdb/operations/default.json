@@ -355,9 +355,9 @@
   "description": "Calculate total memory usage per hour",
   "operation-type": "esql",
   {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 hour)"}"
+  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 hour)"
   {%- else %}
-  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 hour)"}"
+  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 hour)"
   {% endif %}
 },
 {
@@ -365,9 +365,9 @@
   "description": "Calculate total memory usage per day",
   "operation-type": "esql",
   {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day)"}"
+  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day)"
   {%- else %}
-  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day)"}"
+  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day)"
   {% endif %}
 },
 {
@@ -375,9 +375,9 @@
   "description": "Calculate total memory usage per container, hour",
   "operation-type": "esql",
   {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"}"
+  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"
   {%- else %}
-  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"}"
+  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"
   {% endif %}
 },
 {
@@ -385,9 +385,9 @@
   "description": "Calculate total memory usage per container, day",
   "operation-type": "esql",
   {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day), kubernetes.container.name"}"
+  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day), kubernetes.container.name"
   {%- else %}
-  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day), kubernetes.container.name"}"
+  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day), kubernetes.container.name"
   {% endif %}
 },
 {
@@ -395,9 +395,9 @@
   "description": "Calculate total memory pagefault rate per hour",
   "operation-type": "esql",
   {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "query": "TS k8s | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 hour)"}"
+  "query": "TS k8s | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 hour)"
   {%- else %}
-  "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 hour)"}"
+  "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 hour)"
   {% endif %}
 },
 {
@@ -405,9 +405,9 @@
   "description": "Calculate total memory pagefault rate per day",
   "operation-type": "esql",
   {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "query": "TS k8s | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day)"}"
+  "query": "TS k8s | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day)"
   {%- else %}
-  "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day)"}"
+  "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day)"
   {% endif %}
 },
 {
@@ -415,9 +415,9 @@
   "description": "Calculate total memory pagefault rate per container, hour",
   "operation-type": "esql",
   {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "query": "TS k8s | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"}"
+  "query": "TS k8s | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"
   {%- else %}
-  "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"}"
+  "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"
   {% endif %}
 },
 {
@@ -425,9 +425,9 @@
   "description": "Calculate total memory pagefault rate per container, day",
   "operation-type": "esql",
   {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
-  "query": "TS k8s | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day), kubernetes.container.name"}"
+  "query": "TS k8s | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day), kubernetes.container.name"
   {%- else %}
-  "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day), kubernetes.container.name"}"
+  "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day), kubernetes.container.name"
   {% endif %}
 }
 

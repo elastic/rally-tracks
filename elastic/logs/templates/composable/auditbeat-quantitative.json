@@ -15,7 +15,7 @@
     "lifecycle": {}
   {%- endif -%}
   },
-  "composed_of" : ["auditbeat-mappings", "track-shared-logsdb-mode"],
+  "composed_of" : ["auditbeat-mappings", "track-shared-logsdb-mode", "track-custom-shared-settings"],
   "priority": 1,
   "data_stream" : { }
 }

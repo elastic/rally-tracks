@@ -234,6 +234,8 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
                 query_body = f'KQL("{ self._search_fields }:{ query }")'
             elif self._query_type == "term":
                 query_body = f'TERM(title, "{ query }") OR TERM(content, "{ query }")'
+            elif self._query_type == "match_phrase":
+                query_body = f'MATCH_PHRASE(title, "{ query }") OR MATCH_PHRASE(content, "{ query }")'
             else:
                 raise ValueError("Unknown query type: " + self._query_type)
 
@@ -266,6 +268,8 @@ class QueryParamSource(QueryIteratorParamSource):
                 query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
             elif self._query_type == "term":
                 query_body = {"bool": {"should": [{"term": {"title": query}}, {"term": {"content": query}}]}}
+            elif self._query_type == "match_phrase":
+                query_body = {"match_phrase": {"content": query}}
             else:
                 raise ValueError("Unknown query type: " + self._query_type)
 

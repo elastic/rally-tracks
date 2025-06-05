@@ -1,29 +1,29 @@
     {%- set p_target_opensearch = (target_opensearch | default(false))%}
+    {%- set p_number_of_shards = (number_of_shards | default(1))%}
+    {%- set p_number_of_replicas = (number_of_replicas | default(0))%}
     {
       "name": "create-ilm-policy",
       "operation-type": "raw-request",
       "method": "PUT",
       "path": {{ "/_plugins/_ism/policies/logs-benchmark-policy" | tojson if p_target_opensearch else "/_ilm/policy/logs-benchmark-policy" | tojson }},
-      "body": {
+      "body":
         {% if p_target_opensearch %}
           {% include "request_body/policy/opensearch.json" %}
         {%- else %}
           {% include "request_body/policy/elasticsearch.json" %}
         {% endif %}
-      }
     },
     {
       "name": "create-index-template",
       "operation-type": "raw-request",
       "method": "PUT",
       "path": "/_index_template/logs-benchmark-template",
-      "body": {
+      "body":
         {% if p_target_opensearch %}
           {% include "request_body/index_template/opensearch.json" %}
         {%- else %}
           {% include "request_body/index_template/elasticsearch.json" %}
         {% endif %}
-      }
     },
     {
       "name": "bulk-index",

@@ -1,0 +1,73 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Benchmark for the Big5 workload",
+  "data-streams": [
+      {
+        "name": "logs-benchmark-dev"
+      }
+  ],
+  "corpora": [
+    {
+      "name": "big5",
+      "base-url": "https://rally-tracks.elastic.co/big5",
+      "documents": [
+        {
+          "source-file": "logs-1.ndjson.bz2",
+          "document-count": 139000967,
+          "compressed-bytes": 7103110671,
+          "uncompressed-bytes": 128687211682
+        },
+        {
+          "source-file": "logs-2.ndjson.bz2",
+          "document-count": 157534429,
+          "compressed-bytes": 8034424492,
+          "uncompressed-bytes": 145611025706
+        },
+        {
+          "source-file": "logs-3.ndjson.bz2",
+          "document-count": 138860135,
+          "compressed-bytes": 7091409825,
+          "uncompressed-bytes": 128503162173
+        },
+        {
+          "source-file": "logs-4.ndjson.bz2",
+          "document-count": 155215122,
+          "compressed-bytes": 7913344071,
+          "uncompressed-bytes": 143625550045
+        },
+        {
+          "source-file": "logs-5.ndjson.bz2",
+          "document-count": 135967215,
+          "compressed-bytes": 6930313733,
+          "uncompressed-bytes": 125786343861
+        },
+        {
+          "source-file": "logs-6.ndjson.bz2",
+          "document-count": 142025858,
+          "compressed-bytes": 7249946049,
+          "uncompressed-bytes": 131441787613
+        },
+        {
+          "source-file": "logs-7.ndjson.bz2",
+          "document-count": 145339293,
+          "compressed-bytes": 7412765784,
+          "uncompressed-bytes": 134462390552
+        },
+        {
+          "source-file": "logs-8.ndjson.bz2",
+          "document-count": 157897411,
+          "compressed-bytes": 8047436454,
+          "uncompressed-bytes": 145980297788
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

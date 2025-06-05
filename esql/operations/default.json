@@ -1,0 +1,92 @@
+    {
+      "name": "index-base",
+      "operation-type": "bulk",
+      "indices": [
+        {% for i in range(1, n_indices) %}
+        {% set idx_name = "idx_"+(i|string) %}
+        "{{idx_name}}",
+        {% endfor %}
+        "idx_0"
+      ],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+
+    {
+      "name": "from_idx_limit_1",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 1"
+    },
+    {
+      "name": "from_idx_limit_10",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 10"
+    },
+    {
+      "name": "from_idx_limit_1000",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 1000"
+    },
+    {
+      "name": "from_idx_limit_10000",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 10000"
+    },
+
+    {
+      "name": "from_idx_limit_1_drop_null",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 1",
+      "request-params": { "drop_null_columns": true }
+    },
+    {
+      "name": "from_idx_limit_10_drop_null",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 10",
+      "request-params": { "drop_null_columns": true }
+    },
+    {
+      "name": "from_idx_limit_1000_drop_null",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 1000",
+      "request-params": { "drop_null_columns": true }
+    },
+    {
+      "name": "from_idx_limit_10000_drop_null",
+      "operation-type": "esql",
+      "query": "FROM idx_* | limit 10000",
+      "request-params": { "drop_null_columns": true }
+    },
+
+    {
+      "name": "search_limit_1",
+      "operation-type": "search",
+      "index": "idx_*",
+      "body": {
+        "size": 1
+      }
+    },
+    {
+      "name": "search_limit_10",
+      "operation-type": "search",
+      "index": "idx_*",
+      "body": {
+        "size": 10
+      }
+    },
+    {
+      "name": "search_limit_1000",
+      "operation-type": "search",
+      "index": "idx_*",
+      "body": {
+        "size": 1000
+      }
+    },
+    {
+      "name": "search_limit_10000",
+      "operation-type": "search",
+      "index": "idx_*",
+      "body": {
+        "size": 10000
+      }
+    }

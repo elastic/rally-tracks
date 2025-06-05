@@ -1,0 +1,134 @@
+    {
+      "name": "esql_large_schema",
+      "description": "Scale tests for ES|QL",
+      "default": true,
+      "schedule": [
+        {
+          "operation": "delete-index",
+          "tags": ["setup"]
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
+              "index.translog.flush_threshold_size": "4g",
+                {% endif %}
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
+              "index.codec": "best_compression",
+              "index.refresh_interval": "30s"
+            }{%- endif %}
+          },
+          "tags": ["setup"]
+        },
+
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "idx_0",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          },
+          "tags": ["setup"]
+        },
+
+        {
+          "operation": "index-base",
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "tags": ["setup"]
+        },
+        {
+          "operation": "from_idx_limit_1",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "from_idx_limit_10",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "from_idx_limit_1000",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "from_idx_limit_10000",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+
+
+        {
+          "operation": "from_idx_limit_1_drop_null",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "from_idx_limit_10_drop_null",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "from_idx_limit_1000_drop_null",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "from_idx_limit_10000_drop_null",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+
+
+        {
+          "operation": "search_limit_1",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "search_limit_10",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "search_limit_1000",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "search_limit_10000",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        }
+      ]
+    }

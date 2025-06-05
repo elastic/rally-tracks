@@ -10,27 +10,27 @@
             "limit": "10000"
           }
         },
-        {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-        "number_of_routing_shards": "30",
-        "number_of_shards": "{{ number_of_shards | default(1) }}",
-        "number_of_replicas": "{{ number_of_replicas | default(1) }}",
-        {%- endif -%}{# non-serverless-index-settings-marker-end #}
         "query": {
           "default_field": [
             "message"
           ]
-        },
-        {%- if disable_pipelines is not true %}
-        "default_pipeline": "logs-k8-app",
+        }
+        {#- non-serverless-index-settings-marker-start #}
+        {%- if build_flavor != "serverless" or serverless_operator == true %},
+        "number_of_routing_shards": "30",
+        "refresh_interval": {{ refresh_interval | default("5s") | tojson }}
         {%- endif %}
-        {% if route_on_sort_fields | default(false) is true %}
+        {#- non-serverless-index-settings-marker-end #}
+        {%- if disable_pipelines is not true %},
+        "default_pipeline": "logs-k8-app"
+        {%- endif %}
+        {%- if route_on_sort_fields | default(false) is true %},
         "sort": {
           "field": [ "host.name", "event.code", "log.file.path", "@timestamp" ],
           "order": [ "asc", "asc", "asc", "desc" ]
         },
-        "logsdb.route_on_sort_fields": true,
+        "logsdb.route_on_sort_fields": true
         {% endif %}
-        "refresh_interval": "5s"
       }
     },
     "mappings": {
@@ -2005,6 +2005,7 @@
   },
   "composed_of": [
     "logs-mappings",
+    "track-custom-shared-settings",
     "track-custom-mappings",
     "track-data-stream-lifecycle",
     "track-shared-logsdb-mode"

@@ -1,0 +1,76 @@
+{% import "rally.helpers" as rally with context %}
+{% set n_indices = (n_indices | default(5)) %}
+{% set n_fields = (n_fields | default(500)) %}
+
+{% set p_snapshot_repo_name = (snapshot_repo_name | default("logging")) %}
+{% set p_snapshot_repo_type = (snapshot_repo_type | default("s3")) %}
+{% set p_snapshot_repo_settings = (snapshot_repo_settings | default({
+"bucket": snapshot_bucket | default("test-bucket"),
+"client": "default",
+"base_path": snapshot_base_path | default("observability/logging"),
+"max_snapshot_bytes_per_sec": -1,
+"readonly": snapshot_repo_readonly | default(true)
+}))%}
+{% set p_snapshot_name = (snapshot_name | default("logging-test")) %}
+{% set p_restore_data_streams = (restore_data_streams | default("logs-*")) %}
+{% set p_snapshot_metadata = (snapshot_metadata | default({}))%}
+{% set p_snapshot_rename_suffix = (snapshot_rename_suffix | default("") ) %}
+
+{
+"version": 2,
+"description": "Indexes for JOIN tests",
+"indices": [
+
+{% for i in range(1, n_indices) %}
+{% set idx_name = "idx_"+(i|string) %}
+  {
+    "name": "{{idx_name}}",
+    "body": "idx_mapping{{i%20}}.json"
+  },
+{% endfor %}
+{% set idx_name = "idx_0" %}
+  {
+    "name": "{{idx_name}}",
+    "body": "idx_mapping0.json"
+  }
+],
+"corpora": [
+{% for i in range(1, n_indices) %}
+{% set idx_name = "idx_"+(i|string) %}
+{
+  "name": "{{idx_name}}",
+  "base-url": "https://rally-tracks.elastic.co/joins",
+  "documents": [
+    {
+      "target-index": "{{idx_name}}",
+      "source-file": "lookup_idx_100000_f10.json.bz2",
+      "#COMMENT": "Lookup index with 100k documents and 100k distinct keys (keyworks, \"0\"..\"99999\")",
+      "document-count": 100000,
+      "compressed-bytes": 2248693,
+      "uncompressed-bytes": 41277790
+    }
+  ]
+},
+{% endfor %}
+{
+  "name": "idx_0",
+  "base-url": "https://rally-tracks.elastic.co/joins",
+  "documents": [
+      {
+        "target-index": "idx_0",
+        "source-file": "lookup_idx_100000_f10.json.bz2",
+        "#COMMENT": "Lookup index with 100k documents and 100k distinct keys (keyworks, \"0\"..\"99999\")",
+        "document-count": 100000,
+        "compressed-bytes": 2248693,
+        "uncompressed-bytes": 41277790
+      }
+    ]
+  }
+],
+"operations": [
+{{ rally.collect(parts="operations/*.json") }}
+],
+"challenges": [
+{{ rally.collect(parts="challenges/*.json") }}
+]
+}

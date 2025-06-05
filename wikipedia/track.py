@@ -108,29 +108,6 @@ class SearchApplicationSearchParamSource(QueryIteratorParamSource):
             return self.params()
 
 
-class QueryParamSource(QueryIteratorParamSource):
-    def __init__(self, track, params, **kwargs):
-        super().__init__(track, params, **kwargs)
-        self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
-        self._cache = params.get("cache", True)
-
-    def params(self):
-        try:
-            result = {
-                "body": {
-                    "query": {"query_string": {"query": next(self._queries_iterator), "default_field": self._params["search-fields"]}}
-                },
-                "size": self._params["size"],
-                "index": self._index_name,
-                "cache": self._cache,
-            }
-
-            return result
-        except StopIteration:
-            self._queries_iterator = iter(self._sample_queries)
-            return self.params()
-
-
 class CreateQueryRulesetParamSource(ParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
@@ -237,11 +214,81 @@ class RetrieverParamSource(QueryIteratorParamSource):
             return self.params()
 
 
+# TODO Add other queries, check default fields for search. Compare them with other DSL queries
+class EsqlSearchParamSource(QueryIteratorParamSource):
+    def __init__(self, track, params, **kwargs):
+        super().__init__(track, params, **kwargs)
+        self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
+        self._search_fields = self._params["search-fields"]
+        self._size = params.get("size", 20)
+        self._query_type = self._params["query-type"]
+
+    def params(self):
+        try:
+            query = next(self._queries_iterator)
+            if self._query_type == "query-string":
+                query_body = f'QSTR("{ query }", {{"default_field": "{ self._search_fields }" }})'
+            elif self._query_type == "match":
+                query_body = f'MATCH(title, "{ query }") OR MATCH(content, "{ query }")'
+            elif self._query_type == "kql":
+                query_body = f'KQL("{ self._search_fields }:{ query }")'
+            elif self._query_type == "term":
+                query_body = f'TERM(title, "{ query }") OR TERM(content, "{ query }")'
+            else:
+                raise ValueError("Unknown query type: " + self._query_type)
+
+            return {
+                "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | SORT _score DESC | LIMIT { self._size }",
+            }
+
+        except StopIteration:
+            self._queries_iterator = iter(self._sample_queries)
+            return self.params()
+
+
+class QueryParamSource(QueryIteratorParamSource):
+    def __init__(self, track, params, **kwargs):
+        super().__init__(track, params, **kwargs)
+        self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
+        self._cache = params.get("cache", False)
+        self._query_type = self._params["query-type"]
+
+    def params(self):
+        try:
+            query = next(self._queries_iterator)
+            if self._query_type == "query-string":
+                query_body = {"query_string": {"query": query, "default_field": self._params["search-fields"]}}
+            elif self._query_type == "kql":
+                query_body = {"kql": {"query": f'{ self._params["search-fields"] }:"{ query }"'}}
+            elif self._query_type == "match":
+                query_body = {"match": {"content": query}}
+            elif self._query_type == "multi_match":
+                query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
+            elif self._query_type == "term":
+                query_body = {"bool": {"should": [{"term": {"title": query}}, {"term": {"content": query}}]}}
+            else:
+                raise ValueError("Unknown query type: " + self._query_type)
+
+        except StopIteration:
+            self._queries_iterator = iter(self._sample_queries)
+            return self.params()
+
+        return {
+            "body": {
+                "query": query_body,
+                "size": self._params["size"],
+            },
+            "index": self._index_name,
+            "cache": self._cache,
+        }
+
+
 def register(registry):
-    registry.register_param_source("query-string-search", QueryParamSource)
+    registry.register_param_source("query-search", QueryParamSource)
     registry.register_param_source("create-search-application-param-source", CreateSearchApplicationParamSource)
     registry.register_param_source("search-application-search-param-source", SearchApplicationSearchParamSource)
     registry.register_param_source("create-query-ruleset-param-source", CreateQueryRulesetParamSource)
     registry.register_param_source("query-rules-search-param-source", QueryRulesSearchParamSource)
     registry.register_param_source("pinned-search-param-source", PinnedSearchParamSource)
     registry.register_param_source("retriever-search", RetrieverParamSource)
+    registry.register_param_source("esql-search", EsqlSearchParamSource)

@@ -1,0 +1,370 @@
+
+    {
+      "name": "apache_match_esql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-*| WHERE event.dataset: \"apache.access\" AND http.response.status_code: 404 AND user_agent.name: \"Firefox\" | SORT @timestamp DESC | LIMIT 500",
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "format": "strict_date_optional_time",
+            "gte": "{{bulk_start_date}}T09:10:05.477Z",
+            "lte": "{{bulk_end_date}}T21:10:05.477Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "apache_equals_esql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE event.dataset == \"apache.access\" AND http.response.status_code == 404 AND user_agent.name == \"Firefox\" | SORT @timestamp DESC | LIMIT 500",
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "format": "strict_date_optional_time",
+            "gte": "{{bulk_start_date}}T09:10:05.477Z",
+            "lte": "{{bulk_end_date}}T21:10:05.477Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "apache_match_query_dsl_query",
+      "operation-type": "search",
+      "index": "{{p_esql_target_prefix}}logs-*",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match": {
+                        "event.dataset": "apache.access"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              },
+              {
+                "match": {
+                  "http.response.status_code": 404
+                }
+              },
+              {
+                "match": {
+                  "user_agent.name": "Firefox"
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "{{bulk_start_date}}T09:10:05.477Z",
+                    "lte": "{{bulk_end_date}}T21:10:05.477Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "size": 500,
+        "sort": [
+          {
+            "@timestamp": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "kafka_qstr_esql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE QSTR(\"event.dataset: kafka.log AND Connection * disconnected\") | SORT @timestamp DESC | LIMIT 500",
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "format": "strict_date_optional_time",
+            "gte": "{{bulk_start_date}}T09:10:05.477Z",
+            "lte": "{{bulk_end_date}}T21:52:08.615Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "kafka_like_esql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE event.dataset == \"kafka.log\" AND message LIKE \"Connection * disconnected\" | SORT @timestamp DESC | LIMIT 500",
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "format": "strict_date_optional_time",
+            "gte": "{{bulk_start_date}}T09:10:05.477Z",
+            "lte": "{{bulk_end_date}}T21:52:08.615Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "kafka_qstr_dsl_query",
+      "operation-type": "search",
+      "index": "{{p_esql_target_prefix}}logs-*",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "query_string": {
+                        "query": "event.dataset: kafka.log"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              },
+              {
+                "query_string": {
+                  "query": "Connection * disconnected"
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "{{bulk_start_date}}T09:10:05.477Z",
+                    "lte": "{{bulk_end_date}}T21:52:08.615Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "size": 500,
+        "sort": [
+          {
+            "@timestamp": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "qstr_esql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE QSTR(\"slack\") | SORT @timestamp DESC | LIMIT 500",
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "format": "strict_date_optional_time",
+            "gte": "{{bulk_start_date}}T21:52:08.615Z",
+            "lte": "{{bulk_end_date}}T21:52:08.615Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "qstr_query_dsl_query",
+      "operation-type": "search",
+      "index": "{{p_esql_target_prefix}}logs-*",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "query_string": {
+                  "query": "slack"
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "{{bulk_start_date}}T21:52:08.615Z",
+                    "lte": "{{bulk_end_date}}T21:52:08.615Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "size": 500,
+        "sort": [
+          {
+            "@timestamp": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "kql_esql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE kql(\"query\") | SORT @timestamp DESC | LIMIT 500",
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "format": "strict_date_optional_time",
+            "gte": "{{bulk_start_date}}T07:52:08.615Z",
+            "lte": "{{bulk_end_date}}T07:52:08.615Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "kql_like_esql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE message like \"*query*\" | SORT @timestamp DESC | LIMIT 500",
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "format": "strict_date_optional_time",
+            "gte": "{{bulk_start_date}}T07:52:08.615Z",
+            "lte": "{{bulk_end_date}}T07:52:08.615Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "kql_query_dsl_query",
+      "operation-type": "search",
+      "index": "{{p_esql_target_prefix}}logs-*",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "kql": {
+                  "query": "query"
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "{{bulk_start_date}}T07:52:08.615Z",
+                    "lte": "{{bulk_end_date}}T07:52:08.615Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "size": 500,
+        "sort": [
+          {
+            "@timestamp": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "syslog_qstr_esql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE QSTR(\"event.dataset: system.syslog\") AND QSTR(\"Stopped*\") | SORT @timestamp DESC | LIMIT 500",
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "format": "strict_date_optional_time",
+            "gte": "{{bulk_start_date}}T20:13:05.675Z",
+            "lte": "{{bulk_end_date}}T20:13:05.675Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "syslog_like_esql_query",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE event.dataset == \"system.syslog\" AND message LIKE \"Stopped*\" | SORT @timestamp DESC | LIMIT 500",
+      "filter": {
+        "range": {
+          "@timestamp": {
+            "format": "strict_date_optional_time",
+            "gte": "{{bulk_start_date}}T20:13:05.675Z",
+            "lte": "{{bulk_end_date}}T20:13:05.675Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "syslog_query_dsl_query",
+      "operation-type": "search",
+      "index": "{{p_esql_target_prefix}}logs-*",
+      "body": {
+        "query": {
+           "bool": {
+            "filter": [
+              {
+                "bool": {
+                  "filter": [
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "query_string": {
+                              "query": "event.dataset: system.syslog"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    },
+                    {
+                      "bool": {
+                        "should": [
+                          {
+                            "query_string": {
+                              "query": "Stopped*"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "format": "strict_date_optional_time",
+                    "gte": "{{bulk_start_date}}T20:13:05.675Z",
+                    "lte": "{{bulk_end_date}}T20:13:05.675Z"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "size": 500,
+        "sort": [
+          {
+            "@timestamp": {
+              "order": "desc"
+            }
+          }
+        ]
+      }
+    }

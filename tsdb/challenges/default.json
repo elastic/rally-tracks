@@ -150,10 +150,10 @@
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
-        },
+        }
         {% endif %}
         {% if p_index_mode == "time_series" and run_esql_aggs is defined %}
-        {
+        ,{
           "operation": "esql-memory-usage-hour",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
@@ -163,46 +163,46 @@
           "operation": "esql-memory-usage-day",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
-        "iterations": 100
+          "iterations": 100
         },
         {
           "operation": "esql-memory-usage-by-container-hour",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
-        "iterations": 100
+          "iterations": 100
         },
         {
           "operation": "esql-memory-usage-by-container-day",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
-        "iterations": 100
+          "iterations": 100
         },
         {
           "operation": "esql-memory-pagefault-rate-hour",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
-        "iterations": 100
+          "iterations": 100
         },
         {
           "operation": "esql-memory-pagefault-rate-day",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
-        "iterations": 100
+          "iterations": 100
         },
         {
           "operation": "esql-memory-pagefault-rate-by-container-hour",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
-        "iterations": 100
+          "iterations": 100
         },
         {
           "operation": "esql-memory-pagefault-rate-by-container-day",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
-        "iterations": 100
-        },
+          "iterations": 100
+        }
         {% endif %}
-        {
+        ,{
           "operation": "esql-fetch-500",
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},

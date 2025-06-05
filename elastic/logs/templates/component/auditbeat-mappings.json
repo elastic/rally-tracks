@@ -7,7 +7,6 @@
             "limit": "10000"
           }
         },
-        "refresh_interval": "30s",
         {% if route_on_sort_fields | default(false) is true %}
         "sort": {
            "field": [ "host.name", "kubernetes.pod.uid", "log.logger", "@timestamp" ],

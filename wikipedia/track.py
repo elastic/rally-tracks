@@ -263,13 +263,13 @@ class QueryParamSource(QueryIteratorParamSource):
             elif self._query_type == "kql":
                 query_body = {"kql": {"query": f'{ self._params["search-fields"] }:"{ query }"'}}
             elif self._query_type == "match":
-                query_body = {"match": {"content": query}}
+                query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
             elif self._query_type == "multi_match":
                 query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
             elif self._query_type == "term":
                 query_body = {"bool": {"should": [{"term": {"title": query}}, {"term": {"content": query}}]}}
             elif self._query_type == "match_phrase":
-                query_body = {"match_phrase": {"content": query}}
+                query_body = {"bool": {"should": [{"match_phrase": {"title": query}}, {"match_phrase": {"content": query}}]}}
             else:
                 raise ValueError("Unknown query type: " + self._query_type)
 

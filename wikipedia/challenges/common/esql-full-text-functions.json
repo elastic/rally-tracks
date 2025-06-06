@@ -47,6 +47,20 @@
   "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
 },
 {
+  "name": "standalone-esql-match-phrase-search",
+  "operation": "query-esql-match-phrase-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }}
+},
+{
+  "name": "standalone-query-match-phrase-search",
+  "operation": "query-match-phrase-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+},
+{
   "name": "standalone-esql-qstr-search",
   "operation": "query-esql-qstr-search",
   "query-type": "match",

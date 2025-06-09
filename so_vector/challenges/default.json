@@ -48,6 +48,13 @@
       "clients": 1
     },
     {
+      "name": "knn-recall-10-50-match-all",
+      "operation": "knn-recall-10-50-match-all",
+      "warmup-iterations": 1,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
       "name": "script-score-query-match-all",
       "operation": "script-score-query-match-all",
       "warmup-iterations": 100,
@@ -129,6 +136,13 @@
       "name": "knn-search-10-50-match-all-force-merge",
       "operation": "knn-search-10-50-match-all",
       "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-10-50-match-all-force-merge",
+      "operation": "knn-recall-10-50-match-all",
+      "warmup-iterations": 1,
       "iterations": 100,
       "clients": 1
     },

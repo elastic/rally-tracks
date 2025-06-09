@@ -54,6 +54,14 @@
   "num_candidates": 50
 },
 {
+  "name": "knn-recall-10-50-match-all",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "include-in-reporting": false
+},
+{
   "name": "script-score-query-css",
   "operation-type": "search",
   "param-source": "knn-param-source",

@@ -1,6 +1,6 @@
 import bz2
-import logging
 import json
+import logging
 import os
 from typing import Any, List
 
@@ -18,6 +18,7 @@ def compute_percentile(data: List[Any], percentile):
     sorted_data = sorted(data)
     index = int(round(percentile * size / 100)) - 1
     return sorted_data[max(min(index, size - 1), 0)]
+
 
 class KnnParamSource:
     def __init__(self, track, params, **kwargs):
@@ -89,6 +90,7 @@ class KnnParamSource:
 
         return result
 
+
 class KnnVectorStore:
     def __init__(self):
         cwd = os.path.dirname(__file__)
@@ -144,10 +146,10 @@ class KnnRecallParamSource:
 class KnnRecallRunner:
     def get_knn_query(self, query_vec, k, num_candidates, oversample):
         knn = {
-                "field": "titleVector",
-                "query_vector": query_vec,
-                "k": k,
-                "num_candidates": num_candidates,
+            "field": "titleVector",
+            "query_vector": query_vec,
+            "k": k,
+            "num_candidates": num_candidates,
         }
         if oversample > -1:
             knn["rescore_vector"] = {"oversample": oversample}

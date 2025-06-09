@@ -87,4 +87,3 @@ The following parameters are available:
 * `target_opensearch` (default: false) - Whether the target is an OpenSearch cluster
 * `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
 * `iterations` (default: 1000) - Number of measurement iterations that each client executes.
-* `target_throughput` (default: 1) - Number of requests per second over all clients.

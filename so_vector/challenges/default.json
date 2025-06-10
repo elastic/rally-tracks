@@ -69,6 +69,13 @@
       "clients": 1
     },
     {
+      "name": "knn-recall-10-50-acceptedAnswerId",
+      "operation": "knn-recall-10-50-acceptedAnswerId",
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
       "name": "script-score-query-acceptedAnswerId",
       "operation": "script-score-query-acceptedAnswerId",
       "warmup-iterations": 100,
@@ -80,6 +87,13 @@
       "operation": "knn-search-10-50-java",
       "warmup-iterations": 100,
       "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-10-50-java",
+      "operation": "knn-recall-10-50-java",
+      "warmup-iterations": 1,
+      "iterations": 1,
       "clients": 1
     },
     {
@@ -97,6 +111,13 @@
       "clients": 1
     },
     {
+      "name": "knn-recall-10-50-css",
+      "operation": "knn-recall-10-50-css",
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
       "name": "script-score-query-css",
       "operation": "script-score-query-css",
       "warmup-iterations": 100,
@@ -111,10 +132,45 @@
       "clients": 1
     },
     {
+      "name": "knn-recall-10-50-concurrency",
+      "operation": "knn-recall-10-50-concurrency",
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
       "name": "script-score-query-concurrency",
       "operation": "script-score-query-concurrency",
       "warmup-iterations": 100,
       "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-random-10-percent",
+      "operation": "knn-search-10-50-random-10-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-10-50-random-10-percent",
+      "operation": "knn-recall-10-50-random-10-percent",
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "clients": 1
+    },
+        {
+      "name": "knn-search-10-50-random-20-percent",
+      "operation": "knn-search-10-50-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-10-50-random-20-percent",
+      "operation": "knn-recall-10-50-random-20-percent",
+      "warmup-iterations": 1,
+      "iterations": 1,
       "clients": 1
     }
     {# non-serverless-after-force-merge-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
@@ -158,6 +214,13 @@
       "operation": "knn-search-10-50-java",
       "warmup-iterations": 100,
       "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-10-50-java-force-merge",
+      "operation": "knn-recall-10-50-java",
+      "warmup-iterations": 1,
+      "iterations": 1,
       "clients": 1
     },
     {

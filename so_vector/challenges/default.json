@@ -210,6 +210,13 @@
       "clients": 1
     },
     {
+      "name": "knn-recall-10-50-acceptedAnswerId-force-merge",
+      "operation": "knn-recall-10-50-acceptedAnswerId",
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
       "name": "knn-search-10-50-java-force-merge",
       "operation": "knn-search-10-50-java",
       "warmup-iterations": 100,
@@ -231,10 +238,52 @@
       "clients": 1
     },
     {
+      "name": "knn-recall-10-50-css-force-merge",
+      "operation": "knn-recall-10-50-css",
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-10-50-concurrency-force-merge",
+      "operation": "knn-recall-10-50-concurrency",
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
       "name": "knn-search-10-50-concurrency-force-merge",
       "operation": "knn-search-10-50-concurrency",
       "warmup-iterations": 100,
       "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-random-10-percent-force-merge",
+      "operation": "knn-search-10-50-random-10-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-10-50-random-10-percent-force-merge",
+      "operation": "knn-recall-10-50-random-10-percent",
+      "warmup-iterations": 1,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-random-20-percent-force-merge",
+      "operation": "knn-search-10-50-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-10-50-random-20-percent-force-merge",
+      "operation": "knn-recall-10-50-random-20-percent",
+      "warmup-iterations": 1,
+      "iterations": 1,
       "clients": 1
     }
       {% endif %}

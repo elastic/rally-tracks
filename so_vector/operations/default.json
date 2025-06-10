@@ -109,16 +109,50 @@
 			}
 		}
   }
-}
+},
 {
-
-}
+    "name": "knn-recall-10-50-random-10-percent",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": {
+    "range": {
+			"questionId": {
+				"gte": 500000,
+				"lte": 1300000
+			}
+		}
+  }
+},
 {
-
-}
+  "name": "knn-search-10-50-random-20-percent",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": {
+    "range": {
+			"questionId": {
+				"lte": 1500000
+			}
+		}
+  }
+},
 {
-
-}
+    "name": "knn-recall-10-50-random-20-percent",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": {
+    "range": {
+			"questionId": {
+				"lte": 1500000
+			}
+		}
+  }
+},
 {
   "name": "knn-search-10-50-match-all",
   "operation-type": "search",

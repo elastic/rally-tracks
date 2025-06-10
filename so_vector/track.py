@@ -48,7 +48,7 @@ class KnnParamSource:
 
     def params(self):
         result = {"index": self._index_name, "cache": self._params.get("cache", False), "size": self._params.get("k", 10)}
-        num_candidates = self._params.get("num-candidates", 50)
+        num_candidates = self._params.get("num_candidates", 50)
         # if -1, then its unset. If set, just set it.
         oversample = self._params.get("oversample", -1)
         if oversample > -1 and self._exact_scan:
@@ -79,7 +79,7 @@ class KnnParamSource:
                     "field": "titleVector",
                     "query_vector": query_vec,
                     "k": self._params.get("k", 10),
-                    "num_candidates": self._params.get("num-candidates", 50),
+                    "num_candidates": self._params.get("num_candidates", 50),
                 },
                 "_source": False,
             }
@@ -135,7 +135,7 @@ class KnnRecallParamSource:
             "index": self._index_name,
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
-            "num_candidates": self._params.get("num-candidates", 50),
+            "num_candidates": self._params.get("num_candidates", 50),
             "oversample": self._params.get("oversample", -1),
             "knn_vector_store": KnnVectorStore(),
         }

@@ -23,6 +23,38 @@
         "clients": 1,
         "schedule": "workflow-scheduler"
       },
+      {% endfor %}
+      {
+        "name": "field-caps",
+        "operation": {
+          "operation-type": "raw-request",
+          "path": {{ "/%s/_field_caps?fields=*" | format(target_index) | tojson }},
+          "method": "GET"
+        },
+        "target-interval": {{ p_user_think_time }},
+        "schedule": "poisson"
+      },
+      {
+        "name": "field-caps-exclude-empty-fields",
+        "operation": {
+          "operation-type": "raw-request",
+          "path": {{ "/%s/_field_caps?fields=*&include_empty_fields=false" | format(target_index) | tojson }},
+          "method": "GET"
+        },
+        "target-interval": {{ p_user_think_time }},
+        "schedule": "poisson"
+      }
+    ]
+  }
+},
+{
+  "name": "ccs-queries-no_minimized_roundtrips",
+  "parallel": {
+    "time-period": {{ p_query_time_period }},
+    "warmup-time-period": {{ p_query_warmup_time_period }},
+    "tasks": [
+      {% set target_index = "logs-*,remote*:logs-*" %}
+      {% for workflow in p_query_workflows %}
       {
         "name": {{ "%s/no_minimized_roundtrips" | format(workflow) | tojson }},
         "operation": {
@@ -47,7 +79,7 @@
       },
       {% endfor %}
       {
-        "name": "field-caps",
+        "name": "field-caps-nominimized_roundtrips",
         "operation": {
           "operation-type": "raw-request",
           "path": {{ "/%s/_field_caps?fields=*" | format(target_index) | tojson }},
@@ -57,7 +89,7 @@
         "schedule": "poisson"
       },
       {
-        "name": "field-caps-exclude-empty-fields",
+        "name": "field-caps-exclude-empty-fields-nominimized_roundtrips",
         "operation": {
           "operation-type": "raw-request",
           "path": {{ "/%s/_field_caps?fields=*&include_empty_fields=false" | format(target_index) | tojson }},

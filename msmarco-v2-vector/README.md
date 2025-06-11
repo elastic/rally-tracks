@@ -64,7 +64,7 @@ $ python _tools/parse_queries.py -r
 ### Parameters
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
-
+ - `vector_index_type` (default: bbq_hnsw)
  - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.
  - `index_refresh_interval` (default: unset): The index refresh interval.
  - `initial_indexing_bulk_indexing_clients` (default: 5)
@@ -82,3 +82,57 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `search_ops` (default: [(10, 20, 0), (10, 20, 20), (10, 50, 0), (10, 50, 20), (10, 100, 0), (10, 100, 20), (10, 200, 0), (10, 200, 20), (10, 500, 0), (10, 500, 20), (10, 1000, 0), (10, 1000, 20), (100, 120, 0), (100, 120, 120), (100, 200, 0), (100, 200, 120), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]): The search and recall operations to run (k, ef_search, num_rescore).
  - `standalone_search_iterations` (default: 10000)
  - `vector_index_type` (default: "int8_hnsw"): The index kind for storing the vectors.
+
+### Parameters for ingest-autoscale challenge
+
+- Mapping:
+    - `vector_index_type` (default: bbq_hnsw)
+- Initial indexing:
+    - `initial_ingest_clients` (default: 4)
+    - `initial_ingest_bulk_size` (default: 100)
+- Ingest Operations:
+    - `ingest_bulk_size` (default: 100)
+    - `as_warmup_time_periods` (default: [600,600,600,600,600])
+    - `as_time_periods` (default: [1800,1800,1800,1800,1800])
+    - `as_ingest_clients` (default: [1,2,4,8,16])
+    - `as_ingest_target_throughputs` (default: [-1,-1,-1,-1,-1])
+
+When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
+
+### Parameters for search-autoscale challenge
+
+- Mapping:
+  - `vector_index_type` (default: bbq_hnsw)
+- Initial indexing:
+    - `initial_ingest_clients` (default: 4)
+    - `initial_ingest_bulk_size` (default: 100)
+- Search Operations:
+    - `search_size` (default: 10)
+    - `as_warmup_time_periods` (default: [600,600,600,600,600])
+    - `as_time_periods` (default: [1800,1800,1800,1800,1800])
+    - `as_search_clients` (default: [1,2,4,8,16])
+    - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
+
+When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
+
+### Parameters for ingest-search-autoscale challenge
+
+- Mapping:
+    - `vector_index_type` (default: bbq_hnsw)
+- Initial indexing:
+    - `initial_ingest_clients` (default: 4)
+    - `initial_ingest_bulk_size` (default: 100)
+- Operations:
+    - `as_warmup_time_periods` (default: [600,600,600,600,600])
+    - `as_time_periods` (default: [1800,1800,1800,1800,1800])
+- Ingest Operations:
+    - `ingest_bulk_size` (default: 100)
+    - `as_ingest_clients` (default: [1,2,4,8,16])
+    - `as_ingest_target_throughputs` (default: [-1,-1,-1,-1,-1])
+- Search Operations:
+    - `search_size` (default: 10)
+    - `as_search_clients` (default: [1,2,4,8,16])
+    - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
+
+When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
+When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.

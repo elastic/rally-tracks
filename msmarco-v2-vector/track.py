@@ -106,10 +106,7 @@ class KnnParamSource:
             "index": self._index_name,
             "cache": self._params.get("cache", False),
             "size": top_k,
-            "body": {
-                "knn": knn_query,
-                "_source": False
-            },
+            "body": {"knn": knn_query, "_source": False},
         }
 
         self._iters += 1
@@ -200,8 +197,7 @@ class KnnRecallRunner:
                 "k": top_k,
                 "num_candidates": num_candidates,
                 "avg_nodes_visited": statistics.mean(nodes_visited) if any([x > 0 for x in nodes_visited]) else None,
-                "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99) if any(
-                    [x > 0 for x in nodes_visited]) else None,
+                "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99) if any([x > 0 for x in nodes_visited]) else None,
             }
             if exact_total > 0
             else None

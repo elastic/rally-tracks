@@ -16,6 +16,7 @@
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
+  "include-in-reporting": false,
   "filter": {
     "exists": {
       "field": "acceptedAnswerId"
@@ -30,7 +31,9 @@
   "num_candidates": 50,
   "filter": {
     "terms": {
-       "tags": ["java"]
+      "tags": [
+        "java"
+      ]
     }
   }
 },
@@ -43,7 +46,9 @@
   "include-in-reporting": false,
   "filter": {
     "terms": {
-       "tags": ["java"]
+      "tags": [
+        "java"
+      ]
     }
   }
 },
@@ -55,7 +60,9 @@
   "num_candidates": 50,
   "filter": {
     "terms": {
-       "tags": ["css"]
+      "tags": [
+        "css"
+      ]
     }
   }
 },
@@ -65,9 +72,12 @@
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
+  "include-in-reporting": false,
   "filter": {
     "terms": {
-       "tags": ["css"]
+      "tags": [
+        "css"
+      ]
     }
   }
 },
@@ -79,7 +89,9 @@
   "num_candidates": 50,
   "filter": {
     "terms": {
-       "tags": ["concurrency"]
+      "tags": [
+        "concurrency"
+      ]
     }
   }
 },
@@ -89,9 +101,12 @@
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
+  "include-in-reporting": false,
   "filter": {
     "terms": {
-       "tags": ["concurrency"]
+      "tags": [
+        "concurrency"
+      ]
     }
   }
 },
@@ -103,24 +118,25 @@
   "num_candidates": 50,
   "filter": {
     "range": {
-			"questionId": {
-				"lte": 650000
-			}
-		}
+      "questionId": {
+        "lte": 650000
+      }
+    }
   }
 },
 {
-    "name": "knn-recall-10-50-random-10-percent",
+  "name": "knn-recall-10-50-random-10-percent",
   "operation-type": "knn-recall",
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
+  "include-in-reporting": false,
   "filter": {
     "range": {
-			"questionId": {
-				"lte": 650000
-			}
-		}
+      "questionId": {
+        "lte": 650000
+      }
+    }
   }
 },
 {
@@ -131,24 +147,25 @@
   "num_candidates": 50,
   "filter": {
     "range": {
-			"questionId": {
-				"lte": 1500000
-			}
-		}
+      "questionId": {
+        "lte": 1500000
+      }
+    }
   }
 },
 {
-    "name": "knn-recall-10-50-random-20-percent",
+  "name": "knn-recall-10-50-random-20-percent",
   "operation-type": "knn-recall",
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
+  "include-in-reporting": false,
   "filter": {
     "range": {
-			"questionId": {
-				"lte": 1500000
-			}
-		}
+      "questionId": {
+        "lte": 1500000
+      }
+    }
   }
 },
 {
@@ -174,7 +191,9 @@
   "k": 10,
   "filter": {
     "terms": {
-       "tags": ["css"]
+      "tags": [
+        "css"
+      ]
     }
   }
 },
@@ -186,7 +205,9 @@
   "k": 10,
   "filter": {
     "terms": {
-       "tags": ["javascript"]
+      "tags": [
+        "javascript"
+      ]
     }
   }
 },
@@ -198,7 +219,9 @@
   "k": 10,
   "filter": {
     "terms": {
-       "tags": ["concurrency"]
+      "tags": [
+        "concurrency"
+      ]
     }
   }
 },
@@ -210,7 +233,9 @@
   "k": 10,
   "filter": {
     "terms": {
-       "tags": ["ccs"]
+      "tags": [
+        "ccs"
+      ]
     }
   }
 },
@@ -223,8 +248,8 @@
   "filter": {
     "exists": {
       "field": "acceptedAnswerId"
-   }
-  } 
+    }
+  }
 },
 {
   "name": "script-score-query-java",
@@ -234,9 +259,11 @@
   "k": 10,
   "filter": {
     "terms": {
-      "tags": ["java"]
-   }
-  } 
+      "tags": [
+        "java"
+      ]
+    }
+  }
 },
 {
   "name": "script-score-query-match-all",

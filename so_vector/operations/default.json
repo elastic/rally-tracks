@@ -140,6 +140,35 @@
   }
 },
 {
+  "name": "knn-search-100-300-random-10-percent",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num_candidates": 300,
+  "filter": {
+    "range": {
+      "questionId": {
+        "lte": 650000
+      }
+    }
+  }
+},
+{
+  "name": "knn-recall-100-300-random-10-percent",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num_candidates": 300,
+  "include-in-reporting": false,
+  "filter": {
+    "range": {
+      "questionId": {
+        "lte": 650000
+      }
+    }
+  }
+},
+{
   "name": "knn-search-10-50-random-20-percent",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -169,6 +198,35 @@
   }
 },
 {
+  "name": "knn-search-100-300-random-20-percent",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num_candidates": 300,
+  "filter": {
+    "range": {
+      "questionId": {
+        "lte": 1500000
+      }
+    }
+  }
+},
+{
+  "name": "knn-recall-100-300-random-20-percent",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num_candidates": 300,
+  "include-in-reporting": false,
+  "filter": {
+    "range": {
+      "questionId": {
+        "lte": 1500000
+      }
+    }
+  }
+},
+{
   "name": "knn-search-10-50-match-all",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -181,6 +239,21 @@
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
+  "include-in-reporting": false
+},
+{
+  "name": "knn-search-100-300-match-all",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 100,
+  "num_candidates": 300 
+},
+{
+  "name": "knn-recall-100-300-match-all",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": 100,
+  "num_candidates": 300,
   "include-in-reporting": false
 },
 {

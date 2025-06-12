@@ -11,6 +11,31 @@ QUERIES_FILENAME_1K: str = "queries-1k.json.bz2"
 TRUE_KNN_FILENAME_1K: str = "queries-recall-1k.json.bz2"
 
 
+async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, filter, client) -> List[str]:
+    if filter is None:
+        raise ValueError("Filter must be provided for exact neighbors extraction.")
+    script_query = {
+        "query": {
+            "script_score": {
+                "query": filter,
+                "script": {
+                    "source": f"dotProduct(params.query, '{vector_field}') + 1.0",
+                    "params": {"query": query_vector},
+                },
+            }
+        },
+        "_source": False,
+        "docvalue_fields": ["questionId"],
+    }
+    script_result = await client.search(
+        body=script_query,
+        index=index,
+        request_cache=True,
+        size=max_size,
+    )
+    return [hit["fields"]["questionId"][0] for hit in script_result["hits"]["hits"]]
+
+
 def compute_percentile(data: List[Any], percentile):
     size = len(data)
     if size <= 0:
@@ -106,7 +131,20 @@ class KnnVectorStore:
     def get_query_vectors(self) -> List[List[float]]:
         return self._queries
 
-    def get_neighbors_for_query(self, query_id: int, size: int) -> List[str]:
+    async def get_neighbors_for_query(self, index: str, query_id: int, size: int, filter, client) -> List[str]:
+        # For now, we must calculate the exact neighbors, maybe we should cache this?
+        # it would have to be cached per query and filter
+        if filter is not None:
+            query_vector = self._queries[query_id]
+            extracted = await extract_exact_neighbors(
+                query_vector=query_vector,
+                index=index,
+                max_size=size,
+                vector_field="titleVector",
+                filter=filter,
+                client=client,
+            )
+            return extracted
         if (query_id < 0) or (query_id >= len(self._query_nearest_neighbor_docids)):
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
         if (size < 0) or (size > len(self._query_nearest_neighbor_docids[query_id])):
@@ -138,13 +176,14 @@ class KnnRecallParamSource:
             "num_candidates": self._params.get("num_candidates", 50),
             "oversample": self._params.get("oversample", -1),
             "knn_vector_store": KnnVectorStore(),
+            "filter": self._params.get("filter", None),
         }
 
 
 # Used in tandem with the KnnRecallParamSource.
 # reads the queries, executes knn search and compares the results with the true nearest neighbors
 class KnnRecallRunner:
-    def get_knn_query(self, query_vec, k, num_candidates, oversample):
+    def get_knn_query(self, query_vec, k, num_candidates, filter, oversample):
         knn = {
             "field": "titleVector",
             "query_vector": query_vec,
@@ -153,6 +192,8 @@ class KnnRecallRunner:
         }
         if oversample > -1:
             knn["rescore_vector"] = {"oversample": oversample}
+        if filter is not None:
+            knn["filter"] = filter
         return {"knn": knn, "_source": False, "docvalue_fields": ["questionId"]}
 
     async def __call__(self, es, params):
@@ -160,6 +201,7 @@ class KnnRecallRunner:
         num_candidates = params["num_candidates"]
         index = params["index"]
         request_cache = params["cache"]
+        filter = params["filter"]
         recall_total = 0
         exact_total = 0
         min_recall = k
@@ -167,7 +209,7 @@ class KnnRecallRunner:
 
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
         for query_id, query_vector in enumerate(knn_vector_store.get_query_vectors()):
-            knn_body = self.get_knn_query(query_vector, k, num_candidates, params["oversample"])
+            knn_body = self.get_knn_query(query_vector, k, num_candidates, filter, params["oversample"])
             knn_result = await es.search(
                 body=knn_body,
                 index=index,
@@ -175,7 +217,7 @@ class KnnRecallRunner:
                 size=k,
             )
             knn_hits = [hit["fields"]["questionId"][0] for hit in knn_result["hits"]["hits"]]
-            true_neighbors = knn_vector_store.get_neighbors_for_query(query_id, k)[:k]
+            true_neighbors = await knn_vector_store.get_neighbors_for_query(index, query_id, k, filter, es)
             current_recall = len(set(knn_hits).intersection(set(true_neighbors)))
             recall_total += current_recall
             exact_total += len(true_neighbors)
@@ -189,7 +231,7 @@ class KnnRecallRunner:
             "num_candidates": num_candidates,
             "oversample": params["oversample"],
         }
-        logger.info(f"Recall results: {to_return}")
+        logger.info(f"Recall results: {to_return} for filter: {filter}")
         return to_return
 
     def __repr__(self, *args, **kwargs):

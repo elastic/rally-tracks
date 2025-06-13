@@ -7,14 +7,18 @@
       {%- endif -%}{# non-serverless-index-settings-marker-end #}
       "sort": {
         "field": "partition_id"
-      },
+      }
+      {%- if use_synthetic_source | default(false) -%},
       "mapping.source.mode": "synthetic"
+      {%- endif -%}
     }
   },
   "mappings": {
+    {%- if routing | default(false) -%}
     "_routing": {
       "required": true
     },
+    {%- endif -%}
     "properties": {
       "partition_id": {
         "type": "keyword"

@@ -21,14 +21,16 @@
   "name": "random-bulk-indexing",
   "operation-type": "bulk",
   "param-source": "random-bulk-param-source",
-  "dims": {{dims | default(128)}},
-  "partitions": {{partitions | default(1000)}}
+  "dims": {{ dims | default(128) | int }},
+  "partitions": {{ partitions | default(1000) | int }},
+  "routing": {{ routing | default(false) | tojson }},
+  "bulk-size": {{ index_bulk_size | default(1000)}}
 },
 {
   "name": "brute-force-filtered-search",
   "operation-type": "search",
   "param-source": "knn-param-source",
-  "dims": {{dims | default(128)}},
-  "partitions": {{partitions | default(1000)}}
+  "dims": {{ dims | default(128) | int }},
+  "partitions": {{ partitions | default(1000) | int }}
 }
 

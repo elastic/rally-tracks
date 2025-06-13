@@ -18,9 +18,12 @@
     {
       "name": "random-indexing",
       "operation": "random-bulk-indexing",
+      {%- if index_target_throughput is defined %}
+      "target-throughput": {{ index_target_throughput | int }},
+      {%- else %}
       "clients": {{ index_clients | default(1) | int }},
-      "iterations": {{ index_iterations | default(1000) | int }},
-      "bulk-size": {{ index_bulk_size | default(1000)}}
+      {%- endif %}
+      "iterations": {{ index_iterations | default(1000) | int }}
     },
     {
       "name": "refresh-after-index",

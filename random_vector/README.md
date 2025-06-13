@@ -7,17 +7,15 @@ of brute force search over vectors filtered by a partition ID.
 
 ## Indexing
 
-The track performs indexing in one of two modes, depending on whether `index_target_throughput` is defined:
+Indexing runs in one of two modes, depending on whether `index_target_throughput` is specified.
+The track launches `index_clients` parallel clients. Each client sends `index_iterations` bulk requests, with each request containing `index_bulk_size` documents.
 
-* **Without `index_target_throughput`**
-  If `index_target_throughput` is not set, the track launches `index_clients` parallel clients. Each client executes `index_iterations` bulk requests, with each request containing `index_bulk_size` documents.
-  The total number of documents indexed is:
-  `index_clients` × `index_iterations` × `index_bulk_size`
+The total number of documents indexed is:
+`index_clients` × `index_iterations` × `index_bulk_size`
 
-* **With `index_target_throughput`**
-  If `index_target_throughput` is set, the track performs `index_iterations` bulk requests, each of size `index_bulk_size`, while aiming to sustain the target throughput (`index_target_throughput`) in documents per second.
-  The total number of documents indexed is:
-  `index_iterations` × `index_bulk_size`
+* If `index_target_throughput` is set, each client will send bulk operations at a rate of:
+  `index_target_throughput` ÷ `index_clients` bulk requests per second.
+* If `index_target_throughput` is not set, each client will send bulk operations as fast as possible.
 
 ### Document content and index layout
 

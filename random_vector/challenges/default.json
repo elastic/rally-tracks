@@ -20,9 +20,8 @@
       "operation": "random-bulk-indexing",
       {%- if index_target_throughput is defined %}
       "target-throughput": {{ index_target_throughput | int }},
-      {%- else %}
-      "clients": {{ index_clients | default(1) | int }},
       {%- endif %}
+      "clients": {{ index_clients | default(1) | int }},
       "iterations": {{ index_iterations | default(1000) | int }}
     },
     {

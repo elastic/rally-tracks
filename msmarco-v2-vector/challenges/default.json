@@ -107,4 +107,28 @@
     }
     {%- endfor %}
   ]
+},
+{
+  "name": "ingest-autoscale",
+  "description": "Benchmark bulk indexing with configurable steps",
+  "default": false,
+  "schedule": [
+    {{ rally.collect(parts="common/ingest-autoscale-schedule.json") }}
+  ]
+},
+{
+  "name": "search-autoscale",
+  "description": "Benchmark search queries with configurable scaling steps",
+  "default": false,
+  "schedule": [
+    {{ rally.collect(parts="common/search-autoscale-schedule.json") }}
+  ]
+},
+{
+  "name": "ingest-search-autoscale",
+  "description": "Benchmark concurrent queries and bulk indexing with configurable scaling steps",
+  "default": false,
+  "schedule": [
+    {{ rally.collect(parts="common/ingest-search-autoscale-schedule.json") }}
+  ]
 }

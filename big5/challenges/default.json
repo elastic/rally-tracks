@@ -1,0 +1,205 @@
+{
+  "name": "big5",
+  "default": true,
+  "schedule": [
+    {
+      "operation": "create-ilm-policy"
+    },
+    {
+      "operation": "create-index-template"
+    },
+    {
+      "operation": "create-data-stream"
+    },
+    {
+      "operation": "bulk-index",
+      "clients": {{ bulk_indexing_clients | default(1) }}
+    },
+    {
+      "operation": "default",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "desc_sort_timestamp",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "asc_sort_timestamp",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "desc_sort_with_after_timestamp",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "asc_sort_with_after_timestamp",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "desc_sort_timestamp_can_match_shortcut",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "desc_sort_timestamp_no_can_match_shortcut",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "asc_sort_timestamp_can_match_shortcut",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "asc_sort_timestamp_no_can_match_shortcut",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "name": "term",
+      "operation": "term",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "multi_terms-keyword",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "keyword-terms",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "keyword-terms-low-cardinality",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "composite-terms",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "composite_terms-keyword",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "composite-date_histogram-daily",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "range",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "range-numeric",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "keyword-in-range",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "date_histogram_hourly_agg",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "date_histogram_minute_agg",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "scroll",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "query-string-on-message",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "query-string-on-message-filtered",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "query-string-on-message-filtered-sorted-num",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "sort_keyword_can_match_shortcut",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "sort_keyword_no_can_match_shortcut",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "sort_numeric_desc",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "sort_numeric_asc",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "sort_numeric_desc_with_match",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "sort_numeric_asc_with_match",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "range_field_conjunction_big_range_big_term_query",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "range_field_disjunction_big_range_small_term_query",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "range_field_conjunction_small_range_small_term_query",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "range_field_conjunction_small_range_big_term_query",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "range-auto-date-histo",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "range-auto-date-histo-with-metrics",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    }
+  ]
+}

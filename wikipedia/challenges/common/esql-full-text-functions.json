@@ -1,0 +1,107 @@
+{
+  "name": "delete-index",
+  "operation": "delete-index"
+},
+{
+  "name": "create-index",
+  "operation": "create-index"
+},
+{
+  "name": "check-cluster-health",
+  "operation": "check-cluster-health"
+},
+{
+  "name": "initial-documents-indexing",
+  "operation": "initial-documents-indexing",
+  "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }},
+  "clients": {{ initial_indexing_bulk_clients | default(5) | int }}
+},
+{
+  "name": "refresh-after-index",
+  "operation": "refresh-after-index"
+},
+{
+  "name": "force-merge",
+  "operation": "force-merge"
+},
+{
+  "name": "refresh-after-force-merge",
+  "operation": "refresh-after-force-merge"
+},
+{
+  "name": "wait-until-merges-finish-after-index",
+  "operation": "wait-until-merges-finish-after-index"
+},
+{
+  "name": "standalone-esql-match-search",
+  "operation": "query-esql-match-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }}
+},
+{
+  "name": "standalone-query-match-search",
+  "operation": "query-match-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+},
+{
+  "name": "standalone-esql-match-phrase-search",
+  "operation": "query-esql-match-phrase-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }}
+},
+{
+  "name": "standalone-query-match-phrase-search",
+  "operation": "query-match-phrase-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+},
+{
+  "name": "standalone-esql-qstr-search",
+  "operation": "query-esql-qstr-search",
+  "query-type": "match",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+},
+{
+  "name": "standalone-query-string-search",
+  "operation": "query-string-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+},
+{
+  "name": "standalone-esql-kql-search",
+  "operation": "query-esql-kql-search",
+  "query-type": "match",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+},
+{
+  "name": "standalone-query-kql-search",
+  "operation": "query-kql-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+},
+{
+  "name": "standalone-esql-term-search",
+  "operation": "query-esql-term-search",
+  "query-type": "match",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+},
+{
+  "name": "standalone-query-term-search",
+  "operation": "query-term-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "time-period": {{ standalone_search_time_period | default(300) | int }},
+  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+}

@@ -234,11 +234,13 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
                 query_body = f'KQL("{ self._search_fields }:{ query }")'
             elif self._query_type == "term":
                 query_body = f'TERM(title, "{ query }") OR TERM(content, "{ query }")'
+            elif self._query_type == "match_phrase":
+                query_body = f'MATCH_PHRASE(title, "{ query }") OR MATCH_PHRASE(content, "{ query }")'
             else:
                 raise ValueError("Unknown query type: " + self._query_type)
 
             return {
-                "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | KEEP title, _score | SORT _score DESC | LIMIT { self._size }",
+                "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | SORT _score DESC | LIMIT { self._size }",
             }
 
         except StopIteration:
@@ -250,7 +252,7 @@ class QueryParamSource(QueryIteratorParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
         self._index_name = params.get("index", track.indices[0].name if len(track.indices) == 1 else "_all")
-        self._cache = params.get("cache", True)
+        self._cache = params.get("cache", False)
         self._query_type = self._params["query-type"]
 
     def params(self):
@@ -262,8 +264,12 @@ class QueryParamSource(QueryIteratorParamSource):
                 query_body = {"kql": {"query": f'{ self._params["search-fields"] }:"{ query }"'}}
             elif self._query_type == "match":
                 query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
+            elif self._query_type == "multi_match":
+                query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
             elif self._query_type == "term":
                 query_body = {"bool": {"should": [{"term": {"title": query}}, {"term": {"content": query}}]}}
+            elif self._query_type == "match_phrase":
+                query_body = {"bool": {"should": [{"match_phrase": {"title": query}}, {"match_phrase": {"content": query}}]}}
             else:
                 raise ValueError("Unknown query type: " + self._query_type)
 
@@ -273,10 +279,9 @@ class QueryParamSource(QueryIteratorParamSource):
 
         return {
             "body": {
-                "_source": {"includes": ["title"]},
                 "query": query_body,
+                "size": self._params["size"],
             },
-            "size": self._params["size"],
             "index": self._index_name,
             "cache": self._cache,
         }

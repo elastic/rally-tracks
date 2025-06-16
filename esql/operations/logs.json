@@ -1,0 +1,30 @@
+    {
+      "name": "from_logs_limit_1",
+      "operation-type": "esql",
+      "query": "FROM logs* | limit 1"
+    },
+    {
+      "name": "from_star_limit_1",
+      "operation-type": "esql",
+      "query": "FROM * | limit 1"
+    },
+    {
+      "name": "from_logs_limit_10",
+      "operation-type": "esql",
+      "query": "FROM logs* | limit 10"
+    },
+    {
+      "name": "from_star_limit_10",
+      "operation-type": "esql",
+      "query": "FROM * | limit 10"
+    },
+    {
+      "name": "from_logs_limit_1000",
+      "operation-type": "esql",
+      "query": "FROM logs* | limit 1000"
+    },
+    {
+      "name": "from_star_limit_1000",
+      "operation-type": "esql",
+      "query": "FROM * | limit 1000"
+    }

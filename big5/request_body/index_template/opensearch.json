@@ -1,0 +1,174 @@
+{
+  "index_patterns": [
+    "logs-benchmark-*"
+  ],
+  "template": {
+    "settings": {
+      "index.codec": "best_compression",
+      "index.number_of_shards": {{ p_number_of_shards }},
+      "index.translog.sync_interval": "30s",
+      "index.translog.durability": "async",
+      "index.number_of_replicas": {{ p_number_of_replicas }}
+    },
+    "mappings": {
+      "properties": {
+        "agent": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "id": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "ephemeral_id": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "type": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "version": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        },
+        "process": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        },
+        "log": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "message": {
+          "type": "text"
+        },
+        "tags": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "cloud": {
+          "type": "object",
+          "properties": {
+            "region": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        },
+        "@timestamp": {
+          "type": "date"
+        },
+        "ecs": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "file": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        },
+        "host": {
+          "type": "object"
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "long"
+            },
+            "tmax": {
+              "type": "long"
+            },
+            "tmin": {
+              "type": "long"
+            }
+          }
+        },
+        "aws": {
+          "type": "object",
+          "properties": {
+            "cloudwatch": {
+              "type": "object",
+              "properties": {
+                "log_group": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "ingestion_time": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "log_stream": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "event": {
+          "type": "object",
+          "properties": {
+            "ingested": {
+              "type": "date"
+            },
+            "id": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "dataset": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  },
+  "composed_of": [],
+  "priority": "200",
+  "data_stream": {
+    "timestamp_field": {
+      "name": "@timestamp"
+    }
+  }
+}

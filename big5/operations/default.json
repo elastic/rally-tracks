@@ -1,0 +1,837 @@
+    {%- set p_target_opensearch = (target_opensearch | default(false))%}
+    {%- set p_number_of_shards = (number_of_shards | default(1))%}
+    {%- set p_number_of_replicas = (number_of_replicas | default(0))%}
+    {
+      "name": "create-ilm-policy",
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": {{ "/_plugins/_ism/policies/logs-benchmark-policy" | tojson if p_target_opensearch else "/_ilm/policy/logs-benchmark-policy" | tojson }},
+      "body":
+        {% if p_target_opensearch %}
+          {% include "request_body/policy/opensearch.json" %}
+        {%- else %}
+          {% include "request_body/policy/elasticsearch.json" %}
+        {% endif %}
+    },
+    {
+      "name": "create-index-template",
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_index_template/logs-benchmark-template",
+      "body":
+        {% if p_target_opensearch %}
+          {% include "request_body/index_template/opensearch.json" %}
+        {%- else %}
+          {% include "request_body/index_template/elasticsearch.json" %}
+        {% endif %}
+    },
+    {
+      "name": "bulk-index",
+      "operation-type": "bulk",
+      "bulk-size": {{ bulk_size | default(500) }},
+      "ingest-percentage": {{ ingest_percentage | default(100) }}
+    },
+    {
+      "name": "default",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "term",
+      "operation-type": "search",
+      "request-timeout": 7200,
+      "body": {
+        "query": {
+          "term": {
+            "log.file.path": {
+              "value": "/var/log/messages/fuschiashoulder"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "2023-01-01T00:00:00",
+              "lt": "2023-01-03T00:00:00"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range-numeric",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "range": {
+            "metrics.size": {
+              "gte": 20,
+              "lte": 200
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "keyword-in-range",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "gte": "2023-01-01T00:00:00",
+                    "lt": "2023-01-03T00:00:00"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "process.name": "kernel"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_hourly_agg",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "by_hour": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "calendar_interval": "hour"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date_histogram_minute_agg",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "2023-01-01T00:00:00",
+              "lt": "2023-01-03T00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "by_hour": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "calendar_interval": "minute"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "scroll",
+      "operation-type": "search",
+      "pages": 25,
+      "results-per-page": 1000,
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "desc_sort_timestamp",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"@timestamp" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "desc_sort_with_after_timestamp",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"@timestamp" : "desc"}
+        ],
+        "search_after": ["2023-01-06T23:59:58.000Z"]
+      }
+    },
+    {
+      "name": "asc_sort_timestamp",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"@timestamp" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "asc_sort_with_after_timestamp",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match_all": {}
+        },
+        "sort" : [
+          {"@timestamp" : "asc"}
+        ],
+        "search_after": ["2023-01-01T23:59:58.000Z"]
+      }
+    },
+    {
+      "name": "desc_sort_timestamp_can_match_shortcut",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "process.name": "kernel"
+          }
+        },
+        "sort" : [
+          {"@timestamp" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "desc_sort_timestamp_no_can_match_shortcut",
+      "operation-type": "search",
+      "request-params" : {
+        "pre_filter_shard_size" : 100000
+      },
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "process.name": "kernel"
+          }
+        },
+        "sort" : [
+          {"@timestamp" : "desc"}
+        ]
+      }
+    },
+    {
+      "name": "asc_sort_timestamp_can_match_shortcut",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "process.name": "kernel"
+          }
+        },
+        "sort" : [
+          {"@timestamp" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "asc_sort_timestamp_no_can_match_shortcut",
+      "operation-type": "search",
+      "request-params" : {
+        "pre_filter_shard_size" : 100000
+      },
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "process.name": "kernel"
+          }
+        },
+        "sort" : [
+          {"@timestamp" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_keyword_can_match_shortcut",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "process.name": "kernel"
+          }
+        },
+        "sort" : [
+          {"meta.file" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_keyword_no_can_match_shortcut",
+      "operation-type": "search",
+      "request-params" : {
+        "pre_filter_shard_size" : 100000
+      },
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "process.name": "kernel"
+          }
+        },
+        "sort" : [
+          {"meta.file" : "asc"}
+        ]
+      }
+    },
+    {
+      "name": "sort_numeric_desc",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match_all": {}
+        },
+        "sort": [
+          {
+            "metrics.size": "desc"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sort_numeric_asc",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match_all": {}
+        },
+        "sort": [
+          {
+            "metrics.size": "asc"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sort_numeric_desc_with_match",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "log.file.path": "/var/log/messages/solarshark"
+          }
+        },
+        "sort": [
+          {
+            "metrics.size": "desc"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sort_numeric_asc_with_match",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "match": {
+            "log.file.path": "/var/log/messages/solarshark"
+          }
+        },
+        "sort": [
+          {
+            "metrics.size": "asc"
+          }
+        ]
+      }
+    },
+    {
+      "name": "terms-significant-1",
+      "operation-type": "search",
+      "request-timeout": 7200,
+      "body": {
+        "track_total_hits": false,
+        "size": 0,
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "2023-01-01T00:00:00",
+              "lt": "2023-01-03T00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "terms": {
+            "terms": {
+              "field": "aws.cloudwatch.log_stream",
+              "size": 10
+            },
+            "aggs": {
+              "significant_ips": {
+                "significant_terms": {
+                  "field": "process.name"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "terms-significant-2",
+      "operation-type": "search",
+      "request-timeout": 7200,
+      "body": {
+        "track_total_hits": false,
+        "size": 0,
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "2023-01-01T00:00:00",
+              "lt": "2023-01-03T00:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "terms": {
+            "terms": {
+              "field": "process.name",
+              "size": 10
+            },
+            "aggs": {
+              "significant_ips": {
+                "significant_terms": {
+                  "field": "aws.cloudwatch.log_stream"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_conjunction_big_range_big_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "process.name": "systemd"
+                }
+              },
+              {
+                "range": {
+                  "metrics.size": {
+                    "gte": 1,
+                    "lte": 100
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_disjunction_big_range_small_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "aws.cloudwatch.log_stream": "indigodagger"
+                }
+              },
+              {
+                "range": {
+                  "metrics.size": {
+                    "gte": 1,
+                    "lte": 100
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_conjunction_small_range_small_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "aws.cloudwatch.log_stream": "indigodagger"
+                }
+              },
+              {
+                "range": {
+                  "metrics.size": {
+                    "gte": 10,
+                    "lte": 20
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "range_field_conjunction_small_range_big_term_query",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "metrics.size": {
+                    "gte": 20,
+                    "lte": 30
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "range-auto-date-histo",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "tmax": {
+            "range": {
+              "field": "metrics.size",
+              "ranges": [
+                {
+                  "to": -10
+                },
+                {
+                  "from": -10,
+                  "to": 10
+                },
+                {
+                  "from": 10,
+                  "to": 100
+                },
+                {
+                  "from": 100,
+                  "to": 1000
+                },
+                {
+                  "from": 1000,
+                  "to": 2000
+                },
+                {
+                  "from": 2000
+                }
+              ]
+            },
+            "aggs": {
+              "date": {
+                "auto_date_histogram": {
+                  "field": "@timestamp",
+                  "buckets": 20
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range-auto-date-histo-with-metrics",
+      "operation-type": "search",
+      "request-timeout": 7200,
+      "body": {
+        "size": 0,
+        "aggs": {
+          "tmax": {
+            "range": {
+              "field": "metrics.size",
+              "ranges": [
+                {
+                  "to": 100
+                },
+                {
+                  "from": 100,
+                  "to": 1000
+                },
+                {
+                  "from": 1000,
+                  "to": 2000
+                },
+                {
+                  "from": 2000
+                }
+              ]
+            },
+            "aggs": {
+              "date": {
+                "auto_date_histogram": {
+                  "field": "@timestamp",
+                  "buckets": 10
+                },
+                "aggs": {
+                  "tmin": {
+                    "min": {
+                      "field": "metrics.tmin"
+                    }
+                  },
+                  "tavg": {
+                    "avg": {
+                      "field": "metrics.size"
+                    }
+                  },
+                  "tmax": {
+                    "max": {
+                      "field": "metrics.size"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "multi_terms-keyword",
+      "operation-type": "search",
+      "request-timeout": 7200,
+      "body":{
+        "size": 0,
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "2023-01-05T00:00:00",
+              "lt": "2023-01-05T05:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "important_terms": {
+            "multi_terms": {
+              "terms": [
+                {
+                  "field": "process.name"
+                },
+                {
+                  "field": "cloud.region"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-terms",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "2023-01-02T00:00:00",
+              "lt": "2023-01-02T10:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "logs": {
+            "composite": {
+              "sources": [
+                { "process_name": { "terms": { "field": "process.name", "order": "desc" }}},
+                { "cloud_region": { "terms": { "field": "cloud.region", "order": "asc" }}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite_terms-keyword",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "2023-01-02T00:00:00",
+              "lt": "2023-01-02T10:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "logs": {
+            "composite": {
+              "sources": [
+                { "process_name": { "terms": { "field": "process.name", "order": "desc" }}},
+                { "cloud_region": { "terms": { "field": "cloud.region", "order": "asc" }}},
+                { "cloudstream": { "terms": { "field": "aws.cloudwatch.log_stream", "order": "asc" }}}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "composite-date_histogram-daily",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "@timestamp": {
+              "gte": "2022-12-30T00:00:00",
+              "lt": "2023-01-07T12:00:00"
+            }
+          }
+        },
+        "aggs": {
+          "logs": {
+            "composite": {
+              "sources": [
+                { "date": { "date_histogram": { "field": "@timestamp", "calendar_interval": "day" } } }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "keyword-terms",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "station": {
+            "terms": {
+              "field": "aws.cloudwatch.log_stream",
+              "size": 500
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "keyword-terms-low-cardinality",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "country": {
+            "terms": {
+              "field": "aws.cloudwatch.log_stream",
+              "size": 50
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "query-string-on-message",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "query_string": {
+            "query": "message: monkey jackal bear"
+          }
+        }
+      }
+    },
+    {
+      "name": "query-string-on-message-filtered",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "gte": "2023-01-03T00:00:00",
+                    "lt": "2023-01-03T10:00:00"
+                  }
+                }
+              },
+              {
+                "query_string": {
+                  "query": "message: monkey jackal bear"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "query-string-on-message-filtered-sorted-num",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "range": {
+                  "@timestamp": {
+                    "gte": "2023-01-03T00:00:00",
+                    "lt": "2023-01-03T10:00:00"
+                  }
+                }
+              },
+              {
+                "query_string": {
+                  "query": "message: monkey jackal bear"
+                }
+              }
+            ]
+          }
+        },
+        "sort": [
+          {
+            "@timestamp": {
+              "order": "asc"
+            }
+          }
+        ]
+      }
+    }

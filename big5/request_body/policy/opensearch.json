@@ -1,0 +1,54 @@
+{
+  "policy": {
+    "policy_id": "logs-benchmark-policy",
+    "description": "logs benchmark policy",
+    "default_state": "hot",
+    "states": [
+      {
+        "name": "hot",
+        "actions": [
+          {
+            "retry": {
+              "count": 3,
+              "backoff": "exponential",
+              "delay": "1m"
+            },
+            "rollover": {
+              "min_primary_shard_size": "25gb"
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "state_name": "warm"
+          }
+        ]
+      },
+      {
+        "name": "warm",
+        "actions": [
+          {
+            "retry": {
+              "count": 3,
+              "backoff": "exponential",
+              "delay": "1m"
+            },
+            "force_merge": {
+              "max_num_segments": 1
+            }
+          }
+        ],
+        "transitions": [
+        ]
+      }
+    ],
+    "ism_template": [
+      {
+        "index_patterns": [
+          "logs-benchmark-*"
+        ],
+        "priority": 200
+      }
+    ]
+  }
+}

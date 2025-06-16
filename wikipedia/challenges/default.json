@@ -1,168 +1,200 @@
-{
-  "name": "index-and-search",
-  "description": "Indexes wikipedia data, then executes searches.",
-  "default": true,
-  "schedule": [
-    {
-      "name": "delete-index",
-      "operation": "delete-index"
-    },
-    {
-      "name": "create-index",
-      "operation": "create-index"
-    },
-    {
-      "name": "check-cluster-health",
-      "operation": "check-cluster-health"
-    },
-    {
-      "name": "initial-documents-indexing",
-      "operation": "initial-documents-indexing",
-      "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }},
-      "clients": {{ initial_indexing_bulk_clients | default(5) | int }}
-    },
-    {
-      "name": "refresh-after-index",
-      "operation": "refresh-after-index"
-    },
-    {
-      "name": "force-merge",
-      "operation": "force-merge"
-    },
-    {
-      "name": "refresh-after-force-merge",
-      "operation": "refresh-after-force-merge"
-    },
-    {
-      "name": "wait-until-merges-finish-after-index",
-      "operation": "wait-until-merges-finish-after-index"
-    },
-    {
-      "name": "standalone-query-string-search",
-      "operation": "query-string-search",
-      "clients": {{ standalone_search_clients | default(20) | int }},
-      "time-period": {{ standalone_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "create-default-search-application",
-      "operation": "create-default-search-application"
-    },
-    {
-      "name": "default-search-application-search",
-      "operation": "default-search-application-search",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name":"update-query-rules-settings",
-      "tags": ["setup"],
-      "operation": {
-        "operation-type": "raw-request",
-        "method": "PUT",
-        "path": "/_cluster/settings",
-        "body": {
-          "persistent": {
-            "xpack.applications.rules.max_rules_per_ruleset" : 1000
-          }
-        },
-        "include-in-reporting": false
-      }
-    },
-    {
-      "name": "create-query-ruleset-1",
-      "operation": "create-query-ruleset-1",
-      "ruleset_id": "ruleset_1",
-      "ruleset_size": 1
-    },
-    {
-      "name": "create-query-ruleset-10",
-      "operation": "create-query-ruleset-10",
-      "ruleset_id": "ruleset_10",
-      "ruleset_size": 10
-    },
-    {
-      "name": "create-query-ruleset-100",
-      "operation": "create-query-ruleset-100",
-      "ruleset_id": "ruleset_100",
-      "ruleset_size": 100
-    },
-    {
-      "name": "create-query-ruleset-1000",
-      "operation": "create-query-ruleset-1000",
-      "ruleset_id": "ruleset_1000",
-      "ruleset_size": 1000
-    },
-    {
-      "name": "query-rules-search-1",
-      "operation": "query-rules-search-1",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "query-rules-search-10",
-      "operation": "query-rules-search-10",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "query-rules-search-100",
-      "operation": "query-rules-search-100",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "query-rules-search-1000",
-      "operation": "query-rules-search-1000",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "pinned-search",
-      "operation": "pinned-search",
-      "clients": {{ application_search_clients | default(20) | int }},
-      "time-period": {{ application_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "parallel": {
-        "completed-by": "parallel-documents-indexing-query-string-search",
-        "tasks": [
-          {
-            "name": "parallel-documents-indexing-bulk",
-            "operation": "parallel-documents-indexing",
-            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
-            "warmup-time-period": {{ parallel_indexing_bulk_warmup_time_period | default(10) | int }},
-            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+  {
+    "name": "index-and-search",
+    "description": "Indexes wikipedia data, then executes searches.",
+    "default": true,
+    "schedule": [
+      {
+        "name": "delete-index",
+        "operation": "delete-index"
+      },
+      {
+        "name": "create-index",
+        "operation": "create-index"
+      },
+      {
+        "name": "check-cluster-health",
+        "operation": "check-cluster-health"
+      },
+      {
+        "name": "initial-documents-indexing",
+        "operation": "initial-documents-indexing",
+        "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }},
+        "clients": {{ initial_indexing_bulk_clients | default(5) | int }}
+      },
+      {
+        "name": "refresh-after-index",
+        "operation": "refresh-after-index"
+      },
+      {
+        "name": "force-merge",
+        "operation": "force-merge"
+      },
+      {
+        "name": "refresh-after-force-merge",
+        "operation": "refresh-after-force-merge"
+      },
+      {
+        "name": "wait-until-merges-finish-after-index",
+        "operation": "wait-until-merges-finish-after-index"
+      },
+      {
+        "name": "standalone-query-string-search",
+        "operation": "query-string-search",
+        "clients": {{ standalone_search_clients | default(20) | int }},
+        "time-period": {{ standalone_search_time_period | default(300) | int }},
+        "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+      },
+      {
+        "name": "create-default-search-application",
+        "operation": "create-default-search-application"
+      },
+      {
+        "name": "default-search-application-search",
+        "operation": "default-search-application-search",
+        "clients": {{ application_search_clients | default(20) | int }},
+        "time-period": {{ application_search_time_period | default(300) | int }},
+        "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      },
+      {
+        "name":"update-query-rules-settings",
+        "tags": ["setup"],
+        "operation": {
+          "operation-type": "raw-request",
+          "method": "PUT",
+          "path": "/_cluster/settings",
+          "body": {
+            "persistent": {
+              "xpack.applications.rules.max_rules_per_ruleset" : 1000
+            }
           },
-          {
-            "name": "parallel-documents-indexing-query-string-search",
-            "operation": "query-string-search",
-            "clients": {{ parallel_indexing_search_clients | default(20) | int }},
-            "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
-            "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}
-          }
-        ]
+          "include-in-reporting": false
+        }
+      },
+      {
+        "name": "create-query-ruleset-1",
+        "operation": "create-query-ruleset-1",
+        "ruleset_id": "ruleset_1",
+        "ruleset_size": 1
+      },
+      {
+        "name": "create-query-ruleset-10",
+        "operation": "create-query-ruleset-10",
+        "ruleset_id": "ruleset_10",
+        "ruleset_size": 10
+      },
+      {
+        "name": "create-query-ruleset-100",
+        "operation": "create-query-ruleset-100",
+        "ruleset_id": "ruleset_100",
+        "ruleset_size": 100
+      },
+      {
+        "name": "create-query-ruleset-1000",
+        "operation": "create-query-ruleset-1000",
+        "ruleset_id": "ruleset_1000",
+        "ruleset_size": 1000
+      },
+      {
+        "name": "query-rules-search-1",
+        "operation": "query-rules-search-1",
+        "clients": {{ application_search_clients | default(20) | int }},
+        "time-period": {{ application_search_time_period | default(300) | int }},
+        "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      },
+      {
+        "name": "query-rules-search-10",
+        "operation": "query-rules-search-10",
+        "clients": {{ application_search_clients | default(20) | int }},
+        "time-period": {{ application_search_time_period | default(300) | int }},
+        "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      },
+      {
+        "name": "query-rules-search-100",
+        "operation": "query-rules-search-100",
+        "clients": {{ application_search_clients | default(20) | int }},
+        "time-period": {{ application_search_time_period | default(300) | int }},
+        "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      },
+      {
+        "name": "query-rules-search-1000",
+        "operation": "query-rules-search-1000",
+        "clients": {{ application_search_clients | default(20) | int }},
+        "time-period": {{ application_search_time_period | default(300) | int }},
+        "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      },
+      {
+        "name": "pinned-search",
+        "operation": "pinned-search",
+        "clients": {{ application_search_clients | default(20) | int }},
+        "time-period": {{ application_search_time_period | default(300) | int }},
+        "warmup-time-period": {{ application_search_warmup_time_period | default(10) | int }}
+      },
+      {
+        "parallel": {
+          "completed-by": "parallel-documents-indexing-query-string-search",
+          "tasks": [
+            {
+              "name": "parallel-documents-indexing-bulk",
+              "operation": "parallel-documents-indexing",
+              "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
+              "warmup-time-period": {{ parallel_indexing_bulk_warmup_time_period | default(10) | int }},
+              "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+            },
+            {
+              "name": "parallel-documents-indexing-query-string-search",
+              "operation": "query-string-search",
+              "clients": {{ parallel_indexing_search_clients | default(20) | int }},
+              "time-period": {{ parallel_indexing_search_time_period | default(300) | int }},
+              "warmup-time-period": {{ parallel_indexing_search_warmup_time_period | default(10) | int }}
+            }
+          ]
+        }
+      },
+      {
+        "name": "standalone-retriever-search",
+        "operation": "retriever-search",
+        "clients": {{ standalone_search_clients | default(20) | int }},
+        "time-period": {{ standalone_search_time_period | default(300) | int }},
+        "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+      },
+      {
+        "name": "standalone-retriever-search-with-rerank",
+        "operation": "retriever-search-with-rerank",
+        "clients": {{ standalone_search_clients | default(20) | int }},
+        "time-period": {{ standalone_search_time_period | default(300) | int }},
+        "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
       }
-    },
-    {
-      "name": "standalone-retriever-search",
-      "operation": "retriever-search",
-      "clients": {{ standalone_search_clients | default(20) | int }},
-      "time-period": {{ standalone_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
-    },
-    {
-      "name": "standalone-retriever-search-with-rerank",
-      "operation": "retriever-search-with-rerank",
-      "clients": {{ standalone_search_clients | default(20) | int }},
-      "time-period": {{ standalone_search_time_period | default(300) | int }},
-      "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
-    }
-  ]
-}
+    ]
+  },
+  {
+    "name": "esql-full-text-functions",
+    "description": "Indexes and executes ES|QL and Query DSL full text functions queries",
+    "default": false,
+    "schedule": [
+      {{ rally.collect(parts="common/esql-full-text-functions.json") }}
+    ]
+  },
+  {
+    "name": "ingest-autoscale",
+    "description": "Benchmark bulk indexing with configurable steps",
+    "default": false,
+    "schedule": [
+      {{ rally.collect(parts="common/ingest-autoscale-schedule.json") }}
+    ]
+  },
+  {
+    "name": "search-autoscale",
+    "description": "Benchmark search queries with configurable scaling steps",
+    "default": false,
+    "schedule": [
+      {{ rally.collect(parts="common/search-autoscale-schedule.json") }}
+    ]
+  },
+  {
+    "name": "ingest-search-autoscale",
+    "description": "Benchmark concurrent queries and bulk indexing with configurable scaling steps",
+    "default": false,
+    "schedule": [
+      {{ rally.collect(parts="common/ingest-search-autoscale-schedule.json") }}
+    ]
+  }

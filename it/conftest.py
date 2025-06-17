@@ -18,9 +18,9 @@
 import pytest
 from elasticsearch import Elasticsearch
 
+
 @pytest.fixture(scope="function")
 def es_cluster_cleanup(es_cluster):
     es = Elasticsearch(f"http://localhost:{es_cluster.http_port}")
     es.indices.delete(index="*")
     es.indices.delete_data_stream(name="*")
-

@@ -97,23 +97,6 @@
         "warmup-time-period": {{p_as_warmup_time_periods[i]}},
         "time-period": {{p_as_time_periods[i]}},
         "target-throughput": {{p_as_search_target_throughputs[i]}}
-      },
-      {
-        "name": "parallel-search-{{loop.index}}-c{{p_as_search_clients[i]}}-s10-t{{p_as_search_target_throughputs[i]}}",
-        "clients": {{p_as_search_clients[i]}},
-        "operation": {
-          "operation-type": "search",
-          "param-source": "knn-param-source",
-          "k": 10,
-          "num-candidates": 100,
-          {%- if p_vector_index_type == "bbq_hnsw" %}
-          "oversample-rescore": 3,
-          {%- endif %}
-          "looped": true
-        },
-        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-        "time-period": {{p_as_time_periods[i]}},
-        "target-throughput": {{p_as_search_target_throughputs[i]}}
       }
   {%- endif %}
     ]

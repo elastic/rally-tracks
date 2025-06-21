@@ -10,6 +10,7 @@ class RandomBulkParamSource(ParamSource):
         self._index_name = params.get("index", track.indices[0].name)
         self._dims = params.get("dims", 128)
         self._partitions = params.get("partitions", 1000)
+        self._routing = params.get("routing", False)
 
     def params(self):
         import numpy as np
@@ -18,7 +19,10 @@ class RandomBulkParamSource(ParamSource):
         for _ in range(self._bulk_size):
             vec = np.random.rand(self._dims)
             partition_id = random.randint(0, self._partitions)
-            bulk_data.append({"index": {"_index": self._index_name, "routing": partition_id}})
+            metadata = {"_index": self._index_name}
+            if self._routing:
+                metadata["routing"] = partition_id
+            bulk_data.append({"index": metadata})
             bulk_data.append({"partition_id": partition_id, "emb": vec.tolist()})
 
         return {

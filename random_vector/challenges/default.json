@@ -1,16 +1,49 @@
+{%- set p_index_type = (index_type | default("datastream"))%}
+
 {
   "name": "index-and-search",
   "description": "Create an index and index doc with random content into it.",
   "default": true,
   "schedule": [
+    {%- if p_index_type == "datastream" -%}
+   {
+  
+    "name": "create-ingest-pipeline",
+    "operation": "create-ingest-pipeline"
+   },
+  {%- endif -%}
+   {
+  
+    "name": "delete-data-stream",
+    "operation": "delete-data-stream"
+   },
     {
       "name": "delete-index",
-      "operation": "delete-index"
+      "operation": "delete-index",
+      "ignore": [401,404]
     },
     {
+  
+      "name": "delete-data-stream-template",
+      "operation": "delete-data-stream-template"
+   
+   }, 
+   {%- if p_index_type == "datastream" -%}
+   {
+    "name": "create-data-stream-template",
+    "operation": "create-data-stream-template"
+ 
+   },
+   {%- endif -%}
+   {
+    {%- if p_index_type == "datastream" -%}
+      "name": "create-data-stream",
+      "operation": "create-data-stream"
+    {%- else -%}
       "name": "create-index",
       "operation": "create-index"
-    },
+    {%- endif -%}
+  },
     {
       "name": "check-cluster-health",
       "operation": "check-cluster-health"
@@ -18,9 +51,11 @@
     {
       "name": "random-indexing",
       "operation": "random-bulk-indexing",
+      {%- if index_target_throughput is defined %}
+      "target-throughput": {{ index_target_throughput | int }},
+      {%- endif %}
       "clients": {{ index_clients | default(1) | int }},
-      "iterations": {{ index_iterations | default(1000) | int }},
-      "bulk-size": {{ index_bulk_size | default(1000)}}
+      "iterations": {{ index_iterations | default(1000) | int }}
     },
     {
       "name": "refresh-after-index",
@@ -60,5 +95,13 @@
       "iterations": {{ search_iterations | default(1000) | int }},
       "clients": {{ search_clients | default(8) | int }}
     }
+  ]
+},
+{
+  "name": "ingest-search-autoscale",
+  "description": "Benchmark bulk indexing with configurable steps",
+  "default": false,
+  "schedule": [
+    {{ rally.collect(parts="common/ingest-autoscale-schedule.json") }}
   ]
 }

@@ -10,6 +10,19 @@ class RandomBulkParamSource(ParamSource):
         self._index_name = params.get("index", track.indices[0].name)
         self._dims = params.get("dims", 128)
         self._partitions = params.get("partitions", 1000)
+        self._routing = params.get("routing", False)
+        self._index_type = params.get("index_type", "datastream")
+        self._as_ingest_clients = params.get("as_ingest_clients", [5,20,5])
+        self._as_ingest_bulk_size = params.get("as_ingest_bulk_size", [100,100,100])
+        self._as_ingest_target_throughputs = params.get("as_ingest_target_throughputs", [10,50,10])
+        self._as_ingest_index_iterations = params.get("as_ingest_index_iterations", [1000,2000,1500])
+        self._parallel_warmup_time_periods = params.get("parallel_warmup_time_periods", 10)
+        self._parallel_time_periods = params.get("parallel_time_periods", 10)
+        self._parallel_indexing_clients = params.get("parallel_indexing_clients", 1)
+        self._parallel_ingest_target_throughputs = params.get("parallel_ingest_target_throughputs", 1)
+        self._parallel_indexing_bulk_size = params.get("parallel_indexing_bulk_size", 10)
+        self._parallel_search_clients = params.get("parallel_search_clients", 10)
+
 
     def params(self):
         import numpy as np
@@ -18,7 +31,10 @@ class RandomBulkParamSource(ParamSource):
         for _ in range(self._bulk_size):
             vec = np.random.rand(self._dims)
             partition_id = random.randint(0, self._partitions)
-            bulk_data.append({"index": {"_index": self._index_name, "routing": partition_id}})
+            metadata = {"_index": self._index_name}
+            if self._routing:
+                metadata["routing"] = partition_id
+            bulk_data.append({"create": metadata})
             bulk_data.append({"partition_id": partition_id, "emb": vec.tolist()})
 
         return {

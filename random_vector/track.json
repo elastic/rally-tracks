@@ -5,7 +5,11 @@
   "indices": [
     {
       "name": "index",
+      {%- if (index_type == "datastream") -%}
+      "body": "datastream-mapping.json"
+      {%- else -%}
       "body": "index-mapping.json"
+      {%- endif -%}
     }
   ],
   "operations": [

@@ -1,6 +1,91 @@
 {
   "name": "delete-index",
   "operation-type": "delete-index",
+  "ignore": [401,404],
+  "include-in-reporting": false
+},
+{
+  "name": "create-ingest-pipeline",
+  "operation-type": "put-pipeline",
+  "id": "add-timestamp",
+  "body": {
+    "processors": [
+      {
+        "set": {
+          "field": "@timestamp",
+          "value": {{'"{{_ingest.timestamp}}"'}}
+        }
+      }
+    ]
+  },
+  "include-in-reporting": false
+},
+{
+  "name": "delete-data-stream",
+  "operation-type": "raw-request",
+  "method": "DELETE",
+  "path": "/_data_stream/index",
+  "ignore": [404],
+  "include-in-reporting": false
+},
+{
+  "name": "delete-data-stream-template",
+  "operation-type": "raw-request",
+  "method": "DELETE",
+  "ignore": [404],
+  "path": "/_index_template/index",
+  "include-in-reporting": false
+},
+{
+  "name": "create-data-stream-template",
+  "operation-type": "raw-request",
+  "method": "PUT",
+  "path": "/_index_template/index",
+  "body": {
+    "index_patterns": ["index"],
+    "data_stream": { },
+    "template": {
+      "settings": {
+        {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+        "number_of_shards": {{number_of_shards | default(1)}},
+        "number_of_replicas": {{number_of_replicas | default(0)}},
+        {%- endif -%}{# non-serverless-index-settings-marker-end #}
+        "index.default_pipeline": "add-timestamp",
+        "mapping.source.mode": "synthetic",
+        "refresh_interval" : "1s",
+        "sort": {
+          "field": "partition_id"
+        }
+      },
+      "mappings": {
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "emb": {
+            "type": "dense_vector",
+            "dims":  {{ dims | default(128) | tojson }},
+            "index": true,
+            "similarity": "cosine",
+            "index_options": {
+              "type": {{ vector_index_type | default("flat") | tojson }}
+            }
+          },
+          "partition_id": {
+            "type": "keyword"
+          }
+        }
+      }
+    },
+    "priority": 200
+  },
+  "include-in-reporting": false
+},
+{
+  "name": "create-data-stream",
+  "operation-type": "raw-request",
+  "method": "PUT",
+  "path": "/_data_stream/index",
   "include-in-reporting": false
 },
 {
@@ -20,15 +105,38 @@
 {
   "name": "random-bulk-indexing",
   "operation-type": "bulk",
+  "refresh": "wait_for",
   "param-source": "random-bulk-param-source",
-  "dims": {{dims | default(128)}},
-  "partitions": {{partitions | default(1000)}}
+  "dims": {{ dims | default(128) | int }},
+  "partitions": {{ partitions | default(1000) | int }},
+  "routing": {{ routing | default(false) | tojson }},
+  {%- if index_type == "index" -%}
+  "routing": {{ routing | default(false) | tojson }},
+  {%- endif -%}
+  "bulk-size": {{ index_bulk_size | default(1000)}}
 },
 {
   "name": "brute-force-filtered-search",
   "operation-type": "search",
   "param-source": "knn-param-source",
-  "dims": {{dims | default(128)}},
-  "partitions": {{partitions | default(1000)}}
+  "dims": {{ dims | default(128) | int }},
+  "partitions": {{ partitions | default(1000) | int }}
 }
-
+{%- set p_as_ingest_clients = (as_ingest_clients | default([5,20,5]))%}
+{%- set p_as_ingest_target_throughputs = (as_ingest_target_throughputs | default([10,50,10]))%}
+{%- set p_as_ingest_index_iterations = (as_ingest_index_iterations | default([1000,2000,1500]))%}
+{%- set p_as_ingest_bulk_size = (as_ingest_bulk_size | default([100,100,100]))%}
+{%- for i in range(p_as_ingest_clients|length) %},
+{
+  "name": "random-bulk-indexing-{{loop.index}}-c{{p_as_ingest_clients[i]}}-b{{p_as_ingest_bulk_size[i]}}-tt{{p_as_ingest_target_throughputs[i]}}-it{{p_as_ingest_index_iterations[i]}}",
+  "operation-type": "bulk",
+  "refresh": "wait_for",
+  "param-source": "random-bulk-param-source",
+  "dims": {{ dims | default(128) | int }},
+  "partitions": {{ partitions | default(1000) | int }},
+  "routing": {{ routing | default(false) | tojson }},
+  {%- if index_type == "index" -%}
+  "routing": {{ routing | default(false) | tojson }},
+  {%- endif -%}
+  "bulk-size": {{ p_as_ingest_bulk_size[i] }}}
+{%- endfor %}

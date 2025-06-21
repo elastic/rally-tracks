@@ -1,17 +1,12 @@
 {
   "settings": {
-    "index": {
-      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    {# non-serverless-index-settings-marker-start #}
+    {%- if build_flavor != "serverless" or serverless_operator == true -%}
       "number_of_shards": {{number_of_shards | default(1)}},
       "number_of_replicas": {{number_of_replicas | default(0)}},
-      {%- endif -%}{# non-serverless-index-settings-marker-end #}
-      "sort": {
-        "field": "partition_id"
-      }
-      {%- if use_synthetic_source | default(false) -%},
-      "mapping.source.mode": "synthetic"
-      {%- endif -%}
-    }
+    {%- endif -%}
+    {# non-serverless-index-settings-marker-end #}
+      "refresh_interval" : "1s"
   },
   "mappings": {
     {%- if routing | default(false) -%}

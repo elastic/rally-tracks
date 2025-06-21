@@ -6,7 +6,6 @@
       "number_of_replicas": {{number_of_replicas | default(0)}},
     {%- endif -%}
     {# non-serverless-index-settings-marker-end #}
-      "refresh_interval" : "1s"
   },
   "mappings": {
     {%- if routing | default(false) -%}

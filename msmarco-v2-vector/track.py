@@ -68,24 +68,6 @@ def read_qrels(qrels_input_file):
     return qrels
 
 
-def get_rescore_query(vec, window_size):
-    return {
-        "window_size": window_size,
-        "query": {
-            "query_weight": 0,
-            "rescore_query": {
-                "script_score": {
-                    "query": {"match_all": {}},
-                    "script": {
-                        "source": "double value = dotProduct(params.query_vector, 'emb'); return sigmoid(1, Math.E, -value);",
-                        "params": {"query_vector": vec},
-                    },
-                }
-            },
-        },
-    }
-
-
 class KnnParamSource:
     def __init__(self, track, params, **kwargs):
         # choose a suitable index: if there is only one defined for this track
@@ -114,21 +96,18 @@ class KnnParamSource:
     def params(self):
         top_k = self._params.get("k", 10)
         num_candidates = self._params.get("num-candidates", 50)
-        num_rescore = self._params.get("num-rescore", 0)
         query_vec = self._queries[self._iters]
+        knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
+        if self._params.get("oversample-rescore", 0) > 0:
+            knn_query["rescore_vector"] = {"oversample": self._params.get("oversample-rescore")}
+        if "filter" in self._params:
+            knn_query["filter"] = self._params["filter"]
         result = {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
             "size": top_k,
-            "body": {
-                "knn": {"field": "emb", "query_vector": query_vec, "k": max(top_k, num_rescore), "num_candidates": num_candidates},
-                "_source": False,
-            },
+            "body": {"knn": knn_query, "_source": False},
         }
-        if num_rescore > 0:
-            result["body"]["rescore"] = get_rescore_query(query_vec, num_rescore)
-        if "filter" in self._params:
-            result["body"]["knn"]["filter"] = self._params["filter"]
 
         self._iters += 1
         if self._iters >= self._maxIters:
@@ -157,7 +136,7 @@ class KnnRecallParamSource:
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
-            "num_rescore": self._params.get("num-rescore", 0),
+            "oversample_rescore": self._params.get("oversample-rescore", 0),
         }
 
 
@@ -165,7 +144,6 @@ class KnnRecallRunner:
     async def __call__(self, es, params):
         top_k = params["size"]
         num_candidates = params["num_candidates"]
-        num_rescore = params["num_rescore"]
         index = params["index"]
         request_cache = params["cache"]
 
@@ -181,19 +159,16 @@ class KnnRecallRunner:
             for line in queries_file:
                 query = json.loads(line)
                 query_id = query["query_id"]
+
+                knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}
+                if params["oversample_rescore"] > 0:
+                    knn_query["rescore_vector"] = {"oversample": params["oversample_rescore"]}
                 body = {
-                    "knn": {
-                        "field": "emb",
-                        "query_vector": query["emb"],
-                        "k": max(top_k, num_rescore),
-                        "num_candidates": num_candidates,
-                    },
+                    "knn": knn_query,
                     "_source": False,
                     "fields": ["docid"],
                     "profile": True,
                 }
-                if num_rescore > 0:
-                    body["rescore"] = get_rescore_query(query["emb"], num_rescore)
                 knn_result = await es.search(index=index, request_cache=request_cache, size=top_k, body=body)
                 knn_hits = []
                 for hit in knn_result["hits"]["hits"]:

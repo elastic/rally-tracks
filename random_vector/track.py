@@ -94,7 +94,7 @@ class RandomSearchParamSource:
         self._dims = params.get("dims", 128)
         self._top_k = params.get("k", 10)
         self._script = params.get("script", True)
-        self._oversample_factor = ("oversample", 0)
+        self._oversample_factor = params.get("oversample", 0)
 
         self.infinite = True
 

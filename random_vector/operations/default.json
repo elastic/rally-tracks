@@ -68,7 +68,10 @@
             "index": true,
             "similarity": "cosine",
             "index_options": {
-              "type": {{ vector_index_type | default("flat") | tojson }}
+              "type": {{ vector_index_type | default("flat") | tojson }},
+              "rescore_vector": {
+                "oversample": {{ vector_oversample | default(3) | tojson }}
+              }
             }
           },
           "partition_id": {

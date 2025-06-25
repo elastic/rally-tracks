@@ -85,8 +85,7 @@
       },
       {
         "name": "parallel-knn-filtered-search-multiple-client",
-        "operation": "brute-force-filtered-search",
-        "script": false,
+        "operation": "brute-force-knn-filtered-search",
         "clients": {{ p_as_parallel_search_clients | default(1) | int }},
         "warmup-time-period": {{p_as_parallel_warmup_time_periods}},
         "time-period": {{p_as_parallel_time_periods}}

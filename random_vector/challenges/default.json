@@ -67,30 +67,26 @@
     },
     {
       "name": "script-score-filtered-search-single-client",
-      "operation": "brute-force-filtered-search",
-      "script": true,
+      "operation": "brute-force-script-filtered-search",
       "warmup-iterations": 100,
       "iterations": {{ search_iterations | default(1000) | int }}
     },
     {
       "name": "script-score-filtered-search-multiple-client",
-      "operation": "brute-force-filtered-search",
-      "script": true,
+      "operation": "brute-force-script-filtered-search",
       "warmup-iterations": 100,
       "iterations": {{ search_iterations | default(1000) | int }},
       "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-filtered-search-single-client",
-      "operation": "brute-force-filtered-search",
-      "script": false,
+      "operation": "brute-force-knn-filtered-search",
       "warmup-iterations": 100,
       "iterations": {{ search_iterations | default(10000) | int }}
     },
     {
       "name": "knn-filtered-search-multiple-client",
-      "operation": "brute-force-filtered-search",
-      "script": false,
+      "operation": "brute-force-knn-filtered-search",
       "warmup-iterations": 100,
       "iterations": {{ search_iterations | default(1000) | int }},
       "clients": {{ search_clients | default(8) | int }}

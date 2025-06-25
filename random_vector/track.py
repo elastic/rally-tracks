@@ -49,6 +49,9 @@ class RandomBulkParamSource(ParamSource):
 
 def generate_knn_query(query_vector, partition_id, k):
     return {
+        "_source": {
+            "exclude_vectors": True
+        },
         "knn": {
             "field": "emb",
             "query_vector": query_vector,
@@ -61,6 +64,9 @@ def generate_knn_query(query_vector, partition_id, k):
 
 def generate_script_query(query_vector, partition_id):
     return {
+        "_source": {
+            "exclude_vectors": True
+        },
         "query": {
             "script_score": {
                 "query": {"term": {"partition_id": partition_id}},
@@ -98,8 +104,8 @@ class RandomSearchParamSource:
         if self._script:
             query = generate_script_query(query_vec, partition_id)
         else:
-            query = generate_knn_query(query_vec, partition_id, self._topk)
-        return {"index": self._index_name, "cache": self._cache, "size": self._top_k, "_source_excludes": ["emb"], "body": query}
+            query = generate_knn_query(query_vec, partition_id, self._top_k)
+        return {"index": self._index_name, "cache": self._cache, "size": self._top_k, "body": query}
 
 
 def register(registry):

@@ -116,9 +116,18 @@
   "bulk-size": {{ index_bulk_size | default(1000)}}
 },
 {
-  "name": "brute-force-filtered-search",
+  "name": "brute-force-script-filtered-search",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "script": true,
+  "dims": {{ dims | default(128) | int }},
+  "partitions": {{ partitions | default(1000) | int }}
+},
+{
+  "name": "brute-force-knn-filtered-search",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "script": false,
   "dims": {{ dims | default(128) | int }},
   "partitions": {{ partitions | default(1000) | int }}
 }

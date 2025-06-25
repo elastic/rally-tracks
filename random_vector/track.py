@@ -47,7 +47,7 @@ class RandomBulkParamSource(ParamSource):
         }
 
 
-def generate_knn_query(query_vector, partition_id, k):
+def generate_knn_query(query_vector, partition_id, k, oversample_factor):
     return {
         "_source": {
             "exclude_vectors": True
@@ -58,6 +58,9 @@ def generate_knn_query(query_vector, partition_id, k):
             "k": k,
             "num_candidates": k,
             "filter": {"term": {"partition_id": partition_id}},
+            "rescore_vector": {
+                "oversample": oversample_factor
+            }
         }
     }
 
@@ -91,6 +94,8 @@ class RandomSearchParamSource:
         self._dims = params.get("dims", 128)
         self._top_k = params.get("k", 10)
         self._script = params.get("script", True)
+        self._oversample_factor = ("oversample", 0)
+
         self.infinite = True
 
     def partition(self, partition_index, total_partitions):
@@ -104,7 +109,7 @@ class RandomSearchParamSource:
         if self._script:
             query = generate_script_query(query_vec, partition_id)
         else:
-            query = generate_knn_query(query_vec, partition_id, self._top_k)
+            query = generate_knn_query(query_vec, partition_id, self._top_k, self._oversample_factor)
         return {"index": self._index_name, "cache": self._cache, "size": self._top_k, "body": query}
 
 

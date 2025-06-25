@@ -68,10 +68,7 @@
             "index": true,
             "similarity": "cosine",
             "index_options": {
-              "type": {{ vector_index_type | default("flat") | tojson }},
-              "rescore_vector": {
-                "oversample": {{ vector_oversample | default(3) | tojson }}
-              }
+              "type": {{ vector_index_type | default("flat") | tojson }}
             }
           },
           "partition_id": {
@@ -132,7 +129,8 @@
   "param-source": "knn-param-source",
   "script": false,
   "dims": {{ dims | default(128) | int }},
-  "partitions": {{ partitions | default(1000) | int }}
+  "partitions": {{ partitions | default(1000) | int }},
+  "oversample": {{ oversample_factor | default(0) | int }}
 }
 {%- set p_as_ingest_clients = (as_ingest_clients | default([5,20,5]))%}
 {%- set p_as_ingest_target_throughputs = (as_ingest_target_throughputs | default([10,50,10]))%}

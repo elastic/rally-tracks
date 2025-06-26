@@ -229,7 +229,7 @@ The following parameters are available:
 * `recovery_small_max_batch_size` (default: `4MB`) - The maximum estimated size for the batch of translog operations to return.
 * `recovery_large_max_batch_size` (default: `32MB`) - The maximum estimated size for the batch of translog operations to return.
 * recovery_max_operations_count (default: `16777216`) - The maximum number of translog operations to return in a single batch.
-* `pattern_text_message_field` (default: `false`) - If true use `patterned_text` for all message fields, else `match_only_text`. 
+* `patterned_text_message_field` (default: `false`) - If true use `patterned_text` for all message fields, else `match_only_text`. 
 
 ### Data Download Parameters
 

@@ -340,18 +340,18 @@
           "message": {
             {% if p_patterned_text_message_field %}
             "type": "patterned_text"
-            {% else % }
+            {% else %}
             "type": "match_only_text"
-            {% endif % }
+            {% endif %}
           },
           "error": {
             "properties": {
               "message": {
                 {% if p_patterned_text_message_field %}
                 "type": "patterned_text"
-                {% else % }
+                {% else %}
                 "type": "match_only_text"
-                {% endif % }
+                {% endif %}
               }
             }
           },

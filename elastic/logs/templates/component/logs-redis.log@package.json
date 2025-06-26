@@ -113,12 +113,20 @@
           "error": {
             "properties": {
               "message": {
+                {% if p_patterned_text_message_field %}
+                "type": "patterned_text"
+                {% else % }
                 "type": "match_only_text"
+                {% endif % }
               }
             }
           },
           "message": {
+            {% if p_patterned_text_message_field %}
+            "type": "patterned_text"
+            {% else % }
             "type": "match_only_text"
+            {% endif % }
           },
           "redis": {
             "properties": {

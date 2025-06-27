@@ -1,0 +1,96 @@
+{%- set p_index_type = (index_type | default("datastream"))%}
+
+{%- if (p_index_type == "datastream") -%}
+{
+  
+    "name": "create-ingest-pipeline",
+    "operation": "create-ingest-pipeline"
+},
+{%- endif -%}
+{
+  
+    "name": "delete-data-stream",
+    "operation": "delete-data-stream"
+},
+{
+    "name": "delete-index",
+    "operation": "delete-index",
+    "ignore": [401,404]
+},
+{
+  
+    "name": "delete-data-stream-template",
+    "operation": "delete-data-stream-template"
+ 
+}, 
+{%- if p_index_type == "datastream" -%}
+{
+    "name": "create-data-stream-template",
+    "operation": "create-data-stream-template"
+ 
+},
+{%- endif -%}
+{%- if p_index_type == "datastream" -%}
+{
+    "name": "create-data-stream",
+    "operation": "create-data-stream"
+ 
+},
+{%- endif -%}
+{%- if p_index_type == "index" -%}
+{
+    "name": "create-index",
+    "operation": "create-index"
+},
+{%- endif -%}
+{
+  "name": "check-cluster-health",
+  "operation": "check-cluster-health"
+}
+{%- set p_as_ingest_target_throughputs = (as_ingest_target_throughputs | default([10,50,10]))%}
+{%- set p_as_ingest_clients = (as_ingest_clients | default([5,20,5]))%}
+{%- set p_as_ingest_bulk_size = (as_ingest_bulk_size | default([100,100,100]))%}
+{%- set p_as_ingest_index_iterations = (as_ingest_index_iterations | default([1000,2000,1500]))%}
+{%- for i in range(p_as_ingest_clients|length) %},
+    {
+      "name": "ingest-{{loop.index}}-c{{p_as_ingest_clients[i]}}-b{{p_as_ingest_bulk_size[i]}}-tt{{p_as_ingest_target_throughputs[i]}}-it{{p_as_ingest_index_iterations[i]}}",
+      "operation": "random-bulk-indexing-{{loop.index}}-c{{p_as_ingest_clients[i]}}-b{{p_as_ingest_bulk_size[i]}}-tt{{p_as_ingest_target_throughputs[i]}}-it{{p_as_ingest_index_iterations[i]}}",
+      "target-throughput":  {{p_as_ingest_target_throughputs[i]}},
+      "clients": {{ p_as_ingest_clients[i] | default(1) | int }},
+      "iterations": {{ p_as_ingest_index_iterations[i]}},
+      "bulk-size": {{ p_as_ingest_bulk_size[i]}},
+      "iterations": {{ p_as_ingest_index_iterations[i] | default(1000) | int }},
+      "looped": true
+    }
+
+{%- endfor %}
+{%- set p_as_parallel_indexing_clients = (parallel_indexing_clients | default(1))%}
+{%- set p_as_parallel_ingest_target_throughputs = (parallel_ingest_target_throughputs | default(1))%}
+{%- set p_as_parallel_indexing_bulk_size = (parallel_indexing_bulk_size | default(10))%}
+{%- set p_as_parallel_warmup_time_periods = (parallel_warmup_time_periods | default(10))%}
+{%- set p_as_parallel_time_periods = (parallel_time_periods | default(10))%}
+{%- set p_as_parallel_search_clients = (parallel_search_clients | default(10))%}
+,{
+  "parallel": {
+    "completed-by": "parallel-random-indexing",
+    "tasks": [
+      {
+        "name": "parallel-random-indexing",
+        "operation": "random-bulk-indexing",
+        "clients": {{ p_as_parallel_indexing_clients | default(1) | int }},
+        "target-throughput":  {{p_as_parallel_ingest_target_throughputs | default(1) | int}},
+        "bulk-size": {{ p_as_parallel_indexing_bulk_size | default(10)}},        
+        "warmup-time-period": {{p_as_parallel_warmup_time_periods}},
+        "time-period": {{p_as_parallel_time_periods}}
+      },
+      {
+        "name": "parallel-knn-filtered-search-multiple-client",
+        "operation": "brute-force-filtered-search",
+        "script": false,
+        "clients": {{ p_as_parallel_search_clients | default(1) | int }},
+        "warmup-time-period": {{p_as_parallel_warmup_time_periods}},
+        "time-period": {{p_as_parallel_time_periods}}
+      }
+    ]
+  }
+}

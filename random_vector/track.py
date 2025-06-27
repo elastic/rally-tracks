@@ -35,9 +35,7 @@ class RandomBulkParamSource(ParamSource):
 
 def generate_knn_query(query_vector, partition_id, k, rescore_oversample):
     return {
-        "_source": {
-          "exclude_vectors": True
-        },
+        "_source": {"exclude_vectors": True},
         "knn": {
             "field": "emb",
             "query_vector": query_vector,
@@ -45,7 +43,7 @@ def generate_knn_query(query_vector, partition_id, k, rescore_oversample):
             "num_candidates": k,
             "filter": {"term": {"partition_id": partition_id}},
             "rescore_vector": {"oversample": rescore_oversample},
-        }
+        },
     }
 
 

@@ -101,6 +101,7 @@ def project():
         json={
             "name": project_name,
             "region_id": "aws-eu-west-1",
+            "optimized_for": "vector",
         },
     )
 

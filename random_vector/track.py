@@ -1,7 +1,7 @@
 import random
+import time
 
 from esrally.track.params import ParamSource
-import time
 
 
 class RandomBulkParamSource(ParamSource):

@@ -2,6 +2,7 @@ import random
 
 from esrally.track.params import ParamSource
 
+
 class RandomBulkParamSource(ParamSource):
     def __init__(self, track, params, **kwargs):
         super().__init__(track, params, **kwargs)
@@ -12,7 +13,6 @@ class RandomBulkParamSource(ParamSource):
 
     def params(self):
         import numpy as np
-        import time
 
         timestamp = int(time.time()) * 1000
         bulk_data = []
@@ -44,7 +44,7 @@ def generate_knn_query(query_vector, partition_id, k, rescore_oversample):
             "k": k,
             "num_candidates": k,
             "filter": {"term": {"partition_id": partition_id}},
-            "rescore_vector": {"oversample": rescore_oversample}
+            "rescore_vector": {"oversample": rescore_oversample},
         }
     }
 

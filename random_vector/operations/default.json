@@ -1,14 +1,4 @@
 {
-  "name": "delete-index",
-  "operation-type": "delete-index",
-  "include-in-reporting": false
-},
-{
-  "name": "create-index",
-  "operation-type": "create-index",
-  "include-in-reporting": false
-},
-{
   "name": "check-cluster-health",
   "operation-type": "cluster-health",
   "request-params": {
@@ -23,7 +13,6 @@
   "param-source": "random-bulk-param-source",
   "dims": {{ dims | default(128) | int }},
   "partitions": {{ partitions | default(1000) | int }},
-  "routing": {{ routing | default(false) | tojson }},
   "bulk-size": {{ index_bulk_size | default(1000)}}
 },
 {
@@ -31,6 +20,7 @@
   "operation-type": "search",
   "param-source": "knn-param-source",
   "dims": {{ dims | default(128) | int }},
-  "partitions": {{ partitions | default(1000) | int }}
+  "partitions": {{ partitions | default(1000) | int }},
+  "rescore-oversample": {{ rescore_oversample | default(0) | int }}
 }
 

@@ -1,6 +1,6 @@
 {% import "rally.helpers" as rally %}
 {
-  "name": "logging-querying-esql",
+  "name": "logging-querying-esql-full-text-functions",
   "description": "Applies an ESQL query workload. Ensures data streams exist so queries can be run, but does not remove existing data.",
   "parameters": {
     "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}

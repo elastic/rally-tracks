@@ -26,10 +26,25 @@
         "emb": {
           "type": "dense_vector",
           "dims":  {{ dims | default(128) | tojson }},
-          "index": true,
           "similarity": "cosine",
           "index_options": {
             "type": {{ vector_index_type | default("bbq_flat") | tojson }}
+          }
+        },
+        "nested": {
+          "type": "nested",
+          "properties": {
+            "paragraph_id": {
+              "type": "keyword"
+            },
+            "emb": {
+              "type": "dense_vector",
+              "dims":  {{ dims | default(128) | tojson }},
+              "similarity": "cosine",
+              "index_options": {
+                "type": {{ vector_index_type | default("bbq_flat") | tojson }}
+              }
+            }
           }
         }
       }

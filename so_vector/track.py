@@ -11,7 +11,9 @@ QUERIES_FILENAME_1K: str = "queries-1k.json.bz2"
 TRUE_KNN_FILENAME_1K: str = "queries-recall-1k.json.bz2"
 
 
-async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, filter, client) -> List[str]:
+async def extract_exact_neighbors(
+    query_vector: List[float], index: str, max_size: int, vector_field: str, request_timeout: float, filter, client
+) -> List[str]:
     if filter is None:
         raise ValueError("Filter must be provided for exact neighbors extraction.")
     script_query = {
@@ -32,6 +34,7 @@ async def extract_exact_neighbors(query_vector: List[float], index: str, max_siz
         index=index,
         request_cache=True,
         size=max_size,
+        request_timeout=request_timeout,
     )
     return [hit["fields"]["questionId"][0] for hit in script_result["hits"]["hits"]]
 
@@ -131,7 +134,7 @@ class KnnVectorStore:
     def get_query_vectors(self) -> List[List[float]]:
         return self._queries
 
-    async def get_neighbors_for_query(self, index: str, query_id: int, size: int, filter, client) -> List[str]:
+    async def get_neighbors_for_query(self, index: str, query_id: int, size: int, request_timeout: float, filter, client) -> List[str]:
         # For now, we must calculate the exact neighbors, maybe we should cache this?
         # it would have to be cached per query and filter
         if filter is not None:
@@ -141,6 +144,7 @@ class KnnVectorStore:
                 index=index,
                 max_size=size,
                 vector_field="titleVector",
+                request_timeout=request_timeout,
                 filter=filter,
                 client=client,
             )
@@ -200,6 +204,7 @@ class KnnRecallRunner:
         k = params["size"]
         num_candidates = params["num_candidates"]
         index = params["index"]
+        request_timeout = params.get("request-timeout", -1)
         request_cache = params["cache"]
         filter = params["filter"]
         recall_total = 0
@@ -215,9 +220,10 @@ class KnnRecallRunner:
                 index=index,
                 request_cache=request_cache,
                 size=k,
+                request_timeout=request_timeout,
             )
             knn_hits = [hit["fields"]["questionId"][0] for hit in knn_result["hits"]["hits"]]
-            true_neighbors = await knn_vector_store.get_neighbors_for_query(index, query_id, k, filter, es)
+            true_neighbors = await knn_vector_store.get_neighbors_for_query(index, query_id, k, request_timeout, filter, es)
             current_recall = len(set(knn_hits).intersection(set(true_neighbors)))
             recall_total += current_recall
             exact_total += len(true_neighbors)

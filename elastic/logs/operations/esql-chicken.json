@@ -1,15 +1,15 @@
     {
       "name": "ckicken_1",
       "operation-type": "esql",
-      "query": "FROM logs | INSIST_🐔 resource.attributes.agent.id | EVAL col0 = COALESCE(resource.attributes.agent.id, \"\") | WHERE MATCH(message, \"204.188.85.203\") and col0 == \"703ef3bd-dc06-4c6c-a621-13c89245e6b0\""
+      "query": "FROM logs-* | INSIST_🐔 agent.id | EVAL col0 = COALESCE(agent.id, \"\") | WHERE MATCH(message, \"204.188.85.203\") and col0 == \"703ef3bd-dc06-4c6c-a621-13c89245e6b0\""
     },
     {
       "name": "chicken_2",
       "operation-type": "esql",
-      "query": "FROM logs | INSIST_🐔 attributes.event.dataset,attributes.kubernetes.container.image |  EVAL col0 = COALESCE(attributes.kubernetes.container.image, \"\") | WHERE col0 != \"\" | STATS col1 = COUNT() BY col0,stream.name"
+      "query": "FROM logs-* | INSIST_🐔 event.dataset,kubernetes.container.image |  EVAL col0 = COALESCE(kubernetes.container.image, \"\") | WHERE col0 != \"\" | STATS col1 = COUNT(message) BY col0,data_stream.dataset"
     },
     {
       "name": "chicken_3",
       "operation-type": "esql",
-      "query": "FROM logs-* METADATA _index | INSIST_🐔 agent.id | STATS c=count(*) BY agent.id | SORT c DESC"
+      "query": "FROM logs-* | INSIST_🐔 agent.id | STATS c=count(message) BY agent.id | SORT c DESC"
     }

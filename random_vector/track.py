@@ -12,17 +12,16 @@ class RandomBulkParamSource(ParamSource):
         self._partitions = params.get("partitions", 1000)
         self._routing = params.get("routing", False)
         self._index_type = params.get("index_type", "datastream")
-        self._as_ingest_clients = params.get("as_ingest_clients", [5,20,5])
-        self._as_ingest_bulk_size = params.get("as_ingest_bulk_size", [100,100,100])
-        self._as_ingest_target_throughputs = params.get("as_ingest_target_throughputs", [10,50,10])
-        self._as_ingest_index_iterations = params.get("as_ingest_index_iterations", [1000,2000,1500])
+        self._as_ingest_clients = params.get("as_ingest_clients", [5, 20, 5])
+        self._as_ingest_bulk_size = params.get("as_ingest_bulk_size", [100, 100, 100])
+        self._as_ingest_target_throughputs = params.get("as_ingest_target_throughputs", [10, 50, 10])
+        self._as_ingest_index_iterations = params.get("as_ingest_index_iterations", [1000, 2000, 1500])
         self._parallel_warmup_time_periods = params.get("parallel_warmup_time_periods", 10)
         self._parallel_time_periods = params.get("parallel_time_periods", 10)
         self._parallel_indexing_clients = params.get("parallel_indexing_clients", 1)
         self._parallel_ingest_target_throughputs = params.get("parallel_ingest_target_throughputs", 1)
         self._parallel_indexing_bulk_size = params.get("parallel_indexing_bulk_size", 10)
         self._parallel_search_clients = params.get("parallel_search_clients", 10)
-
 
     def params(self):
         import numpy as np

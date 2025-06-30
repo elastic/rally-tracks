@@ -6,10 +6,10 @@
     {
       "name": "chicken_2",
       "operation-type": "esql",
-      "query": "FROM logs-* | INSIST_🐔 event.dataset,kubernetes.container.image |  EVAL col0 = COALESCE(kubernetes.container.image, \"\") | WHERE col0 != \"\" | STATS col1 = COUNT(message) BY col0,data_stream.dataset"
+      "query": "FROM logs-* | INSIST_🐔 event.dataset,kubernetes.container.image |  EVAL col0 = COALESCE(kubernetes.container.image, \"\") | WHERE col0 != \"\" | STATS col1 = COUNT() BY col0,data_stream.dataset"
     },
     {
       "name": "chicken_3",
       "operation-type": "esql",
-      "query": "FROM logs-* | INSIST_🐔 agent.id | STATS c=count(message) BY agent.id | SORT c DESC"
+      "query": "FROM logs-* | INSIST_🐔 agent.id | STATS c=count() BY agent.id, data_stream.dataset | SORT c DESC"
     }

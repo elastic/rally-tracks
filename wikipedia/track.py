@@ -28,7 +28,7 @@ def query_samples(k: int, seed: int | None = None) -> list[str]:
         queries_reader = csv.reader(queries_file)
         # It skips the file header
         next(queries_reader)
-        # It reads the file road by road
+        # It reads the file row by row
         for query, probability in queries_reader:
             queries.append(QUERY_CLEAN_REXEXP.sub(" ", query).lower())
             probabilities.append(float(probability))

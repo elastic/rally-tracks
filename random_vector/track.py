@@ -23,7 +23,7 @@ class RandomBulkParamSource(ParamSource):
             metadata = {"_index": self._index_name}
             bulk_data.append({"create": metadata})
             doc = {"@timestamp": timestamp, "partition_id": partition_id}
-            if self._paragraph_size > 0:
+            if self._paragraph_size > 1:
                 nested_vec = []
                 for i in range(0, self._paragraph_size):
                     nested_vec.append({"emb": np.random.rand(self._dims).tolist(), "paragraph_id": i})

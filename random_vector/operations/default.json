@@ -14,7 +14,7 @@
   "dims": {{ dims | default(128) | int }},
   "partitions": {{ partitions | default(1000) | int }},
   "bulk-size": {{ index_bulk_size | default(1000) | int}},
-  "paragraph-size": {{paragraph_size | default(0) | int}}
+  "paragraph-size": {{paragraph_size | default(1) | int}}
 },
 {
   "name": "brute-force-filtered-search",
@@ -23,7 +23,7 @@
   "dims": {{ dims | default(128) | int }},
   "partitions": {{ partitions | default(1000) | int }},
   "rescore-oversample": {{ rescore_oversample | default(0) | int }},
-    {%- if paragraph_size | default(0) | int > 0 -%}
+    {%- if paragraph_size | default(1) | int > 1 -%}
   "field": "nested.emb"
     {%- else %}
   "field": "emb"

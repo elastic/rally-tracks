@@ -5,8 +5,8 @@ By default, it uses the `bbq_flat` `vector_index_type` to evaluate the performan
 
 The `paragraph_size` parameter determines how many random vectors are indexed per document.
 
-* If `paragraph_size` is set to `0` (the default), each document contains a single top-level random vector.
-* If `paragraph_size` is greater than `0`, that number of random vectors is indexed as nested fields within each document.
+* If `paragraph_size` is set to `1` (the default), each document contains a single top-level random vector.
+* If `paragraph_size` is greater than `1`, that number of random vectors is indexed as nested fields within each document.
 
 ## Indexing
 

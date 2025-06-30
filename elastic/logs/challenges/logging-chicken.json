@@ -44,21 +44,21 @@
       "tags": ["esql", "settings"]
     },
     {
-      "operation": "ckicken_1",
+      "operation": "chicken_1",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "full-text"]
     },
     {
-      "operation": "ckicken_2",
+      "operation": "chicken_2",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
       "tags": ["esql", "full-text"]
     },
     {
-      "operation": "ckicken_3",
+      "operation": "chicken_3",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},

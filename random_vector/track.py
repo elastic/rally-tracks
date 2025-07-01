@@ -48,18 +48,15 @@ class RandomBulkParamSource(ParamSource):
 
 def generate_knn_query(query_vector, partition_id, k):
     return {
-        "source": {
-            "exclude_vectors": true
-            },
+        "source": {"exclude_vectors": true},
         "knn": {
             "field": "emb",
             "query_vector": query_vector,
             "k": k,
             "num_candidates": k,
             "filter": {"term": {"partition_id": partition_id}},
-        }
+        },
     }
-
 
 
 def generate_script_query(query_vector, partition_id):

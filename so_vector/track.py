@@ -230,6 +230,7 @@ class KnnRecallRunner:
             "k": k,
             "num_candidates": num_candidates,
             "oversample": params["oversample"],
+            "is_filtered_search": filter is not None
         }
         logger.info(f"Recall results: {to_return} for filter: {filter}")
         return to_return

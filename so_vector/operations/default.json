@@ -227,6 +227,43 @@
   }
 },
 {
+  "name": "knn-search-default-match-all",
+  "operation-type": "search",
+  "param-source": "knn-param-source"
+},
+{
+  "name": "knn-recall-default-match-all",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "include-in-reporting": false
+},
+
+{
+  "name": "knn-search-default-random-20-percent",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "filter": {
+    "range": {
+      "questionId": {
+        "lte": 1500000
+      }
+    }
+  }
+},
+{
+  "name": "knn-recall-default-random-20-percent",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "include-in-reporting": false,
+  "filter": {
+    "range": {
+      "questionId": {
+        "lte": 1500000
+      }
+    }
+  }
+},
+{
   "name": "knn-search-10-50-match-all",
   "operation-type": "search",
   "param-source": "knn-param-source",

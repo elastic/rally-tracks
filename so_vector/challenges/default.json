@@ -41,6 +41,20 @@
       }
     },
     {
+      "name": "knn-search-default-match-all",
+      "operation": "knn-search-default-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-default-match-all",
+      "operation": "knn-recall-default-match-all",
+      "warmup-iterations": 0,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
       "name": "knn-search-10-50-match-all",
       "operation": "knn-search-10-50-match-all",
       "warmup-iterations": 100,
@@ -173,7 +187,21 @@
       "iterations": 1,
       "clients": 1
     },
-        {
+    {
+      "name": "knn-search-default-random-20-percent",
+      "operation": "knn-search-default-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-default-random-20-percent",
+      "operation": "knn-recall-default-random-20-percent",
+      "warmup-iterations": 0,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
       "name": "knn-search-10-50-random-20-percent",
       "operation": "knn-search-10-50-random-20-percent",
       "warmup-iterations": 100,
@@ -229,6 +257,20 @@
     {
       "name": "refresh-after-force-merge",
       "operation": "refresh"
+    },
+    {
+      "name": "knn-search-default-match-all-force-merge",
+      "operation": "knn-search-default-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-default-match-all-force-merge",
+      "operation": "knn-recall-default-match-all",
+      "warmup-iterations": 0,
+      "iterations": 1,
+      "clients": 1
     },
     {
       "name": "knn-search-10-50-match-all-force-merge",
@@ -324,6 +366,20 @@
     {
       "name": "knn-recall-10-50-random-10-percent-force-merge",
       "operation": "knn-recall-10-50-random-10-percent",
+      "warmup-iterations": 0,
+      "iterations": 1,
+      "clients": 1
+    },
+    {
+      "name": "knn-search-default-random-20-percent-force-merge",
+      "operation": "knn-search-default-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "knn-recall-default-random-20-percent-force-merge",
+      "operation": "knn-recall-default-random-20-percent",
       "warmup-iterations": 0,
       "iterations": 1,
       "clients": 1

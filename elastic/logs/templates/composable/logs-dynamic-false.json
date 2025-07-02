@@ -1,0 +1,34 @@
+{
+  "name": "logs-dynamic-false",
+  "index_template": {
+    "index_patterns": [
+      "logs-*-*"
+    ],
+    "template": {
+      "settings": {},
+      "mappings": {
+        "dynamic": false,
+        "properties": {
+          "@timestamp": {
+            "type": "date"
+          },
+          "message": {
+            "type": "match_only_text"
+          }
+        }
+      }
+    },
+    "composed_of": [
+      "logs@settings",
+      "logs@mappings",
+      "track-custom-shared-settings",
+      "track-data-stream-lifecycle",
+      "track-shared-logsdb-mode"
+    ],
+    "priority": 200,
+    "data_stream": {
+      "hidden": false,
+      "allow_custom_routing": false
+    }
+  }
+}

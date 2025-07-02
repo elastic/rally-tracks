@@ -1,0 +1,20 @@
+    {
+      "name": "chicken_1",
+      "operation-type": "esql",
+      "query": "FROM logs-* | INSIST_🐔 agent.id | EVAL col0 = COALESCE(agent.id, \"\") | WHERE MATCH(message, \"204.188.85.203\") and col0 == \"703ef3bd-dc06-4c6c-a621-13c89245e6b0\""
+    },
+    {
+      "name": "chicken_2",
+      "operation-type": "esql",
+      "query": "FROM logs-* | INSIST_🐔 event.dataset,kubernetes.container.image |  EVAL col0 = COALESCE(kubernetes.container.image, \"\") | WHERE col0 != \"\" | STATS col1 = COUNT() BY col0,data_stream.dataset"
+    },
+    {
+      "name": "chicken_3",
+      "operation-type": "esql",
+      "query": "FROM logs-* | INSIST_🐔 agent.id | STATS c=count() BY agent.id, data_stream.dataset | SORT c DESC"
+    },
+    {
+      "name": "chicken_4",
+      "operation-type": "esql",
+      "query": "FROM logs-* | INSIST_🐔 agent.hostname | EVAL col0 = COALESCE(agent.hostname, \"elasticsearch-ci-immutable-centos-7-1599241536066250344\") | WHERE col0 ==  \"elasticsearch-ci-immutable-centos-7-1599241536066250344\""
+    }

@@ -60,6 +60,7 @@
     "operation-type": "create-data-stream"
   }
 },
+{% if p_mapping == "mapped" %}
 {
   "name": "validate-package-template-installation",
   "operation": {
@@ -68,6 +69,7 @@
     "asset-types": ["index-templates"]
   }
 },
+{% endif %}
 {
   "name": "update-custom-package-templates",
   "operation": {

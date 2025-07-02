@@ -48,21 +48,28 @@
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "full-text"]
+      "tags": ["esql", "insist"]
     },
     {
       "operation": "chicken_2",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "full-text"]
+      "tags": ["esql", "insist"]
     },
     {
       "operation": "chicken_3",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(20) }},
       "iterations": {{ iterations | default(100) }},
-      "tags": ["esql", "full-text"]
+      "tags": ["esql", "insist"]
+    },
+    {
+      "operation": "chicken_4",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "insisit"]
     }
   ]
 }

@@ -37,7 +37,7 @@
         "index" : true,
         "similarity": "dot_product",
         "index_options": {
-          "type": {{ vector_index_type | default("int8_hnsw") | tojson }}
+          "type": {{ vector_index_type | default("bbq_hnsw") | tojson }}
         }
       },
       "acceptedAnswerId": {

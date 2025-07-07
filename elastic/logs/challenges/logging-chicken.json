@@ -44,6 +44,13 @@
       "tags": ["esql", "settings"]
     },
     {
+      "operation": "limit_500",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql"]
+    },
+    {
       "operation": "chicken_1",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(3) }},
@@ -63,13 +70,20 @@
       "warmup-iterations": {{ warmup_iterations | default(3) }},
       "iterations": {{ iterations | default(5) }},
       "tags": ["esql", "insist"]
+    }
+    {
+      "operation": "chicken_3_with_where",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(5) }},
+      "tags": ["esql", "insist"]
     },
     {
       "operation": "chicken_4",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(3) }},
       "iterations": {{ iterations | default(5) }},
-      "tags": ["esql", "insisit"]
+      "tags": ["esql", "insist"]
     }
   ]
 }

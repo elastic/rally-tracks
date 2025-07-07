@@ -11,7 +11,7 @@
     {
       "name": "chicken_2",
       "operation-type": "esql",
-      "query": "FROM logs-* | INSIST_🐔 event.dataset,kubernetes.container.image |  EVAL col0 = COALESCE(kubernetes.container.image, \"\") | WHERE col0 != \"\" | STATS col1 = COUNT() BY col0,data_stream.dataset"
+      "query": "FROM logs-* | INSIST_🐔 kubernetes.container.image |  EVAL col0 = COALESCE(kubernetes.container.image, \"\") | WHERE col0 != \"\" | STATS col1 = COUNT() BY col0,data_stream.dataset"
     },
     {
       "name": "chicken_3",
@@ -26,5 +26,5 @@
     {
       "name": "chicken_4",
       "operation-type": "esql",
-      "query": "FROM logs-* | INSIST_🐔 agent.hostname | EVAL col0 = COALESCE(agent.hostname, \"elasticsearch-ci-immutable-centos-7-1599241536066250344\") | WHERE col0 ==  \"elasticsearch-ci-immutable-centos-7-1599241536066250344\""
+      "query": "FROM logs-* | INSIST_🐔 agent.hostname | EVAL col0 = COALESCE(agent.hostname, \"\") | WHERE col0 ==  \"elasticsearch-ci-immutable-centos-7-1599241536066250344\""
     }

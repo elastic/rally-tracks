@@ -46,29 +46,29 @@
     {
       "operation": "chicken_1",
       "clients": {{ p_search_clients }},
-      "warmup-iterations": {{ warmup_iterations | default(20) }},
-      "iterations": {{ iterations | default(100) }},
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(5) }},
       "tags": ["esql", "insist"]
     },
     {
       "operation": "chicken_2",
       "clients": {{ p_search_clients }},
-      "warmup-iterations": {{ warmup_iterations | default(20) }},
-      "iterations": {{ iterations | default(100) }},
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(5) }},
       "tags": ["esql", "insist"]
     },
     {
       "operation": "chicken_3",
       "clients": {{ p_search_clients }},
-      "warmup-iterations": {{ warmup_iterations | default(20) }},
-      "iterations": {{ iterations | default(100) }},
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(5) }},
       "tags": ["esql", "insist"]
     },
     {
       "operation": "chicken_4",
       "clients": {{ p_search_clients }},
-      "warmup-iterations": {{ warmup_iterations | default(20) }},
-      "iterations": {{ iterations | default(100) }},
+      "warmup-iterations": {{ warmup_iterations | default(3) }},
+      "iterations": {{ iterations | default(5) }},
       "tags": ["esql", "insisit"]
     }
   ]

@@ -70,7 +70,7 @@
       "warmup-iterations": {{ warmup_iterations | default(3) }},
       "iterations": {{ iterations | default(5) }},
       "tags": ["esql", "insist"]
-    }
+    },
     {
       "operation": "chicken_3_with_where",
       "clients": {{ p_search_clients }},

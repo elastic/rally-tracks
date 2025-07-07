@@ -53,6 +53,7 @@
     {
       "operation": "chicken_1",
       "clients": {{ p_search_clients }},
+      {# TODO: restore iterations / warmup_iterations once insist_:chicken: has acceptable performance #}
       "warmup-iterations": {{ warmup_iterations | default(3) }},
       "iterations": {{ iterations | default(5) }},
       "tags": ["esql", "insist"]

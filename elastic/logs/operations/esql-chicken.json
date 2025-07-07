@@ -3,6 +3,7 @@
       "operation-type": "esql",
       "query": "FROM logs-* | LIMIT 500"
     },
+    {# TODO: All COALESCE usages can be removed once https://github.com/elastic/elasticsearch/issues/130220 is fixed #}
     {
       "name": "chicken_1",
       "operation-type": "esql",

@@ -938,14 +938,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "avg_passenger_count_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "avg_passenger_count_filtered_aggregation",
           "clients": 1,
@@ -958,14 +950,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "avg_passenger_count_filtered_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "avg_tip_percent_aggregation",
           "clients": 1,
@@ -978,14 +962,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "avg_tip_percent_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "avg_amount_group_by_integer_aggregation",
           "clients": 1,
@@ -998,14 +974,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "avg_amount_group_by_integer_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "avg_amount_group_by_keyword_aggregation",
           "clients": 1,
@@ -1018,14 +986,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "avg_amount_group_by_keyword_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "count_group_by_keyword_aggregation",
           "clients": 1,
@@ -1038,14 +998,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "count_group_by_keyword_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "multi_terms-keyword",
           "clients": 1,
@@ -1064,14 +1016,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "multi_terms-keyword_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "sort_by_ts_query",
           "clients": 1,
@@ -1084,14 +1028,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "sort_by_ts_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "date_histogram_calendar_interval",
           "clients": 1,
@@ -1104,14 +1040,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "date_histogram_calendar_interval_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "date_histogram_fixed_interval",
           "clients": 1,
@@ -1124,14 +1052,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "date_histogram_fixed_interval_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "date_histogram_fixed_interval_with_metrics_agg",
           "clients": 1,
@@ -1144,14 +1064,6 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
-      {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
-        {
-          "operation": "date_histogram_fixed_interval_with_metrics_esql_doc_partitioning",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
-        },
-      {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "esql_enrich_control",
           "tags": ["enrich"],

@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
           cache: pip
@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
         os:
           - macos-13
           - ubuntu-latest
@@ -46,8 +46,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: unit ${{ fromJson('{"macos-13":"macOS","ubuntu-latest":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -67,14 +67,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.11"]
+        python-version: ["3.9", "3.12"]
 
     runs-on: ubuntu-22.04
 
     name: rally-tracks-compat ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -101,7 +101,7 @@ jobs:
           slack_channel: ${{ secrets.SLACK_CHANNEL }}
           status: FAILED
       # Artifact will show up under "Artifacts" in the "Summary" page of runs
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: rally-tracks-compat-logs-${{ matrix.python-version }}

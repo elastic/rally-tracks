@@ -1,7 +1,7 @@
 {% import "rally.helpers" as rally %}
 {
   "name": "logging-streams",
-  "description": "Indexes logs the streams way, either throttled or un-throttled, for a specified time period and volume per day",
+  "description": "Indexes logs the streams way without dynamic mappings, either throttled or un-throttled, for a specified time period and volume per day",
   "schedule": [
     {
       "name": "logs-component-template",

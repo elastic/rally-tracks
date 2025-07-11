@@ -98,7 +98,7 @@ class KnnParamSource:
         num_candidates = self._params.get("num-candidates", 50)
         query_vec = self._queries[self._iters]
         knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
-        if self._params.get("oversample-rescore", 0) > 0:
+        if self._params.get("oversample-rescore", -1) >= 0:
             knn_query["rescore_vector"] = {"oversample": self._params.get("oversample-rescore")}
         if "filter" in self._params:
             knn_query["filter"] = self._params["filter"]
@@ -136,7 +136,7 @@ class KnnRecallParamSource:
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
-            "oversample_rescore": self._params.get("oversample-rescore", 0),
+            "oversample_rescore": self._params.get("oversample-rescore", -1),
         }
 
 
@@ -161,7 +161,7 @@ class KnnRecallRunner:
                 query_id = query["query_id"]
 
                 knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}
-                if params["oversample_rescore"] > 0:
+                if params["oversample_rescore"] >= 0:
                     knn_query["rescore_vector"] = {"oversample": params["oversample_rescore"]}
                 body = {
                     "knn": knn_query,

@@ -13,7 +13,8 @@
           "processors": [
             {
               "remove": {
-                "field": "data_stream"
+                "field": "data_stream",
+                "ignore_missing": true
               }
             },
             {

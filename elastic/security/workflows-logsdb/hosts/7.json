@@ -1,0 +1,96 @@
+{
+  "name": "/app/security/*?{query}",
+  "id": "Open `Anomalies` sub-tab",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 1.630714
+        },
+        {
+          "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - hosts - 7.1",
+          "operation-type": "search",
+          "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "true",
+            "allow_no_indices": "true"
+          },
+          "body": {
+            "aggs": {
+              "anomalyActionGroup": {
+                "terms": {
+                  "field": "job_id",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 10
+                },
+                "aggs": {
+                  "anomalies": {
+                    "date_histogram": {
+                      "field": "timestamp",
+                      "fixed_interval": "112500ms",
+                      "min_doc_count": 0,
+                      "extended_bounds": {
+                        "min": 1643986800000,
+                        "max": 1643990400000
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "query": {
+              "bool": {
+                "filter": [
+                  {
+                    "bool": {
+                      "must": [],
+                      "filter": [
+                        {
+                          "bool": {
+                            "should": [],
+                            "minimum_should_match": 1
+                          }
+                        },
+                        {
+                          "match_phrase": {
+                            "result_type": "record"
+                          }
+                        },
+                        null,
+                        {
+                          "range": {
+                            "record_score": {
+                              "gte": 50
+                            }
+                          }
+                        }
+                      ],
+                      "should": [],
+                      "must_not": []
+                    }
+                  },
+                  {
+                    "range": {
+                      "timestamp": {
+                        "gte": "2022-02-04T15:00:00.000Z",
+                        "lte": "2022-02-04T16:00:00.000Z",
+                        "format": "strict_date_optional_time"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "size": 0
+          }
+        }
+      ]
+    }
+  ]
+}

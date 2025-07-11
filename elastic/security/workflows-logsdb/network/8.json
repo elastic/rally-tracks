@@ -1,0 +1,100 @@
+{
+  "name": "/app/security/*?{query}",
+  "id": "Open `HTTP` sub-tab",
+  "requests": [
+    {
+      "name": "sleep",
+      "operation-type": "sleep",
+      "duration": 0.18767699999999998
+    },
+    {
+      "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 8.1",
+      "operation-type": "search",
+      "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+      "request-params": {
+        "batched_reduce_size": "64",
+        "ignore_unavailable": "true",
+        "track_total_hits": "false",
+        "allow_no_indices": "true",
+        "size": "0"
+      },
+      "body": {
+        "aggregations": {
+          "http_count": {
+            "cardinality": {
+              "field": "url.path"
+            }
+          },
+          "url": {
+            "terms": {
+              "field": "url.path",
+              "size": 10,
+              "order": {
+                "_count": "desc"
+              }
+            },
+            "aggs": {
+              "methods": {
+                "terms": {
+                  "field": "http.request.method",
+                  "size": 4
+                }
+              },
+              "domains": {
+                "terms": {
+                  "field": "url.domain",
+                  "size": 4
+                }
+              },
+              "status": {
+                "terms": {
+                  "field": "http.response.status_code",
+                  "size": 4
+                }
+              },
+              "source": {
+                "top_hits": {
+                  "size": 1,
+                  "_source": {
+                    "includes": [
+                      "host.name",
+                      "source.ip"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "query": {
+          "bool": {
+            "filter": [
+              {
+                "bool": {
+                  "must": [],
+                  "filter": [],
+                  "should": [],
+                  "must_not": []
+                }
+              },
+              {
+                "range": {
+                  "@timestamp": {
+                    "gte": "2022-02-04T15:00:00.000Z",
+                    "lte": "2022-02-04T16:00:00.000Z",
+                    "format": "strict_date_optional_time"
+                  }
+                }
+              },
+              {
+                "exists": {
+                  "field": "http.request.method"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

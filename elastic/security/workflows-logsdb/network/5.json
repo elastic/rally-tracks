@@ -1,0 +1,1698 @@
+{
+  "name": "/app/security/*?{query}",
+  "id": "Select an IP to open details",
+  "requests": [
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.3292710000000003
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 5.1",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "docvalue_fields": [
+                  {
+                    "field": "@metadata.beat"
+                  },
+                  {
+                    "field": "@metadata.type"
+                  },
+                  {
+                    "field": "@metadata.version"
+                  },
+                  {
+                    "field": "@timestamp"
+                  },
+                  {
+                    "field": "agent.agent_id"
+                  },
+                  {
+                    "field": "agent.build.original"
+                  },
+                  {
+                    "field": "agent.ephemeral_id"
+                  },
+                  {
+                    "field": "agent.hostname"
+                  },
+                  {
+                    "field": "agent.id"
+                  },
+                  {
+                    "field": "agent.name"
+                  },
+                  {
+                    "field": "agent.type"
+                  },
+                  {
+                    "field": "agent.version"
+                  },
+                  {
+                    "field": "as.number"
+                  },
+                  {
+                    "field": "as.organization.name"
+                  },
+                  {
+                    "field": "auditd.data.a0"
+                  },
+                  {
+                    "field": "auditd.data.a1"
+                  },
+                  {
+                    "field": "auditd.data.a2"
+                  },
+                  {
+                    "field": "auditd.data.a3"
+                  },
+                  {
+                    "field": "auditd.data.a[0-3]"
+                  },
+                  {
+                    "field": "auditd.data.acct"
+                  },
+                  {
+                    "field": "auditd.data.acl"
+                  },
+                  {
+                    "field": "auditd.data.action"
+                  },
+                  {
+                    "field": "auditd.data.added"
+                  },
+                  {
+                    "field": "auditd.data.addr"
+                  },
+                  {
+                    "field": "auditd.data.apparmor"
+                  },
+                  {
+                    "field": "auditd.data.arch"
+                  },
+                  {
+                    "field": "auditd.data.arg"
+                  },
+                  {
+                    "field": "auditd.data.argc"
+                  },
+                  {
+                    "field": "auditd.data.audit_backlog_limit"
+                  },
+                  {
+                    "field": "auditd.data.audit_backlog_wait_time"
+                  },
+                  {
+                    "field": "auditd.data.audit_enabled"
+                  },
+                  {
+                    "field": "auditd.data.audit_failure"
+                  },
+                  {
+                    "field": "auditd.data.auid"
+                  },
+                  {
+                    "field": "auditd.data.banners"
+                  },
+                  {
+                    "field": "auditd.data.bool"
+                  },
+                  {
+                    "field": "auditd.data.bus"
+                  },
+                  {
+                    "field": "auditd.data.cap_fe"
+                  },
+                  {
+                    "field": "auditd.data.cap_fi"
+                  },
+                  {
+                    "field": "auditd.data.cap_fp"
+                  },
+                  {
+                    "field": "auditd.data.cap_fver"
+                  },
+                  {
+                    "field": "auditd.data.cap_pe"
+                  },
+                  {
+                    "field": "auditd.data.cap_pi"
+                  },
+                  {
+                    "field": "auditd.data.cap_pp"
+                  },
+                  {
+                    "field": "auditd.data.capability"
+                  },
+                  {
+                    "field": "auditd.data.capname"
+                  },
+                  {
+                    "field": "auditd.data.cgroup"
+                  },
+                  {
+                    "field": "auditd.data.changed"
+                  },
+                  {
+                    "field": "auditd.data.cipher"
+                  },
+                  {
+                    "field": "auditd.data.class"
+                  },
+                  {
+                    "field": "auditd.data.cmd"
+                  },
+                  {
+                    "field": "auditd.data.code"
+                  },
+                  {
+                    "field": "auditd.data.compat"
+                  },
+                  {
+                    "field": "auditd.data.daddr"
+                  },
+                  {
+                    "field": "auditd.data.data"
+                  },
+                  {
+                    "field": "auditd.data.default-context"
+                  },
+                  {
+                    "field": "auditd.data.device"
+                  },
+                  {
+                    "field": "auditd.data.dir"
+                  },
+                  {
+                    "field": "auditd.data.direction"
+                  },
+                  {
+                    "field": "auditd.data.dmac"
+                  },
+                  {
+                    "field": "auditd.data.dport"
+                  },
+                  {
+                    "field": "auditd.data.enforcing"
+                  },
+                  {
+                    "field": "auditd.data.entries"
+                  },
+                  {
+                    "field": "auditd.data.exit"
+                  },
+                  {
+                    "field": "auditd.data.fam"
+                  },
+                  {
+                    "field": "auditd.data.family"
+                  },
+                  {
+                    "field": "auditd.data.fd"
+                  },
+                  {
+                    "field": "auditd.data.fe"
+                  },
+                  {
+                    "field": "auditd.data.feature"
+                  },
+                  {
+                    "field": "auditd.data.fi"
+                  },
+                  {
+                    "field": "auditd.data.file"
+                  },
+                  {
+                    "field": "auditd.data.flags"
+                  },
+                  {
+                    "field": "auditd.data.format"
+                  },
+                  {
+                    "field": "auditd.data.fp"
+                  },
+                  {
+                    "field": "auditd.data.fver"
+                  },
+                  {
+                    "field": "auditd.data.grantors"
+                  },
+                  {
+                    "field": "auditd.data.grp"
+                  },
+                  {
+                    "field": "auditd.data.hook"
+                  },
+                  {
+                    "field": "auditd.data.hostname"
+                  },
+                  {
+                    "field": "auditd.data.icmp_type"
+                  },
+                  {
+                    "field": "auditd.data.id"
+                  },
+                  {
+                    "field": "auditd.data.igid"
+                  },
+                  {
+                    "field": "auditd.data.img-ctx"
+                  },
+                  {
+                    "field": "auditd.data.inif"
+                  },
+                  {
+                    "field": "auditd.data.ino"
+                  },
+                  {
+                    "field": "auditd.data.inode_gid"
+                  },
+                  {
+                    "field": "auditd.data.inode_uid"
+                  },
+                  {
+                    "field": "auditd.data.invalid_context"
+                  },
+                  {
+                    "field": "auditd.data.ioctlcmd"
+                  },
+                  {
+                    "field": "auditd.data.ip"
+                  },
+                  {
+                    "field": "auditd.data.ipid"
+                  },
+                  {
+                    "field": "auditd.data.ipx-net"
+                  },
+                  {
+                    "field": "auditd.data.items"
+                  },
+                  {
+                    "field": "auditd.data.iuid"
+                  },
+                  {
+                    "field": "auditd.data.kernel"
+                  },
+                  {
+                    "field": "auditd.data.kind"
+                  },
+                  {
+                    "field": "auditd.data.ksize"
+                  },
+                  {
+                    "field": "auditd.data.laddr"
+                  },
+                  {
+                    "field": "auditd.data.len"
+                  },
+                  {
+                    "field": "auditd.data.list"
+                  },
+                  {
+                    "field": "auditd.data.lport"
+                  }
+                ],
+                "query": {
+                  "bool": {
+                    "filter": {
+                      "bool": {
+                        "should": [
+                          {
+                            "term": {
+                              "source.ip": "63.33.254.192"
+                            }
+                          },
+                          {
+                            "term": {
+                              "destination.ip": "63.33.254.192"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                "_source": [
+                  "@timestamp"
+                ],
+                "size": 1,
+                "sort": [
+                  {
+                    "@timestamp": {
+                      "order": "desc"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.330529
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 5.2",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "aggs": {
+                  "anomalyActionGroup": {
+                    "terms": {
+                      "field": "job_id",
+                      "order": {
+                        "_count": "desc"
+                      },
+                      "size": 10
+                    },
+                    "aggs": {
+                      "anomalies": {
+                        "date_histogram": {
+                          "field": "timestamp",
+                          "fixed_interval": "112500ms",
+                          "min_doc_count": 0,
+                          "extended_bounds": {
+                            "min": 1643986800000,
+                            "max": 1643990400000
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [
+                            {
+                              "bool": {
+                                "should": [],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "match_phrase": {
+                                "result_type": "record"
+                              }
+                            },
+                            {
+                              "match_phrase": {
+                                "destination.ip": "63.33.254.192"
+                              }
+                            },
+                            {
+                              "range": {
+                                "record_score": {
+                                  "gte": 50
+                                }
+                              }
+                            }
+                          ],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.331201
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 5.3",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true",
+                "size": "0"
+              },
+              "body": {
+                "aggregations": {
+                  "top_n_flow_count": {
+                    "cardinality": {
+                      "field": "source.ip"
+                    }
+                  },
+                  "source": {
+                    "terms": {
+                      "field": "source.ip",
+                      "size": 10,
+                      "order": {
+                        "bytes_out": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "bytes_in": {
+                        "sum": {
+                          "field": "destination.bytes"
+                        }
+                      },
+                      "bytes_out": {
+                        "sum": {
+                          "field": "source.bytes"
+                        }
+                      },
+                      "domain": {
+                        "terms": {
+                          "field": "source.domain",
+                          "order": {
+                            "timestamp": "desc"
+                          }
+                        },
+                        "aggs": {
+                          "timestamp": {
+                            "max": {
+                              "field": "@timestamp"
+                            }
+                          }
+                        }
+                      },
+                      "location": {
+                        "filter": {
+                          "exists": {
+                            "field": "source.geo"
+                          }
+                        },
+                        "aggs": {
+                          "top_geo": {
+                            "top_hits": {
+                              "_source": "source.geo.*",
+                              "size": 1
+                            }
+                          }
+                        }
+                      },
+                      "autonomous_system": {
+                        "filter": {
+                          "exists": {
+                            "field": "source.as"
+                          }
+                        },
+                        "aggs": {
+                          "top_as": {
+                            "top_hits": {
+                              "_source": "source.as.*",
+                              "size": 1
+                            }
+                          }
+                        }
+                      },
+                      "flows": {
+                        "cardinality": {
+                          "field": "network.community_id"
+                        }
+                      },
+                      "destination_ips": {
+                        "cardinality": {
+                          "field": "destination.ip"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [
+                      {
+                        "term": {
+                          "destination.ip": "63.33.254.192"
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.331725
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 5.4",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true",
+                "size": "0"
+              },
+              "body": {
+                "aggregations": {
+                  "top_n_flow_count": {
+                    "cardinality": {
+                      "field": "destination.ip"
+                    }
+                  },
+                  "destination": {
+                    "terms": {
+                      "field": "destination.ip",
+                      "size": 10,
+                      "order": {
+                        "bytes_in": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "bytes_in": {
+                        "sum": {
+                          "field": "source.bytes"
+                        }
+                      },
+                      "bytes_out": {
+                        "sum": {
+                          "field": "destination.bytes"
+                        }
+                      },
+                      "domain": {
+                        "terms": {
+                          "field": "destination.domain",
+                          "order": {
+                            "timestamp": "desc"
+                          }
+                        },
+                        "aggs": {
+                          "timestamp": {
+                            "max": {
+                              "field": "@timestamp"
+                            }
+                          }
+                        }
+                      },
+                      "location": {
+                        "filter": {
+                          "exists": {
+                            "field": "destination.geo"
+                          }
+                        },
+                        "aggs": {
+                          "top_geo": {
+                            "top_hits": {
+                              "_source": "destination.geo.*",
+                              "size": 1
+                            }
+                          }
+                        }
+                      },
+                      "autonomous_system": {
+                        "filter": {
+                          "exists": {
+                            "field": "destination.as"
+                          }
+                        },
+                        "aggs": {
+                          "top_as": {
+                            "top_hits": {
+                              "_source": "destination.as.*",
+                              "size": 1
+                            }
+                          }
+                        }
+                      },
+                      "flows": {
+                        "cardinality": {
+                          "field": "network.community_id"
+                        }
+                      },
+                      "source_ips": {
+                        "cardinality": {
+                          "field": "source.ip"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [
+                      {
+                        "term": {
+                          "source.ip": "63.33.254.192"
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.337487
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 5.5",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true",
+                "size": "0"
+              },
+              "body": {
+                "aggregations": {
+                  "top_countries_count": {
+                    "cardinality": {
+                      "field": "source.geo.country_iso_code"
+                    }
+                  },
+                  "source": {
+                    "terms": {
+                      "field": "source.geo.country_iso_code",
+                      "size": 10,
+                      "order": {
+                        "bytes_out": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "bytes_in": {
+                        "sum": {
+                          "field": "destination.bytes"
+                        }
+                      },
+                      "bytes_out": {
+                        "sum": {
+                          "field": "source.bytes"
+                        }
+                      },
+                      "flows": {
+                        "cardinality": {
+                          "field": "network.community_id"
+                        }
+                      },
+                      "source_ips": {
+                        "cardinality": {
+                          "field": "source.ip"
+                        }
+                      },
+                      "destination_ips": {
+                        "cardinality": {
+                          "field": "destination.ip"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [
+                      {
+                        "term": {
+                          "destination.ip": "63.33.254.192"
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.339848
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 5.6",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true",
+                "size": "0"
+              },
+              "body": {
+                "aggregations": {
+                  "top_countries_count": {
+                    "cardinality": {
+                      "field": "destination.geo.country_iso_code"
+                    }
+                  },
+                  "destination": {
+                    "terms": {
+                      "field": "destination.geo.country_iso_code",
+                      "size": 10,
+                      "order": {
+                        "bytes_in": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "bytes_in": {
+                        "sum": {
+                          "field": "source.bytes"
+                        }
+                      },
+                      "bytes_out": {
+                        "sum": {
+                          "field": "destination.bytes"
+                        }
+                      },
+                      "flows": {
+                        "cardinality": {
+                          "field": "network.community_id"
+                        }
+                      },
+                      "source_ips": {
+                        "cardinality": {
+                          "field": "source.ip"
+                        }
+                      },
+                      "destination_ips": {
+                        "cardinality": {
+                          "field": "destination.ip"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [
+                      {
+                        "term": {
+                          "source.ip": "63.33.254.192"
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.34215
+            },
+            {
+              "name": "Elasticsearch: POST /apm-*-transaction*,traces-apm*,auditbeat-*,endgame-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*/_async_search - network - 5.7",
+              "operation-type": "search",
+              "index": "apm-*-transaction*,traces-apm*,auditbeat-*,endgame-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "aggs": {
+                  "user_count": {
+                    "cardinality": {
+                      "field": "user.name"
+                    }
+                  },
+                  "users": {
+                    "terms": {
+                      "field": "user.name",
+                      "size": 10,
+                      "order": {
+                        "_key": "asc"
+                      }
+                    },
+                    "aggs": {
+                      "id": {
+                        "terms": {
+                          "field": "user.id"
+                        }
+                      },
+                      "groupId": {
+                        "terms": {
+                          "field": "user.group.id"
+                        }
+                      },
+                      "groupName": {
+                        "terms": {
+                          "field": "user.group.name"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "destination.ip": "63.33.254.192"
+                        }
+                      }
+                    ],
+                    "must_not": [
+                      {
+                        "term": {
+                          "event.category": "authentication"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.3449560000000003
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 5.8",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true",
+                "size": "0"
+              },
+              "body": {
+                "aggregations": {
+                  "http_count": {
+                    "cardinality": {
+                      "field": "url.path"
+                    }
+                  },
+                  "url": {
+                    "terms": {
+                      "field": "url.path",
+                      "size": 10,
+                      "order": {
+                        "_count": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "methods": {
+                        "terms": {
+                          "field": "http.request.method",
+                          "size": 4
+                        }
+                      },
+                      "domains": {
+                        "terms": {
+                          "field": "url.domain",
+                          "size": 4
+                        }
+                      },
+                      "status": {
+                        "terms": {
+                          "field": "http.response.status_code",
+                          "size": 4
+                        }
+                      },
+                      "source": {
+                        "top_hits": {
+                          "size": 1,
+                          "_source": {
+                            "includes": [
+                              "host.name",
+                              "source.ip"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      },
+                      {
+                        "exists": {
+                          "field": "http.request.method"
+                        }
+                      }
+                    ],
+                    "should": [
+                      {
+                        "term": {
+                          "source.ip": "63.33.254.192"
+                        }
+                      },
+                      {
+                        "term": {
+                          "destination.ip": "63.33.254.192"
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.346292
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 5.9",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "aggs": {
+                  "count": {
+                    "cardinality": {
+                      "field": "tls.server.hash.sha1"
+                    }
+                  },
+                  "sha1": {
+                    "terms": {
+                      "field": "tls.server.hash.sha1",
+                      "size": 10,
+                      "order": {
+                        "_key": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "issuers": {
+                        "terms": {
+                          "field": "tls.server.issuer"
+                        }
+                      },
+                      "subjects": {
+                        "terms": {
+                          "field": "tls.server.subject"
+                        }
+                      },
+                      "not_after": {
+                        "terms": {
+                          "field": "tls.server.not_after"
+                        }
+                      },
+                      "ja3": {
+                        "terms": {
+                          "field": "tls.client.ja3"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      },
+                      {
+                        "term": {
+                          "destination.ip": "63.33.254.192"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 2.353107
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 5.10",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "docvalue_fields": [
+                  {
+                    "field": "@metadata.beat"
+                  },
+                  {
+                    "field": "@metadata.type"
+                  },
+                  {
+                    "field": "@metadata.version"
+                  },
+                  {
+                    "field": "@timestamp"
+                  },
+                  {
+                    "field": "agent.agent_id"
+                  },
+                  {
+                    "field": "agent.build.original"
+                  },
+                  {
+                    "field": "agent.ephemeral_id"
+                  },
+                  {
+                    "field": "agent.hostname"
+                  },
+                  {
+                    "field": "agent.id"
+                  },
+                  {
+                    "field": "agent.name"
+                  },
+                  {
+                    "field": "agent.type"
+                  },
+                  {
+                    "field": "agent.version"
+                  },
+                  {
+                    "field": "as.number"
+                  },
+                  {
+                    "field": "as.organization.name"
+                  },
+                  {
+                    "field": "auditd.data.a0"
+                  },
+                  {
+                    "field": "auditd.data.a1"
+                  },
+                  {
+                    "field": "auditd.data.a2"
+                  },
+                  {
+                    "field": "auditd.data.a3"
+                  },
+                  {
+                    "field": "auditd.data.a[0-3]"
+                  },
+                  {
+                    "field": "auditd.data.acct"
+                  },
+                  {
+                    "field": "auditd.data.acl"
+                  },
+                  {
+                    "field": "auditd.data.action"
+                  },
+                  {
+                    "field": "auditd.data.added"
+                  },
+                  {
+                    "field": "auditd.data.addr"
+                  },
+                  {
+                    "field": "auditd.data.apparmor"
+                  },
+                  {
+                    "field": "auditd.data.arch"
+                  },
+                  {
+                    "field": "auditd.data.arg"
+                  },
+                  {
+                    "field": "auditd.data.argc"
+                  },
+                  {
+                    "field": "auditd.data.audit_backlog_limit"
+                  },
+                  {
+                    "field": "auditd.data.audit_backlog_wait_time"
+                  },
+                  {
+                    "field": "auditd.data.audit_enabled"
+                  },
+                  {
+                    "field": "auditd.data.audit_failure"
+                  },
+                  {
+                    "field": "auditd.data.auid"
+                  },
+                  {
+                    "field": "auditd.data.banners"
+                  },
+                  {
+                    "field": "auditd.data.bool"
+                  },
+                  {
+                    "field": "auditd.data.bus"
+                  },
+                  {
+                    "field": "auditd.data.cap_fe"
+                  },
+                  {
+                    "field": "auditd.data.cap_fi"
+                  },
+                  {
+                    "field": "auditd.data.cap_fp"
+                  },
+                  {
+                    "field": "auditd.data.cap_fver"
+                  },
+                  {
+                    "field": "auditd.data.cap_pe"
+                  },
+                  {
+                    "field": "auditd.data.cap_pi"
+                  },
+                  {
+                    "field": "auditd.data.cap_pp"
+                  },
+                  {
+                    "field": "auditd.data.capability"
+                  },
+                  {
+                    "field": "auditd.data.capname"
+                  },
+                  {
+                    "field": "auditd.data.cgroup"
+                  },
+                  {
+                    "field": "auditd.data.changed"
+                  },
+                  {
+                    "field": "auditd.data.cipher"
+                  },
+                  {
+                    "field": "auditd.data.class"
+                  },
+                  {
+                    "field": "auditd.data.cmd"
+                  },
+                  {
+                    "field": "auditd.data.code"
+                  },
+                  {
+                    "field": "auditd.data.compat"
+                  },
+                  {
+                    "field": "auditd.data.daddr"
+                  },
+                  {
+                    "field": "auditd.data.data"
+                  },
+                  {
+                    "field": "auditd.data.default-context"
+                  },
+                  {
+                    "field": "auditd.data.device"
+                  },
+                  {
+                    "field": "auditd.data.dir"
+                  },
+                  {
+                    "field": "auditd.data.direction"
+                  },
+                  {
+                    "field": "auditd.data.dmac"
+                  },
+                  {
+                    "field": "auditd.data.dport"
+                  },
+                  {
+                    "field": "auditd.data.enforcing"
+                  },
+                  {
+                    "field": "auditd.data.entries"
+                  },
+                  {
+                    "field": "auditd.data.exit"
+                  },
+                  {
+                    "field": "auditd.data.fam"
+                  },
+                  {
+                    "field": "auditd.data.family"
+                  },
+                  {
+                    "field": "auditd.data.fd"
+                  },
+                  {
+                    "field": "auditd.data.fe"
+                  },
+                  {
+                    "field": "auditd.data.feature"
+                  },
+                  {
+                    "field": "auditd.data.fi"
+                  },
+                  {
+                    "field": "auditd.data.file"
+                  },
+                  {
+                    "field": "auditd.data.flags"
+                  },
+                  {
+                    "field": "auditd.data.format"
+                  },
+                  {
+                    "field": "auditd.data.fp"
+                  },
+                  {
+                    "field": "auditd.data.fver"
+                  },
+                  {
+                    "field": "auditd.data.grantors"
+                  },
+                  {
+                    "field": "auditd.data.grp"
+                  },
+                  {
+                    "field": "auditd.data.hook"
+                  },
+                  {
+                    "field": "auditd.data.hostname"
+                  },
+                  {
+                    "field": "auditd.data.icmp_type"
+                  },
+                  {
+                    "field": "auditd.data.id"
+                  },
+                  {
+                    "field": "auditd.data.igid"
+                  },
+                  {
+                    "field": "auditd.data.img-ctx"
+                  },
+                  {
+                    "field": "auditd.data.inif"
+                  },
+                  {
+                    "field": "auditd.data.ino"
+                  },
+                  {
+                    "field": "auditd.data.inode_gid"
+                  },
+                  {
+                    "field": "auditd.data.inode_uid"
+                  },
+                  {
+                    "field": "auditd.data.invalid_context"
+                  },
+                  {
+                    "field": "auditd.data.ioctlcmd"
+                  },
+                  {
+                    "field": "auditd.data.ip"
+                  },
+                  {
+                    "field": "auditd.data.ipid"
+                  },
+                  {
+                    "field": "auditd.data.ipx-net"
+                  },
+                  {
+                    "field": "auditd.data.items"
+                  },
+                  {
+                    "field": "auditd.data.iuid"
+                  },
+                  {
+                    "field": "auditd.data.kernel"
+                  },
+                  {
+                    "field": "auditd.data.kind"
+                  },
+                  {
+                    "field": "auditd.data.ksize"
+                  },
+                  {
+                    "field": "auditd.data.laddr"
+                  },
+                  {
+                    "field": "auditd.data.len"
+                  },
+                  {
+                    "field": "auditd.data.list"
+                  },
+                  {
+                    "field": "auditd.data.lport"
+                  }
+                ],
+                "aggs": {
+                  "source": {
+                    "filter": {
+                      "term": {
+                        "source.ip": "63.33.254.192"
+                      }
+                    },
+                    "aggs": {
+                      "firstSeen": {
+                        "min": {
+                          "field": "@timestamp"
+                        }
+                      },
+                      "lastSeen": {
+                        "max": {
+                          "field": "@timestamp"
+                        }
+                      },
+                      "as": {
+                        "filter": {
+                          "exists": {
+                            "field": "source.as"
+                          }
+                        },
+                        "aggs": {
+                          "results": {
+                            "top_hits": {
+                              "size": 1,
+                              "_source": [
+                                "source.as"
+                              ],
+                              "sort": [
+                                {
+                                  "@timestamp": "desc"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "geo": {
+                        "filter": {
+                          "exists": {
+                            "field": "source.geo"
+                          }
+                        },
+                        "aggs": {
+                          "results": {
+                            "top_hits": {
+                              "size": 1,
+                              "_source": [
+                                "source.geo"
+                              ],
+                              "sort": [
+                                {
+                                  "@timestamp": "desc"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "destination": {
+                    "filter": {
+                      "term": {
+                        "destination.ip": "63.33.254.192"
+                      }
+                    },
+                    "aggs": {
+                      "firstSeen": {
+                        "min": {
+                          "field": "@timestamp"
+                        }
+                      },
+                      "lastSeen": {
+                        "max": {
+                          "field": "@timestamp"
+                        }
+                      },
+                      "as": {
+                        "filter": {
+                          "exists": {
+                            "field": "destination.as"
+                          }
+                        },
+                        "aggs": {
+                          "results": {
+                            "top_hits": {
+                              "size": 1,
+                              "_source": [
+                                "destination.as"
+                              ],
+                              "sort": [
+                                {
+                                  "@timestamp": "desc"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "geo": {
+                        "filter": {
+                          "exists": {
+                            "field": "destination.geo"
+                          }
+                        },
+                        "aggs": {
+                          "results": {
+                            "top_hits": {
+                              "size": 1,
+                              "_source": [
+                                "destination.geo"
+                              ],
+                              "sort": [
+                                {
+                                  "@timestamp": "desc"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "host": {
+                    "filter": {
+                      "term": {
+                        "host.ip": "63.33.254.192"
+                      }
+                    },
+                    "aggs": {
+                      "results": {
+                        "top_hits": {
+                          "size": 1,
+                          "_source": [
+                            "host"
+                          ],
+                          "sort": [
+                            {
+                              "@timestamp": "desc"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "should": []
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

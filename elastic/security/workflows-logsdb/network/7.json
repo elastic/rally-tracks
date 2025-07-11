@@ -1,0 +1,802 @@
+{
+  "name": "/app/security/*?{query}",
+  "id": "Open `DNS` sub-tab",
+  "requests": [
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.18745699999999998
+        },
+        {
+          "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 7.1",
+          "operation-type": "search",
+          "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "false",
+            "allow_no_indices": "true",
+            "size": "0"
+          },
+          "body": {
+            "docvalue_fields": [
+              {
+                "field": "@metadata.beat"
+              },
+              {
+                "field": "@metadata.type"
+              },
+              {
+                "field": "@metadata.version"
+              },
+              {
+                "field": "@timestamp"
+              },
+              {
+                "field": "agent.agent_id"
+              },
+              {
+                "field": "agent.build.original"
+              },
+              {
+                "field": "agent.ephemeral_id"
+              },
+              {
+                "field": "agent.hostname"
+              },
+              {
+                "field": "agent.id"
+              },
+              {
+                "field": "agent.name"
+              },
+              {
+                "field": "agent.type"
+              },
+              {
+                "field": "agent.version"
+              },
+              {
+                "field": "as.number"
+              },
+              {
+                "field": "as.organization.name"
+              },
+              {
+                "field": "auditd.data.a0"
+              },
+              {
+                "field": "auditd.data.a1"
+              },
+              {
+                "field": "auditd.data.a2"
+              },
+              {
+                "field": "auditd.data.a3"
+              },
+              {
+                "field": "auditd.data.a[0-3]"
+              },
+              {
+                "field": "auditd.data.acct"
+              },
+              {
+                "field": "auditd.data.acl"
+              },
+              {
+                "field": "auditd.data.action"
+              },
+              {
+                "field": "auditd.data.added"
+              },
+              {
+                "field": "auditd.data.addr"
+              },
+              {
+                "field": "auditd.data.apparmor"
+              },
+              {
+                "field": "auditd.data.arch"
+              },
+              {
+                "field": "auditd.data.arg"
+              },
+              {
+                "field": "auditd.data.argc"
+              },
+              {
+                "field": "auditd.data.audit_backlog_limit"
+              },
+              {
+                "field": "auditd.data.audit_backlog_wait_time"
+              },
+              {
+                "field": "auditd.data.audit_enabled"
+              },
+              {
+                "field": "auditd.data.audit_failure"
+              },
+              {
+                "field": "auditd.data.auid"
+              },
+              {
+                "field": "auditd.data.banners"
+              },
+              {
+                "field": "auditd.data.bool"
+              },
+              {
+                "field": "auditd.data.bus"
+              },
+              {
+                "field": "auditd.data.cap_fe"
+              },
+              {
+                "field": "auditd.data.cap_fi"
+              },
+              {
+                "field": "auditd.data.cap_fp"
+              },
+              {
+                "field": "auditd.data.cap_fver"
+              },
+              {
+                "field": "auditd.data.cap_pe"
+              },
+              {
+                "field": "auditd.data.cap_pi"
+              },
+              {
+                "field": "auditd.data.cap_pp"
+              },
+              {
+                "field": "auditd.data.capability"
+              },
+              {
+                "field": "auditd.data.capname"
+              },
+              {
+                "field": "auditd.data.cgroup"
+              },
+              {
+                "field": "auditd.data.changed"
+              },
+              {
+                "field": "auditd.data.cipher"
+              },
+              {
+                "field": "auditd.data.class"
+              },
+              {
+                "field": "auditd.data.cmd"
+              },
+              {
+                "field": "auditd.data.code"
+              },
+              {
+                "field": "auditd.data.compat"
+              },
+              {
+                "field": "auditd.data.daddr"
+              },
+              {
+                "field": "auditd.data.data"
+              },
+              {
+                "field": "auditd.data.default-context"
+              },
+              {
+                "field": "auditd.data.device"
+              },
+              {
+                "field": "auditd.data.dir"
+              },
+              {
+                "field": "auditd.data.direction"
+              },
+              {
+                "field": "auditd.data.dmac"
+              },
+              {
+                "field": "auditd.data.dport"
+              },
+              {
+                "field": "auditd.data.enforcing"
+              },
+              {
+                "field": "auditd.data.entries"
+              },
+              {
+                "field": "auditd.data.exit"
+              },
+              {
+                "field": "auditd.data.fam"
+              },
+              {
+                "field": "auditd.data.family"
+              },
+              {
+                "field": "auditd.data.fd"
+              },
+              {
+                "field": "auditd.data.fe"
+              },
+              {
+                "field": "auditd.data.feature"
+              },
+              {
+                "field": "auditd.data.fi"
+              },
+              {
+                "field": "auditd.data.file"
+              },
+              {
+                "field": "auditd.data.flags"
+              },
+              {
+                "field": "auditd.data.format"
+              },
+              {
+                "field": "auditd.data.fp"
+              },
+              {
+                "field": "auditd.data.fver"
+              },
+              {
+                "field": "auditd.data.grantors"
+              },
+              {
+                "field": "auditd.data.grp"
+              },
+              {
+                "field": "auditd.data.hook"
+              },
+              {
+                "field": "auditd.data.hostname"
+              },
+              {
+                "field": "auditd.data.icmp_type"
+              },
+              {
+                "field": "auditd.data.id"
+              },
+              {
+                "field": "auditd.data.igid"
+              },
+              {
+                "field": "auditd.data.img-ctx"
+              },
+              {
+                "field": "auditd.data.inif"
+              },
+              {
+                "field": "auditd.data.ino"
+              },
+              {
+                "field": "auditd.data.inode_gid"
+              },
+              {
+                "field": "auditd.data.inode_uid"
+              },
+              {
+                "field": "auditd.data.invalid_context"
+              },
+              {
+                "field": "auditd.data.ioctlcmd"
+              },
+              {
+                "field": "auditd.data.ip"
+              },
+              {
+                "field": "auditd.data.ipid"
+              },
+              {
+                "field": "auditd.data.ipx-net"
+              },
+              {
+                "field": "auditd.data.items"
+              },
+              {
+                "field": "auditd.data.iuid"
+              },
+              {
+                "field": "auditd.data.kernel"
+              },
+              {
+                "field": "auditd.data.kind"
+              },
+              {
+                "field": "auditd.data.ksize"
+              },
+              {
+                "field": "auditd.data.laddr"
+              },
+              {
+                "field": "auditd.data.len"
+              },
+              {
+                "field": "auditd.data.list"
+              },
+              {
+                "field": "auditd.data.lport"
+              }
+            ],
+            "aggregations": {
+              "dns_count": {
+                "cardinality": {
+                  "field": "dns.question.registered_domain"
+                }
+              },
+              "dns_name_query_count": {
+                "terms": {
+                  "field": "dns.question.registered_domain",
+                  "order": {
+                    "unique_domains": "desc"
+                  },
+                  "size": 10
+                },
+                "aggs": {
+                  "unique_domains": {
+                    "cardinality": {
+                      "field": "dns.question.name"
+                    }
+                  },
+                  "dns_question_name": {
+                    "date_histogram": {
+                      "field": "@timestamp",
+                      "fixed_interval": "112500ms",
+                      "min_doc_count": 0,
+                      "extended_bounds": {
+                        "min": 1643986800000,
+                        "max": 1643990400000
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "query": {
+              "bool": {
+                "filter": [
+                  {
+                    "bool": {
+                      "must": [],
+                      "filter": [],
+                      "should": [],
+                      "must_not": []
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "gte": "2022-02-04T15:00:00.000Z",
+                        "lte": "2022-02-04T16:00:00.000Z",
+                        "format": "strict_date_optional_time"
+                      }
+                    }
+                  }
+                ],
+                "must_not": [
+                  {
+                    "term": {
+                      "dns.question.type": {
+                        "value": "PTR"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "stream": [
+        {
+          "name": "sleep",
+          "operation-type": "sleep",
+          "duration": 0.188295
+        },
+        {
+          "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 7.2",
+          "operation-type": "search",
+          "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+          "request-params": {
+            "batched_reduce_size": "64",
+            "ignore_unavailable": "true",
+            "track_total_hits": "false",
+            "allow_no_indices": "true",
+            "size": "0"
+          },
+          "body": {
+            "docvalue_fields": [
+              {
+                "field": "@metadata.beat"
+              },
+              {
+                "field": "@metadata.type"
+              },
+              {
+                "field": "@metadata.version"
+              },
+              {
+                "field": "@timestamp"
+              },
+              {
+                "field": "agent.agent_id"
+              },
+              {
+                "field": "agent.build.original"
+              },
+              {
+                "field": "agent.ephemeral_id"
+              },
+              {
+                "field": "agent.hostname"
+              },
+              {
+                "field": "agent.id"
+              },
+              {
+                "field": "agent.name"
+              },
+              {
+                "field": "agent.type"
+              },
+              {
+                "field": "agent.version"
+              },
+              {
+                "field": "as.number"
+              },
+              {
+                "field": "as.organization.name"
+              },
+              {
+                "field": "auditd.data.a0"
+              },
+              {
+                "field": "auditd.data.a1"
+              },
+              {
+                "field": "auditd.data.a2"
+              },
+              {
+                "field": "auditd.data.a3"
+              },
+              {
+                "field": "auditd.data.a[0-3]"
+              },
+              {
+                "field": "auditd.data.acct"
+              },
+              {
+                "field": "auditd.data.acl"
+              },
+              {
+                "field": "auditd.data.action"
+              },
+              {
+                "field": "auditd.data.added"
+              },
+              {
+                "field": "auditd.data.addr"
+              },
+              {
+                "field": "auditd.data.apparmor"
+              },
+              {
+                "field": "auditd.data.arch"
+              },
+              {
+                "field": "auditd.data.arg"
+              },
+              {
+                "field": "auditd.data.argc"
+              },
+              {
+                "field": "auditd.data.audit_backlog_limit"
+              },
+              {
+                "field": "auditd.data.audit_backlog_wait_time"
+              },
+              {
+                "field": "auditd.data.audit_enabled"
+              },
+              {
+                "field": "auditd.data.audit_failure"
+              },
+              {
+                "field": "auditd.data.auid"
+              },
+              {
+                "field": "auditd.data.banners"
+              },
+              {
+                "field": "auditd.data.bool"
+              },
+              {
+                "field": "auditd.data.bus"
+              },
+              {
+                "field": "auditd.data.cap_fe"
+              },
+              {
+                "field": "auditd.data.cap_fi"
+              },
+              {
+                "field": "auditd.data.cap_fp"
+              },
+              {
+                "field": "auditd.data.cap_fver"
+              },
+              {
+                "field": "auditd.data.cap_pe"
+              },
+              {
+                "field": "auditd.data.cap_pi"
+              },
+              {
+                "field": "auditd.data.cap_pp"
+              },
+              {
+                "field": "auditd.data.capability"
+              },
+              {
+                "field": "auditd.data.capname"
+              },
+              {
+                "field": "auditd.data.cgroup"
+              },
+              {
+                "field": "auditd.data.changed"
+              },
+              {
+                "field": "auditd.data.cipher"
+              },
+              {
+                "field": "auditd.data.class"
+              },
+              {
+                "field": "auditd.data.cmd"
+              },
+              {
+                "field": "auditd.data.code"
+              },
+              {
+                "field": "auditd.data.compat"
+              },
+              {
+                "field": "auditd.data.daddr"
+              },
+              {
+                "field": "auditd.data.data"
+              },
+              {
+                "field": "auditd.data.default-context"
+              },
+              {
+                "field": "auditd.data.device"
+              },
+              {
+                "field": "auditd.data.dir"
+              },
+              {
+                "field": "auditd.data.direction"
+              },
+              {
+                "field": "auditd.data.dmac"
+              },
+              {
+                "field": "auditd.data.dport"
+              },
+              {
+                "field": "auditd.data.enforcing"
+              },
+              {
+                "field": "auditd.data.entries"
+              },
+              {
+                "field": "auditd.data.exit"
+              },
+              {
+                "field": "auditd.data.fam"
+              },
+              {
+                "field": "auditd.data.family"
+              },
+              {
+                "field": "auditd.data.fd"
+              },
+              {
+                "field": "auditd.data.fe"
+              },
+              {
+                "field": "auditd.data.feature"
+              },
+              {
+                "field": "auditd.data.fi"
+              },
+              {
+                "field": "auditd.data.file"
+              },
+              {
+                "field": "auditd.data.flags"
+              },
+              {
+                "field": "auditd.data.format"
+              },
+              {
+                "field": "auditd.data.fp"
+              },
+              {
+                "field": "auditd.data.fver"
+              },
+              {
+                "field": "auditd.data.grantors"
+              },
+              {
+                "field": "auditd.data.grp"
+              },
+              {
+                "field": "auditd.data.hook"
+              },
+              {
+                "field": "auditd.data.hostname"
+              },
+              {
+                "field": "auditd.data.icmp_type"
+              },
+              {
+                "field": "auditd.data.id"
+              },
+              {
+                "field": "auditd.data.igid"
+              },
+              {
+                "field": "auditd.data.img-ctx"
+              },
+              {
+                "field": "auditd.data.inif"
+              },
+              {
+                "field": "auditd.data.ino"
+              },
+              {
+                "field": "auditd.data.inode_gid"
+              },
+              {
+                "field": "auditd.data.inode_uid"
+              },
+              {
+                "field": "auditd.data.invalid_context"
+              },
+              {
+                "field": "auditd.data.ioctlcmd"
+              },
+              {
+                "field": "auditd.data.ip"
+              },
+              {
+                "field": "auditd.data.ipid"
+              },
+              {
+                "field": "auditd.data.ipx-net"
+              },
+              {
+                "field": "auditd.data.items"
+              },
+              {
+                "field": "auditd.data.iuid"
+              },
+              {
+                "field": "auditd.data.kernel"
+              },
+              {
+                "field": "auditd.data.kind"
+              },
+              {
+                "field": "auditd.data.ksize"
+              },
+              {
+                "field": "auditd.data.laddr"
+              },
+              {
+                "field": "auditd.data.len"
+              },
+              {
+                "field": "auditd.data.list"
+              },
+              {
+                "field": "auditd.data.lport"
+              }
+            ],
+            "aggregations": {
+              "dns_count": {
+                "cardinality": {
+                  "field": "dns.question.registered_domain"
+                }
+              },
+              "dns_name_query_count": {
+                "terms": {
+                  "field": "dns.question.registered_domain",
+                  "size": 1000000
+                },
+                "aggs": {
+                  "bucket_sort": {
+                    "bucket_sort": {
+                      "sort": [
+                        {
+                          "unique_domains": {
+                            "order": "desc"
+                          }
+                        },
+                        {
+                          "_key": {
+                            "order": "asc"
+                          }
+                        }
+                      ],
+                      "from": 0,
+                      "size": 10
+                    }
+                  },
+                  "unique_domains": {
+                    "cardinality": {
+                      "field": "dns.question.name"
+                    }
+                  },
+                  "dns_bytes_in": {
+                    "sum": {
+                      "field": "source.bytes"
+                    }
+                  },
+                  "dns_bytes_out": {
+                    "sum": {
+                      "field": "destination.bytes"
+                    }
+                  }
+                }
+              }
+            },
+            "query": {
+              "bool": {
+                "filter": [
+                  {
+                    "bool": {
+                      "must": [],
+                      "filter": [],
+                      "should": [],
+                      "must_not": []
+                    }
+                  },
+                  {
+                    "range": {
+                      "@timestamp": {
+                        "gte": "2022-02-04T15:00:00.000Z",
+                        "lte": "2022-02-04T16:00:00.000Z",
+                        "format": "strict_date_optional_time"
+                      }
+                    }
+                  }
+                ],
+                "must_not": [
+                  {
+                    "term": {
+                      "dns.question.type": {
+                        "value": "PTR"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

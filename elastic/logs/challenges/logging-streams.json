@@ -281,8 +281,9 @@
         "bulk-size": {{ p_bulk_size }},
         "detailed-results": true
       },
-      "clients": {{ p_bulk_indexing_clients }}{% if p_throttle_indexing %},
-      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "clients": {{ p_bulk_indexing_clients }},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+      {% if p_throttle_indexing %},
       "schedule": "timestamp-throttler",
       "max-delay-secs": 1
       {% endif %}
@@ -310,6 +311,21 @@
         "operation-type": "compression-statistics",
         "data-stream": "logs"
       }
+    },
+    {
+      "name": "delete-data-stream",
+      "operation": "delete-data-stream",
+      "data-stream": "logs"
+    },
+    {
+      "name": "delete-logs-template",
+      "operation": "delete-composable-template",
+      "template": "logs@stream"
+    },
+    {
+      "name": "delete-logs-component-template",
+      "operation": "delete-component-template",
+      "template": "logs@stream.layer"
     }
   ]
 }

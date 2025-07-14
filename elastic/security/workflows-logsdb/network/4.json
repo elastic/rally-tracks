@@ -1,0 +1,1015 @@
+{
+  "name": "POST /internal/bsearch",
+  "id": "Set the time range to `now-1hr` to `now`",
+  "requests": [
+    {
+      "stream": [
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.8731369999999999
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 4.1",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "source.ip"
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "destination.ip"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.8737849999999999
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 4.2",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "dns.question.name"
+                              }
+                            },
+                            {
+                              "term": {
+                                "suricata.eve.dns.type": {
+                                  "value": "query"
+                                }
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "zeek.dns.query"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.874274
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 4.3",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "aggregations": {
+                  "unique_flow_id": {
+                    "cardinality": {
+                      "field": "network.community_id"
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "source.ip"
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "destination.ip"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.8748940000000001
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 4.4",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "true",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "source.ip"
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "destination.ip"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "tls.version"
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "suricata.eve.tls.version"
+                              }
+                            },
+                            {
+                              "exists": {
+                                "field": "zeek.ssl.version"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.875514
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 4.5",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true"
+              },
+              "body": {
+                "aggregations": {
+                  "source": {
+                    "filter": {
+                      "bool": {
+                        "should": [
+                          {
+                            "term": {
+                              "source.ip": "10.0.0.0/8"
+                            }
+                          },
+                          {
+                            "term": {
+                              "source.ip": "192.168.0.0/16"
+                            }
+                          },
+                          {
+                            "term": {
+                              "source.ip": "172.16.0.0/12"
+                            }
+                          },
+                          {
+                            "term": {
+                              "source.ip": "fd00::/8"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    },
+                    "aggs": {
+                      "unique_private_ips": {
+                        "cardinality": {
+                          "field": "source.ip"
+                        }
+                      },
+                      "histogram": {
+                        "auto_date_histogram": {
+                          "field": "@timestamp",
+                          "buckets": "6"
+                        },
+                        "aggs": {
+                          "count": {
+                            "cardinality": {
+                              "field": "source.ip"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "destination": {
+                    "filter": {
+                      "bool": {
+                        "should": [
+                          {
+                            "term": {
+                              "destination.ip": "10.0.0.0/8"
+                            }
+                          },
+                          {
+                            "term": {
+                              "destination.ip": "192.168.0.0/16"
+                            }
+                          },
+                          {
+                            "term": {
+                              "destination.ip": "172.16.0.0/12"
+                            }
+                          },
+                          {
+                            "term": {
+                              "destination.ip": "fd00::/8"
+                            }
+                          }
+                        ],
+                        "minimum_should_match": 1
+                      }
+                    },
+                    "aggs": {
+                      "unique_private_ips": {
+                        "cardinality": {
+                          "field": "destination.ip"
+                        }
+                      },
+                      "histogram": {
+                        "auto_date_histogram": {
+                          "field": "@timestamp",
+                          "buckets": "6"
+                        },
+                        "aggs": {
+                          "count": {
+                            "cardinality": {
+                              "field": "destination.ip"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "size": 0
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.8766280000000001
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 4.6",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true",
+                "size": "0"
+              },
+              "body": {
+                "aggregations": {
+                  "top_n_flow_count": {
+                    "cardinality": {
+                      "field": "source.ip"
+                    }
+                  },
+                  "source": {
+                    "terms": {
+                      "field": "source.ip",
+                      "size": 10,
+                      "order": {
+                        "bytes_out": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "bytes_in": {
+                        "sum": {
+                          "field": "destination.bytes"
+                        }
+                      },
+                      "bytes_out": {
+                        "sum": {
+                          "field": "source.bytes"
+                        }
+                      },
+                      "domain": {
+                        "terms": {
+                          "field": "source.domain",
+                          "order": {
+                            "timestamp": "desc"
+                          }
+                        },
+                        "aggs": {
+                          "timestamp": {
+                            "max": {
+                              "field": "@timestamp"
+                            }
+                          }
+                        }
+                      },
+                      "location": {
+                        "filter": {
+                          "exists": {
+                            "field": "source.geo"
+                          }
+                        },
+                        "aggs": {
+                          "top_geo": {
+                            "top_hits": {
+                              "_source": "source.geo.*",
+                              "size": 1
+                            }
+                          }
+                        }
+                      },
+                      "autonomous_system": {
+                        "filter": {
+                          "exists": {
+                            "field": "source.as"
+                          }
+                        },
+                        "aggs": {
+                          "top_as": {
+                            "top_hits": {
+                              "_source": "source.as.*",
+                              "size": 1
+                            }
+                          }
+                        }
+                      },
+                      "flows": {
+                        "cardinality": {
+                          "field": "network.community_id"
+                        }
+                      },
+                      "destination_ips": {
+                        "cardinality": {
+                          "field": "destination.ip"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.878279
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 4.7",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true",
+                "size": "0"
+              },
+              "body": {
+                "aggregations": {
+                  "top_n_flow_count": {
+                    "cardinality": {
+                      "field": "destination.ip"
+                    }
+                  },
+                  "destination": {
+                    "terms": {
+                      "field": "destination.ip",
+                      "size": 10,
+                      "order": {
+                        "bytes_in": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "bytes_in": {
+                        "sum": {
+                          "field": "source.bytes"
+                        }
+                      },
+                      "bytes_out": {
+                        "sum": {
+                          "field": "destination.bytes"
+                        }
+                      },
+                      "domain": {
+                        "terms": {
+                          "field": "destination.domain",
+                          "order": {
+                            "timestamp": "desc"
+                          }
+                        },
+                        "aggs": {
+                          "timestamp": {
+                            "max": {
+                              "field": "@timestamp"
+                            }
+                          }
+                        }
+                      },
+                      "location": {
+                        "filter": {
+                          "exists": {
+                            "field": "destination.geo"
+                          }
+                        },
+                        "aggs": {
+                          "top_geo": {
+                            "top_hits": {
+                              "_source": "destination.geo.*",
+                              "size": 1
+                            }
+                          }
+                        }
+                      },
+                      "autonomous_system": {
+                        "filter": {
+                          "exists": {
+                            "field": "destination.as"
+                          }
+                        },
+                        "aggs": {
+                          "top_as": {
+                            "top_hits": {
+                              "_source": "destination.as.*",
+                              "size": 1
+                            }
+                          }
+                        }
+                      },
+                      "flows": {
+                        "cardinality": {
+                          "field": "network.community_id"
+                        }
+                      },
+                      "source_ips": {
+                        "cardinality": {
+                          "field": "source.ip"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.880134
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 4.8",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true",
+                "size": "0"
+              },
+              "body": {
+                "aggregations": {
+                  "top_countries_count": {
+                    "cardinality": {
+                      "field": "source.geo.country_iso_code"
+                    }
+                  },
+                  "source": {
+                    "terms": {
+                      "field": "source.geo.country_iso_code",
+                      "size": 10,
+                      "order": {
+                        "bytes_out": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "bytes_in": {
+                        "sum": {
+                          "field": "destination.bytes"
+                        }
+                      },
+                      "bytes_out": {
+                        "sum": {
+                          "field": "source.bytes"
+                        }
+                      },
+                      "flows": {
+                        "cardinality": {
+                          "field": "network.community_id"
+                        }
+                      },
+                      "source_ips": {
+                        "cardinality": {
+                          "field": "source.ip"
+                        }
+                      },
+                      "destination_ips": {
+                        "cardinality": {
+                          "field": "destination.ip"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.8813500000000001
+            },
+            {
+              "name": "Elasticsearch: POST /auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*/_async_search - network - 4.9",
+              "operation-type": "search",
+              "index": "auditbeat-*,filebeat-*,logs-*,packetbeat-*,winlogbeat-*,-*elastic-cloud-logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "false",
+                "allow_no_indices": "true",
+                "size": "0"
+              },
+              "body": {
+                "aggregations": {
+                  "top_countries_count": {
+                    "cardinality": {
+                      "field": "destination.geo.country_iso_code"
+                    }
+                  },
+                  "destination": {
+                    "terms": {
+                      "field": "destination.geo.country_iso_code",
+                      "size": 10,
+                      "order": {
+                        "bytes_in": "desc"
+                      }
+                    },
+                    "aggs": {
+                      "bytes_in": {
+                        "sum": {
+                          "field": "source.bytes"
+                        }
+                      },
+                      "bytes_out": {
+                        "sum": {
+                          "field": "destination.bytes"
+                        }
+                      },
+                      "flows": {
+                        "cardinality": {
+                          "field": "network.community_id"
+                        }
+                      },
+                      "source_ips": {
+                        "cardinality": {
+                          "field": "source.ip"
+                        }
+                      },
+                      "destination_ips": {
+                        "cardinality": {
+                          "field": "destination.ip"
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [],
+                          "filter": [],
+                          "should": [],
+                          "must_not": []
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z",
+                            "format": "strict_date_optional_time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.881867
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - network - 4.10",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "10001",
+                "preference": "1649684439115"
+              },
+              "body": {
+                "docvalue_fields": [
+                  {
+                    "field": "@timestamp",
+                    "format": "epoch_millis"
+                  },
+                  "source.geo.location"
+                ],
+                "size": 10000,
+                "_source": false,
+                "script_fields": {},
+                "stored_fields": [
+                  "@timestamp",
+                  "source.geo.location"
+                ],
+                "runtime_mappings": {},
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stream": [
+            {
+              "name": "sleep",
+              "operation-type": "sleep",
+              "duration": 0.8833909999999999
+            },
+            {
+              "name": "Elasticsearch: POST /logs-*/_async_search - network - 4.11",
+              "operation-type": "search",
+              "index": "logs-*",
+              "request-params": {
+                "batched_reduce_size": "64",
+                "ignore_unavailable": "true",
+                "track_total_hits": "10001",
+                "preference": "1649684439115"
+              },
+              "body": {
+                "docvalue_fields": [
+                  {
+                    "field": "@timestamp",
+                    "format": "epoch_millis"
+                  },
+                  "destination.geo.location"
+                ],
+                "size": 10000,
+                "_source": false,
+                "script_fields": {},
+                "stored_fields": [
+                  "@timestamp",
+                  "destination.geo.location"
+                ],
+                "runtime_mappings": {},
+                "query": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "bool": {
+                          "must": [
+                            {
+                              "exists": {
+                                "field": "destination.geo.location"
+                              }
+                            },
+                            {
+                              "geo_bounding_box": {
+                                "destination.geo.location": {
+                                  "top_left": [
+                                    -180,
+                                    85.05113
+                                  ],
+                                  "bottom_right": [
+                                    180,
+                                    -85.05113
+                                  ]
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "range": {
+                          "@timestamp": {
+                            "format": "strict_date_optional_time",
+                            "gte": "2022-02-04T15:00:00.000Z",
+                            "lte": "2022-02-04T16:00:00.000Z"
+                          }
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": []
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

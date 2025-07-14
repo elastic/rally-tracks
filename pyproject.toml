@@ -47,7 +47,7 @@ extra-dependencies = [
 test = "pytest"
 
 [tool.hatch.envs.it.scripts]
-test = "pytest it --log-cli-level=INFO"
+test = "pytest it --log-cli-level=INFO --distribution-version=8.15.5"
 
 [tool.hatch.envs.it_serverless.scripts]
 test_user = "pytest -s it_serverless --log-cli-level=INFO"

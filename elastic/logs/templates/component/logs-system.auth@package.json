@@ -287,12 +287,20 @@
           "error": {
             "properties": {
               "message": {
+                {% if patterned_text_message_field | default(false) is true %}
+                "type": "patterned_text"
+                {% else %}
                 "type": "match_only_text"
+                {% endif %}
               }
             }
           },
           "message": {
+            {% if patterned_text_message_field | default(false) is true %}
+            "type": "patterned_text"
+            {% else %}
             "type": "match_only_text"
+            {% endif %}
           },
           "version": {
             "ignore_above": 1024,

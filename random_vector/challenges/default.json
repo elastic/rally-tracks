@@ -4,12 +4,25 @@
   "default": true,
   "schedule": [
     {
-      "name": "delete-index",
-      "operation": "delete-index"
+      "name": "delete-data-stream",
+      "operation": {
+        "operation-type": "delete-data-stream",
+        "data-stream": [
+          "vectors-benchmark-random"
+        ]
+      }
     },
     {
-      "name": "create-index",
-      "operation": "create-index"
+      "name": "delete-templates",
+      "operation": {
+        "operation-type": "delete-composable-template"
+      }
+    },
+    {
+      "name": "create-templates",
+      "operation": {
+        "operation-type": "create-composable-template"
+      }
     },
     {
       "name": "check-cluster-health",
@@ -18,9 +31,11 @@
     {
       "name": "random-indexing",
       "operation": "random-bulk-indexing",
+      {%- if index_target_throughput is defined %}
+      "target-throughput": {{ index_target_throughput | int }},
+      {%- endif %}
       "clients": {{ index_clients | default(1) | int }},
-      "iterations": {{ index_iterations | default(1000) | int }},
-      "bulk-size": {{ index_bulk_size | default(1000)}}
+      "iterations": {{ index_iterations | default(1000) | int }}
     },
     {
       "name": "refresh-after-index",
@@ -31,33 +46,11 @@
       }
     },
     {
-      "name": "script-score-filtered-search-single-client",
-      "operation": "brute-force-filtered-search",
-      "script": true,
-      "warmup-iterations": 100,
-      "iterations": {{ search_iterations | default(1000) | int }}
-    },
-    {
-      "name": "script-score-filtered-search-multiple-client",
-      "operation": "brute-force-filtered-search",
-      "script": true,
-      "warmup-iterations": 100,
-      "iterations": {{ search_iterations | default(1000) | int }},
-      "clients": {{ search_clients | default(8) | int }}
-    },
-    {
-      "name": "knn-filtered-search-single-client",
+      "name": "brute-force-filtered-search",
       "operation": "brute-force-filtered-search",
       "script": false,
-      "warmup-iterations": 100,
-      "iterations": {{ search_iterations | default(10000) | int }}
-    },
-    {
-      "name": "knn-filtered-search-multiple-client",
-      "operation": "brute-force-filtered-search",
-      "script": false,
-      "warmup-iterations": 100,
-      "iterations": {{ search_iterations | default(1000) | int }},
+      "warmup-iterations": 1000,
+      "iterations": {{ search_iterations | default(10000) | int }},
       "clients": {{ search_clients | default(8) | int }}
     }
   ]

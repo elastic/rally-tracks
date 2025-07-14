@@ -73,6 +73,8 @@
 
 {% set es_version = "7.13.2" %}
 
+{% set p_mapping = ( mapping | default('mapped') ) %}
+
 {% set p_integration_ratios = (integration_ratios | default({
     "kafka": {
       "corpora": {
@@ -218,6 +220,7 @@
     }
   ],
   "component-templates": [
+    {% if p_mapping == "mapped" %}
     {% if build_flavor != "serverless" %}
       {
           "name": ".fleet_agent_id_verification-1",
@@ -339,6 +342,7 @@
         "name": "logs-system.syslog@custom",
         "template": "./templates/component/logs-system.syslog@custom.json"
     },
+    {% endif %}
     {
         "name": "track-custom-mappings",
         "template": "./templates/component/track-custom-mappings.json"
@@ -361,6 +365,7 @@
     }
   ],
   "composable-templates": [
+    {% if p_mapping == "mapped" %}
     {
         "name": "logs-kafka.log",
         "index-pattern": "logs-kafka.log-*",
@@ -469,6 +474,16 @@
         "delete-matching-indices": false,
         "template": "./templates/composable/auditbeat-quantitative.json"
     }
+    {% endif %}
+    {% if p_mapping == "unmapped" %}
+    {
+        "name": "logs-unmapped",
+        "index-pattern": "logs-*-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-dynamic-false.json",
+        "template-path": "index_template"
+    }
+    {% endif %}
   ],
   "corpora": [
     {

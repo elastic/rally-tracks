@@ -3,6 +3,83 @@
   "name": "logging-normalizetest",
   "description": "Indexes logs the streams way, either throttled or un-throttled, for a specified time period and volume per day",
   "schedule": [
+      {
+        "name": "logs-component-template",
+        "operation": {
+          "operation-type": "create-component-template",
+          "template": "logs@stream.layer",
+          "body": {
+            "template": {
+                "settings": {
+                  "index": {
+                    "mode": "logsdb",
+                    "codec": "best_compression",
+                    "mapping": {
+                      "total_fields": {
+                        "ignore_dynamic_beyond_limit": "true"
+                      },
+                      "ignore_malformed": "true"
+                    },
+                    "sort": {
+                      "field": [
+                        "resource.attributes.host.name",
+                        "@timestamp"
+                      ],
+                      "order": [
+                        "asc",
+                        "desc"
+                      ]
+                    }
+                  }
+                },
+                "mappings": {
+                  "dynamic": false,
+                  "properties": {
+                    "@timestamp": {
+                      "type": "date"
+                    },
+                    "body.text": {
+                      "type": "match_only_text"
+                    },
+                    "severity_text": {
+                      "type": "keyword"
+                    },
+                    "resource.attributes.host.name": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+          }
+        }
+      },
+      {
+        "name": "logs-index-template",
+        "operation": {
+          "operation-type": "create-composable-template",
+          "template": "logs@stream",
+          "body": {
+            "index_patterns": [
+              "logs"
+            ],
+            "template": {
+            },
+            "composed_of": [
+              "logs@stream.layer"
+            ],
+            "priority": 1000,
+            "version": 1,
+            "_meta": {
+              "managed": true,
+              "description": "The index template for logs stream"
+            },
+            "data_stream": {
+              "hidden": false,
+              "allow_custom_routing": false
+            }
+          }
+        }
+      },
      {
       "name": "setup",
       "operation": {
@@ -22,7 +99,7 @@
             },
             {
               "reroute": {
-                "destination": "logs-generic.otel-default"
+                "destination": "logs"
               }
             }
           ]

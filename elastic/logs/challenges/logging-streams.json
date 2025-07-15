@@ -314,18 +314,24 @@
     },
     {
       "name": "delete-data-stream",
-      "operation": "delete-data-stream",
-      "data-stream": "logs"
+      "operation": {
+        "operation-type": "delete-data-stream",
+        "data-stream": "logs"
+      }
     },
     {
       "name": "delete-logs-template",
-      "operation": "delete-composable-template",
-      "template": "logs@stream"
+      "operation": {
+        "operation-type": "delete-composable-template",
+        "template": "logs@stream"
+      }
     },
     {
       "name": "delete-logs-component-template",
-      "operation": "delete-component-template",
-      "template": "logs@stream.layer"
+      "operation": {
+        "operation-type": "delete-component-template",
+        "template": "logs@stream.layer"
+      }
     }
   ]
 }

@@ -323,14 +323,14 @@
       "name": "delete-logs-template",
       "operation": {
         "operation-type": "delete-composable-template",
-        "template": "logs@stream"
+        "templates": ["logs@stream"]
       }
     },
     {
       "name": "delete-logs-component-template",
       "operation": {
         "operation-type": "delete-component-template",
-        "template": "logs@stream.layer"
+        "templates": ["logs@stream.layer"]
       }
     }
   ]

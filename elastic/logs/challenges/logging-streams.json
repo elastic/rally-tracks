@@ -3,258 +3,8 @@
   "name": "logging-streams",
   "description": "Indexes logs the streams way without dynamic mappings, either throttled or un-throttled, for a specified time period and volume per day",
   "schedule": [
+    {% include "tasks/index-setup.json" %},
     {
-      "name": "logs-component-template",
-      "operation": {
-        "operation-type": "create-component-template",
-        "template": "logs@stream.layer",
-        "body": {
-           "template": {
-              "settings": {
-                "index": {
-                  "mode": "logsdb",
-                  "codec": "best_compression",
-                  "mapping": {
-                    "total_fields": {
-                      "ignore_dynamic_beyond_limit": "true"
-                    },
-                    "ignore_malformed": "true"
-                  },
-                  "sort": {
-                    "field": [
-                      "resource.attributes.host.name",
-                      "@timestamp"
-                    ],
-                    "order": [
-                      "asc",
-                      "desc"
-                    ]
-                  }
-                }
-              },
-              "mappings": {
-                "dynamic": false,
-                "properties": {
-                  "scope.name": {
-                    "type": "keyword"
-                  },
-                  "body.text": {
-                    "type": "match_only_text"
-                  },
-                  "severity_text": {
-                    "type": "keyword"
-                  },
-                  "body": {
-                    "type": "object",
-                    "properties": {
-                      "structured": {
-                        "type": "flattened"
-                      },
-                      "text": {
-                        "type": "match_only_text"
-                      }
-                    }
-                  },
-                  "scope.dropped_attributes_count": {
-                    "type": "long"
-                  },
-                  "trace.id": {
-                    "path": "trace_id",
-                    "type": "alias"
-                  },
-                  "scope": {
-                    "type": "object",
-                    "properties": {
-                      "attributes": {
-                        "type": "object",
-                        "subobjects": false
-                      }
-                    }
-                  },
-                  "resource.schema_url": {
-                    "type": "keyword"
-                  },
-                  "log.level": {
-                    "path": "severity_text",
-                    "type": "alias"
-                  },
-                  "host.name": {
-                    "path": "resource.attributes.host.name",
-                    "type": "alias"
-                  },
-                  "resource.attributes.host.name": {
-                    "type": "keyword"
-                  },
-                  "observed_timestamp": {
-                    "type": "date"
-                  },
-                  "trace_id": {
-                    "type": "keyword"
-                  },
-                  "resource": {
-                    "type": "object",
-                    "properties": {
-                      "dropped_attributes_count": {
-                        "type": "long"
-                      },
-                      "schema_url": {
-                        "ignore_above": 1024,
-                        "type": "keyword"
-                      },
-                      "attributes": {
-                        "type": "object",
-                        "subobjects": false
-                      }
-                    }
-                  },
-                  "span_id": {
-                    "type": "keyword"
-                  },
-                  "span.id": {
-                    "path": "span_id",
-                    "type": "alias"
-                  },
-                  "message": {
-                    "path": "body.text",
-                    "type": "alias"
-                  },
-                  "@timestamp": {
-                    "ignore_malformed": false,
-                    "type": "date"
-                  },
-                  "dropped_attributes_count": {
-                    "type": "long"
-                  },
-                  "severity_number": {
-                    "type": "long"
-                  },
-                  "event_name": {
-                    "type": "keyword"
-                  },
-                  "attributes": {
-                    "type": "object",
-                    "subobjects": false
-                  },
-                  "scope.version": {
-                    "type": "keyword"
-                  },
-                  "resource.dropped_attributes_count": {
-                    "type": "long"
-                  },
-                  "scope.schema_url": {
-                    "type": "keyword"
-                  }
-                }
-              }
-            }
-        }
-      }
-    },
-    {
-      "name": "logs-pipeline",
-      "operation": {
-        "operation-type": "put-pipeline",
-        "id": "logs@stream.processing",
-        "body": {
-          "description": "Pipeline for processing logs stream",
-          "processors": [
-            {
-              "set": {
-                "description": "If '@timestamp' is missing, set it with the ingest timestamp",
-                "field": "@timestamp",
-                "override": false,
-                "copy_from": "_ingest.timestamp"
-              }
-            },
-            {
-              "pipeline": {
-                "name": "logs@json-pipeline",
-                "ignore_missing_pipeline": true
-              }
-            },
-            {
-              "dot_expander": {
-                "field": "*",
-                "ignore_failure": true
-              }
-            },
-            {
-              "normalize_for_stream": {}
-            },
-            {
-              "dot_expander": {
-                "path": "resource.attributes",
-                "field": "*",
-                "ignore_failure": true
-              }
-            },
-            {
-              "dot_expander": {
-                "path": "attributes",
-                "field": "*",
-                "ignore_failure": true
-              }
-            },
-            {
-              "script": {
-                "source": "ctx[\"stream.name\"] = params.field",
-                "lang": "painless",
-                "params": {
-                  "field": "logs"
-                }
-              }
-            },
-            {
-              "pipeline": {
-                "name": "logs@stream.reroutes",
-                "ignore_missing_pipeline": true
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "logs-index-template",
-      "operation": {
-        "operation-type": "create-composable-template",
-        "template": "logs@stream",
-        "body": {
-          "index_patterns": [
-            "logs"
-          ],
-          "template": {
-            "settings": {
-              "index": {
-                "default_pipeline": "logs@stream.processing"
-              }
-            },
-            "mappings": {
-              "properties": {
-                "stream.name": {
-                  "type": "constant_keyword",
-                  "value": "logs"
-                }
-              }
-            }
-          },
-          "composed_of": [
-            "logs@stream.layer"
-          ],
-          "priority": 1000,
-          "version": 1,
-          "_meta": {
-            "managed": true,
-            "description": "The index template for logs stream"
-          },
-          "data_stream": {
-            "hidden": false,
-            "allow_custom_routing": false
-          }
-        }
-      }
-    },
-     {
       "name": "setup",
       "operation": {
         "operation-type": "put-pipeline",
@@ -288,7 +38,7 @@
       "max-delay-secs": 1
       {% endif %}
     },
-      {
+    {
       "name": "compression-stats",
       "operation": {
         "operation-type": "compression-statistics",
@@ -313,24 +63,14 @@
       }
     },
     {
-      "name": "delete-data-stream",
+      "name": "clear-redirect-pipeline",
       "operation": {
-        "operation-type": "delete-data-stream",
-        "data-stream": "logs"
-      }
-    },
-    {
-      "name": "delete-logs-template",
-      "operation": {
-        "operation-type": "delete-composable-template",
-        "templates": ["logs@stream"]
-      }
-    },
-    {
-      "name": "delete-logs-component-template",
-      "operation": {
-        "operation-type": "delete-component-template",
-        "templates": ["logs@stream.layer"]
+        "operation-type": "put-pipeline",
+        "id": "logs@custom",
+        "body": {
+          "description": "Clear logs@custom in case another challenge runs afterwards",
+          "processors": []
+        }
       }
     }
   ]

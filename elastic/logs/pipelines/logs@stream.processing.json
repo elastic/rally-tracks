@@ -1,0 +1,57 @@
+{
+  "description": "Pipeline for processing logs stream",
+  "processors": [
+    {
+      "set": {
+        "description": "If '@timestamp' is missing, set it with the ingest timestamp",
+        "field": "@timestamp",
+        "override": false,
+        "copy_from": "_ingest.timestamp"
+      }
+    },
+    {
+      "pipeline": {
+        "name": "logs@json-pipeline",
+        "ignore_missing_pipeline": true
+      }
+    },
+    {
+      "dot_expander": {
+        "field": "*",
+        "ignore_failure": true
+      }
+    },
+    {
+      "normalize_for_stream": {}
+    },
+    {
+      "dot_expander": {
+        "path": "resource.attributes",
+        "field": "*",
+        "ignore_failure": true
+      }
+    },
+    {
+      "dot_expander": {
+        "path": "attributes",
+        "field": "*",
+        "ignore_failure": true
+      }
+    },
+    {
+      "script": {
+        "source": "ctx[\"stream.name\"] = params.field",
+        "lang": "painless",
+        "params": {
+          "field": "logs"
+        }
+      }
+    },
+    {
+      "pipeline": {
+        "name": "logs@stream.reroutes",
+        "ignore_missing_pipeline": true
+      }
+    }
+  ]
+}

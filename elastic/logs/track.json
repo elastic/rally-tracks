@@ -215,6 +215,10 @@
     },
     {
       "name": "logs-redis.slowlog-default"
+    },
+    {
+      {# TODO: logs is the main streams stream #}
+      "name": "logs"
     }
   ],
   "component-templates": [
@@ -358,6 +362,10 @@
     {
       "name": "track-shared-logsdb-mode",
       "template": "./templates/component/track-shared-logsdb-mode.json"
+    },
+    {
+        "name": "logs@stream.layer",
+        "template": "./templates/component/logs@stream.layer.json"
     }
   ],
   "composable-templates": [
@@ -468,6 +476,12 @@
         "index-pattern": "auditbeatquantitative-*",
         "delete-matching-indices": false,
         "template": "./templates/composable/auditbeat-quantitative.json"
+    },
+    {
+      "name": "logs@stream",
+      "index-pattern": "logs",
+      "delete-matching-indices": false,
+      "template": "./templates/composable/logs@stream.json"
     }
   ],
   "corpora": [

@@ -368,8 +368,9 @@
       "template": "./templates/component/track-shared-logsdb-mode.json"
     },
     {
-        "name": "logs@stream.layer",
-        "template": "./templates/component/logs@stream.layer.json"
+      "name": "logs@stream.layer",
+      "template": "./templates/component/logs@stream.layer.json",
+      "template-path": "component_template"
     }
   ],
   "composable-templates": [
@@ -486,7 +487,8 @@
       "name": "logs@stream",
       "index-pattern": "logs",
       "delete-matching-indices": false,
-      "template": "./templates/composable/logs@stream.json"
+      "template": "./templates/composable/logs@stream.json",
+      "template-path": "index_template"
     }
     {% endif %}
     {% if p_mapping == "unmapped" %}

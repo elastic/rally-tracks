@@ -1,0 +1,126 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-normalizetest",
+  "description": "Indexes logs the streams way, either throttled or un-throttled, for a specified time period and volume per day",
+  "schedule": [
+      {
+        "name": "logs-component-template",
+        "operation": {
+          "operation-type": "create-component-template",
+          "template": "logs@stream.layer",
+          "body": {
+            "template": {
+                "settings": {
+                  "index": {
+                    "mode": "logsdb",
+                    "codec": "best_compression",
+                    "mapping": {
+                      "total_fields": {
+                        "ignore_dynamic_beyond_limit": "true"
+                      },
+                      "ignore_malformed": "true"
+                    },
+                    "sort": {
+                      "field": [
+                        "resource.attributes.host.name",
+                        "@timestamp"
+                      ],
+                      "order": [
+                        "asc",
+                        "desc"
+                      ]
+                    }
+                  }
+                },
+                "mappings": {
+                  "dynamic": false,
+                  "properties": {
+                    "@timestamp": {
+                      "type": "date"
+                    },
+                    "body.text": {
+                      "type": "match_only_text"
+                    },
+                    "severity_text": {
+                      "type": "keyword"
+                    },
+                    "resource.attributes.host.name": {
+                      "type": "keyword"
+                    }
+                  }
+                }
+              }
+          }
+        }
+      },
+      {
+        "name": "logs-index-template",
+        "operation": {
+          "operation-type": "create-composable-template",
+          "template": "logs@stream",
+          "body": {
+            "index_patterns": [
+              "logs"
+            ],
+            "template": {
+            },
+            "composed_of": [
+              "logs@stream.layer"
+            ],
+            "priority": 1000,
+            "version": 1,
+            "_meta": {
+              "managed": true,
+              "description": "The index template for logs stream"
+            },
+            "data_stream": {
+              "hidden": false,
+              "allow_custom_routing": false
+            }
+          }
+        }
+      },
+     {
+      "name": "setup",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs@custom",
+        "body": {
+          "description": "Sends all data to the 'logs' index. This is easier than changing the index name in the source.",
+          "processors": [
+            {
+              "remove": {
+                "field": "data_stream",
+                "ignore_missing": true
+              }
+            },
+            {
+              "normalize_for_stream": {}
+            },
+            {
+              "reroute": {
+                "destination": "logs"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "bulk-size": {{ p_bulk_size }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients }}{% if p_throttle_indexing %},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "schedule": "timestamp-throttler",
+      "max-delay-secs": 1
+      {% endif %}
+    }
+  ]
+}

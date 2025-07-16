@@ -12,6 +12,18 @@
         "body": {
           "description": "Sends all data to the 'logs' index. This is easier than changing the index name in the source.",
           "processors": [
+          ]
+        }
+      }
+    },
+    {
+      "name": "patch-k8-logs",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs-k8-app",
+        "body": {
+          "description": "Pipeline for parsing app logs",
+          "processors": [
             {
               "reroute": {
                 "destination": "logs"

@@ -5,7 +5,8 @@
     "template": {
       "settings": {
         "index": {
-          "default_pipeline": "logs@stream.processing"
+          "default_pipeline": "logs@stream.processing",
+          "number_of_replicas" : "{{ number_of_replicas | default('1')}}"
         }
       },
       "mappings": {

@@ -21,7 +21,6 @@ spec:
   owner: group:es-perf
   lifecycle: production
   dependsOn: 
-    - "resource:rally-tracks-it"
     - "resource:rally-tracks-it-serverless"
 
 

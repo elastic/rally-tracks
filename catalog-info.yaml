@@ -30,41 +30,6 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
-  name: rally-tracks-it
-  description: Run Rally Tracks integration tests
-  links:
-    - title: Pipeline
-      url: https://buildkite.com/elastic/rally-tracks-it
-
-spec:
-  type: buildkite-pipeline
-  owner: group:es-perf
-  system: buildkite
-
-  implementation:
-    apiVersion: buildkite.elastic.dev/v1
-    kind: Pipeline
-    metadata:
-      name: Rally Tracks - IT
-    spec:
-      env:
-        ELASTIC_SLACK_NOTIFICATIONS_ENABLED: 'true'
-        SLACK_NOTIFICATIONS_CHANNEL: '#es-perf-build'
-      pipeline_file: .buildkite/it/pipeline.yml
-      repository: elastic/rally-tracks
-      teams:
-        es-perf: {}
-        elasticsearch-team:
-          access_level: BUILD_AND_READ
-        everyone:
-          access_level: READ_ONLY
-
-
----
-# yaml-language-server: $schema=https://gist.githubusercontent.com/elasticmachine/988b80dae436cafea07d9a4a460a011d/raw/rre.schema.json
-apiVersion: backstage.io/v1alpha1
-kind: Resource
-metadata:
   name: rally-tracks-it-serverless
   description: Run Rally Tracks integration tests for serverless
   links:
@@ -86,6 +51,8 @@ spec:
         ELASTIC_SLACK_NOTIFICATIONS_ENABLED: 'true'
         SLACK_NOTIFICATIONS_CHANNEL: '#es-perf-build'
       pipeline_file: .buildkite/it/serverless-pipeline.yml
+      provider_settings:
+        trigger_mode: none
       repository: elastic/rally-tracks
       schedules:
         Daily:

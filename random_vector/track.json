@@ -2,11 +2,15 @@
 {
   "version": 2,
   "description": "Benchmarking filtered search on random vectors",
-  "indices": [
+  "composable-templates": [
     {
-      "name": "index",
-      "body": "index-mapping.json"
+      "name": "vector-index-template",
+      "index-pattern": "vectors-benchmark-*",
+      "template": "index-template.json"
     }
+  ],
+  "data-streams": [
+    {"name": "vectors-benchmark-random"}
   ],
   "operations": [
     {{ rally.collect(parts="operations/*.json") }}

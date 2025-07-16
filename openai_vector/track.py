@@ -47,7 +47,7 @@ class KnnParamSource:
     def params(self):
         result = {"index": self._index_name, "cache": self._params.get("cache", False), "size": self._params.get("k", 10)}
         num_candidates = self._params.get("num-candidates", 50)
-        oversample = self._params.get("oversample", 0)
+        oversample = self._params.get("oversample", -1)
         query_vec = self._queries[self._iters]
         knn_query = {
             "knn": {
@@ -59,7 +59,7 @@ class KnnParamSource:
         }
         if "filter" in self._params:
             knn_query["knn"]["filter"] = self._params["filter"]
-        if oversample > 0:
+        if oversample >= 0:
             knn_query["knn"]["rescore_vector"] = {"oversample": oversample}
         result["body"] = {"query": knn_query, "_source": False}
         self._iters += 1
@@ -113,7 +113,7 @@ class KnnRecallParamSource:
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 50),
-            "oversample": self._params.get("oversample", 0),
+            "oversample": self._params.get("oversample", -1),
             "knn_vector_store": KnnVectorStore(),
         }
 
@@ -130,7 +130,7 @@ class KnnRecallRunner:
                 "num_candidates": num_candidates,
             }
         }
-        if oversample > 0:
+        if oversample >= 0:
             knn_query["knn"]["rescore_vector"] = {"oversample": oversample}
         return {"query": knn_query, "_source": False}
 

@@ -84,6 +84,14 @@
           "processors": []
         }
       }
+    },
+    {
+      "name":"reset-pipelines",
+      "description": "Put pipelines back so k8s-app pipeline is restored",
+      "operation": {
+        "operation-type": "create-pipeline",
+        "param-source": "add-track-path"
+      }
     }
   ]
 }

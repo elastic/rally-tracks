@@ -12,6 +12,11 @@
         "body": {
           "description": "Sends all data to the 'logs' index. This is easier than changing the index name in the source.",
           "processors": [
+            {
+              "reroute": {
+                "destination": "logs"
+              }
+            }
           ]
         }
       }

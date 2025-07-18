@@ -21,7 +21,6 @@ spec:
   owner: group:es-perf
   lifecycle: production
   dependsOn: 
-    - "resource:rally-tracks-it"
     - "resource:rally-tracks-it-serverless"
 
 
@@ -48,8 +47,6 @@ spec:
       name: Rally Tracks - IT Serverless
     spec:
       pipeline_file: .buildkite/it/serverless-pipeline.yml
-      provider_settings:
-        trigger_mode: none
       repository: elastic/rally-tracks
       schedules:
         Daily:

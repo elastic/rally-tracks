@@ -1,0 +1,102 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-streams",
+  "description": "Indexes logs the streams way without dynamic mappings, either throttled or un-throttled, for a specified time period and volume per day",
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {
+      "name": "setup",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs@custom",
+        "body": {
+          "description": "Sends all data to the 'logs' index. This is easier than changing the index name in the source.",
+          "processors": [
+            {
+              "reroute": {
+                "destination": "logs"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "patch-k8-logs",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs-k8-app",
+        "body": {
+          "description": "Pipeline for parsing app logs",
+          "processors": [
+            {
+              "reroute": {
+                "destination": "logs"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "bulk-size": {{ p_bulk_size }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients }},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+      {% if p_throttle_indexing %},
+      "schedule": "timestamp-throttler",
+      "max-delay-secs": 1
+      {% endif %}
+    },
+    {
+      "name": "compression-stats",
+      "operation": {
+        "operation-type": "compression-statistics",
+        "data-stream": "logs"
+      }
+    },
+    {
+      "name": "force-merge-datastreams",
+      "operation": {
+        "operation-type": "force-merge",
+        "index": "logs",
+        "mode": "polling",
+        "max-num-segments": 1,
+        "request-timeout": 60
+      }
+    },
+    {
+      "name": "compression-stats-after-merge",
+      "operation": {
+        "operation-type": "compression-statistics",
+        "data-stream": "logs"
+      }
+    },
+    {
+      "name": "clear-redirect-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs@custom",
+        "body": {
+          "description": "Clear logs@custom in case another challenge runs afterwards",
+          "processors": []
+        }
+      }
+    },
+    {
+      "name":"reset-pipelines",
+      "description": "Put pipelines back so k8s-app pipeline is restored",
+      "operation": {
+        "operation-type": "create-pipeline",
+        "param-source": "add-track-path"
+      }
+    }
+  ]
+}

@@ -21,9 +21,11 @@
         "ignore_failure": true
       }
     },
+    {%- if build_flavor != "serverless" -%}
     {
       "normalize_for_stream": {}
     },
+    {%- endif -%}
     {
       "dot_expander": {
         "path": "resource.attributes",

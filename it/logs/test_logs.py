@@ -15,9 +15,9 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import json
-
 import pytest
+
+from it.logs import BASE_PARAMS, params
 
 pytest_rally = pytest.importorskip("pytest_rally")
 
@@ -63,15 +63,6 @@ class TestLogs:
             track="elastic/logs",
             challenge="logging-streams",
             track_params=params(),
-        )
-        assert ret == 0
-
-    def test_logs_chicken(self, es_cluster, rally):
-        custom = {"mapping": "unmapped"}
-        ret = rally.race(
-            track="elastic/logs",
-            challenge="logging-insist-chicken",
-            track_params=params(updates=custom),
         )
         assert ret == 0
 

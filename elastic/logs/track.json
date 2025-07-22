@@ -223,7 +223,6 @@
     }
   ],
   "component-templates": [
-    {% if p_mapping == "mapped" %}
     {% if build_flavor != "serverless" %}
       {
           "name": ".fleet_agent_id_verification-1",
@@ -345,7 +344,6 @@
         "name": "logs-system.syslog@custom",
         "template": "./templates/component/logs-system.syslog@custom.json"
     },
-    {% endif %}
     {
       "name": "logs@stream.layer",
       "template": "./templates/component/logs@stream.layer.json",
@@ -373,7 +371,6 @@
     }
   ],
   "composable-templates": [
-    {% if p_mapping == "mapped" %}
     {
         "name": "logs-kafka.log",
         "index-pattern": "logs-kafka.log-*",
@@ -482,7 +479,6 @@
         "delete-matching-indices": false,
         "template": "./templates/composable/auditbeat-quantitative.json"
     },
-    {% endif %}
     {% if p_mapping == "unmapped" %}
     {
         "name": "logs-unmapped",

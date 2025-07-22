@@ -179,6 +179,11 @@
     "workflow-request-cache": {{ workflow_request_cache | default(true) | tojson }}
   },
   "data-streams": [
+    {% if p_mapping == "mapped" %}
+    {
+      "name": "logs"
+    },
+    {% endif %}
     {
       "name": "logs-kafka.log-default"
     },
@@ -217,9 +222,6 @@
     },
     {
       "name": "logs-redis.slowlog-default"
-    },
-    {
-      "name": "logs"
     }
   ],
   "component-templates": [
@@ -345,6 +347,11 @@
         "name": "logs-system.syslog@custom",
         "template": "./templates/component/logs-system.syslog@custom.json"
     },
+    {
+      "name": "logs@stream.layer",
+      "template": "./templates/component/logs@stream.layer.json",
+      "template-path": "component_template"
+    },
     {% endif %}
     {
         "name": "track-custom-mappings",
@@ -365,11 +372,6 @@
     {
       "name": "track-shared-logsdb-mode",
       "template": "./templates/component/track-shared-logsdb-mode.json"
-    },
-    {
-      "name": "logs@stream.layer",
-      "template": "./templates/component/logs@stream.layer.json",
-      "template-path": "component_template"
     }
   ],
   "composable-templates": [

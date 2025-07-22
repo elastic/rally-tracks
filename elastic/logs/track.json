@@ -373,13 +373,6 @@
     }
   ],
   "composable-templates": [
-    {
-      "name": "logs@stream",
-      "index-pattern": "logs",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs@stream.json",
-      "template-path": "index_template"
-    },
     {% if p_mapping == "mapped" %}
     {
         "name": "logs-kafka.log",
@@ -497,8 +490,15 @@
         "delete-matching-indices": false,
         "template": "./templates/composable/logs-dynamic-false.json",
         "template-path": "index_template"
-    }
+    },
     {% endif %}
+    {
+      "name": "logs@stream",
+      "index-pattern": "logs",
+      "delete-matching-indices": false,
+      "template": "./templates/composable/logs@stream.json",
+      "template-path": "index_template"
+    }
   ],
   "corpora": [
     {

@@ -1219,11 +1219,6 @@
       "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time"
     },
     {
-      "name": "date_histogram_calendar_interval_monthly_3months_esql_segment_partitioning",
-      "operation-type": "esql",
-      "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time"
-    },
-    {
     "name": "date_histogram_calendar_interval_monthly_9months_esql_segment_partitioning",
     "operation-type": "esql",
     "query": "FROM nyc_taxis | where dropoff_datetime < \"2015-10-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time"
@@ -1232,7 +1227,7 @@
       "name": "date_histogram_calendar_interval_monthly_12months_esql_segment_partitioning",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time"
-    }
+    },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
     {
       "name": "date_histogram_calendar_interval_esql_doc_partitioning",
@@ -1260,7 +1255,7 @@
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }
       }
-    }
+    },
   {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
     {
       "name": "date_histogram_fixed_interval_esql_segment_partitioning",

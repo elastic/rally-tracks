@@ -70,7 +70,7 @@ class TestLogs:
         custom = {"mapping": "unmapped"}
         ret = rally.race(
             track="elastic/logs",
-            challenge="logging-chicken",
+            challenge="logging-insist-chicken",
             track_params=params(updates=custom),
         )
         assert ret == 0

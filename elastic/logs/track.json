@@ -179,11 +179,6 @@
     "workflow-request-cache": {{ workflow_request_cache | default(true) | tojson }}
   },
   "data-streams": [
-    {% if p_mapping == "mapped" %}
-    {
-      "name": "logs"
-    },
-    {% endif %}
     {
       "name": "logs-kafka.log-default"
     },
@@ -222,6 +217,9 @@
     },
     {
       "name": "logs-redis.slowlog-default"
+    },
+    {
+      "name": "logs"
     }
   ],
   "component-templates": [
@@ -347,12 +345,12 @@
         "name": "logs-system.syslog@custom",
         "template": "./templates/component/logs-system.syslog@custom.json"
     },
+    {% endif %}
     {
       "name": "logs@stream.layer",
       "template": "./templates/component/logs@stream.layer.json",
       "template-path": "component_template"
     },
-    {% endif %}
     {
         "name": "track-custom-mappings",
         "template": "./templates/component/track-custom-mappings.json"
@@ -375,6 +373,13 @@
     }
   ],
   "composable-templates": [
+    {
+      "name": "logs@stream",
+      "index-pattern": "logs",
+      "delete-matching-indices": false,
+      "template": "./templates/composable/logs@stream.json",
+      "template-path": "index_template"
+    },
     {% if p_mapping == "mapped" %}
     {
         "name": "logs-kafka.log",
@@ -484,13 +489,6 @@
         "delete-matching-indices": false,
         "template": "./templates/composable/auditbeat-quantitative.json"
     },
-    {
-      "name": "logs@stream",
-      "index-pattern": "logs",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs@stream.json",
-      "template-path": "index_template"
-    }
     {% endif %}
     {% if p_mapping == "unmapped" %}
     {

@@ -34,10 +34,8 @@
             "type": "object",
             "properties": {
               "structured": {
-                "type": "flattened"
-              },
-              "text": {
-                "type": "match_only_text"
+                "type": "object",
+                "subobjects": false
               }
             }
           },
@@ -68,11 +66,15 @@
             "path": "resource.attributes.host.name",
             "type": "alias"
           },
+          "servce.name": {
+            "path": "resource.attributes.service.name",
+            "type": "alias"
+          },
           "resource.attributes.host.name": {
             "type": "keyword"
           },
-          "observed_timestamp": {
-            "type": "date"
+          "resource.attributes.service.name": {
+            "type": "keyword"
           },
           "trace_id": {
             "type": "keyword"

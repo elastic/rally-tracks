@@ -4,9 +4,11 @@
       "default": true,
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
@@ -14,6 +16,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "weather-data-2016",
@@ -25,6 +28,7 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index",
           "#COMMENT": "This is an incredibly short warmup time period but it is necessary to get also measurement samples. As this benchmark is rather about search than indexing this is ok.",
           "warmup-time-period": 70,
@@ -33,9 +37,11 @@
         },
         {
           "name": "refresh-after-index",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200{%- if max_num_segments is defined %},
@@ -44,11 +50,13 @@
           }
         },
         {
+          "tags": ["index"],
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
+          "tags": ["index"],
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -63,6 +71,7 @@
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",
+          "tags": ["index"],
           "operation": {
             "operation-type": "sleep",
             "duration": {{ post_ingest_sleep_duration|default(30) }}
@@ -126,9 +135,11 @@
       "description": "Indexes the whole document corpus using Elasticsearch default settings.",
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
@@ -136,6 +147,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "weather-data-2016",
@@ -147,6 +159,7 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index",
           "#COMMENT": "This is an incredibly short warmup time period but it is necessary to get also measurement samples. As this benchmark is rather about search than indexing this is ok.",
           "warmup-time-period": 70,
@@ -155,9 +168,11 @@
         },
         {
           "name": "refresh-after-index",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200{%- if max_num_segments is defined %},
@@ -167,10 +182,12 @@
         },
         {
           "name": "refresh-after-force-merge",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
+          "tags": ["index"],
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -190,9 +207,11 @@
       "default": false,
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
@@ -200,6 +219,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "weather-data-2016",
@@ -211,6 +231,7 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index",
           "#COMMENT": "This is an incredibly short warmup time period but it is necessary to get also measurement samples. As this benchmark is rather about search than indexing this is ok.",
           "warmup-time-period": 10,
@@ -219,10 +240,12 @@
         },
         {
           "name": "refresh-after-index",
+          "tags": ["index"],
           "operation": "refresh",
           "clients": 1
         },
         {
+          "tags": ["index"],
           "operation": "force-merge",
           "clients": 1{%- if max_num_segments is defined %},
           "max-num-segments": {{max_num_segments}}
@@ -230,11 +253,13 @@
         },
         {
           "name": "refresh-after-force-merge",
+          "tags": ["index"],
           "operation": "refresh",
           "clients": 1
         },
         {
           "name": "wait-until-merges-finish",
+          "tags": ["index"],
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -249,6 +274,7 @@
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",
+          "tags": ["index"],
           "operation": {
             "operation-type": "sleep",
             "duration": {{ post_ingest_sleep_duration|default(30) }}
@@ -264,9 +290,11 @@
       "default": false,
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
@@ -274,6 +302,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "weather-data-2016",
@@ -285,6 +314,7 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index",
           "#COMMENT": "This is an incredibly short warmup time period but it is necessary to get also measurement samples. As this benchmark is rather about search than indexing this is ok.",
           "warmup-time-period": 10,
@@ -293,10 +323,12 @@
         },
         {
           "name": "refresh-after-index",
+          "tags": ["index"],
           "operation": "refresh",
           "clients": 1
         },
         {
+          "tags": ["index"],
           "operation": "force-merge",
           "clients": 1{%- if max_num_segments is defined %},
           "max-num-segments": {{max_num_segments}}
@@ -304,12 +336,14 @@
         },
         {
           "name": "refresh-after-force-merge",
+          "tags": ["index"],
           "operation": "refresh",
           "clients": 1
         },
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",
+          "tags": ["index"],
           "operation": {
             "operation-type": "sleep",
             "duration": {{ post_ingest_sleep_duration|default(30) }}

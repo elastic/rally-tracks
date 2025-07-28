@@ -63,7 +63,7 @@
 {% if p_mapping == "mapped" %}
 {
   "name": "validate-package-template-installation",
-  "tags": ["setup"],
+  "tags": ["health"],
   "operation": {
     "operation-type": "validate-package-assets",
     "packages": {{ p_integration_ratios.keys() | reject("==", "application-logs") | list | tojson }},

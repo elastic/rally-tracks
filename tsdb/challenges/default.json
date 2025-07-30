@@ -12,7 +12,7 @@
             "method": "PUT",
             "path": "/_cluster/settings",
             "body": {
-              "transient": {
+              "persistent": {
                 "search.max_buckets" : 300000
               }
             },

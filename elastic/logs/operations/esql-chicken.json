@@ -1,0 +1,31 @@
+    {
+      "name": "limit_500",
+      "operation-type": "esql",
+      "query": "FROM logs-* | LIMIT 500"
+    },
+    {# TODO: All COALESCE usages can be removed once https://github.com/elastic/elasticsearch/issues/130220 is fixed #}
+    {
+      "name": "chicken_1",
+      "operation-type": "esql",
+      "query": "FROM logs-* | INSIST_🐔 agent.id | EVAL col0 = COALESCE(agent.id, \"\") | WHERE MATCH(message, \"204.188.85.203\") and col0 == \"703ef3bd-dc06-4c6c-a621-13c89245e6b0\""
+    },
+    {
+      "name": "chicken_2",
+      "operation-type": "esql",
+      "query": "FROM logs-* | INSIST_🐔 kubernetes.container.image |  EVAL col0 = COALESCE(kubernetes.container.image, \"\") | WHERE col0 != \"\" | STATS col1 = COUNT() BY col0,data_stream.dataset"
+    },
+    {
+      "name": "chicken_3",
+      "operation-type": "esql",
+      "query": "FROM logs-* | INSIST_🐔 agent.id | STATS c=count() BY agent.id, data_stream.dataset | SORT c DESC"
+    },
+    {
+      "name": "chicken_3_with_where",
+      "operation-type": "esql",
+      "query": "FROM logs-* | INSIST_🐔 agent.id | EVAL end_time = DATE_PARSE(\"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\",\"{{ bulk_end_date }}\") | WHERE @timestamp >= end_time - 1 hour | STATS c=count() BY agent.id, data_stream.dataset | SORT c DESC"
+    },
+    {
+      "name": "chicken_4",
+      "operation-type": "esql",
+      "query": "FROM logs-* | INSIST_🐔 agent.hostname | EVAL col0 = COALESCE(agent.hostname, \"\") | WHERE col0 ==  \"elasticsearch-ci-immutable-centos-7-1599241536066250344\""
+    }

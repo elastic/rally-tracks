@@ -4,9 +4,11 @@
       "default": true,
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
@@ -14,6 +16,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "so",
@@ -25,18 +28,21 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index-append",
           "warmup-time-period": 120,
           "clients": {{bulk_indexing_clients | default(8)}},
           "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200
           }
         },
         {
+          "tags": ["index"],
           "name": "wait-until-merges-finish",
           "operation": {
             "operation-type": "index-stats",
@@ -57,15 +63,18 @@
       "default": false,
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
           }
         },
         {
+          "tags": ["health"],
           "name": "check-cluster-health",
           "operation": {
             "operation-type": "cluster-health",
@@ -78,18 +87,21 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index-append",
           "warmup-time-period": 120,
           "clients": {{bulk_indexing_clients | default(8)}},
           "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200
           }
         },
         {
+          "tags": ["index"],
           "name": "wait-until-merges-finish",
           "operation": {
             "operation-type": "index-stats",
@@ -105,6 +117,7 @@
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",
+          "tags": ["index"],
           "operation": {
             "operation-type": "sleep",
             "duration": {{ post_ingest_sleep_duration|default(30) }}
@@ -175,9 +188,11 @@
       "default": false,
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
@@ -185,6 +200,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "so",
@@ -196,12 +212,14 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index-append",
           "warmup-time-period": 120,
           "clients": {{bulk_indexing_clients | default(8)}},
           "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200
@@ -209,6 +227,7 @@
         },
         {
           "name": "wait-until-merges-finish",
+          "tags": ["index"],
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -223,6 +242,7 @@
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",
+          "tags": ["index"],
           "operation": {
             "operation-type": "sleep",
             "duration": {{ post_ingest_sleep_duration|default(30) }}

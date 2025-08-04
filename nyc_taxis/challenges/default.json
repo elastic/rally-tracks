@@ -1104,9 +1104,27 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
+        {
+          "operation": "date_histogram_calendar_interval_monthly_9months_esql_segment_partitioning",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "date_histogram_calendar_interval_monthly_12months_esql_segment_partitioning",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
       {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
         {
           "operation": "date_histogram_calendar_interval_esql_doc_partitioning",
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "date_histogram_calendar_interval_weekly_3weeks_esql_doc_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50

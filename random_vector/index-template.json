@@ -1,0 +1,38 @@
+{
+  "index_patterns": ["vectors-benchmark-*"],
+  "priority": 500,
+  "data_stream": {},
+  "template": {
+    "settings": {
+      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+      "number_of_shards": {{number_of_shards | default(1)}},
+      "number_of_replicas": {{number_of_replicas | default(0)}},
+      {%- endif -%}{# non-serverless-index-settings-marker-end #}
+        {%- if use_synthetic_source | default(true) -%}
+      "mapping.source.mode": "synthetic",
+        {%- endif -%}
+      "sort": {
+        "field": "partition_id"
+      }
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "partition_id": {
+          "type": "keyword"
+        },
+        "emb": {
+          "type": "dense_vector",
+          "dims":  {{ dims | default(128) | tojson }},
+          "index": true,
+          "similarity": "cosine",
+          "index_options": {
+            "type": {{ vector_index_type | default("bbq_flat") | tojson }}
+          }
+        }
+      }
+    }
+  }
+}

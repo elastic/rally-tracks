@@ -13,6 +13,7 @@
 {
   "name": "knn-recall-10-50-acceptedAnswerId",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -40,6 +41,7 @@
 {
   "name": "knn-recall-10-50-java",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -69,6 +71,7 @@
 {
   "name": "knn-recall-10-50-css",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -98,6 +101,7 @@
 {
   "name": "knn-recall-10-50-concurrency",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -127,6 +131,7 @@
 {
   "name": "knn-recall-10-50-random-10-percent",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -156,6 +161,7 @@
 {
   "name": "knn-recall-100-300-random-10-percent",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 100,
   "num_candidates": 300,
@@ -185,6 +191,7 @@
 {
   "name": "knn-recall-10-50-random-20-percent",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -214,6 +221,7 @@
 {
   "name": "knn-recall-100-300-random-20-percent",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 100,
   "num_candidates": 300,
@@ -234,6 +242,7 @@
 {
   "name": "knn-recall-default-match-all",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "include-in-reporting": false
 },
@@ -253,6 +262,7 @@
 {
   "name": "knn-recall-default-random-20-percent",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "include-in-reporting": false,
   "filter": {
@@ -273,6 +283,7 @@
 {
   "name": "knn-recall-10-50-match-all",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -288,6 +299,7 @@
 {
   "name": "knn-recall-100-300-match-all",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 100,
   "num_candidates": 300,

@@ -10,6 +10,7 @@
     {% if bulk_start_date and bulk_end_date %}
       {
         "name": "bulk-index",
+        "tags": ["index"],
         "operation": {
           "operation-type": "raw-bulk",
           "param-source": "processed-source",
@@ -25,11 +26,13 @@
       {%- if force_merge_max_num_segments is defined %},
       {
         "name": "refresh-after-index",
+        "tags": ["index"],
         "index": "logs-*",
         "operation": "refresh"
       },
       {
         "name": "wait-until-index-merges-fininshes",
+        "tags": ["index"],
         "operation": {
           "operation-type": "index-stats",
           "index": "logs-*",
@@ -42,6 +45,7 @@
         }
       },
       {
+        "tags": ["index"],
         "operation": {
           "operation-type": "force-merge",
           "index": "logs-*",
@@ -51,6 +55,7 @@
       },
       {
         "name": "wait-until-merges-finish",
+        "tags": ["index"],
         "operation": {
           "operation-type": "index-stats",
           "index": "logs-*",
@@ -64,6 +69,7 @@
       },
       {
         "name": "refresh-after-force-merge",
+        "tags": ["index"],
         "index": "logs-*",
         "operation": "refresh"
       }

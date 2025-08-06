@@ -60,16 +60,20 @@
     "operation-type": "create-data-stream"
   }
 },
+{% if p_mapping == "mapped" %}
 {
   "name": "validate-package-template-installation",
+  "tags": ["health"],
   "operation": {
     "operation-type": "validate-package-assets",
     "packages": {{ p_integration_ratios.keys() | reject("==", "application-logs") | list | tojson }},
     "asset-types": ["index-templates"]
   }
 },
+{% endif %}
 {
   "name": "update-custom-package-templates",
+  "tags": ["setup"],
   "operation": {
     "operation-type": "update-custom-templates",
     "body": {
@@ -112,6 +116,7 @@
 },
 {
   "name": "check-cluster-health",
+  "tags": ["health"],
   "operation": {
     "operation-type": "cluster-health",
     "index": "_all",

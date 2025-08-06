@@ -7,6 +7,10 @@
     "pytrec_eval==0.5",
     "numpy"
   ],
+  "parameters": {
+    "test-mode": {{ test_mode | default(false) |tojson}}
+  },
+  
   "indices": [
     {
       "name": "msmarco-v2",

@@ -43,7 +43,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - number_of_shards (default: 1)
  - number_of_replicas (default: 0)
  - vector_index_type (default: bbq_flat)
- - paragraph_size (default: 0)
+ - paragraph_size (default: 1)
  - index_target_throughput (default: undefined)
  - index_clients (default: 1)
  - index_iterations (default: 1000)

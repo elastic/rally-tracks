@@ -18,6 +18,7 @@ This rally track includes a challenge for each version of the ELSER model:
 * ELSER-V1: ".elser_model_1"
 * ELSER-V2 Platform Agnostic: ".elser_model_2"
 * ELSER-V2 Platform Specific: ".elser_model_2_linux-x86_64"
+* ELSER-V2-eis: ".elser-2-elastic"
 
 There are also two multi-parametric challenges to decrease the number of esbench instances that need to be started. These challenges take the same parameters as the other challenges, plus extra ones, but the meaning of the parameters is slightly different: 
 * ELSER-Multi-Parametric-Ingest: 

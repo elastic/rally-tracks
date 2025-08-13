@@ -1,0 +1,97 @@
+{
+  "name": "ELSER-V2-eis",
+  "description": "Test the throughput of ELSER eis in various scenarios",
+  "default": false,
+  "schedule": [
+    {
+      "operation": "delete-index"
+    },
+    {
+      "operation": {
+        "include-in-reporting": false,
+        "operation-type": "create-index"
+      }
+    },
+    {
+      "name": "setup-elser-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "elser-v2-eis-ingest",
+        "body": {
+          "description": "Pipes documents to ELSER",
+          "processors": [
+            {
+              "inference": {
+                "model_id": ".elser-2-elastic",
+                "target_field": "ml",
+                "field_map": {
+                  "body": "text_field"
+                },
+                "inference_config": {
+                  "text_expansion": {
+                    "results_field": "tokens"
+                  }
+                }
+              }
+            }
+          ],
+          "on_failure": [
+            {
+              "set": {
+                "description": "Record error information",
+                "field": "error_information",
+                "value": "Processor {{ _ingest.on_failure_processor_type }} with tag {{ _ingest.on_failure_processor_tag }} in pipeline {{ _ingest.on_failure_pipeline }} failed with message {{ _ingest.on_failure_message }}"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "include-in-reporting": false,
+        "operation-type": "cluster-health",
+        "index": "benchmark-elser-ingest-speedtest",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('yellow')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "name": "ingest-with-eis",
+      "clients": {{ "bulk_indexing_clients | default(1)" }},
+      "operation": {
+        "include-in-reporting": true,
+        "operation-type": "bulk",
+        "bulk-size": {{ "bulk_size | default(5)" }},
+        "corpora": "size256-bert-vocab-whole-words",
+        "pipeline": "elser-v2-eis-ingest",
+        "request-timeout": 60.0,
+        "ingest-percentage": {{ "ingest_percentage | default(1)" }}
+      }
+    },
+    {
+      "operation": {
+        "include-in-reporting": false,
+        "operation-type": "force-merge",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "include-in-reporting": false,
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true
+      }
+    }
+  ]
+}

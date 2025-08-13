@@ -31,6 +31,11 @@ async def get_xpack_capabilities(es):
 elser_v1_model_id = ".elser_model_1"
 elser_v2_model_id = ".elser_model_2"
 elser_v2_platform_specific_model_id = ".elser_model_2_linux-x86_64"
+eis_model_id = ".elser-2-elastic"
+
+
+def is_eis_model(model_id):
+    return model_id == eis_model_id
 
 
 # TODO enable this function once rally upgrades the elasticsearch python client to >=8.9.0
@@ -56,6 +61,8 @@ elser_v2_platform_specific_model_id = ".elser_model_2_linux-x86_64"
 
 async def put_elser(es, params):
     model_id = params["model_id"]
+    if is_eis_model(model_id):
+        return True
 
     try:
         await es.perform_request(method="PUT", path=f"/_ml/trained_models/{model_id}", body={"input": {"field_names": ["text_field"]}})
@@ -77,6 +84,8 @@ async def put_elser(es, params):
 
 async def delete_elser(es, params):
     model_id = params["model_id"]
+    if is_eis_model(model_id):
+        return True
 
     try:
         await es.perform_request(method="DELETE", path=f"/_ml/trained_models/{model_id}", params={"force": "true"})
@@ -98,6 +107,8 @@ async def delete_elser(es, params):
 
 async def poll_for_elser_completion(es, params):
     model_id = params["model_id"]
+    if is_eis_model(model_id):
+        return True
     try_count = 0
     max_wait_time_seconds = 120
     wait_time_per_cycle_seconds = 5
@@ -120,6 +131,8 @@ def is_model_fully_defined(response):
 
 async def stop_trained_model_deployment(es, params):
     model_id = params["model_id"]
+    if is_eis_model(model_id):
+        return True
     try:
         await es.ml.stop_trained_model_deployment(model_id=model_id, force=True)
         return True
@@ -136,10 +149,12 @@ async def stop_trained_model_deployment(es, params):
 
 
 async def start_trained_model_deployment(es, params):
+    model_id = params["model_id"]
+    if is_eis_model(model_id):
+        return True
     number_of_allocations = params["number_of_allocations"]
     threads_per_allocation = params["threads_per_allocation"]
     queue_capacity = params["queue_capacity"]
-    model_id = params["model_id"]
     try:
         await es.ml.start_trained_model_deployment(
             model_id=model_id,

@@ -11,9 +11,7 @@ QUERIES_FILENAME_1K: str = "queries-1k.json.bz2"
 TRUE_KNN_FILENAME_1K: str = "queries-recall-1k.json.bz2"
 
 
-async def extract_exact_neighbors(
-    query_vector: List[float], index: str, max_size: int, vector_field: str, filter, client
-) -> List[str]:
+async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, filter, client) -> List[str]:
     if filter is None:
         raise ValueError("Filter must be provided for exact neighbors extraction.")
     script_query = {
@@ -133,9 +131,7 @@ class KnnVectorStore:
     def get_query_vectors(self) -> List[List[float]]:
         return self._queries
 
-    async def get_neighbors_for_query(
-        self, index: str, query_id: int, size: int, request_timeout: Optional[float], filter, client
-    ) -> List[str]:
+    async def get_neighbors_for_query(self, index: str, query_id: int, size: int, filter, client) -> List[str]:
         # For now, we must calculate the exact neighbors, maybe we should cache this?
         # it would have to be cached per query and filter
         if filter is not None:

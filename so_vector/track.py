@@ -212,7 +212,7 @@ class KnnRecallRunner:
         max_recall = 0
 
         if request_timeout:
-            es.options(request_timeout=request_timeout)
+            es = es.options(request_timeout=request_timeout)
 
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
         for query_id, query_vector in enumerate(knn_vector_store.get_query_vectors()):

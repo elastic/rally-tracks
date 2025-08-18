@@ -8,9 +8,6 @@
       "number_of_shards": {{number_of_shards | default(1)}},
       "number_of_replicas": {{number_of_replicas | default(0)}},
       {%- endif -%}{# non-serverless-index-settings-marker-end #}
-        {%- if use_synthetic_source | default(true) -%}
-      "mapping.source.mode": "synthetic",
-        {%- endif -%}
       "sort": {
         "field": "partition_id"
       }

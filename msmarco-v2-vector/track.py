@@ -106,7 +106,7 @@ class KnnParamSource:
             "index": self._index_name,
             "cache": self._params.get("cache", False),
             "size": top_k,
-            "body": {"knn": knn_query, "_source": False},
+            "body": {"knn": knn_query},
         }
 
         self._iters += 1

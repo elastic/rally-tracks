@@ -43,6 +43,11 @@
           "tags": ["setup"]
         },
         {
+          "operation": "index-lookup-1_x10000",
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "tags": ["setup"]
+        },
+        {
           "operation": "index-lookup-100k",
           "clients": {{bulk_indexing_clients | default(8)}},
           "tags": ["setup"]

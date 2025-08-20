@@ -11,11 +11,19 @@
       "name": "index-small-lookup-indices",
       "operation-type": "bulk",
       "indices": [
+        "lookup_idx_1_f2_x10000",
         "lookup_idx_1000_f10",
         "lookup_idx_100000_f10",
         "lookup_idx_200000_f10",
         "lookup_idx_500000_f10"
       ],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": 100
+    },
+    {
+      "name": "index-lookup-1_x10000",
+      "operation-type": "bulk",
+      "indices": ["lookup_idx_1_f2_x10000"],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": 100
     },

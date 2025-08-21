@@ -148,6 +148,13 @@
           "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 5,
           "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_limit10_expanding1000_filter1",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
         }
       ]
     }

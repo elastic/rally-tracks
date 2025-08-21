@@ -187,24 +187,24 @@
     {
       "name": "esql_lookup_join_expanding10000_filter10",
       "operation-type": "esql",
-      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = \"0\" | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 10",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = (key_100000::integer-key_100000::integer)::keyword | LIMIT 30000 | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 10 | stats c= count(*) | LIMIT 1",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_expanding10000_filter100",
       "operation-type": "esql",
-      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = \"0\" | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 100",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = (key_100000::integer-key_100000::integer)::keyword | LIMIT 30000 | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 100 | stats c= count(*) | LIMIT 1",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_expanding10000_filter1000",
       "operation-type": "esql",
-      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = \"0\" | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 1000",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = (key_100000::integer-key_100000::integer)::keyword | LIMIT 30000 | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 1000 | stats c= count(*) | LIMIT 1",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_expanding10000_filter5000",
       "operation-type": "esql",
-      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = \"0\" | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 5000",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = (key_100000::integer-key_100000::integer)::keyword | LIMIT 30000 | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 5000 | stats c= count(*) | LIMIT 1",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     }

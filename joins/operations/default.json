@@ -172,14 +172,39 @@
     },
 
     {
-      "name": "esql_lookup_join_limit10_expanding1000_filter1",
+      "name": "esql_lookup_join_limit10_expanding10000_filter1",
       "operation-type": "esql",
       "query": "from join_base_idx | limit 10 | eval key_1 = \"0\" | keep key_1, @timestamp | lookup join lookup_idx_1_f2_x10000 on key_1 | where lookup_int_0 == 8599",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
-      "name": "esql_lookup_join_limit50_expanding1000_filter1",
+      "name": "esql_lookup_join_limit50_expanding10000_filter1",
       "operation-type": "esql",
       "query": "from join_base_idx | limit 50 | eval key_1 = \"0\" | keep key_1, @timestamp | lookup join lookup_idx_1_f2_x10000 on key_1 | where lookup_int_0 == 8599",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+
+    {
+      "name": "esql_lookup_join_expanding10000_filter10",
+      "operation-type": "esql",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = \"0\" | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 10",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_expanding10000_filter100",
+      "operation-type": "esql",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = \"0\" | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 100",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_expanding10000_filter1000",
+      "operation-type": "esql",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = \"0\" | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 1000",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_expanding10000_filter5000",
+      "operation-type": "esql",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = \"0\" | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 5000",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     }

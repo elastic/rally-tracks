@@ -11,6 +11,7 @@ class RandomBulkParamSource(ParamSource):
         self._index_name = track.data_streams[0].name
         self._dims = params.get("dims", 128)
         self._partitions = params.get("partitions", 1000)
+        self._paragraph_size = params.get("paragraph-size", 1)
 
     def params(self):
         import numpy as np
@@ -18,11 +19,18 @@ class RandomBulkParamSource(ParamSource):
         timestamp = int(time.time()) * 1000
         bulk_data = []
         for _ in range(self._bulk_size):
-            vec = np.random.rand(self._dims)
             partition_id = random.randint(0, self._partitions)
             metadata = {"_index": self._index_name}
             bulk_data.append({"create": metadata})
-            bulk_data.append({"@timestamp": timestamp, "partition_id": partition_id, "emb": vec.tolist()})
+            doc = {"@timestamp": timestamp, "partition_id": partition_id}
+            if self._paragraph_size > 1:
+                nested_vec = []
+                for i in range(0, self._paragraph_size):
+                    nested_vec.append({"emb": np.random.rand(self._dims).tolist(), "paragraph_id": i})
+                doc["nested"] = nested_vec
+            else:
+                doc["emb"] = np.random.rand(self._dims).tolist()
+            bulk_data.append(doc)
 
         return {
             "body": bulk_data,
@@ -34,10 +42,10 @@ class RandomBulkParamSource(ParamSource):
         }
 
 
-def generate_knn_query(query_vector, partition_id, k, rescore_oversample):
+def generate_knn_query(field_name, query_vector, partition_id, k, rescore_oversample):
     return {
         "knn": {
-            "field": "emb",
+            "field": field_name,
             "query_vector": query_vector,
             "k": k,
             "num_candidates": k,
@@ -51,6 +59,7 @@ class RandomSearchParamSource:
     def __init__(self, track, params, **kwargs):
         self._index_name = track.data_streams[0].name
         self._cache = params.get("cache", False)
+        self._field = params.get("field", "emb")
         self._partitions = params.get("partitions", 1000)
         self._dims = params.get("dims", 128)
         self._top_k = params.get("k", 10)
@@ -65,7 +74,7 @@ class RandomSearchParamSource:
 
         partition_id = random.randint(0, self._partitions)
         query_vec = np.random.rand(self._dims).tolist()
-        query = generate_knn_query(query_vec, partition_id, self._top_k, self._rescore_oversample)
+        query = generate_knn_query(self._field, query_vec, partition_id, self._top_k, self._rescore_oversample)
         return {"index": self._index_name, "cache": self._cache, "size": self._top_k, "body": query}
 
 

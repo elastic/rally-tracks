@@ -1,9 +1,12 @@
 # Random Vector Track
 
-This track is designed for benchmarking filtered search on random vectors.
+This track is intended for benchmarking filtered vector search using randomly generated vectors.
+By default, it uses the `bbq_flat` `vector_index_type` to evaluate the performance of brute-force search with partition ID-based filtering.
 
-By default, the `flat` vector_index_type is utilized to evaluate the performance
-of brute force search over vectors filtered by a partition ID.
+The `paragraph_size` parameter determines how many random vectors are indexed per document.
+
+* If `paragraph_size` is set to `1` (the default), each document contains a single top-level random vector.
+* If `paragraph_size` is greater than `1`, that number of random vectors is indexed as nested fields within each document.
 
 ## Indexing
 
@@ -39,6 +42,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - number_of_shards (default: 1)
  - number_of_replicas (default: 0)
  - vector_index_type (default: bbq_flat)
+ - paragraph_size (default: 1)
  - index_target_throughput (default: undefined)
  - index_clients (default: 1)
  - index_iterations (default: 1000)

@@ -14,6 +14,12 @@
           },
           "logsdb.route_on_sort_fields": true,
           {% endif %}
+          {% if patterned_text_message_field | default(false) is true %}
+          "sort": {
+            "field": [ "host.name", "message.template_id", "@timestamp" ],
+            "order": [ "asc", "asc", "desc" ]
+          },
+          {% endif %}
           "mapping": {
             "total_fields": {
               "limit": "10000"
@@ -338,12 +344,20 @@
             }
           },
           "message": {
+            {% if patterned_text_message_field | default(false) is true %}
+            "type": "patterned_text"
+            {% else %}
             "type": "match_only_text"
+            {% endif %}
           },
           "error": {
             "properties": {
               "message": {
+                {% if patterned_text_message_field | default(false) is true %}
+                "type": "patterned_text"
+                {% else %}
                 "type": "match_only_text"
+                {% endif %}
               }
             }
           },

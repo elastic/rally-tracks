@@ -2,7 +2,7 @@ import bz2
 import json
 import logging
 import os
-from typing import Any, List
+from typing import Any, List, Optional
 
 logger = logging.getLogger(__name__)
 QUERIES_FILENAME: str = "queries.json.bz2"
@@ -169,6 +169,8 @@ class KnnRecallParamSource:
         return self
 
     def params(self):
+        request_timeout = self._params.get("request-timeout", None)
+        optional_params = {"request-timeout": request_timeout} if request_timeout else {}
         return {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
@@ -177,6 +179,7 @@ class KnnRecallParamSource:
             "oversample": self._params.get("oversample", -1),
             "knn_vector_store": KnnVectorStore(),
             "filter": self._params.get("filter", None),
+            **optional_params,
         }
 
 
@@ -200,12 +203,16 @@ class KnnRecallRunner:
         k = params["size"]
         num_candidates = params["num_candidates"]
         index = params["index"]
+        request_timeout = params.get("request-timeout", None)
         request_cache = params["cache"]
         filter = params["filter"]
         recall_total = 0
         exact_total = 0
         min_recall = k
         max_recall = 0
+
+        if request_timeout:
+            es = es.options(request_timeout=request_timeout)
 
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
         for query_id, query_vector in enumerate(knn_vector_store.get_query_vectors()):
@@ -230,6 +237,7 @@ class KnnRecallRunner:
             "k": k,
             "num_candidates": num_candidates,
             "oversample": params["oversample"],
+            "is_filtered_search": filter is not None,
         }
         logger.info(f"Recall results: {to_return} for filter: {filter}")
         return to_return

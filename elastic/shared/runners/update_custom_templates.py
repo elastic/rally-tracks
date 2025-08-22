@@ -25,6 +25,9 @@ async def update_custom_templates(es, params):
         name = template["name"]
         if name.endswith("@custom"):
             original = template["component_template"]
+            # Remove fields added by https://github.com/elastic/elasticsearch/pull/131536
+            original.pop("created_date_millis", None)
+            original.pop("modified_date_millis", None)
             await es.cluster.put_component_template(name=name, body={**original, **custom})
             ops_count += 1
 

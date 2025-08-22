@@ -53,8 +53,7 @@ async def extract_exact_neighbors(
                     "params": {"query": query_vector},
                 },
             }
-        },
-        "_source": False,
+        }
     }
     script_result = await client.search(
         body=script_query,
@@ -149,8 +148,7 @@ class KnnParamSource:
                             "params": {"query": self._queries[self._iters]},
                         },
                     }
-                },
-                "_source": False,
+                }
             }
         else:
             result["body"] = {
@@ -159,8 +157,7 @@ class KnnParamSource:
                     "query_vector": self._queries[self._iters],
                     "k": self._params.get("k", 10),
                     "num_candidates": self._params.get("num-candidates", 100),
-                },
-                "_source": False,
+                }
             }
         self._iters += 1
         if self._iters >= len(self._queries):

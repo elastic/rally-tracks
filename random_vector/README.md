@@ -36,7 +36,6 @@ These operations are executed against the index using various DSL flavors, inclu
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 
- - use_synthetic_source (default: true)
  - number_of_shards (default: 1)
  - number_of_replicas (default: 0)
  - vector_index_type (default: bbq_flat)

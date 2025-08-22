@@ -11,7 +11,7 @@ class RandomBulkParamSource(ParamSource):
         self._index_name = track.data_streams[0].name
         self._dims = params.get("dims", 128)
         self._partitions = params.get("partitions", 1000)
-        self._paragraph_size = params.get("paragraph-size", 0)
+        self._paragraph_size = params.get("paragraph-size", 1)
 
     def params(self):
         import numpy as np

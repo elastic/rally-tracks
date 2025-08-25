@@ -184,6 +184,41 @@
           "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "esql_lookup_join_limit10_expanding10000_filter1",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_expanding10000_filter10",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_expanding10000_filter100",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_expanding10000_filter1000",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_expanding10000_filter5000",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
         }
 
       ]

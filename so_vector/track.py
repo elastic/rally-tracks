@@ -57,6 +57,7 @@ class KnnParamSource:
         self._index_name = params.get("index", default_index)
         self._cache = params.get("cache", False)
         self._exact_scan = params.get("exact", False)
+        self._in_esql_mode = params.get("operation-type", "") == "esql"
         self._params = params
         self._queries = []
 
@@ -78,12 +79,19 @@ class KnnParamSource:
         oversample = self._params.get("oversample", -1)
         if oversample > -1 and self._exact_scan:
             raise ValueError("Oversampling is not supported for exact scan queries.")
+
+        self._k = self._params.get("k", 10)
+        self._num_candidates = self._params.get("num_candidates", 50)
+
         query_vec = self._queries[self._iters]
         self._iters += 1
         if self._iters >= self._maxIters:
             self._iters = 0
 
         if self._exact_scan:
+            if self._in_esql_mode:
+                raise ValueError("ESQL mode not support with exact scan.")
+
             result["body"] = {
                 "query": {
                     "script_score": {
@@ -99,19 +107,35 @@ class KnnParamSource:
             if "filter" in self._params:
                 result["body"]["query"]["script_score"]["query"] = self._params["filter"]
         else:
-            result["body"] = {
-                "knn": {
-                    "field": "titleVector",
-                    "query_vector": query_vec,
-                    "k": self._params.get("k", 10),
-                    "num_candidates": self._params.get("num_candidates", 50),
-                },
-                "_source": False,
-            }
-            if "filter" in self._params:
-                result["body"]["knn"]["filter"] = self._params["filter"]
-            if oversample > -1:
-                result["body"]["knn"]["rescore_vector"] = {"oversample": oversample}
+            if self._in_esql_mode:
+                # Construct options JSON.
+                k_param = "{\"k\":" + str(self._k) + ",\"num_candidates\":" + str(self._num_candidates)
+                if oversample > -1:
+                    k_param += ", \"rescore_oversample\":" + str(oversample)
+                k_param += "}"
+
+                query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {k_param})"
+                if "filter" in self._params:
+                    # Optionally append filter.
+                    query += " and (" + self._params["filter"] + ")"
+                query += "| sort _score desc | drop titleVector"
+
+                #print("Resulting query:", query)
+                return {"query": query}
+            else:
+                result["body"] = {
+                    "knn": {
+                        "field": "titleVector",
+                        "query_vector": query_vec,
+                        "k": self._k,
+                        "num_candidates": self._num_candidates,
+                    },
+                    "_source": False,
+                }
+                if "filter" in self._params:
+                    result["body"]["knn"]["filter"] = self._params["filter"]
+                if oversample > -1:
+                    result["body"]["knn"]["rescore_vector"] = {"oversample": oversample}
 
         return result
 

@@ -9,6 +9,10 @@
       "body": "index-join_base_idx.json"
     },
     {
+      "name": "lookup_idx_1_f2_x10000",
+      "body": "index-lookup_idx_1_f2_x10000.json"
+    },
+    {
       "name": "lookup_idx_1000_f10",
       "body": "index-lookup_idx_1000_f10.json"
     },
@@ -42,6 +46,20 @@
     }
   ],
   "corpora": [
+    {
+      "name": "lookup_idx_1_f2_x10000",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "lookup_idx_1_f2_x10000",
+          "source-file": "lookup_idx_1_f2_x10000.json.bz2",
+          "#COMMENT": "Lookup index with 10000 documents, all with the same key (keyword, \"0\")",
+          "document-count": 10000,
+          "compressed-bytes": 33337,
+          "uncompressed-bytes": 647780
+        }
+      ]
+    },
     {
       "name": "lookup_idx_1000_f10",
       "base-url": "https://rally-tracks.elastic.co/joins",

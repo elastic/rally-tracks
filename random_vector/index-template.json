@@ -8,9 +8,6 @@
       "number_of_shards": {{number_of_shards | default(1)}},
       "number_of_replicas": {{number_of_replicas | default(0)}},
       {%- endif -%}{# non-serverless-index-settings-marker-end #}
-        {%- if use_synthetic_source | default(true) -%}
-      "mapping.source.mode": "synthetic",
-        {%- endif -%}
       "sort": {
         "field": "partition_id"
       }
@@ -26,10 +23,25 @@
         "emb": {
           "type": "dense_vector",
           "dims":  {{ dims | default(128) | tojson }},
-          "index": true,
           "similarity": "cosine",
           "index_options": {
             "type": {{ vector_index_type | default("bbq_flat") | tojson }}
+          }
+        },
+        "nested": {
+          "type": "nested",
+          "properties": {
+            "paragraph_id": {
+              "type": "keyword"
+            },
+            "emb": {
+              "type": "dense_vector",
+              "dims":  {{ dims | default(128) | tojson }},
+              "similarity": "cosine",
+              "index_options": {
+                "type": {{ vector_index_type | default("bbq_flat") | tojson }}
+              }
+            }
           }
         }
       }

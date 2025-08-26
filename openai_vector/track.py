@@ -61,7 +61,7 @@ class KnnParamSource:
             knn_query["knn"]["filter"] = self._params["filter"]
         if oversample >= 0:
             knn_query["knn"]["rescore_vector"] = {"oversample": oversample}
-        result["body"] = {"query": knn_query, "_source": False}
+        result["body"] = {"query": knn_query}
         self._iters += 1
         if self._iters >= self._maxIters:
             self._iters = 0
@@ -147,7 +147,6 @@ class KnnRecallRunner:
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
         for query_id, query_vector in enumerate(knn_vector_store.get_query_vectors()):
             knn_body = self.get_knn_query(query_vector, k, num_candidates, params["oversample"])
-            knn_body["_source"] = False
             knn_body["docvalue_fields"] = ["docid"]
             knn_result = await es.search(
                 body=knn_body,

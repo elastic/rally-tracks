@@ -11,11 +11,19 @@
       "name": "index-small-lookup-indices",
       "operation-type": "bulk",
       "indices": [
+        "lookup_idx_1_f2_x10000",
         "lookup_idx_1000_f10",
         "lookup_idx_100000_f10",
         "lookup_idx_200000_f10",
         "lookup_idx_500000_f10"
       ],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": 100
+    },
+    {
+      "name": "index-lookup-1_x10000",
+      "operation-type": "bulk",
+      "indices": ["lookup_idx_1_f2_x10000"],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": 100
     },
@@ -97,9 +105,45 @@
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
+      "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_few_matching_like_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | where lookup_keyword_0 like \"val 249*\" | limit 1000",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_few_matching_concat_like_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | where concat(\"x\", lookup_keyword_0) like \"xval 249*\" | limit 1000",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_all_matching_like_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | where lookup_keyword_0 like \"val *\" | limit 1000",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_all_matching_concat_like_limit1000",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | where concat(\"x\", lookup_keyword_0) like \"xval *\" | limit 1000",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
       "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_no_match",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | where concat(lookup_keyword_0, \"foo\") == \"bar\"",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_not_matching_equals",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | where lookup_keyword_0 == \"non existing\"",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_one_matching_equals",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | where lookup_keyword_0 == \"val 10 rep 0\"",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
 {% endfor %}
@@ -124,5 +168,43 @@
       "name": "esql_lookup_join_1k_100k_200k_500k",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_1000_f10 on key_1000 | rename lookup_keyword_0 as lk_1k | lookup join lookup_idx_100000_f10 on key_100000 | rename lookup_keyword_0 as lk_100k | lookup join lookup_idx_200000_f10 on key_200000 | rename lookup_keyword_0 as lk_200k | lookup join lookup_idx_500000_f10 on key_500000 | rename lookup_keyword_0 as lk_500k | keep id, key_1000, key_100000, key_200000, key_500000, lk_1k, lk_100k, lk_200k, lk_500k | limit 1000",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+
+    {
+      "name": "esql_lookup_join_limit10_expanding10000_filter1",
+      "operation-type": "esql",
+      "query": "from join_base_idx | limit 10 | eval key_1 = \"0\" | keep key_1, @timestamp | lookup join lookup_idx_1_f2_x10000 on key_1 | where lookup_int_0 == 8599",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_limit50_expanding10000_filter1",
+      "operation-type": "esql",
+      "query": "from join_base_idx | limit 50 | eval key_1 = \"0\" | keep key_1, @timestamp | lookup join lookup_idx_1_f2_x10000 on key_1 | where lookup_int_0 == 8599",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+
+    {
+      "name": "esql_lookup_join_expanding10000_filter10",
+      "operation-type": "esql",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = (key_100000::integer-key_100000::integer)::keyword | LIMIT 30000 | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 10 | stats c= count(*) | LIMIT 1",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_expanding10000_filter100",
+      "operation-type": "esql",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = (key_100000::integer-key_100000::integer)::keyword | LIMIT 30000 | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 100 | stats c= count(*) | LIMIT 1",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_expanding10000_filter1000",
+      "operation-type": "esql",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = (key_100000::integer-key_100000::integer)::keyword | LIMIT 30000 | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 1000 | stats c= count(*) | LIMIT 1",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_expanding10000_filter5000",
+      "operation-type": "esql",
+      "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = (key_100000::integer-key_100000::integer)::keyword | LIMIT 30000 | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1 | WHERE lookup_int_0 < 5000 | stats c= count(*) | LIMIT 1",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     }

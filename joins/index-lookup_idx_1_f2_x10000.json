@@ -1,0 +1,21 @@
+{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
+
+{
+  "settings": {
+        "index.mode": "lookup",
+        "auto_expand_replicas": {{ auto_expand_replicas | default("0-all") | tojson }}
+    {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    , "index.requests.cache.enable": false
+    {%- endif -%}{# non-serverless-index-settings-marker-end #}
+  },
+  "mappings": {
+    "_source": {
+      "mode": {{ source_mode | default("stored") | tojson }}
+    },
+    "properties": {
+      "key_1": {
+        "type": "keyword"
+      }
+    }
+  }
+}

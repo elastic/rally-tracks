@@ -117,7 +117,7 @@ class KnnParamSource:
                 if "filter" in self._params:
                     # Optionally append filter.
                     query += " and (" + self._params["filter"] + ")"
-                query += "| sort _score desc | drop titleVector"
+                query += "| drop titleVector | sort _score desc"
 
                 # print("Resulting query:", query)
                 return {"query": query}

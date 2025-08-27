@@ -112,6 +112,20 @@
           "warmup-iterations": 10,
           "iterations": 50
         },
+        {
+          "operation": "esql_lookup_join_{{idx_suffix[i]}}_two_keys",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_{{idx_suffix[i]}}_two_keys_where_one_matching_equals",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
 {% endfor %}
 
 {% for i in range(2, 7) %}
@@ -219,6 +233,20 @@
         },
         {
           "operation": "esql_lookup_join_expanding10000_filter5000",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_expanding10000_two_keys",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_expanding10000_two_keys_filter1000",
           "tags": ["lookup", "join"],
           "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 5,

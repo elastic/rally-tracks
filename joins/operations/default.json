@@ -15,7 +15,8 @@
         "lookup_idx_1000_f10",
         "lookup_idx_100000_f10",
         "lookup_idx_200000_f10",
-        "lookup_idx_500000_f10"
+        "lookup_idx_500000_f10",
+        "lookup_idx_1000_100000_200000_f10"
       ],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": 100
@@ -59,6 +60,13 @@
       "name": "index-lookup-100m",
       "operation-type": "bulk",
       "indices": ["lookup_idx_100000000_f10"],
+      "bulk-size": {{bulk_size | default(10000)}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+    {
+      "name": "index-lookup-1k-100k-200k",
+      "operation-type": "bulk",
+      "indices": ["lookup_idx_1000_100000_200000_f10"],
       "bulk-size": {{bulk_size | default(10000)}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },

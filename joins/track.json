@@ -43,6 +43,10 @@
     {
       "name": "lookup_idx_100000000_f10",
       "body": "index-lookup_idx_100000000_f10.json"
+    },
+    {
+      "name": "lookup_idx_1000_100000_200000_f10",
+      "body": "index-lookup_idx_1000_100000_200000_f10.json"
     }
   ],
   "corpora": [
@@ -169,6 +173,20 @@
           "document-count": 100000000,
           "compressed-bytes": 2668827023,
           "uncompressed-bytes": 44877777790
+        }
+      ]
+    },
+    {
+      "name": "lookup_idx_1000_100000_200000_f10",
+      "base-url": "https://rally-tracks.elastic.co/joins",
+      "documents": [
+        {
+          "target-index": "lookup_idx_1000_100000_200000_f10",
+          "source-file": "lookup_idx_1000_100000_200000_f10.json.bz2",
+          "#COMMENT": "Lookup index with three keys (key_1000, key_100000, key_200000), they key suffix is the key cardinality",
+          "document-count": 200000,
+          "compressed-bytes": 4325364,
+          "uncompressed-bytes": 119022470
         }
       ]
     },

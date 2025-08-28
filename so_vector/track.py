@@ -90,21 +90,27 @@ class KnnParamSource:
 
         if self._exact_scan:
             if self._in_esql_mode:
-                raise ValueError("ESQL mode not support with exact scan.")
-
-            result["body"] = {
-                "query": {
-                    "script_score": {
-                        "query": {"match_all": {}},
-                        "script": {
-                            "source": "dotProduct(params.query, 'titleVector') + 1.0",
-                            "params": {"query": query_vec},
-                        },
+                query = f"FROM {self._index_name}"
+                if "filter" in self._params:
+                    # Optionally append filter.
+                    query += " | where (" + self._params["filter"] + ")"
+                query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | drop titleVector | sort score desc | limit {self._k}"
+                result = {"query": query}
+                # print("Resulting query:", result)
+            else:
+                result["body"] = {
+                    "query": {
+                        "script_score": {
+                            "query": {"match_all": {}},
+                            "script": {
+                                "source": "dotProduct(params.query, 'titleVector') + 1.0",
+                                "params": {"query": query_vec},
+                            },
+                        }
                     }
                 }
-            }
-            if "filter" in self._params:
-                result["body"]["query"]["script_score"]["query"] = self._params["filter"]
+                if "filter" in self._params:
+                    result["body"]["query"]["script_score"]["query"] = self._params["filter"]
         else:
             if self._in_esql_mode:
                 # Construct options JSON.
@@ -119,8 +125,7 @@ class KnnParamSource:
                     query += " and (" + self._params["filter"] + ")"
                 query += "| drop titleVector | sort _score desc"
 
-                # print("Resulting query:", query)
-                return {"query": query}
+                result = {"query": query}
             else:
                 result["body"] = {
                     "knn": {
@@ -135,6 +140,7 @@ class KnnParamSource:
                 if oversample > -1:
                     result["body"]["knn"]["rescore_vector"] = {"oversample": oversample}
 
+        # print("Resulting query:", result)
         return result
 
 

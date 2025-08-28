@@ -111,6 +111,13 @@
       "clients": 1
     },
     {
+      "name": "esql-script-score-query-match-all",
+      "operation": "esql-script-score-query-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
       "name": "knn-search-10-50-acceptedAnswerId",
       "operation": "knn-search-10-50-acceptedAnswerId",
       "warmup-iterations": 100,
@@ -134,6 +141,13 @@
     {
       "name": "script-score-query-acceptedAnswerId",
       "operation": "script-score-query-acceptedAnswerId",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-acceptedAnswerId",
+      "operation": "esql-script-score-query-acceptedAnswerId",
       "warmup-iterations": 100,
       "iterations": 100,
       "clients": 1
@@ -167,6 +181,27 @@
       "clients": 1
     },
     {
+      "name": "esql-script-score-query-java",
+      "operation": "esql-script-score-query-java",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "script-score-query-javascript",
+      "operation": "script-score-query-javascript",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-javascript",
+      "operation": "esql-script-score-query-javascript",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
       "name": "knn-search-10-50-css",
       "operation": "knn-search-10-50-css",
       "warmup-iterations": 100,
@@ -195,6 +230,13 @@
       "clients": 1
     },
     {
+      "name": "esql-script-score-query-css",
+      "operation": "esql-script-score-query-css",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
       "name": "knn-search-10-50-concurrency",
       "operation": "knn-search-10-50-concurrency",
       "warmup-iterations": 100,
@@ -218,6 +260,13 @@
     {
       "name": "script-score-query-concurrency",
       "operation": "script-score-query-concurrency",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-concurrency",
+      "operation": "esql-script-score-query-concurrency",
       "warmup-iterations": 100,
       "iterations": 100,
       "clients": 1

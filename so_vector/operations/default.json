@@ -409,6 +409,14 @@
   }
 },
 {
+  "name": "esql-script-score-query-css",
+  "operation-type": "esql",
+  "param-source": "knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"css\")"
+},
+{
   "name": "script-score-query-javascript",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -421,6 +429,14 @@
       ]
     }
   }
+},
+{
+  "name": "esql-script-score-query-javascript",
+  "operation-type": "esql",
+  "param-source": "knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"javascript\")"
 },
 {
   "name": "script-score-query-concurrency",
@@ -437,6 +453,14 @@
   }
 },
 {
+  "name": "esql-script-score-query-concurrency",
+  "operation-type": "esql",
+  "param-source": "knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"concurrency\")"
+},
+{
   "name": "script-score-query-ccs",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -451,6 +475,14 @@
   }
 },
 {
+  "name": "esql-script-score-query-ccs",
+  "operation-type": "esql",
+  "param-source": "knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"ccs\")"
+},
+{
   "name": "script-score-query-acceptedAnswerId",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -461,6 +493,14 @@
       "field": "acceptedAnswerId"
     }
   }
+},
+{
+  "name": "esql-script-score-query-acceptedAnswerId",
+  "operation-type": "esql",
+  "param-source": "knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "acceptedAnswerId IS NOT NULL"
 },
 {
   "name": "script-score-query-java",
@@ -477,8 +517,23 @@
   }
 },
 {
+  "name": "esql-script-score-query-java",
+  "operation-type": "esql",
+  "param-source": "knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"java\")"
+},
+{
   "name": "script-score-query-match-all",
   "operation-type": "search",
+  "param-source": "knn-param-source",
+  "exact": true,
+  "k": 10
+},
+{
+  "name": "esql-script-score-query-match-all",
+  "operation-type": "esql",
   "param-source": "knn-param-source",
   "exact": true,
   "k": 10

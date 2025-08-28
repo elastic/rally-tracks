@@ -243,4 +243,40 @@
       "operation-type": "esql",
       "query": "FROM lookup_idx_100000_f10 | EVAL key_1 = (key_100000::integer-key_100000::integer)::keyword, lookup_int_0 = key_100000::long | LOOKUP JOIN lookup_idx_1_f2_x10000 on key_1, lookup_int_0 | WHERE lookup_int_0 < 1000",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_1k_100k_200k_one_key_count",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | LOOKUP JOIN lookup_idx_1000_100000_200000_f10 ON key_200000 | STATS count(*)",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_1k_100k_200k_two_keys_count",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | LOOKUP JOIN lookup_idx_1000_100000_200000_f10 ON key_200000, key_1000 | STATS count(*)",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+        "name": "esql_lookup_join_1k_100k_200k_three_keys_count",
+        "operation-type": "esql",
+        "query": "FROM join_base_idx | LOOKUP JOIN lookup_idx_1000_100000_200000_f10 ON key_200000, key_100000, key_1000 | STATS count(*)",
+        "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_1k_100k_200k_one_key_filter_count",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | LOOKUP JOIN lookup_idx_1000_100000_200000_f10 ON key_200000 | WHERE lookup_int_0 < 5000 | STATS count(*)",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_1k_100k_200k_two_keys_filter_count",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | LOOKUP JOIN lookup_idx_1000_100000_200000_f10 ON key_200000, key_1000 | WHERE lookup_int_0 < 5000 | STATS count(*)",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+    },
+    {
+      "name": "esql_lookup_join_1k_100k_200k_three_keys_filter_count",
+      "operation-type": "esql",
+      "query": "FROM join_base_idx | LOOKUP JOIN lookup_idx_1000_100000_200000_f10 ON key_200000, key_100000, key_1000 | WHERE lookup_int_0 < 5000 | STATS count(*)",
+      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     }

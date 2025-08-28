@@ -272,6 +272,13 @@
       "clients": 1
     },
     {
+      "name": "esql-knn-search-10-50-random-20-percent",
+      "operation": "esql-knn-search-10-50-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
       "name": "knn-recall-10-50-random-20-percent",
       "operation": "knn-recall-10-50-random-20-percent",
       "warmup-iterations": 0,
@@ -299,9 +306,16 @@
       "iterations": 1,
       "clients": 1
     },
-        {
+    {
       "name": "knn-search-100-300-random-20-percent",
       "operation": "knn-search-100-300-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-100-300-random-20-percent",
+      "operation": "esql-knn-search-100-300-random-20-percent",
       "warmup-iterations": 100,
       "iterations": 100,
       "clients": 1

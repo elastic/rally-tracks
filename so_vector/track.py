@@ -108,12 +108,12 @@ class KnnParamSource:
         else:
             if self._in_esql_mode:
                 # Construct options JSON.
-                k_param = '{"k":' + str(self._k) + ',"num_candidates":' + str(self._num_candidates)
+                options_param = '{"num_candidates":' + str(self._num_candidates)
                 if oversample > -1:
-                    k_param += ', "rescore_oversample":' + str(oversample)
-                k_param += "}"
+                    options_param += ', "rescore_oversample":' + str(oversample)
+                options_param += "}"
 
-                query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {k_param})"
+                query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {self._k}, {options_param})"
                 if "filter" in self._params:
                     # Optionally append filter.
                     query += " and (" + self._params["filter"] + ")"

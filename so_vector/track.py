@@ -57,7 +57,6 @@ class KnnParamSource:
         self._index_name = params.get("index", default_index)
         self._cache = params.get("cache", False)
         self._exact_scan = params.get("exact", False)
-        self._in_esql_mode = params.get("operation-type", "") == "esql"
         self._params = params
         self._queries = []
 
@@ -79,9 +78,51 @@ class KnnParamSource:
         oversample = self._params.get("oversample", -1)
         if oversample > -1 and self._exact_scan:
             raise ValueError("Oversampling is not supported for exact scan queries.")
+        query_vec = self._queries[self._iters]
+        self._iters += 1
+        if self._iters >= self._maxIters:
+            self._iters = 0
 
-        self._k = self._params.get("k", 10)
-        self._num_candidates = self._params.get("num_candidates", 50)
+        if self._exact_scan:
+            result["body"] = {
+                "query": {
+                    "script_score": {
+                        "query": {"match_all": {}},
+                        "script": {
+                            "source": "dotProduct(params.query, 'titleVector') + 1.0",
+                            "params": {"query": query_vec},
+                        },
+                    }
+                },
+            }
+            if "filter" in self._params:
+                result["body"]["query"]["script_score"]["query"] = self._params["filter"]
+        else:
+            result["body"] = {
+                "knn": {
+                    "field": "titleVector",
+                    "query_vector": query_vec,
+                    "k": self._params.get("k", 10),
+                    "num_candidates": self._params.get("num_candidates", 50),
+                },
+            }
+            if "filter" in self._params:
+                result["body"]["knn"]["filter"] = self._params["filter"]
+            if oversample > -1:
+                result["body"]["knn"]["rescore_vector"] = {"oversample": oversample}
+
+        return result
+
+
+class ESQLKnnParamSource(KnnParamSource):
+    def params(self):
+        num_candidates = self._params.get("num_candidates", 50)
+        # if -1, then its unset. If set, just set it.
+        oversample = self._params.get("oversample", -1)
+        if oversample > -1 and self._exact_scan:
+            raise ValueError("Oversampling is not supported for exact scan queries.")
+
+        k = self._params.get("k", 10)
 
         query_vec = self._queries[self._iters]
         self._iters += 1
@@ -89,59 +130,25 @@ class KnnParamSource:
             self._iters = 0
 
         if self._exact_scan:
-            if self._in_esql_mode:
-                query = f"FROM {self._index_name}"
-                if "filter" in self._params:
-                    # Optionally append filter.
-                    query += " | where (" + self._params["filter"] + ")"
-                query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | drop titleVector | sort score desc | limit {self._k}"
-                result = {"query": query}
-                # print("Resulting query:", result)
-            else:
-                result["body"] = {
-                    "query": {
-                        "script_score": {
-                            "query": {"match_all": {}},
-                            "script": {
-                                "source": "dotProduct(params.query, 'titleVector') + 1.0",
-                                "params": {"query": query_vec},
-                            },
-                        }
-                    }
-                }
-                if "filter" in self._params:
-                    result["body"]["query"]["script_score"]["query"] = self._params["filter"]
+            query = f"FROM {self._index_name}"
+            if "filter" in self._params:
+                # Optionally append filter.
+                query += " | where (" + self._params["filter"] + ")"
+            query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | drop titleVector | sort score desc | limit {k}"
         else:
-            if self._in_esql_mode:
-                # Construct options JSON.
-                options_param = '{"num_candidates":' + str(self._num_candidates)
-                if oversample > -1:
-                    options_param += ', "rescore_oversample":' + str(oversample)
-                options_param += "}"
+            # Construct options JSON.
+            options_param = '{"num_candidates":' + str(num_candidates)
+            if oversample > -1:
+                options_param += ', "rescore_oversample":' + str(oversample)
+            options_param += "}"
 
-                query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {self._k}, {options_param})"
-                if "filter" in self._params:
-                    # Optionally append filter.
-                    query += " and (" + self._params["filter"] + ")"
-                query += "| drop titleVector | sort _score desc"
+            query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {k}, {options_param})"
+            if "filter" in self._params:
+                # Optionally append filter.
+                query += " and (" + self._params["filter"] + ")"
+            query += "| drop titleVector | sort _score desc"
 
-                result = {"query": query}
-            else:
-                result["body"] = {
-                    "knn": {
-                        "field": "titleVector",
-                        "query_vector": query_vec,
-                        "k": self._k,
-                        "num_candidates": self._num_candidates,
-                    },
-                }
-                if "filter" in self._params:
-                    result["body"]["knn"]["filter"] = self._params["filter"]
-                if oversample > -1:
-                    result["body"]["knn"]["rescore_vector"] = {"oversample": oversample}
-
-        # print("Resulting query:", result)
-        return result
+        return {"query": query}
 
 
 class KnnVectorStore:
@@ -276,5 +283,6 @@ class KnnRecallRunner:
 
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)
+    registry.register_param_source("esql-knn-param-source", ESQLKnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

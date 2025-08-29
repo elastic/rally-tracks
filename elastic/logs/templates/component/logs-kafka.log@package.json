@@ -345,7 +345,8 @@
           },
           "message": {
             {% if patterned_text_message_field | default(false) is true %}
-            "type": "patterned_text"
+            "type": "patterned_text",
+            "index_options": {{ patterned_text_index_options | default("docs") | tojson }}
             {% else %}
             "type": "match_only_text"
             {% endif %}
@@ -354,7 +355,8 @@
             "properties": {
               "message": {
                 {% if patterned_text_message_field | default(false) is true %}
-                "type": "patterned_text"
+                "type": "patterned_text",
+                "index_options": {{ patterned_text_index_options | default("docs") | tojson }}
                 {% else %}
                 "type": "match_only_text"
                 {% endif %}

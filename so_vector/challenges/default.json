@@ -1,3 +1,5 @@
+{% set is_esql_enabled = (esql_enabled == "true") %}
+
 {
   "name": "index-and-search",
   "description": "Indexes vectors, then executes searches under various conditions",
@@ -47,6 +49,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-default-match-all",
       "operation": "esql-knn-search-default-match-all",
@@ -54,6 +57,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-default-match-all",
       "operation": "knn-recall-default-match-all",
@@ -68,6 +72,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-10-50-match-all",
       "operation": "esql-knn-search-10-50-match-all",
@@ -75,6 +80,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-10-50-match-all",
       "operation": "knn-recall-10-50-match-all",
@@ -89,6 +95,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-100-300-match-all",
       "operation": "esql-knn-search-100-300-match-all",
@@ -96,6 +103,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-100-300-match-all",
       "operation": "knn-recall-100-300-match-all",
@@ -110,6 +118,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-script-score-query-match-all",
       "operation": "esql-script-score-query-match-all",
@@ -117,6 +126,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-search-10-50-acceptedAnswerId",
       "operation": "knn-search-10-50-acceptedAnswerId",
@@ -124,6 +134,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-10-50-acceptedAnswerId",
       "operation": "esql-knn-search-10-50-acceptedAnswerId",
@@ -131,6 +142,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-10-50-acceptedAnswerId",
       "operation": "knn-recall-10-50-acceptedAnswerId",
@@ -145,6 +157,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-script-score-query-acceptedAnswerId",
       "operation": "esql-script-score-query-acceptedAnswerId",
@@ -152,6 +165,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-search-10-50-java",
       "operation": "knn-search-10-50-java",
@@ -159,6 +173,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-10-50-java",
       "operation": "esql-knn-search-10-50-java",
@@ -166,6 +181,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-10-50-java",
       "operation": "knn-recall-10-50-java",
@@ -180,6 +196,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-script-score-query-java",
       "operation": "esql-script-score-query-java",
@@ -187,6 +204,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "script-score-query-javascript",
       "operation": "script-score-query-javascript",
@@ -194,6 +212,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-script-score-query-javascript",
       "operation": "esql-script-score-query-javascript",
@@ -201,6 +220,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-search-10-50-css",
       "operation": "knn-search-10-50-css",
@@ -208,6 +228,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-10-50-css",
       "operation": "esql-knn-search-10-50-css",
@@ -215,6 +236,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-10-50-css",
       "operation": "knn-recall-10-50-css",
@@ -229,6 +251,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-script-score-query-css",
       "operation": "esql-script-score-query-css",
@@ -236,6 +259,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-search-10-50-concurrency",
       "operation": "knn-search-10-50-concurrency",
@@ -243,6 +267,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-10-50-concurrency",
       "operation": "esql-knn-search-10-50-concurrency",
@@ -250,6 +275,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-10-50-concurrency",
       "operation": "knn-recall-10-50-concurrency",
@@ -264,6 +290,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-script-score-query-concurrency",
       "operation": "esql-script-score-query-concurrency",
@@ -271,6 +298,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-search-10-50-random-10-percent",
       "operation": "knn-search-10-50-random-10-percent",
@@ -278,6 +306,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-10-50-random-10-percent",
       "operation": "esql-knn-search-10-50-random-10-percent",
@@ -285,6 +314,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-10-50-random-10-percent",
       "operation": "knn-recall-10-50-random-10-percent",
@@ -299,6 +329,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-default-random-20-percent",
       "operation": "esql-knn-search-default-random-20-percent",
@@ -306,6 +337,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-default-random-20-percent",
       "operation": "knn-recall-default-random-20-percent",
@@ -320,6 +352,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-10-50-random-20-percent",
       "operation": "esql-knn-search-10-50-random-20-percent",
@@ -327,6 +360,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-10-50-random-20-percent",
       "operation": "knn-recall-10-50-random-20-percent",
@@ -341,6 +375,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-100-300-random-10-percent",
       "operation": "esql-knn-search-100-300-random-10-percent",
@@ -348,6 +383,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-100-300-random-10-percent",
       "operation": "knn-recall-100-300-random-10-percent",
@@ -362,6 +398,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-100-300-random-20-percent",
       "operation": "esql-knn-search-100-300-random-20-percent",
@@ -369,6 +406,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-100-300-random-20-percent",
       "operation": "knn-recall-100-300-random-20-percent",
@@ -524,6 +562,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-10-50-random-20-percent-force-merge",
       "operation": "esql-knn-search-10-50-random-20-percent",
@@ -531,6 +570,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-10-50-random-20-percent-force-merge",
       "operation": "knn-recall-10-50-random-20-percent",
@@ -559,6 +599,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% if is_esql_enabled %}
     {
       "name": "esql-knn-search-100-300-random-20-percent-force-merge",
       "operation": "esql-knn-search-100-300-random-20-percent",
@@ -566,6 +607,7 @@
       "iterations": 100,
       "clients": 1
     },
+{% endif %}
     {
       "name": "knn-recall-100-300-random-20-percent-force-merge",
       "operation": "knn-recall-100-300-random-20-percent",

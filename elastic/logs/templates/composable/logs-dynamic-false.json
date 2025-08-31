@@ -8,6 +8,23 @@
       "settings": {},
       "mappings": {
         "dynamic": false,
+        "runtime": {
+          "agent.version": {
+            "type": "keyword"
+          },
+          "agent.type": {
+            "type": "keyword"
+          },
+          "rally.doc_size": {
+            "type": "long"
+          },
+          "rally.message_size": {
+            "type": "long"
+          },
+          "log.offset": {
+            "type": "long"
+          }
+        },
         "properties": {
           "@timestamp": {
             "type": "date"

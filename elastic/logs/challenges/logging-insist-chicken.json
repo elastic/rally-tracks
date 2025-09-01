@@ -115,14 +115,14 @@
       "tags": ["esql", "runtime"]
     },
     {
-      "operation": "runtime_esql_basic_count_group_1_limit_0",
+      "operation": "runtime_esql_basic_count_group_1",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(3) }},
       "iterations": {{ iterations | default(5) }},
       "tags": ["esql", "runtime"]
     },
     {
-      "operation": "runtime_esql_basic_count_group_2_limit_0",
+      "operation": "runtime_esql_basic_count_group_2",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(3) }},
       "iterations": {{ iterations | default(5) }},

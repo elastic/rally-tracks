@@ -50,12 +50,12 @@
       "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.message_size) BY b = BUCKET(rally.doc_size, 1000.) | SORT b"
     },
     {
-      "name": "runtime_esql_basic_count_group_1_limit_0",
+      "name": "runtime_esql_basic_count_group_1",
       "operation-type": "esql",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version | SORT count DESC | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version | SORT count DESC | LIMIT 20"
     },
     {
-      "name": "runtime_esql_basic_count_group_2_limit_0",
+      "name": "runtime_esql_basic_count_group_2",
       "operation-type": "esql",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version, agent.type | SORT count DESC | LIMIT 0"
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version, agent.type | SORT count DESC | LIMIT 20"
     }

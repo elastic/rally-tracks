@@ -93,7 +93,7 @@ class KnnParamSource:
                             "params": {"query": query_vec},
                         },
                     }
-                },
+                }
             }
             if "filter" in self._params:
                 result["body"]["query"]["script_score"]["query"] = self._params["filter"]
@@ -104,7 +104,7 @@ class KnnParamSource:
                     "query_vector": query_vec,
                     "k": self._params.get("k", 10),
                     "num_candidates": self._params.get("num_candidates", 50),
-                },
+                }
             }
             if "filter" in self._params:
                 result["body"]["knn"]["filter"] = self._params["filter"]

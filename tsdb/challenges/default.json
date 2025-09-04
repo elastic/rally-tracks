@@ -387,7 +387,7 @@
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
-    ]
+      ]
     },
     {
       "name": "low-latency",

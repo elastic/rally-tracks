@@ -380,9 +380,9 @@
       "clients": 1
     }
 {% endif %}
-   ,
 {# non-serverless-after-force-merge-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       {% if p_include_force_merge %}
+   ,
     {
       "operation": {
         "operation-type": "force-merge",

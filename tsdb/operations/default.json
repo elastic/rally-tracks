@@ -429,5 +429,41 @@
   {%- else %}
   "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day), kubernetes.container.name"
   {% endif %}
+},
+{
+  "name": "esql-memory-usage-day-downsample-1m",
+  "description": "Calculate total memory usage per hour using 1m downsampled data",
+  "operation-type": "esql",
+  "query": "TS tsdb-1m | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day)"
+},
+{
+  "name": "esql-memory-usage-day-downsample-1h",
+  "description": "Calculate total memory usage per hour using 1h downsampled data",
+  "operation-type": "esql",
+  "query": "TS tsdb-1h | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day)"
+},
+{
+  "name": "esql-memory-usage-day-downsample-1d",
+  "description": "Calculate total memory usage per hour using 1d downsampled data",
+  "operation-type": "esql",
+  "query": "TS tsdb-1d | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes)) BY bucket(@timestamp, 1 day)"
+},
+{
+  "name": "esql-memory-pagefault-rate-day-downsample-1m",
+  "description": "Calculate total memory pagefault rate per day using 1m downsampled data",
+  "operation-type": "esql",
+  "query": "TS tsdb-1m | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day)"
+},
+{
+  "name": "esql-memory-pagefault-rate-day-downsample-1h",
+  "description": "Calculate total memory pagefault rate per day using 1h downsampled data",
+  "operation-type": "esql",
+  "query": "TS tsdb-1h | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day)"
+},
+{
+  "name": "esql-memory-pagefault-rate-day-downsample-1d",
+  "description": "Calculate total memory pagefault rate per day using 1d downsampled data",
+  "operation-type": "esql",
+  "query": "TS tsdb-1d | STATS sum(rate(kubernetes.container.memory.pagefaults)) BY bucket(@timestamp, 1 day)"
 }
 

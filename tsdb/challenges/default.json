@@ -350,8 +350,44 @@
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
-        }
-      ]
+        },
+        {
+          "operation": "esql-memory-usage-day-downsample-1m",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-usage-day-downsample-1h",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-usage-day-downsample-1d",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-pagefault-rate-day-downsample-1m",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-pagefault-rate-day-downsample-1h",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-pagefault-rate-day-downsample-1d",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+    ]
     },
     {
       "name": "low-latency",

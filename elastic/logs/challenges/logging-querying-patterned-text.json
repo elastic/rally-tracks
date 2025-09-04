@@ -104,7 +104,7 @@
       "tags": ["esql", "no-matches"]
     },
     {
-      "operation": "phrase_query_with_matches_only_template",
+      "operation": "phrase_query_with_matches_template_many_term_matches",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(10) }},
       "iterations": {{ iterations | default(20) }},
@@ -118,7 +118,7 @@
       "tags": ["esql", "has-matches"]
     },
     {
-      "operation": "phrase_query_empty_many_term_matches",
+      "operation": "phrase_query_empty_with_term_matches",
       "clients": {{ p_search_clients }},
       "warmup-iterations": {{ warmup_iterations | default(10) }},
       "iterations": {{ iterations | default(20) }},

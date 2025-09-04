@@ -19,7 +19,7 @@
   "query": "FROM logs-* | WHERE MATCH(message, \"123456787654321\") | keep message"
 },
 {
-  "name": "phrase_query_with_matches_common_words",
+  "name": "phrase_query_with_matches_template_many_term_matches",
   "operation-type": "esql",
   "query": "FROM logs-* | WHERE MATCH_PHRASE(message, \"metrics in the last\") | keep message"
 },

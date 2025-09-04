@@ -6,7 +6,7 @@
 {
   "name": "term_query_with_matches_argument",
   "operation-type": "esql",
-  "query": "FROM logs-* | WHERE MATCH(message, \"1d61a999d2a74ca66308cffdcb4a23c5fa1b77f1\") | keep message"
+  "query": "FROM logs-* | WHERE MATCH(message, \"30s\") | keep message"
 },
 {
   "name": "term_query_empty_template_term",
@@ -19,17 +19,17 @@
   "query": "FROM logs-* | WHERE MATCH(message, \"123456787654321\") | keep message"
 },
 {
-  "name": "phrase_query_with_matches_only_template",
+  "name": "phrase_query_with_matches_common_words",
   "operation-type": "esql",
-  "query": "FROM logs-* | WHERE MATCH_PHRASE(message, \"failed to query the DNS server\") | keep message"
+  "query": "FROM logs-* | WHERE MATCH_PHRASE(message, \"metrics in the last\") | keep message"
 },
 {
   "name": "phrase_query_with_matches_argument_and_template",
   "operation-type": "esql",
-  "query": "FROM logs-* | WHERE MATCH_PHRASE(message, \"job 1d61a999d2a74ca66308cffdcb4a23c5fa1b77f1\") | keep message"
+  "query": "FROM logs-* | WHERE MATCH_PHRASE(message, \"SSL certificate default/prod-3-eden-wildcard\") | keep message"
 },
 {
-  "name": "phrase_query_empty_many_term_matches",
+  "name": "phrase_query_empty_with_term_matches",
   "operation-type": "esql",
   "query": "FROM logs-* | WHERE MATCH_PHRASE(message, \"server query failed\") | keep message"
 }

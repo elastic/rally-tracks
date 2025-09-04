@@ -106,22 +106,22 @@
     {
       "operation": "phrase_query_with_matches_only_template",
       "clients": {{ p_search_clients }},
-      "warmup-iterations": {{ warmup_iterations | default(20) }},
-      "iterations": {{ iterations | default(100) }},
+      "warmup-iterations": {{ warmup_iterations | default(10) }},
+      "iterations": {{ iterations | default(20) }},
       "tags": ["esql", "has-matches"]
     },
     {
       "operation": "phrase_query_with_matches_argument_and_template",
       "clients": {{ p_search_clients }},
-      "warmup-iterations": {{ warmup_iterations | default(20) }},
-      "iterations": {{ iterations | default(100) }},
+      "warmup-iterations": {{ warmup_iterations | default(10) }},
+      "iterations": {{ iterations | default(20) }},
       "tags": ["esql", "has-matches"]
     },
     {
       "operation": "phrase_query_empty_many_term_matches",
       "clients": {{ p_search_clients }},
-      "warmup-iterations": {{ warmup_iterations | default(20) }},
-      "iterations": {{ iterations | default(100) }},
+      "warmup-iterations": {{ warmup_iterations | default(10) }},
+      "iterations": {{ iterations | default(20) }},
       "tags": ["esql", "no-matches"]
     },
     {

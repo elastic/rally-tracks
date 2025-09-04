@@ -1,0 +1,181 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-querying-esql-full-text-functions",
+  "description": "Applies an ESQL query workload. Ensures data streams exist so queries can be run, but does not remove existing data.",
+  "parameters": {
+    "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
+  },
+  "schedule": [
+    {% include "tasks/many-shards-setup.json" %},
+    {% if bulk_start_date and bulk_end_date %}
+      {
+        "name": "bulk-index",
+        "operation": {
+          "operation-type": "raw-bulk",
+          "param-source": "processed-source",
+          "time-format": "milliseconds",
+          "profile": "fixed_interval",
+          "init-load": true,
+          "bulk-size": {{ p_bulk_size }},
+          "detailed-results": true
+        },
+        "clients": {{ p_bulk_indexing_clients }},
+        "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+      }
+      {%- if force_merge_max_num_segments is defined %},
+      {
+        "name": "refresh-after-index",
+        "index": "logs-*",
+        "operation": "refresh"
+      },
+      {
+        "name": "wait-until-index-merges-fininshes",
+        "operation": {
+          "operation-type": "index-stats",
+          "index": "logs-*",
+          "condition": {
+            "path": "_all.total.merges.current",
+            "expected-value": 0
+          },
+          "retry-until-success": true,
+          "include-in-reporting": false
+        },
+        "tags": ["wait"]
+      },
+      {
+        "operation": {
+          "operation-type": "force-merge",
+          "index": "logs-*",
+          "request-timeout": 36000,
+          "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+        }
+      },
+      {
+        "name": "wait-until-merges-finish",
+        "operation": {
+          "operation-type": "index-stats",
+          "index": "logs-*",
+          "condition": {
+            "path": "_all.total.merges.current",
+            "expected-value": 0
+          },
+          "retry-until-success": true,
+          "include-in-reporting": false
+        }
+      },
+      {
+        "name": "refresh-after-force-merge",
+        "index": "logs-*",
+        "operation": "refresh"
+      }
+      {%- endif %}
+      ,
+    {% endif %}
+    {
+      "operation": "disable_query_cache",
+      "tags": ["esql", "settings"]
+    },
+    {
+      "operation": "apache_match_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "full-text"]
+    },
+    {
+      "operation": "apache_equals_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "like"]
+    },
+    {
+      "operation": "kafka_qstr_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "full-text"]
+    },
+    {
+      "operation": "kafka_like_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "like"]
+    },
+    {
+      "operation": "qstr_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "full-text"]
+    },
+    {
+      "operation": "kql_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "full-text"]
+    },
+    {
+      "operation": "kql_like_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "like"]
+    },
+    {
+      "operation": "syslog_qstr_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "full-text"]
+    },
+    {
+      "operation": "syslog_like_esql_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["esql", "like"]
+    }{%- if build_flavor != "serverless" or serverless_operator == true %},
+    {
+      "operation": "apache_match_query_dsl_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["search", "full-text"]
+    },
+    {
+      "operation": "kafka_qstr_dsl_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["search", "full-text"]
+    },
+    {
+      "operation": "qstr_query_dsl_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["search", "full-text"]
+    },
+    {
+      "operation": "kql_query_dsl_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["search", "full-text"]
+    },
+    {
+      "operation": "syslog_query_dsl_query",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(20) }},
+      "iterations": {{ iterations | default(100) }},
+      "tags": ["search", "full-text"]
+    },
+    {
+      "operation": "enable_query_cache",
+      "tags": ["settings"]
+    }{%- endif %}
+  ]
+}

@@ -10,10 +10,12 @@
   "mappings": {
     "properties": {
       "title": {
-        "type": "patterned_text"
+        "type": "patterned_text",
+        "index_options": "positions"
       },
       "content": {
-        "type": "patterned_text"
+        "type": "patterned_text",
+        "index_options": "positions"
       },
       "namespace": {
         "ignore_above": 1024,

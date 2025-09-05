@@ -1,3 +1,5 @@
+{% set is_esql_enabled = (esql_enabled == "true") %}
+
 {
   "name": "index-and-search",
   "description": "Indexes vectors, then executes searches under various conditions",
@@ -132,6 +134,13 @@
       "clients": 1
     },
     {
+      "name": "script-score-query-javascript",
+      "operation": "script-score-query-javascript",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
       "name": "knn-search-10-50-css",
       "operation": "knn-search-10-50-css",
       "warmup-iterations": 100,
@@ -229,7 +238,7 @@
       "iterations": 1,
       "clients": 1
     },
-        {
+    {
       "name": "knn-search-100-300-random-20-percent",
       "operation": "knn-search-100-300-random-20-percent",
       "warmup-iterations": 100,
@@ -243,9 +252,137 @@
       "iterations": 1,
       "clients": 1
     }
-    {# non-serverless-after-force-merge-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+{% if is_esql_enabled %}
+    ,{
+      "name": "esql-knn-search-default-match-all",
+      "operation": "esql-knn-search-default-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-match-all",
+      "operation": "esql-knn-search-10-50-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-100-300-match-all",
+      "operation": "esql-knn-search-100-300-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-match-all",
+      "operation": "esql-script-score-query-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-acceptedAnswerId",
+      "operation": "esql-knn-search-10-50-acceptedAnswerId",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-acceptedAnswerId",
+      "operation": "esql-script-score-query-acceptedAnswerId",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-java",
+      "operation": "esql-knn-search-10-50-java",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-java",
+      "operation": "esql-script-score-query-java",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-javascript",
+      "operation": "esql-script-score-query-javascript",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-css",
+      "operation": "esql-knn-search-10-50-css",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-css",
+      "operation": "esql-script-score-query-css",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-concurrency",
+      "operation": "esql-knn-search-10-50-concurrency",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-concurrency",
+      "operation": "esql-script-score-query-concurrency",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-random-10-percent",
+      "operation": "esql-knn-search-10-50-random-10-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-default-random-20-percent",
+      "operation": "esql-knn-search-default-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-random-20-percent",
+      "operation": "esql-knn-search-10-50-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-100-300-random-10-percent",
+      "operation": "esql-knn-search-100-300-random-10-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-100-300-random-20-percent",
+      "operation": "esql-knn-search-100-300-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    }
+{% endif %}
+{# non-serverless-after-force-merge-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       {% if p_include_force_merge %}
-    ,
+   ,
     {
       "operation": {
         "operation-type": "force-merge",
@@ -426,6 +563,92 @@
       "iterations": 1,
       "clients": 1
     }
+{% if is_esql_enabled %}
+    ,{
+      "name": "esql-knn-search-default-match-all-force-merge",
+      "operation": "esql-knn-search-default-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-match-all-force-merge",
+      "operation": "esql-knn-search-10-50-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-100-300-match-all-force-merge",
+      "operation": "esql-knn-search-100-300-match-all",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-acceptedAnswerId-force-merge",
+      "operation": "esql-knn-search-10-50-acceptedAnswerId",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-java-force-merge",
+      "operation": "esql-knn-search-10-50-java",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-css-force-merge",
+      "operation": "esql-knn-search-10-50-css",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-concurrency-force-merge",
+      "operation": "esql-knn-search-10-50-concurrency",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-random-10-percent-force-merge",
+      "operation": "esql-knn-search-10-50-random-10-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esq-knn-search-default-random-20-percent-force-merge",
+      "operation": "esql-knn-search-default-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-random-20-percent-force-merge",
+      "operation": "esql-knn-search-10-50-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-100-300-random-10-percent-force-merge",
+      "operation": "esql-knn-search-100-300-random-10-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-100-300-random-20-percent-force-merge",
+      "operation": "esql-knn-search-100-300-random-20-percent",
+      "warmup-iterations": 100,
+      "iterations": 100,
+      "clients": 1
+    }
+{% endif %}
       {% endif %}
     {%- endif -%}{# non-serverless-after-force-merge-marker-end #}
   ]

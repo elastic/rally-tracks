@@ -114,6 +114,43 @@ class KnnParamSource:
         return result
 
 
+class ESQLKnnParamSource(KnnParamSource):
+    def params(self):
+        num_candidates = self._params.get("num_candidates", 50)
+        # if -1, then its unset. If set, just set it.
+        oversample = self._params.get("oversample", -1)
+        if oversample > -1 and self._exact_scan:
+            raise ValueError("Oversampling is not supported for exact scan queries.")
+
+        k = self._params.get("k", 10)
+
+        query_vec = self._queries[self._iters]
+        self._iters += 1
+        if self._iters >= self._maxIters:
+            self._iters = 0
+
+        if self._exact_scan:
+            query = f"FROM {self._index_name}"
+            if "filter" in self._params:
+                # Optionally append filter.
+                query += " | where (" + self._params["filter"] + ")"
+            query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | drop titleVector | sort score desc | limit {k}"
+        else:
+            # Construct options JSON.
+            options_param = '{"num_candidates":' + str(num_candidates)
+            if oversample > -1:
+                options_param += ', "rescore_oversample":' + str(oversample)
+            options_param += "}"
+
+            query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {k}, {options_param})"
+            if "filter" in self._params:
+                # Optionally append filter.
+                query += " and (" + self._params["filter"] + ")"
+            query += "| drop titleVector | sort _score desc"
+
+        return {"query": query}
+
+
 class KnnVectorStore:
     def __init__(self):
         cwd = os.path.dirname(__file__)
@@ -246,5 +283,6 @@ class KnnRecallRunner:
 
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)
+    registry.register_param_source("esql-knn-param-source", ESQLKnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

@@ -28,4 +28,34 @@
       "name": "chicken_4",
       "operation-type": "esql",
       "query": "FROM logs-* | INSIST_🐔 agent.hostname | EVAL col0 = COALESCE(agent.hostname, \"\") | WHERE col0 ==  \"elasticsearch-ci-immutable-centos-7-1599241536066250344\""
+    },
+    {
+      "name": "runtime_esql_avg_log_offset",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(log.offset)"
+    },
+    {
+      "name": "runtime_esql_avg_doc_size",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.doc_size)"
+    },
+    {
+      "name": "runtime_esql_avg_compression",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | EVAL compression = rally.doc_size::DOUBLE / rally.message_size | STATS AVG(compression)"
+    },
+    {
+      "name": "runtime_esql_avg_amount_group_by_integer",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS AVG(rally.message_size) BY b = BUCKET(rally.doc_size, 1000.) | SORT b"
+    },
+    {
+      "name": "runtime_esql_basic_count_group_1",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version | SORT count DESC | LIMIT 20"
+    },
+    {
+      "name": "runtime_esql_basic_count_group_2",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | STATS count=count(*) BY agent.version, agent.type | SORT count DESC | LIMIT 20"
     }

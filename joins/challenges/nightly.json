@@ -48,6 +48,11 @@
           "tags": ["setup"]
         },
         {
+          "operation": "index-lookup-1k-100k-200k",
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "tags": ["setup"]
+        },
+        {
           "operation": "index-lookup-100k",
           "clients": {{bulk_indexing_clients | default(8)}},
           "tags": ["setup"]
@@ -150,6 +155,20 @@
           "iterations": 20
         },
         {
+          "operation": "esql_lookup_join_100k_two_keys",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_100k_two_keys_where_one_matching_equals",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
           "operation": "esql_lookup_join_limit10_expanding10000_filter1",
           "tags": ["lookup", "join"],
           "clients":  {{query_clients | default(1)}},
@@ -179,6 +198,62 @@
         },
         {
           "operation": "esql_lookup_join_expanding10000_filter5000",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_expanding10000_two_keys",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_expanding10000_two_keys_filter1000",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_1k_100k_200k_one_key_count",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_1k_100k_200k_two_keys_count",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_1k_100k_200k_three_keys_count",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_1k_100k_200k_one_key_filter_count",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_1k_100k_200k_two_keys_filter_count",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_1k_100k_200k_three_keys_filter_count",
           "tags": ["lookup", "join"],
           "clients":  {{query_clients | default(1)}},
           "warmup-iterations": 5,

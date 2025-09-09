@@ -50,7 +50,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 - Index settings:
   - `number_of_replicas` (default: `0`)
   - `number_of_shards` (default: `1`)
-  - `index_mapping_type` (default: `minimal`)
+  - `index_mapping_type`: `minimal` / `full` / `semantic-serverless` (default: `minimal`)
 - Initial indexing:
   - `initial_indexing_bulk_clients` (default: `5`)
   - `initial_indexing_bulk_size` (default: `500`)

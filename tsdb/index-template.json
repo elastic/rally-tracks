@@ -21,14 +21,6 @@
         "mode": "{{p_index_mode}}",
         {% endif %}
         {% if p_index_mode == "time_series" %}
-        "routing_path": [
-          "metricset.name",
-          "kubernetes.container.name",
-          "kubernetes.event.involved_object.uid",
-          "kubernetes.node.name",
-          "kubernetes.system.container.id",
-          "kubernetes.volume.name"
-        ],
         "time_series": {
           "start_time": "2021-04-28T00:00:00.000Z",
           "end_time": "2021-05-01T00:00:00.000Z"

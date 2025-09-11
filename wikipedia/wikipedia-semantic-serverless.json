@@ -2,10 +2,12 @@
   "mappings": {
     "properties": {
       "title": {
-        "type": "semantic_text"
+        "type": "semantic_text",
+        "inference_id": ".elser-2-elastic"
       },
       "content": {
-        "type": "semantic_text"
+        "type": "semantic_text",
+        "inference_id": ".elser-2-elastic"
       },
       "namespace": {
         "ignore_above": 1024,

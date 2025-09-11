@@ -213,77 +213,77 @@ Note that `query_max_date_start` cannot be defined in conjunction with `query_ma
 
 The following parameters are available:
 
-* `raw_data_volume_per_day` (default: `0.1GB`) - The volume of raw data to index per day. 
-* `wait_for_status` (default: `green `) - The track creates Data Streams prior to indexing. All created Data Streams must at least reach this status before indexing commences. Reduce to `yellow` for clusters where green isn't possible e.g. single node.
-* `start_date` (default: `2020-01-01` ) - The start date of the data. The `end_date` minus this value will determine the time range assigned to the data and also directly impact the total volume indexed. Must be less than the `end_date`.
-* `end_date` (default: `2020-01-02` ) - The end date of the data. This value minus the `start_date` will determine the time range assigned to the data and also directly impact the total volume indexed. Must be greater than the `start_date`.
-* `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
-* `lifecycle` (default: unset to fall back on Serverless detection) - Specifies the lifecycle management feature to use for data streams. Use `ilm` for index lifecycle management or `dlm` for data lifecycle management. By default, `dlm` will be used for benchmarking Serverless Elasticsearch.
-* `workflow-request-cache` (default: `true`) - Explicit control of request cache query parameter in searches executed in a workflow. This can be further overriden at an operation level with `request-cache` parameter.
-* `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
-* `source_mode` (default: unset) - Specifies the source mode to be used.
-* `use_synthetic_source_recovery` (default: unset): Whether synthetic recovery source will be used.
-* `recovery_target` (required) - The target index or data stream for fetching shard changes via the recovery API.
-* `recovery_from_seq_no` (default: `0`) - The sequence number from which to start fetching translog operations.
-* `recovery_poll_timeout` (default: `1m`) - The maximum time to wait for additional translog operations before returning an empty result.
-* `recovery_small_max_batch_size` (default: `4MB`) - The maximum estimated size for the batch of translog operations to return.
-* `recovery_large_max_batch_size` (default: `32MB`) - The maximum estimated size for the batch of translog operations to return.
-* `recovery_max_operations_count (default: `16777216`) - The maximum number of translog operations to return in a single batch.
-* `patterned_text_message_field` (default: `false`) - If true use `patterned_text` for all message fields, else `match_only_text`. 
-* `patterned_text_index_options` (default: `docs`) - If set to `positions`, includes positions in the patterned_text message field index.
+* `raw_data_volume_per_day` (string, default: `0.1GB`) - The volume of raw data to index per day. 
+* `wait_for_status` (string, default: `green`) - The track creates Data Streams prior to indexing. All created Data Streams must at least reach this status before indexing commences. Reduce to `yellow` for clusters where green isn't possible e.g. single node.
+* `start_date` (string, default: `2020-01-01`) - The start date of the data. The `end_date` minus this value will determine the time range assigned to the data and also directly impact the total volume indexed. Must be less than the `end_date`.
+* `end_date` (string, default: `2020-01-02`) - The end date of the data. This value minus the `start_date` will determine the time range assigned to the data and also directly impact the total volume indexed. Must be greater than the `start_date`.
+* `corpora_uri_base` (string, default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
+* `lifecycle` (string, default: unset to fall back on Serverless detection) - Specifies the lifecycle management feature to use for data streams. Use `ilm` for index lifecycle management or `dlm` for data lifecycle management. By default, `dlm` will be used for benchmarking Serverless Elasticsearch.
+* `workflow-request-cache` (bool, default: `true`) - Explicit control of request cache query parameter in searches executed in a workflow. This can be further overriden at an operation level with `request-cache` parameter.
+* `synthetic_source_keep` (string, default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
+* `source_mode` (string, default: unset) - Specifies the source mode to be used.
+* `use_synthetic_source_recovery` (bool, default: unset): Whether synthetic recovery source will be used.
+* `recovery_target` (string, default: `logs-k8-application.log-default`) - The target index or data stream for fetching shard changes via the recovery API.
+* `recovery_seq_no` (int, default: `0`) - The sequence number from which to start fetching translog operations.
+* `recovery_poll_timeout` (string, default: `1m`) - The maximum time to wait for additional translog operations before returning an empty result.
+* `recovery_small_max_batch_size` (string, default: `512kB`) - The maximum estimated size for the batch of translog operations to return.
+* `recovery_large_max_batch_size` (string, default: `32MB`) - The maximum estimated size for the batch of translog operations to return.
+* `recovery_max_operations_count` (int, default: `16777216`) - The maximum number of translog operations to return in a single batch.
+* `patterned_text_message_field` (bool, default: `false`) - If true use `patterned_text` for all message fields, else `match_only_text`. 
+* `patterned_text_index_options` (string, default: `docs`) - If set to `positions`, includes positions in the patterned_text message field index.
 
 ### Data Download Parameters
 
-* `max_total_download_gb` (default: `2 * num of corpus`) - The maximum volume of data to download in GB. This is divided evenly amongst each of the corpus available. A minimum of 1GB per corpus will be downloaded irrespective of this value. This value defaults to `2 * num of corpus` i.e. by default 2GB is downloaded for each corpus. Currently there are 18 corpora, requiring 36GB of space.
+* `max_total_download_gb` (numeric, default: `2 * num of corpus`) - The maximum volume of data to download in GB. This is divided evenly amongst each of the corpus available. A minimum of 1GB per corpus will be downloaded irrespective of this value. This value defaults to `2 * num of corpus` i.e. by default 2GB is downloaded for each corpus. Currently there are 18 corpora, requiring 36GB of space.
 
 ### Data Generation Parameters
 
-* `data_generation_clients` (default: `2`) - The number of concurrent clients used for data generation. Increase to speed up data generation assuming sufficient IO.
-* `max_generated_corpus_size` (default: `2GB`) - Sets an upper limit for the size of the generated corpus, allowing the user to limit disk space usage. Accepts units `M`, `MB`, `G`, `GB`, `T`, `TB`, `P`, `PB`.
-* `force_data_generation` (default: `false`) - If set to `true`, file generation always takes place. If `false` and generated files exist in `{file_cache_dir}/{unique_id}` they are re-used and generation is skipped. The `unique_id` here will be a hash of the parameters which effect data generation - see [Data Generation](#2-data-generation).
-* `random_seed` (default: 13) - Files are generated through random sampling of the source corpora. This pseudo random selection process is seeded to ensure multiple runs of the track generate the same data - thus ensuring tests are repeatable. Changing this value or `data_generation_clients` will cause the generation of a different dataset. Must be an integer.
-* `integration_ratios` - A dictionary containing a key per integration. Each integration in turn has a configuration object. This object includes a `corpora` dictionary, containing the ratios of the source corpora to use for this integration in the generated corpus. The keys represent the corpus names and the values the ratios. See [Ratios](#ratios) for further details.
-* `exclude_properties` - The list of fields to remove from the source corpora when generating a corpus. The keys represent the corpus names and the values a list of fields to remove per corpus. Only root fields can currently be removed from the JSON.
+* `data_generation_clients` (int, optional) - The number of concurrent clients used for data generation. Increase to speed up data generation assuming sufficient IO. If not specified, a default value of 2 is used by the data generator.
+* `max_generated_corpus_size` (string, default: `2GB`) - Sets an upper limit for the size of the generated corpus, allowing the user to limit disk space usage. Accepts units `M`, `MB`, `G`, `GB`, `T`, `TB`, `P`, `PB`.
+* `force_data_generation` (bool, default: `false`) - If set to `true`, file generation always takes place. If `false` and generated files exist in `{file_cache_dir}/{unique_id}` they are re-used and generation is skipped. The `unique_id` here will be a hash of the parameters which effect data generation - see [Data Generation](#2-data-generation).
+* `random_seed` (int, default: 13) - Files are generated through random sampling of the source corpora. This pseudo random selection process is seeded to ensure multiple runs of the track generate the same data - thus ensuring tests are repeatable. Changing this value or `data_generation_clients` will cause the generation of a different dataset. Must be an integer.
+* `integration_ratios` (dict) - A dictionary containing a key per integration. Each integration in turn has a configuration object. This object includes a `corpora` dictionary, containing the ratios of the source corpora to use for this integration in the generated corpus. The keys represent the corpus names and the values the ratios. See [Ratios](#ratios) for further details.
+* `exclude_properties` (dict) - The list of fields to remove from the source corpora when generating a corpus. The keys represent the corpus names and the values a list of fields to remove per corpus. Only root fields can currently be removed from the JSON.
 
 ### Indexing Parameters
 
-* `number_of_shards` (default: 1) - The number of primary shards to set per Data Stream. The same value is used for all Data Streams.
-* `number_of_replicas` (default: 1) - The number of replicas to set per Data Stream. The same value is used for all Data Streams.
-* `refresh_interval` (default: unset) - The Data Stream refresh interval. It is unset by default to use the Elasticsearch default refresh interval.
-* `bulk_indexing_clients` (default: 8) - The number of clients issuing indexing requests.
-* `runtime_indexing_clients`(default: bulk_indexing_clients) - for the simoutaneous indexing and querying challenge (`logging-indexing-querying`) this allows a different number of clients to be used in runtime vs the initial bulk load.
-* `bulk_size` (default: 1000) - The number of documents to send per indexing request.
-* `runtime_bulk_size` (default: bulk_size) - The number of documents to send per indexing request during the runtime phase of `logging-indexing-querying`challenge.
-* `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 
-* `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
-* `initial_indices_count` (default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
-* `ingest_percentage` (default: 100) - The percentage of data to be ingested.
-* `index_mode` (default: unset): What index mode to use. Accepted values: `standard` and `logs`. 
-* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
-* `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
-* `codec` (default: unset): Configured the `index.codec` index setting, which controls how stored fields get stored / compressed.
+* `number_of_shards` (int, default: 1) - The number of primary shards to set per Data Stream. The same value is used for all Data Streams.
+* `number_of_replicas` (int, default: 1) - The number of replicas to set per Data Stream. The same value is used for all Data Streams.
+* `refresh_interval` (string, default: unset) - The Data Stream refresh interval. It is unset by default to use the Elasticsearch default refresh interval.
+* `bulk_indexing_clients` (int, default: 8) - The number of clients issuing indexing requests.
+* `runtime_indexing_clients` (int, default: bulk_indexing_clients) - for the simoutaneous indexing and querying challenge (`logging-indexing-querying`) this allows a different number of clients to be used in runtime vs the initial bulk load.
+* `bulk_size` (int, default: 1000) - The number of documents to send per indexing request.
+* `runtime_bulk_size` (int, default: bulk_size) - The number of documents to send per indexing request during the runtime phase of `logging-indexing-querying`challenge.
+* `throttle_indexing` (bool, default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 
+* `disable_pipelines` (bool, default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
+* `initial_indices_count` (int, default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
+* `ingest_percentage` (int, default: 100) - The percentage of data to be ingested.
+* `index_mode` (string, default: unset): What index mode to use. Accepted values: `standard` and `logs`. 
+* `force_merge_max_num_segments` (int, default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
+* `include_non_serverless_index_settings` (bool, default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
+* `codec` (string, default: unset): Configured the `index.codec` index setting, which controls how stored fields get stored / compressed.
 
 ### Querying parameters
 
-* `workflow_time_interval` (default: 30) - The mean time between executions of a workflow. A Poisson process resulting in an exponentially distributed delay.
-* `think_time_interval` (default: 4) - The mean time between the execution of actions of a workflow. A Poisson process resulting in an exponentially distributed delay. Users of the track shouldn't need to modify this parameter.
-* `query_warmup_time_period` (default: 120) - Warmup time for queries before measurements are recorded.
-* `query_time_period` (default: 900) - The period for which queries should be issued. This only applies to challenges where no concurrent indexing is occurring. If concurrent indexing is occurring, querying will stop once this completes.
-* `random_seed` (default: 13) - Integer used to determine the order of query execution. The interval between workflow executions, as well as the actions within them, is based on an exponentially distributed random variable. Seeding this process ensures execution is deterministic across different executions.
-* `query_min_date` (default: `2020-01-01`) - Minimum datetime to execute queries over (such as yyyy-MM-dd or yyyy-MM-ddThh:mm:ss.zzzZ). Affects ranges and date_histograms.  Must be less than `query_max_date` (or `query_max_date_start`).
-* `query_max_date` (default: `2020-01-02`) - Maximum datetime to execute queries over (such as yyyy-MM-dd or yyyy-MM-ddThh:mm:ss.zzzZ). Affects ranges and date_histograms. Cannot be configured when `query_max_date_start` is also defined.
-* `search_clients` (default: 1) - The number of clients per workflow that issue search requests.
-* `query_max_date_start` (optional) - Maximum datetime to execute queries over, at the beginning of a query workflow task. Increments with the time elapsed as the benchmark executes. Cannot be configured when `query_max_date` is also defined.
-* `query_average_interval` (optional) - Average time interval for queries to use. If unset, we use the durations and intervals set in the original action definitions.
-* `query_request_params` (optional) - A map of query parameters that will be used with any querying.
-* `query_workflows` (optional) - A list of workflows to execute. By default, all workflows are used.
-* `include_esql_queries` (default: true for non-serverless clusters, false for serverless clusters): Whether to include ESQL and ESQL-related queries.
+* `workflow_time_interval` (int, default: 30) - The mean time between executions of a workflow. A Poisson process resulting in an exponentially distributed delay.
+* `think_time_interval` (int, default: 4) - The mean time between the execution of actions of a workflow. A Poisson process resulting in an exponentially distributed delay. Users of the track shouldn't need to modify this parameter.
+* `query_warmup_time_period` (int, default: 120) - Warmup time for queries before measurements are recorded.
+* `query_time_period` (int, default: 900) - The period for which queries should be issued. This only applies to challenges where no concurrent indexing is occurring. If concurrent indexing is occurring, querying will stop once this completes.
+* `random_seed` (int, default: 13) - Integer used to determine the order of query execution. The interval between workflow executions, as well as the actions within them, is based on an exponentially distributed random variable. Seeding this process ensures execution is deterministic across different executions.
+* `query_min_date` (string, default: `2020-01-01`) - Minimum datetime to execute queries over (such as yyyy-MM-dd or yyyy-MM-ddThh:mm:ss.zzzZ). Affects ranges and date_histograms.  Must be less than `query_max_date` (or `query_max_date_start`).
+* `query_max_date` (string, default: None) - Maximum datetime to execute queries over (such as yyyy-MM-dd or yyyy-MM-ddThh:mm:ss.zzzZ). Affects ranges and date_histograms. Cannot be configured when `query_max_date_start` is also defined. If not set, defaults to the data's end date.
+* `search_clients` (int, default: 1) - The number of clients per workflow that issue search requests.
+* `query_max_date_start` (string, optional) - Maximum datetime to execute queries over, at the beginning of a query workflow task. Increments with the time elapsed as the benchmark executes. Cannot be configured when `query_max_date` is also defined.
+* `query_average_interval` (string, optional) - Average time interval for queries to use. If unset, we use the durations and intervals set in the original action definitions.
+* `query_request_params` (dict, optional) - A map of query parameters that will be used with any querying.
+* `query_workflows` (list, optional) - A list of workflows to execute. By default, all workflows are used.
+* `include_esql_queries` (bool, default: true for non-serverless clusters, false for serverless clusters): Whether to include ESQL and ESQL-related queries.
 
 ### Snapshot parameters
-* `snapshot_counts` (default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
-* `snapshot_repo_name` (default: `logging`) - Snapshot repository name.
-* `snapshot_repo_type` (default: `s3`) - Other valid choices can be `gcs` and `azure`.
-* `snapshot_repo_settings` (default: 
+* `snapshot_counts` (int, default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
+* `snapshot_repo_name` (string, default: `logging`) - Snapshot repository name.
+* `snapshot_repo_type` (string, default: `s3`) - Other valid choices can be `gcs` and `azure`.
+* `snapshot_repo_settings` (dict, default: 
 ```
 {
     "bucket": snapshot_bucket | default("test-bucket"),
@@ -293,10 +293,10 @@ The following parameters are available:
     "readonly": snapshot_repo_readonly | default(false)
 }
 ```
-Setting that can also be set with separate parameters is `snapshot_bucket`, `snapshot_base_path` and `snapshot_repo_readonly`
-* `snapshot_name` (default: `logging-test`) Snapshot name when creating or to recover. Used as a prefix in case more than one snapshot is taken.
-* `restore_data_streams` (default: `logs-*`) Specifies data streams for `restore-snapshot` and `create-snapshot` operations.
-* `snapshot_metadata` (default: `{}`) Metadata to set when creating a snapshot. Used in `create-snapshot` operation.
+Settings that can also be set with separate parameters: `snapshot_bucket` (string), `snapshot_base_path` (string) and `snapshot_repo_readonly` (bool)
+* `snapshot_name` (string, default: `logging-test`) Snapshot name when creating or to recover. Used as a prefix in case more than one snapshot is taken.
+* `restore_data_streams` (string, default: `logs-*`) Specifies data streams for `restore-snapshot` and `create-snapshot` operations.
+* `snapshot_metadata` (dict, default: `{}`) Metadata to set when creating a snapshot. Used in `create-snapshot` operation.
 
 ## Available Challenges
 
@@ -391,16 +391,16 @@ Note that this challenge requires you to be able to successfully create a snapsh
 This challenge is intended for serverless data streams auto sharding testing. It consists of configurable number of steps provided with array parameters.
 Note: `include_target_throughput` parameter is ignored in this challenge.
 
-* `as_clients` (default: [8,16,32]): An array with the number of indexing clients to be used in each step.
-* `as_warmup_time_periods` (default: [300,300,300]): An array with warm-up time period, in seconds, of every step.
-* `as_time_periods` (default: [300,300,300]): An array with time period, in seconds, of every step.
-* `as_target_throughputs` (default: [2,4,8]): An array with target throughput of each step, expressed in requests/s. Please use `bulk_size` parameter to translate this into docs/s. Target throughput is not configured if the values specified in this array are negative.
-* `ds_autosharding_excludes` (default: []) a list of data stream name patterns to exclude from auto sharding.
-* `ds_autosharding_increase_cooldown` (default: "270s") A time value indicating the amount of time to cooldown before increasing the number of shards.
-* `ds_autosharding_decrease_cooldown` (default: "3d") A time value indicating the amount of time to cooldown before decreasing the number of shards.
-* `ds_autosharding_min_threads` (default: 2) The minimum number of write threads in the auto *scaling* function.
-* `ds_autosharding_max_threads` (default: 32) The maximum number of write threads in the auto *scaling* function.
-* `dsl_poll_interval` (default: "5m") A time value indicating the interval data stream lifecycle runs at. This is relevant in the context of auto sharding as data stream lifecycle periodically triggers the rollover operations that will recalcualte and implement the (auto)sharding scheme.
+* `as_clients` (list, default: [8,16,32]): An array with the number of indexing clients to be used in each step.
+* `as_warmup_time_periods` (list, default: [300,300,300]): An array with warm-up time period, in seconds, of every step.
+* `as_time_periods` (list, default: [300,300,300]): An array with time period, in seconds, of every step.
+* `as_target_throughputs` (list, default: [2,4,8]): An array with target throughput of each step, expressed in requests/s. Please use `bulk_size` parameter to translate this into docs/s. Target throughput is not configured if the values specified in this array are negative.
+* `ds_autosharding_excludes` (list, default: []) a list of data stream name patterns to exclude from auto sharding.
+* `ds_autosharding_increase_cooldown` (string, default: "270s") A time value indicating the amount of time to cooldown before increasing the number of shards.
+* `ds_autosharding_decrease_cooldown` (string, default: "3d") A time value indicating the amount of time to cooldown before decreasing the number of shards.
+* `ds_autosharding_min_threads` (int, default: 2) The minimum number of write threads in the auto *scaling* function.
+* `ds_autosharding_max_threads` (int, default: 32) The maximum number of write threads in the auto *scaling* function.
+* `dsl_poll_interval` (string, default: "5m") A time value indicating the interval data stream lifecycle runs at. This is relevant in the context of auto sharding as data stream lifecycle periodically triggers the rollover operations that will recalcualte and implement the (auto)sharding scheme.
 
 ### Categorize Text (categorize-text)
 
@@ -412,8 +412,8 @@ aggregation. The challenge targets a specific set of indices by way of an index 
 Restores a data stream from 7.x snapshots and reindexes all indices into version 8.x. 
 The snapshot parameters are used to define the correct snapshot, with `restore_data_streams` being the data stream to reindex.
 This challenge also uses the following task specific parameters:
-* `reindex_max_concurrent_indices` (default: 1) The maximum number of data stream backing indices that will be reindexed at the same time.
-* `reindex_max_requests_per_second` (default: 1000) The average maximum number of documents that will be reindexed per second, per backing index.
+* `reindex_max_concurrent_indices` (int, default: 1) The maximum number of data stream backing indices that will be reindexed at the same time.
+* `reindex_max_requests_per_second` (int, default: 1000) The average maximum number of documents that will be reindexed per second, per backing index.
 
 ## Changing the Datasets
 

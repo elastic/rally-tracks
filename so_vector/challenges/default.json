@@ -1,4 +1,4 @@
-{% set is_esql_enabled = (esql_enabled == "true") %}
+{% set is_esql_enabled = (esql_enabled | default(false)) %}
 
 {
   "name": "index-and-search",

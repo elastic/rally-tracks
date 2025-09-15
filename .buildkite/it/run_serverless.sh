@@ -14,6 +14,7 @@ echo "\$nrconf{restart} = 'a';" | sudo tee -a /etc/needrestart/needrestart.conf 
 
 PYTHON_VERSION="$1"
 TEST_NAME="$2"
+TRACK_FILTER=$(git diff --name-only origin/master...HEAD | grep '/' | awk -F/ '{print $1}' | sort -u | paste -sd, -)
 
 echo "--- System dependencies"
 
@@ -29,7 +30,7 @@ echo "--- Python modules"
 source .venv/bin/activate
 python -m pip install .[develop]
 
-echo "--- Run IT serverless test \"$TEST_NAME\" :pytest:"
+echo "--- Run IT serverless test \"$TEST_NAME\" with track filter \"$TRACK_FILTER\" :pytest:"
 
-hatch -v -e it_serverless run $TEST_NAME
+hatch -v -e it_serverless run $TEST_NAME --track-filter="$TRACK_FILTER"
 

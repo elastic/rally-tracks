@@ -37,8 +37,6 @@ jobs:
 
   filter-pr-changes:
     runs-on: ubuntu-latest
-    env:
-      EXCLUDE_FOLDERS: ".github,.buildkite,.git,it_serverless"
     outputs:
       tracks: ${{ steps.track_filter.outputs.tracks }}
     steps:

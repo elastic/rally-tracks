@@ -99,19 +99,17 @@ class KnnParamSource:
                 result["body"]["query"]["script_score"]["query"] = self._params["filter"]
         else:
             result["body"] = {
-              "query": {
-                  "knn": {
-                      "field": "titleVector",
-                      "query_vector": query_vec,
-                      "k": self._params.get("k", 10),
-                      "num_candidates": self._params.get("num_candidates", 50),
-                  }
-              }
+                "knn": {
+                    "field": "titleVector",
+                    "query_vector": query_vec,
+                    "k": self._params.get("k", 10),
+                    "num_candidates": self._params.get("num_candidates", 50),
+                }
             }
             if "filter" in self._params:
-                result["body"]["query"]["knn"]["filter"] = self._params["filter"]
+                result["body"]["knn"]["filter"] = self._params["filter"]
             if oversample > -1:
-                result["body"]["query"]["knn"]["rescore_vector"] = {"oversample": oversample}
+                result["body"]["knn"]["rescore_vector"] = {"oversample": oversample}
 
         return result
 

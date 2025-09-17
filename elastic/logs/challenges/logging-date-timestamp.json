@@ -18,6 +18,55 @@
       "schedule": "timestamp-throttler",
       "max-delay-secs": 1
       {% endif %}
+    },
+    {
+      "tags": ["index"],
+      "name": "refresh-after-index",
+      "index": "logs-*",
+      "operation": "refresh"
+    },
+    {
+      "name": "wait-until-index-merges-fininshes",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "logs-*",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "force-merge",
+        "index": "logs-*",
+        "request-timeout": 36000,
+        "max-num-segments": 1
+      }
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "logs-*",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "tags": ["index"],
+      "index": "logs-*",
+      "operation": "refresh"
     }
   ]
 }

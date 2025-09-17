@@ -1,0 +1,22 @@
+# bash command to register the custom@logs component template with timestamp mapping in Elasticsearch
+curl PUT "localhost:9200/_component_template/logs@custom" -u "<username>:<password>" -H 'Content-Type: application/json' -d'
+{
+  "template": {
+    "mappings": {
+      "properties": {
+        "@timestamp": {
+          "type": "date_nanos"
+        }
+      }
+    }
+  }
+}
+'
+# bash command to verify the component template has been registered
+curl "localhost:9200/_component_template/logs@custom?pretty" -u "<username>:<password>"
+
+# create venv and install dependencies
+# NOTE: YOU MUST REMOVE THE VENV FOLDER IN ORDER TO RUN THE RALLY TRACK
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt

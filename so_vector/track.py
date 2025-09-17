@@ -99,17 +99,19 @@ class KnnParamSource:
                 result["body"]["query"]["script_score"]["query"] = self._params["filter"]
         else:
             result["body"] = {
-                "knn": {
-                    "field": "titleVector",
-                    "query_vector": query_vec,
-                    "k": self._params.get("k", 10),
-                    "num_candidates": self._params.get("num_candidates", 50),
-                }
+              "query": {
+                  "knn": {
+                      "field": "titleVector",
+                      "query_vector": query_vec,
+                      "k": self._params.get("k", 10),
+                      "num_candidates": self._params.get("num_candidates", 50),
+                  }
+              }
             }
             if "filter" in self._params:
-                result["body"]["knn"]["filter"] = self._params["filter"]
+                result["body"]["query"]["knn"]["filter"] = self._params["filter"]
             if oversample > -1:
-                result["body"]["knn"]["rescore_vector"] = {"oversample": oversample}
+                result["body"]["query"]["knn"]["rescore_vector"] = {"oversample": oversample}
 
         return result
 
@@ -117,6 +119,7 @@ class KnnParamSource:
 class ESQLKnnParamSource(KnnParamSource):
     def params(self):
         num_candidates = self._params.get("num_candidates", 50)
+        retrieve_source = self._params.get("retrieve_source", False)
         # if -1, then its unset. If set, just set it.
         oversample = self._params.get("oversample", -1)
         if oversample > -1 and self._exact_scan:
@@ -131,10 +134,12 @@ class ESQLKnnParamSource(KnnParamSource):
 
         if self._exact_scan:
             query = f"FROM {self._index_name}"
+            if retrieve_source:
+                query += " METADATA _source"
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " | where (" + self._params["filter"] + ")"
-            query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | drop titleVector | sort score desc | limit {k}"
+            query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0"
         else:
             # Construct options JSON.
             options_param = '{"min_candidates":' + str(num_candidates)
@@ -142,11 +147,20 @@ class ESQLKnnParamSource(KnnParamSource):
                 options_param += ', "rescore_oversample":' + str(oversample)
             options_param += "}"
 
-            query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {options_param})"
+            query = f"FROM {self._index_name} METADATA _score"
+            if retrieve_source:
+                query += ", _source"
+            query += f" | WHERE KNN(titleVector, {query_vec}, {options_param})"
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " and (" + self._params["filter"] + ")"
-            query += "| drop titleVector | sort _score desc | limit " + str(k)
+
+        query += "| SORT _score desc | LIMIT " + str(k)
+
+        if retrieve_source:
+            query += " | KEEP _source"
+        else:
+            query += " | DROP titleVector"
 
         return {"query": query}
 

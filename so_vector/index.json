@@ -2,8 +2,10 @@
 
 {
   "settings": {
+    "index.mapping.exclude_source_vectors": {{ exclude_source_vectors | default(false) | tojson }}
     {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       {% if p_include_non_serverless_index_settings %}
+      ,
     "index.number_of_shards": {{number_of_shards | default(2)}},
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
       {% endif %}

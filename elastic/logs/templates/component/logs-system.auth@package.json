@@ -14,7 +14,7 @@
           },
           "logsdb.route_on_sort_fields": true,
           {% endif %}
-          {% if pattern_text_message_field | default(false) is true %}
+          {% if patterned_text_message_field | default(false) is true %}
           "sort": {
             "field": [ "host.name", "message.template_id", "@timestamp" ],
             "order": [ "asc", "asc", "desc" ]
@@ -293,9 +293,9 @@
           "error": {
             "properties": {
               "message": {
-                {% if pattern_text_message_field | default(false) is true %}
+                {% if patterned_text_message_field | default(false) is true %}
                 "type": "pattern_text",
-                "index_options": {{ pattern_text_index_options | default("docs") | tojson }}
+                "index_options": {{ patterned_text_index_options | default("docs") | tojson }}
                 {% else %}
                 "type": "match_only_text"
                 {% endif %}
@@ -303,9 +303,9 @@
             }
           },
           "message": {
-            {% if pattern_text_message_field | default(false) is true %}
+            {% if patterned_text_message_field | default(false) is true %}
             "type": "pattern_text",
-            "index_options": {{ pattern_text_index_options | default("docs") | tojson }}
+            "index_options": {{ patterned_text_index_options | default("docs") | tojson }}
             {% else %}
             "type": "match_only_text"
             {% endif %}

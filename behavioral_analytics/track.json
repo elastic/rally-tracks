@@ -1,0 +1,29 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Behavioral analytics related benchmarks",
+  "data-streams": [
+    {
+      "name": "behavioral_analytics-events-test_collection"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "behavioral_analytics",
+      "base-url": "https://rally-tracks.elastic.co/behavioral_analytics",
+      "documents": [
+        {
+          "source-file": "events.json.bz2",
+          "document-count": 24514512
+        }
+      ]
+    }
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ]
+}

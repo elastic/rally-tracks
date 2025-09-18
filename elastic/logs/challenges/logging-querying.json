@@ -240,6 +240,55 @@
       "warmup-iterations": 5,
       "iterations": 20,
       "tags": ["esql", "dissect"]
+    },
+    {
+      "operation": "term_query_with_matches",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "message", "has-matches"]
+    },
+    {
+      "operation": "term_query_with_matches_argument",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "message", "has-matches"]
+    },
+    {
+      "operation": "term_query_empty_template_term",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "message", "no-matches"]
+    },
+    {
+      "operation": "term_query_empty_argument_term",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql", "message", "no-matches"]
+    },
+    {
+      "operation": "phrase_query_with_matches_template_many_term_matches",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql", "message", "has-matches"]
+    },
+    {
+      "operation": "phrase_query_with_matches_argument_and_template",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql", "message", "has-matches"]
+    },
+    {
+      "operation": "phrase_query_empty_with_term_matches",
+      "clients": 1,
+      "warmup-iterations": 5,
+      "iterations": 20,
+      "tags": ["esql", "message", "no-matches"]
     }{%- if build_flavor != "serverless" or serverless_operator == true %},
     {
       "operation": "disable_query_cache",

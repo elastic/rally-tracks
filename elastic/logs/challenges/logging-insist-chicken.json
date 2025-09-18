@@ -85,6 +85,48 @@
       "warmup-iterations": {{ warmup_iterations | default(3) }},
       "iterations": {{ iterations | default(5) }},
       "tags": ["esql", "insist"]
+    },
+    {
+      "operation": "runtime_esql_avg_log_offset",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(1) }},
+      "iterations": {{ iterations | default(1) }},
+      "tags": ["esql", "runtime"]
+    },
+    {
+      "operation": "runtime_esql_avg_doc_size",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(1) }},
+      "iterations": {{ iterations | default(1) }},
+      "tags": ["esql", "runtime"]
+    },
+    {
+      "operation": "runtime_esql_avg_compression",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(1) }},
+      "iterations": {{ iterations | default(1) }},
+      "tags": ["esql", "runtime"]
+    },
+    {
+      "operation": "runtime_esql_avg_amount_group_by_integer",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(1) }},
+      "iterations": {{ iterations | default(1) }},
+      "tags": ["esql", "runtime"]
+    },
+    {
+      "operation": "runtime_esql_basic_count_group_1",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(1) }},
+      "iterations": {{ iterations | default(1) }},
+      "tags": ["esql", "runtime"]
+    },
+    {
+      "operation": "runtime_esql_basic_count_group_2",
+      "clients": {{ p_search_clients }},
+      "warmup-iterations": {{ warmup_iterations | default(1) }},
+      "iterations": {{ iterations | default(1) }},
+      "tags": ["esql", "runtime"]
     }
   ]
 }

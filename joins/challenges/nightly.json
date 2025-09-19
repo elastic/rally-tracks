@@ -120,6 +120,20 @@
           "iterations": 20
         },
         {
+          "operation": "esql_lookup_join_expression_eq_100k_keys_where_few_matching_like_limit1000",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
+          "operation": "esql_lookup_join_expression_lte_gte_100k_keys_where_few_matching_like_limit1000",
+          "tags": ["lookup", "join"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 5,
+          "iterations": 20
+        },
+        {
           "operation": "esql_lookup_join_100k_keys_where_few_matching_concat_like_limit1000",
           "tags": ["lookup", "join"],
           "clients":  {{query_clients | default(1)}},

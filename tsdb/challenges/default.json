@@ -311,8 +311,9 @@
             "path": "/tsdb/_block/write",
             "method": "PUT"
           }
-        },
-        {
+        }
+        {% if p_index_mode == "time_series" and run_esql_aggs is defined %}
+        ,{
           "name": "downsample-1m",
           "operation": {
             "operation-type": "downsample",
@@ -387,6 +388,7 @@
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
         }
+        {%- endif -%}
       ]
     },
     {

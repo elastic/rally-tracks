@@ -34,6 +34,7 @@ def params(updates=None):
 
 
 class TestSyntheticSource:
+    @pytest.mark.track("tsdb")
     def test_tsdb_default(self, es_cluster, rally):
         ret = rally.race(
             track="tsdb",
@@ -41,6 +42,7 @@ class TestSyntheticSource:
         )
         assert ret == 0
 
+    @pytest.mark.track("nyc_taxis")
     def test_nyc_taxis_default(self, es_cluster, rally):
         ret = rally.race(
             track="nyc_taxis",

@@ -41,7 +41,7 @@ jobs:
   filter-pr-changes:
     runs-on: ubuntu-22.04
     outputs:
-      tracks: ${{ steps.track_filter.outputs.tracks }}
+      track_filter: ${{ steps.track-filter.outputs.track_filter }}
     steps:
       - uses: actions/checkout@v4
       - name: Parse repo and create filters.yml
@@ -51,8 +51,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           filters: .github/filters.yml
-      - name: Collect changed tracks for --track-filter argument
-        id: track_filter
+      - name: Collect changed tracks and calculate --track-filter argument
+        id: track-filter
         run: |
             TRACKS=$(echo '${{ toJSON(steps.changes.outputs) }}' | jq -r '
             to_entries
@@ -61,9 +61,9 @@ jobs:
             | join(",")
             ')
             if echo "$TRACKS" | grep -qw "full_ci"; then
-            echo 'tracks=' >> $GITHUB_OUTPUT
+            echo 'track_filter=' >> $GITHUB_OUTPUT
             else
-            echo "tracks=--track-filter=$TRACKS" >> $GITHUB_OUTPUT
+            echo "track_filter=--track-filter=$TRACKS" >> $GITHUB_OUTPUT
             fi
 
   test:
@@ -88,7 +88,7 @@ jobs:
       - name: "Install dependencies"
         run: python -m pip install .[develop]
       - name: "Run tests"
-        run: hatch -v -e unit run test --track-filter="${{ needs.filter-pr-changes.outputs.tracks }}"
+        run: hatch -v -e unit run test ${{ needs.filter-pr-changes.outputs.track_filter }}
       - uses: elastic/es-perf-github-status@v2
         if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
         with:
@@ -121,8 +121,8 @@ jobs:
       - run: echo "JAVA11_HOME=$JAVA_HOME_11_X64" >> $GITHUB_ENV
       - name: "Install dependencies"
         run: python -m pip install .[develop]
-      - name: "Run tests (${{ needs.filter-pr-changes.outputs.tracks }})"
-        run: hatch -v -e it run test --track-filter="${{ needs.filter-pr-changes.outputs.tracks }}"
+      - name: "Run tests ${{ needs.filter-pr-changes.outputs.track_filter }}"
+        run: hatch -v -e it run test ${{ needs.filter-pr-changes.outputs.track_filter }}
         timeout-minutes: 120
         env:
           # elastic/endpoint fetches assets from GitHub, authenticate to avoid

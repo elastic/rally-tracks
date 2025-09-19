@@ -11,6 +11,9 @@ on:
 
 env:
   DEFAULT_BRANCH: master
+  # comma-separated list of paths that if changed will trigger a full CI run (Note: don't use trailing '/' at the end)
+  RUN_FULL_CI_WHEN_CHANGED: |
+    'es-revision', 'pyproject.toml',  '.pre-commit-config.yaml', 'catalog-info.yaml', '.github', 'it', 'it_serverless'
 
 permissions: "read-all"
 
@@ -36,7 +39,7 @@ jobs:
           status: FAILED
 
   filter-pr-changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       tracks: ${{ steps.track_filter.outputs.tracks }}
     steps:
@@ -51,13 +54,17 @@ jobs:
       - name: Collect changed tracks for --track-filter argument
         id: track_filter
         run: |
-          TRACKS=$(echo '${{ toJSON(steps.changes.outputs) }}' | jq -r '
+            TRACKS=$(echo '${{ toJSON(steps.changes.outputs) }}' | jq -r '
             to_entries
             | map(select(.value == "true"))
             | map(.key)
             | join(",")
-          ')
-          echo "tracks=$TRACKS" >> $GITHUB_OUTPUT
+            ')
+            if echo "$TRACKS" | grep -qw "full_ci"; then
+            echo 'tracks=' >> $GITHUB_OUTPUT
+            else
+            echo "tracks=--track-filter=$TRACKS" >> $GITHUB_OUTPUT
+            fi
 
   test:
     needs: filter-pr-changes

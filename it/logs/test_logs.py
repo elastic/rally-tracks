@@ -22,7 +22,7 @@ from it.logs import BASE_PARAMS, params
 pytest_rally = pytest.importorskip("pytest_rally")
 
 
-@pytest.mark.track("elastic")
+@pytest.mark.track("elastic/logs")
 class TestLogs:
     def test_logs_fails_if_assets_not_installed(self, es_cluster, rally, capsys):
         ret = rally.race(track="elastic/logs", exclude_tasks="tag:setup")

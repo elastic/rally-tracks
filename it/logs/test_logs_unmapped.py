@@ -22,7 +22,7 @@ from it.logs import BASE_PARAMS, params
 pytest_rally = pytest.importorskip("pytest_rally")
 
 
-@pytest.mark.track("elastic")
+@pytest.mark.track("elastic/logs")
 class TestLogsUnmapped:
     def test_logs_chicken(self, es_cluster, rally):
         custom = {"mapping": "unmapped"}

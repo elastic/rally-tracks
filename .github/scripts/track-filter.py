@@ -5,7 +5,6 @@ import yaml
 # static file paths should be a comma-separated list of files or directories
 static_paths = os.environ.get("RUN_FULL_CI_WHEN_CHANGED", [])
 
-static_paths = ".github"
 filters = {}
 
 # Statically include some files that should always trigger a full CI run
@@ -15,7 +14,16 @@ if static_paths:
 # Dynamically create filters for each track (top-level subdirectory) in the repo
 for entry in os.listdir("."):
     if os.path.isdir(entry) and entry not in static_paths:
-        filters[entry] = [f"{entry}/**"]
+        if entry == "elastic":
+            filters.update(
+                {
+                    f"{entry}/{subdir}": [f"{entry}/{subdir}/**"]
+                    for subdir in os.listdir(entry)
+                    if os.path.isdir(os.path.join(entry, subdir))
+                }
+            )
+        else:
+            filters[entry] = [f"{entry}/**"]
 
 
 with open(".github/filters.yml", "w") as f:

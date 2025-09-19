@@ -19,12 +19,14 @@ agents:
 
 steps:
   - label: "Run IT serverless tests with user privileges"
+    if: build.pull_request.base_branch == "master" || build.source == "schedule"
     plugins:
       - elastic/vault-secrets#v0.0.2: *vault-base_url
       - elastic/vault-secrets#v0.0.2: *vault-get_credentials_endpoint
       - elastic/vault-secrets#v0.0.2: *vault-api_key
     command: bash .buildkite/it/run_serverless.sh 3.11 test_user
   - label: "Run IT Serverless tests with operator privileges"
+    if: build.pull_request.base_branch == "master" || build.source == "schedule"
     plugins:
       - elastic/vault-secrets#v0.0.2: *vault-base_url
       - elastic/vault-secrets#v0.0.2: *vault-get_credentials_endpoint

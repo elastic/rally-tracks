@@ -14,7 +14,8 @@ echo "\$nrconf{restart} = 'a';" | sudo tee -a /etc/needrestart/needrestart.conf 
 
 PYTHON_VERSION="$1"
 TEST_NAME="$2"
-TRACK_FILTER=$(git diff --name-only origin/master...HEAD | grep '/' | awk -F/ '{print $1}' | sort -u | paste -sd, -)
+RUN_FULL_CI_WHEN_CHANGED=()
+IFS=',' read -ra RUN_FULL_CI_WHEN_CHANGED <<< "$3"
 
 echo "--- System dependencies"
 
@@ -30,6 +31,29 @@ echo "--- Python modules"
 source .venv/bin/activate
 python -m pip install .[develop]
 
+echo "--- Track filter modification"
+
+CHANGED_FILES=$(git diff --name-only origin/master...HEAD)
+readarray -t changed_files_arr <<< "$CHANGED_FILES"
+
+CHANGED_TOP_LEVEL_DIRS=$(echo "$CHANGED_FILES" | grep '/' | awk -F/ '{print $1}' | sort -u | paste -sd, -)
+CHANGED_TOP_LEVEL_DIRS=${CHANGED_TOP_LEVEL_DIRS%,}
+IFS=',' read -ra changed_dirs_arr <<< "$CHANGED_TOP_LEVEL_DIRS"
+
+all_changed_arr=("${changed_files_arr[@]}" "${changed_dirs_arr[@]}")
+
+TRACK_FILTER="--track-filter=${CHANGED_TOP_LEVEL_DIRS}"
+
+# If any changes match one of the RUN_FULL_CI_WHEN_CHANGED paths, run full CI
+for static_path in "${RUN_FULL_CI_WHEN_CHANGED[@]}"; do
+    for changed in "${all_changed_arr[@]}"; do
+        if [[ "$static_path" == "$changed" ]]; then
+            echo "Matched '$static_path' in changed files/dirs. Running full CI."
+            TRACK_FILTER=""
+            break 2
+        fi
+    done
+done
 echo "--- Run IT serverless test \"$TEST_NAME\" with track filter \"$TRACK_FILTER\" :pytest:"
 
 hatch -v -e it_serverless run $TEST_NAME --track-filter="$TRACK_FILTER"

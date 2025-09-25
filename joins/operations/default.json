@@ -125,9 +125,9 @@
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
-      "name": "esql_lookup_join_expression_lte_gte_{{idx_suffix[i]}}_keys_where_few_matching_like_limit1000",
+      "name": "esql_lookup_join_expression_lte_gte_{{idx_suffix[i]}}_keys_where_all_matching_like_limit1000",
       "operation-type": "esql",
-      "query": "FROM join_base_idx | RENAME key_{{key_suffix[i]}} as left_key_{{key_suffix[i]}} | EVAL left_key2_{{key_suffix[i]}} = left_key_{{key_suffix[i]}}| LOOKUP JOIN lookup_idx_{{key_suffix[i]}}_f10 on left_key_{{key_suffix[i]}}>=key_{{key_suffix[i]}} AND left_key2_{{key_suffix[i]}}<=key_{{key_suffix[i]}}| where lookup_keyword_0 like \"val 249*\" | limit 1000",
+      "query": "FROM join_base_idx | RENAME key_{{key_suffix[i]}} as left_key_{{key_suffix[i]}} | EVAL left_key2_{{key_suffix[i]}} = left_key_{{key_suffix[i]}}| LOOKUP JOIN lookup_idx_{{key_suffix[i]}}_f10 on left_key_{{key_suffix[i]}}>=key_{{key_suffix[i]}} AND left_key2_{{key_suffix[i]}}<=key_{{key_suffix[i]}}| where lookup_keyword_0 like \"val *\" | limit 1000",
       "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {

@@ -74,6 +74,8 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `corpora` (default: "so_vector_float"): The dataset to use. The default data set represents vectors as float arrays. Use "so_vector_base64" for the same dataset with vectors encoded as base64 strings.
 * `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
 * `iterations` (default: 100) - Number of measurement iterations that each client executes.
+* `use_gpu_indexing` (default: "auto"): Whether to use GPU for vector indexing. Can be set to `true` or `false`.
+* `merge_scheduler_auto_throttle` (default: false): Whether to enable automatic throttling for the merge scheduler. Can be set to `true`.
 
 ### License
 We use the same license for the data as the original data: [CC-SA-4.0](http://creativecommons.org/licenses/by-sa/4.0/).

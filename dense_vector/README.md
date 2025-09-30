@@ -35,3 +35,5 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
 * `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
 * `vector_index_type` (default: "int8_hnsw"): The index kind for storing the vectors.
+* `use_gpu_indexing` (default: "auto"): Whether to use GPU for vector indexing. Can be set to `true` or `false`.
+* `merge_scheduler_auto_throttle` (default: false): Whether to enable automatic throttling for the merge scheduler. Can be set to `true`.

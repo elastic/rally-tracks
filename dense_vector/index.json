@@ -2,6 +2,8 @@
   "settings": {
     "index": {
       {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+      "vectors.indexing.use_gpu": {{ use_gpu_indexing | default("auto") | tojson }},
+      "merge.scheduler.auto_throttle" : {{ merge_scheduler_auto_throttle | default(false) | tojson }},
       "number_of_shards": {{ number_of_shards | default(2) }},
       "number_of_replicas": {{ number_of_replicas | default(0) }}
       {%- endif -%}{# non-serverless-index-settings-marker-end #}

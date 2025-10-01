@@ -3,7 +3,7 @@
     "index": {
       {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       {%- if index_refresh_interval is defined %}
-      "index_refresh_interval": {{ index_refresh_interval | tojson }},
+      "refresh_interval": {{ index_refresh_interval | tojson }},
       {%- endif %}
       {% if preload_pagecache %}
       "store.preload": [ "vec", "vex", "vem"],

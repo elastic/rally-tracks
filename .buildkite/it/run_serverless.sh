@@ -2,6 +2,7 @@
 
 set -eo pipefail
 
+source .buildkite/it/ci.env
 source .buildkite/retry.sh
 
 export TERM=dumb
@@ -14,8 +15,7 @@ echo "\$nrconf{restart} = 'a';" | sudo tee -a /etc/needrestart/needrestart.conf 
 
 PYTHON_VERSION="$1"
 TEST_NAME="$2"
-RUN_FULL_CI_WHEN_CHANGED=()
-IFS=',' read -ra RUN_FULL_CI_WHEN_CHANGED <<< "$3"
+IFS=',' read -ra RUN_FULL_CI_WHEN_CHANGED <<< "${RUN_FULL_CI_WHEN_CHANGED:-}"
 
 echo "--- System dependencies"
 

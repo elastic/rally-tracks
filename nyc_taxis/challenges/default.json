@@ -961,6 +961,27 @@
           "iterations": 50,
           "tags": ["inlinestats"]
         },
+        {
+          "operation": "one_chained_inlinestats_esql",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["inlinestats"]
+        },
+        {
+          "operation": "two_chained_inlinestats_esql",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["inlinestats"]
+        },
+        {
+          "operation": "three_chained_inlinestats_esql",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["inlinestats"]
+        },
       {%- endif -%}{# non-serverless-inlinestats-marker-end #}
       {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
         {

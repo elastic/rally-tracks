@@ -1092,6 +1092,21 @@
       "query" : "FROM nyc_taxis | LIMIT 1000 | inlinestats s1 = sum(passenger_count) | inlinestats s2 = sum(s1) | inlinestats s3 = sum(s2)"
     },
     {
+      "name": "one_chained_inlinestats_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | inlinestats s1 = sum(passenger_count) | LIMIT 1000"
+    },
+    {
+      "name": "two_chained_inlinestats_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | inlinestats s1 = sum(passenger_count) | inlinestats s2 = sum(trip_distance) | LIMIT 1000"
+    },
+    {
+      "name": "three_chained_inlinestats_esql",
+      "operation-type": "esql",
+      "query" : "FROM nyc_taxis | inlinestats s1 = sum(passenger_count) | inlinestats s2 = sum(trip_distance) | inlinestats s3 = sum(total_amount) | LIMIT 1000"
+    },
+    {
       "name": "multiple_stats_esql",
       "operation-type": "esql",
       "query" : "FROM nyc_taxis | LIMIT 1000 | stats sum = sum(passenger_count), count = count(*), avg = avg(passenger_count)"

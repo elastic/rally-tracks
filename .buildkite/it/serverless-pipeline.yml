@@ -17,10 +17,9 @@ agents:
   provider: "gcp"
   image: family/core-ubuntu-2204
 
-env:
-  RUN_FULL_CI_WHEN_CHANGED=pyproject.toml,.buildkite,it_serverless
-
 steps:
+  - env:
+    RUN_FULL_CI_WHEN_CHANGED: pyproject.toml,.buildkite,it,it_serverless
   - label: "Run IT serverless tests with user privileges"
     if: build.pull_request.base_branch == "master" || build.source == "schedule"
     plugins:

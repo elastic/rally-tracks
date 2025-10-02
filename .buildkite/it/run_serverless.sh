@@ -2,7 +2,6 @@
 
 set -eo pipefail
 
-source .buildkite/it/ci.env
 source .buildkite/retry.sh
 
 export TERM=dumb

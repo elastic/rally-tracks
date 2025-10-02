@@ -57,87 +57,87 @@
     {
       "name": "text-expansion-search-maxwand-enabled",
       "operation": "text-expansion-search-maxwand-enabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "text-expansion-search-maxwand-disabled",
       "operation": "text-expansion-search-maxwand-disabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "text-expansion-splade-search-maxwand-enabled",
       "operation": "text-expansion-splade-search-maxwand-enabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "text-expansion-splade-search-maxwand-disabled",
       "operation": "text-expansion-splade-search-maxwand-disabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "pruned-text-expansion-search-maxwand-enabled",
       "operation": "pruned-text-expansion-search-maxwand-enabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "pruned-text-expansion-search-maxwand-disabled",
       "operation": "pruned-text-expansion-search-maxwand-disabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "pruned-rescored-text-expansion-search-maxwand-enabled",
       "operation": "pruned-rescored-text-expansion-search-maxwand-enabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
-      "num_candidates": 100,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
+      "num_candidates": {{rescored_num_candidates | default(100)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "pruned-rescored-text-expansion-search-maxwand-disabled",
       "operation": "pruned-rescored-text-expansion-search-maxwand-disabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
-      "num_candidates": 100,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
+      "num_candidates": {{rescored_num_candidates | default(100)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "bm25-search-maxwand-enabled",
       "operation": "bm25-search-maxwand-enabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "bm25-search-maxwand-disabled",
       "operation": "bm25-search-maxwand-disabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "hybrid-search-maxwand-enabled",
       "operation": "hybrid-search-maxwand-enabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
       "name": "hybrid-search-maxwand-disabled",
       "operation": "hybrid-search-maxwand-disabled",
-      "warmup-iterations": 100,
-      "iterations": 1000,
+      "warmup-iterations": {{search_warmup_iterations | default(100)}},
+      "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {

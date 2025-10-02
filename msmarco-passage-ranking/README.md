@@ -620,6 +620,9 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `number_of_shards` (default: 1)
 * `number_of_replicas` (default: 0)
 * `search_clients` (default: 1)
+* `search_iterations` (default: 1000)
+* `search_warmup_iterations` (default: 100)
+* `rescored_num_candidates` (default: 100)
 
 ### License
 Terms and Conditions for using the MS MARCO datasets can be found at https://microsoft.github.io/msmarco/

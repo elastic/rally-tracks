@@ -964,32 +964,32 @@
     {
       "name": "inlinestats_avg_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats avg(passenger_count)"
+      "query" : "FROM nyc_taxis | inline stats avg(passenger_count)"
     },
     {
       "name": "inlinestats_count_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats count(passenger_count)"
+      "query" : "FROM nyc_taxis | inline stats count(passenger_count)"
     },
     {
       "name": "inlinestats_median_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats median(passenger_count)"
+      "query" : "FROM nyc_taxis | inline stats median(passenger_count)"
     },
     {
       "name": "inlinestats_max_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats max(passenger_count)"
+      "query" : "FROM nyc_taxis | inline stats max(passenger_count)"
     },
     {
       "name": "inlinestats_sum_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats sum(passenger_count)"
+      "query" : "FROM nyc_taxis | inline stats sum(passenger_count)"
     },
     {
       "name": "inlinestats_top_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats top(passenger_count, 3, \"desc\")"
+      "query" : "FROM nyc_taxis | inline stats top(passenger_count, 3, \"desc\")"
     },
     {
       "name": "stats_count_esql_segment_partitioning",
@@ -1024,7 +1024,7 @@
     {
       "name": "inlinestats_count_comparison_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis METADATA _id | LIMIT 1000 | inlinestats count(passenger_count) by _id"
+      "query" : "FROM nyc_taxis METADATA _id | LIMIT 1000 | inline stats count(passenger_count) by _id"
     },
     {
       "name": "stats_avg_comparison_esql",
@@ -1034,7 +1034,7 @@
     {
       "name": "inlinestats_avg_comparison_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis METADATA _id | LIMIT 1000 | inlinestats avg(passenger_count) by _id"
+      "query" : "FROM nyc_taxis METADATA _id | LIMIT 1000 | inline stats avg(passenger_count) by _id"
     },
     {
       "name": "stats_max_comparison_esql",
@@ -1044,67 +1044,67 @@
     {
       "name": "inlinestats_max_comparison_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis METADATA _id | LIMIT 1000 | inlinestats max(passenger_count) by _id"
+      "query" : "FROM nyc_taxis METADATA _id | LIMIT 1000 | inline stats max(passenger_count) by _id"
     },
     {
       "name": "inlinestats_then_stats_count_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats c = count(passenger_count) | stats count(c)"
+      "query" : "FROM nyc_taxis | inline stats c = count(passenger_count) | stats count(c)"
     },
     {
       "name": "stats_then_inlinestats_count_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | stats c = count(passenger_count) | inlinestats count(c)"
+      "query" : "FROM nyc_taxis | stats c = count(passenger_count) | inline stats count(c)"
     },
     {
       "name": "inlinestats_then_stats_sum_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats s = sum(passenger_count) | stats sum(s)"
+      "query" : "FROM nyc_taxis | inline stats s = sum(passenger_count) | stats sum(s)"
     },
     {
       "name": "stats_then_inlinestats_sum_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | stats s = sum(passenger_count) | inlinestats sum(s)"
+      "query" : "FROM nyc_taxis | stats s = sum(passenger_count) | inline stats sum(s)"
     },
     {
       "name": "inlinestats_then_stats_avg_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats a = avg(passenger_count) | stats avg(a)"
+      "query" : "FROM nyc_taxis | inline stats a = avg(passenger_count) | stats avg(a)"
     },
     {
       "name": "stats_then_inlinestats_avg_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | stats a = avg(passenger_count) | inlinestats avg(a)"
+      "query" : "FROM nyc_taxis | stats a = avg(passenger_count) | inline stats avg(a)"
     },
     {
       "name": "one_inlinestats_sum_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | LIMIT 1000 | inlinestats s1 = sum(passenger_count)"
+      "query" : "FROM nyc_taxis | LIMIT 1000 | inline stats s1 = sum(passenger_count)"
     },
     {
       "name": "two_inlinestats_sum_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | LIMIT 1000 | inlinestats s1 = sum(passenger_count) | inlinestats s2 = sum(s1)"
+      "query" : "FROM nyc_taxis | LIMIT 1000 | inline stats s1 = sum(passenger_count) | inline stats s2 = sum(s1)"
     },
     {
       "name": "three_inlinestats_sum_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | LIMIT 1000 | inlinestats s1 = sum(passenger_count) | inlinestats s2 = sum(s1) | inlinestats s3 = sum(s2)"
+      "query" : "FROM nyc_taxis | LIMIT 1000 | inline stats s1 = sum(passenger_count) | inline stats s2 = sum(s1) | inline stats s3 = sum(s2)"
     },
     {
       "name": "one_chained_inlinestats_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats s1 = sum(passenger_count) | LIMIT 1000"
+      "query" : "FROM nyc_taxis | inline stats s1 = sum(passenger_count) | LIMIT 1000"
     },
     {
       "name": "two_chained_inlinestats_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats s1 = sum(passenger_count) | inlinestats s2 = sum(trip_distance) | LIMIT 1000"
+      "query" : "FROM nyc_taxis | inline stats s1 = sum(passenger_count) | inline stats s2 = sum(trip_distance) | LIMIT 1000"
     },
     {
       "name": "three_chained_inlinestats_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats s1 = sum(passenger_count) | inlinestats s2 = sum(trip_distance) | inlinestats s3 = sum(total_amount) | LIMIT 1000"
+      "query" : "FROM nyc_taxis | inline stats s1 = sum(passenger_count) | inline stats s2 = sum(trip_distance) | inline stats s3 = sum(total_amount) | LIMIT 1000"
     },
     {
       "name": "multiple_stats_esql",
@@ -1114,13 +1114,13 @@
     {
       "name": "multiple_inlinestats_esql",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | LIMIT 1000 | inlinestats sum = sum(passenger_count), count = count(*), avg = avg(passenger_count)"
+      "query" : "FROM nyc_taxis | LIMIT 1000 | inline stats sum = sum(passenger_count), count = count(*), avg = avg(passenger_count)"
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
     {
       "name": "inlinestats_avg_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats avg(passenger_count)",
+      "query" : "FROM nyc_taxis | inline stats avg(passenger_count)",
       "body": {
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }
@@ -1129,7 +1129,7 @@
     {
       "name": "inlinestats_count_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats count(passenger_count)",
+      "query" : "FROM nyc_taxis | inline stats count(passenger_count)",
       "body": {
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }
@@ -1138,7 +1138,7 @@
     {
       "name": "inlinestats_median_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats median(passenger_count)",
+      "query" : "FROM nyc_taxis | inline stats median(passenger_count)",
       "body": {
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }
@@ -1147,7 +1147,7 @@
     {
       "name": "inlinestats_max_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats max(passenger_count)",
+      "query" : "FROM nyc_taxis | inline stats max(passenger_count)",
       "body": {
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }
@@ -1156,7 +1156,7 @@
     {
       "name": "inlinestats_sum_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats sum(passenger_count)",
+      "query" : "FROM nyc_taxis | inline stats sum(passenger_count)",
       "body": {
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }
@@ -1165,7 +1165,7 @@
     {
       "name": "inlinestats_top_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | inlinestats top(passenger_count, 3, \"desc\")",
+      "query" : "FROM nyc_taxis | inline stats top(passenger_count, 3, \"desc\")",
       "body": {
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }
@@ -1430,13 +1430,13 @@
     {
       "name": "inlinestats_avg_passenger_count_filtered_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| inlinestats avg(passenger_count)"
+      "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| inline stats avg(passenger_count)"
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
     {
       "name": "inlinestats_avg_passenger_count_filtered_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| inlinestats avg(passenger_count)",
+      "query" : "FROM nyc_taxis | where total_amount > 60 and rate_code_id==\"2\"| inline stats avg(passenger_count)",
       "body": {
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }

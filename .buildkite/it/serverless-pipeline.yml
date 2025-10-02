@@ -1,3 +1,6 @@
+env:
+    RUN_FULL_CI_WHEN_CHANGED: pyproject.toml,.buildkite,it_serverless
+
 common:
   plugins:
     - elastic/vault-secrets#v0.0.2: &vault-base_url
@@ -18,8 +21,6 @@ agents:
   image: family/core-ubuntu-2204
 
 steps:
-  - env:
-    RUN_FULL_CI_WHEN_CHANGED: pyproject.toml,.buildkite,it,it_serverless
   - label: "Run IT serverless tests with user privileges"
     if: build.pull_request.base_branch == "master" || build.source == "schedule"
     plugins:

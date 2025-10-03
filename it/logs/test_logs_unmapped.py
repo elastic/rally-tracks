@@ -17,34 +17,18 @@
 
 import pytest
 
+from it.logs import BASE_PARAMS, params
+
 pytest_rally = pytest.importorskip("pytest_rally")
 
-BASE_PARAMS = {
-    "source_mode": "synthetic",
-    "number_of_replicas": "0",
-}
 
-
-def params(updates=None):
-    base = BASE_PARAMS.copy()
-    if updates is None:
-        return base
-    else:
-        return {**base, **updates}
-
-
-class TestSyntheticSource:
-    @pytest.mark.track("tsdb")
-    def test_tsdb_default(self, es_cluster, rally):
+@pytest.mark.track("elastic/logs")
+class TestLogsUnmapped:
+    def test_logs_chicken(self, es_cluster, rally):
+        custom = {"mapping": "unmapped"}
         ret = rally.race(
-            track="tsdb",
-            track_params=params(),
+            track="elastic/logs",
+            challenge="logging-insist-chicken",
+            track_params=params(updates=custom),
         )
         assert ret == 0
-
-    @pytest.mark.track("nyc_taxis")
-    def test_nyc_taxis_default(self, es_cluster, rally):
-        ret = rally.race(
-            track="nyc_taxis",
-            track_params=params(),
-        )

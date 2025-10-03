@@ -941,27 +941,6 @@
         },
       {# non-serverless-inlinestats-marker-start #}{%- if build_flavor != "serverless" -%}
         {
-          "operation": "one_inlinestats_sum_esql",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50,
-          "tags": ["inlinestats"]
-        },
-        {
-          "operation": "two_inlinestats_sum_esql",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50,
-          "tags": ["inlinestats"]
-        },
-        {
-          "operation": "three_inlinestats_sum_esql",
-          "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50,
-          "tags": ["inlinestats"]
-        },
-        {
           "operation": "one_chained_inlinestats_esql",
           "clients": 1,
           "warmup-iterations": 5,
@@ -1381,45 +1360,45 @@
           "tags": ["inlinestats"]
         },
         {
-          "operation": "stats_count_comparison_esql",
+          "operation": "stats_count_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "inlinestats_count_comparison_esql",
+          "operation": "inlinestats_count_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "stats_avg_comparison_esql",
+          "operation": "stats_avg_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "inlinestats_avg_comparison_esql",
+          "operation": "inlinestats_avg_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "stats_max_comparison_esql",
+          "operation": "stats_max_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "inlinestats_max_comparison_esql",
+          "operation": "inlinestats_max_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {

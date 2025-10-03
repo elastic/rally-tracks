@@ -17,22 +17,18 @@
 
 import pytest
 
+from it.logs import BASE_PARAMS, params
+
 pytest_rally = pytest.importorskip("pytest_rally")
 
 
-class TestCustomParameters:
-    @pytest.mark.track("tsdb")
-    def test_tsdb_esql(self, es_cluster, rally):
+@pytest.mark.track("elastic/logs")
+class TestLogsUnmapped:
+    def test_logs_chicken(self, es_cluster, rally):
+        custom = {"mapping": "unmapped"}
         ret = rally.race(
-            track="tsdb",
-            track_params={"run_esql_aggs": True, "index_mode": "time_series"},
-        )
-        assert ret == 0
-
-    @pytest.mark.track("tsdb")
-    def test_tsdb_data_stream(self, es_cluster, rally):
-        ret = rally.race(
-            track="tsdb",
-            track_params={"run_esql_aggs": True, "index_mode": "time_series", "ingest_mode": "data_stream", "source_mode": "synthetic"},
+            track="elastic/logs",
+            challenge="logging-insist-chicken",
+            track_params=params(updates=custom),
         )
         assert ret == 0

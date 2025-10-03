@@ -19,32 +19,20 @@ import pytest
 
 pytest_rally = pytest.importorskip("pytest_rally")
 
-BASE_PARAMS = {
-    "source_mode": "synthetic",
-    "number_of_replicas": "0",
-}
 
-
-def params(updates=None):
-    base = BASE_PARAMS.copy()
-    if updates is None:
-        return base
-    else:
-        return {**base, **updates}
-
-
-class TestSyntheticSource:
+class TestCustomParameters:
     @pytest.mark.track("tsdb")
-    def test_tsdb_default(self, es_cluster, rally):
+    def test_tsdb_esql(self, es_cluster, rally):
         ret = rally.race(
             track="tsdb",
-            track_params=params(),
+            track_params={"run_esql_aggs": True, "index_mode": "time_series"},
         )
         assert ret == 0
 
-    @pytest.mark.track("nyc_taxis")
-    def test_nyc_taxis_default(self, es_cluster, rally):
+    @pytest.mark.track("tsdb")
+    def test_tsdb_data_stream(self, es_cluster, rally):
         ret = rally.race(
-            track="nyc_taxis",
-            track_params=params(),
+            track="tsdb",
+            track_params={"run_esql_aggs": True, "index_mode": "time_series", "ingest_mode": "data_stream", "source_mode": "synthetic"},
         )
+        assert ret == 0

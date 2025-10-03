@@ -52,7 +52,7 @@ jobs:
       - name: "Determine --revision argument"
         id: revision-argument
         run: |
-          echo "revision=' --revision=${{ steps.es-version.outputs.version }}'" >> $GITHUB_OUTPUT
+          echo "revision= --revision=${{ steps.es-version.outputs.version }}" >> $GITHUB_OUTPUT
 
   filter-pr-changes:
     runs-on: ubuntu-22.04
@@ -79,7 +79,7 @@ jobs:
             if echo "$TRACKS" | grep -qw "full_ci"; then
             echo 'track_filter=' >> $GITHUB_OUTPUT
             else
-            echo "track_filter=' --track-filter=$TRACKS'" >> $GITHUB_OUTPUT
+            echo "track_filter= --track-filter=$TRACKS" >> $GITHUB_OUTPUT
             fi
 
   test:

@@ -36,6 +36,23 @@ jobs:
           slack_channel: ${{ secrets.SLACK_CHANNEL }}
           status: FAILED
 
+  determine-revision:
+    runs-on: ubuntu-22.04
+    outputs:
+      revision: ${{ steps.revision-argument.outputs.revision }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Determine ES version"
+        id: es-version
+        run: |
+          ES_VERSION=$(cat es-version)
+          echo "Determined es-version: $ES_VERSION"
+          echo "version=$ES_VERSION" >> $GITHUB_OUTPUT
+      - name: "Determine --revision argument"
+        id: revision-argument
+        run: |
+          echo "revision= --revision=${{ steps.es-version.outputs.version }}" >> $GITHUB_OUTPUT
+
   filter-pr-changes:
     runs-on: ubuntu-22.04
     outputs:
@@ -61,11 +78,13 @@ jobs:
             if echo "$TRACKS" | grep -qw "full_ci"; then
             echo 'track_filter=' >> $GITHUB_OUTPUT
             else
-            echo "track_filter=--track-filter=$TRACKS" >> $GITHUB_OUTPUT
+            echo "track_filter= --track-filter=$TRACKS" >> $GITHUB_OUTPUT
             fi
 
   test:
-    needs: filter-pr-changes
+    needs: 
+      - filter-pr-changes
+      - determine-revision
     strategy:
       fail-fast: false
       matrix:
@@ -85,8 +104,8 @@ jobs:
           cache-dependency-path: pyproject.toml
       - name: "Install dependencies"
         run: python -m pip install .[develop]
-      - name: "Run tests ${{ needs.filter-pr-changes.outputs.track_filter }}"
-        run: hatch -v -e unit run test ${{ needs.filter-pr-changes.outputs.track_filter }}
+      - name: "Run tests${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }}"
+        run: hatch -v -e unit run test${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }}
       - uses: elastic/es-perf-github-status@v2
         if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
         with:
@@ -95,7 +114,10 @@ jobs:
           status: FAILED
 
   rally-tracks-compat:
-    needs: filter-pr-changes
+    needs: 
+      - filter-pr-changes
+      - determine-revision
+
     strategy:
       fail-fast: false
       matrix:
@@ -119,8 +141,8 @@ jobs:
       - run: echo "JAVA11_HOME=$JAVA_HOME_11_X64" >> $GITHUB_ENV
       - name: "Install dependencies"
         run: python -m pip install .[develop]
-      - name: "Run tests ${{ needs.filter-pr-changes.outputs.track_filter }}"
-        run: hatch -v -e it run test ${{ needs.filter-pr-changes.outputs.track_filter }}
+      - name: "Run tests${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }}"
+        run: hatch -v -e it run test${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }}
         timeout-minutes: 120
         env:
           # elastic/endpoint fetches assets from GitHub, authenticate to avoid

@@ -32,11 +32,12 @@ python -m pip install .[develop]
 
 echo "--- Track filter modification"
 
+CHANGED_FILES=$(git diff --name-only origin/master...HEAD)
+
 if [[ -z "$CHANGED_FILES" ]]; then
     echo "No changed files detected between origin/master and HEAD. Running full CI"
     TRACK_FILTER_ARG=""
 else
-    CHANGED_FILES=$(git diff --name-only origin/master...HEAD)
     readarray -t changed_files_arr <<< "$CHANGED_FILES"
     CHANGED_TOP_LEVEL_DIRS=$(printf '%s\n' "$CHANGED_FILES" | awk -F/ '/\//{print $1}' | sort -u | paste -sd, -)
     CHANGED_TOP_LEVEL_DIRS=${CHANGED_TOP_LEVEL_DIRS%,}

@@ -37,9 +37,6 @@ readarray -t changed_files_arr <<< "$CHANGED_FILES"
 
 if [[ -z "$CHANGED_FILES" ]]; then
     echo "No changed files detected between origin/master and HEAD. Running full CI"
-    CHANGED_TOP_LEVEL_DIRS=""
-    changed_dirs_arr=()
-    all_changed_arr=()
     TRACK_FILTER_ARG=""
 else
     CHANGED_TOP_LEVEL_DIRS=$(printf '%s\n' "$CHANGED_FILES" | awk -F/ '/\//{print $1}' | sort -u | paste -sd, -)

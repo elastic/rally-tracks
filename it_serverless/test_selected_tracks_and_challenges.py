@@ -49,7 +49,6 @@ class TestTrackRepository:
     ]
 
     skip_challenges = {
-        "nyc_taxis": ["esql"],
         "tsdb": ["downsample"],
         "tsdb_k8s_queries": ["esql"],
     }

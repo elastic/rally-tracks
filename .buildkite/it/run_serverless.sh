@@ -33,26 +33,33 @@ python -m pip install .[develop]
 echo "--- Track filter modification"
 
 CHANGED_FILES=$(git diff --name-only origin/master...HEAD)
-readarray -t changed_files_arr <<< "$CHANGED_FILES"
 
-CHANGED_TOP_LEVEL_DIRS=$(echo "$CHANGED_FILES" | grep '/' | awk -F/ '{print $1}' | sort -u | paste -sd, -)
-CHANGED_TOP_LEVEL_DIRS=${CHANGED_TOP_LEVEL_DIRS%,}
-IFS=',' read -ra changed_dirs_arr <<< "$CHANGED_TOP_LEVEL_DIRS"
+if [[ -z "$CHANGED_FILES" ]]; then
+    echo "No changed files detected between origin/master and HEAD. Running full CI"
+    TRACK_FILTER_ARG=""
+else
+    readarray -t changed_files_arr <<< "$CHANGED_FILES"
+    CHANGED_TOP_LEVEL_DIRS=$(printf '%s\n' "$CHANGED_FILES" | awk -F/ '/\//{print $1}' | sort -u | paste -sd, -)
+    CHANGED_TOP_LEVEL_DIRS=${CHANGED_TOP_LEVEL_DIRS%,}
+    IFS=',' read -ra changed_dirs_arr <<< "$CHANGED_TOP_LEVEL_DIRS"
 
-all_changed_arr=("${changed_files_arr[@]}" "${changed_dirs_arr[@]}")
+    all_changed_arr=("${changed_files_arr[@]}" "${changed_dirs_arr[@]}")
 
-TRACK_FILTER_ARG="--track-filter=${CHANGED_TOP_LEVEL_DIRS}"
-
-# If any changes match one of the RUN_FULL_CI_WHEN_CHANGED paths, run full CI
-for static_path in "${RUN_FULL_CI_WHEN_CHANGED[@]}"; do
-    for changed in "${all_changed_arr[@]}"; do
-        if [[ "$static_path" == "$changed" ]]; then
-            echo "Matched '$static_path' in changed files/dirs. Running full CI."
-            TRACK_FILTER_ARG=""
-            break 2
-        fi
+    TRACK_FILTER_ARG=" --track-filter=${CHANGED_TOP_LEVEL_DIRS}"
+    
+    # If any changes match one of the RUN_FULL_CI_WHEN_CHANGED paths, run full CI
+    for static_path in "${RUN_FULL_CI_WHEN_CHANGED[@]}"; do
+        for changed in "${all_changed_arr[@]}"; do
+            if [[ "$static_path" == "$changed" ]]; then
+                echo "Matched '$static_path' in changed files/dirs. Running full CI."
+                TRACK_FILTER_ARG=""
+                break 2
+            fi
+        done
     done
-done
-echo "--- Run IT serverless test \"$TEST_NAME\" $TRACK_FILTER_ARG :pytest:"
+fi
 
-hatch -v -e it_serverless run $TEST_NAME $TRACK_FILTER_ARG
+
+echo "--- Run IT serverless test \"$TEST_NAME\"$TRACK_FILTER_ARG :pytest:"
+
+hatch -v -e it_serverless run $TEST_NAME$TRACK_FILTER_ARG

@@ -6,7 +6,8 @@ build-backend = "hatchling.build"
 develop = [
     "hatch==1.7.0",
     "hatchling==1.18.0",
-    "black==23.3.0",
+    "click<8.3.0", # fix to a pre 8.3.0 version until https://github.com/pypa/hatch/issues/2050 resolved
+    "black==24.10.0",
     "isort==5.12.0",
     "pre-commit==3.3.3",
     "pip==22.2",
@@ -22,7 +23,7 @@ source = "vcs"
 name = "rally-tracks"
 readme = "README.md"
 dynamic = ["version"]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -47,13 +48,7 @@ extra-dependencies = [
 test = "pytest {args}"
 
 [tool.hatch.envs.it.scripts]
-<<<<<<< HEAD
-test = "pytest it --log-cli-level=INFO --distribution-version=8.15.5"
-||||||| parent of 714442d (Tests tracks selectively based on PR changes (#858))
-test = "pytest it --log-cli-level=INFO"
-=======
 test = "pytest it --log-cli-level=INFO {args}"
->>>>>>> 714442d (Tests tracks selectively based on PR changes (#858))
 
 [tool.hatch.envs.it_serverless.scripts]
 test_user = "pytest -s it_serverless --log-cli-level=INFO {args}"
@@ -72,7 +67,7 @@ markers = [
 
 [tool.black]
 line-length = 140
-target-version = ['py38']
+target-version = ['py310', 'py311', 'py312', 'py313']
 
 [tool.isort]
 profile = 'black'

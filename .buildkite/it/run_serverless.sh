@@ -32,7 +32,7 @@ python -m pip install .[develop]
 
 echo "--- Track filter modification"
 
-CHANGED_FILES=$(git diff --name-only upstream/master...HEAD)
+CHANGED_FILES=$(git diff --name-only origin/master...HEAD)
 readarray -t changed_files_arr <<< "$CHANGED_FILES"
 
 if [[ -z "$CHANGED_FILES" ]]; then
@@ -65,4 +65,4 @@ fi
 
 echo "--- Run IT serverless test \"$TEST_NAME\"$TRACK_FILTER_ARG :pytest:"
 
-# hatch -v -e it_serverless run $TEST_NAME$TRACK_FILTER_ARG
+hatch -v -e it_serverless run $TEST_NAME$TRACK_FILTER_ARG

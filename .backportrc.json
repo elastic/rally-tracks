@@ -10,7 +10,8 @@
     "backport"
   ],
   "branchLabelMapping": {
-    "^backport-to-(.+)$": "$1"
+    "^v(\\d{1,2})$" : "$1",
+    "^v(\\d{1,2}).(\\d{1,2})$" : "$1.$2"
   },
   "autoMerge": true,
   "autoMergeMethod": "squash",

@@ -352,6 +352,21 @@
       "template-path": "component_template"
     },
     {
+      "name": "logs.child1@stream.layer",
+      "template": "./templates/component/logs.child1@stream.layer.json",
+      "template-path": "component_template"
+    },
+    {
+      "name": "logs.child2@stream.layer",
+      "template": "./templates/component/logs.child2@stream.layer.json",
+      "template-path": "component_template"
+    },
+    {
+      "name": "logs.child3@stream.layer",
+      "template": "./templates/component/logs.child3@stream.layer.json",
+      "template-path": "component_template"
+    },
+    {
         "name": "track-custom-mappings",
         "template": "./templates/component/track-custom-mappings.json"
     },
@@ -497,6 +512,27 @@
       "index-pattern": "logs",
       "delete-matching-indices": false,
       "template": "./templates/composable/logs@stream.json",
+      "template-path": "index_template"
+    },
+    {
+      "name": "logs.child1@stream",
+      "index-pattern": "logs.child1",
+      "delete-matching-indices": false,
+      "template": "./templates/composable/logs.child1@stream.json",
+      "template-path": "index_template"
+    },
+    {
+      "name": "logs.child2@stream",
+      "index-pattern": "logs.child2",
+      "delete-matching-indices": false,
+      "template": "./templates/composable/logs.child2@stream.json",
+      "template-path": "index_template"
+    },
+    {
+      "name": "logs.child3@stream",
+      "index-pattern": "logs.child3",
+      "delete-matching-indices": false,
+      "template": "./templates/composable/logs.child3@stream.json",
       "template-path": "index_template"
     }
   ],

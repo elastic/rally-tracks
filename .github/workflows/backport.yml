@@ -18,6 +18,12 @@ jobs:
         continue-on-error: true
         with:
           github_token: ${{ secrets.BACKPORT_TOKEN }}
+      
+      - uses: actions/checkout@v4
+      - name: Label PR if needed
+        run: python .github/scripts/backport-pending.py
+        env:
+          label_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Info log
         if: ${{ success() }}

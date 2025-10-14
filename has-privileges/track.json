@@ -1,0 +1,19 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 1,
+  "description": "has-privileges test data is automatically generated",
+  "indices": [ ],
+  "corpora": [
+    {
+      "name": "has-privileges",
+      "base-url": "https://rally-tracks.elastic.co/has-privileges",
+      "documents": [ ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

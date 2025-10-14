@@ -21,33 +21,7 @@
               }
             },
             {
-              "pipeline": {
-                "name": "logs@json-pipeline",
-                "ignore_missing_pipeline": true
-              }
-            },
-            {
-              "dot_expander": {
-                "field": "*",
-                "ignore_failure": true
-              }
-            },
-            {
               "normalize_for_stream": {}
-            },
-            {
-              "dot_expander": {
-                "path": "resource.attributes",
-                "field": "*",
-                "ignore_failure": true
-              }
-            },
-            {
-              "dot_expander": {
-                "path": "attributes",
-                "field": "*",
-                "ignore_failure": true
-              }
             },
             {
               "script": {

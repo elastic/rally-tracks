@@ -138,43 +138,36 @@ def main() -> int:
     # Save and print the initial parameters
     lookback_days = int(os.environ.get("LOOKBACK_DAYS", "7"))
     age_days = int(os.environ.get("PENDING_LABEL_AGE_DAYS", "7"))
-    print(f"[reminder] Parameters: LOOKBACK_DAYS={lookback_days} PENDING_LABEL_AGE_DAYS={age_days}")
     now = dt.datetime.now(dt.timezone.utc)
     since = now - dt.timedelta(days=lookback_days)
     threshold = now - dt.timedelta(days=age_days)
+    print(f"[reminder] Parameters: LOOKBACK_DAYS={lookback_days} PENDING_LABEL_AGE_DAYS={age_days}")
     print(f"[reminder] now={now.isoformat()} since(lookback start)={since.isoformat()} threshold(remind if before)={threshold.isoformat()}")
 
     # Process merged PRs updated since lookback_days
     for merged_pr in list_prs(f"repo:{repo} is:pr is:merged", since):
-        try: 
-            number = merged_pr.get("number") or int(merged_pr.get("url", "/").rstrip("/").split("/")[-1])
-
-            pr = get_pr(repo, number)
-            # We have already filtered for is:merged, but double-check merged_at field.
-            if not pr.get("merged_at"):
-                print(f"[reminder]  PR #{number}: Skipped because merged_at field is missing")
-                continue
-
-            labels = pr.get("labels", [])
-            # If pending label is missing, skip.
-            # We don't check for version labels, since we want to run the reminder logic regardless of the outcome.
+        try:
+            labels = merged_pr.get("labels", [])
+            # Skip if no pending label
             if not has_pending_label(labels):
                 continue
-            
-            author = pr.get("user", {}).get("login", "PR author")
+
+            author = merged_pr.get("user", {}).get("login", "PR author")
+            number = merged_pr.get("number") or int(merged_pr.get("url", "/").rstrip("/").split("/")[-1])
             comments = get_issue_comments(repo, number)
             prev_time = last_reminder_time(comments)
-            # If both pending and version labels are present, check last reminder time
+            # If pending label is present, check last reminder time.
             if prev_time is None:
                 post_comment(repo, number, f"{COMMENT_MARKER}\n@{author}\n{REMINDER_BODY}")
-                print(f"[reminder]  PR #{number}: Could not fetch last reminder comment, posted initial reminder")
+                print(f"[reminder]  PR #{number}: Posted initial reminder (no prior marker)")
             elif prev_time < threshold:
                 post_comment(repo, number, f"{COMMENT_MARKER}\n@{author}\n{REMINDER_BODY}")
                 delta = (threshold - prev_time).days
-                print(f"[reminder]  PR #{number}: Posted reminder, delta {delta}")
+                print(f"[reminder]  PR #{number}: Posted follow-up reminder, delta {delta}")
             else:
                 print(f"[reminder]  PR #{number}: Cooling period not elapsed ({prev_time} > threshold) -> skip")
         except Exception as ex:
+            # Error handling is per-PR to continue processing others, as this job makes the necessary API calls to avoid action duplication.
             print(f"::error:: PR #{number}: Unexpected error: {ex}", file=sys.stderr)
             continue
     return 0

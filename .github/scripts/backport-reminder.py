@@ -102,6 +102,7 @@ def has_pending_label(labels: List[Dict[str, Any]]) -> bool:
 
 def last_reminder_time(comments: List[Dict[str, Any]]) -> dt.datetime | None:
     """Return timestamp of the newest reminder comment (first match in descending order)."""
+
     def comment_ts(c: Dict[str, Any]) -> dt.datetime:
         ts_raw = c.get("created_at") or c.get("updated_at")
         if not ts_raw:

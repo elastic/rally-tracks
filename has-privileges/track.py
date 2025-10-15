@@ -33,7 +33,7 @@ async def create_roles_and_users(es, params):
             {
                 "names": [generate_random_name()],
                 "privileges": random.sample(["read", "write", "delete", "create"], k=2)
-            } for _ in range(8)
+            } 
         ]
         cluster_privileges = random.sample(["all", "monitor", "manage"], k=2)
         selected_spaces = random.sample(spaces, k=min(5, len(spaces)))
@@ -80,7 +80,7 @@ def get_and_increment():
 
 async def has_privileges(es, params):
     user_id = random.randint(1, 99)
-    spaces = [f"space:space{i}" for i in random.sample(range(100), k=5)]
+    spaces = [f"space:space{i}" for i in random.sample(range(100), k=1)]
     await es.options(basic_auth=("user_" + str(user_id), "password")).security.has_privileges(
         body={
             "cluster": [

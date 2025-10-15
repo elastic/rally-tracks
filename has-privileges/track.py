@@ -81,7 +81,7 @@ def get_and_increment():
 async def has_privileges(es, params):
     user_id = random.randint(1, 99)
     spaces = [f"space:space{i}" for i in random.sample(range(100), k=5)]
-    await es.options(basic_auth=("user_" + str(user_id), "password")).has_privileges(
+    await es.options(basic_auth=("user_" + str(user_id), "password")).security.has_privileges(
         body={
             "cluster": [
             "manage_security",

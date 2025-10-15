@@ -23,7 +23,7 @@ jobs:
       - name: Label PR if needed
         run: python .github/scripts/backport-pending.py
         env:
-          label_token: ${{ secrets.GITHUB_TOKEN }}
+          label_token: ${{ secrets.BACKPORT_TOKEN }}
 
       - name: Info log
         if: ${{ success() }}

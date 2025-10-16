@@ -1,6 +1,9 @@
 name: Backport reminder
 
 on:
+  pull_request_target:
+    branches: [master]
+    types: [closed]
   schedule:
     - cron: '0 6 * * *'  # Every day at 06:00 UTC
   workflow_dispatch:
@@ -14,6 +17,9 @@ on:
         required: false
         default: '7'
 
+env:
+    BACKPORT_TOKEN: ${{ secrets.BACKPORT_TOKEN }}
+
 jobs:
   reminder:
     runs-on: ubuntu-latest
@@ -24,13 +30,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+      - name: Add Backport label
+        run: python .github/scripts/backport.py label --event-name ${{ github.event_name }}
       - name: Run reminder
-        env:
-          BACKPORT_TOKEN: ${{ secrets.BACKPORT_TOKEN }}
-          LOOKBACK_DAYS: ${{ github.event.inputs.lookback_days || '90' }} # We check PRs LOOKBACK_DAYS old
-          PENDING_LABEL_AGE_DAYS: ${{ github.event.inputs.pending_label_age_days || '7' }} # We only remind if the pending label is at least PENDING_LABEL_AGE_DAYS old
-        run: python .github/scripts/backport-reminder.py
+        run: python .github/scripts/backport.py remind --event-name ${{ github.event_name }} --lookback-days ${{ github.event.inputs.lookback_days || '90' }} --pending-label-age-days ${{ github.event.inputs.pending_label_age_days || '7' }}

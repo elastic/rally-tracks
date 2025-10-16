@@ -8,8 +8,8 @@ from dataclasses import dataclass
 from typing import List
 
 VERSION_LABEL_RE = re.compile(r"^v\d{1,2}$|(^v\d{1,2}\.\d{1,2}$)")
-PENDING_LABEL = "Backport Pending"
-PENDING_LABEL_COLOR = "ffc600"
+PENDING_LABEL = "backport pending"
+PENDING_LABEL_COLOR = "fff2bf"
 
 
 @dataclass

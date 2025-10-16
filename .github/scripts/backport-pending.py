@@ -43,9 +43,9 @@ def needs_pending_label(info: PRInfo) -> bool:
 
 def add_label(pr_number: int, label: str) -> None:
     repo = os.environ.get("GITHUB_REPOSITORY")
-    token = os.environ.get("label_token")
+    token = os.environ.get("BACKPORT_TOKEN")
     if not repo or not token:
-        print("::error::Missing GITHUB_REPOSITORY or label_token", file=sys.stderr)
+        print("::error::Missing GITHUB_REPOSITORY or BACKPORT_TOKEN", file=sys.stderr)
         sys.exit(1)
     owner, repo_name = repo.split("/", 1)
     # First ensure the label exists (create or update color/description)
@@ -102,7 +102,7 @@ Label a PR with 'Backport pending' if it has no version label.
 Expected environment:
   GITHUB_EVENT_PATH: Path to the event JSON (GitHub sets this automatically)
   GITHUB_REPOSITORY: owner/repo
-  label_token: token with repo:issues scope (use label_token or a PAT)
+  BACKPORT_TOKEN: token with repo:issues scope (use BACKPORT_TOKEN or a PAT)
 
 This script is idempotent: if the PR already has a version label (vX.Y) or already
 has the 'Backport Pending' label, it exits without error.

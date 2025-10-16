@@ -33,7 +33,7 @@ async def create_roles_and_users(es, params):
             {
                 "names": [generate_random_name()],
                 "privileges": random.sample(["read", "write", "delete", "create"], k=2)
-            } 
+            } for _ in range(10)
         ]
         cluster_privileges = random.sample(["all", "monitor", "manage"], k=2)
         selected_spaces = random.sample(spaces, k=min(5, len(spaces)))

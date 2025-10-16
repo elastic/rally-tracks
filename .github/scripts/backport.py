@@ -336,28 +336,32 @@ Exit codes: 0 success / 1 error. Env validated once at startup.
 
 
 def main(argv: List[str] | None = None) -> int:
-	args = parse_args(argv or sys.argv[1:])
-	if getattr(args, "token", None):
-		CONFIG["token"] = args.token
-	if getattr(args, "repo", None):
-		CONFIG["repo"] = args.repo
-	lookback = getattr(args, "lookback_days", None)
-	try:
-		require_mandatory_vars()
-		prefetched = prefetch_prs(args.event_name, lookback)
-		if args.command == "label":
-			return run_label(prefetched)
-		if args.command == "remind":
-			return run_remind(prefetched, args.pending_label_age_days, args.lookback_days)
-		raise NotImplementedError(f"Unknown command {args.command}")
-	except NotImplementedError as nie:
-		print(f"::error::Not implemented error: {nie}", file=sys.stderr)
-	except RuntimeError as re:
-		print(f"::error::Runtime error: {re}", file=sys.stderr)
-		return 1
-	except Exception as e:
-		print(f"::error::Unhandled error: {e}", file=sys.stderr)
-		return 1
+    try:
+        args = parse_args(argv or sys.argv[1:])
+    except Exception as e:
+        print(f"::error::Argument parsing error: \nArguments: {sys.argv or sys.argv[1:]}\n{e}", file=sys.stderr)
+        return 1
+    if getattr(args, "token", None):
+        CONFIG["token"] = args.token
+    if getattr(args, "repo", None):
+        CONFIG["repo"] = args.repo
+    lookback = getattr(args, "lookback_days", None)
+    try:
+        require_mandatory_vars()
+        prefetched = prefetch_prs(args.event_name, lookback)
+        if args.command == "label":
+            return run_label(prefetched)
+        if args.command == "remind":
+            return run_remind(prefetched, args.pending_label_age_days, args.lookback_days)
+        raise NotImplementedError(f"Unknown command {args.command}")
+    except NotImplementedError as nie:
+        print(f"::error::Not implemented error: {nie}", file=sys.stderr)
+    except RuntimeError as re:
+        print(f"::error::Runtime error: {re}", file=sys.stderr)
+        return 1
+    except Exception as e:
+        print(f"::error::Unhandled error: {e}", file=sys.stderr)
+        return 1
 
 
 if __name__ == "__main__":

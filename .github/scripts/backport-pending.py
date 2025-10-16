@@ -16,7 +16,6 @@ PENDING_LABEL_COLOR = "fff2bf"
 class PRInfo:
     number: int
     labels: List[str]
-    merged: bool
 
 
 def load_event() -> dict:
@@ -33,13 +32,13 @@ def extract_pr(event: dict) -> PRInfo | None:
     if not pr:
         return None
     labels = [lbl.get("name", "") for lbl in pr.get("labels", [])]
-    return PRInfo(number=pr["number"], labels=labels, merged=pr.get("merged", False))
+    return PRInfo(number=pr["number"], labels=labels)
 
 
 def needs_pending_label(info: PRInfo) -> bool:
     has_version_label = any(VERSION_LABEL_RE.match(l) for l in info.labels)
     has_pending = PENDING_LABEL in info.labels
-    return info.merged and (not has_version_label) and (not has_pending)
+    return not (has_version_label and has_pending)
 
 
 def add_label(pr_number: int, label: str) -> None:
@@ -53,6 +52,7 @@ def add_label(pr_number: int, label: str) -> None:
     ensure_label(owner, repo_name, token)
     url = f"https://api.github.com/repos/{owner}/{repo_name}/issues/{pr_number}/labels"
     body = json.dumps({"labels": [label]}).encode()
+    # POST adds label(s) keeping old ones
     req = urllib.request.Request(url, data=body, method="POST")
     req.add_header("Authorization", f"Bearer {token}")
     req.add_header("Accept", "application/vnd.github+json")
@@ -97,7 +97,7 @@ def ensure_label(owner: str, repo_name: str, token: str) -> None:
 
 
 """
-Label a merged PR with 'Backport pending' if it has no version label.
+Label a PR with 'Backport pending' if it has no version label.
 
 Expected environment:
   GITHUB_EVENT_PATH: Path to the event JSON (GitHub sets this automatically)
@@ -120,7 +120,7 @@ def main() -> int:
     if needs_pending_label(info):
         add_label(info.number, PENDING_LABEL)
     else:
-        print("No label needed (either merged has version label or already pending)")
+        print("No label needed (either PR has version label or already pending)")
     return 0
 
 

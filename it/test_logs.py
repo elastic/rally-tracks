@@ -41,6 +41,7 @@ def params(updates=None):
     else:
         return {**base, **updates}
 
+
 @pytest.mark.track("elastic/logs")
 class TestLogs:
     def test_logs_fails_if_assets_not_installed(self, es_cluster, rally, capsys):

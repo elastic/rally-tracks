@@ -41,6 +41,7 @@ def params(updates=None):
     else:
         return {**base, **updates}
 
+
 @pytest.mark.track("elastic/logs")
 @pytest.mark.operator_only
 class TestLogs:

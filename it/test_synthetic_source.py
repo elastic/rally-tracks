@@ -32,6 +32,7 @@ def params(updates=None):
     else:
         return {**base, **updates}
 
+
 class TestSyntheticSource:
 
     @pytest.mark.track("tsdb")

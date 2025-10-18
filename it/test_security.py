@@ -20,6 +20,7 @@ import requests
 
 pytest_rally = pytest.importorskip("pytest_rally")
 
+
 @pytest.mark.track("elastic/security")
 class TestSecurity:
     def test_security_indexing(self, es_cluster, rally):

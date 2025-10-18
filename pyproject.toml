@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 develop = [
     "hatch==1.7.0",
     "hatchling==1.18.0",
+    "click<8.3.0", # fix to a pre 8.3.0 version until https://github.com/pypa/hatch/issues/2050 resolved
     "black==24.10.0",
     "isort==5.12.0",
     "pre-commit==3.3.3",

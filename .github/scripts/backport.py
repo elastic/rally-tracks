@@ -23,11 +23,12 @@ comments on such PRs until a version label (e.g. v9.2) is added.
 Quick usage:
 	backport.py help
 	backport.py --event-name pull_request_target label
-	backport.py --repo owner/repo --token TOKEN --event-name schedule label --lookback-days 7
-	backport.py --repo owner/repo --token TOKEN --event-name workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
+	backport.py --repo owner/repo --event-name schedule label --lookback-days 7
+	backport.py --repo owner/repo --event-name workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
+    backport.py --dry-run --repo owner/repo --event-name schedule label
+    backport.py --dry-run --repo owner/repo --event-name workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
 
 Key flags:
-	--token / BACKPORT_TOKEN           GitHub token
 	--repo / GITHUB_REPOSITORY         owner/repo
 	--event-name                       pull_request_target | schedule | workflow_dispatch
 	--lookback-days N                  Days to scan (bulk modes)
@@ -65,16 +66,23 @@ GITHUB_API = "https://api.github.com"
 CONFIG: Dict[str, str | None] = {
     "token": os.environ.get("BACKPORT_TOKEN"),
     "repo": os.environ.get("GITHUB_REPOSITORY"),  # owner/repo
+    "dry_run": False,  # set by --dry-run
 }
+
+
+def is_dry_run() -> bool:
+    return bool(CONFIG.get("dry_run"))
 
 
 def require_mandatory_vars() -> None:
     """Validate critical environment / CLI inputs using CONFIG."""
     if not CONFIG.get("token"):
-        raise RuntimeError("Missing BACKPORT_TOKEN / --token")
+        raise RuntimeError("Missing BACKPORT_TOKEN from environment.")
     repo = CONFIG.get("repo")
     if not repo or not re.match(r"^[^/]+/[^/]+$", str(repo)):
-        raise RuntimeError("Missing or invalid GITHUB_REPOSITORY / --repo (expected owner/repo)")
+        raise RuntimeError("Missing or invalid GITHUB_REPOSITORY. Either set it in the environment or from --repo argument (expected owner/repo)")
+    if is_dry_run():
+        print(f"[dry-run] Dry-run set with BACKPORT_TOKEN={ '<set>' if CONFIG['token'] else '<missing>'}; Will only print GitHub API calls.", file=sys.stderr)
 
 
 # ----------------------------- Shared HTTP Helpers -----------------------------
@@ -86,6 +94,11 @@ def gh_request(path: str, method: str = "GET", body: Dict[str, Any] | None = Non
     if body is not None:
         data = json.dumps(body).encode()
     token = CONFIG.get("token")
+    # In dry-run, skip mutating requests (anything not GET) and just log.
+    if is_dry_run():
+        print(f"[dry-run] Would {method} {url} body={json.dumps(body) if body else '{}'}")
+        if method.upper() != "GET":
+            return {}
     req = urllib.request.Request(url, data=data, method=method)
     req.add_header("Authorization", f"Bearer {token}")
     req.add_header("Accept", "application/vnd.github+json")
@@ -93,6 +106,8 @@ def gh_request(path: str, method: str = "GET", body: Dict[str, Any] | None = Non
         with urllib.request.urlopen(req) as resp:
             charset = resp.headers.get_content_charset() or "utf-8"
             txt = resp.read().decode(charset)
+            if is_dry_run():
+                print(f"[dry-run] Response to {method} {url} resp:{resp.status}")
             if resp.status >= 300:
                 raise RuntimeError(f"HTTP {resp.status}: {txt}")
             return json.loads(txt) if txt.strip() else {}
@@ -144,6 +159,8 @@ def ensure_label() -> None:
     repo = CONFIG.get("repo")
     label_api = f"/repos/{repo}/labels/{PENDING_LABEL_CANONICAL.replace(' ', '%20')}"
     try:
+        if is_dry_run():
+            print(f"[dry-run] Ensure label '{PENDING_LABEL_CANONICAL}' exists")
         gh_request(label_api)
         return  # exists
     except Exception:
@@ -156,6 +173,8 @@ def ensure_label() -> None:
 
 
 def add_label(pr_number: int, label: str) -> None:
+    if is_dry_run():
+        print(f"[dry-run] Adds label '{label}' to PR #{pr_number}")
     ensure_label()
     repo = CONFIG.get("repo")
     issues_labels_api = f"/repos/{repo}/issues/{pr_number}/labels"
@@ -164,6 +183,9 @@ def add_label(pr_number: int, label: str) -> None:
 
 
 def remove_label(pr_number: int, label: str) -> None:
+    if is_dry_run():
+        print(f"[dry-run] Would remove label '{label}' from PR #{pr_number}")
+        return
     repo = CONFIG.get("repo")
     issues_labels_api = f"/repos/{repo}/issues/{pr_number}/labels"
     gh_request(issues_labels_api, method="DELETE", body={"labels": [label]})
@@ -233,6 +255,9 @@ def get_issue_comments(number: int) -> List[Dict[str, Any]]:
 
 
 def post_comment(number: int, body: str) -> None:
+    if is_dry_run():
+        preview = body.splitlines()[0]
+        print(f"[dry-run] Posts comment to PR #{number}: {preview}...")
     repo = CONFIG.get("repo")
     gh_request(f"/repos/{repo}/issues/{number}/comments", method="POST", body={"body": body})
 
@@ -304,6 +329,11 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
             required=False,
             help="GitHub event name",
         )
+        parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Simulate actions without modifying GitHub state",
+        )
         sub = parser.add_subparsers(dest="command", required=True)
 
         p_label = sub.add_parser("label", help="Add Backport Pending label to merged PRs without version label")
@@ -368,6 +398,8 @@ def main(argv: List[str] | None = None) -> int:
     try:
         # Parse Args step
         args = parse_args(argv or sys.argv[1:])
+        if hasattr(args, "dry_run"):
+            CONFIG["dry_run"] = bool(args.dry_run)
         if args.command == "help":
             print((__doc__ or "").strip())
             return 0

@@ -1,0 +1,36 @@
+{
+  "name": "delete-index",
+  "operation": {
+    "operation-type": "delete-index"
+  }
+},
+{
+  "name": "create-index",
+  "operation": {
+    "operation-type": "create-index"
+  }
+},
+{
+  "name": "check-cluster-health",
+  "operation": "check-cluster-health"
+},
+{
+"parallel": {
+"ramp-up-time-period": {{ warmup_rampup_time_period | default(600) }},
+"warmup-time-period": {{warmup_warmup_time_period | default(600)}},
+{% if pre_index_duration is defined %}
+"time-period": {{pre_index_duration}},
+{% endif %}
+"tasks": [
+{
+"operation": "index_base_corpora",
+"clients": {{initial_ingest_clients | default(96)}}
+}
+]
+}
+},
+{
+"operation": "index_raw",
+"clients": {{runtime_bulk_indexing_clients}}
+}
+

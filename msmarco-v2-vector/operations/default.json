@@ -19,6 +19,30 @@
   "ingest-percentage": {{initial_indexing_ingest_percentage | default(100)}}
 },
 {
+"name": "index_base_corpora",
+"corpora": "msmarco-v2-initial-indexing",
+"operation-type": "bulk",
+"bulk-size": {{bulk_size | default(100)}},
+"ingest-percentage": {{ingest_percentage | default(5)}}
+{%- if conflicts is defined %},
+"conflicts": "{{p_conflicts}}",
+"on-conflict": "{{p_on_conflict}}",
+"conflict-probability": {{p_conflict_probability}}
+{%- endif %}
+},
+{
+"name": "index_raw",
+"corpora": ["msmarco-v2-parallel-indexing", "msmarco-v2-initial-indexing"],
+"operation-type": "bulk",
+"bulk-size": {{bulk_size | default(100)}},
+"ingest-percentage": {{ingest_percentage | default(100)}}
+{%- if conflicts is defined %},
+"conflicts": "{{p_conflicts}}",
+"on-conflict": "{{p_on_conflict}}",
+"conflict-probability": {{p_conflict_probability}}
+{%- endif %}
+},
+{
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
   "corpora": "msmarco-v2-parallel-indexing",

@@ -31,6 +31,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Add Backport label
-        run: python .github/scripts/backport.py label --event-name ${{ github.event_name }} --lookback-days ${{ github.event.inputs.lookback_days }}
+        run: python .github/scripts/backport.py label --callback ${{ github.event_name }} --lookback-days ${{ github.event.inputs.lookback_days }}
       - name: Run reminder
-        run: python .github/scripts/backport.py remind --event-name ${{ github.event_name }} --lookback-days ${{ github.event.inputs.lookback_days }} --pending-label-age-days ${{ github.event.inputs.pending_label_age_days }}
+        run: python .github/scripts/backport.py remind --callback ${{ github.event_name }} --lookback-days ${{ github.event.inputs.lookback_days }} --pending-label-age-days ${{ github.event.inputs.pending_label_age_days }}

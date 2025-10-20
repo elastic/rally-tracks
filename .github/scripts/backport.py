@@ -22,18 +22,18 @@ comments on such PRs until a version label (e.g. v9.2) is added.
 
 Quick usage:
 	backport.py help
-	backport.py --event-name pull_request_target label
-	backport.py --repo owner/repo --event-name schedule label --lookback-days 7
-	backport.py --repo owner/repo --event-name workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
-    backport.py --dry-run --repo owner/repo --event-name schedule label
-    backport.py --dry-run --repo owner/repo --event-name workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
+	backport.py --callback pull_request_target label
+	backport.py --repo owner/repo --callback schedule label --lookback-days 7
+	backport.py --repo owner/repo --callback workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
+    backport.py --dry-run --repo owner/repo --callback schedule label
+    backport.py --dry-run --repo owner/repo --callback workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
 
-Key flags:
-	--repo / GITHUB_REPOSITORY         owner/repo
-	--event-name                       pull_request_target | schedule | workflow_dispatch
-	--lookback-days N                  Days to scan (bulk modes)
-	--pending-label-age-days M         Days between reminders
-	--remove                           Remove pending label (label command)
+Flags:
+	--repo                               owner/repo
+	--callback                           pull_request_target | schedule | workflow_dispatch
+	--lookback-days N                    Days to scan (bulk modes)
+	--pending-label-age-days M           Days between reminders
+    --remove                             Remove pending label (label command)
 
 Logic:
 	Add label when: no version label (regex vX(.Y)) and no pending label.
@@ -46,6 +46,7 @@ Exit codes: 0 success / 1 error.
 import argparse
 import datetime as dt
 import json
+import logging
 import os
 import re
 import sys
@@ -67,6 +68,8 @@ CONFIG: Dict[str, str | None] = {
     "token": os.environ.get("BACKPORT_TOKEN"),
     "repo": os.environ.get("GITHUB_REPOSITORY"),  # owner/repo
     "dry_run": False,  # set by --dry-run
+    "log_level": "INFO",  # INFO by default, set to DEBUG if --debug passed
+    "command": None,  # set post-parse for logging
 }
 
 
@@ -76,13 +79,41 @@ def is_dry_run() -> bool:
 
 def require_mandatory_vars() -> None:
     """Validate critical environment / CLI inputs using CONFIG."""
-    if not CONFIG.get("token"):
+    if not CONFIG.get("token") and not is_dry_run():
         raise RuntimeError("Missing BACKPORT_TOKEN from environment.")
     repo = CONFIG.get("repo")
     if not repo or not re.match(r"^[^/]+/[^/]+$", str(repo)):
-        raise RuntimeError("Missing or invalid GITHUB_REPOSITORY. Either set it in the environment or from --repo argument (expected owner/repo)")
-    if is_dry_run():
-        print(f"[dry-run] Dry-run set with BACKPORT_TOKEN={ '<set>' if CONFIG['token'] else '<missing>'}; Will only print GitHub API calls.", file=sys.stderr)
+        raise RuntimeError("Missing or invalid GITHUB_REPOSITORY. Either set it or pass --repo (owner/repo)")
+
+
+def configure(args: argparse.Namespace) -> None:
+    """Populate CONFIG, initialize logging, and validate required inputs.
+
+    This centralizes setup so other entry points (tests, future subcommands)
+    can reuse consistent initialization semantics.
+    """
+    CONFIG["dry_run"] = bool(getattr(args, "dry_run", False))
+    CONFIG["log_level"] = "DEBUG" if getattr(args, "debug", False) else "INFO"
+    CONFIG["command"] = getattr(args, "command", None)
+    if getattr(args, "repo", None):
+        CONFIG["repo"] = args.repo
+    setup_logging(CONFIG["log_level"])
+    require_mandatory_vars()
+
+
+# ----------------------------- Logging -----------------------------
+logger = logging.getLogger("backport")
+
+
+def setup_logging(level: str) -> None:
+    lvl = logging.DEBUG if level.upper() == "DEBUG" else logging.INFO
+    backport_formatter = logging.Formatter(
+        f"[%(asctime)s] %(levelname)s [{CONFIG.get("command")}{" (dry-run)" if is_dry_run() else ""}]: %(message)s", "%Y-%m-%d %H:%M:%S"
+    )
+    handler = logging.StreamHandler(stream=sys.stdout)
+    handler.setFormatter(backport_formatter)
+    logger.addHandler(handler)
+    logger.setLevel(lvl)
 
 
 # ----------------------------- Shared HTTP Helpers -----------------------------
@@ -96,7 +127,7 @@ def gh_request(path: str, method: str = "GET", body: Dict[str, Any] | None = Non
     token = CONFIG.get("token")
     # In dry-run, skip mutating requests (anything not GET) and just log.
     if is_dry_run():
-        print(f"[dry-run] Would {method} {url} body={json.dumps(body) if body else '{}'}")
+        logger.debug(f"Would {method} {url} body={json.dumps(body) if body else '{}'}")
         if method.upper() != "GET":
             return {}
     req = urllib.request.Request(url, data=data, method=method)
@@ -107,7 +138,7 @@ def gh_request(path: str, method: str = "GET", body: Dict[str, Any] | None = Non
             charset = resp.headers.get_content_charset() or "utf-8"
             txt = resp.read().decode(charset)
             if is_dry_run():
-                print(f"[dry-run] Response to {method} {url} resp:{resp.status}")
+                logger.debug(f"Response {resp.status} {method} {url}")
             if resp.status >= 300:
                 raise RuntimeError(f"HTTP {resp.status}: {txt}")
             return json.loads(txt) if txt.strip() else {}
@@ -136,7 +167,7 @@ class PRInfo:
 def load_event() -> dict:
     path = os.environ.get("GITHUB_EVENT_PATH")
     if not path or not os.path.exists(path):
-        print("::warning::GITHUB_EVENT_PATH not set or file missing; nothing to do", file=sys.stderr)
+        logger.warning("GITHUB_EVENT_PATH not set or file missing; nothing to do")
         return {}
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -159,8 +190,6 @@ def ensure_label() -> None:
     repo = CONFIG.get("repo")
     label_api = f"/repos/{repo}/labels/{PENDING_LABEL_CANONICAL.replace(' ', '%20')}"
     try:
-        if is_dry_run():
-            print(f"[dry-run] Ensure label '{PENDING_LABEL_CANONICAL}' exists")
         gh_request(label_api)
         return  # exists
     except Exception:
@@ -169,27 +198,22 @@ def ensure_label() -> None:
     try:
         gh_request(create_api, method="POST", body={"name": PENDING_LABEL_CANONICAL, "color": PENDING_LABEL_COLOR})
     except Exception as e:
-        print(f"::warning::Could not create label: {e}")
+        logger.warning(f"Could not create label: {e}")
 
 
 def add_label(pr_number: int, label: str) -> None:
-    if is_dry_run():
-        print(f"[dry-run] Adds label '{label}' to PR #{pr_number}")
     ensure_label()
     repo = CONFIG.get("repo")
     issues_labels_api = f"/repos/{repo}/issues/{pr_number}/labels"
     gh_request(issues_labels_api, method="POST", body={"labels": [label]})
-    print(f"[label] Added label '{label}' to PR #{pr_number}")
+    logger.info(f"Added label '{label}' to PR #{pr_number}")
 
 
 def remove_label(pr_number: int, label: str) -> None:
-    if is_dry_run():
-        print(f"[dry-run] Would remove label '{label}' from PR #{pr_number}")
-        return
     repo = CONFIG.get("repo")
     issues_labels_api = f"/repos/{repo}/issues/{pr_number}/labels"
     gh_request(issues_labels_api, method="DELETE", body={"labels": [label]})
-    print(f"[label] Removed label '{label}' to PR #{pr_number}")
+    logger.info(f"Removed label '{label}' from PR #{pr_number}")
 
 
 def run_label(prefetched_prs: List[Dict[str, Any]], remove: bool) -> int:
@@ -208,9 +232,9 @@ def run_label(prefetched_prs: List[Dict[str, Any]], remove: bool) -> int:
             elif needs_pending_label(info):
                 add_label(info.number, PENDING_LABEL_CANONICAL)
             else:
-                print(f"[label] PR #{info.number}: No label action needed")
+                logger.debug(f"PR #{info.number}: No label action needed")
         except Exception as e:
-            print(f"::error::[label] PR #{pr.get('number','unknown')}: {e}", file=sys.stderr)
+            logger.error(f"[label] PR #{pr.get('number','unknown')}: {e}")
             rc = 1
     return rc
 
@@ -221,6 +245,8 @@ REMINDER_BODY = "A backport is pending for this PR.\n\n" "Please add an appropri
 
 
 def list_prs(filter_q: str, since: dt.datetime) -> Iterable[Dict[str, Any]]:
+    if is_dry_run():
+        logger.info(f"Would list PRs with filter '{filter_q}' since {since.isoformat()}")
     q_date = since.strftime("%Y-%m-%d")
     page = 1
     while True:
@@ -257,7 +283,7 @@ def get_issue_comments(number: int) -> List[Dict[str, Any]]:
 def post_comment(number: int, body: str) -> None:
     if is_dry_run():
         preview = body.splitlines()[0]
-        print(f"[dry-run] Posts comment to PR #{number}: {preview}...")
+        logger.info(f"Post comment to PR #{number}: {preview}...")
     repo = CONFIG.get("repo")
     gh_request(f"/repos/{repo}/issues/{number}/comments", method="POST", body={"body": body})
 
@@ -286,8 +312,8 @@ def run_remind(prefetched_prs: List[Dict[str, Any]], pending_label_age_days: int
 
     now = dt.datetime.now(dt.timezone.utc)
     threshold = now - dt.timedelta(days=pending_label_age_days)
-    print(
-        f"[reminder] prefetched={len(prefetched_prs)} lookback_days={lookback_days} pending_label_age_days={pending_label_age_days} now={now.isoformat()} threshold={threshold.isoformat()}"
+    logger.info(
+        f"prefetched={len(prefetched_prs)} lookback_days={lookback_days} pending_label_age_days={pending_label_age_days} now={now.isoformat()} threshold={threshold.isoformat()}"
     )
     for pr in prefetched_prs:
         try:
@@ -317,26 +343,31 @@ def run_remind(prefetched_prs: List[Dict[str, Any]], pending_label_age_days: int
 # ----------------------------- CLI -----------------------------
 def parse_args(argv: List[str]) -> argparse.Namespace:
     try:
-        parser = argparse.ArgumentParser(description="Backport label & reminder utilities")
+        parser = argparse.ArgumentParser(description="Backport utilities")
         parser.add_argument(
             "--repo",
             help="Target repository in owner/repo form (overrides GITHUB_REPOSITORY env)",
             required=False,
         )
         parser.add_argument(
-            "--event-name",
+            "--callback",
             choices=["pull_request_target", "schedule", "workflow_dispatch"],
-            required=False,
-            help="GitHub event name",
+            required=True,
+            help="Mode of operation",
         )
         parser.add_argument(
             "--dry-run",
             action="store_true",
             help="Simulate actions without modifying GitHub state",
         )
+        parser.add_argument(
+            "--debug",
+            action="store_true",
+            help="Enable verbose debug logging",
+        )
         sub = parser.add_subparsers(dest="command", required=True)
 
-        p_label = sub.add_parser("label", help="Add Backport Pending label to merged PRs without version label")
+        p_label = sub.add_parser("label", help="Add backport pending label to merged PRs without version label")
         p_label.add_argument(
             "--lookback-days",
             type=int,
@@ -372,8 +403,8 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def prefetch_prs(event_name: str, lookback_days: int) -> List[Dict[str, Any]]:
-    if event_name == "pull_request_target":
+def prefetch_prs(callback: str, lookback_days: int) -> List[Dict[str, Any]]:
+    if callback == "pull_request_target":
         event = load_event()
         if event:
             pr_data = event.get("pull_request")
@@ -385,7 +416,7 @@ def prefetch_prs(event_name: str, lookback_days: int) -> List[Dict[str, Any]]:
         merged_flag = pr_data.get("merged")
         merged_at = pr_data.get("merged_at")
         if not merged_flag and not merged_at:
-            raise RuntimeError(f"[prefetch] PR #{pr_data.get('number','?')} not merged yet; skipping.")
+            raise RuntimeError(f"PR #{pr_data.get('number','?')} not merged yet; skipping.")
         return [pr_data]
     now = dt.datetime.now(dt.timezone.utc)
     since = now - dt.timedelta(days=lookback_days)
@@ -398,34 +429,31 @@ def main(argv: List[str] | None = None) -> int:
     try:
         # Parse Args step
         args = parse_args(argv or sys.argv[1:])
-        if hasattr(args, "dry_run"):
-            CONFIG["dry_run"] = bool(args.dry_run)
         if args.command == "help":
             print((__doc__ or "").strip())
             return 0
-        if getattr(args, "repo", None):
-            CONFIG["repo"] = args.repo
+        # Centralized configuration
+        configure(args)
+
         lookback = getattr(args, "lookback_days", None)
-        # Event name required only for operational commands.
-        if args.command in {"label", "remind"} and not getattr(args, "event_name", None):
-            raise RuntimeError("--event-name is required for label/remind")
-        if args.command in {"label", "remind"}:
-            require_mandatory_vars()
 
         # Prefetch PRs and run command step
-        prefetched = prefetch_prs(args.event_name, lookback) if args.command in {"label", "remind"} else []
+        prefetched = prefetch_prs(args.callback, lookback) if args.command in {"label", "remind"} else []
         if args.command == "label":
             return run_label(prefetched, args.remove)
         if args.command == "remind":
             return run_remind(prefetched, args.pending_label_age_days, args.lookback_days)
         raise NotImplementedError(f"Unknown command {args.command}")
+    except KeyError as ke:
+        logger.error(f"Missing configuration key: {ke}")
+        return 1
     except NotImplementedError as nie:
-        print(f"::error::Not implemented error: {nie}", file=sys.stderr)
+        logger.error(f"Not implemented error: {nie}")
     except RuntimeError as re:
-        print(f"::error::Runtime error: {re}", file=sys.stderr)
+        logger.error(f"Runtime error: {re}")
         return 1
     except Exception as e:
-        print(f"::error::Unhandled error: {e}", file=sys.stderr)
+        logger.error(f"Unhandled error: {e}")
         return 1
 
 

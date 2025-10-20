@@ -294,11 +294,6 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     try:
         parser = argparse.ArgumentParser(description="Backport label & reminder utilities")
         parser.add_argument(
-            "--token",
-            help="GitHub token (overrides BACKPORT_TOKEN env)",
-            required=False,
-        )
-        parser.add_argument(
             "--repo",
             help="Target repository in owner/repo form (overrides GITHUB_REPOSITORY env)",
             required=False,
@@ -376,8 +371,6 @@ def main(argv: List[str] | None = None) -> int:
         if args.command == "help":
             print((__doc__ or "").strip())
             return 0
-        if getattr(args, "token", None):
-            CONFIG["token"] = args.token
         if getattr(args, "repo", None):
             CONFIG["repo"] = args.repo
         lookback = getattr(args, "lookback_days", None)

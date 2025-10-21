@@ -43,6 +43,7 @@ Logic:
 Exit codes: 0 success / 1 error.
 """
 
+import argparse
 import datetime as dt
 import json
 import logging
@@ -87,17 +88,17 @@ def require_mandatory_vars() -> None:
         raise RuntimeError("Missing or invalid GITHUB_REPOSITORY. Either set it or pass --repo (owner/repo)")
 
 
-def configure(dry_run: bool, debug: bool, command: str | None, repo: str | None) -> None:
+def configure(args: argparse.Namespace) -> None:
     """Populate CONFIG, initialize logging, and validate required inputs.
 
     This centralizes setup so other entry points (tests, future subcommands)
     can reuse consistent initialization semantics.
     """
-    CONFIG["dry_run"] = bool(dry_run)
-    CONFIG["log_level"] = "DEBUG" if debug else "INFO"
-    CONFIG["command"] = command
-    if repo:
-        CONFIG["repo"] = repo
+    CONFIG["dry_run"] = bool(getattr(args, "dry_run", False))
+    CONFIG["log_level"] = "DEBUG" if getattr(args, "debug", False) else "INFO"
+    CONFIG["command"] = getattr(args, "command", None)
+    if getattr(args, "repo", None):
+        CONFIG["repo"] = args.repo
     setup_logging(CONFIG["log_level"])
     require_mandatory_vars()
 
@@ -342,59 +343,66 @@ def run_remind(prefetched_prs: List[Dict[str, Any]], pending_label_age_days: int
 
 
 # ----------------------------- CLI -----------------------------
-class CallbackType(click.ParamType):
-    name = "event"
-    choices = ("pull_request_target", "schedule", "workflow_dispatch")
+def parse_args(argv: List[str]) -> argparse.Namespace:
+    try:
+        parser = argparse.ArgumentParser(description="Backport utilities")
+        parser.add_argument(
+            "--repo",
+            help="Target repository in owner/repo form (overrides GITHUB_REPOSITORY env)",
+            required=False,
+        )
+        parser.add_argument(
+            "--callback",
+            choices=["pull_request_target", "schedule", "workflow_dispatch"],
+            required=True,
+            help="Mode of operation",
+        )
+        parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Simulate actions without modifying GitHub state",
+        )
+        parser.add_argument(
+            "--debug",
+            action="store_true",
+            help="Enable verbose debug logging",
+        )
+        sub = parser.add_subparsers(dest="command", required=True)
 
-    def get_metavar(self, param):  # type: ignore[override]
-        return "EVENT"
+        p_label = sub.add_parser("label", help="Add backport pending label to merged PRs without version label")
+        p_label.add_argument(
+            "--lookback-days",
+            type=int,
+            required=False,
+            default=1,
+            help="Days to look back when not pull_request_target (default: 1). Ignored for pull_request_target single PR",
+        )
+        p_label.add_argument(
+            "--remove",
+            action="store_true",
+            required=False,
+            default=False,
+            help="Removes backport pending label",
+        )
 
-    def convert(self, value, param, ctx):  # type: ignore[override]
-        if value in self.choices:
-            return value
-        self.fail(f"Invalid callback '{value}'. Choose from: {', '.join(self.choices)}", param, ctx)
+        p_remind = sub.add_parser("remind", help="Post reminders on merged PRs still pending backport")
+        p_remind.add_argument(
+            "--lookback-days",
+            type=int,
+            required=True,
+            help="Days to look back for updated merged PRs",
+        )
+        p_remind.add_argument(
+            "--pending-label-age-days",
+            type=int,
+            required=True,
+            help="Days between reminders for the same PR",
+        )
 
-
-@click.group(help="Backport utilities (label + remind)")
-@click.option("--repo", required=False, metavar="OWNER/REPO", help="Override GITHUB_REPOSITORY (format: owner/repo)")
-@click.option(
-    "--callback",
-    type=CallbackType(),
-    required=True,
-    metavar="EVENT",
-    help="GitHub event context mode (EVENT: pull_request_target, schedule, workflow_dispatch)",
-)
-@click.option("--dry-run", is_flag=True, help="Simulate actions without modifying GitHub state")
-@click.option("--debug", is_flag=True, help="Enable verbose debug logging")
-@click.pass_context
-def cli(ctx: click.Context, repo: str | None, callback: str, dry_run: bool, debug: bool):
-    # Stash shared params into context; actual command name known later.
-    ctx.ensure_object(dict)
-    ctx.obj.update({"repo": repo, "callback": callback, "dry_run": dry_run, "debug": debug})
-
-
-@cli.command(help="Add backport pending label to merged PRs without version label")
-@click.option("--lookback-days", type=int, default=1, show_default=True, help="Days to look back when not pull_request_target")
-@click.option("--remove", is_flag=True, help="Remove backport pending label")
-@click.pass_context
-def label(ctx: click.Context, lookback_days: int, remove: bool):
-    params = ctx.obj
-    configure(params.get("dry_run"), params.get("debug"), "label", params.get("repo"))
-    callback = params.get("callback")
-    prefetched = prefetch_prs(callback, lookback_days)
-    raise SystemExit(run_label(prefetched, remove))
-
-
-@cli.command(help="Post reminders on merged PRs still pending backport")
-@click.option("--lookback-days", type=int, required=True, help="Days to look back for updated merged PRs")
-@click.option("--pending-label-age-days", type=int, required=True, help="Days between reminders for the same PR")
-@click.pass_context
-def remind(ctx: click.Context, lookback_days: int, pending_label_age_days: int):
-    params = ctx.obj
-    configure(params.get("dry_run"), params.get("debug"), "remind", params.get("repo"))
-    callback = params.get("callback")
-    prefetched = prefetch_prs(callback, lookback_days)
-    raise SystemExit(run_remind(prefetched, pending_label_age_days, lookback_days))
+        sub.add_parser("help", help="Print extended CLI help text")
+    except Exception:
+        raise RuntimeError("Command parsing failed")
+    return parser.parse_args(argv)
 
 
 def prefetch_prs(callback: str, lookback_days: int) -> List[Dict[str, Any]]:
@@ -421,11 +429,31 @@ def prefetch_prs(callback: str, lookback_days: int) -> List[Dict[str, Any]]:
 
 def main(argv: List[str] | None = None) -> int:
     try:
-        cli.main(args=argv, prog_name="backport.py", standalone_mode=True)
-        return 0
-    except SystemExit as se:
-        # Allow click to control exit codes
-        return se.code
+        # Parse Args step
+        args = parse_args(argv or sys.argv[1:])
+        if args.command == "help":
+            print((__doc__ or "").strip())
+            return 0
+        # Centralized configuration
+        configure(args)
+
+        lookback = getattr(args, "lookback_days", None)
+
+        # Prefetch PRs and run command step
+        prefetched = prefetch_prs(args.callback, lookback) if args.command in {"label", "remind"} else []
+        if args.command == "label":
+            return run_label(prefetched, args.remove)
+        if args.command == "remind":
+            return run_remind(prefetched, args.pending_label_age_days, args.lookback_days)
+        raise NotImplementedError(f"Unknown command {args.command}")
+    except KeyError as ke:
+        logger.error(f"Missing configuration key: {ke}")
+        return 1
+    except NotImplementedError as nie:
+        logger.error(f"Not implemented error: {nie}")
+    except RuntimeError as re:
+        logger.error(f"Runtime error: {re}")
+        return 1
     except Exception as e:
         logger.error(f"Unhandled error: {e}")
         return 1

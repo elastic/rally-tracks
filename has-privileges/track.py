@@ -15,6 +15,16 @@ KIBANA_APP_PRIVILEGES_FILENAME: str = "kibana-app-privileges.json.bz2"
 def generate_random_name(length=10):
     return ''.join(random.choices(string.ascii_lowercase + string.digits + '_-', k=length))
 
+def generate_random_index_expression(length=10):
+    base = ''.join(random.choices(string.ascii_lowercase + string.digits + '_-', k=length))
+    mode = random.choice(["prefix", "suffix", "both"])  # include 'none' to exclude adding wildcard
+
+    if mode in ("prefix", "both"):
+        base = "*" + base
+    if mode in ("suffix", "both"):
+        base = base + "*"
+
+    return base
 
 async def create_roles_and_users(es, params):
     # create 100 spaces
@@ -31,7 +41,7 @@ async def create_roles_and_users(es, params):
     for role_name in roles:
         indices_privileges = [
             {
-                "names": [generate_random_name()],
+                "names": [generate_random_index_expression()],
                 "privileges": random.sample(["read", "write", "delete", "create"], k=2)
             } for _ in range(10)
         ]

@@ -43,10 +43,10 @@ async def create_roles_and_users(es, params):
             {
                 "names": [generate_random_index_expression()],
                 "privileges": random.sample(["read", "write", "delete", "create"], k=2)
-            } for _ in range(10)
+            } for _ in range(1)
         ]
         cluster_privileges = random.sample(["all", "monitor", "manage"], k=2)
-        selected_spaces = random.sample(spaces, k=min(5, len(spaces)))
+        selected_spaces = random.sample(spaces, k=1)
         
         await es.security.put_role(
             name=role_name,
@@ -60,7 +60,7 @@ async def create_roles_and_users(es, params):
                 }
             ]
         )
-    # create 100 users with subset of 50 roles
+    # create 100 users with subset of 300 roles
     for i in range(100):
         await es.security.put_user(
             username="user_" + str(i),

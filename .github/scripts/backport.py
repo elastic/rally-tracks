@@ -57,8 +57,6 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List
 from urllib.parse import urlencode
 
-import click
-
 ISO_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 VERSION_LABEL_RE = re.compile(r"^v\d{1,2}(?:\.\d{1,2})?$")
 BACKPORT_LABEL = "backport"

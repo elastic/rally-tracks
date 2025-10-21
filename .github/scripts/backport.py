@@ -22,15 +22,15 @@ comments on such PRs until a version label (e.g. v9.2) is added.
 
 Quick usage:
 	backport.py help
-	backport.py --callback pull_request_target label
-	backport.py --repo owner/repo --callback schedule label --lookback-days 7
-	backport.py --repo owner/repo --callback workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
-    backport.py --dry-run --repo owner/repo --callback schedule label
-    backport.py --dry-run --repo owner/repo --callback workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
+	backport.py --trigger pull_request_target label
+	backport.py --repo owner/repo --trigger schedule label --lookback-days 7
+	backport.py --repo owner/repo --trigger workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
+    backport.py --dry-run --repo owner/repo --trigger schedule label
+    backport.py --dry-run --repo owner/repo --trigger workflow_dispatch remind --lookback-days 30 --pending-label-age-days 14
 
 Flags:
 	--repo                               owner/repo
-	--callback                           pull_request_target | schedule | workflow_dispatch
+	--trigger                           pull_request_target | schedule | workflow_dispatch
 	--lookback-days N                    Days to scan (bulk modes)
 	--pending-label-age-days M           Days between reminders
     --remove                             Remove pending label (label command)
@@ -352,7 +352,7 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
             required=False,
         )
         parser.add_argument(
-            "--callback",
+            "--trigger",
             choices=["pull_request_target", "schedule", "workflow_dispatch"],
             required=True,
             help="Mode of operation",
@@ -405,8 +405,8 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def prefetch_prs(callback: str, lookback_days: int) -> List[Dict[str, Any]]:
-    if callback == "pull_request_target":
+def prefetch_prs(trigger: str, lookback_days: int) -> List[Dict[str, Any]]:
+    if trigger == "pull_request_target":
         event = load_event()
         if event:
             pr_data = event.get("pull_request")
@@ -440,7 +440,7 @@ def main(argv: List[str] | None = None) -> int:
         lookback = getattr(args, "lookback_days", None)
 
         # Prefetch PRs and run command step
-        prefetched = prefetch_prs(args.callback, lookback) if args.command in {"label", "remind"} else []
+        prefetched = prefetch_prs(args.trigger, lookback) if args.command in {"label", "remind"} else []
         if args.command == "label":
             return run_label(prefetched, args.remove)
         if args.command == "remind":

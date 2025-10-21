@@ -55,7 +55,7 @@ async def create_roles_and_users(es, params):
         await es.security.put_user(
             username="user_" + str(i),
             password="password",
-            roles=random.sample(roles, k=300)
+            roles=random.sample(roles, k=100)
         )
 
 async def create_kibana_app_privileges(es, params):

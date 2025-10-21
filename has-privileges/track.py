@@ -64,19 +64,7 @@ async def create_kibana_app_privileges(es, params):
         app_privileges = json.load(kibana_app_privileges_file)
         await es.security.put_privileges(
                 body=app_privileges
-            )
-
-counter = 0
-lock = threading.Lock()
-
-def get_and_increment():
-    global counter
-    result = -1
-    with lock:
-        result = counter
-        counter += 1
-    return result
-
+        )
 
 async def has_privileges(es, params):
     user_id = random.randint(1, 99)

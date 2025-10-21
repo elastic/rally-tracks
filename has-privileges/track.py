@@ -17,7 +17,7 @@ def generate_random_name(length=10):
 
 def generate_random_index_expression(length=10):
     base = ''.join(random.choices(string.ascii_lowercase + string.digits + '_-', k=length))
-    mode = random.choice(["prefix", "suffix", "both"])  # include 'none' to exclude adding wildcard
+    mode = random.choice([ "suffix"])  # include 'none' to exclude adding wildcard
 
     if mode in ("prefix", "both"):
         base = "*" + base

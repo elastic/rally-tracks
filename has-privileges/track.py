@@ -10,7 +10,7 @@ import os
 from esrally import exceptions
 
 
-KIBANA_APP_PRIVILEGES_FILENAME: str = "kibana-app-privileges.json.bz2" // 8.18.3 9.2.0 
+KIBANA_APP_PRIVILEGES_FILENAME: str = "kibana-app-privileges.json.bz2" # collected from 8.18.3 version 
 
 def generate_random_name(length=10):
     return ''.join(random.choices(string.ascii_lowercase + string.digits + '_-', k=length))

@@ -10,14 +10,14 @@ import os
 from esrally import exceptions
 
 
-KIBANA_APP_PRIVILEGES_FILENAME: str = "kibana-app-privileges.json.bz2"
+KIBANA_APP_PRIVILEGES_FILENAME: str = "kibana-app-privileges.json.bz2" // 8.18.3 9.2.0 
 
 def generate_random_name(length=10):
     return ''.join(random.choices(string.ascii_lowercase + string.digits + '_-', k=length))
 
 def generate_random_index_expression(length=10):
     base = ''.join(random.choices(string.ascii_lowercase + string.digits + '_-', k=length))
-    mode = random.choice([ "suffix"])  # include 'none' to exclude adding wildcard
+    mode = random.choice(["prefix", "suffix", "both"])  # include 'none' to exclude adding wildcard
 
     if mode in ("prefix", "both"):
         base = "*" + base
@@ -65,7 +65,7 @@ async def create_roles_and_users(es, params):
         await es.security.put_user(
             username="user_" + str(i),
             password="password",
-            roles=random.sample(roles, k=500)
+            roles=random.sample(roles, k=300)
         )
 
 async def create_kibana_app_privileges(es, params):

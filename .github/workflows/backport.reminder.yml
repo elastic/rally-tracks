@@ -30,7 +30,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Add Backport label
-        run: python .github/scripts/backport.py label --trigger ${{ github.event_name }} --lookback-days ${{ github.event.inputs.lookback_days }}
-      - name: Run reminder
-        run: python .github/scripts/backport.py remind --trigger ${{ github.event_name }} --lookback-days ${{ github.event.inputs.lookback_days }} --pending-label-age-days ${{ github.event.inputs.pending_label_age_days }}
+      - name: Add Backport pending label (single PR)
+        if: github.event_name == 'pull_request_target'
+        run: python .github/scripts/backport.py label --pr-mode
+      - name: Add Backport pending label (bulk)
+        if: github.event_name != 'pull_request_target'
+        run: python .github/scripts/backport.py label --lookback-days ${{ github.event.inputs.lookback_days }}
+      - name: Run Backport reminder (single PR)
+        if: github.event_name == 'pull_request_target'
+        run: python .github/scripts/backport.py remind --pr-mode --pending-label-age-days ${{ github.event.inputs.pending_label_age_days }}
+      - name: Run Backport reminder (bulk)
+        if: github.event_name != 'pull_request_target'
+        run: python .github/scripts/backport.py remind --lookback-days ${{ github.event.inputs.lookback_days }} --pending-label-age-days ${{ github.event.inputs.pending_label_age_days }}

@@ -56,6 +56,7 @@ class MagicNumbers:
     RALLYTSDATA_LEN = 3  # len(NNN) (always 3 digits)
     RALLYTSDATA_LEN_END = 11  # position of character before <
     RALLYTS_FORMAT_BEGIN = 12  # position of first character after <
+    RALLYTS_CLOSING_CHAR_LEN = 1  # length of closing '>' character
 
 
 class ProcessedCorpusParamSource:
@@ -162,9 +163,9 @@ class ProcessedCorpusParamSource:
         return ProcessedCorpusParamSource(self._orig_args[0], new_params, **self._orig_args[2])
 
     def _json_processor(self, doc: bytes, line_num: int, _: str) -> Tuple[str, int]:
-        doc = doc.decode("utf-8").strip()
+        decoded_doc = doc.decode("utf-8").strip()
         if line_num % 2 == 0:
-            return doc, 0
+            return decoded_doc, 0
         # adds the timestamp to docs not metadata lines which will be in generated files
         timestamp = self._ts_generator.next_timestamp()
         # we assume date order - maybe speed this up for a boolean check on first request?
@@ -173,18 +174,24 @@ class ProcessedCorpusParamSource:
         self.max_timestamp = timestamp
 
         # see ProcessedCorpusParamSource for more details
-        rallyts_start_pos = int(doc[MagicNumbers.RALLYTS_BEGIN_IDX : MagicNumbers.TS_BEGIN_IDX], 16)
-        msglen_value_start_pos = int(doc[MagicNumbers.MSGLEN_BEGIN_IDX : MagicNumbers.MSGLEN_END_IDX], 16)
-        msglen_value_end_pos = int(doc[MagicNumbers.MSGLEN_END_IDX : MagicNumbers.MSGLEN_END_IDX + 10], 16)
+        rallyts_start_pos = int(decoded_doc[MagicNumbers.RALLYTS_BEGIN_IDX : MagicNumbers.TS_BEGIN_IDX], 16)
+        ts_value_start_pos = int(decoded_doc[MagicNumbers.TS_BEGIN_IDX : MagicNumbers.TS_END_IDX], 16)
+        ts_value_end_pos = int(decoded_doc[MagicNumbers.TS_END_IDX : MagicNumbers.MSGLEN_BEGIN_IDX], 16)
+        msglen_value_start_pos = int(decoded_doc[MagicNumbers.MSGLEN_BEGIN_IDX : MagicNumbers.MSGLEN_END_IDX], 16)
+        msglen_value_end_pos = int(decoded_doc[MagicNumbers.MSGLEN_END_IDX : MagicNumbers.MSGLEN_END_IDX + 10], 16)
 
-        msgsize = int(doc[msglen_value_start_pos:msglen_value_end_pos], 10)
+        msgsize = int(decoded_doc[msglen_value_start_pos:msglen_value_end_pos], 10)
 
+        # Track the offset adjustment for subsequent replacements
+        offset_adjustment = 0
+
+        # First, handle rally timestamp marker replacement if present
         if rallyts_start_pos != -1:
             # doc["message"] contains _RALLYTS with timestamp format specification (most of integrations)
 
-            rallyts_len = int(doc[rallyts_start_pos + MagicNumbers.RALLYTS_LEN : rallyts_start_pos + MagicNumbers.RALLYTSDATA_LEN_END], 10)
+            rallyts_len = int(decoded_doc[rallyts_start_pos + MagicNumbers.RALLYTS_LEN : rallyts_start_pos + MagicNumbers.RALLYTSDATA_LEN_END], 10)
 
-            ts_format = doc[
+            ts_format = decoded_doc[
                 rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN : rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len
             ]
 
@@ -192,24 +199,33 @@ class ProcessedCorpusParamSource:
             # timezone-less interpretation of the epoch
             if ts_format == "%s":
                 # turns out float.__trunc__ is faster than builtins.int(<float>) per microbenchmark
-                formatted_ts = timestamp.timestamp().__trunc__()
+                formatted_rallyts = str(timestamp.timestamp().__trunc__())
             else:
-                formatted_ts = time.strftime(ts_format, timestamp.timetuple())
+                formatted_rallyts = time.strftime(ts_format, timestamp.timetuple())
 
+            # Calculate the original placeholder length
+            rallyts_placeholder_len = MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len + MagicNumbers.RALLYTS_CLOSING_CHAR_LEN  # +1 for closing >
+            
             # replace _RALLYTSNNN<...> with generated timestamp in the right format
-            # and omit the "markers" key
-            doc = (
-                f"{doc[:rallyts_start_pos]}"
-                f"{formatted_ts}"
-                f"{doc[rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len + 1: MagicNumbers.MARKER_IDX]}"
-                f"}}}}"
+            decoded_doc = (
+                f"{decoded_doc[:rallyts_start_pos]}"
+                f"{formatted_rallyts}"
+                f"{decoded_doc[rallyts_start_pos + rallyts_placeholder_len:]}"
             )
-        else:
-            # no timestamp in message field e.g. application-logs, redis-slowlog-log
+            
+            # Calculate the offset adjustment for subsequent replacements
+            offset_adjustment = len(formatted_rallyts) - rallyts_placeholder_len
+
+        # Second, handle @timestamp field replacement if present
+        if ts_value_start_pos != -1:
             # directly copy timestamp in a format compatible with the `date` ES field (`strict_date_optional_time`)
 
-            ts_value_start_pos = int(doc[MagicNumbers.TS_BEGIN_IDX : MagicNumbers.TS_END_IDX], 16)
-            ts_value_end_pos = int(doc[MagicNumbers.TS_END_IDX : MagicNumbers.MSGLEN_BEGIN_IDX], 16)
+            # Adjust positions if rally marker replacement occurred before this position
+            adjusted_ts_value_start_pos = ts_value_start_pos
+            adjusted_ts_value_end_pos = ts_value_end_pos
+            if rallyts_start_pos != -1 and rallyts_start_pos < ts_value_start_pos:
+                adjusted_ts_value_start_pos += offset_adjustment
+                adjusted_ts_value_end_pos += offset_adjustment
 
             formatted_ts = "%04d-%02d-%02dT%02d:%02d:%02d" % (
                 timestamp.year,
@@ -225,15 +241,17 @@ class ProcessedCorpusParamSource:
             LARGEINT = 123132434 + line_num
 
             # replace @timestamp value with generated timestamp
-            # and omit the "markers" key
-            doc = (
-                f"{doc[:ts_value_start_pos]}"
+            decoded_doc = (
+                f"{decoded_doc[:adjusted_ts_value_start_pos]}"
                 f"""{formatted_ts}.{LARGEINT % 1000}Z"""
-                f"{doc[ts_value_end_pos: MagicNumbers.MARKER_IDX]}"
-                f"}}}}"
+                f"{decoded_doc[adjusted_ts_value_end_pos:]}"
             )
 
-        return doc, msgsize
+        # Finally, remove the "markers" key from the end of the document
+        # The marker index is from the end, so it's not affected by earlier replacements
+        decoded_doc = decoded_doc[:MagicNumbers.MARKER_IDX] + "}}"
+
+        return decoded_doc, msgsize
 
     def create_bulk_corpus_reader(self, corpus, bulk_size, processor, num_clients, client_index):
         readers = []

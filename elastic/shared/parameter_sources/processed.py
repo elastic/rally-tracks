@@ -189,7 +189,9 @@ class ProcessedCorpusParamSource:
         if rallyts_start_pos != -1:
             # doc["message"] contains _RALLYTS with timestamp format specification (most of integrations)
 
-            rallyts_len = int(decoded_doc[rallyts_start_pos + MagicNumbers.RALLYTS_LEN : rallyts_start_pos + MagicNumbers.RALLYTSDATA_LEN_END], 10)
+            rallyts_len = int(
+                decoded_doc[rallyts_start_pos + MagicNumbers.RALLYTS_LEN : rallyts_start_pos + MagicNumbers.RALLYTSDATA_LEN_END], 10
+            )
 
             ts_format = decoded_doc[
                 rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN : rallyts_start_pos + MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len
@@ -204,15 +206,15 @@ class ProcessedCorpusParamSource:
                 formatted_rallyts = time.strftime(ts_format, timestamp.timetuple())
 
             # Calculate the original placeholder length
-            rallyts_placeholder_len = MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len + MagicNumbers.RALLYTS_CLOSING_CHAR_LEN  # +1 for closing >
-            
+            rallyts_placeholder_len = (
+                MagicNumbers.RALLYTS_FORMAT_BEGIN + rallyts_len + MagicNumbers.RALLYTS_CLOSING_CHAR_LEN
+            )  # +1 for closing >
+
             # replace _RALLYTSNNN<...> with generated timestamp in the right format
             decoded_doc = (
-                f"{decoded_doc[:rallyts_start_pos]}"
-                f"{formatted_rallyts}"
-                f"{decoded_doc[rallyts_start_pos + rallyts_placeholder_len:]}"
+                f"{decoded_doc[:rallyts_start_pos]}" f"{formatted_rallyts}" f"{decoded_doc[rallyts_start_pos + rallyts_placeholder_len:]}"
             )
-            
+
             # Calculate the offset adjustment for subsequent replacements
             offset_adjustment = len(formatted_rallyts) - rallyts_placeholder_len
 
@@ -249,7 +251,7 @@ class ProcessedCorpusParamSource:
 
         # Finally, remove the "markers" key from the end of the document
         # The marker index is from the end, so it's not affected by earlier replacements
-        decoded_doc = decoded_doc[:MagicNumbers.MARKER_IDX] + "}}"
+        decoded_doc = decoded_doc[: MagicNumbers.MARKER_IDX] + "}}"
 
         return decoded_doc, msgsize
 

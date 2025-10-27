@@ -99,7 +99,8 @@ logger = logging.getLogger("backport")
 
 
 def setup_logging(level: str) -> None:
-    lvl = logging.DEBUG if level.upper() == "DEBUG" else logging.INFO
+    assert level.upper() in {"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"}, "Invalid log level"
+    lvl = getattr(logging, level.upper(), logging.INFO)
     backport_formatter = logging.Formatter(
         f"[%(asctime)s] %(levelname)s [{CONFIG.get("command")}{" (dry-run)" if is_dry_run() else ""}]: %(message)s", "%Y-%m-%d %H:%M:%S"
     )
@@ -151,7 +152,7 @@ class PRInfo:
         if raw_number is None and pr.get("url"):
             try:
                 raw_number = int(pr.get("url", "/").rstrip("/").split("/")[-1])
-            except Exception:
+            except TypeError:
                 raw_number = -1
         self.number = raw_number if isinstance(raw_number, int) else int(raw_number)
         self.labels = [lbl.get("name", "") for lbl in pr.get("labels", [])]
@@ -234,15 +235,15 @@ def run_label(prefetched_prs: List[Dict[str, Any]], remove: bool) -> int:
 
 
 # ----------------------------- Reminder Logic -----------------------------
-def list_prs(filter_q: str, since: dt.datetime) -> Iterable[Dict[str, Any]]:
-    if is_dry_run():
-        logger.info(f"Would list PRs with filter '{filter_q}' since {since.isoformat()}")
+def list_prs(q_filter: str, since: dt.datetime) -> Iterable[Dict[str, Any]]:
     q_date = since.strftime("%Y-%m-%d")
+    q = f"{q_filter} updated:>={q_date}"
+    logger.debug(f"Fetch PRs with filter '{q}")
     page = 1
     while True:
         result = gh_request(
             "/search/issues",
-            params={"q": f"{filter_q} updated:>={q_date}", "per_page": "100", "page": str(page)},
+            params={"q": f"{q}", "per_page": "100", "page": str(page)},
         )
         items = result.get("items", [])
         if not items:
@@ -350,7 +351,7 @@ def configure(args: argparse.Namespace) -> None:
     can reuse consistent initialization semantics.
     """
     CONFIG["dry_run"] = bool(getattr(args, "dry_run", False))
-    CONFIG["log_level"] = "DEBUG" if getattr(args, "debug", False) else "INFO"
+    CONFIG["log_level"] = "DEBUG" if getattr(args, "debug") else "INFO"
     CONFIG["command"] = getattr(args, "command", None)
     if getattr(args, "repo", None):
         CONFIG["repo"] = args.repo
@@ -453,9 +454,9 @@ def main(argv: List[str] | None = None) -> int:
         args = parse_args(argv or sys.argv[1:])
         configure(args)
 
-        lookback = getattr(args, "lookback_days", None)
-        # Prefetch PRs and run command step
-        prefetched = prefetch_prs(getattr(args, "pr_mode", False), lookback) if args.command in {"label", "remind"} else []
+        logger.debug(f"Parsed arguments: {args}")
+        prefetched = prefetch_prs(args.pr_mode, args.lookback_days)
+        logger.debug(f"Prefetched {len(prefetched)} PRs for command '{args.command}': {[pr.get('number') for pr in prefetched]}")
         if args.command == "label":
             return run_label(prefetched, args.remove)
         if args.command == "remind":

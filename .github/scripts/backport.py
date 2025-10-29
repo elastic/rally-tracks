@@ -29,7 +29,8 @@ Usage: backport.py [options] <command> [flags]
 Options:
     --repo                               owner/repo
     --pr-mode                            Single PR mode (use event payload); Handle PR through GITHUB_EVENT_PATH.
-    --debug                              Enable debug logging
+    -v, --verbose                        Increase verbosity (can be repeated: -vv)
+    -q, --quiet                          Decrease verbosity (can be repeated: -qq)
     --dry-run                            Simulate actions without modifying GitHub state
 
 Commands:
@@ -45,7 +46,7 @@ Quick usage:
     backport.py label --pr-mode
     backport.py --repo owner/name label --lookback-days 7
     backport.py --repo owner/name remind --lookback-days 30 --pending-label-age-days 14
-    backport.py --repo owner/name --dry-run --debug label --lookback-days 30
+    backport.py --repo owner/name --dry-run -vv label --lookback-days 30
 
 Logic:
     Add label when: no version label (regex vX(.Y)), no pending or 'backport' label.
@@ -65,9 +66,12 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, List
+from typing import Any
 from urllib.parse import urlencode
+
+LOG = logging.getLogger(__name__)
 
 ISO_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 VERSION_LABEL_RE = re.compile(r"^v\d{1,2}(?:\.\d{1,2})?$")
@@ -85,43 +89,35 @@ REMINDER_BODY = (
     "Thank you!"
 )
 
-CONFIG: Dict[str, bool | str | None] = {
-    "token": os.environ.get("BACKPORT_TOKEN"),
-    "repo": os.environ.get("GITHUB_REPOSITORY"),  # owner/repo
-    "dry_run": False,  # set by --dry-run
-    "log_level": "INFO",  # INFO by default, set to DEBUG if --debug passed
-    "command": None,  # set post-parse for logging
-}
+
+@dataclass
+class BackportConfig:
+    token: str | None = None
+    repo: str | None = None
+    dry_run: bool = False
+    log_level: int = logging.INFO
+    command: str | None = None
+    verbose: int = 0
+    quiet: int = 0
 
 
-# ----------------------------- Logging -----------------------------
-logger = logging.getLogger("backport")
-
-
-def setup_logging(level: str) -> None:
-    assert level.upper() in {"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"}, "Invalid log level"
-    lvl = getattr(logging, level.upper(), logging.INFO)
-    backport_formatter = logging.Formatter(
-        f"[%(asctime)s] %(levelname)s [{CONFIG.get("command")}{" (dry-run)" if is_dry_run() else ""}]: %(message)s", "%Y-%m-%d %H:%M:%S"
-    )
-    handler = logging.StreamHandler(stream=sys.stdout)
-    handler.setFormatter(backport_formatter)
-    logger.addHandler(handler)
-    logger.setLevel(lvl)
-
+CONFIG = BackportConfig(
+    token=os.environ.get("BACKPORT_TOKEN"),
+    repo=os.environ.get("GITHUB_REPOSITORY"),
+)
 
 # ----------------------------- GH Helpers -----------------------------
-def gh_request(path: str, method: str = "GET", body: Dict[str, Any] | None = None, params: Dict[str, str] | None = None) -> Any:
+def gh_request(path: str, method: str = "GET", body: dict[str, Any] | None = None, params: dict[str, str] | None = None) -> Any:
     if params:
         path = f"{path}?{urlencode(params)}"
     url = f"{GITHUB_API}{path}"
     data = None
     if body is not None:
         data = json.dumps(body).encode()
-    token = CONFIG.get("token")
+    token = CONFIG.token
     # In dry-run, skip mutating requests (anything not GET) and just log.
     if is_dry_run():
-        logger.debug(f"Would {method} {url} body={json.dumps(body) if body else '{}'}")
+        LOG.debug(f"Would {method} {url} body={json.dumps(body) if body else '{}'}")
         if method.upper() != "GET":
             return {}
     req = urllib.request.Request(url, data=data, method=method)
@@ -132,7 +128,7 @@ def gh_request(path: str, method: str = "GET", body: Dict[str, Any] | None = Non
             charset = resp.headers.get_content_charset() or "utf-8"
             txt = resp.read().decode(charset)
             if is_dry_run():
-                logger.debug(f"Response {resp.status} {method} {url}")
+                LOG.debug(f"Response {resp.status} {method} {url}")
             if resp.status >= 300:
                 raise RuntimeError(f"HTTP {resp.status}: {txt}")
             return json.loads(txt) if txt.strip() else {}
@@ -145,23 +141,17 @@ def gh_request(path: str, method: str = "GET", body: Dict[str, Any] | None = Non
 @dataclass
 class PRInfo:
     number: int
-    labels: List[str]
+    labels: list[str]
 
-    def __init__(self, pr: Dict[str, Any]):
-        raw_number = pr.get("number")
-        if raw_number is None and pr.get("url"):
-            try:
-                raw_number = int(pr.get("url", "/").rstrip("/").split("/")[-1])
-            except TypeError:
-                raw_number = -1
-        self.number = raw_number if isinstance(raw_number, int) else int(raw_number)
+    def __init__(self, pr: dict[str, Any]):
+        self.number = int(pr.get("number") or pr.get("url", "").rstrip("/").strip().rsplit("/", 1) or -1)
         self.labels = [lbl.get("name", "") for lbl in pr.get("labels", [])]
 
 
 def load_event() -> dict:
     path = os.environ.get("GITHUB_EVENT_PATH")
     if not path or not os.path.exists(path):
-        logger.warning("GITHUB_EVENT_PATH not set or file missing; nothing to do")
+        LOG.warning("GITHUB_EVENT_PATH not set or file missing; nothing to do")
         return {}
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -182,7 +172,7 @@ def needs_pending_label(info: PRInfo) -> bool:
 
 def ensure_label() -> None:
     """Create Backport Pending label if missing (color only set on create)."""
-    repo = CONFIG.get("repo")
+    repo = CONFIG.repo
     label_api = f"/repos/{repo}/labels/{PENDING_LABEL_CANONICAL.replace(' ', '%20')}"
     try:
         gh_request(label_api)
@@ -193,25 +183,25 @@ def ensure_label() -> None:
     try:
         gh_request(create_api, method="POST", body={"name": PENDING_LABEL_CANONICAL, "color": PENDING_LABEL_COLOR})
     except Exception as e:
-        logger.warning(f"Could not create label: {e}")
+        LOG.warning(f"Could not create label: {e}")
 
 
 def add_label(pr_number: int, label: str) -> None:
     ensure_label()
-    repo = CONFIG.get("repo")
+    repo = CONFIG.repo
     issues_labels_api = f"/repos/{repo}/issues/{pr_number}/labels"
     gh_request(issues_labels_api, method="POST", body={"labels": [label]})
-    logger.info(f"Added label '{label}' to PR #{pr_number}")
+    LOG.info(f"Added label '{label}' to PR #{pr_number}")
 
 
 def remove_label(pr_number: int, label: str) -> None:
-    repo = CONFIG.get("repo")
+    repo = CONFIG.repo
     issues_labels_api = f"/repos/{repo}/issues/{pr_number}/labels"
     gh_request(issues_labels_api, method="DELETE", body={"labels": [label]})
-    logger.info(f"Removed label '{label}' from PR #{pr_number}")
+    LOG.info(f"Removed label '{label}' from PR #{pr_number}")
 
 
-def run_label(prefetched_prs: List[Dict[str, Any]], remove: bool) -> int:
+def run_label(prefetched_prs: list[dict[str, Any]], remove: bool) -> int:
     """Apply label logic to prefetched merged PRs (single for pull_request_target or bulk)."""
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for labeling")
@@ -227,18 +217,18 @@ def run_label(prefetched_prs: List[Dict[str, Any]], remove: bool) -> int:
             elif needs_pending_label(info):
                 add_label(info.number, PENDING_LABEL_CANONICAL)
             else:
-                logger.debug(f"PR #{info.number}: No label action needed")
+                LOG.debug(f"PR #{info.number}: No label action needed")
         except Exception as e:
-            logger.error(f"Label error for PR #{pr.get('number','unknown')}: {e}")
+            LOG.error(f"Label error for PR #{pr.get('number','unknown')}: {e}")
             rc = 1
     return rc
 
 
 # ----------------------------- Reminder Logic -----------------------------
-def list_prs(q_filter: str, since: dt.datetime) -> Iterable[Dict[str, Any]]:
+def list_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
     q_date = since.strftime("%Y-%m-%d")
     q = f"{q_filter} updated:>={q_date}"
-    logger.debug(f"Fetch PRs with filter '{q}")
+    LOG.debug(f"Fetch PRs with filter '{q}")
     page = 1
     while True:
         result = gh_request(
@@ -256,15 +246,16 @@ def list_prs(q_filter: str, since: dt.datetime) -> Iterable[Dict[str, Any]]:
         time.sleep(0.25)
 
 
-def get_issue_comments(number: int) -> List[Dict[str, Any]]:
-    comments: List[Dict[str, Any]] = []
+def get_issue_comments(number: int) -> list[dict[str, Any]]:
+    comments: list[dict[str, Any]] = []
     page = 1
     while True:
-        repo = CONFIG.get("repo")
+        repo = CONFIG.repo
         data = gh_request(f"/repos/{repo}/issues/{number}/comments", params={"per_page": "100", "page": str(page)})
         if not data:
             break
         comments.extend(data)
+        # We are using a page size of 100. If we get less, we are done.
         if len(data) < 100:
             break
         page += 1
@@ -273,18 +264,18 @@ def get_issue_comments(number: int) -> List[Dict[str, Any]]:
 
 def post_comment(number: int, body: str) -> None:
     if is_dry_run():
-        logger.info(f"Would post comment to PR #{number}")
-    repo = CONFIG.get("repo")
+        LOG.info(f"Would post comment to PR #{number}")
+    repo = CONFIG.repo
     gh_request(f"/repos/{repo}/issues/{number}/comments", method="POST", body={"body": body})
 
 
-def has_pending_label(labels: List[Dict[str, Any]]) -> bool:
+def has_pending_label(labels: list[dict[str, Any]]) -> bool:
     names_lower = {lbl.get("name", "").lower() for lbl in labels}
     return PENDING_LABEL_CANONICAL.lower() in names_lower
 
 
-def last_reminder_time(comments: List[Dict[str, Any]], marker: str) -> dt.datetime | None:
-    def comment_ts(c: Dict[str, Any]) -> dt.datetime:
+def last_reminder_time(comments: list[dict[str, Any]], marker: str) -> dt.datetime | None:
+    def comment_ts(c: dict[str, Any]) -> dt.datetime:
         ts_raw = c.get("created_at") or c.get("updated_at")
         if not ts_raw:
             raise RuntimeError("Comment missing timestamp fields")
@@ -297,12 +288,12 @@ def last_reminder_time(comments: List[Dict[str, Any]], marker: str) -> dt.dateti
     return None
 
 
-def run_remind(prefetched_prs: List[Dict[str, Any]], pending_label_age_days: int, lookback_days: int) -> int:
+def run_remind(prefetched_prs: list[dict[str, Any]], pending_label_age_days: int, lookback_days: int) -> int:
     """Post reminders using prefetched merged PR list."""
 
     now = dt.datetime.now(dt.timezone.utc)
     threshold = now - dt.timedelta(days=pending_label_age_days)
-    logger.info(
+    LOG.info(
         f"prefetched={len(prefetched_prs)} lookback_days={lookback_days} pending_label_age_days={pending_label_age_days} now={now.isoformat()} threshold={threshold.isoformat()}"
     )
     for pr in prefetched_prs:
@@ -318,28 +309,28 @@ def run_remind(prefetched_prs: List[Dict[str, Any]], pending_label_age_days: int
             prev_time = last_reminder_time(comments, COMMENT_MARKER_BASE)
             if prev_time is None:
                 post_comment(number, f"{COMMENT_MARKER_BASE}\n@{author}\n{REMINDER_BODY}")
-                logger.info(f"PR #{number}: initial reminder posted")
+                LOG.info(f"PR #{number}: initial reminder posted")
             elif prev_time < threshold:
                 post_comment(number, f"{COMMENT_MARKER_BASE}\n@{author}\n{REMINDER_BODY}")
-                logger.info(f"PR #{number}: follow-up reminder posted (prev {prev_time.isoformat()})")
+                LOG.info(f"PR #{number}: follow-up reminder posted (prev {prev_time.isoformat()})")
             else:
-                logger.info(f"PR #{number}: cooling period not elapsed (prev {prev_time.isoformat()})")
+                LOG.info(f"PR #{number}: cooling period not elapsed (prev {prev_time.isoformat()})")
         except Exception as ex:
-            logger.error(f"Remind error for PR #{pr.get('number', '?')}: {ex}")
+            LOG.error(f"Remind error for PR #{pr.get('number', '?')}: {ex}")
             continue
     return 0
 
 
 # ----------------------------- CLI -----------------------------
 def is_dry_run() -> bool:
-    return bool(CONFIG.get("dry_run"))
+    return CONFIG.dry_run
 
 
 def require_mandatory_vars() -> None:
     """Validate critical environment / CLI inputs using CONFIG."""
-    if not CONFIG.get("token"):
+    if not CONFIG.token:
         raise RuntimeError("Missing BACKPORT_TOKEN from environment.")
-    repo = CONFIG.get("repo")
+    repo = CONFIG.repo
     if not repo or not re.match(r"^[^/]+/[^/]+$", str(repo)):
         raise RuntimeError("Missing or invalid GITHUB_REPOSITORY. Either set it or pass --repo (owner/repo)")
 
@@ -350,16 +341,17 @@ def configure(args: argparse.Namespace) -> None:
     This centralizes setup so other entry points (tests, future subcommands)
     can reuse consistent initialization semantics.
     """
-    CONFIG["dry_run"] = bool(getattr(args, "dry_run", False))
-    CONFIG["log_level"] = "DEBUG" if getattr(args, "debug") else "INFO"
-    CONFIG["command"] = getattr(args, "command", None)
-    if getattr(args, "repo", None):
-        CONFIG["repo"] = args.repo
-    setup_logging(CONFIG["log_level"])
+    CONFIG.dry_run = args.dry_run
+    CONFIG.verbose = args.verbose
+    CONFIG.quiet = args.quiet
+    CONFIG.log_level = (CONFIG.quiet - CONFIG.verbose) * (logging.INFO - logging.DEBUG) + logging.INFO
+    CONFIG.command = args.command
+    CONFIG.repo = args.repo
+    logging.basicConfig(level=CONFIG.log_level, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     require_mandatory_vars()
 
 
-def prefetch_prs(pr_mode: bool, lookback_days: int) -> List[Dict[str, Any]]:
+def prefetch_prs(pr_mode: bool, lookback_days: int) -> list[dict[str, Any]]:
     if pr_mode:
         event = load_event()
         if event:
@@ -376,22 +368,23 @@ def prefetch_prs(pr_mode: bool, lookback_days: int) -> List[Dict[str, Any]]:
         return [pr_data]
     now = dt.datetime.now(dt.timezone.utc)
     since = now - dt.timedelta(days=lookback_days)
-    repo = CONFIG.get("repo")
+    repo = CONFIG.repo
     # Note that we rely on is:merged to filter out unmerged PRs.
     return list(list_prs(f"repo:{repo} is:pr is:merged", since))
 
 
-def parse_args(argv: List[str]) -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     try:
         parser = argparse.ArgumentParser(
             description="Backport utilities",
-            epilog="""\nExamples:\n  backport.py label --pr-mode\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30 --pending-label-age-days 14\n  backport.py --dry-run --debug label --lookback-days 30\n\nSingle PR mode (--pr-mode) reads the pull_request payload from GITHUB_EVENT_PATH.\nBulk mode searches merged PRs updated within --lookback-days.\n""",
+            epilog="""\nExamples:\n  backport.py label --pr-mode\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30 --pending-label-age-days 14\n  backport.py --dry-run -vv label --lookback-days 30\n\nSingle PR mode (--pr-mode) reads the pull_request payload from GITHUB_EVENT_PATH.\nBulk mode searches merged PRs updated within --lookback-days.\n""",
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
         parser.add_argument(
             "--repo",
             help="Target repository in owner/repo form (overrides GITHUB_REPOSITORY env)",
             required=False,
+            default=None,
         )
         parser.add_argument(
             "--pr-mode",
@@ -404,9 +397,18 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
             help="Simulate actions without modifying GitHub state",
         )
         parser.add_argument(
-            "--debug",
-            action="store_true",
-            help="Enable verbose debug logging",
+            "-v",
+            "--verbose",
+            action="count",
+            default=0,
+            help="Increase verbosity (can be used multiple times, e.g., -vv for more verbose)",
+        )
+        parser.add_argument(
+            "-q",
+            "--quiet",
+            action="count",
+            default=0,
+            help="Decrease verbosity (can be used multiple times)",
         )
         sub = parser.add_subparsers(dest="command", required=True)
 
@@ -446,35 +448,37 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
 
     except Exception:
         raise RuntimeError("Command parsing failed")
-    return parser.parse_args(argv)
+    return parser.parse_args()
 
 
-def main(argv: List[str] | None = None) -> int:
+def main():
     try:
-        args = parse_args(argv or sys.argv[1:])
+        args = parse_args()
         configure(args)
 
-        logger.debug(f"Parsed arguments: {args}")
+        LOG.debug(f"Parsed arguments: {args}")
         prefetched = prefetch_prs(args.pr_mode, args.lookback_days)
-        logger.debug(f"Prefetched {len(prefetched)} PRs for command '{args.command}': {[pr.get('number') for pr in prefetched]}")
-        if args.command == "label":
-            return run_label(prefetched, args.remove)
-        if args.command == "remind":
-            return run_remind(prefetched, args.pending_label_age_days, args.lookback_days)
-        raise NotImplementedError(f"Unknown command {args.command}")
+        LOG.debug(f"Prefetched {len(prefetched)} PRs for command '{args.command}': {[pr.get('number') for pr in prefetched]}")
+        match args.command:
+            case "label":
+                run_label(prefetched, args.remove)
+            case "remind":
+                run_remind(prefetched, args.pending_label_age_days, args.lookback_days)
+            case _:
+                raise NotImplementedError(f"Unknown command {args.command}")
     except KeyError as ke:
-        logger.error(f"Missing configuration key: {ke}")
-        return 1
+        LOG.error(f"Missing configuration key: {ke}")
+        sys.exit(1)
     except NotImplementedError as nie:
-        logger.error(f"Not implemented error: {nie}")
-        return 1
+        LOG.error(f"Not implemented error: {nie}")
+        sys.exit(2)
     except RuntimeError as re:
-        logger.error(f"Runtime error: {re}")
-        return 1
+        LOG.error(f"Runtime error: {re}")
+        sys.exit(3)
     except Exception as e:
-        logger.error(f"Unhandled error: {e}")
-        return 1
+        LOG.error(f"Unhandled error: {e}")
+        sys.exit(4)
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

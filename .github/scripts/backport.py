@@ -106,6 +106,7 @@ CONFIG = BackportConfig(
     repo=os.environ.get("GITHUB_REPOSITORY"),
 )
 
+
 # ----------------------------- GH Helpers -----------------------------
 def gh_request(path: str, method: str = "GET", body: dict[str, Any] | None = None, params: dict[str, str] | None = None) -> Any:
     if params:

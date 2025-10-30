@@ -785,6 +785,10 @@
           "tags": ["setup"]
         },
         {
+          "operation": "delete-nyc-taxis-sample-index",
+          "tags": ["setup"]
+        },
+        {
           "operation": {
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
@@ -924,6 +928,10 @@
         {
           "name": "refresh-after-index",
           "operation": "refresh",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-nyc-taxis-sample-index",
           "tags": ["setup"]
         },
         {

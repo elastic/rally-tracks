@@ -1,4 +1,4 @@
-Baseline race:
+Baseline:
   - Race ID: `755c12c3-cb5b-477c-b3e9-4d684bf8b2e1`
   - Race timestamp: 2025-10-28 09:09:27
   - Challenge: logging-querying
@@ -6,7 +6,7 @@ Baseline race:
   - User tags: `created-by=esbench, division=engineering, env-id=2241ac07-93d6-44fc-a1f2-fea5c2074e86, git-username=eyalkoren, 
     host-username=eyalkoren, name=timestamp-date, org=obs, project=logs-plus, setup=esbench, team=obs-experience`
 
-Contender race:
+Contender:
   - Race ID: `e118cb4b-6e77-49d8-a157-8f663c2d74f6`
   - Race timestamp: 2025-10-28 07:39:58
   - Challenge: logging-querying

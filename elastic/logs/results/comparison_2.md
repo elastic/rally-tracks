@@ -1,5 +1,4 @@
-
-Baseline race:
+Baseline:
   - Race ID: `a583725a-f526-41cf-a994-dd37af96f5a3`
   - Race timestamp: 2025-10-27 17:27:45
   - Challenge: logging-querying
@@ -7,15 +6,13 @@ Baseline race:
   - User tags: `created-by=esbench, division=engineering, env-id=2241ac07-93d6-44fc-a1f2-fea5c2074e86, git-username=eyalkoren, 
     host-username=eyalkoren, name=timestamp-date, org=obs, project=logs-plus, setup=esbench, team=obs-experience`
 
-Contender race:
+Contender:
   - Race ID: `254fbf8c-8ab4-4051-91f2-6cb5ca710fdc`
   - Race timestamp: 2025-10-27 15:58:44
   - Challenge: logging-querying
   - Car: external
   - User tags: `created-by=esbench, division=engineering, env-id=2241ac07-93d6-44fc-a1f2-fea5c2074e86, git-username=eyalkoren, 
     host-username=eyalkoren, name=timestamp-date_nanos, org=obs, project=logs-plus, setup=esbench, team=obs-experience`
-
-
 
 |                                                        Metric |                                                              Task |        Baseline |       Contender |         Diff |   Unit |   Diff % |
 |--------------------------------------------------------------:|------------------------------------------------------------------:|----------------:|----------------:|-------------:|-------:|---------:|

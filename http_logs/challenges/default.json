@@ -18,9 +18,11 @@
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
@@ -28,6 +30,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "logs-*",
@@ -39,6 +42,7 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index-append",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
@@ -46,9 +50,11 @@
         },
         {
           "name": "refresh-after-index",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200
@@ -56,10 +62,12 @@
         },
         {
           "name": "refresh-after-force-merge",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
+          "tags": ["index"],
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -78,9 +86,11 @@
       "description": "Indexes the whole document corpus in an index sorted by timestamp field in descending order (most recent first) and using a setup that will lead to a lower indexing throughput than the default settings. Document ids are unique so all index operations are append only.",
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
@@ -91,6 +101,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "logs-*",
@@ -102,6 +113,7 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index-append",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
@@ -109,9 +121,11 @@
         },
         {
           "name": "refresh-after-index",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200
@@ -119,10 +133,12 @@
         },
         {
           "name": "refresh-after-force-merge",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
+          "tags": ["index"],
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -141,9 +157,11 @@
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. Runs the documents through an ingest node pipeline to parse the http logs. May require --elasticsearch-plugins='ingest-geoip' ",
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
@@ -151,6 +169,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "logs-*",
@@ -162,9 +181,11 @@
           }
         },
         {
-        "operation": "create-http-log-{{ingest_pipeline | default('baseline')}}-pipeline"
+          "tags": ["setup"],
+          "operation": "create-http-log-{{ingest_pipeline | default('baseline')}}-pipeline"
         },
         {
+          "tags": ["index"],
           "operation": "index-append-with-ingest-{{ingest_pipeline | default('baseline')}}-pipeline",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
@@ -172,20 +193,24 @@
         },
         {
           "name": "refresh-after-index",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200
           }
         },
         {
+          "tags": ["index"],
           "name": "refresh-after-force-merge",
           "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
+          "tags": ["index"],
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -203,9 +228,11 @@
       "name": "update",
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
@@ -219,6 +246,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "logs-*",
@@ -230,6 +258,7 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "update",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
@@ -237,9 +266,11 @@
         },
         {
           "name": "refresh-after-index",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200
@@ -247,10 +278,12 @@
         },
         {
           "name": "refresh-after-force-merge",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
+          "tags": ["index"],
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -269,9 +302,11 @@
       "description": "Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only. After indexing, same data are reindexed.",
       "schedule": [
         {
+          "tags": ["setup"],
           "operation": "delete-index"
         },
         {
+          "tags": ["setup"],
           "operation": {
             "operation-type": "create-index",
             "settings": {{index_settings | default({}) | tojson}}
@@ -279,6 +314,7 @@
         },
         {
           "name": "check-cluster-health",
+          "tags": ["health"],
           "operation": {
             "operation-type": "cluster-health",
             "index": "logs-*",
@@ -290,6 +326,7 @@
           }
         },
         {
+          "tags": ["index"],
           "operation": "index-append",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
@@ -297,9 +334,11 @@
         },
         {
           "name": "refresh-after-index",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
+          "tags": ["index"],
           "operation": {
             "operation-type": "force-merge",
             "request-timeout": 7200
@@ -307,10 +346,12 @@
         },
         {
           "name": "refresh-after-force-merge",
+          "tags": ["index"],
           "operation": "refresh"
         },
         {
           "name": "wait-until-merges-finish",
+          "tags": ["index"],
           "operation": {
             "operation-type": "index-stats",
             "index": "_all",
@@ -325,6 +366,7 @@
         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
         {
           "name": "post-ingest-sleep",
+          "tags": ["index"],
           "operation": {
             "operation-type": "sleep",
             "duration": {{ post_ingest_sleep_duration|default(30) }}
@@ -333,6 +375,7 @@
         {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
         {
           "name": "reindex",
+          "tags": ["index"],
           "operation": {
             "operation-type": "reindex",
             "body": {

@@ -76,7 +76,7 @@ LOG = logging.getLogger(__name__)
 ISO_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 VERSION_LABEL_RE = re.compile(r"^v\d{1,2}(?:\.\d{1,2})?$")
 BACKPORT_LABEL = "backport"
-PENDING_LABEL_CANONICAL = "backport pending"
+PENDING_LABEL = "backport pending"
 PENDING_LABEL_COLOR = "fff2bf"
 GITHUB_API = "https://api.github.com"
 COMMENT_MARKER_BASE = "<!-- backport-pending-reminder -->"  # static for detection
@@ -163,32 +163,37 @@ def extract_pr(event: dict) -> PRInfo | None:
     return PRInfo(pr) if pr else None
 
 
-def needs_pending_label(info: PRInfo) -> bool:
-    has_version_label = any(VERSION_LABEL_RE.match(l) for l in info.labels)
-    has_pending = any(l.lower() == PENDING_LABEL_CANONICAL.lower() for l in info.labels)
-    has_backport = any(l.lower() == BACKPORT_LABEL.lower() for l in info.labels)
-    # Add label only if no version label AND pending label absent.
+def pr_needs_pending_label(info: PRInfo) -> bool:
+    pr_labels = info.labels
+    has_version_label = any(VERSION_LABEL_RE.match(l) for l in pr_labels)
+    has_pending = any(l.lower() == PENDING_LABEL.lower() for l in pr_labels)
+    has_backport = any(l.lower() == BACKPORT_LABEL.lower() for l in pr_labels)
     return not has_version_label and not has_pending and not has_backport
 
 
-def ensure_label() -> None:
-    """Create Backport Pending label if missing (color only set on create)."""
+def repo_needs_pending_label(repo_labels: list[str]) -> bool:
+    return repo_labels.count(PENDING_LABEL) == 0
+
+
+def ensure_backport_pending_label() -> None:
+    """If the exact PENDING_LABEL string does not appear at least once, we create it."""
     repo = CONFIG.repo
-    label_api = f"/repos/{repo}/labels/{PENDING_LABEL_CANONICAL.replace(' ', '%20')}"
     try:
-        gh_request(label_api)
-        return  # exists
-    except Exception:
-        pass  # proceed to attempt creation
-    create_api = f"/repos/{repo}/labels"
+        existing = gh_request(f"/repos/{repo}/labels", params={"per_page": "100"})
+    except Exception as e:
+        LOG.debug(f"Could not list labels; attempting direct create: {e}")
+        existing = []
+    names = [lbl.get("name", "") for lbl in existing]
+    if not repo_needs_pending_label(names):
+        return
     try:
-        gh_request(create_api, method="POST", body={"name": PENDING_LABEL_CANONICAL, "color": PENDING_LABEL_COLOR})
+        gh_request(f"/repos/{repo}/labels", method="POST", body={"name": PENDING_LABEL, "color": PENDING_LABEL_COLOR})
     except Exception as e:
         LOG.warning(f"Could not create label: {e}")
 
 
 def add_label(pr_number: int, label: str) -> None:
-    ensure_label()
+    ensure_backport_pending_label()
     repo = CONFIG.repo
     issues_labels_api = f"/repos/{repo}/issues/{pr_number}/labels"
     gh_request(issues_labels_api, method="POST", body={"labels": [label]})
@@ -206,23 +211,22 @@ def run_label(prefetched_prs: list[dict[str, Any]], remove: bool) -> int:
     """Apply label logic to prefetched merged PRs (single for pull_request_target or bulk)."""
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for labeling")
-    # Using return code as we want to attempt all PRs even if some fail.
-    rc = 0
+    errors=0
     for pr in prefetched_prs:
         try:
             if not pr:
                 continue
             info = PRInfo(pr)
             if remove:
-                remove_label(info.number, PENDING_LABEL_CANONICAL)
-            elif needs_pending_label(info):
-                add_label(info.number, PENDING_LABEL_CANONICAL)
+                remove_label(info.number, PENDING_LABEL)
+            elif pr_needs_pending_label(info):
+                add_label(info.number, PENDING_LABEL)
             else:
                 LOG.debug(f"PR #{info.number}: No label action needed")
         except Exception as e:
             LOG.error(f"Label error for PR #{pr.get('number','unknown')}: {e}")
-            rc = 1
-    return rc
+            errors += 1
+    return errors
 
 
 # ----------------------------- Reminder Logic -----------------------------
@@ -272,7 +276,7 @@ def post_comment(number: int, body: str) -> None:
 
 def has_pending_label(labels: list[dict[str, Any]]) -> bool:
     names_lower = {lbl.get("name", "").lower() for lbl in labels}
-    return PENDING_LABEL_CANONICAL.lower() in names_lower
+    return PENDING_LABEL.lower() in names_lower
 
 
 def last_reminder_time(comments: list[dict[str, Any]], marker: str) -> dt.datetime | None:
@@ -297,6 +301,7 @@ def run_remind(prefetched_prs: list[dict[str, Any]], pending_label_age_days: int
     LOG.info(
         f"prefetched={len(prefetched_prs)} lookback_days={lookback_days} pending_label_age_days={pending_label_age_days} now={now.isoformat()} threshold={threshold.isoformat()}"
     )
+    errors=0
     for pr in prefetched_prs:
         try:
             if not pr:
@@ -318,8 +323,9 @@ def run_remind(prefetched_prs: list[dict[str, Any]], pending_label_age_days: int
                 LOG.info(f"PR #{number}: cooling period not elapsed (prev {prev_time.isoformat()})")
         except Exception as ex:
             LOG.error(f"Remind error for PR #{pr.get('number', '?')}: {ex}")
+            errors += 1
             continue
-    return 0
+    return errors
 
 
 # ----------------------------- CLI -----------------------------
@@ -462,9 +468,9 @@ def main():
         LOG.debug(f"Prefetched {len(prefetched)} PRs for command '{args.command}': {[pr.get('number') for pr in prefetched]}")
         match args.command:
             case "label":
-                run_label(prefetched, args.remove)
+                return run_label(prefetched, args.remove)
             case "remind":
-                run_remind(prefetched, args.pending_label_age_days, args.lookback_days)
+                return run_remind(prefetched, args.pending_label_age_days, args.lookback_days)
             case _:
                 raise NotImplementedError(f"Unknown command {args.command}")
     except KeyError as ke:

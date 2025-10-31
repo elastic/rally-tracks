@@ -975,11 +975,10 @@
     },
     {
       "name": "delete-nyc-taxis-sample-index",
-      "operation-type": "raw-request",
-      "index": "nyc_taxis",
-      "method": "DELETE",
-      "ignore": [404],
-      "path": "/nyc_taxis_sample"
+      "name": "delete-nyc-taxis-sample-index",
+      "operation-type": "delete-index",
+      "index": "nyc_taxis_sample",
+      "only-if-exists": true
     },
     {
       "name": "avg_passenger_count_esql_segment_partitioning",

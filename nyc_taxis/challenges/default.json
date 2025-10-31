@@ -786,7 +786,7 @@
         },
         {
           "operation": "delete-nyc-taxis-sample-index",
-          "tags": ["setup"]
+          "tags": ["setup-2"]
         },
         {
           "operation": {
@@ -926,12 +926,12 @@
           "tags": ["setup"]
         },
         {
-          "name": "refresh-after-index",
-          "operation": "refresh",
-          "tags": ["setup"]
+          "operation": "create-nyc-taxis-sample-index",
+          "tags": ["setup-2"]
         },
         {
-          "operation": "create-nyc-taxis-sample-index",
+          "name": "refresh-after-index",
+          "operation": "refresh",
           "tags": ["setup"]
         },
         {

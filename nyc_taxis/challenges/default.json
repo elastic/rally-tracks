@@ -926,11 +926,16 @@
           "tags": ["setup"]
         },
         {
+          "name": "refresh-after-index",
+          "operation": "refresh",
+          "tags": ["setup"]
+        },
+        {
           "operation": "create-nyc-taxis-sample-index",
           "tags": ["setup"]
         },
         {
-          "name": "refresh-after-index",
+          "name": "refresh-after-sample-index",
           "operation": "refresh",
           "tags": ["setup"]
         },

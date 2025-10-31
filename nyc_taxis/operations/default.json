@@ -964,8 +964,7 @@
       "path": "/_reindex",
       "body": {
         "source": {
-          "index": "nyc_taxis",
-          "query": { "match_all": {} }
+          "index": "nyc_taxis"
         },
         "max_docs": 1000,
         "dest": {

@@ -23,7 +23,7 @@
 "corpora": "msmarco-v2-initial-indexing",
 "operation-type": "bulk",
 "bulk-size": {{bulk_size | default(100)}},
-"ingest-percentage": {{initial_ingest_percentage | default(5)}}
+"ingest-percentage": {{initial_ingest_percentage | default(100)}}
 {%- if conflicts is defined %},
 "conflicts": "{{p_conflicts}}",
 "on-conflict": "{{p_on_conflict}}",

@@ -109,12 +109,20 @@
   ]
 },
 {
-"name": "ingest-scale",
-"description": "Benchmark bulk indexing with configurable steps",
-"default": false,
-"schedule": [
-{{ rally.collect(parts="common/ingest-scale.json") }}
-]
+  "name": "ingest-scale",
+  "description": "Benchmark bulk indexing with configurable steps",
+  "default": false,
+  "schedule": [
+    {{ rally.collect(parts="common/ingest-scale.json") }}
+  ]
+},
+{
+  "name": "ingest-search-scale",
+  "description": "Benchmark bulk indexing, then search",
+  "default": false,
+  "schedule": [
+    {{ rally.collect(parts="common/ingest-search-scale.json") }}
+  ]
 },
 {
   "name": "ingest-autoscale",

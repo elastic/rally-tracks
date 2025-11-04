@@ -33,6 +33,7 @@
 "operation": "index_raw",
 "clients": {{runtime_bulk_indexing_clients}}
 }
+{%- set p_vector_index_type = (vector_index_type | default("bbq_hnsw"))%}
 {%- set p_runtime_search_clients=runtime_search_clients | default(16) %}
 {%- set p_scale_steps=scaling_steps | default([0.1, 0.25, 0.50, 0.80, 1.0, 1.5, 2.0, 5.0]) -%}
 {% for step in p_scale_steps %}
@@ -47,25 +48,24 @@
       "operation-type": "search",
     "param-source": "knn-param-source",
     "k": 10,
-    "num-candidates": 100,
     {%- if p_vector_index_type == "bbq_hnsw" %}
       "oversample-rescore": 3,
     {%- endif %}
-    },
+    "num-candidates": 100
+  },
     "warmup-time-period": {{search_warmup_time_period | default(600)}},
     "clients": {{scaled_search_clients}}
   },
   {
     "name": "search-c{{scaled_search_clients}}-s100",
-    "clients": {{p_as_search_clients[i]}},
     "operation": {
     "operation-type": "search",
     "param-source": "knn-param-source",
     "k": 100,
-    "num-candidates": 500,
     {%- if p_vector_index_type == "bbq_hnsw" %}
       "oversample-rescore": 3,
     {%- endif %}
+    "num-candidates": 500
     },
     "warmup-time-period": {{search_warmup_time_period | default(600)}},
     "clients": {{scaled_search_clients}}
@@ -73,5 +73,7 @@
 ]
 }
 }
+{%- endfor %}
+
 
 

@@ -31,7 +31,7 @@
 },
 {
 "operation": "index_raw",
-"clients": {{runtime_bulk_indexing_clients}}
+"clients": {{runtime_bulk_indexing_clients | default(300)}}
 }
 {%- set p_vector_index_type = (vector_index_type | default("bbq_hnsw"))%}
 {%- set p_runtime_search_clients=runtime_search_clients | default(16) %}

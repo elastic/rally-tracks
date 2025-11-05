@@ -31,6 +31,6 @@
 },
 {
 "operation": "index_raw",
-"clients": {{runtime_bulk_indexing_clients}}
+"clients": {{runtime_bulk_indexing_clients | default(300)}}
 }
 

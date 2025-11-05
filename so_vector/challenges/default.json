@@ -33,8 +33,9 @@
       "operation": {
         "operation-type": "bulk",
         "bulk-size": {{bulk_size | default(500)}},
-        "ingest-percentage": {{ingest_percentage | default(100)}}
-      },
+        "ingest-percentage": {{ingest_percentage | default(100)}},
+        "corpora": {{corpora | default("so_vector_float") | tojson }}
+},
       "warmup-time-period": {{ bulk_warmup | default(40) | int }},
       "clients": {{bulk_indexing_clients | default(1)}}
     },

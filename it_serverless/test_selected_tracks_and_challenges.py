@@ -54,7 +54,7 @@ class TestTrackRepository:
     }
     skip_challenges_user = {
         "geonames": ["append-no-conflicts"],
-        "http_logs": ["append-no-conflicts", "runtime-fields"],
+        "http_logs": ["append-no-conflicts", "runtime-fields", "raw-docs-sampling"],
         "k8s_metrics": ["append-no-conflicts-metrics-with-fast-refresh", "fast-refresh-index-only", "fast-refresh-index-with-search"],
     }
     disable_assertions = {

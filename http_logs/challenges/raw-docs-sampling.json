@@ -1,0 +1,121 @@
+{
+  "name": "raw-docs-sampling",
+  "description": " Ingestion performance with raw documents sampling enabled. Tests sampling feature impact on log ingestion. Indexes the whole document corpus using Elasticsearch default settings. We only adjust the number of replicas as we benchmark a single node cluster and Rally will only start the benchmark if the cluster turns green. Document ids are unique so all index operations are append only.",
+  "default": false,
+  "schedule": [
+    {
+      "tags": ["setup"],
+      "operation": "delete-index"
+    },
+    {
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "tags": ["health"],
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "logs-*",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "name": "configure-sampling",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/{{index_name | default('logs-181998')}}/_sample/config",
+        "body": {
+          "rate": "0.5",
+          "max_samples": "1000",
+          "if": "ctx.status != null && ctx.status >= 200 && ctx.status < 300"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "name": "verify-sampling-config",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "GET",
+        "path": "/{{index_name | default('logs-181998')}}/_sample/config"
+      }
+    },
+    {
+      "tags": ["index"],
+      "operation": "index-append",
+      "warmup-time-period": 240,
+      "clients": {{bulk_indexing_clients | default(8)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    {
+      "name": "refresh-after-index",
+      "tags": ["index"],
+      "operation": "refresh"
+    },
+    {
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "force-merge",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "tags": ["index"],
+      "operation": "refresh"
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "retrieve-sampled-docs",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "GET",
+        "path": "/{{index_name | default('logs-181998')}}/_sample"
+      }
+    },
+    {
+      "name": "get-sampling-stats",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "GET",
+        "path": "/{{index_name | default('logs-181998')}}/_sample/stats"
+      }
+    },
+    {
+      "name": "cleanup-sampling-config",
+      "tags": ["cleanup"],
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "DELETE",
+        "path": "/{{index_name | default('logs-181998')}}/_sample/config"
+      }
+    }
+  ]
+}
+

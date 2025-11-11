@@ -1,0 +1,35 @@
+{
+  "name": "term_query_with_matches",
+  "operation-type": "esql",
+  "query": "FROM logs-* | WHERE MATCH(message, \"server query failed\") | keep message"
+},
+{
+  "name": "term_query_with_matches_argument",
+  "operation-type": "esql",
+  "query": "FROM logs-* | WHERE MATCH(message, \"30s\") | keep message"
+},
+{
+  "name": "term_query_empty_template_term",
+  "operation-type": "esql",
+  "query": "FROM logs-* | WHERE MATCH(message, \"gorgonzola\") | keep message"
+},
+{
+  "name": "term_query_empty_argument_term",
+  "operation-type": "esql",
+  "query": "FROM logs-* | WHERE MATCH(message, \"123456787654321\") | keep message"
+},
+{
+  "name": "phrase_query_with_matches_template_many_term_matches",
+  "operation-type": "esql",
+  "query": "FROM logs-* | WHERE MATCH_PHRASE(message, \"metrics in the last\") | keep message"
+},
+{
+  "name": "phrase_query_with_matches_argument_and_template",
+  "operation-type": "esql",
+  "query": "FROM logs-* | WHERE MATCH_PHRASE(message, \"SSL certificate default/prod-3-eden-wildcard\") | keep message"
+},
+{
+  "name": "phrase_query_empty_with_term_matches",
+  "operation-type": "esql",
+  "query": "FROM logs-* | WHERE MATCH_PHRASE(message, \"server query failed\") | keep message"
+}

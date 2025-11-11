@@ -14,6 +14,9 @@
         },
         "logsdb.route_on_sort_fields": true,
         {% endif %}
+        {% if patterned_text_message_field | default(false) is true %}
+        "logsdb.default_sort_on_message_template": true,
+        {% endif %}
         {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
         "max_docvalue_fields_search": 200,
         "number_of_shards": 1,
@@ -2817,7 +2820,8 @@
             },
             "message": {
               {% if patterned_text_message_field | default(false) is true %}
-              "type": "patterned_text"
+              "type": "pattern_text",
+              "index_options": {{ patterned_text_index_options | default("docs") | tojson }}
               {% else %}
               "type": "match_only_text"
               {% endif %}
@@ -5795,7 +5799,8 @@
         },
         "message": {
           {% if patterned_text_message_field | default(false) is true %}
-          "type": "patterned_text"
+          "type": "pattern_text",
+          "index_options": {{ patterned_text_index_options | default("docs") | tojson }}
           {% else %}
           "type": "match_only_text"
           {% endif %}

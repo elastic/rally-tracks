@@ -11,8 +11,17 @@
   }
 },
 {
+  "name": "esql-knn-search-10-50-acceptedAnswerId",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": "acceptedAnswerId IS NOT NULL"
+},
+{
   "name": "knn-recall-10-50-acceptedAnswerId",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -38,8 +47,17 @@
   }
 },
 {
+  "name": "esql-knn-search-10-50-java",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": "term(tags, \"java\")"
+},
+{
   "name": "knn-recall-10-50-java",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -67,8 +85,17 @@
   }
 },
 {
+  "name": "esql-knn-search-10-50-css",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": "term(tags, \"css\")"
+},
+{
   "name": "knn-recall-10-50-css",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -96,8 +123,17 @@
   }
 },
 {
+  "name": "esql-knn-search-10-50-concurrency",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": "term(tags, \"concurrency\")"
+},
+{
   "name": "knn-recall-10-50-concurrency",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -125,8 +161,17 @@
   }
 },
 {
+  "name": "esql-knn-search-10-50-random-10-percent",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": "questionId <= 650000"
+},
+{
   "name": "knn-recall-10-50-random-10-percent",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -154,8 +199,17 @@
   }
 },
 {
+  "name": "esql-knn-search-100-300-random-10-percent",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 100,
+  "num_candidates": 300,
+  "filter": "questionId <= 650000"
+},
+{
   "name": "knn-recall-100-300-random-10-percent",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 100,
   "num_candidates": 300,
@@ -183,8 +237,17 @@
   }
 },
 {
+  "name": "esql-knn-search-10-50-random-20-percent",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "num_candidates": 50,
+  "filter": "questionId <= 1500000"
+},
+{
   "name": "knn-recall-10-50-random-20-percent",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -212,11 +275,70 @@
   }
 },
 {
+  "name": "esql-knn-search-100-300-random-20-percent",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 100,
+  "num_candidates": 300,
+  "filter": "questionId <= 1500000"
+},
+{
   "name": "knn-recall-100-300-random-20-percent",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 100,
   "num_candidates": 300,
+  "include-in-reporting": false,
+  "filter": {
+    "range": {
+      "questionId": {
+        "lte": 1500000
+      }
+    }
+  }
+},
+{
+  "name": "knn-search-default-match-all",
+  "operation-type": "search",
+  "param-source": "knn-param-source"
+},
+{
+  "name": "esql-knn-search-default-match-all",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source"
+},
+{
+  "name": "knn-recall-default-match-all",
+  "operation-type": "knn-recall",
+  "request-timeout": 600,
+  "param-source": "knn-recall-param-source",
+  "include-in-reporting": false
+},
+
+{
+  "name": "knn-search-default-random-20-percent",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "filter": {
+    "range": {
+      "questionId": {
+        "lte": 1500000
+      }
+    }
+  }
+},
+{
+  "name": "esql-knn-search-default-random-20-percent",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "filter":  "questionId <= 1500000"
+},
+{
+  "name": "knn-recall-default-random-20-percent",
+  "operation-type": "knn-recall",
+  "request-timeout": 600,
+  "param-source": "knn-recall-param-source",
   "include-in-reporting": false,
   "filter": {
     "range": {
@@ -234,8 +356,16 @@
   "num_candidates": 50
 },
 {
+  "name": "esql-knn-search-10-50-match-all",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "num_candidates": 50
+},
+{
   "name": "knn-recall-10-50-match-all",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 10,
   "num_candidates": 50,
@@ -249,8 +379,16 @@
   "num_candidates": 300 
 },
 {
+  "name": "esql-knn-search-100-300-match-all",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 100,
+  "num_candidates": 300
+},
+{
   "name": "knn-recall-100-300-match-all",
   "operation-type": "knn-recall",
+  "request-timeout": 600,
   "param-source": "knn-recall-param-source",
   "k": 100,
   "num_candidates": 300,
@@ -271,6 +409,14 @@
   }
 },
 {
+  "name": "esql-script-score-query-css",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"css\")"
+},
+{
   "name": "script-score-query-javascript",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -283,6 +429,14 @@
       ]
     }
   }
+},
+{
+  "name": "esql-script-score-query-javascript",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"javascript\")"
 },
 {
   "name": "script-score-query-concurrency",
@@ -299,6 +453,14 @@
   }
 },
 {
+  "name": "esql-script-score-query-concurrency",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"concurrency\")"
+},
+{
   "name": "script-score-query-ccs",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -313,6 +475,14 @@
   }
 },
 {
+  "name": "esql-script-score-query-ccs",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"ccs\")"
+},
+{
   "name": "script-score-query-acceptedAnswerId",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -323,6 +493,14 @@
       "field": "acceptedAnswerId"
     }
   }
+},
+{
+  "name": "esql-script-score-query-acceptedAnswerId",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "acceptedAnswerId IS NOT NULL"
 },
 {
   "name": "script-score-query-java",
@@ -339,9 +517,24 @@
   }
 },
 {
+  "name": "esql-script-score-query-java",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "term(tags, \"java\")"
+},
+{
   "name": "script-score-query-match-all",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "exact": true,
+  "k": 10
+},
+{
+  "name": "esql-script-score-query-match-all",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10
 }

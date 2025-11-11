@@ -563,42 +563,47 @@ def test_timestamp_corpus_read_from_multiple_integrations():
     client_param_source = param_source.partition(partition_index=0, total_partitions=1)
 
     # see test_timestamp_corpus_read() for expected timestamps for the defined timerange and corpus size
-    timestamps = {
-        "apache-access-logs": "31/Aug/2020:00:12:26 +0000",
-        "apache-error-logs": "Mon Aug 31 01:32:26 2020",
-        "application-logs-1": "2020-08-31T02:52:26.435Z",
-        "application-logs-2": "2020-08-31T04:12:26.435Z",
-        "kafka-logs": "2020-08-31 05:32:26",
-        "mysql-error-logs": "2020-08-31 06:52:26",
-        "mysql-slowlog-logs": "1598861546",
-        "nginx-access-logs": "31/Aug/2020:09:32:26 +0000",
-        "nginx-access-logs-2": "31/Aug/2020:10:52:26 +0000",
-        "nginx-error-logs": "2020/08/31 12:12:26",
-        "nginx-error-logs-2": "2020/08/31 13:32:26",
-        "postgresql-logs": "2020-08-31 14:52:26",
-        "redis-app-logs": "31 Aug 16:12:26",
-        "redis-app-slowlogs": "2020-08-31T17:32:26.435Z",
-        "system-auth-logs": "2020-08-31T18:52:26.775113Z",
-        "system-auth-logs-2": "2020-08-31T20:12:26.775113Z",
-        "system-syslog-logs": "2020-08-31T21:32:26.775113Z",
-        "system-syslog-logs-2": "2020-08-31T22:52:26.775113Z",
+    # Each entry contains: (message_timestamp, expected_at_timestamp)
+    # message_timestamp: format as it appears in the message field
+    # expected_at_timestamp: ISO format value expected in the @timestamp field
+    expected_timestamps = {
+        "apache-access-logs": ("31/Aug/2020:00:12:26 +0000", "2020-08-31T00:12:26.435Z"),
+        "apache-error-logs": ("Mon Aug 31 01:32:26 2020", "2020-08-31T01:32:26.435Z"),
+        "application-logs-1": ("2020-08-31T02:52:26.435Z", "2020-08-31T02:52:26.435Z"),
+        "application-logs-2": ("2020-08-31T04:12:26.435Z", "2020-08-31T04:12:26.435Z"),
+        "kafka-logs": ("2020-08-31 05:32:26", "2020-08-31T05:32:26.435Z"),
+        "mysql-error-logs": ("2020-08-31 06:52:26", "2020-08-31T06:52:26.435Z"),
+        "mysql-slowlog-logs": ("1598861546", "2020-08-31T08:12:26.435Z"),
+        "nginx-access-logs": ("31/Aug/2020:09:32:26 +0000", "2020-08-31T09:32:26.435Z"),
+        "nginx-access-logs-2": ("31/Aug/2020:10:52:26 +0000", "2020-08-31T10:52:26.435Z"),
+        "nginx-error-logs": ("2020/08/31 12:12:26", "2020-08-31T12:12:26.435Z"),
+        "nginx-error-logs-2": ("2020/08/31 13:32:26", "2020-08-31T13:32:26.435Z"),
+        "postgresql-logs": ("2020-08-31 14:52:26", "2020-08-31T14:52:26.435Z"),
+        "redis-app-logs": ("31 Aug 16:12:26", "2020-08-31T16:12:26.435Z"),
+        "redis-app-slowlogs": ("2020-08-31T17:32:26.435Z", "2020-08-31T17:32:26.435Z"),
+        "system-auth-logs": ("2020-08-31T18:52:26.775113Z", "2020-08-31T18:52:26.435Z"),
+        "system-auth-logs-2": ("2020-08-31T20:12:26.775113Z", "2020-08-31T20:12:26.435Z"),
+        "system-syslog-logs": ("2020-08-31T21:32:26.775113Z", "2020-08-31T21:32:26.435Z"),
+        "system-syslog-logs-2": ("2020-08-31T22:52:26.775113Z", "2020-08-31T22:52:26.435Z"),
     }
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "apache-access-logs"
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == f'10.12.9.197 - brownantonio [{timestamps[expected_idx_name]}] "GET / HTTP/1.1" 200 1203 "-" "Elastic-Heartbeat/7.8.0 (linux; amd64; f79387d32717d79f689d94fda1ec80b2cf285d30; 2020-06-14 17:31:16 +0000 UTC)"'
+        == f'10.12.9.197 - brownantonio [{expected_timestamps[expected_idx_name][0]}] "GET / HTTP/1.1" 200 1203 "-" "Elastic-Heartbeat/7.8.0 (linux; amd64; f79387d32717d79f689d94fda1ec80b2cf285d30; 2020-06-14 17:31:16 +0000 UTC)"'
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "apache-error-logs"
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == f"[{timestamps[expected_idx_name]}] [core:info] [pid 994682:tid 677381] [client 10.12.9.220:35782] AH00128: File does not exist: /var/www/html/wp-login.ph, referer: shopify.com"
+        == f"[{expected_timestamps[expected_idx_name][0]}] [core:info] [pid 994682:tid 677381] [client 10.12.9.220:35782] AH00128: File does not exist: /var/www/html/wp-login.ph, referer: shopify.com"
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
     idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "application-logs-1"
@@ -607,120 +612,138 @@ def test_timestamp_corpus_read_from_multiple_integrations():
         doc_message
         == '82.36.71.189 - [82.36.71.189] - elasticsearch-ci [07/Sep/2020:10:28:35 +0000] "GET /cache/c2d427d5ecd9155176c39090541beb49 HTTP/1.1" 200 2412 "-" "Gradle/6.6.1 (Linux;4.12.14-lp151.28.63-default;amd64) (Oracle Corporation;14.0.2;14.0.2+12-46)" 409 0.008 [elasticsearch-gradle-proxy-80] 82.36.71.189:9080 2412 0.008 200'
     )
-    assert ts == timestamps[expected_idx_name]
+    assert ts == expected_timestamps[expected_idx_name][1]
 
     idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "application-logs-2"
     assert idx_name == expected_idx_name
     assert doc_message == "\u001b[0mGET / \u001b[32m200 \u001b[0m0.592 ms - 2410\u001b[0m"
-    assert ts == timestamps[expected_idx_name]
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "kafka-logs"
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == timestamps[expected_idx_name]
+        == expected_timestamps[expected_idx_name][0]
         + ",544. DEBUG [ReplicaFetcher replicaId=2, leaderId=1, fetcherId=0]: Built incremental fetch (sessionId=998038420, epoch=3028672) for node 1. Added 0 partition(s), altered 0 partition(s), removed 0 partition(s) out of 24 partition(s) (org.apache.kafka.clients.FetchSessionHandler)"
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "mysql-error-logs"
     assert idx_name == expected_idx_name
-    assert doc_message == timestamps[expected_idx_name] + " 3328971 [Note] Access denied for user 'root'@'10.12.6.38' (using password: YES)"
+    assert (
+        doc_message
+        == expected_timestamps[expected_idx_name][0] + " 3328971 [Note] Access denied for user 'root'@'10.12.6.38' (using password: YES)"
+    )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "mysql-slowlog-logs"
     assert idx_name == expected_idx_name
     assert (
         doc_message
         == "# User@Host: stevenssandra[root] @  [10.12.7.63]  Id: 4756535\n# Query_time: 0.00061  Lock_time: 0.000057 Rows_sent: 99 Rows_examined: 99   \nSET timestamp="
-        + timestamps[expected_idx_name]
+        + expected_timestamps[expected_idx_name][0]
         + ";\nSELECT intcol1,intcol2,intcol3,intcol4,intcol5,intcol6,intcol7,charcol1,charcol2,charcol3,charcol4,charcol5,charcol6,charcol7 FROM t1\u0000;"
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "nginx-access-logs"
     assert idx_name == expected_idx_name
     assert (
         doc_message
         == "134.68.249.190 - danielle15 ["
-        + timestamps[expected_idx_name]
+        + expected_timestamps[expected_idx_name][0]
         + '] "GET / HTTP/1.1" 200 649 "" "Elastic-Heartbeat/7.8.0 (linux; amd64; f79387d32717d79f689d94fda1ec80b2cf285d30; 2020-06-14 17:31:16 +0000 UTC)"'
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "nginx-access-logs-2"
     assert idx_name == expected_idx_name
     assert (
-        doc_message == "93.191.78.166 - wendy13 [" + timestamps[expected_idx_name] + '] "GET /whoAmI/ HTTP/1.1" 200 6927 "-" "GoogleHC/1.0"'
+        doc_message
+        == "93.191.78.166 - wendy13 [" + expected_timestamps[expected_idx_name][0] + '] "GET /whoAmI/ HTTP/1.1" 200 6927 "-" "GoogleHC/1.0"'
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "nginx-error-logs"
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == timestamps[expected_idx_name]
+        == expected_timestamps[expected_idx_name][0]
         + ' [info] 18#18: *6831822 [lua] ip_blacklist.lua:15: Loading REDIS Cache, client: 106.172.245.114, server: green.demo.elastic.co, request: "GET /status HTTP/1.1", host: "demo.elastic.co"'
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "nginx-error-logs-2"
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == timestamps[expected_idx_name]
+        == expected_timestamps[expected_idx_name][0]
         + ' [error] 26284#26284: *244030 limiting requests, dry run, excess: 50.256 by zone "jenkins_global", client: 211.174.195.82, server: kibana-ci.elastic.co, request: "GET /static/4ffe5b59/descriptor/hudson.plugins.gradle.GradleOutcomeNote/style.css HTTP/1.1", host: "kibana-ci.elastic.co"'
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "postgresql-logs"
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == timestamps[expected_idx_name]
+        == expected_timestamps[expected_idx_name][0]
         + '.870 UTC [3894076] elastic@opbeans LOG:  duration: 0.236 ms  statement <unnamed>: SELECT "opbeans_orderline"."id", "opbeans_orderline"."order_id", "opbeans_orderline"."product_id", "opbeans_orderline"."amount", "opbeans_product"."id", "opbeans_product"."sku", "opbeans_product"."name", "opbeans_product"."description", "opbeans_product"."product_type_id", "opbeans_product"."stock", "opbeans_product"."cost", "opbeans_product"."selling_price" FROM "opbeans_orderline" INNER JOIN "opbeans_product" ON ("opbeans_orderline"."product_id" = "opbeans_product"."id") WHERE "opbeans_orderline"."order_id" = 74649'
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "redis-app-logs"
     assert idx_name == expected_idx_name
-    assert doc_message == f"1:M {timestamps[expected_idx_name]}.464 - Accepted 10.12.9.203:40122"
+    assert doc_message == f"1:M {expected_timestamps[expected_idx_name][0]}.464 - Accepted 10.12.9.203:40122"
+    assert ts == expected_timestamps[expected_idx_name][1]
 
     idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "redis-app-slowlogs"
     assert idx_name == expected_idx_name
     assert doc_message == "ZREVRANGEBYSCORE ip_blacklist 9223372036854775807 -1 WITHSCORES"
-    assert ts == timestamps[expected_idx_name]
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "system-auth-logs"
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == timestamps[expected_idx_name]
+        == expected_timestamps[expected_idx_name][0]
         + " packer-5f3c21c5-cff2-f924-ed7a-0beb9d7363cc sudo: pam_unix(sudo:session): session closed for user root"
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "system-auth-logs-2"
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == timestamps[expected_idx_name] + " server-02 sshd[8252]: Received disconnect from 175.158.50.75 port 31759:11: Bye Bye [preauth]"
+        == expected_timestamps[expected_idx_name][0]
+        + " server-02 sshd[8252]: Received disconnect from 175.158.50.75 port 31759:11: Bye Bye [preauth]"
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "system-syslog-logs"
     assert idx_name == expected_idx_name
     assert (
         doc_message
-        == timestamps[expected_idx_name]
+        == expected_timestamps[expected_idx_name][0]
         + " packer-5f3c21c5-cff2-f924-ed7a-0beb9d7363cc systemd[1]: Stopped Execute cloud user/final scripts."
     )
+    assert ts == expected_timestamps[expected_idx_name][1]
 
-    idx_name, doc_message, _ = next_bulk()
+    idx_name, doc_message, ts = next_bulk()
     expected_idx_name = "system-syslog-logs-2"
     assert idx_name == expected_idx_name
-    assert doc_message == timestamps[expected_idx_name] + " workstation-03 systemd: Started Docker Cleanup."
+    assert doc_message == expected_timestamps[expected_idx_name][0] + " workstation-03 systemd: Started Docker Cleanup."
+    assert ts == expected_timestamps[expected_idx_name][1]

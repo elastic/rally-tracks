@@ -1,0 +1,114 @@
+{
+  "name": "logs@stream.layer",
+  "component_template": {
+    "template": {
+      "settings": {
+        "index": {
+          "mode": "logsdb",
+          "codec": "best_compression",
+          "mapping": {
+            "total_fields": {
+              "ignore_dynamic_beyond_limit": "true"
+            },
+            "ignore_malformed": "true"
+          },
+          "sort": {
+            "field": ["resource.attributes.host.name", "@timestamp"],
+            "order": ["asc", "desc"]
+          }
+        }
+      },
+      "mappings": {
+        "dynamic": false,
+        "properties": {
+          "trace_id": {
+            "type": "keyword"
+          },
+          "scope.name": {
+            "type": "keyword"
+          },
+          "service.name": {
+            "path": "resource.attributes.service.name",
+            "type": "alias"
+          },
+          "resource": {
+            "type": "object",
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "subobjects": false
+              }
+            }
+          },
+          "span_id": {
+            "type": "keyword"
+          },
+          "body.text": {
+            "type": "match_only_text"
+          },
+          "severity_text": {
+            "type": "keyword"
+          },
+          "span.id": {
+            "path": "span_id",
+            "type": "alias"
+          },
+          "body": {
+            "type": "object",
+            "properties": {
+              "structured": {
+                "type": "object",
+                "subobjects": false
+              }
+            }
+          },
+          "message": {
+            "path": "body.text",
+            "type": "alias"
+          },
+          "trace.id": {
+            "path": "trace_id",
+            "type": "alias"
+          },
+          "@timestamp": {
+            "ignore_malformed": false,
+            "type": "date"
+          },
+          "scope": {
+            "type": "object",
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "subobjects": false
+              }
+            }
+          },
+          "severity_number": {
+            "type": "long"
+          },
+          "log.level": {
+            "path": "severity_text",
+            "type": "alias"
+          },
+          "event_name": {
+            "type": "keyword"
+          },
+          "attributes": {
+            "type": "object",
+            "subobjects": false
+          },
+          "host.name": {
+            "path": "resource.attributes.host.name",
+            "type": "alias"
+          },
+          "resource.attributes.host.name": {
+            "type": "keyword"
+          },
+          "resource.attributes.service.name": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}

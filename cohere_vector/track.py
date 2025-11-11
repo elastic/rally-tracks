@@ -38,8 +38,7 @@ class KnnParamSource:
                 "query_vector": self._queries[self._iters],
                 "k": self._params.get("k", 10),
                 "num_candidates": self._params.get("num-candidates", 50),
-            },
-            "_source": False,
+            }
         }
         if "filter" in self._params:
             result["body"]["knn"]["filter"] = self._params["filter"]

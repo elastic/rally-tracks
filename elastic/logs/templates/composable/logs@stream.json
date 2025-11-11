@@ -1,0 +1,33 @@
+{
+  "name": "logs@stream",
+  "index_template": {
+    "index_patterns": ["logs"],
+    "template": {
+      "settings": {
+        "index": {
+          "default_pipeline": "logs@stream.processing",
+          "number_of_replicas" : "{{ number_of_replicas | default('1')}}"
+        }
+      },
+      "mappings": {
+        "properties": {
+          "stream.name": {
+            "type": "constant_keyword",
+            "value": "logs"
+          }
+        }
+      }
+    },
+    "composed_of": ["logs@stream.layer"],
+    "priority": 1000,
+    "version": 1,
+    "_meta": {
+      "managed": true,
+      "description": "The index template for logs stream"
+    },
+    "data_stream": {
+      "hidden": false,
+      "allow_custom_routing": false
+    }
+  }
+}

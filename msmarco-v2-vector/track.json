@@ -1,5 +1,5 @@
 {% import "rally.helpers" as rally with context %}
-
+{% set _base_url = (base_url | default("https://rally-tracks.elastic.co/cohere-msmarco-v2-embed-english-v3")) %}
 {
   "version": 2,
   "description": "Benchmark for vector search with msmarco-v2 passage data",
@@ -16,7 +16,7 @@
   "corpora": [
     {
       "name": "msmarco-v2-initial-indexing",
-      "base-url": "https://rally-tracks.elastic.co/cohere-msmarco-v2-embed-english-v3",
+      "base-url": "{{_base_url}}",
       "documents": [
         {
           "source-file": "cohere-documents-01.json.bz2",

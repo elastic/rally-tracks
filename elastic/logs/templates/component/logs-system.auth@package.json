@@ -14,6 +14,9 @@
           },
           "logsdb.route_on_sort_fields": true,
           {% endif %}
+          {% if patterned_text_message_field | default(false) is true %}
+          "logsdb.default_sort_on_message_template": true,
+          {% endif %}
           "mapping": {
             "total_fields": {
               "limit": "10000"
@@ -288,7 +291,8 @@
             "properties": {
               "message": {
                 {% if patterned_text_message_field | default(false) is true %}
-                "type": "patterned_text"
+                "type": "pattern_text",
+                "index_options": {{ patterned_text_index_options | default("docs") | tojson }}
                 {% else %}
                 "type": "match_only_text"
                 {% endif %}
@@ -297,7 +301,8 @@
           },
           "message": {
             {% if patterned_text_message_field | default(false) is true %}
-            "type": "patterned_text"
+            "type": "pattern_text",
+            "index_options": {{ patterned_text_index_options | default("docs") | tojson }}
             {% else %}
             "type": "match_only_text"
             {% endif %}

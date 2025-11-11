@@ -10,11 +10,6 @@
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
   },
   "mappings": {
-    {%- if build_flavor != "serverless" -%}
-    "_source": {
-      "excludes": ["titleVector"]
-    },
-    {%- endif -%}
     "properties": {
       "userId": {
         "type": "keyword"
@@ -37,7 +32,7 @@
         "index" : true,
         "similarity": "dot_product",
         "index_options": {
-          "type": {{ vector_index_type | default("int8_hnsw") | tojson }}
+          "type": {{ vector_index_type | default("bbq_hnsw") | tojson }}
         }
       },
       "acceptedAnswerId": {

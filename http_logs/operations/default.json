@@ -502,4 +502,14 @@
         "field": "request.raw",
         "string": "GET image"
       }
+    },
+    {
+      "name": "esql-avg-message-length",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS AVG(LENGTH(message))"
+    },
+    {
+      "name": "esql-avg-message-keyword-length",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS AVG(LENGTH(message.keyword))"
     }

@@ -2,7 +2,7 @@ import bz2
 import json
 import logging
 import os
-from typing import Any, List
+from typing import Any, List, Optional
 
 logger = logging.getLogger(__name__)
 QUERIES_FILENAME: str = "queries.json.bz2"
@@ -93,8 +93,7 @@ class KnnParamSource:
                             "params": {"query": query_vec},
                         },
                     }
-                },
-                "_source": False,
+                }
             }
             if "filter" in self._params:
                 result["body"]["query"]["script_score"]["query"] = self._params["filter"]
@@ -105,8 +104,7 @@ class KnnParamSource:
                     "query_vector": query_vec,
                     "k": self._params.get("k", 10),
                     "num_candidates": self._params.get("num_candidates", 50),
-                },
-                "_source": False,
+                }
             }
             if "filter" in self._params:
                 result["body"]["knn"]["filter"] = self._params["filter"]
@@ -114,6 +112,43 @@ class KnnParamSource:
                 result["body"]["knn"]["rescore_vector"] = {"oversample": oversample}
 
         return result
+
+
+class ESQLKnnParamSource(KnnParamSource):
+    def params(self):
+        num_candidates = self._params.get("num_candidates", 50)
+        # if -1, then its unset. If set, just set it.
+        oversample = self._params.get("oversample", -1)
+        if oversample > -1 and self._exact_scan:
+            raise ValueError("Oversampling is not supported for exact scan queries.")
+
+        k = self._params.get("k", 10)
+
+        query_vec = self._queries[self._iters]
+        self._iters += 1
+        if self._iters >= self._maxIters:
+            self._iters = 0
+
+        if self._exact_scan:
+            query = f"FROM {self._index_name}"
+            if "filter" in self._params:
+                # Optionally append filter.
+                query += " | where (" + self._params["filter"] + ")"
+            query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | drop titleVector | sort score desc | limit {k}"
+        else:
+            # Construct options JSON.
+            options_param = '{"min_candidates":' + str(num_candidates)
+            if oversample > -1:
+                options_param += ', "rescore_oversample":' + str(oversample)
+            options_param += "}"
+
+            query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {options_param})"
+            if "filter" in self._params:
+                # Optionally append filter.
+                query += " and (" + self._params["filter"] + ")"
+            query += "| drop titleVector | sort _score desc | limit " + str(k)
+
+        return {"query": query}
 
 
 class KnnVectorStore:
@@ -169,6 +204,8 @@ class KnnRecallParamSource:
         return self
 
     def params(self):
+        request_timeout = self._params.get("request-timeout", None)
+        optional_params = {"request-timeout": request_timeout} if request_timeout else {}
         return {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
@@ -177,6 +214,7 @@ class KnnRecallParamSource:
             "oversample": self._params.get("oversample", -1),
             "knn_vector_store": KnnVectorStore(),
             "filter": self._params.get("filter", None),
+            **optional_params,
         }
 
 
@@ -200,12 +238,16 @@ class KnnRecallRunner:
         k = params["size"]
         num_candidates = params["num_candidates"]
         index = params["index"]
+        request_timeout = params.get("request-timeout", None)
         request_cache = params["cache"]
         filter = params["filter"]
         recall_total = 0
         exact_total = 0
         min_recall = k
         max_recall = 0
+
+        if request_timeout:
+            es = es.options(request_timeout=request_timeout)
 
         knn_vector_store: KnnVectorStore = params["knn_vector_store"]
         for query_id, query_vector in enumerate(knn_vector_store.get_query_vectors()):
@@ -241,5 +283,6 @@ class KnnRecallRunner:
 
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)
+    registry.register_param_source("esql-knn-param-source", ESQLKnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

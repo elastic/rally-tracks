@@ -2,6 +2,7 @@
 {# TODO By default, source_mode should be "synthetic" if index_mode == "time_series" else "stored" #}
 {% set p_source_mode = (source_mode | default("synthetic")) %}
 {% set p_include_source_mode = (include_source_mode | default(true)) %}
+{% set p_index_mode = (index_mode | default("time_series")) %}
 {
   "index_patterns": ["k8s*"],
   "data_stream": {},
@@ -21,14 +22,6 @@
         "mode": "{{p_index_mode}}",
         {% endif %}
         {% if p_index_mode == "time_series" %}
-        "routing_path": [
-          "metricset.name",
-          "kubernetes.container.name",
-          "kubernetes.event.involved_object.uid",
-          "kubernetes.node.name",
-          "kubernetes.system.container.id",
-          "kubernetes.volume.name"
-        ],
         "time_series": {
           "start_time": "2021-04-28T00:00:00.000Z",
           "end_time": "2021-05-01T00:00:00.000Z"

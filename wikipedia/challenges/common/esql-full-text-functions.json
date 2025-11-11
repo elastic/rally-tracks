@@ -36,59 +36,59 @@
   "name": "standalone-esql-match-search",
   "operation": "query-esql-match-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
-  "time-period": {{ standalone_search_time_period | default(300) | int }},
-  "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }}
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ iterations | default(500) }}
 },
 {
   "name": "standalone-query-match-search",
   "operation": "query-match-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
-  "time-period": {{ standalone_search_time_period | default(300) | int }},
-  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ iterations | default(500) }}
 },
 {
   "name": "standalone-esql-match-phrase-search",
   "operation": "query-esql-match-phrase-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
-  "time-period": {{ standalone_search_time_period | default(300) | int }},
-  "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }}
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ iterations | default(500) }}
 },
 {
   "name": "standalone-query-match-phrase-search",
   "operation": "query-match-phrase-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
-  "time-period": {{ standalone_search_time_period | default(300) | int }},
-  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ iterations | default(500) }}
 },
 {
   "name": "standalone-esql-qstr-search",
   "operation": "query-esql-qstr-search",
   "query-type": "match",
   "clients": {{ standalone_search_clients | default(20) | int }},
-  "time-period": {{ standalone_search_time_period | default(300) | int }},
-  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ iterations | default(500) }}
 },
 {
   "name": "standalone-query-string-search",
   "operation": "query-string-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
-  "time-period": {{ standalone_search_time_period | default(300) | int }},
-  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ iterations | default(500) }}
 },
 {
   "name": "standalone-esql-kql-search",
   "operation": "query-esql-kql-search",
   "query-type": "match",
   "clients": {{ standalone_search_clients | default(20) | int }},
-  "time-period": {{ standalone_search_time_period | default(300) | int }},
-  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ iterations | default(500) }}
 },
 {
   "name": "standalone-query-kql-search",
   "operation": "query-kql-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
-  "time-period": {{ standalone_search_time_period | default(300) | int }},
-  "warmup-time-period": {{ standalone_search_warmup_time_period | default(10) | int }}
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ iterations | default(500) }}
 },
 {
   "name": "standalone-esql-term-search",
@@ -96,12 +96,12 @@
   "query-type": "match",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(500) }}
 },
 {
   "name": "standalone-query-term-search",
   "operation": "query-term-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(500) }}
 }

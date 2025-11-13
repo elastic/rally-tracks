@@ -35,7 +35,7 @@
         "bulk-size": {{bulk_size | default(500)}},
         "ingest-percentage": {{ingest_percentage | default(100)}},
         "corpora": {{corpora | default("so_vector_float") | tojson }}
-},
+    },
       "warmup-time-period": {{ bulk_warmup | default(40) | int }},
       "clients": {{bulk_indexing_clients | default(1)}}
     },
@@ -47,6 +47,20 @@
         "request-timeout": 1000,
         "include-in-reporting": true
       }
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+        "path": "_all.total.merges.current",
+        "expected-value": 0
+      },
+      "retry-until-success": true,
+      "include-in-reporting": false
+      },
+      "tags": ["index"]
     },
     {
       "name": "knn-search-default-match-all",
@@ -450,6 +464,20 @@
       "name": "refresh-after-force-merge",
       "tags": ["force-merge"],
       "operation": "refresh"
+    },
+    {
+      "name": "wait-until-force-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      },
+      "tags": ["force-merge"]
     },
     {
       "name": "knn-search-default-match-all-force-merge",

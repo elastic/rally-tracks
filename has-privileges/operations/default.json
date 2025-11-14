@@ -1,12 +1,19 @@
-    {
-      "name": "create-roles-and-users",
-      "operation-type": "create-roles-and-users"
-    }, 
-    {
-      "name": "create-kibana-app-privileges",
-      "operation-type": "create-kibana-app-privileges"
-    }, 
-    {
-      "name": "has-privileges",
-      "operation-type": "has-privileges"
-    }
+{
+  "name": "create-roles-and-users",
+  "operation-type": "create-roles-and-users",
+  "num_roles": {{num_roles | default(1000)}},
+  "num_users": {{num_users | default(100)}},
+  "num_roles_per_user": {{num_roles_per_user | default(300)}},
+  "num_spaces": {{num_spaces | default(100)}},
+  "wildcard_mode": "{{wildcard_mode | default('mixed')}}"
+},
+{
+"name": "create-kibana-app-privileges",
+"operation-type": "create-kibana-app-privileges"
+},
+{
+  "name": "has-privileges",
+  "operation-type": "has-privileges",
+  "num_users": {{num_users | default(100)}},
+  "num_spaces": {{num_spaces | default(100)}}
+}

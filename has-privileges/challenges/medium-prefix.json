@@ -1,0 +1,26 @@
+{
+  "name": "medium-prefix",
+  "description": "Benchmarking _has_privileges API with medium scale and prefix wildcards only (*index)",
+  "default": false,
+  "schedule": [
+    {
+      "operation": "create-roles-and-users",
+      "num_roles": 100,
+      "num_users": 50,
+      "num_roles_per_user": 30,
+      "num_spaces": 50,
+      "wildcard_mode": "prefix"
+    },
+    {
+      "operation": "create-kibana-app-privileges"
+    },
+    {
+      "name": "has-privileges",
+      "operation": "has-privileges",
+      "num_users": 50,
+      "num_spaces": 50,
+      "iterations": 10,
+      "clients": 5
+    }
+  ]
+}

@@ -15,9 +15,14 @@ KIBANA_APP_PRIVILEGES_FILENAME: str = "kibana-app-privileges.json.bz2" # collect
 def generate_random_name(length=10):
     return ''.join(random.choices(string.ascii_lowercase + string.digits + '_-', k=length))
 
-def generate_random_index_expression(length=10):
+def generate_random_index_expression(length=10, wildcard_mode="mixed"):
+    # wildcard_mode: "prefix", "suffix", "both", "none", or "mixed" (random choice)
     base = ''.join(random.choices(string.ascii_lowercase + string.digits + '_-', k=length))
-    mode = random.choice(["prefix", "suffix", "both"])  # include 'none' to exclude adding wildcard
+
+    if wildcard_mode == "mixed":
+        mode = random.choice(["prefix", "suffix", "both"])
+    else:
+        mode = wildcard_mode
 
     if mode in ("prefix", "both"):
         base = "*" + base
@@ -27,21 +32,34 @@ def generate_random_index_expression(length=10):
     return base
 
 async def create_roles_and_users(es, params):
-    # create 100 spaces
+    # Extract parameters with defaults
+    num_roles = params.get("num_roles", 1000)
+    num_users = params.get("num_users", 100)
+    num_roles_per_user = params.get("num_roles_per_user", 300)
+    num_spaces = params.get("num_spaces", 100)
+    wildcard_mode = params.get("wildcard_mode", "mixed")
+
+    # Validate parameters
+    if num_roles_per_user > num_roles:
+        raise exceptions.InvalidSyntax(
+            f"num_roles_per_user ({num_roles_per_user}) cannot exceed num_roles ({num_roles})"
+        )
+
+    # create spaces
     spaces = []
-    for i in range(100):
+    for i in range(num_spaces):
         spaces.append(f"space:space{i}")
-    
-    # create 1000 roles
+
+    # create roles
     roles = []
-    for i in range(1000):
+    for i in range(num_roles):
         random_role_name = f"role_{i}"
         roles.append(random_role_name)
 
     for role_name in roles:
         indices_privileges = [
             {
-                "names": [generate_random_index_expression()],
+                "names": [generate_random_index_expression(wildcard_mode=wildcard_mode)],
                 "privileges": random.sample(["read", "write", "delete", "create"], k=2)
             } for _ in range(1)
         ]
@@ -60,12 +78,12 @@ async def create_roles_and_users(es, params):
                 }
             ]
         )
-    # create 100 users with subset of 300 roles
-    for i in range(100):
+    # create users with subset of roles
+    for i in range(num_users):
         await es.security.put_user(
             username="user_" + str(i),
             password="password",
-            roles=random.sample(roles, k=300)
+            roles=random.sample(roles, k=num_roles_per_user)
         )
 
 async def create_kibana_app_privileges(es, params):
@@ -77,8 +95,13 @@ async def create_kibana_app_privileges(es, params):
         )
 
 async def has_privileges(es, params):
-    user_id = random.randint(1, 99)
-    spaces = [f"space:space{i}" for i in random.sample(range(100), k=1)]
+    # Extract parameters with defaults
+    num_users = params.get("num_users", 100)
+    num_spaces = params.get("num_spaces", 100)
+
+    # Select a random user (0-indexed, so max is num_users - 1)
+    user_id = random.randint(0, num_users - 1)
+    spaces = [f"space:space{i}" for i in random.sample(range(num_spaces), k=1)]
     await es.options(basic_auth=("user_" + str(user_id), "password")).security.has_privileges(
         body={
             "cluster": [

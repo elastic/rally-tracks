@@ -1,0 +1,26 @@
+{
+  "name": "small-none",
+  "description": "Benchmarking _has_privileges API with small scale and no wildcards (index)",
+  "default": false,
+  "schedule": [
+    {
+      "operation": "create-roles-and-users",
+      "num_roles": 10,
+      "num_users": 10,
+      "num_roles_per_user": 5,
+      "num_spaces": 10,
+      "wildcard_mode": "none"
+    },
+    {
+      "operation": "create-kibana-app-privileges"
+    },
+    {
+      "name": "has-privileges",
+      "operation": "has-privileges",
+      "num_users": 10,
+      "num_spaces": 10,
+      "iterations": 10,
+      "clients": 5
+    }
+  ]
+}

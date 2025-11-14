@@ -1,7 +1,7 @@
 {
-  "name": "has-privileges",
-  "description": "Benchmarking _has_privileges API with large scale: 1000 roles, 100 users, 300 roles per user (default)",
-  "default": true,
+  "name": "large-suffix",
+  "description": "Benchmarking _has_privileges API with large scale and suffix wildcards only (index*)",
+  "default": false,
   "schedule": [
     {
       "operation": "create-roles-and-users",
@@ -9,7 +9,7 @@
       "num_users": 100,
       "num_roles_per_user": 300,
       "num_spaces": 100,
-      "wildcard_mode": "mixed"
+      "wildcard_mode": "suffix"
     },
     {
       "operation": "create-kibana-app-privileges"
@@ -25,4 +25,3 @@
     }
   ]
 }
-    

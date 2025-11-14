@@ -42,6 +42,11 @@ extra-dependencies = [
     "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main"
 ]
 
+[tool.hatch.envs.it_serverless]
+extra-dependencies = [
+    "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main"
+]
+
 [tool.hatch.envs.unit]
 extra-dependencies = [
     "geneve==0.0.3",

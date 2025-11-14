@@ -34,13 +34,13 @@ exclude = [
 
 [tool.hatch.envs.default]
 dependencies = [
-    "esrally[develop] @ git+https://github.com/elastic/rally.git@master",
+    "esrally[develop] @ git+https://github.com/gbanasiak/rally.git@address-pytest-deprecations",
     "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main",
 ]
 
 [tool.hatch.envs.unit]
 extra-dependencies = [
-    "geneve==0.0.3",
+    "geneve==0.3.0",
     "elastic-package-assets @ git+https://github.com/elastic/package-assets.git@main"
 ]
 

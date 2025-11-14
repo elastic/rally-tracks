@@ -128,6 +128,9 @@ jobs:
 
     name: rally-tracks-compat ${{ matrix.python-version }}
     steps:
+      - name: Check public IP address
+        run: curl -4 ifconfig.me
+        continue-on-error: true
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:

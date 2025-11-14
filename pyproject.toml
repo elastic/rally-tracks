@@ -34,7 +34,7 @@ exclude = [
 
 [tool.hatch.envs.default]
 dependencies = [
-    "esrally[develop] @ git+https://github.com/gbanasiak/rally.git@address-pytest-deprecations",
+    "esrally[develop] @ git+https://github.com/elastic/rally.git@master",
     "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main",
 ]
 

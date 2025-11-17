@@ -127,6 +127,9 @@ jobs:
 
     name: rally-tracks-compat ${{ matrix.python-version }}
     steps:
+      - name: Check public IP address
+        run: curl -4s ifconfig.me
+        continue-on-error: true
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -139,15 +142,30 @@ jobs:
           java-version: "21"
       - run: echo "JAVA21_HOME=$JAVA_HOME_21_X64" >> $GITHUB_ENV
       - run: echo "JAVA11_HOME=$JAVA_HOME_11_X64" >> $GITHUB_ENV
+      - name: Free Disk Space
+        continue-on-error: true
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be
+        with:
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+          tool-cache: false
+      - name: Check disk space before
+        run: df -h
       - name: "Install dependencies"
         run: python -m pip install .[develop]
       - name: "Run tests${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }}"
         run: hatch -v -e it run test${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }}
-        timeout-minutes: 120
+        timeout-minutes: 160
         env:
           # elastic/endpoint fetches assets from GitHub, authenticate to avoid
           # being rate limited
           ASSETS_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check disk space after
+        run: df -h
       - uses: elastic/es-perf-github-status@v2
         if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
         with:

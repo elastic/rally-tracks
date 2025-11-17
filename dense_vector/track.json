@@ -10,7 +10,7 @@
   ],
   "corpora": [
     {
-      "name": "dense-vector",
+      "name": "dense_vector_floats",
       "base-url": "https://rally-tracks.elastic.co/dense_vector",
       "documents": [
         {
@@ -18,6 +18,18 @@
           "document-count": 10000000,
           "compressed-bytes": 7689453829,
           "uncompressed-bytes": 20905226599
+        }
+      ]
+    },
+    {
+      "name": "dense_vector_base64",
+      "base-url": "https://rally-tracks.elastic.co/dense_vector",
+      "documents": [
+        {
+          "source-file": "documents_base64.json.bz2",
+          "document-count": 10000000,
+          "compressed-bytes": 3825272273,
+          "uncompressed-bytes": 5260000000
         }
       ]
     }

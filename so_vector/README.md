@@ -72,6 +72,8 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `include_force_merge` (default: true for non-serverless clusters, false for serverless clusters): Whether to include force merge operation.
 * `vector_index_type` (default: "bbq_hnsw"): The index kind for storing the vectors.
 * `corpora` (default: "so_vector_float"): The dataset to use. The default data set represents vectors as float arrays. Use "so_vector_base64" for the same dataset with vectors encoded as base64 strings.
+* `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
+* `iterations` (default: 100) - Number of measurement iterations that each client executes.
 
 ### License
 We use the same license for the data as the original data: [CC-SA-4.0](http://creativecommons.org/licenses/by-sa/4.0/).

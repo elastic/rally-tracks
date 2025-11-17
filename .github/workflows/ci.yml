@@ -120,8 +120,8 @@ jobs:
           cache-dependency-path: pyproject.toml
       - name: "Install dependencies"
         run: python -m pip install .[develop]
-      - name: "Run tests${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }}"
-        run: hatch -v -e unit run test${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }}
+      - name: "Run tests"
+        run: hatch -v -e unit run test
       - uses: elastic/es-perf-github-status@v2
         if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
         with:

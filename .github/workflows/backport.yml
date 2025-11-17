@@ -20,10 +20,6 @@ jobs:
         uses: sorenlouv/backport-github-action@ad888e978060bc1b2798690dd9d03c4036560947  # v9.5.1
         with:
           github_token: $BACKPORT_TOKEN
-      
-      - uses: actions/checkout@v4
-      - name: Label PR if needed
-        run: python .github/scripts/backport-pending.py
 
       - name: Info log
         if: ${{ success() }}
@@ -31,4 +27,4 @@ jobs:
         
       - name: Debug log
         if: ${{ failure() }}
-        run: cat ~/.backport/backport.debug.log 
+        run: cat ~/.backport/backport.debug.log

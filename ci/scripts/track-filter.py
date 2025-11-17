@@ -1,6 +1,6 @@
 import os
 
-import yaml  # type: ignore
+import yaml
 
 filters = {}
 

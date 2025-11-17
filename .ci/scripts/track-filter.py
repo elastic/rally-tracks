@@ -17,6 +17,6 @@ for entry in os.listdir("."):
         filters[entry] = [f"{entry}/**"]
 
 
-with open("ci/filters.yml", "w") as f:
+with open(".ci/filters.yml", "w") as f:
     yaml.dump(filters, f, default_flow_style=False)
-print(f"Created ci/filters.yml with {len(filters)} track(s): {', '.join(filters.keys())}")
+print(f"Created .ci/filters.yml with {len(filters)} track(s): {', '.join(filters.keys())}")

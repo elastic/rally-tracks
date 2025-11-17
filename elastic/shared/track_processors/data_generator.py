@@ -320,8 +320,13 @@ class CorpusGenerator:
         _rallyts_start_idx = raw_string.find(_rallyts_token)
 
         _ts_token = '@timestamp": "'
-        _ts_start_idx = raw_string.find(_ts_token) + len(_ts_token)
-        _ts_end_idx = _ts_start_idx + raw_string[_ts_start_idx:].find('"')
+        _ts_find_result = raw_string.find(_ts_token)
+        if _ts_find_result != -1:
+            _ts_start_idx = _ts_find_result + len(_ts_token)
+            _ts_end_idx = _ts_start_idx + raw_string[_ts_start_idx:].find('"')
+        else:
+            _ts_start_idx = -1
+            _ts_end_idx = -1
 
         _msgsize_token = '"rally": {"message_size": '
         _msgsize_start_idx = raw_string.find(_msgsize_token) + len(_msgsize_token)

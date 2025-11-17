@@ -122,6 +122,20 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
 When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
 
+### Parameters for esql-full-text-functions challenge 
+
+- Initial indexing:
+  - `initial_indexing_bulk_clients` (default: `5`)
+  - `initial_indexing_bulk_size` (default: `500`)
+  - `initial_indexing_ingest_percentage` (default: `100`)
+  - `initial_indexing_bulk_warmup_time_period` (default: `40` )
+
+- Search Operations:
+  - `standalone_search_clients` (default: `20`)
+  - `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
+  - `iterations` (default: 100) - Number of measurement iterations that each client executes.
+
+
 ### License
 
 We use the same license for the data as the original data: [CC-SA-3.0](http://creativecommons.org/licenses/by-sa/3.0/).

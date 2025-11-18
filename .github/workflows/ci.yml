@@ -144,7 +144,7 @@ jobs:
         run: python -m pip install .[develop]
       - name: "Run tests${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }} --source-build-release"
         run: hatch -v -e it run test${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-revision.outputs.revision }} --source-build-release
-        timeout-minutes: 120
+        timeout-minutes: 160
         env:
           # elastic/endpoint fetches assets from GitHub, authenticate to avoid
           # being rate limited

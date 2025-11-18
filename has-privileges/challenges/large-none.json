@@ -1,6 +1,6 @@
 {
-  "name": "large-none",
-  "description": "Benchmarking _has_privileges API with large scale and no wildcards (index)",
+  "name": "large-none-8.x",
+  "description": "Benchmarking _has_privileges API with large scale and no wildcards (index) - Kibana 8.x",
   "default": false,
   "schedule": [
     {
@@ -12,7 +12,36 @@
       "wildcard_mode": "none"
     },
     {
-      "operation": "create-kibana-app-privileges"
+      "operation": "create-kibana-app-privileges",
+      "version": "8.19.7"
+    },
+    {
+      "name": "has-privileges",
+      "operation": "has-privileges",
+      "num_users": 100,
+      "num_spaces": 100,
+      "warmup-iterations": 1,
+      "iterations": 10,
+      "clients": 5
+    }
+  ]
+}
+{
+  "name": "large-none-9.x",
+  "description": "Benchmarking _has_privileges API with large scale and no wildcards (index) - Kibana 9.x",
+  "default": false,
+  "schedule": [
+    {
+      "operation": "create-roles-and-users",
+      "num_roles": 1000,
+      "num_users": 100,
+      "num_roles_per_user": 300,
+      "num_spaces": 100,
+      "wildcard_mode": "none"
+    },
+    {
+      "operation": "create-kibana-app-privileges",
+      "version": "9.2.1"
     },
     {
       "name": "has-privileges",

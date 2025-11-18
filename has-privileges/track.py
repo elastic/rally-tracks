@@ -9,7 +9,15 @@ import threading
 
 from esrally import exceptions
 
-KIBANA_APP_PRIVILEGES_FILENAME: str = "kibana-app-privileges.json.bz2"  # collected from 8.18.3 version
+
+def get_kibana_app_privileges_filename(version=None):
+    if version:
+        version_specific = f"kibana-app-privileges-{version}.json.bz2"
+        cwd = os.path.dirname(__file__)
+        if os.path.exists(os.path.join(cwd, version_specific)):
+            return version_specific
+
+    return "kibana-app-privileges.json.bz2"
 
 
 def generate_random_name(length=10):
@@ -79,8 +87,11 @@ async def create_roles_and_users(es, params):
 
 
 async def create_kibana_app_privileges(es, params):
+    version = params.get("version")
+    filename = get_kibana_app_privileges_filename(version)
+
     cwd = os.path.dirname(__file__)
-    with bz2.open(os.path.join(cwd, KIBANA_APP_PRIVILEGES_FILENAME), "rt") as kibana_app_privileges_file:
+    with bz2.open(os.path.join(cwd, filename), "rt") as kibana_app_privileges_file:
         app_privileges = json.load(kibana_app_privileges_file)
         await es.security.put_privileges(body=app_privileges)
 

@@ -1,6 +1,6 @@
 {
-  "name": "small-suffix",
-  "description": "Benchmarking _has_privileges API with small scale and suffix wildcards only (index*)",
+  "name": "small-suffix-8.x",
+  "description": "Benchmarking _has_privileges API with small scale and suffix wildcards only (index*) - Kibana 8.x",
   "default": false,
   "schedule": [
     {
@@ -12,7 +12,35 @@
       "wildcard_mode": "suffix"
     },
     {
-      "operation": "create-kibana-app-privileges"
+      "operation": "create-kibana-app-privileges",
+      "version": "8.19.7"
+    },
+    {
+      "name": "has-privileges",
+      "operation": "has-privileges",
+      "num_users": 10,
+      "num_spaces": 10,
+      "iterations": 10,
+      "clients": 5
+    }
+  ]
+}
+{
+  "name": "small-suffix-9.x",
+  "description": "Benchmarking _has_privileges API with small scale and suffix wildcards only (index*) - Kibana 9.x",
+  "default": false,
+  "schedule": [
+    {
+      "operation": "create-roles-and-users",
+      "num_roles": 10,
+      "num_users": 10,
+      "num_roles_per_user": 5,
+      "num_spaces": 10,
+      "wildcard_mode": "suffix"
+    },
+    {
+      "operation": "create-kibana-app-privileges",
+      "version": "9.2.1"
     },
     {
       "name": "has-privileges",

@@ -9,7 +9,8 @@
 },
 {
 "name": "create-kibana-app-privileges",
-"operation-type": "create-kibana-app-privileges"
+"operation-type": "create-kibana-app-privileges",
+"version": "{{kibana_version | default('8.19.7')}}"
 },
 {
   "name": "has-privileges",

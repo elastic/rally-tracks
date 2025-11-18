@@ -5,9 +5,7 @@
     "template": {
       "settings": {
         "index": {
-          "default_pipeline": "logs.child1@stream.processing",
-          "number_of_replicas" : "{{ number_of_replicas | default('1')}}",
-          "number_of_shards" : "{{ number_of_shards | default('1')}}"
+          "default_pipeline": "logs.child1@stream.processing"
         }
       },
       "mappings": {
@@ -19,7 +17,7 @@
         }
       }
     },
-    "composed_of": ["logs@stream.layer", "logs.child1@stream.layer"],
+    "composed_of": ["track-custom-shared-settings", "logs@stream.layer", "logs.child1@stream.layer"],
     "priority": 1000,
     "version": 1,
     "_meta": {

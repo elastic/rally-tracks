@@ -76,7 +76,7 @@
       "operation": "knn-search-default-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-recall-default-match-all",
@@ -116,7 +116,7 @@
       "operation": "knn-search-100-300-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-recall-100-300-match-all",
@@ -140,7 +140,7 @@
       "operation": "script-score-query-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-search-10-50-acceptedAnswerId",
@@ -236,7 +236,7 @@
       "operation": "knn-search-10-50-concurrency",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-recall-10-50-concurrency",
@@ -260,7 +260,7 @@
       "operation": "script-score-query-concurrency",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-search-10-50-random-10-percent",
@@ -276,7 +276,7 @@
       "operation": "knn-search-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-recall-10-50-random-10-percent",
@@ -300,7 +300,7 @@
       "operation": "script-score-query-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-search-default-random-20-percent",
@@ -381,7 +381,7 @@
       "operation": "esql-knn-search-default-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-10-50-match-all",
@@ -405,7 +405,7 @@
       "operation": "esql-knn-search-100-300-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-script-score-query-match-all",
@@ -421,7 +421,7 @@
       "operation": "esql-script-score-query-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-script-score-query-10-50-random-10-percent",
@@ -437,7 +437,7 @@
       "operation": "esql-script-score-query-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-10-50-acceptedAnswerId",
@@ -509,7 +509,7 @@
       "operation": "esql-knn-search-10-50-concurrency",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-script-score-query-concurrency",
@@ -525,7 +525,7 @@
       "operation": "esql-script-score-query-concurrency",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-10-50-random-10-percent",
@@ -541,7 +541,7 @@
       "operation": "esql-knn-search-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-default-random-20-percent",
@@ -621,7 +621,7 @@
       "operation": "knn-search-default-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-recall-default-match-all-force-merge",
@@ -661,7 +661,7 @@
       "operation": "knn-search-100-300-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-recall-100-300-match-all-force-merge",
@@ -741,7 +741,7 @@
       "operation": "knn-search-10-50-concurrency",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-search-10-50-random-10-percent-force-merge",
@@ -757,7 +757,7 @@
       "operation": "knn-search-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-recall-10-50-random-10-percent-force-merge",
@@ -846,7 +846,7 @@
       "operation": "esql-knn-search-default-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-10-50-match-all-force-merge",
@@ -870,7 +870,7 @@
       "operation": "esql-knn-search-100-300-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-10-50-acceptedAnswerId-force-merge",
@@ -910,7 +910,7 @@
       "operation": "esql-knn-search-10-50-concurrency",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-10-50-random-10-percent-force-merge",
@@ -926,7 +926,7 @@
       "operation": "esql-knn-search-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
-      "clients": {{ multi_client_search_clients | default(8) | int }}
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esq-knn-search-default-random-20-percent-force-merge",

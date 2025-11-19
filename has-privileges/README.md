@@ -14,7 +14,7 @@ This track simulates realistic authorization checking scenarios by:
 
 **Security must be enabled** in your Elasticsearch cluster. This track requires:
 - X-Pack Security enabled
-- A user with privileges to create roles, users, and call the `_has_privileges` API
+- A superuser with privileges to create roles, users, and call the `_has_privileges` API. We use the provided `rally` user for this purpose. Note that when running this track on esbench, that tooling injects its own superuser as an override.
 
 ## Available Parameters
 

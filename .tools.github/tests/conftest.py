@@ -13,10 +13,10 @@ Usage examples in tests:
 	  assert backport_mod.needs_pending_label(pr_no_labels)
 
   def test_label_api_called(backport_mod, gh_mock, pr_versioned):
-	  gh_mock.add('/repos/test/repo/labels/backport%20pending', method='GET', response={})  # label exists
-	  gh_mock.add('/repos/test/repo/issues/42/labels', method='POST', response={'ok': True})
+	  gh_mock.add(f'/repos/{TEST_REPO}/labels/backport%20pending', method='GET', response={})  # label exists
+	  gh_mock.add(f'/repos/{TEST_REPO}/issues/42/labels', method='POST', response={'ok': True})
 	  backport_mod.add_label(42, backport_mod.PENDING_LABEL)
-	  assert any('/repos/test/repo/issues/42/labels' in c['path'] for c in gh_mock.calls)
+	  assert any(f'/repos/{TEST_REPO}/issues/42/labels' in c['path'] for c in gh_mock.calls)
 
 Note: We treat paths exactly as provided to `gh_request` after query param expansion.
 If you register a route with query parameters, include the full `path?query=..` string.
@@ -35,8 +35,7 @@ from typing import Any
 from urllib.parse import urlencode
 
 import pytest
-
-from .utils import NOW, convert_str_to_date
+from utils import NOW, TEST_REPO, convert_str_to_date
 
 
 # ----------------------- Environment / Config ------------------------
@@ -48,7 +47,7 @@ def set_env() -> None:
     we set values directly on os.environ here.
     """
     os.environ["BACKPORT_TOKEN"] = "dummy-token"
-    os.environ["GITHUB_REPOSITORY"] = "test/repo"
+    os.environ["GITHUB_REPOSITORY"] = TEST_REPO
 
 
 # --------------------------- Module Loader ---------------------------
@@ -57,6 +56,9 @@ def backport_mod(monkeypatch) -> Any:
     """Dynamically load the backport CLI module."""
     backport_path = join(dirname(__file__), "..", "scripts", "backport.py")
     spec = importlib.util.spec_from_file_location("backport", backport_path)
+    if spec is None:
+        pytest.fail(f"Failed find backport module in {backport_path}")
+        return
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     if spec.loader is None:

@@ -19,8 +19,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, TypeVar
 
 import pytest
-
-from ..utils import STATIC_ROUTES, Comment, GHRoute, Label
+from utils import STATIC_ROUTES, TEST_REPO, Comment, GHRoute, Label
 
 
 @dataclass
@@ -40,6 +39,7 @@ class PullRequestCase:
     comments: list[Comment] = field(default_factory=list)
     needs_pending: bool = False
     needs_reminder: bool = False
+    backport_pending_in_labels: bool = False
     merged: bool = True
     merged_at: str | None = None
     remove: bool = False  # To select PRs for label removal.
@@ -64,7 +64,7 @@ class RepoCase:
     create_raises:  Simulate a failure when attempting to create the label.
     """
 
-    name: str = "test/repo"
+    name: str = TEST_REPO
     prs: list[PullRequestCase] = field(default_factory=list)
     repo_labels: list[Label] = field(default_factory=list)
     needs_pending: bool = False
@@ -109,11 +109,11 @@ class GHInteractionCase:
       strict: When True, assert call count equals expected_order length.
     """
 
-    repo: RepoCase | None = None
+    repo: RepoCase = field(default_factory=RepoCase)
     routes: list[GHRoute] = field(default_factory=list)
     lookback_days: int = 7
     pending_reminder_age_days: int = 7
-    expected_prefetch_prs: list[dict[str, Any] | None] = field(default_factory=list)
+    expected_prefetch_prs: list[dict[str, Any]] | None = field(default_factory=list)
     expected_order: list[tuple[str, str]] = field(default_factory=list)
     strict: bool = True
     raises_error: type[Exception] | None = None
@@ -132,14 +132,14 @@ class BackportCliCase:
     """Table-driven CLI scenario data container."""
 
     argv: list[str] = field(default_factory=list)
-    env: dict[str, str] = field(default_factory=lambda: {"BACKPORT_TOKEN": "tok", "GITHUB_REPOSITORY": "test/repo"})
+    env: dict[str, str] = field(default_factory=lambda: {"BACKPORT_TOKEN": "tok", "GITHUB_REPOSITORY": TEST_REPO})
     delete_env: list[str] = field(default_factory=list)
     expect_parse_exit: bool = False
     expect_require_error_substr: str | None = None
     expected_config: dict[str, Any] = field(default_factory=dict)
     expected_args: dict[str, Any] = field(default_factory=dict)
     expected_log_level: int | None = None  # When None, log level assertion is skipped.
-    gh_interaction: GHInteractionCase | None = None
+    gh_interaction: GHInteractionCase = field(default_factory=GHInteractionCase)
     raises_error: type[Exception] | None = None
 
 

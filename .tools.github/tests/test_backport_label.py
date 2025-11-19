@@ -1,14 +1,14 @@
 from dataclasses import asdict
 
-from .resources.case_registry import (
+from resources.case_registry import (
     GHInteractAction,
     build_gh_routes_labels,
     case_by_number,
     expected_actions_for_prs,
     select_pull_requests,
 )
-from .resources.cases import GHInteractionCase, RepoCase, cases
-from .utils import LABELS, STATIC_ROUTES
+from resources.cases import GHInteractionCase, RepoCase, cases
+from utils import LABELS, STATIC_ROUTES
 
 
 @cases(

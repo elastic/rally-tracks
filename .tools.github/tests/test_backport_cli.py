@@ -4,8 +4,7 @@ import sys
 from dataclasses import asdict
 
 import pytest
-
-from .resources.case_registry import (
+from resources.case_registry import (
     GHInteractAction,
     build_gh_routes_comments,
     build_gh_routes_labels,
@@ -15,52 +14,51 @@ from .resources.case_registry import (
     select_pull_requests,
     select_pull_requests_by_lookback,
 )
-from .resources.cases import BackportCliCase, GHInteractionCase, RepoCase, cases
-from .utils import LABELS, SEARCH_LABELS_PER_PAGE, GHRoute
+from resources.cases import BackportCliCase, GHInteractionCase, RepoCase, cases
+from utils import TEST_REPO, GHRoute
 
 
 @cases(
     label_basic=BackportCliCase(
-        # Place global flags (dry-run, -vv) before subcommand for argparse correctness
         argv=["backport.py", "--dry-run", "-vv", "label", "--lookback-days", "30"],
-        env={"BACKPORT_TOKEN": "tok"},  # rely on session env for repo (test/repo)
+        env={"BACKPORT_TOKEN": "tok"},
         expected_args={"command": "label", "lookback_days": 30, "dry_run": True, "verbose": 2},
-        expected_config={"repo": "test/repo", "dry_run": True, "command": "label", "verbose": 2, "quiet": 0},
+        expected_config={"repo": TEST_REPO, "dry_run": True, "command": "label", "verbose": 2, "quiet": 0},
         expected_log_level=logging.NOTSET,
     ),
     label_default_lookback=BackportCliCase(
-        argv=["backport.py", "label"],  # no explicit --lookback-days -> default 7
+        argv=["backport.py", "label"],
         env={"BACKPORT_TOKEN": "tok"},
         expected_args={"command": "label", "lookback_days": 7},
-        expected_config={"repo": "test/repo", "command": "label", "verbose": 0, "quiet": 0},
+        expected_config={"repo": TEST_REPO, "command": "label", "verbose": 0, "quiet": 0},
         expected_log_level=logging.INFO,
     ),
     label_override_lookback=BackportCliCase(
         argv=["backport.py", "label", "--lookback-days", "45"],
         env={"BACKPORT_TOKEN": "tok"},
         expected_args={"command": "label", "lookback_days": 45},
-        expected_config={"repo": "test/repo", "command": "label", "verbose": 0, "quiet": 0},
+        expected_config={"repo": TEST_REPO, "command": "label", "verbose": 0, "quiet": 0},
         expected_log_level=logging.INFO,
     ),
     remind_basic=BackportCliCase(
         argv=["backport.py", "remind", "--lookback-days", "10", "--pending-reminder-age-days", "5"],
-        env={"BACKPORT_TOKEN": "tok", "GITHUB_REPOSITORY": "test/repo"},
+        env={"BACKPORT_TOKEN": "tok", "GITHUB_REPOSITORY": TEST_REPO},
         expected_args={"command": "remind", "lookback_days": 10, "pending_reminder_age_days": 5},
-        expected_config={"repo": "test/repo", "command": "remind", "verbose": 0, "quiet": 0},
+        expected_config={"repo": TEST_REPO, "command": "remind", "verbose": 0, "quiet": 0},
         expected_log_level=logging.INFO,
     ),
     remind_default_pending_age=BackportCliCase(
-        argv=["backport.py", "remind"],  # default lookback=7, pending-reminder-age-days=7
+        argv=["backport.py", "remind"],
         env={"BACKPORT_TOKEN": "tok"},
-        expected_args={"command": "remind", "lookback_days": 7, "pending_reminder_age_days": 7},
-        expected_config={"repo": "test/repo", "command": "remind", "verbose": 0, "quiet": 0},
+        expected_args={"command": "remind", "lookback_days": 7, "pending_reminder_age_days": 14},
+        expected_config={"repo": TEST_REPO, "command": "remind", "verbose": 0, "quiet": 0},
         expected_log_level=logging.INFO,
     ),
     remind_override_pending_age=BackportCliCase(
         argv=["backport.py", "remind", "--lookback-days", "3", "--pending-reminder-age-days", "14"],
         env={"BACKPORT_TOKEN": "tok"},
         expected_args={"command": "remind", "lookback_days": 3, "pending_reminder_age_days": 14},
-        expected_config={"repo": "test/repo", "command": "remind", "verbose": 0, "quiet": 0},
+        expected_config={"repo": TEST_REPO, "command": "remind", "verbose": 0, "quiet": 0},
         expected_log_level=logging.INFO,
     ),
     missing_command=BackportCliCase(
@@ -178,7 +176,7 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, event_file, case: GHIntera
             ],
             expected_order=[
                 *expected_actions_for_prs(GHInteractAction.LIST_PRS, select_pull_requests_by_lookback(7)),
-                *expected_actions_for_repo(GHInteractAction.REPO_GET_LABELS, select_pull_requests_by_lookback(7)),
+                *expected_actions_for_repo(GHInteractAction.REPO_GET_LABELS),
                 *expected_actions_for_repo(GHInteractAction.REPO_ADD_LABEL),
                 *expected_actions_for_prs(GHInteractAction.PR_ADD_PENDING_LABEL, select_pull_requests_by_lookback(7)),
             ],
@@ -199,6 +197,7 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, event_file, case: GHIntera
                     # Prefetches only within 7 days (lookback)
                     response={"items": [asdict(pr) for pr in select_pull_requests_by_lookback(7)]},
                 ),
+                *build_gh_routes_labels("GET", select_pull_requests_by_lookback(7)),
             ],
             expected_order=[
                 # Actions are dynamically created based on the needs_pending and needs_reminder flags

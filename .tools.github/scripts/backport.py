@@ -21,7 +21,7 @@
 
 - Apply 'backport pending' label to merged PRs that require backport.
 - Post reminder comments on such PRs that have a 'backport pending' label
-but a version label (e.g. v9.2) has not been added yet. 
+but a version label (e.g. vX.Y) has not been added yet. 
 - Omits PRs labeled 'backport'.
 
 Usage: backport.py [options] <command> [flags]
@@ -81,10 +81,10 @@ COULD_NOT_CREATE_LABEL_WARNING = "Could not create label"
 GITHUB_API = "https://api.github.com"
 COMMENT_MARKER_BASE = "<!-- backport-pending-reminder -->"  # static for detection
 REMINDER_BODY = (
-    "A backport is pending for this PR. Please add all required version labels.\n\n"
-    "   - If it is intended for the current release version, apply the corresponding version label (e.g. v9.2).\n"
-    "   - If it also supports past released versions, add those labels too (e.g. v9.0 and v9.1).\n"
-    "   - If it only targets a future version (e.g. v9.3), wait until that version label exists and then add it.\n"
+    "A backport is pending for this PR. Please add all required `vX.Y` version labels.\n\n"
+    "   - If it is intended for the current release version, apply the corresponding version label.\n"
+    "   - If it also supports past released versions, add those labels too.\n"
+    "   - If it only targets a future version, wait until that version label exists and then add it.\n"
     "     (Each rally-tracks version label is created during the feature freeze of the next ES branch).\n\n"
     "Backporting entails: \n"
     "   1. Ensuring the correct version labels exist in this PR\n"
@@ -309,13 +309,30 @@ def last_reminder_time(comments: list[dict[str, Any]], marker: str) -> dt.dateti
 
 
 def pr_needs_reminder(info: PRInfo, threshold: dt.datetime) -> bool:
-    if pr_needs_pending_label(info):
+    if not any(label == PENDING_LABEL for label in info.labels):
         return False
     comments = get_issue_comments(info.number)
     prev_time = last_reminder_time(comments, COMMENT_MARKER_BASE)
     if prev_time is None:
         return True
     return prev_time < threshold
+
+
+def delete_reminders(info: PRInfo) -> None:
+    comments = get_issue_comments(info.number)
+    repo = CONFIG.repo
+    for c in comments:
+        body = c.get("body") or ""
+        if COMMENT_MARKER_BASE in body:
+            comment_id = c.get("id")
+            if comment_id is None:
+                LOG.warning(f"Cannot delete comment on PR #{info.number}: missing comment ID")
+                continue
+            if is_dry_run():
+                LOG.info(f"Would delete comment ID {comment_id} on PR #{info.number}")
+                continue
+            gh_request(method="DELETE", path=f"/repos/{repo}/issues/comments/{comment_id}")
+            LOG.info(f"Deleted comment ID {comment_id} on PR #{info.number}")
 
 
 def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: int, lookback_days: int) -> int:
@@ -335,6 +352,7 @@ def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: 
             info = PRInfo(pr)
             if pr_needs_reminder(info, threshold):
                 author = pr.get("user", {}).get("login", "PR author")
+                delete_reminders(info)
                 post_comment(info.number, f"{COMMENT_MARKER_BASE}\n@{author}\n{REMINDER_BODY}")
                 LOG.info(f"PR #{info.number}: initial reminder posted")
             else:
@@ -481,8 +499,8 @@ def parse_args() -> argparse.Namespace:
             "--pending-reminder-age-days",
             type=int,
             required=False,
-            default=7,
-            help="Days between reminders for the same PR (default: 7). Adds initial reminder if none posted yet.",
+            default=14,
+            help="Days between reminders for the same PR (default: 14). Adds initial reminder if none posted yet.",
         )
 
     except Exception:

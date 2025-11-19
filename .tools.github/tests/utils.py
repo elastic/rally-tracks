@@ -101,7 +101,7 @@ class GHRoute:
 
 # ------------------- Constants -----------------
 
-_TEST_REPO = "test/repo"
+TEST_REPO = "test/repo"
 
 SEARCH_LABELS_PER_PAGE = 100
 SEARCH_ISSUES_PER_PAGE = 100
@@ -160,8 +160,8 @@ COMMENTS_PER_PAGE = 100
 
 STATIC_ROUTES = {
     "create_pending_label": GHRoute(
-        path=f"/repos/test/repo/labels", method="POST", response={"name": PENDING_LABEL, "color": PENDING_LABEL_COLOR}
+        path=f"/repos/{TEST_REPO}/labels", method="POST", response={"name": PENDING_LABEL, "color": PENDING_LABEL_COLOR}
     ),
-    "get_labels": GHRoute(path=f"/repos/test/repo/labels?per_page={SEARCH_LABELS_PER_PAGE}", method="GET", response=[]),
+    "get_labels": GHRoute(path=f"/repos/{TEST_REPO}/labels?per_page={SEARCH_LABELS_PER_PAGE}", method="GET", response=[]),
     "search_issues": GHRoute(path=f"/search/issues...merged...updated...", method="GET", response={}),
 }

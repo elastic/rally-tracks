@@ -11,21 +11,23 @@ If higher-level categorization is needed, compose it at call sites.
 
 from __future__ import annotations
 
+from dataclasses import asdict
 from enum import Enum
 from typing import Any
 
-from ..utils import (
+from utils import (
     COMMENTS,
     COMMENTS_PER_PAGE,
     LABELS,
     NOW,
-    SEARCH_ISSUES_PER_PAGE,
     SEARCH_LABELS_PER_PAGE,
+    TEST_REPO,
     GHRoute,
     convert_str_to_date,
     lookback_cutoff,
 )
-from .cases import PullRequestCase, RepoCase
+
+from .cases import PullRequestCase
 
 
 def _pr(**kwargs) -> PullRequestCase:
@@ -35,12 +37,11 @@ def _pr(**kwargs) -> PullRequestCase:
 
 # ----------------------- Static PR Cases -----------------------
 PR_CASES: list[PullRequestCase] = [
-    _pr(number=101, merged_at="2025-10-23T12:00:00Z", needs_pending=True, needs_reminder=True),
+    _pr(number=101, merged_at="2025-10-23T12:00:00Z", needs_pending=True),
     _pr(
         number=102,
         merged_at="2025-10-23T12:00:00Z",
         needs_pending=True,
-        needs_reminder=True,
         comments=[
             COMMENTS["recent_comment"],
             COMMENTS["old_reminder"],
@@ -76,6 +77,7 @@ PR_CASES: list[PullRequestCase] = [
         number=106,
         merged_at="2025-10-02T12:00:00Z",
         labels=LABELS["versioned_pending"],
+        backport_pending_in_labels=True,
         needs_reminder=True,
         comments=[
             COMMENTS["recent_comment"],
@@ -86,7 +88,6 @@ PR_CASES: list[PullRequestCase] = [
         merged_at="2025-10-02T12:00:00Z",
         labels=LABELS["pending_typo"],
         needs_pending=True,
-        needs_reminder=True,
         comments=[
             COMMENTS["strange_new_comment"],
             COMMENTS["old_reminder"],
@@ -108,14 +109,13 @@ PR_CASES: list[PullRequestCase] = [
         merged_at="2025-10-23T12:00:00Z",
         labels=LABELS["pending_typo"],
         needs_pending=True,
-        needs_reminder=True,
         comments=[
             COMMENTS["recent_comment"],
             COMMENTS["marker_in_old_comment_difficult"],
             COMMENTS["really_old_reminder"],
         ],
     ),
-    # Merged PRs should be ignored no matter what their state is.
+    # Unmerged PRs should be ignored no matter what their state is.
     _pr(number=201, merged=False, needs_pending=True, needs_reminder=True),
     _pr(
         number=202,
@@ -128,7 +128,6 @@ PR_CASES: list[PullRequestCase] = [
         merged=False,
         labels=LABELS["versioned_typo"],
         needs_pending=True,
-        needs_reminder=True,
         comments=[
             COMMENTS["really_old_reminder"],
         ],
@@ -137,18 +136,16 @@ PR_CASES: list[PullRequestCase] = [
         number=204,
         merged=False,
         labels=LABELS["versioned_pending_typo"],
-        needs_reminder=True,
         comments=[
             COMMENTS["recent_comment"],
         ],
     ),
     # Old merged PRs for lookback and reminder age testing
-    _pr(number=301, merged_at="2023-10-01T12:00:00Z", needs_pending=True, needs_reminder=True),
+    _pr(number=301, merged_at="2023-10-01T12:00:00Z", needs_pending=True),
     _pr(
         number=302,
         merged_at="2023-10-01T12:00:00Z",
         needs_pending=True,
-        needs_reminder=True,
         comments=[
             COMMENTS["really_old_reminder"],
         ],
@@ -157,7 +154,6 @@ PR_CASES: list[PullRequestCase] = [
         number=303,
         merged_at="2023-10-01T12:00:00Z",
         needs_pending=True,
-        needs_reminder=True,
         comments=[
             COMMENTS["old_reminder"],
             COMMENTS["strange_new_comment"],
@@ -168,13 +164,11 @@ PR_CASES: list[PullRequestCase] = [
         number=304,
         merged_at="2023-10-01T12:00:00Z",
         labels=LABELS["versioned"],
-        needs_reminder=True,
     ),
     _pr(
         number=305,
         merged_at="2023-10-01T12:00:00Z",
         labels=LABELS["backport"],
-        needs_reminder=True,
         comments=[
             COMMENTS["really_old_reminder"],
         ],
@@ -192,6 +186,7 @@ PR_CASES: list[PullRequestCase] = [
         number=307,
         merged_at="2023-10-01T12:00:00Z",
         labels=LABELS["pending"],
+        backport_pending_in_labels=True,
         needs_reminder=True,
         comments=[
             COMMENTS["marker_in_old_comment_difficult"],
@@ -202,7 +197,6 @@ PR_CASES: list[PullRequestCase] = [
         merged_at="2023-10-01T12:00:00Z",
         labels=LABELS["versioned_typo"],
         needs_pending=True,
-        needs_reminder=True,
         comments=[
             COMMENTS["old_reminder"],
             COMMENTS["strange_new_comment"],
@@ -212,19 +206,15 @@ PR_CASES: list[PullRequestCase] = [
         number=309,
         merged_at="2023-10-01T12:00:00Z",
         needs_pending=True,
-        needs_reminder=True,
-        comments=[
-            COMMENTS["old_reminder"],
-            COMMENTS["strange_new_comment"],
-            *COMMENTS["120_old_comments"],
-        ],
+        comments=COMMENTS["120_old_comments"],
     ),
     # PRs marked for removal of pending label
-    _pr(number=401, merged_at="2023-10-01T12:00:00Z", needs_pending=True, needs_reminder=True, remove=True),
+    _pr(number=401, merged_at="2023-10-01T12:00:00Z", needs_pending=True, remove=True),
     _pr(
         number=402,
         merged_at="2023-10-01T12:00:00Z",
         labels=LABELS["pending"],
+        backport_pending_in_labels=True,
         needs_reminder=True,
         comments=[
             COMMENTS["really_old_reminder"],
@@ -236,7 +226,6 @@ PR_CASES: list[PullRequestCase] = [
         merged_at="2023-10-01T12:00:00Z",
         labels=LABELS["pending_typo"],
         needs_pending=True,
-        needs_reminder=True,
         comments=[
             COMMENTS["old_reminder"],
             COMMENTS["strange_new_comment"],
@@ -312,7 +301,7 @@ def build_gh_routes_comments(method: str, prs: list[PullRequestCase]) -> list[GH
         if method == "POST":
             routes.append(
                 GHRoute(
-                    f"/repos/test/repo/issues/{pr.number}/comments",
+                    f"/repos/{TEST_REPO}/issues/{pr.number}/comments",
                     method=method,
                     response={},
                 )
@@ -322,7 +311,7 @@ def build_gh_routes_comments(method: str, prs: list[PullRequestCase]) -> list[GH
             if comments_length == 0:
                 routes.append(
                     GHRoute(
-                        f"/repos/test/repo/issues/{pr.number}/comments...",
+                        f"/repos/{TEST_REPO}/issues/{pr.number}/comments...",
                         method=method,
                         response=[],
                     )
@@ -336,9 +325,9 @@ def build_gh_routes_comments(method: str, prs: list[PullRequestCase]) -> list[GH
                 page_comments = pr.comments[start_idx:end_idx]
                 routes.append(
                     GHRoute(
-                        f"/repos/test/repo/issues/{pr.number}/comments...&page={page}",
+                        f"/repos/{TEST_REPO}/issues/{pr.number}/comments...&page={page}",
                         method=method,
-                        response=[comment for comment in page_comments],
+                        response=[asdict(comment) for comment in page_comments],
                     )
                 )
         else:
@@ -351,7 +340,7 @@ def build_gh_routes_labels(method: str, prs: list[PullRequestCase]) -> list[GHRo
     for pr in prs:
         routes.append(
             GHRoute(
-                f"/repos/test/repo/issues/{pr.number}/labels",
+                f"/repos/{TEST_REPO}/issues/{pr.number}/labels",
                 method=method,
                 response=[{"name": label.name, "color": label.color} for label in pr.labels],
             )
@@ -364,20 +353,20 @@ def expected_actions_for_prs(action: GHInteractAction, prs: list[PullRequestCase
     match action:
         case GHInteractAction.PR_ADD_PENDING_LABEL:
             for pr in prs:
-                actions.append(("POST", f"/repos/test/repo/issues/{pr.number}/labels"))
+                actions.append(("POST", f"/repos/{TEST_REPO}/issues/{pr.number}/labels"))
         case GHInteractAction.PR_REMOVE_PENDING_LABEL:
             for pr in prs:
-                actions.append(("DELETE", f"/repos/test/repo/issues/{pr.number}/labels"))
+                actions.append(("DELETE", f"/repos/{TEST_REPO}/issues/{pr.number}/labels"))
         case GHInteractAction.PR_GET_COMMENTS:
             for pr in prs:
                 num_pages = (len(pr.comments) + COMMENTS_PER_PAGE - 1) // COMMENTS_PER_PAGE
                 if num_pages == 0:
-                    actions.append(("GET", f"/repos/test/repo/issues/{pr.number}/comments?per_page={COMMENTS_PER_PAGE}&page=1"))
+                    actions.append(("GET", f"/repos/{TEST_REPO}/issues/{pr.number}/comments?per_page={COMMENTS_PER_PAGE}&page=1"))
                 for page in range(1, num_pages + 1):
-                    actions.append(("GET", f"/repos/test/repo/issues/{pr.number}/comments?per_page={COMMENTS_PER_PAGE}&page={page}"))
+                    actions.append(("GET", f"/repos/{TEST_REPO}/issues/{pr.number}/comments?per_page={COMMENTS_PER_PAGE}&page={page}"))
         case GHInteractAction.PR_POST_REMINDER_COMMENT:
             for pr in prs:
-                actions.append(("POST", f"/repos/test/repo/issues/{pr.number}/comments"))
+                actions.append(("POST", f"/repos/{TEST_REPO}/issues/{pr.number}/comments"))
         case GHInteractAction.LIST_PRS:
             actions.append(("GET", f"/search/issues...merged...updated..."))
         case _:
@@ -385,13 +374,13 @@ def expected_actions_for_prs(action: GHInteractAction, prs: list[PullRequestCase
     return actions
 
 
-def expected_actions_for_repo(action: GHInteractAction, repo: RepoCase | None = None) -> list[tuple[str, str]]:
+def expected_actions_for_repo(action: GHInteractAction) -> list[tuple[str, str]]:
     actions = []
     match action:
         case GHInteractAction.REPO_GET_LABELS:
-            actions.append(("GET", f"/repos/test/repo/labels?per_page={SEARCH_LABELS_PER_PAGE}"))
+            actions.append(("GET", f"/repos/{TEST_REPO}/labels?per_page={SEARCH_LABELS_PER_PAGE}"))
         case GHInteractAction.REPO_ADD_LABEL:
-            actions.append(("POST", f"/repos/test/repo/labels"))
+            actions.append(("POST", f"/repos/{TEST_REPO}/labels"))
         case _:
             raise ValueError(f"Unsupported repo action: {action}")
     return actions

@@ -71,6 +71,14 @@
       "clients": 1
     },
     {
+      "name": "knn-search-default-match-all-multi-client",
+      "tags": ["search"],
+      "operation": "knn-search-default-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "knn-recall-default-match-all",
       "tags": ["search"],
       "operation": "knn-recall-default-match-all",
@@ -103,6 +111,14 @@
       "clients": 1
     },
     {
+      "name": "knn-search-100-300-match-all-multi-client",
+      "tags": ["search"],
+      "operation": "knn-search-100-300-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "knn-recall-100-300-match-all",
       "tags": ["search"],
       "operation": "knn-recall-100-300-match-all",
@@ -117,6 +133,14 @@
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
+    },
+    {
+      "name": "script-score-query-match-all-multi-client",
+      "tags": ["search"],
+      "operation": "script-score-query-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-search-10-50-acceptedAnswerId",
@@ -207,6 +231,14 @@
       "clients": 1
     },
     {
+      "name": "knn-search-10-50-concurrency-multi-client",
+      "tags": ["search"],
+      "operation": "knn-search-10-50-concurrency",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "knn-recall-10-50-concurrency",
       "tags": ["search"],
       "operation": "knn-recall-10-50-concurrency",
@@ -223,6 +255,14 @@
       "clients": 1
     },
     {
+      "name": "script-score-query-concurrency-multi-client",
+      "tags": ["search"],
+      "operation": "script-score-query-concurrency",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "knn-search-10-50-random-10-percent",
       "tags": ["search"],
       "operation": "knn-search-10-50-random-10-percent",
@@ -231,12 +271,36 @@
       "clients": 1
     },
     {
+      "name": "knn-search-10-50-random-10-percent-multi-client",
+      "tags": ["search"],
+      "operation": "knn-search-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "knn-recall-10-50-random-10-percent",
       "tags": ["search"],
       "operation": "knn-recall-10-50-random-10-percent",
       "warmup-iterations": 0,
       "iterations": 1,
       "clients": 1
+    },
+    {
+      "name": "script-score-query-10-50-random-10-percent",
+      "tags": ["search"],
+      "operation": "script-score-query-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "script-score-query-10-50-random-10-percent-multi-client",
+      "tags": ["search"],
+      "operation": "script-score-query-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-search-default-random-20-percent",
@@ -312,6 +376,14 @@
       "clients": 1
     },
     {
+      "name": "esql-knn-search-default-match-all-multi-client",
+      "tags": ["search"],
+      "operation": "esql-knn-search-default-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "esql-knn-search-10-50-match-all",
       "tags": ["search"],
       "operation": "esql-knn-search-10-50-match-all",
@@ -328,12 +400,44 @@
       "clients": 1
     },
     {
+      "name": "esql-knn-search-100-300-match-all-multi-client",
+      "tags": ["search"],
+      "operation": "esql-knn-search-100-300-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "esql-script-score-query-match-all",
       "tags": ["search"],
       "operation": "esql-script-score-query-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-match-all-multi-client",
+      "tags": ["search"],
+      "operation": "esql-script-score-query-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "esql-script-score-query-10-50-random-10-percent",
+      "tags": ["search"],
+      "operation": "esql-script-score-query-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-script-score-query-10-50-random-10-percent-multi-client",
+      "tags": ["search"],
+      "operation": "esql-script-score-query-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-10-50-acceptedAnswerId",
@@ -400,6 +504,14 @@
       "clients": 1
     },
     {
+      "name": "esql-knn-search-10-50-concurrency-multi-client",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-concurrency",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "esql-script-score-query-concurrency",
       "tags": ["search"],
       "operation": "esql-script-score-query-concurrency",
@@ -408,12 +520,28 @@
       "clients": 1
     },
     {
+      "name": "esql-script-score-query-concurrency-multi-client",
+      "tags": ["search"],
+      "operation": "esql-script-score-query-concurrency",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "esql-knn-search-10-50-random-10-percent",
       "tags": ["search"],
       "operation": "esql-knn-search-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
+    },
+    {
+      "name": "esql-knn-search-10-50-random-10-percent-multi-client",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-default-random-20-percent",
@@ -488,6 +616,14 @@
       "clients": 1
     },
     {
+      "name": "knn-search-default-match-all-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "knn-search-default-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "knn-recall-default-match-all-force-merge",
       "tags": ["search-after-force-merge"],
       "operation": "knn-recall-default-match-all",
@@ -518,6 +654,14 @@
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
+    },
+    {
+      "name": "knn-search-100-300-match-all-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "knn-search-100-300-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-recall-100-300-match-all-force-merge",
@@ -592,12 +736,28 @@
       "clients": 1
     },
     {
+      "name": "knn-search-10-50-concurrency-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "knn-search-10-50-concurrency",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "knn-search-10-50-random-10-percent-force-merge",
       "tags": ["search-after-force-merge"],
       "operation": "knn-search-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
+    },
+    {
+      "name": "knn-search-10-50-random-10-percent-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "knn-search-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "knn-recall-10-50-random-10-percent-force-merge",
@@ -681,6 +841,14 @@
       "clients": 1
     },
     {
+      "name": "esql-knn-search-default-match-all-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "esql-knn-search-default-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "esql-knn-search-10-50-match-all-force-merge",
       "tags": ["search-after-force-merge"],
       "operation": "esql-knn-search-10-50-match-all",
@@ -695,6 +863,14 @@
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
+    },
+    {
+      "name": "esql-knn-search-100-300-match-all-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "esql-knn-search-100-300-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esql-knn-search-10-50-acceptedAnswerId-force-merge",
@@ -729,12 +905,28 @@
       "clients": 1
     },
     {
+      "name": "esql-knn-search-10-50-concurrency-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "esql-knn-search-10-50-concurrency",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
       "name": "esql-knn-search-10-50-random-10-percent-force-merge",
       "tags": ["search-after-force-merge"],
       "operation": "esql-knn-search-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
+    },
+   {
+      "name": "esql-knn-search-10-50-random-10-percent-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "esql-knn-search-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
     },
     {
       "name": "esq-knn-search-default-random-20-percent-force-merge",

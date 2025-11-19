@@ -10,6 +10,7 @@ import threading
 from esrally import exceptions
 from jinja2 import Template
 
+
 def load_has_privileges_request_body(spaces):
     """Load and render the has_privileges request body template."""
     data_dir = os.path.expanduser("~/.rally/benchmarks/data/has-privileges")
@@ -140,9 +141,7 @@ async def has_privileges(es, params):
     user_id = random.randint(0, num_users - 1)
     spaces = [f"space:space{i}" for i in random.sample(range(num_spaces), k=1)]
     request_body = load_has_privileges_request_body(spaces)
-    await es.options(basic_auth=("user_" + str(user_id), "password")).security.has_privileges(
-        body=request_body
-    )
+    await es.options(basic_auth=("user_" + str(user_id), "password")).security.has_privileges(body=request_body)
 
 
 def register(registry):

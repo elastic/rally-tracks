@@ -12,7 +12,6 @@ from jinja2 import Template
 
 
 def load_has_privileges_request_body(spaces):
-    """Load and render the has_privileges request body template."""
     data_dir = os.path.expanduser("~/.rally/benchmarks/data/has-privileges")
     template_path = os.path.join(data_dir, "has-privileges-request-body.json")
 

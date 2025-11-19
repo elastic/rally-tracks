@@ -108,6 +108,8 @@ These files have been uploaded to:
 
 Till such a time that we can fully automate this process, Elasticsearch engineering should occasionally extract the application privileges of newer versions of Kibana and update them at this location.
 
+Process: turn on Kibana so that it bootstraps its privilege list into the ES security index, and then hit the ES endpoint `GET /_security/privilege` with superuser access to download the JSON file.
+
 ### Further Reading
 https://esrally.readthedocs.io/en/stable/adding_tracks.html
 https://esrally.readthedocs.io/en/stable/car.html

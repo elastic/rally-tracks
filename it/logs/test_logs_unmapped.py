@@ -24,7 +24,9 @@ pytest_rally = pytest.importorskip("pytest_rally")
 
 @pytest.mark.track("elastic/logs")
 class TestLogsUnmapped:
-    def test_logs_chicken(self, es_cluster, rally):
+    def test_logs_chicken(self, es_cluster, rally, es_release_build):
+        if es_release_build:
+            pytest.skip("logging-insist-chicken is not supported on release builds")
         custom = {"mapping": "unmapped"}
         ret = rally.race(
             track="elastic/logs",

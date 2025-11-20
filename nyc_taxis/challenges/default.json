@@ -785,6 +785,10 @@
           "tags": ["setup"]
         },
         {
+          "operation": "delete-nyc-taxis-sample-index",
+          "tags": ["setup"]
+        },
+        {
           "operation": {
             "operation-type": "create-index",
             "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
@@ -927,6 +931,15 @@
           "tags": ["setup"]
         },
         {
+          "operation": "create-nyc-taxis-sample-index",
+          "tags": ["setup"]
+        },
+        {
+          "name": "refresh-after-sample-index",
+          "operation": "refresh",
+          "tags": ["setup"]
+        },
+        {
           "operation": "avg_passenger_count_aggregation",
           "clients": 1,
           "warmup-iterations": 10,
@@ -941,24 +954,24 @@
         },
       {# non-serverless-inlinestats-marker-start #}{%- if build_flavor != "serverless" -%}
         {
-          "operation": "one_inlinestats_sum_esql",
+          "operation": "one_chained_inlinestats_esql",
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50,
+          "warmup-iterations": 5,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "two_inlinestats_sum_esql",
+          "operation": "two_chained_inlinestats_esql",
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50,
+          "warmup-iterations": 5,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "three_inlinestats_sum_esql",
+          "operation": "three_chained_inlinestats_esql",
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50,
+          "warmup-iterations": 5,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
       {%- endif -%}{# non-serverless-inlinestats-marker-end #}
@@ -1360,45 +1373,45 @@
           "tags": ["inlinestats"]
         },
         {
-          "operation": "stats_count_comparison_esql",
+          "operation": "stats_count_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "inlinestats_count_comparison_esql",
+          "operation": "inlinestats_count_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "stats_avg_comparison_esql",
+          "operation": "stats_avg_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "inlinestats_avg_comparison_esql",
+          "operation": "inlinestats_avg_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "stats_max_comparison_esql",
+          "operation": "stats_max_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {
-          "operation": "inlinestats_max_comparison_esql",
+          "operation": "inlinestats_max_group_by_esql",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50,
+          "iterations": 20,
           "tags": ["inlinestats"]
         },
         {

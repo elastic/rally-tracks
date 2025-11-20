@@ -64,8 +64,8 @@ jobs:
           fi
       - name: show outputs
         run: |
-          [[ ${{ steps.revision-argument.outputs.revision }} ]] echo "Using${{ steps.revision-argument.outputs.revision }}"
-          [[ ${{ steps.release-build-argument.outputs.release_build }} ]] echo "Using${{ steps.release-build-argument.outputs.release_build }}"
+          [[ -n ${{ steps.revision-argument.outputs.revision }} ]] echo "Using${{ steps.revision-argument.outputs.revision }}"
+          [[ -n ${{ steps.release-build-argument.outputs.release_build }} ]] echo "Using${{ steps.release-build-argument.outputs.release_build }}"
 
   filter-pr-changes:
     runs-on: ubuntu-22.04
@@ -96,7 +96,7 @@ jobs:
             fi
       - name: show outputs
         run: |
-          [[ ${{ steps.track-filter.outputs.track_filter }} ]] echo "Using${{ steps.track-filter.outputs.track_filter }}"
+          [[ -n ${{ steps.track-filter.outputs.track_filter }} ]] echo "Using${{ steps.track-filter.outputs.track_filter }}"
 
   test:
     strategy:

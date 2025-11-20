@@ -302,28 +302,23 @@
   "name": "knn-search-default-match-all",
   "operation-type": "search",
   "param-source": "knn-param-source",
-  "k": 10,
 },
 {
   "name": "esql-knn-search-default-match-all",
   "operation-type": "esql",
   "param-source": "esql-knn-param-source",
-  "k": 10,
-  "num_candidates": 10
 },
 {
   "name": "knn-recall-default-match-all",
   "operation-type": "knn-recall",
   "request-timeout": 600,
   "param-source": "knn-recall-param-source",
-  "num_candidates": 50,
   "include-in-reporting": false
 },
 {
   "name": "knn-search-default-random-20-percent",
   "operation-type": "search",
   "param-source": "knn-param-source",
-  "num_candidates": 50,
   "filter": {
     "range": {
       "questionId": {
@@ -343,7 +338,6 @@
   "operation-type": "knn-recall",
   "request-timeout": 600,
   "param-source": "knn-recall-param-source",
-  "num_candidates": 50,
   "include-in-reporting": false,
   "filter": {
     "range": {

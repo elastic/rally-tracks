@@ -2,7 +2,7 @@ import bz2
 import json
 import logging
 import os
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Final
 
 logger = logging.getLogger(__name__)
 QUERIES_FILENAME: str = "queries.json.bz2"
@@ -10,6 +10,7 @@ TRUE_KNN_FILENAME: str = "queries-recall.json.bz2"
 QUERIES_FILENAME_1K: str = "queries-1k.json.bz2"
 TRUE_KNN_FILENAME_1K: str = "queries-recall-1k.json.bz2"
 
+DEFAULT_K: Final[int] = 10
 
 async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, filter, client) -> List[str]:
     if filter is None:
@@ -102,7 +103,7 @@ class KnnParamSource:
                 "knn": {
                     "field": "titleVector",
                     "query_vector": query_vec,
-                    "k": self._params.get("k", 10),
+                    "k": self._params.get("k", DEFAULT_K),
                     **({"num_candidates": num_candidates} if num_candidates is not None else {}),
                 }
             }
@@ -116,13 +117,12 @@ class KnnParamSource:
 
 class ESQLKnnParamSource(KnnParamSource):
     def params(self):
-        num_candidates = self._params.get("num_candidates", 50)
         # if -1, then its unset. If set, just set it.
         oversample = self._params.get("oversample", -1)
         if oversample > -1 and self._exact_scan:
             raise ValueError("Oversampling is not supported for exact scan queries.")
 
-        k = self._params.get("k", 10)
+        k = self._params.get("k", DEFAULT_K)
 
         query_vec = self._queries[self._iters]
         self._iters += 1
@@ -137,7 +137,8 @@ class ESQLKnnParamSource(KnnParamSource):
             query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | drop titleVector | sort score desc | limit {k}"
         else:
             # Construct options JSON.
-            options_param = '{"min_candidates":' + str(num_candidates)
+            # using k as min_candidates for parity with DSL knn search
+            options_param = '{"min_candidates":' + str(k)
             if oversample > -1:
                 options_param += ', "rescore_oversample":' + str(oversample)
             options_param += "}"

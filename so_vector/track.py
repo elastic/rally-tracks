@@ -139,7 +139,6 @@ class ESQLKnnParamSource(KnnParamSource):
             query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | drop titleVector | sort score desc | limit {k}"
         else:
             # Construct options JSON.
-            # using k as min_candidates for parity with DSL knn search
             options = []
             if num_candidates:
                 options.append(f'"min_candidates":{num_candidates}')

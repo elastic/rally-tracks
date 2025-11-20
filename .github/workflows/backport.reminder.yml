@@ -15,7 +15,7 @@ on:
       pending_label_age_days:
         description: 'Minimum age in days before reminding'
         required: false
-        default: '7'
+        default: '14'
 
 env:
     BACKPORT_TOKEN: ${{ secrets.BACKPORT_TOKEN }}
@@ -33,10 +33,10 @@ jobs:
       - name: Add Backport pending label (single PR)
         if: github.event_name == 'pull_request_target'
         run: |
-          python .tools.github/scripts/backport.py label --pr-mode
-          python .tools.github/scripts/backport.py remind --pr-mode --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days }}
+          python github_ci_tools/scripts/backport.py label --pr-mode
+          python github_ci_tools/scripts/backport.py remind --pr-mode --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days }}
       - name: Add Backport pending label (bulk)
         if: github.event_name != 'pull_request_target'
         run: |
-          python .tools.github/scripts/backport.py label --lookback-days ${{ github.event.inputs.lookback_days }}
-          python .tools.github/scripts/backport.py remind --lookback-days ${{ github.event.inputs.lookback_days }} --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days }}
+          python github_ci_tools/scripts/backport.py label --lookback-days ${{ github.event.inputs.lookback_days }}
+          python github_ci_tools/scripts/backport.py remind --lookback-days ${{ github.event.inputs.lookback_days }} --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days }}

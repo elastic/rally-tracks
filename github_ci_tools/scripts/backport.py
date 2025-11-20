@@ -58,6 +58,7 @@ Exit codes: 0 success / 1 error.
 
 import argparse
 import datetime as dt
+import itertools
 import json
 import logging
 import os
@@ -66,7 +67,7 @@ import sys
 import urllib.error
 import urllib.request
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 from urllib.parse import urlencode
 
@@ -119,18 +120,17 @@ CONFIG = BackportConfig(
 def gh_request(method: str = "GET", path: str = "", body: dict[str, Any] | None = None, params: dict[str, str] | None = None) -> Any:
     if params:
         path = f"{path}?{urlencode(params)}"
-    url = f"{GITHUB_API}{path}"
+    url = f"{GITHUB_API}/{path}"
     data = None
     if body is not None:
         data = json.dumps(body).encode()
-    token = CONFIG.token
     # In dry-run, skip mutating requests (anything not GET) and just log.
     if is_dry_run():
-        LOG.debug(f"Would {method} {url} body={json.dumps(body) if body else '{}'}")
+        LOG.debug(f"Would {method} {url} body={json.dumps(body)}")
         if method.upper() != "GET":
             return {}
     req = urllib.request.Request(url, data=data, method=method)
-    req.add_header("Authorization", f"Bearer {token}")
+    req.add_header("Authorization", f"Bearer {CONFIG.token}")
     req.add_header("Accept", "application/vnd.github+json")
     try:
         with urllib.request.urlopen(req) as resp:
@@ -149,14 +149,16 @@ def gh_request(method: str = "GET", path: str = "", body: dict[str, Any] | None 
 
 @dataclass
 class PRInfo:
-    number: int
-    labels: list[str]
+    number: int = -1
+    labels: list[str] = field(default_factory=list)
 
-    def __init__(self, pr: dict[str, Any]):
-        self.number = int(pr.get("number") or pr.get("url", "").rstrip("/").strip().rsplit("/", 1) or -1)
-        self.labels = [lbl.get("name", "") for lbl in pr.get("labels", [])]
-        if self.number == -1 and not self.labels:
-            raise RuntimeError("PRInfo initialization failed: missing number and labels")
+    @classmethod
+    def from_dict(cls, pr: dict[str, Any]) -> "PRInfo":
+        number = int(pr.get("number") or pr.get("url", "").rstrip("/").strip().rsplit("/", 1) or -1)
+        labels = [lbl.get("name", "") for lbl in pr.get("labels", [])]
+        if number == -1 and not labels:
+            raise ValueError("...")
+        return cls(number, labels)
 
 
 # ----------------------------- PR Extraction (single or bulk) -----------------------------
@@ -165,79 +167,70 @@ def load_event() -> dict:
 
     Returns an empty dict if the path is missing to allow callers to decide on fallback behavior.
     """
-    path = os.environ.get("GITHUB_EVENT_PATH")
-    if not path or not os.path.exists(path):
-        LOG.warning("GITHUB_EVENT_PATH not set or file missing; nothing to do")
-        return {}
+    path = os.environ.get("GITHUB_EVENT_PATH", "").strip()
+    if not path:
+        raise FileNotFoundError("GITHUB_EVENT_PATH environment variable is empty")
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"File not found: {path}")
     with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def extract_pr(event: dict) -> PRInfo | None:
-    """Extract PR information from the event payload (single PR mode)."""
-    pr = event.get("pull_request")
-    return PRInfo(pr) if pr else None
+        data = json.load(f)
+    if not isinstance(data, dict):
+        raise TypeError(f"Event data is a {type(data)}, want a dict.")
+    return data
 
 
 def list_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
     """Query the GH API with a filter to iterate over PRs updated after a given timestamp."""
     q_date = since.strftime("%Y-%m-%d")
     q = f"{q_filter} updated:>={q_date}"
-    LOG.debug(f"Fetch PRs with filter '{q}")
-    page = 1
-    while True:
-        result = gh_request(
-            path="/search/issues",
-            params={"q": f"{q}", "per_page": "100", "page": str(page)},
-        )
-        items = result.get("items", [])
-        if not items:
-            break
-        for it in items:
-            yield it
+    LOG.debug(f"Fetch PRs with filter '{q}'")
+    params = {"q": f"{q}", "per_page": "100"}
+    for page in itertools.count(1):
+        params["page"] = str(page)
+        items = gh_request(path="search/issues", params=params)
+        yield from items
         if len(items) < 100:
             break
-        page += 1
+
+
+# ----------------------------- Label Logic -----------------------------
+def add_repository_label(repository: str | None, name: str, color: str):
+    gh_request(method="POST", path=f"repos/{repository}/labels", body={"name": name, "color": color})
 
 
 def repo_needs_pending_label(repo_labels: list[str]) -> bool:
-    return repo_labels.count(PENDING_LABEL) == 0
+    return PENDING_LABEL not in repo_labels
 
 
 def ensure_backport_pending_label() -> None:
     """If the exact PENDING_LABEL string does not appear at least once, we create it."""
-    repo = CONFIG.repo
     try:
-        existing = gh_request(path=f"/repos/{repo}/labels", params={"per_page": "100"})
+        existing = gh_request(path=f"repos/{CONFIG.repo}/labels", params={"per_page": "100"})
+        LOG.debug(f"Repo has labels: {existing};")
     except Exception as e:
-        LOG.info(f"Could not list labels; attempting direct create: {e}")
+        LOG.debug(f"Could not list repo labels; attempting direct create: {e}")
         existing = []
-    LOG.debug(f"Repo has labels: {existing};")
     names = [lbl.get("name", "") for lbl in existing]
     if not repo_needs_pending_label(names):
         return
     try:
-        gh_request(method="POST", path=f"/repos/{repo}/labels", body={"name": PENDING_LABEL, "color": PENDING_LABEL_COLOR})
+        add_repository_label(repository=CONFIG.repo, name=PENDING_LABEL, color=PENDING_LABEL_COLOR)
     except Exception as e:
         LOG.warning(f"{COULD_NOT_CREATE_LABEL_WARNING}: {e}")
 
 
 def pr_needs_pending_label(info: PRInfo) -> bool:
-    pr_labels = info.labels
-    has_version_label = any(VERSION_LABEL_RE.match(label) for label in pr_labels)
-    has_pending = any(label == PENDING_LABEL for label in pr_labels)
-    has_backport = any(label == BACKPORT_LABEL for label in pr_labels)
-    return not has_version_label and not has_pending and not has_backport
+    has_version_label = any(VERSION_LABEL_RE.match(label) for label in info.labels)
+    return PENDING_LABEL not in info.labels and BACKPORT_LABEL not in info.labels and not has_version_label
 
 
-def add_label(pr_number: int, label: str) -> None:
-    issues_labels_api = f"/repos/{CONFIG.repo}/issues/{pr_number}/labels"
-    gh_request(method="POST", path=issues_labels_api, body={"labels": [label]})
+def add_pull_request_label(pr_number: int, label: str) -> None:
+    gh_request(method="POST", path=f"repos/{CONFIG.repo}/issues/{pr_number}/labels", body={"labels": [label]})
     LOG.info(f"Added label '{label}' to PR #{pr_number}")
 
 
-def remove_label(pr_number: int, label: str) -> None:
-    issues_labels_api = f"/repos/{CONFIG.repo}/issues/{pr_number}/labels"
+def remove_pull_request_label(pr_number: int, label: str) -> None:
+    issues_labels_api = f"repos/{CONFIG.repo}/issues/{pr_number}/labels"
     gh_request(method="DELETE", path=issues_labels_api, body={"labels": [label]})
     LOG.info(f"Removed label '{label}' from PR #{pr_number}")
 
@@ -247,21 +240,20 @@ def run_label(prefetched_prs: list[dict[str, Any]], remove: bool) -> int:
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for labeling")
     # Ensure repository has pending label definition before any per-PR action.
-    # Doing this once avoids per-PR re-listing when add_label calls ensure_backport_pending_label.
     try:
         ensure_backport_pending_label()
-    except Exception as e:  # Defensive: creation failure shouldn't block individual PR labeling attempts
-        LOG.warning(f"Cannot ensure that backport pending label exists in repo: {e}")
+    except Exception as e:
+        raise RuntimeError(f"Cannot ensure that backport pending label exists in repo: {e}")
     errors = 0
     for pr in prefetched_prs:
         try:
             if not pr:
                 continue
-            info = PRInfo(pr)
+            info = PRInfo.from_dict(pr)
             if remove:
-                remove_label(info.number, PENDING_LABEL)
+                remove_pull_request_label(info.number, PENDING_LABEL)
             elif pr_needs_pending_label(info):
-                add_label(info.number, PENDING_LABEL)
+                add_pull_request_label(info.number, PENDING_LABEL)
             else:
                 LOG.debug(f"PR #{info.number}: No label action needed")
         except Exception as e:
@@ -276,7 +268,7 @@ def get_issue_comments(number: int) -> list[dict[str, Any]]:
     page = 1
     repo = CONFIG.repo
     while True:
-        data = gh_request(path=f"/repos/{repo}/issues/{number}/comments", params={"per_page": "100", "page": str(page)})
+        data = gh_request(path=f"repos/{repo}/issues/{number}/comments", params={"per_page": "100", "page": str(page)})
         if not data:
             break
         comments.extend(data)
@@ -287,19 +279,16 @@ def get_issue_comments(number: int) -> list[dict[str, Any]]:
     return comments
 
 
-def post_comment(number: int, body: str) -> None:
-    if is_dry_run():
-        LOG.info(f"Would post comment to PR #{number}")
-    repo = CONFIG.repo
-    gh_request(method="POST", path=f"/repos/{repo}/issues/{number}/comments", body={"body": body})
+def add_comment(number: int, body: str) -> None:
+    gh_request(method="POST", path=f"repos/{CONFIG.repo}/issues/{number}/comments", body={"body": body})
 
 
 def last_reminder_time(comments: list[dict[str, Any]], marker: str) -> dt.datetime | None:
     def comment_ts(c: dict[str, Any]) -> dt.datetime:
-        ts_raw = c.get("created_at") or c.get("updated_at")
-        if not ts_raw:
+        raw_timestamp = c.get("created_at") or c.get("updated_at")
+        if not raw_timestamp:
             raise RuntimeError("Comment missing timestamp fields")
-        return dt.datetime.strptime(ts_raw, ISO_FORMAT).replace(tzinfo=dt.timezone.utc)
+        return dt.datetime.strptime(raw_timestamp, ISO_FORMAT).replace(tzinfo=dt.timezone.utc)
 
     for c in sorted(comments, key=comment_ts, reverse=True):
         body = c.get("body") or ""
@@ -328,10 +317,7 @@ def delete_reminders(info: PRInfo) -> None:
             if comment_id is None:
                 LOG.warning(f"Cannot delete comment on PR #{info.number}: missing comment ID")
                 continue
-            if is_dry_run():
-                LOG.info(f"Would delete comment ID {comment_id} on PR #{info.number}")
-                continue
-            gh_request(method="DELETE", path=f"/repos/{repo}/issues/comments/{comment_id}")
+            gh_request(method="DELETE", path=f"repos/{repo}/issues/comments/{comment_id}")
             LOG.info(f"Deleted comment ID {comment_id} on PR #{info.number}")
 
 
@@ -349,11 +335,11 @@ def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: 
         try:
             if not pr:
                 continue
-            info = PRInfo(pr)
+            info = PRInfo.from_dict(pr)
             if pr_needs_reminder(info, threshold):
                 author = pr.get("user", {}).get("login", "PR author")
                 delete_reminders(info)
-                post_comment(info.number, f"{COMMENT_MARKER_BASE}\n@{author}\n{REMINDER_BODY}")
+                add_comment(info.number, f"{COMMENT_MARKER_BASE}\n@{author}\n{REMINDER_BODY}")
                 LOG.info(f"PR #{info.number}: initial reminder posted")
             else:
                 LOG.info(f"PR #{info.number}: cooling period not elapsed)")
@@ -509,32 +495,19 @@ def parse_args() -> argparse.Namespace:
 
 
 def main():
-    try:
-        args = parse_args()
-        configure(args)
+    args = parse_args()
+    configure(args)
 
-        LOG.debug(f"Parsed arguments: {args}")
-        prefetched = prefetch_prs(args.pr_mode, args.lookback_days)
-        LOG.debug(f"Prefetched {len(prefetched)} PRs for command '{args.command}': {[pr.get('number') for pr in prefetched]}")
-        match args.command:
-            case "label":
-                return run_label(prefetched, args.remove)
-            case "remind":
-                return run_remind(prefetched, args.pending_reminder_age_days, args.lookback_days)
-            case _:
-                raise NotImplementedError(f"Unknown command {args.command}")
-    except KeyError as ke:
-        LOG.error(f"Missing configuration key: {ke}")
-        sys.exit(1)
-    except NotImplementedError as nie:
-        LOG.error(f"Not implemented error: {nie}")
-        sys.exit(2)
-    except RuntimeError as re:
-        LOG.error(f"Runtime error: {re}")
-        sys.exit(3)
-    except Exception as e:
-        LOG.error(f"Unhandled error: {e}")
-        sys.exit(4)
+    LOG.debug(f"Parsed arguments: {args}")
+    prefetched = prefetch_prs(args.pr_mode, args.lookback_days)
+    LOG.debug(f"Prefetched {len(prefetched)} PRs for command '{args.command}': {[pr.get('number') for pr in prefetched]}")
+    match args.command:
+        case "label":
+            return run_label(prefetched, args.remove)
+        case "remind":
+            return run_remind(prefetched, args.pending_reminder_age_days, args.lookback_days)
+        case _:
+            raise NotImplementedError(f"Unknown command {args.command}")
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, TypeVar
 
 import pytest
-from utils import STATIC_ROUTES, TEST_REPO, Comment, GHRoute, Label
+from github_ci_tools.tests.utils import STATIC_ROUTES, TEST_REPO, Comment, GHRoute, Label
 
 
 @dataclass
@@ -162,6 +162,6 @@ def cases(arg_name: str = "case", **table: C) -> Callable:
            no_labels=PullRequestCase(labels=[], needs_pending=True),
         )
         def test_create(case):
-            assert backport_mod.pr_needs_pending_label(backport_mod.PRInfo(asdict(case))) is case.needs_pending
+            assert backport_mod.pr_needs_pending_label(backport_mod.PRInfo.from_dict(asdict(case))) is case.needs_pending
     """
     return pytest.mark.parametrize(argnames=arg_name, argvalues=list(table.values()), ids=list(table.keys()))

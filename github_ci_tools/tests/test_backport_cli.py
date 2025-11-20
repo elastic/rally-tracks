@@ -4,9 +4,9 @@ import sys
 from dataclasses import asdict
 
 import pytest
-from resources.case_registry import (
+
+from github_ci_tools.tests.resources.case_registry import (
     GHInteractAction,
-    build_gh_routes_comments,
     build_gh_routes_labels,
     case_by_number,
     expected_actions_for_prs,
@@ -14,8 +14,8 @@ from resources.case_registry import (
     select_pull_requests,
     select_pull_requests_by_lookback,
 )
-from resources.cases import BackportCliCase, GHInteractionCase, RepoCase, cases
-from utils import TEST_REPO, GHRoute
+from github_ci_tools.tests.resources.cases import BackportCliCase, GHInteractionCase, RepoCase, cases
+from github_ci_tools.tests.utils import TEST_REPO, GHRoute
 
 
 @cases(
@@ -159,7 +159,7 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, event_file, case: GHIntera
 
 
 @cases(
-    labels_only_recent=BackportCliCase(
+    adds_repo_label_and_labels_only_w=BackportCliCase(
         argv=["backport.py", "label"],
         gh_interaction=GHInteractionCase(
             repo=RepoCase(repo_labels=[], prs=select_pull_requests()),
@@ -169,7 +169,7 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, event_file, case: GHIntera
                 GHRoute(
                     path=f"/search/issues...merged...updated...",
                     method="GET",
-                    response={"items": [asdict(pr) for pr in select_pull_requests_by_lookback(7)]},
+                    response=[asdict(pr) for pr in select_pull_requests_by_lookback(7)],
                 ),
                 *build_gh_routes_labels("GET", select_pull_requests_by_lookback(7)),
                 *build_gh_routes_labels("POST", select_pull_requests_by_lookback(7)),
@@ -195,7 +195,7 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, event_file, case: GHIntera
                     path=f"/search/issues...merged...updated...",
                     method="GET",
                     # Prefetches only within 7 days (lookback)
-                    response={"items": [asdict(pr) for pr in select_pull_requests_by_lookback(7)]},
+                    response=[asdict(pr) for pr in select_pull_requests_by_lookback(7)],
                 ),
                 *build_gh_routes_labels("GET", select_pull_requests_by_lookback(7)),
             ],
@@ -221,7 +221,6 @@ def test_backport_run(backport_mod, gh_mock, monkeypatch, case: BackportCliCase)
     backport_mod.configure(args)
 
     prefetched = backport_mod.prefetch_prs(args.pr_mode, args.lookback_days)
-
     try:
         match args.command:
             case "label":

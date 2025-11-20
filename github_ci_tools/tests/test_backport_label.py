@@ -1,14 +1,14 @@
 from dataclasses import asdict
 
-from resources.case_registry import (
+from github_ci_tools.tests.resources.case_registry import (
     GHInteractAction,
     build_gh_routes_labels,
     case_by_number,
     expected_actions_for_prs,
     select_pull_requests,
 )
-from resources.cases import GHInteractionCase, RepoCase, cases
-from utils import LABELS, STATIC_ROUTES
+from github_ci_tools.tests.resources.cases import GHInteractionCase, RepoCase, cases
+from github_ci_tools.tests.utils import LABELS, STATIC_ROUTES
 
 
 @cases(
@@ -50,11 +50,11 @@ def test_repo_ensure_backport_pending_label(backport_mod, gh_mock, caplog, case:
             *build_gh_routes_labels("POST", [case_by_number(101)]),
         ],
     ),
-    add_label_only_to_those_needs_pending=GHInteractionCase(
+    add_pull_request_label_only_to_those_needs_pending=GHInteractionCase(
         repo=RepoCase(prs=select_pull_requests(remove=False)),
         routes=[*build_gh_routes_labels("POST", select_pull_requests(remove=False))],
     ),
-    remove_label_only_for_those_that_has_pending=GHInteractionCase(
+    remove_pull_request_label_only_for_those_that_has_pending=GHInteractionCase(
         repo=RepoCase(prs=select_pull_requests(remove=True)),
         routes=[*build_gh_routes_labels("DELETE", select_pull_requests(remove=True))],
     ),
@@ -64,13 +64,13 @@ def test_label_logic(backport_mod, gh_mock, case: GHInteractionCase):
     case.register(gh_mock)
     for pr in case.repo.prs:
         # Test of the exact logic as in run_label
-        pr_info = backport_mod.PRInfo(asdict(pr))
+        pr_info = backport_mod.PRInfo.from_dict(asdict(pr))
         assert backport_mod.pr_needs_pending_label(pr_info) is pr.needs_pending
 
         if pr.remove:
-            backport_mod.remove_label(pr.number, backport_mod.PENDING_LABEL)
+            backport_mod.remove_pull_request_label(pr.number, backport_mod.PENDING_LABEL)
             case.expected_order += expected_actions_for_prs(GHInteractAction.PR_REMOVE_PENDING_LABEL, [case_by_number(pr.number)])
         elif pr.needs_pending:
-            backport_mod.add_label(pr.number, backport_mod.PENDING_LABEL)
+            backport_mod.add_pull_request_label(pr.number, backport_mod.PENDING_LABEL)
             case.expected_order += expected_actions_for_prs(GHInteractAction.PR_ADD_PENDING_LABEL, [case_by_number(pr.number)])
     gh_mock.assert_calls_in_order(*case.expected_order)

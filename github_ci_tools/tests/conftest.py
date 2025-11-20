@@ -13,10 +13,10 @@ Usage examples in tests:
 	  assert backport_mod.needs_pending_label(pr_no_labels)
 
   def test_label_api_called(backport_mod, gh_mock, pr_versioned):
-	  gh_mock.add(f'/repos/{TEST_REPO}/labels/backport%20pending', method='GET', response={})  # label exists
-	  gh_mock.add(f'/repos/{TEST_REPO}/issues/42/labels', method='POST', response={'ok': True})
-	  backport_mod.add_label(42, backport_mod.PENDING_LABEL)
-	  assert any(f'/repos/{TEST_REPO}/issues/42/labels' in c['path'] for c in gh_mock.calls)
+	  gh_mock.add(f'repos/{TEST_REPO}/labels/backport%20pending', method='GET', response={})  # label exists
+	  gh_mock.add(f'repos/{TEST_REPO}/issues/42/labels', method='POST', response={'ok': True})
+	  backport_mod.add_pull_request_label(42, backport_mod.PENDING_LABEL)
+	  assert any(f'repos/{TEST_REPO}/issues/42/labels' in c['path'] for c in gh_mock.calls)
 
 Note: We treat paths exactly as provided to `gh_request` after query param expansion.
 If you register a route with query parameters, include the full `path?query=..` string.
@@ -35,7 +35,9 @@ from typing import Any
 from urllib.parse import urlencode
 
 import pytest
-from utils import NOW, TEST_REPO, convert_str_to_date
+
+from github_ci_tools.scripts import backport
+from github_ci_tools.tests.utils import NOW, TEST_REPO, convert_str_to_date
 
 
 # ----------------------- Environment / Config ------------------------
@@ -53,19 +55,7 @@ def set_env() -> None:
 # --------------------------- Module Loader ---------------------------
 @pytest.fixture(scope="function")
 def backport_mod(monkeypatch) -> Any:
-    """Dynamically load the backport CLI module."""
-    backport_path = join(dirname(__file__), "..", "scripts", "backport.py")
-    spec = importlib.util.spec_from_file_location("backport", backport_path)
-    if spec is None:
-        pytest.fail(f"Failed find backport module in {backport_path}")
-        return
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    if spec.loader is None:
-        raise RuntimeError("Failed to create loader for backport module")
-    spec.loader.exec_module(module)  # type: ignore[attr-defined]
-
-    # Patch the datetime class inside the module's dt and freeze now for deterministic tests
+    module = backport
     fixed = convert_str_to_date(NOW)
 
     class FixedDateTime(dt.datetime):
@@ -164,12 +154,13 @@ class GitHubMock:
     def __call__(
         self,
         method: str = "GET",
-        path: str = "/repos",
+        path: str = "repos",
         body: dict[str, Any] | None = None,
         params: dict[str, str] | None = None,
     ) -> Any:
         if params:
             path = f"{path}?{urlencode(params)}"
+        path = f"/{path}"
         key = (method.upper(), path)
 
         self.calls.append(
@@ -192,7 +183,7 @@ class GitHubMock:
                         break
             if route is None:
                 raise AssertionError(
-                    f"Unexpected GitHub API call: {key}. Registered exact: {list(self._routes.keys())} glob: {[orig for _,orig,_,_ in self._glob_routes]}"
+                    f"Unexpected GitHub API call: {key}. Registered exact: {list(self._routes.keys())} glob: {[(method, orig) for method,orig,_,_ in self._glob_routes]}"
                 )
         else:
             route = self._routes[key]

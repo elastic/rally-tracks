@@ -124,6 +124,7 @@ class ESQLKnnParamSource(KnnParamSource):
             raise ValueError("Oversampling is not supported for exact scan queries.")
 
         k = self._params.get("k", DEFAULT_K)
+        num_candidates: int | None = self._params.get("num_candidates", None)
 
         query_vec = self._queries[self._iters]
         self._iters += 1
@@ -139,10 +140,12 @@ class ESQLKnnParamSource(KnnParamSource):
         else:
             # Construct options JSON.
             # using k as min_candidates for parity with DSL knn search
-            options_param = '{"min_candidates":' + str(k)
+            options = []
+            if num_candidates:
+                options.append(f'"min_candidates":{num_candidates}')
             if oversample > -1:
-                options_param += ', "rescore_oversample":' + str(oversample)
-            options_param += "}"
+                options.append(f'"rescore_oversample":{oversample}')
+            options_param = "{" + ", ".join(options) + "}"
 
             query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {options_param})"
             if "filter" in self._params:

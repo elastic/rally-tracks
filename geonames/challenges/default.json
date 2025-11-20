@@ -26,7 +26,6 @@
         },
         {
           "operation": "index-append",
-          "warmup-time-period": 70,
           "clients": {{bulk_indexing_clients | default(8)}},
           "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         },
@@ -363,9 +362,45 @@
           }
         },
         {
+          "name": "index-update-5k",
+          "operation": "index-update-20pct",
+          "target-throughput": "5000 docs/sec",
+          "clients": {{bulk_indexing_clients | default(50)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "index-update-10k",
+          "operation": "index-update-50pct",
+          "target-throughput": "10000 docs/sec",
+          "clients": {{bulk_indexing_clients | default(50)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "index-update-30k",
           "operation": "index-update",
-          "warmup-time-period": 45,
-          "clients": {{bulk_indexing_clients | default(8)}},
+          "target-throughput": "30000 docs/sec",
+          "clients": {{bulk_indexing_clients | default(150)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "index-update-60k",
+          "operation": "index-update",
+          "target-throughput": "60000 docs/sec",
+          "clients": {{bulk_indexing_clients | default(300)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "index-update-90k",
+          "operation": "index-update",
+          "target-throughput": "90000 docs/sec",
+          "clients": {{bulk_indexing_clients | default(600)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        },
+        {
+          "name": "index-update-120k",
+          "operation": "index-update",
+          "target-throughput": "120000 docs/sec",
+          "clients": {{bulk_indexing_clients | default(600)}},
           "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
         }
         {% if p_include_force_merge %},

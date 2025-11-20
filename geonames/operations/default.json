@@ -7,8 +7,28 @@
     {
       "name": "index-update",
       "operation-type": "bulk",
-      "bulk-size": {{bulk_size | default(5000)}},
+      "bulk-size": {{bulk_size | default(100)}},
       "ingest-percentage": {{ingest_percentage | default(100)}},
+      "conflicts": "{{conflicts | default('random')}}",
+      "on-conflict": "{{on_conflict | default('index')}}",
+      "conflict-probability": {{conflict_probability | default(25)}},
+      "recency": {{recency | default(0)}}
+    },
+    {
+      "name": "index-update-20pct",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(20)}},
+      "conflicts": "{{conflicts | default('random')}}",
+      "on-conflict": "{{on_conflict | default('index')}}",
+      "conflict-probability": {{conflict_probability | default(25)}},
+      "recency": {{recency | default(0)}}
+    },
+    {
+      "name": "index-update-50pct",
+      "operation-type": "bulk",
+      "bulk-size": {{bulk_size | default(100)}},
+      "ingest-percentage": {{ingest_percentage | default(50)}},
       "conflicts": "{{conflicts | default('random')}}",
       "on-conflict": "{{on_conflict | default('index')}}",
       "conflict-probability": {{conflict_probability | default(25)}},

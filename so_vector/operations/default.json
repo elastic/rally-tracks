@@ -301,25 +301,29 @@
 {
   "name": "knn-search-default-match-all",
   "operation-type": "search",
-  "param-source": "knn-param-source"
+  "param-source": "knn-param-source",
+  "k": 10,
 },
 {
   "name": "esql-knn-search-default-match-all",
   "operation-type": "esql",
-  "param-source": "esql-knn-param-source"
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "min_candidates": 10
 },
 {
   "name": "knn-recall-default-match-all",
   "operation-type": "knn-recall",
   "request-timeout": 600,
   "param-source": "knn-recall-param-source",
+  "min_candidates": 50,
   "include-in-reporting": false
 },
-
 {
   "name": "knn-search-default-random-20-percent",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "min_candidates": 50,
   "filter": {
     "range": {
       "questionId": {
@@ -339,6 +343,7 @@
   "operation-type": "knn-recall",
   "request-timeout": 600,
   "param-source": "knn-recall-param-source",
+  "min_candidates": 50,
   "include-in-reporting": false,
   "filter": {
     "range": {
@@ -400,6 +405,7 @@
   "param-source": "knn-param-source",
   "exact": true,
   "k": 10,
+  "min_candidates": 50,
   "filter": {
     "terms": {
       "tags": [
@@ -422,6 +428,7 @@
   "param-source": "knn-param-source",
   "exact": true,
   "k": 10,
+  "min_candidates": 50,
   "filter": {
     "terms": {
       "tags": [
@@ -444,6 +451,7 @@
   "param-source": "knn-param-source",
   "exact": true,
   "k": 10,
+  "min_candidates": 50,
   "filter": {
     "terms": {
       "tags": [
@@ -465,6 +473,7 @@
   "operation-type": "search",
   "param-source": "knn-param-source",
   "exact": true,
+  "min_candidates": 50,
   "k": 10,
   "filter": {
     "terms": {
@@ -488,6 +497,7 @@
   "param-source": "knn-param-source",
   "exact": true,
   "k": 10,
+  "min_candidates": 50,
   "filter": {
     "exists": {
       "field": "acceptedAnswerId"
@@ -508,6 +518,7 @@
   "param-source": "knn-param-source",
   "exact": true,
   "k": 10,
+  "min_candidates": 50,
   "filter": {
     "terms": {
       "tags": [
@@ -522,6 +533,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
+  "min_candidates": 50,
   "filter": "term(tags, \"java\")"
 },
 {
@@ -530,13 +542,15 @@
   "param-source": "knn-param-source",
   "exact": true,
   "k": 10
+  "min_candidates": 50
 },
 {
   "name": "esql-script-score-query-match-all",
   "operation-type": "esql",
   "param-source": "esql-knn-param-source",
   "exact": true,
-  "k": 10
+  "k": 10,
+  "min_candidates": 10
 },
 {
   "name": "script-score-query-10-50-random-10-percent",

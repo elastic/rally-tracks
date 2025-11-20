@@ -73,7 +73,7 @@ class KnnParamSource:
 
     def params(self):
         result = {"index": self._index_name, "cache": self._params.get("cache", False), "size": self._params.get("k", 10)}
-        num_candidates = self._params.get("num_candidates", 50)
+        num_candidates: int | None = self._params.get("num_candidates", None)
         # if -1, then its unset. If set, just set it.
         oversample = self._params.get("oversample", -1)
         if oversample > -1 and self._exact_scan:
@@ -103,7 +103,7 @@ class KnnParamSource:
                     "field": "titleVector",
                     "query_vector": query_vec,
                     "k": self._params.get("k", 10),
-                    "num_candidates": self._params.get("num_candidates", 50),
+                    **({"num_candidates": num_candidates} if num_candidates is not None else {}),
                 }
             }
             if "filter" in self._params:

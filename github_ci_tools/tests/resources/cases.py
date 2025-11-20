@@ -19,7 +19,14 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, TypeVar
 
 import pytest
-from github_ci_tools.tests.utils import STATIC_ROUTES, TEST_REPO, Comment, GHRoute, Label
+
+from github_ci_tools.tests.utils import (
+    STATIC_ROUTES,
+    TEST_REPO,
+    Comment,
+    GHRoute,
+    Label,
+)
 
 
 @dataclass

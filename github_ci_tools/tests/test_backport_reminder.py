@@ -7,7 +7,12 @@ from github_ci_tools.tests.resources.case_registry import (
     expected_actions_for_prs,
     select_pull_requests,
 )
-from github_ci_tools.tests.resources.cases import GHInteractionCase, PullRequestCase, RepoCase, cases
+from github_ci_tools.tests.resources.cases import (
+    GHInteractionCase,
+    PullRequestCase,
+    RepoCase,
+    cases,
+)
 from github_ci_tools.tests.utils import COMMENT_MARKER_BASE
 
 

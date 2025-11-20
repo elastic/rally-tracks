@@ -14,7 +14,12 @@ from github_ci_tools.tests.resources.case_registry import (
     select_pull_requests,
     select_pull_requests_by_lookback,
 )
-from github_ci_tools.tests.resources.cases import BackportCliCase, GHInteractionCase, RepoCase, cases
+from github_ci_tools.tests.resources.cases import (
+    BackportCliCase,
+    GHInteractionCase,
+    RepoCase,
+    cases,
+)
 from github_ci_tools.tests.utils import TEST_REPO, GHRoute
 
 

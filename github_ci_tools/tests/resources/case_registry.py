@@ -15,6 +15,7 @@ from dataclasses import asdict
 from enum import Enum
 from typing import Any
 
+from github_ci_tools.tests.resources.cases import PullRequestCase
 from github_ci_tools.tests.utils import (
     COMMENTS,
     COMMENTS_PER_PAGE,
@@ -26,8 +27,6 @@ from github_ci_tools.tests.utils import (
     convert_str_to_date,
     lookback_cutoff,
 )
-
-from github_ci_tools.tests.resources.cases import PullRequestCase
 
 
 def _pr(**kwargs) -> PullRequestCase:

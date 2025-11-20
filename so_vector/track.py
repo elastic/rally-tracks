@@ -2,7 +2,7 @@ import bz2
 import json
 import logging
 import os
-from typing import Any, List, Optional, Final
+from typing import Any, Final, List, Optional
 
 logger = logging.getLogger(__name__)
 QUERIES_FILENAME: str = "queries.json.bz2"
@@ -11,6 +11,7 @@ QUERIES_FILENAME_1K: str = "queries-1k.json.bz2"
 TRUE_KNN_FILENAME_1K: str = "queries-recall-1k.json.bz2"
 
 DEFAULT_K: Final[int] = 10
+
 
 async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, filter, client) -> List[str]:
     if filter is None:

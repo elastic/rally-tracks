@@ -16,15 +16,15 @@
         {% endif %}
         {% if patterned_text_message_field | default(false) is true %}
           "sort": {
-          {% if patterned_text_sort is "host_time" %}
+          {% if patterned_text_sort == "host_time" %}
           "field": [ "host.name", "@timestamp" ],
           "order": [ "asc", "desc" ]
           {% endif %}
-          {% if patterned_text_sort is "template_time" %}
+          {% if patterned_text_sort == "template_time" %}
           "field": [ "message.template_id", "@timestamp" ],
           "order": [ "asc", "desc" ]
           {% endif %}
-          {% if patterned_text_sort is "time" %}
+          {% if patterned_text_sort == "time" %}
           "field": [ "@timestamp" ],
           "order": [ "desc" ]
           {% endif %}

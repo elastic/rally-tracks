@@ -62,10 +62,12 @@ jobs:
           else
             echo "release_build= --use-release" >> $GITHUB_ENV
           fi
-      - name: show outputs
-        run: |
-          [[ -n ${{ steps.revision-argument.outputs.revision }} ]] echo "Using${{ steps.revision-argument.outputs.revision }}"
-          [[ -n ${{ steps.release-build-argument.outputs.release_build }} ]] echo "Using${{ steps.release-build-argument.outputs.release_build }}"
+      - name: "Show revision argument"
+        if: ${{ steps.revision-argument.outputs.revision != '' }}
+        run: echo "Using${{ steps.revision-argument.outputs.revision }}"
+      - name: "Show release build argument"
+        if: ${{ steps.release-build-argument.outputs.release_build != '' }}
+        run: echo "Using${{ steps.release-build-argument.outputs.release_build }}"
 
   filter-pr-changes:
     runs-on: ubuntu-22.04
@@ -94,9 +96,9 @@ jobs:
             else
               echo "track_filter= --track-filter=$TRACKS" >> $GITHUB_OUTPUT
             fi
-      - name: show outputs
-        run: |
-          [[ -n ${{ steps.track-filter.outputs.track_filter }} ]] echo "Using${{ steps.track-filter.outputs.track_filter }}"
+      - name: show track filter argument
+        if: ${{ steps.track-filter.outputs.track_filter != '' }}
+        run: echo "Using${{ steps.track-filter.outputs.track_filter }}"
 
   test:
     strategy:

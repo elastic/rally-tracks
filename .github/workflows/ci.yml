@@ -60,7 +60,7 @@ jobs:
           if [[ "${{ steps.es-version.outputs.version }}" != "current" && "${{ steps.es-version.outputs.version }}" != "latest" ]]; then
             echo "release_build=" >> $GITHUB_ENV
           else
-            echo "release_build= --use-release" >> $GITHUB_ENV
+            echo "release_build= --source-build-release" >> $GITHUB_ENV
           fi
       - name: "Show revision argument"
         if: ${{ steps.revision-argument.outputs.revision != '' }}

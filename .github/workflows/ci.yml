@@ -57,10 +57,10 @@ jobs:
       - name: "Determine ES release or snapshot"
         id: release-build-argument
         run: |
-          if [[ "${{ steps.es-version.outputs.version }}" != "current" && "${{ steps.es-version.outputs.version }}" != "latest" ]]; then
-            echo "release_build=" >> $GITHUB_ENV
+          if [[ "${{ steps.es-version.outputs.version }}" == "current" || "${{ steps.es-version.outputs.version }}" == "latest" ]]; then
+            echo "release_build=" >> $GITHUB_OUTPUT
           else
-            echo "release_build= --source-build-release" >> $GITHUB_ENV
+            echo "release_build= --source-build-release" >> $GITHUB_OUTPUT
           fi
       - name: "Show revision argument"
         if: ${{ steps.revision-argument.outputs.revision != '' }}

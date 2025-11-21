@@ -75,12 +75,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Parse repo and create filters.yml
-        run: python3 .github/scripts/track-filter.py
+        run: python3 github_ci_tools/scripts/track-filter.py
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 #v3.0.2
         id: changes
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          filters: .github/filters.yml
+          filters: github_ci_tools/filters.yml
       - name: Collect changed tracks and calculate --track-filter argument
         id: track-filter
         run: |

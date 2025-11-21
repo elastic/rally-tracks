@@ -13,7 +13,7 @@
     },
     {
       "operation": "create-kibana-app-privileges",
-      "version": "{{version | default('8.19.7')}}"
+      "version": "{{kibana_privileges_as_of | default('8.19.7')}}"
     },
     {
       "name": "has-privileges",

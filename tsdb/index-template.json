@@ -32,7 +32,7 @@
           "synthetic_source_keep": "{{synthetic_source_keep}}",
           {% endif %}
           {% if use_doc_values_skipper is defined %}
-          "use_doc_values_skipper" : "{{use_doc_values_skipper}}",
+          "use_doc_values_skipper" : {{ use_doc_values_skipper | tojson }},
           {% endif %}
           "total_fields.limit": 10000
           {% if p_include_source_mode %},

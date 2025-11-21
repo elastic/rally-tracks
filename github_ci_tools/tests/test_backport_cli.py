@@ -174,7 +174,7 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, event_file, case: GHIntera
                 GHRoute(
                     path=f"/search/issues...merged...updated...",
                     method="GET",
-                    response=[asdict(pr) for pr in select_pull_requests_by_lookback(7)],
+                    response={"items": [asdict(pr) for pr in select_pull_requests_by_lookback(7)]},
                 ),
                 *build_gh_routes_labels("GET", select_pull_requests_by_lookback(7)),
                 *build_gh_routes_labels("POST", select_pull_requests_by_lookback(7)),
@@ -200,7 +200,7 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, event_file, case: GHIntera
                     path=f"/search/issues...merged...updated...",
                     method="GET",
                     # Prefetches only within 7 days (lookback)
-                    response=[asdict(pr) for pr in select_pull_requests_by_lookback(7)],
+                    response={"items": [asdict(pr) for pr in select_pull_requests_by_lookback(7)]},
                 ),
                 *build_gh_routes_labels("GET", select_pull_requests_by_lookback(7)),
             ],

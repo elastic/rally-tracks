@@ -136,9 +136,7 @@ def gh_request(method: str = "GET", path: str = "", body: dict[str, Any] | None 
         with urllib.request.urlopen(req) as resp:
             charset = resp.headers.get_content_charset() or "utf-8"
             txt = resp.read().decode(charset)
-            if is_dry_run():
-                LOG.debug(f"Response {resp.status} {method} {url}")
-                LOG.debug(f"Response body: {txt}")
+            LOG.debug(f"Response {resp.status} {method}")
             if resp.status >= 300:
                 raise RuntimeError(f"HTTP {resp.status}: {txt}")
             return json.loads(txt) if txt.strip() else {}
@@ -187,7 +185,8 @@ def list_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
     params = {"q": f"{q}", "per_page": "100"}
     for page in itertools.count(1):
         params["page"] = str(page)
-        items = gh_request(path="search/issues", params=params)
+        results = gh_request(path="search/issues", params=params)
+        items = results.get("items", [])
         yield from items
         if len(items) < 100:
             break
@@ -195,10 +194,18 @@ def list_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
 
 # ----------------------------- Label Logic -----------------------------
 def add_repository_label(repository: str | None, name: str, color: str):
+    if repository is None:
+        raise RuntimeError("Cannot add label: repository is None")
+    (
+        LOG.info(f"Would create label '{name}' with color '{color}' in repo '{repository}'")
+        if is_dry_run()
+        else LOG.info(f"Creating label '{name}' with color '{color}' in repo '{repository}'")
+    )
     gh_request(method="POST", path=f"repos/{repository}/labels", body={"name": name, "color": color})
 
 
 def repo_needs_pending_label(repo_labels: list[str]) -> bool:
+    LOG.debug(f"{PENDING_LABEL} in repo labels: {repo_labels} -> {PENDING_LABEL in repo_labels}")
     return PENDING_LABEL not in repo_labels
 
 
@@ -206,9 +213,7 @@ def ensure_backport_pending_label() -> None:
     """If the exact PENDING_LABEL string does not appear at least once, we create it."""
     try:
         existing = gh_request(path=f"repos/{CONFIG.repo}/labels", params={"per_page": "100"})
-        LOG.debug(f"Repo has labels: {existing};")
     except Exception as e:
-        LOG.debug(f"Could not list repo labels; attempting direct create: {e}")
         existing = []
     names = [lbl.get("name", "") for lbl in existing]
     if not repo_needs_pending_label(names):
@@ -225,14 +230,17 @@ def pr_needs_pending_label(info: PRInfo) -> bool:
 
 
 def add_pull_request_label(pr_number: int, label: str) -> None:
+    LOG.info(f"Would add label '{label}' to PR #{pr_number}") if is_dry_run() else LOG.info(f"Adding label '{label}' to PR #{pr_number}")
     gh_request(method="POST", path=f"repos/{CONFIG.repo}/issues/{pr_number}/labels", body={"labels": [label]})
-    LOG.info(f"Added label '{label}' to PR #{pr_number}")
 
 
 def remove_pull_request_label(pr_number: int, label: str) -> None:
-    issues_labels_api = f"repos/{CONFIG.repo}/issues/{pr_number}/labels"
-    gh_request(method="DELETE", path=issues_labels_api, body={"labels": [label]})
-    LOG.info(f"Removed label '{label}' from PR #{pr_number}")
+    (
+        LOG.info(f"Would remove label '{label}' from PR #{pr_number}")
+        if is_dry_run()
+        else LOG.info(f"Removing label '{label}' from PR #{pr_number}")
+    )
+    gh_request(method="DELETE", path=f"repos/{CONFIG.repo}/issues/{pr_number}/labels", body={"labels": [label]})
 
 
 def run_label(prefetched_prs: list[dict[str, Any]], remove: bool) -> int:
@@ -280,6 +288,9 @@ def get_issue_comments(number: int) -> list[dict[str, Any]]:
 
 
 def add_comment(number: int, body: str) -> None:
+    if is_dry_run():
+        LOG.info(f"Would add comment to PR #{number}:\n{body}")
+        return
     gh_request(method="POST", path=f"repos/{CONFIG.repo}/issues/{number}/comments", body={"body": body})
 
 
@@ -317,6 +328,9 @@ def delete_reminders(info: PRInfo) -> None:
             if comment_id is None:
                 LOG.warning(f"Cannot delete comment on PR #{info.number}: missing comment ID")
                 continue
+            if is_dry_run():
+                LOG.info(f"Would delete comment ID {comment_id} on PR #{info.number}")
+                continue
             gh_request(method="DELETE", path=f"repos/{repo}/issues/comments/{comment_id}")
             LOG.info(f"Deleted comment ID {comment_id} on PR #{info.number}")
 
@@ -327,9 +341,6 @@ def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: 
         raise RuntimeError("No PRs prefetched for reminding")
     now = dt.datetime.now(dt.timezone.utc)
     threshold = now - dt.timedelta(days=pending_reminder_age_days)
-    LOG.info(
-        f"prefetched={len(prefetched_prs)} lookback_days={lookback_days} pending_reminder_age_days={pending_reminder_age_days} now={now.isoformat()} threshold={threshold.isoformat()}"
-    )
     errors = 0
     for pr in prefetched_prs:
         try:
@@ -375,7 +386,6 @@ def configure(args: argparse.Namespace) -> None:
     CONFIG.quiet = args.quiet
     CONFIG.log_level = (CONFIG.quiet - CONFIG.verbose) * (logging.INFO - logging.DEBUG) + logging.INFO
     CONFIG.command = args.command
-    # Always refresh token/repo from environment unless explicitly overridden via CLI.
     CONFIG.token = os.environ.get("BACKPORT_TOKEN")
     CONFIG.repo = args.repo if args.repo is not None else os.environ.get("GITHUB_REPOSITORY")
     logging.basicConfig(level=CONFIG.log_level, format="%(asctime)s %(levelname)s %(name)s %(message)s")

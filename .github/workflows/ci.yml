@@ -57,10 +57,10 @@ jobs:
       - name: "Determine ES release or snapshot"
         id: release-build-argument
         run: |
-          if [[ "${{ steps.es-version.outputs.version }}" == "current" || "${{ steps.es-version.outputs.version }}" == "latest" ]]; then
-            echo "release_build=" >> $GITHUB_OUTPUT
+          if [[ "${{ steps.es-version.outputs.version }}" != "current" && "${{ steps.es-version.outputs.version }}" != "latest" ]]; then
+            echo "release_build=" >> $GITHUB_ENV
           else
-            echo "release_build= --source-build-release" >> $GITHUB_OUTPUT
+            echo "release_build= --source-build-release" >> $GITHUB_ENV
           fi
       - name: "Show revision argument"
         if: ${{ steps.revision-argument.outputs.revision != '' }}
@@ -76,12 +76,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Parse repo and create filters.yml
-        run: python3 github_ci_tools/scripts/track-filter.py
+        run: python3 .github/scripts/track-filter.py
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 #v3.0.2
         id: changes
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          filters: github_ci_tools/filters.yml
+          filters: .github/filters.yml
       - name: Collect changed tracks and calculate --track-filter argument
         id: track-filter
         run: |
@@ -101,9 +101,6 @@ jobs:
         run: echo "Using${{ steps.track-filter.outputs.track_filter }}"
 
   test:
-    needs: 
-      - filter-pr-changes
-      - determine-revision
     strategy:
       fail-fast: false
       matrix:

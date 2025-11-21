@@ -1,0 +1,225 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-partitioned-streams",
+  "description": "Indexes logs the streams way with child streams, without dynamic mappings, either throttled or un-throttled, for a specified time period and volume per day",
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {
+      "name": "setup-reroute-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs@stream.reroutes",
+        "body": {
+          "description": "Pipeline for rerouting logs stream",
+          "processors": [
+            {
+              "reroute": {
+                "destination": "logs.child1",
+                "if": " try { if (($('attributes.service.type', null) !== null && (($('attributes.service.type', null) instanceof Number && $('attributes.service.type', null).toString() == \"redis\") || $('attributes.service.type', null) == \"redis\")) && $('attributes.redis.slowlog.key', null) !== null && $('attributes.redis.slowlog.id', null) !== null) { return true; } return false; } catch (Exception e) { return false; } "
+              }
+            },
+            {
+              "reroute": {
+                "destination": "logs.child2",
+                "if": " try { if (($('body.text', null) !== null && (($('body.text', null) instanceof Number && $('body.text', null).toString().toLowerCase().contains(\"eden.elastic.dev\")) || $('body.text', null).toLowerCase().contains(\"eden.elastic.dev\")))) { return true; } return false; } catch (Exception e) { return false; }"
+              }
+            },
+            {
+              "reroute": {
+                "destination": "logs.child3",
+                "if": " try { if (($('resource.attributes.host.name', null) !== null && (($('resource.attributes.host.name', null) instanceof Number && $('resource.attributes.host.name', null).toString().startsWith(\"filebeat\")) || $('resource.attributes.host.name', null).startsWith(\"filebeat\")))) { return true; } return false; } catch (Exception e) { return false; }"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "setup-child1-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs.child1@stream.processing",
+        "body": {
+          "description": "Pipeline for processing logs.child1 stream",
+          "processors": [
+            {
+              "script": {
+                "source": "ctx[\"stream.name\"] = params.field",
+                "lang": "painless",
+                "params": {
+                  "field": "logs.child1"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "setup-child2-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs.child2@stream.processing",
+        "body": {
+          "description": "Pipeline for processing logs.child2 stream",
+          "processors": [
+            {
+              "script": {
+                "source": "ctx[\"stream.name\"] = params.field",
+                "lang": "painless",
+                "params": {
+                  "field": "logs.child2"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "setup-child3-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs.child3@stream.processing",
+        "body": {
+          "description": "Pipeline for processing logs.child3 stream",
+          "processors": [
+            {
+              "script": {
+                "source": "ctx[\"stream.name\"] = params.field",
+                "lang": "painless",
+                "params": {
+                  "field": "logs.child3"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "setup-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs@stream.processing",
+        "body": {
+          "description": "Pipeline for processing logs stream",
+          "processors": [
+            {
+              "set": {
+                "description": "If '@timestamp' is missing, set it with the ingest timestamp",
+                "field": "@timestamp",
+                "override": false,
+                "copy_from": "_ingest.timestamp"
+              }
+            },
+            {
+              "normalize_for_stream": {}
+            },
+            {
+              "script": {
+                "source": "ctx[\"stream.name\"] = params.field",
+                "lang": "painless",
+                "params": {
+                  "field": "logs"
+                }
+              }
+            },
+            {
+              "pipeline": {
+                "name": "logs@stream.reroutes",
+                "ignore_missing_pipeline": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "setup-redirect",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs@custom",
+        "body": {
+          "description": "Sends all data to the 'logs' index. This is easier than changing the index name in the source.",
+          "processors": [
+            {
+              "reroute": {
+                "destination": "logs"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "patch-k8-logs",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs-k8-app",
+        "body": {
+          "description": "Pipeline for parsing app logs",
+          "processors": [
+            {
+              "reroute": {
+                "destination": "logs"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "bulk-size": {{ p_bulk_size }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients }},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+      {% if p_throttle_indexing %},
+      "schedule": "timestamp-throttler",
+      "max-delay-secs": 1
+      {% endif %}
+    },
+    {
+      "name": "compression-stats",
+      "operation": {
+        "operation-type": "compression-statistics",
+        "data-stream": "logs"
+      }
+    },
+    {
+      "name": "force-merge-datastreams",
+      "operation": {
+        "operation-type": "force-merge",
+        "index": "logs",
+        "mode": "polling",
+        "max-num-segments": 1,
+        "request-timeout": 60
+      }
+    },
+    {
+      "name": "compression-stats-after-merge",
+      "operation": {
+        "operation-type": "compression-statistics",
+        "data-stream": "logs"
+      }
+    },
+    {
+      "name": "clear-redirect-pipeline",
+      "operation": {
+        "operation-type": "put-pipeline",
+        "id": "logs@custom",
+        "body": {
+          "description": "Clear logs@custom in case another challenge runs afterwards",
+          "processors": []
+        }
+      }
+    }
+  ]
+}

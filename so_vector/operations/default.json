@@ -315,7 +315,6 @@
   "param-source": "knn-recall-param-source",
   "include-in-reporting": false
 },
-
 {
   "name": "knn-search-default-random-20-percent",
   "operation-type": "search",
@@ -544,7 +543,6 @@
   "param-source": "knn-param-source",
   "exact": true,
   "k": 10,
-  "num_candidates": 50,
   "filter": {
     "range": {
       "questionId": {
@@ -558,7 +556,6 @@
   "operation-type": "esql",
   "param-source": "esql-knn-param-source",
   "k": 10,
-  "num_candidates": 50,
   "exact": true,
   "filter": "questionId <= 650000"
 }

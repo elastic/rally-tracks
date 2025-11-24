@@ -45,7 +45,7 @@ class TestTrackRepository:
             if challenge == "runtime-fields":
                 track_params = {"runtime_fields": "true"}
             if track == "has-privileges" and challenge == "default":
-                rally_options.update({"car": "4gheap,x-pack-security", "client_options": "use_ssl:true,verify_certs:false"})
+                rally_options.update({"client_options": "use_ssl:true,verify_certs:false"})
             ret = rally.race(track=track, challenge=challenge, track_params=track_params, **rally_options)
             assert ret == 0
         else:

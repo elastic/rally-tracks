@@ -52,7 +52,7 @@
   "param-source": "esql-knn-param-source",
   "k": 10,
   "num_candidates": 50,
-  "filter": "term(tags, \"java\")"
+  "filter": "match(tags, \"java\", {\"boost\": 0})"
 },
 {
   "name": "knn-recall-10-50-java",
@@ -90,7 +90,7 @@
   "param-source": "esql-knn-param-source",
   "k": 10,
   "num_candidates": 50,
-  "filter": "term(tags, \"css\")"
+  "filter": "match(tags, \"css\", {\"boost\": 0})"
 },
 {
   "name": "knn-recall-10-50-css",
@@ -128,7 +128,7 @@
   "param-source": "esql-knn-param-source",
   "k": 10,
   "num_candidates": 50,
-  "filter": "term(tags, \"concurrency\")"
+  "filter": "match(tags, \"concurrency\", {\"boost\": 0})"
 },
 {
   "name": "knn-recall-10-50-concurrency",
@@ -375,7 +375,7 @@
   "operation-type": "search",
   "param-source": "knn-param-source",
   "k": 100,
-  "num_candidates": 300 
+  "num_candidates": 300
 },
 {
   "name": "esql-knn-search-100-300-match-all",
@@ -413,7 +413,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"css\")"
+  "filter": "match(tags, \"css\", {\"boost\": 0})"
 },
 {
   "name": "script-score-query-javascript",
@@ -435,7 +435,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"javascript\")"
+  "filter": "match(tags, \"javascript\", {\"boost\": 0})"
 },
 {
   "name": "script-score-query-concurrency",
@@ -457,7 +457,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"concurrency\")"
+  "filter": "match(tags, \"concurrency\", {\"boost\": 0})"
 },
 {
   "name": "script-score-query-ccs",
@@ -479,7 +479,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"ccs\")"
+  "filter": "match(tags, \"ccs\", {\"boost\": 0})"
 },
 {
   "name": "script-score-query-acceptedAnswerId",
@@ -521,7 +521,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"java\")"
+  "filter": "match(tags, \"java\")"
 },
 {
   "name": "script-score-query-match-all",

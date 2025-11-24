@@ -3,7 +3,7 @@ repos:
     hooks:
       - id: black
         name: black
-        entry: black
+        entry: python3 -m black
         language: system
         types: [python]
         require_serial: true
@@ -12,7 +12,7 @@ repos:
     hooks:
       - id: isort
         name: isort
-        entry: isort
+        entry: python3 -m isort
         language: system
         types: [python]
         require_serial: true

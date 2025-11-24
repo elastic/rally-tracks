@@ -47,6 +47,14 @@ class TestLogs:
         )
         assert ret == 0
 
+    def test_logs_partitioned_streams(self, es_cluster, rally):
+        ret = rally.race(
+            track="elastic/logs",
+            challenge="logging-partitioned-streams",
+            track_params=params(),
+        )
+        assert ret == 0
+
     def test_logs_disable_pipelines(self, es_cluster, rally):
         custom = {"number_of_replicas": 0, "disable_pipelines": "true"}
         ret = rally.race(

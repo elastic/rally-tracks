@@ -8,9 +8,9 @@
   "wildcard_mode": "{{wildcard_mode | default('mixed')}}"
 },
 {
-"name": "create_kibana_app_privileges",
-"operation-type": "create_kibana_app_privileges",
-"version": "{{kibana_privileges_as_of | default('8.19.7')}}"
+  "name": "create_kibana_app_privileges",
+  "operation-type": "create_kibana_app_privileges",
+  "version": "{{kibana_privileges_as_of | default('8.19.7')}}"
 },
 {
   "name": "has_privileges",

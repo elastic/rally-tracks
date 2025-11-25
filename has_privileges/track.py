@@ -1,35 +1,21 @@
 import bz2
-import csv
-import itertools
 import json
 import os
 import random
 import string
-import threading
 
 from esrally import exceptions
 from jinja2 import Template
+
+from .track_processor import HasPrivilegesDataDownloader
 
 
 def load_has_privileges_request_body(spaces):
     data_dir = os.path.expanduser("~/.rally/benchmarks/data/has_privileges")
     template_path = os.path.join(data_dir, "has-privileges-request-body.json")
 
-    os.makedirs(data_dir, exist_ok=True)
-
     if not os.path.exists(template_path):
-        import requests
-
-        base_url = "https://rally-tracks.elastic.co/has-privileges"
-        download_url = f"{base_url}/has-privileges-request-body.json"
-
-        response = requests.get(download_url, verify=False)
-
-        if response.status_code == 200:
-            with open(template_path, "wb") as file:
-                file.write(response.content)
-        else:
-            raise Exception(f"Failed to download has-privileges-request-body.json. HTTP status: {response.status_code}")
+        raise Exception(f"has-privileges-request-body.json not found at {template_path}. Track processor should have downloaded it.")
 
     with open(template_path, "r") as f:
         template_content = f.read()
@@ -39,12 +25,7 @@ def load_has_privileges_request_body(spaces):
     return json.loads(rendered)
 
 
-def generate_random_name(length=10):
-    return "".join(random.choices(string.ascii_lowercase + string.digits + "_-", k=length))
-
-
 def generate_random_index_expression(length=10, wildcard_mode="mixed"):
-    # wildcard_mode: "prefix", "suffix", "both", "none", or "mixed" (random choice)
     base = "".join(random.choices(string.ascii_lowercase + string.digits + "_-", k=length))
 
     if wildcard_mode == "mixed":
@@ -110,21 +91,9 @@ async def create_kibana_app_privileges(es, params):
     filename = f"kibana-app-privileges-{version}.json.bz2"
     data_dir = os.path.expanduser("~/.rally/benchmarks/data/has_privileges")
     data_path = os.path.join(data_dir, filename)
-    os.makedirs(data_dir, exist_ok=True)
 
     if not os.path.exists(data_path):
-        import requests
-
-        base_url = "https://rally-tracks.elastic.co/has-privileges"
-        download_url = f"{base_url}/{filename}"
-
-        response = requests.get(download_url, verify=False)
-
-        if response.status_code == 200:
-            with open(data_path, "wb") as file:
-                file.write(response.content)
-        else:
-            raise Exception(f"Failed to download {filename}. HTTP status: {response.status_code}")
+        raise Exception(f"{filename} not found at {data_path}. Track processor should have downloaded it.")
 
     with bz2.open(data_path, "rt") as kibana_app_privileges_file:
         app_privileges = json.load(kibana_app_privileges_file)
@@ -144,6 +113,7 @@ async def has_privileges(es, params):
 
 
 def register(registry):
+    registry.register_track_processor(HasPrivilegesDataDownloader())
     registry.register_runner("create_roles_and_users", create_roles_and_users, async_runner=True)
     registry.register_runner("create_kibana_app_privileges", create_kibana_app_privileges, async_runner=True)
     registry.register_runner("has_privileges", has_privileges, async_runner=True)

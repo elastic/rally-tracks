@@ -105,7 +105,7 @@ These files have been uploaded to:
 - https://rally-tracks.elastic.co/has-privileges/kibana-app-privileges-8.19.7.json.bz2
 - https://rally-tracks.elastic.co/has-privileges/kibana-app-privileges-9.2.1.json.bz2
 
-Till such a time that we can fully automate this process, Elasticsearch engineering should occasionally extract the application privileges of newer versions of Kibana and update them at this location. Rally was intended to be a tool for benchmarking Elasticsearch and it isn't capable of bringing up Kibana instance which would be needed for such an automation. So, Rally will likely not be not enough for the final solution. We would need to script a preliminary step using esbench potentially. Further research on this is needed.
+Till such a time that we can fully automate this process, Elasticsearch engineering should occasionally extract the application privileges of newer versions of Kibana and update them at this location. Rally was intended to be a tool for benchmarking Elasticsearch and it isn't capable of bringing up a Kibana instance which would be needed for such an automation. So, Rally will likely not be not enough for whatever the eventual solution is. We would need to script a preliminary step using esbench potentially. Further research on this is needed.
 
 Current process: turn on Kibana + ES (easiest to use standard docker images) and wait for Kibana to become available. When first turned on, Kibana bootstraps its application privilege model into the ES security index. Once Kibana is ready, we can hit the ES endpoint `GET /_security/privilege` with superuser access to retrieve the privileges JSON and download it. Use `bzip2 -k {file}.json` to compress and then upload. 
 

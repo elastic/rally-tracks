@@ -11,7 +11,7 @@
   ],
   "corpora": [
     {
-      "name": "openai-initial-indexing",
+      "name": "openai_initial_indexing_floats",
       "base-url": "https://rally-tracks.elastic.co/openai_vector",
       "documents": [
         {
@@ -23,7 +23,19 @@
       ]
     },
     {
-      "name": "openai-parallel-indexing",
+      "name": "openai_initial_indexing_base64",
+      "base-url": "https://rally-tracks.elastic.co/openai_vector",
+      "documents": [
+        {
+          "source-file": "open_ai_corpus-initial-indexing_base64.json.bz2",
+          "document-count": 2580961,
+          "compressed-bytes": 16257545529,
+          "uncompressed-bytes": 22556467788
+        }
+      ]
+    },
+    {
+      "name": "openai_parallel_indexing_floats",
       "base-url": "https://rally-tracks.elastic.co/openai_vector",
       "documents": [
         {
@@ -31,6 +43,18 @@
           "document-count": 100000,
           "compressed-bytes": 1242787434,
           "uncompressed-bytes": 3497178196
+        }
+      ]
+    },
+    {
+      "name": "openai_parallel_indexing_base64",
+      "base-url": "https://rally-tracks.elastic.co/openai_vector",
+      "documents": [
+        {
+          "source-file": "open_ai_corpus-parallel-indexing_base64.json.bz2",
+          "document-count": 100000,
+          "compressed-bytes": 629857595,
+          "uncompressed-bytes": 873838981
         }
       ]
     }

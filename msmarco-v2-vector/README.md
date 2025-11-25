@@ -64,6 +64,7 @@ $ python _tools/parse_queries.py -r
 ### Parameters
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
+ - `base_url` (default: `https://rally-tracks.elastic.co/cohere-msmarco-v2-embed-english-v3`): Specifies the bucket path from where to download the data set.
  - `vector_index_type` (default: bbq_hnsw)
  - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.
  - `index_refresh_interval` (default: unset): The index refresh interval.

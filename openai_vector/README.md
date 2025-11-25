@@ -35,10 +35,12 @@ To rebuild the `queries.json.bz2` file:
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 
+- initial_indexing_corpora (default: openai_initial_indexing_floats) : Use "openai_initial_indexing_base64"  for base64 encoded vectors. 
 - initial_indexing_bulk_size (default: 500)
 - initial_indexing_bulk_warmup (default: 40)
 - initial_indexing_bulk_indexing_clients (default: 5)
 - initial_indexing_ingest_percentage (default: 100)
+- parallel_indexing_corpora (default: openai_parallel_indexing_floats) : Use "openai_parallel_indexing_base64" for base64 encoded vectors.
 - parallel_indexing_bulk_size (default: 500)
 - parallel_indexing_bulk_clients (default: 1)
 - parallel_indexing_ingest_percentage (default: 100)

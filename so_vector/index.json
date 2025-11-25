@@ -2,6 +2,7 @@
 
 {
   "settings": {
+    "index.store.fs.directio_async_prefetch_limit": 0,
     {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       {% if p_include_non_serverless_index_settings %}
     "index.number_of_shards": {{number_of_shards | default(2)}},

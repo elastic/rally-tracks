@@ -93,6 +93,45 @@ The track executes the following operations in order:
    - Calls `_has_privileges` API checking cluster, index, and application privileges
    - Repeats for the specified number of iterations with concurrent clients
 
+## Track Processor
+
+This track uses a custom track processor (`HasPrivilegesDataDownloader`) to automate the download of required data files before the benchmark runs. Track processors in Rally enable pre-flight activities by implementing lifecycle methods that execute before benchmark operations begin.
+
+### What It Does
+
+The track processor handles two types of downloads during the track preparation phase:
+
+1. **Request Body Template** (`has-privileges-request-body.json`)
+   - Downloaded from: `https://rally-tracks.elastic.co/has-privileges/has-privileges-request-body.json`
+   - Contains the Jinja2 template for the `_has_privileges` API request
+   - Used during benchmark execution to generate requests with randomized Kibana spaces
+
+2. **Kibana Application Privileges** (`kibana-app-privileges-{version}.json.bz2`)
+   - Downloaded based on the `version` parameter (e.g., `8.19.7` or `9.2.1`)
+   - Contains version-specific Kibana application privilege definitions
+   - Loaded into Elasticsearch during the `create_kibana_app_privileges` setup operation
+
+### How It Works
+
+The track processor uses the `on_prepare_track` lifecycle method, which executes after Rally loads the track but before any benchmark operations run. This method:
+
+1. Reads the `version` parameter from the challenge configuration
+2. Downloads files to `~/.rally/benchmarks/data/has_privileges/`
+3. Skips downloads if files already exist (for faster subsequent runs)
+
+Files are downloaded once during track preparation and reused across all benchmark iterations. If you need to force a re-download, delete the files from the data directory.
+
+### Implementation
+
+The track processor is registered in `track.py`:
+
+```python
+def register(registry):
+    registry.register_track_processor(HasPrivilegesDataDownloader())
+    # ... register runners
+```
+For more information about track processors, see the Rally documentation: [Manipulating track objects and data with track processors](https://esrally.readthedocs.io/en/stable/advanced.html#manipulating-track-objects-and-data-with-track-processors)
+
 ## Supported Kibana Versions
 
 The track includes application privilege definitions for:

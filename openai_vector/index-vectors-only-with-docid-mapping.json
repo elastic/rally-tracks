@@ -4,7 +4,10 @@
       {% if preload_pagecache %}
     "index.store.preload": [ "vec", "vex", "vem", "veq", "veqm", "veb", "vebm"],
       {% endif %}
+    "index.vectors.indexing.use_gpu": {{ use_gpu_indexing | default(true) | tojson }},
+    "index.merge.scheduler.auto_throttle" : false,
     "index.number_of_shards": {{number_of_shards | default(1)}},
+    "index.refresh_interval": -1, 
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
   },

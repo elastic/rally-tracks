@@ -48,7 +48,7 @@ The `wildcard_mode` parameter controls how index patterns are generated:
 
 ### Running with Rally-Provisioned Cluster
 
-Use the built-in `x-pack-security` car mixin:
+Use the built-in `x-pack-security` car mixin. Note that `track-path` is relative to current working directory and you may need to fiddle with it to point it to the correct location for your track's `track.json` config.
 
 #### Small Scale - Both Wildcards - Kibana 8.x
 ```bash
@@ -87,7 +87,6 @@ The track executes the following operations in order:
 
 2. **Create Kibana Application Privileges** (`create-kibana-app-privileges`)
    - Loads version-specific Kibana application privileges
-   - Falls back to default if version-specific file doesn't exist
 
 3. **Benchmark Has-Privileges API** (`has-privileges`)
    - Randomly selects a user from the created users
@@ -100,15 +99,15 @@ The track includes application privilege definitions for:
 - Kibana 8.x (8.19.7)
 - Kibana 9.x (9.2.1)
 
-To use a different version, specify it via `version` parameter. The track will attempt to load `kibana-app-privileges-{version}.json.bz2` and fall back to the default if not found.
+To use a different version, specify it via `version` parameter. The track will attempt to load `kibana-app-privileges-{version}.json.bz2`.
 
 These files have been uploaded to:
 - https://rally-tracks.elastic.co/has-privileges/kibana-app-privileges-8.19.7.json.bz2
 - https://rally-tracks.elastic.co/has-privileges/kibana-app-privileges-9.2.1.json.bz2
 
-Till such a time that we can fully automate this process, Elasticsearch engineering should occasionally extract the application privileges of newer versions of Kibana and update them at this location.
+Till such a time that we can fully automate this process, Elasticsearch engineering should occasionally extract the application privileges of newer versions of Kibana and update them at this location. Rally was intended to be a tool for benchmarking Elasticsearch and it isn't capable of bringing up Kibana instance which would be needed for such an automation. So, Rally will likely not be not enough for the final solution. We would need to script a preliminary step using esbench potentially. Further research on this is needed.
 
-Process: turn on Kibana so that it bootstraps its privilege list into the ES security index, and then hit the ES endpoint `GET /_security/privilege` with superuser access to download the JSON file.
+Current process: turn on Kibana + ES (easiest to use standard docker images) and wait for Kibana to become available. When first turned on, Kibana bootstraps its application privilege model into the ES security index. Once Kibana is ready, we can hit the ES endpoint `GET /_security/privilege` with superuser access to retrieve the privileges JSON and download it. Use `bzip2 -k {file}.json` to compress and then upload. 
 
 ### Further Reading
 https://esrally.readthedocs.io/en/stable/adding_tracks.html

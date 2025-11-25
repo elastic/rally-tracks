@@ -52,7 +52,7 @@ Use the built-in `x-pack-security` car mixin. Note that `track-path` is relative
 
 #### Small Scale - Both Wildcards - Kibana 8.x
 ```bash
-esrally race --track-path=has-privileges \
+esrally race --track-path=has_privileges \
   --car="4gheap,x-pack-security" \
   --client-options="use_ssl:true,verify_certs:false,basic_auth_user:'rally',basic_auth_password:'rally-password'" \
   --track-params="num_roles:10,num_users:10,num_roles_per_user:5,num_spaces:10,wildcard_mode:both,version:8.19.7,iterations:10,clients:5"
@@ -60,7 +60,7 @@ esrally race --track-path=has-privileges \
 
 #### Medium Scale - No Wildcards - Kibana 8.x
 ```bash
-esrally race --track-path=has-privileges \
+esrally race --track-path=has_privileges \
   --car="4gheap,x-pack-security" \
   --client-options="use_ssl:true,verify_certs:false,basic_auth_user:'rally',basic_auth_password:'rally-password'" \
   --track-params="num_roles:100,num_users:50,num_roles_per_user:30,num_spaces:50,wildcard_mode:none,version:8.19.7,iterations:10,clients:5"
@@ -68,7 +68,7 @@ esrally race --track-path=has-privileges \
 
 #### Stress Test - High Concurrency with Warmup
 ```bash
-esrally race --track-path=has-privileges \
+esrally race --track-path=has_privileges \
   --car="4gheap,x-pack-security" \
   --client-options="use_ssl:true,verify_certs:false,basic_auth_user:'rally',basic_auth_password:'rally-password'" \
   --track-params="num_roles:1000,num_users:200,num_roles_per_user:500,num_spaces:150,wildcard_mode:mixed,version:9.2.1,iterations:100,clients:20,warmup_iterations:10"
@@ -78,17 +78,17 @@ esrally race --track-path=has-privileges \
 
 The track executes the following operations in order:
 
-1. **Create Roles and Users** (`create-roles-and-users`)
+1. **Create Roles and Users** (`create_roles_and_users`)
    - Creates `num_roles` roles with random index patterns
    - Each role has random index privileges (read, write, delete, create)
    - Each role has random cluster privileges (all, monitor, manage)
    - Each role has Kibana application privileges for random spaces
    - Creates `num_users` users, each assigned `num_roles_per_user` random roles
 
-2. **Create Kibana Application Privileges** (`create-kibana-app-privileges`)
+2. **Create Kibana Application Privileges** (`create_kibana_app_privileges`)
    - Loads version-specific Kibana application privileges
 
-3. **Benchmark Has-Privileges API** (`has-privileges`)
+3. **Benchmark _has_privileges API** (`has-privileges`)
    - Randomly selects a user from the created users
    - Calls `_has_privileges` API checking cluster, index, and application privileges
    - Repeats for the specified number of iterations with concurrent clients

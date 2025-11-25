@@ -12,7 +12,7 @@ from jinja2 import Template
 
 
 def load_has_privileges_request_body(spaces):
-    data_dir = os.path.expanduser("~/.rally/benchmarks/data/has-privileges")
+    data_dir = os.path.expanduser("~/.rally/benchmarks/data/has_privileges")
     template_path = os.path.join(data_dir, "has-privileges-request-body.json")
 
     os.makedirs(data_dir, exist_ok=True)
@@ -108,7 +108,7 @@ async def create_roles_and_users(es, params):
 async def create_kibana_app_privileges(es, params):
     version = params.get("version")
     filename = f"kibana-app-privileges-{version}.json.bz2"
-    data_dir = os.path.expanduser("~/.rally/benchmarks/data/has-privileges")
+    data_dir = os.path.expanduser("~/.rally/benchmarks/data/has_privileges")
     data_path = os.path.join(data_dir, filename)
     os.makedirs(data_dir, exist_ok=True)
 
@@ -144,6 +144,6 @@ async def has_privileges(es, params):
 
 
 def register(registry):
-    registry.register_runner("create-roles-and-users", create_roles_and_users, async_runner=True)
-    registry.register_runner("create-kibana-app-privileges", create_kibana_app_privileges, async_runner=True)
-    registry.register_runner("has-privileges", has_privileges, async_runner=True)
+    registry.register_runner("create_roles_and_users", create_roles_and_users, async_runner=True)
+    registry.register_runner("create_kibana_app_privileges", create_kibana_app_privileges, async_runner=True)
+    registry.register_runner("has_privileges", has_privileges, async_runner=True)

@@ -27,7 +27,7 @@ All parameters can be configured via `--track-params` when running Rally:
 | `num_roles_per_user` | integer | 300 | Number of roles assigned to each user. Note: `num_roles_per_user` must be ≤ `num_roles` |
 | `num_spaces` | integer | 100 | Number of Kibana spaces to create                                                       |
 | `wildcard_mode` | string | "mixed" | Wildcard pattern mode (see below)                                                       |
-| `version` | string | "8.19.7" | Kibana version for application privileges                                               |
+| `kibana_privileges_as_of` | string | "8.19.7" | Kibana version for application privileges                                               |
 | `iterations` | integer | 10 | Number of benchmark iterations                                                          |
 | `clients` | integer | 5 | Number of concurrent clients                                                            |
 | `warmup_iterations` | integer | (optional) | Number of warmup iterations before benchmark                                            |
@@ -55,7 +55,7 @@ Use the built-in `x-pack-security` car mixin. Note that `track-path` is relative
 esrally race --track-path=has_privileges \
   --car="4gheap,x-pack-security" \
   --client-options="use_ssl:true,verify_certs:false,basic_auth_user:'rally',basic_auth_password:'rally-password'" \
-  --track-params="num_roles:10,num_users:10,num_roles_per_user:5,num_spaces:10,wildcard_mode:both,version:8.19.7,iterations:10,clients:5"
+  --track-params="num_roles:10,num_users:10,num_roles_per_user:5,num_spaces:10,wildcard_mode:both,kibana_privileges_as_of:8.19.7,iterations:10,clients:5"
 ```
 
 #### Medium Scale - No Wildcards - Kibana 8.x
@@ -63,7 +63,7 @@ esrally race --track-path=has_privileges \
 esrally race --track-path=has_privileges \
   --car="4gheap,x-pack-security" \
   --client-options="use_ssl:true,verify_certs:false,basic_auth_user:'rally',basic_auth_password:'rally-password'" \
-  --track-params="num_roles:100,num_users:50,num_roles_per_user:30,num_spaces:50,wildcard_mode:none,version:8.19.7,iterations:10,clients:5"
+  --track-params="num_roles:100,num_users:50,num_roles_per_user:30,num_spaces:50,wildcard_mode:none,kibana_privileges_as_of:8.19.7,iterations:10,clients:5"
 ```
 
 #### Stress Test - High Concurrency with Warmup
@@ -71,7 +71,7 @@ esrally race --track-path=has_privileges \
 esrally race --track-path=has_privileges \
   --car="4gheap,x-pack-security" \
   --client-options="use_ssl:true,verify_certs:false,basic_auth_user:'rally',basic_auth_password:'rally-password'" \
-  --track-params="num_roles:1000,num_users:200,num_roles_per_user:500,num_spaces:150,wildcard_mode:mixed,version:9.2.1,iterations:100,clients:20,warmup_iterations:10"
+  --track-params="num_roles:1000,num_users:200,num_roles_per_user:500,num_spaces:150,wildcard_mode:both,kibana_privileges_as_of:9.2.1,iterations:100,clients:20,warmup_iterations:10"
 ```
 
 ## Benchmark Workflow

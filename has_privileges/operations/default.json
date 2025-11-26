@@ -5,7 +5,7 @@
   "num_users": {{num_users | default(100)}},
   "num_roles_per_user": {{num_roles_per_user | default(300)}},
   "num_spaces": {{num_spaces | default(100)}},
-  "wildcard_mode": "{{wildcard_mode | default('mixed')}}"
+  "wildcard_mode": "{{wildcard_mode | default('both')}}"
 },
 {
   "name": "create_kibana_app_privileges",

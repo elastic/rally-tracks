@@ -20,14 +20,14 @@ This track simulates realistic authorization checking scenarios by:
 
 All parameters can be configured via `--track-params` when running Rally:
 
-| Parameter | Type | Default | Description                                                                             |
-|-----------|------|---------|-----------------------------------------------------------------------------------------|
+| Parameter | Type    | Default | Description                                                                             |
+|-----------|---------|---------|-----------------------------------------------------------------------------------------|
 | `num_roles` | integer | 1000 | Total number of roles to create                                                         |
 | `num_users` | integer | 100 | Total number of users to create                                                         |
 | `num_roles_per_user` | integer | 300 | Number of roles assigned to each user. Note: `num_roles_per_user` must be ≤ `num_roles` |
 | `num_spaces` | integer | 100 | Number of Kibana spaces to create                                                       |
-| `wildcard_mode` | string | "mixed" | Wildcard pattern mode (see below)                                                       |
-| `kibana_privileges_as_of` | string | "8.19.7" | Kibana version for application privileges                                               |
+| `wildcard_mode` | both    | "mixed" | Wildcard pattern mode (see below)                                                       |
+| `kibana_privileges_as_of` | string  | "8.19.7" | Kibana version for application privileges                                               |
 | `iterations` | integer | 10 | Number of benchmark iterations                                                          |
 | `clients` | integer | 5 | Number of concurrent clients                                                            |
 | `warmup_iterations` | integer | (optional) | Number of warmup iterations before benchmark                                            |

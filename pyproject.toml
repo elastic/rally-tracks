@@ -71,7 +71,8 @@ junit_family = "xunit2"
 junit_logging = "all"
 asyncio_mode = "strict"
 markers = [
-    'track(name): Optionally associate a test class, function or module with a track. Usage: @pytest.mark.track("track1", "track2"). You can use a comma-separated list of track names. When given the --track-filter option (--track-filter=track1,track3), pytest will only run the tests marked with at least one of the track names. Unmarked objects will run by default.'
+    'track(name): Optionally associate a test class, function or module with a track. Usage: @pytest.mark.track("track1", "track2"). You can use a comma-separated list of track names. When given the --track-filter option (--track-filter=track1,track3), pytest will only run the tests marked with at least one of the track names. Unmarked objects will run by default.',
+    'es_cluster_car(car): mark test with the car to use for the es_cluster fixture',
 ]
 
 [tool.black]

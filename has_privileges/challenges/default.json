@@ -1,0 +1,36 @@
+{
+  "name": "default",
+  "description": "Benchmarking _has_privileges API with configurable scale and wildcard modes",
+  "default": true,
+  "parameters": {
+    "version": "{{kibana_privileges_as_of | default('8.19.7')}}",
+    "num_roles": {{num_roles | default(1000)}},
+    "num_users": {{num_users | default(100)}},
+    "num_roles_per_user": {{num_roles_per_user | default(300)}},
+    "num_spaces": {{num_spaces | default(100)}},
+    "wildcard_mode": "{{wildcard_mode | default('both')}}"
+  },
+  "schedule": [
+    {
+      "operation": "create_roles_and_users",
+      "num_roles": {{num_roles | default(1000)}},
+      "num_users": {{num_users | default(100)}},
+      "num_roles_per_user": {{num_roles_per_user | default(300)}},
+      "num_spaces": {{num_spaces | default(100)}},
+      "wildcard_mode": "{{wildcard_mode | default('both')}}"
+    },
+    {
+      "operation": "create_kibana_app_privileges",
+      "version": "{{kibana_privileges_as_of | default('8.19.7')}}"
+    },
+    {
+      "name": "has_privileges",
+      "operation": "has_privileges",
+      "num_users": {{num_users | default(100)}},
+      "num_spaces": {{num_spaces | default(100)}},
+      {% if warmup_iterations is defined %}"warmup-iterations": {{warmup_iterations}},{% endif %}
+      "iterations": {{iterations | default(10)}},
+      "clients": {{clients | default(5)}}
+    }
+  ]
+}

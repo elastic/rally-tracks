@@ -30,6 +30,7 @@ class TestTrackRepository:
         "msmarco-v2-vector",
         "openai_vector",
         "random_vector",
+        "has_privileges",
     ]
     disable_assertions = {
         "http_logs": ["append-no-conflicts", "runtime-fields"],

@@ -4,6 +4,8 @@ import logging
 import os
 from typing import Any, Final, List, Optional
 
+from esrally.driver import runner
+
 logger = logging.getLogger(__name__)
 QUERIES_FILENAME: str = "queries.json.bz2"
 TRUE_KNN_FILENAME: str = "queries-recall.json.bz2"
@@ -285,8 +287,92 @@ class KnnRecallRunner:
         return "knn-recall"
 
 
+class EsqlProfileRunner(runner.Runner):
+    @staticmethod
+    def _build_phase_timing(phase_name: str, phase_profile: dict, absolute_time: float) -> dict:
+        """Build a dependent_timing entry for a profiled phase."""
+        took_nanos = phase_profile.get("took_nanos", 0)
+        service_time = took_nanos / 1_000_000_000  # Convert nanoseconds to seconds
+        request_start = phase_profile.get("start_millis", 0) / 1000  # Convert to seconds
+        request_end = phase_profile.get("stop_millis", 0) / 1000  # Convert to seconds
+
+        timing_data = {
+            "operation": phase_name,
+            "operation-type": "esql-profile-phase",
+            "absolute_time": absolute_time,
+            "request_start": request_start,
+            "request_end": request_end,
+            "service_time": service_time,
+        }
+
+        # Rally expects each entry to have metadata plus a nested "dependent_timing" key
+        return {
+            "dependent_timing": timing_data
+        }
+
+    async def __call__(self, es, params):
+        import time
+
+        # Extract transport-level parameters (timeouts, headers, etc.)
+        params, request_params, transport_params, headers = self._transport_request_params(params)
+        es = es.options(**transport_params)
+
+        # Get the ESQL query (mandatory parameter)
+        query = runner.mandatory(params, "query", self)
+
+        # Build the request body with the query and profile enabled
+        body = params.get("body", {})
+        body["query"] = query
+        body["profile"] = True
+
+        # Add optional filter if provided
+        query_filter = params.get("filter")
+        if query_filter:
+            body["filter"] = query_filter
+
+        # Set headers if not provided (preserves prior behavior)
+        if not bool(headers):
+            headers = None
+
+        # Disable eager response parsing to avoid skewing results
+        es.return_raw_response()
+
+        # Capture absolute time before execution
+        absolute_time = time.time()
+
+        # Execute the ESQL query with profiling
+        raw_response = await es.perform_request(method="POST", path="/_query", headers=headers, body=body, params=request_params)
+
+        # Parse the raw response (body is a BytesIO object, need to read it)
+        response = json.loads(raw_response.body.read())
+
+        # Extract the profile information
+        profile = response.get("profile", {})
+
+        # Build dependent_timing entries for each profiled phase
+        dependent_timings = []
+        if profile:
+            for phase_name in ["query", "planning"]:
+                if phase_name in profile:
+                    dependent_timings.append(
+                        self._build_phase_timing(phase_name, profile[phase_name], absolute_time)
+                    )
+
+        return {
+            "profile": profile,
+            "success": True,
+            "unit": "ops",
+            "weight": 1,
+            "dependent_timing": dependent_timings
+        }
+
+    def __repr__(self, *args, **kwargs):
+        return "esql-profile"
+
+
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)
     registry.register_param_source("esql-knn-param-source", ESQLKnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)
+    registry.register_runner("esql-profile", EsqlProfileRunner(), async_runner=True)

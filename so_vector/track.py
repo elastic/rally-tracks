@@ -356,17 +356,7 @@ class EsqlProfileRunner(runner.Runner):
                 if phase_name in profile:
                     timing_entry = self._build_phase_timing(phase_name, profile[phase_name], absolute_time)
                     dependent_timings.append(timing_entry)
-
-                    # Log the timing metrics being captured
-                    timing_data = timing_entry["dependent_timing"]
-                    logger.info(
-                        f"ES|QL Profile - {phase_name} phase: "
-                        f"service_time={timing_data['service_time']:.6f}s, "
-                        f"took_nanos={profile[phase_name].get('took_nanos', 0)}, "
-                        f"request_start={timing_data['request_start']:.3f}, "
-                        f"request_end={timing_data['request_end']:.3f}"
-                    )
-
+                    
         result = {
             "success": True,
             "unit": "ops",

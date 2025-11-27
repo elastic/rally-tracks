@@ -288,28 +288,6 @@ class KnnRecallRunner:
 
 
 class EsqlProfileRunner(runner.Runner):
-    @staticmethod
-    def _build_phase_timing(phase_name: str, phase_profile: dict, absolute_time: float) -> dict:
-        """Build a dependent_timing entry for a profiled phase."""
-        took_nanos = phase_profile.get("took_nanos", 0)
-        service_time = took_nanos / 1_000_000_000  # Convert nanoseconds to seconds
-        request_start = phase_profile.get("start_millis", 0) / 1000  # Convert to seconds
-        request_end = phase_profile.get("stop_millis", 0) / 1000  # Convert to seconds
-
-        timing_data = {
-            "operation": phase_name,
-            "operation-type": "esql-profile-phase",
-            "absolute_time": absolute_time,
-            "request_start": request_start,
-            "request_end": request_end,
-            "service_time": service_time,
-        }
-
-        # Rally expects each entry to have metadata plus a nested "dependent_timing" key
-        return {
-            "dependent_timing": timing_data
-        }
-
     async def __call__(self, es, params):
         import time
 
@@ -349,20 +327,13 @@ class EsqlProfileRunner(runner.Runner):
         # Extract the profile information
         profile = response.get("profile", {})
 
-        # Build dependent_timing entries for each profiled phase
-        dependent_timings = []
+        # Build result entries for each profiled phase
+        result = {}
         if profile:
             for phase_name in ["query", "planning"]:
                 if phase_name in profile:
-                    timing_entry = self._build_phase_timing(phase_name, profile[phase_name], absolute_time)
-                    dependent_timings.append(timing_entry)
-                    
-        result = {
-            "success": True,
-            "unit": "ops",
-            "weight": 1,
-            "dependent_timing": dependent_timings,
-        }
+                    took_nanos = profile.get(phase_name, []).get("took_nanos", 0)
+                    result[f"{phase_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds                
 
         # Extract driver-level metrics
         drivers = profile.get("drivers", [])
@@ -388,12 +359,12 @@ class EsqlProfileRunner(runner.Runner):
                 process_nanos = status.get("process_nanos", 0)
                 if process_nanos > 0:
                     metric_key = f"{driver_name}.{safe_operator_name}.took_ms"
-                    result[metric_key] = process_nanos / 1_000_000  # Convert to milliseconds
+                    result[metric_key] = result.get(metric_key, 0) + process_nanos / 1_000_000  # Convert to milliseconds
 
                 cpu_nanos = status.get("cpu_nanos", 0)
                 if cpu_nanos > 0:
                     metric_key = f"{driver_name}.{safe_operator_name}.cpu_ms"
-                    result[metric_key] = cpu_nanos / 1_000_000  # Convert to milliseconds
+                    result[metric_key] = result.get(metric_key, 0) + cpu_nanos / 1_000_000  # Convert to milliseconds
 
         return result
 

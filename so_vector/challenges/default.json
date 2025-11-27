@@ -521,11 +521,131 @@
       "clients": 1
     }
     {% if is_esql_profiling_enabled %}
-    ,
-    {
+    ,{
       "name": "esql-profile-knn-search-default-match-all",
-      "tags": ["profile"],
+      "tags": ["search"],
       "operation": "esql-profile-knn-search-default-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    }, 
+    {
+      "name": "esql-profile-knn-search-default-match-all-multi-client",
+      "tags": ["search"],
+      "operation": "esql-knn-search-default-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "esql-profile-knn-search-10-50-match-all",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-100-300-match-all",
+      "tags": ["search"],
+      "operation": "esql-knn-search-100-300-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-100-300-match-all-multi-client",
+      "tags": ["search"],
+      "operation": "esql-knn-search-100-300-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "esql-profile-knn-search-10-50-acceptedAnswerId",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-acceptedAnswerId",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-10-50-java",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-java",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-10-50-css",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-css",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-10-50-concurrency",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-concurrency",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-10-50-concurrency-multi-client",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-concurrency",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "esql-profile-knn-search-10-50-random-10-percent",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-10-50-random-10-percent-multi-client",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "esql-profile-knn-search-default-random-20-percent",
+      "tags": ["search"],
+      "operation": "esql-knn-search-default-random-20-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-10-50-random-20-percent",
+      "tags": ["search"],
+      "operation": "esql-knn-search-10-50-random-20-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-100-300-random-10-percent",
+      "tags": ["search"],
+      "operation": "esql-knn-search-100-300-random-10-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-100-300-random-20-percent",
+      "tags": ["search"],
+      "operation": "esql-knn-search-100-300-random-20-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ profile_iterations | default(100) }},
       "clients": 1
     }
@@ -788,97 +908,97 @@
     }
 {% if is_esql_enabled %}
     ,{
-      "name": "esql-knn-search-default-match-all-force-merge",
+      "name": "esql-profile-knn-search-default-match-all-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-default-match-all",
+      "operation": "esql-profile-knn-search-default-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-default-match-all-multi-client-force-merge",
+      "name": "esql-profile-knn-search-default-match-all-multi-client-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-default-match-all",
+      "operation": "esql-profile-knn-search-default-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": {{ search_clients | default(8) | int }}
     },
     {
-      "name": "esql-knn-search-10-50-match-all-force-merge",
+      "name": "esql-profile-knn-search-10-50-match-all-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-10-50-match-all",
+      "operation": "esql-profile-knn-search-10-50-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-100-300-match-all-force-merge",
+      "name": "esql-profile-knn-search-100-300-match-all-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-100-300-match-all",
+      "operation": "esql-profile-knn-search-100-300-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-100-300-match-all-multi-client-force-merge",
+      "name": "esql-profile-knn-search-100-300-match-all-multi-client-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-100-300-match-all",
+      "operation": "esql-profile-knn-search-100-300-match-all",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": {{ search_clients | default(8) | int }}
     },
     {
-      "name": "esql-knn-search-10-50-acceptedAnswerId-force-merge",
+      "name": "esql-profile-knn-search-10-50-acceptedAnswerId-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-10-50-acceptedAnswerId",
+      "operation": "esql-profile-knn-search-10-50-acceptedAnswerId",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-10-50-java-force-merge",
+      "name": "esql-profile-knn-search-10-50-java-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-10-50-java",
+      "operation": "esql-profile-knn-search-10-50-java",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-10-50-css-force-merge",
+      "name": "esql-profile-knn-search-10-50-css-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-10-50-css",
+      "operation": "esql-profile-knn-search-10-50-css",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-10-50-concurrency-force-merge",
+      "name": "esql-profile-knn-search-10-50-concurrency-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-10-50-concurrency",
+      "operation": "esql-profile-knn-search-10-50-concurrency",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-10-50-concurrency-multi-client-force-merge",
+      "name": "esql-profile-knn-search-10-50-concurrency-multi-client-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-10-50-concurrency",
+      "operation": "esql-profile-knn-search-10-50-concurrency",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": {{ search_clients | default(8) | int }}
     },
     {
-      "name": "esql-knn-search-10-50-random-10-percent-force-merge",
+      "name": "esql-profile-knn-search-10-50-random-10-percent-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-10-50-random-10-percent",
+      "operation": "esql-profile-knn-search-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
    {
-      "name": "esql-knn-search-10-50-random-10-percent-multi-client-force-merge",
+      "name": "esql-profile-knn-search-10-50-random-10-percent-multi-client-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-10-50-random-10-percent",
+      "operation": "esql-profile-knn-search-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": {{ search_clients | default(8) | int }}
@@ -886,31 +1006,31 @@
     {
       "name": "esq-knn-search-default-random-20-percent-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-default-random-20-percent",
+      "operation": "esql-profile-knn-search-default-random-20-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-10-50-random-20-percent-force-merge",
+      "name": "esql-profile-knn-search-10-50-random-20-percent-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-10-50-random-20-percent",
+      "operation": "esql-profile-knn-search-10-50-random-20-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-100-300-random-10-percent-force-merge",
+      "name": "esql-profile-knn-search-100-300-random-10-percent-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-100-300-random-10-percent",
+      "operation": "esql-profile-knn-search-100-300-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     },
     {
-      "name": "esql-knn-search-100-300-random-20-percent-force-merge",
+      "name": "esql-profile-knn-search-100-300-random-20-percent-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "esql-knn-search-100-300-random-20-percent",
+      "operation": "esql-profile-knn-search-100-300-random-20-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1

@@ -331,6 +331,14 @@
   }
 },
 {
+  "name": "esql-knn-search-100-300-random-20-percent",
+  "operation-type": "esql-profile",
+  "param-source": "esql-knn-param-source",
+  "k": 100,
+  "num_candidates": 300,
+  "filter": "questionId <= 1500000"
+},
+{
   "name": "esql-profile-knn-search-100-300-random-20-percent",
   "operation-type": "esql-profile",
   "param-source": "esql-knn-param-source",

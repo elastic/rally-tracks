@@ -361,8 +361,39 @@ class EsqlProfileRunner(runner.Runner):
             "success": True,
             "unit": "ops",
             "weight": 1,
-            "dependent_timing": dependent_timings
+            "dependent_timing": dependent_timings,
         }
+
+        # Extract driver-level metrics
+        drivers = profile.get("drivers", [])
+        for driver in drivers:
+            driver_name = driver.get("description", "unknown")
+            took_nanos = driver.get("took_nanos", 0)
+            cpu_nanos = driver.get("cpu_nanos", 0)
+
+            # Add driver-level timing metrics
+            result[f"{driver_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
+            result[f"{driver_name}.cpu_ms"] = cpu_nanos / 1_000_000
+
+            # Extract operator-level metrics
+            operators = driver.get("operators", [])
+            for idx, operator in enumerate(operators):
+                operator_name = operator.get("operator", f"operator_{idx}")
+                # Sanitize operator name for use as a metric key (remove brackets)
+                safe_operator_name = operator_name.split("[")[0] if "[" in operator_name else operator_name
+
+                # Get process_nanos and cpu_nanos from operator status
+                status = operator.get("status", {})
+
+                process_nanos = status.get("process_nanos", 0)
+                if process_nanos > 0:
+                    metric_key = f"{driver_name}.{safe_operator_name}.took_ms"
+                    result[metric_key] = process_nanos / 1_000_000  # Convert to milliseconds
+
+                cpu_nanos = status.get("cpu_nanos", 0)
+                if cpu_nanos > 0:
+                    metric_key = f"{driver_name}.{safe_operator_name}.cpu_ms"
+                    result[metric_key] = cpu_nanos / 1_000_000  # Convert to milliseconds
 
         return result
 

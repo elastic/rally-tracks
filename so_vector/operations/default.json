@@ -505,6 +505,14 @@
   "filter": "match(tags, \"css\", {\"boost\": 0})"
 },
 {
+  "name": "esql-profile-script-score-query-css",
+  "operation-type": "esql-profile",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "match(tags, \"css\", {\"boost\": 0})"
+},
+{
   "name": "script-score-query-javascript",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -521,6 +529,14 @@
 {
   "name": "esql-script-score-query-javascript",
   "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "match(tags, \"javascript\", {\"boost\": 0})"
+},
+{
+  "name": "esql-profile-script-score-query-javascript",
+  "operation-type": "esql-profile",
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
@@ -549,6 +565,14 @@
   "filter": "match(tags, \"concurrency\", {\"boost\": 0})"
 },
 {
+  "name": "esql-profile-script-score-query-concurrency",
+  "operation-type": "esql-profile",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "match(tags, \"concurrency\", {\"boost\": 0})"
+},
+{
   "name": "script-score-query-ccs",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -571,6 +595,14 @@
   "filter": "match(tags, \"ccs\", {\"boost\": 0})"
 },
 {
+  "name": "esql-profile-script-score-query-ccs",
+  "operation-type": "esql-profile",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "match(tags, \"ccs\", {\"boost\": 0})"
+},
+{
   "name": "script-score-query-acceptedAnswerId",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -585,6 +617,14 @@
 {
   "name": "esql-script-score-query-acceptedAnswerId",
   "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "acceptedAnswerId IS NOT NULL"
+},
+{
+  "name": "esql-profile-script-score-query-acceptedAnswerId",
+  "operation-type": "esql-profile",
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
@@ -613,6 +653,14 @@
   "filter": "match(tags, \"java\")"
 },
 {
+  "name": "esql-profile-script-score-query-java",
+  "operation-type": "esql-profile",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": "match(tags, \"java\")"
+},
+{
   "name": "script-score-query-match-all",
   "operation-type": "search",
   "param-source": "knn-param-source",
@@ -622,6 +670,13 @@
 {
   "name": "esql-script-score-query-match-all",
   "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10
+},
+{
+  "name": "esql-profile-script-score-query-match-all",
+  "operation-type": "esql-profile",
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10
@@ -643,6 +698,14 @@
 {
   "name": "esql-script-score-query-10-50-random-10-percent",
   "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "exact": true,
+  "filter": "questionId <= 650000"
+},
+{
+  "name": "esql-profile-script-score-query-10-50-random-10-percent",
+  "operation-type": "esql-profile",
   "param-source": "esql-knn-param-source",
   "k": 10,
   "exact": true,

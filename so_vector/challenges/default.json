@@ -644,7 +644,71 @@
     {
       "name": "esql-profile-knn-search-100-300-random-20-percent",
       "tags": ["profile"],
-      "operation": "esql-knn-search-100-300-random-20-percent",
+      "operation": "esql-profile-knn-search-100-300-random-20-percent",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-script-score-query-match-all",
+      "tags": ["profile"],
+      "operation": "esql-profile-script-score-query-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-script-score-query-acceptedAnswerId",
+      "tags": ["profile"],
+      "operation": "esql-profile-script-score-query-acceptedAnswerId",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-script-score-query-java",
+      "tags": ["profile"],
+      "operation": "esql-profile-script-score-query-java",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-script-score-query-javascript",
+      "tags": ["profile"],
+      "operation": "esql-profile-script-score-query-javascript",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-script-score-query-css",
+      "tags": ["profile"],
+      "operation": "esql-profile-script-score-query-css",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-script-score-query-concurrency",
+      "tags": ["profile"],
+      "operation": "esql-profile-script-score-query-concurrency",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-script-score-query-ccs",
+      "tags": ["profile"],
+      "operation": "esql-profile-script-score-query-ccs",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-script-score-query-10-50-random-10-percent",
+      "tags": ["profile"],
+      "operation": "esql-profile-script-score-query-10-50-random-10-percent",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ profile_iterations | default(100) }},
       "clients": 1

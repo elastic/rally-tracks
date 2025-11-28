@@ -358,13 +358,8 @@ class EsqlProfileRunner(runner.Runner):
 
                 process_nanos = status.get("process_nanos", 0)
                 if process_nanos > 0:
-                    metric_key = f"{driver_name}.{safe_operator_name}.took_ms"
+                    metric_key = f"{driver_name}.{safe_operator_name}.process_ms"
                     result[metric_key] = result.get(metric_key, 0) + process_nanos / 1_000_000  # Convert to milliseconds
-
-                cpu_nanos = status.get("cpu_nanos", 0)
-                if cpu_nanos > 0:
-                    metric_key = f"{driver_name}.{safe_operator_name}.cpu_ms"
-                    result[metric_key] = result.get(metric_key, 0) + cpu_nanos / 1_000_000  # Convert to milliseconds
 
         return result
 

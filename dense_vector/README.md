@@ -26,6 +26,7 @@ python3 _tools/parse.py data/learn.350M.fbin > documents.json
 
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
 
+* `corpora` (default :"dense_vector_floats") : Use "dense_vector_base64" for base64 encoded vectors.
 * `bulk_size` (default: 5000)
 * `bulk_indexing_clients` (default: 1): Number of clients that issue bulk indexing requests.
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.

@@ -125,7 +125,7 @@ def test_invalid_time_date():
                     "format": "strict_date_optional_time",
                 }
             }
-        ).process(DateTimeValues(min_date=None, max_date=datetime.datetime.utcnow(), duration=None))
+        ).process(DateTimeValues(min_date=None, max_date=datetime.datetime.now(tz=datetime.timezone.utc), duration=None))
     assert rae.value.args[0] == "Invalid time format: 2020-11-30T:16:59.340Z"
 
 
@@ -138,7 +138,7 @@ def test_missing_gte():
                     "format": "strict_date_optional_time",
                 }
             }
-        ).process(DateTimeValues(min_date=None, max_date=datetime.datetime.utcnow(), duration=None))
+        ).process(DateTimeValues(min_date=None, max_date=datetime.datetime.now(tz=datetime.timezone.utc), duration=None))
     assert (
         rae.value.message == 'Range query for date does not have both "gte" or "gt" and '
         "\"lte\" or \"lt\" key - [{'@timestamp': {'lte': '2020-12-01T12:16:59.340Z', "
@@ -155,7 +155,7 @@ def test_missing_lte():
                     "format": "strict_date_optional_time",
                 }
             }
-        ).process(DateTimeValues(min_date=None, max_date=datetime.datetime.utcnow(), duration=None))
+        ).process(DateTimeValues(min_date=None, max_date=datetime.datetime.now(tz=datetime.timezone.utc), duration=None))
     assert (
         rae.value.message == 'Range query for date does not have both "gte" or "gt" and '
         "\"lte\" or \"lt\" key - [{'@timestamp': {'gte': '2020-12-01T12:16:59.340Z', "
@@ -166,7 +166,7 @@ def test_missing_lte():
 def test_pass_through():
     range_query = {"http.status.code": {"gte": 200, "lte": 300}}
     range_query_handler = RangeQueryHandler(range_query)
-    range_query_handler.process(DateTimeValues(min_date=None, max_date=datetime.datetime.utcnow(), duration=None))
+    range_query_handler.process(DateTimeValues(min_date=None, max_date=datetime.datetime.now(tz=datetime.timezone.utc), duration=None))
     assert range_query["http.status.code"]["gte"] == 200
     assert range_query["http.status.code"]["lte"] == 300
 

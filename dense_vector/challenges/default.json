@@ -27,6 +27,7 @@
       "name": "index-append",
       "operation": {
         "operation-type": "bulk",
+        "corpora" : {{corpora | default("dense_vector_floats") | tojson}},
         "bulk-size": {{bulk_size | default(5000)}},
         "ingest-percentage": 20
       },
@@ -72,6 +73,7 @@
             "name": "index-update-concurrent-with-searches",
             "operation": {
               "operation-type": "bulk",
+              "corpora" : {{corpora | default("dense_vector_floats") | tojson}},
               "bulk-size": 5000,
               "ingest-percentage": 5
             }

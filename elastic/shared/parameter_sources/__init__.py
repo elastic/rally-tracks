@@ -6,7 +6,7 @@ DEFAULT_END_DATE = "now"
 DEFAULT_MAX_DATE = "2020-01-01"
 
 # this provides a universal start date for `now` if we are using it as the current time
-now = datetime.utcnow().replace(tzinfo=timezone.utc)
+now = datetime.now(tz=timezone.utc)
 
 
 def utc_now():

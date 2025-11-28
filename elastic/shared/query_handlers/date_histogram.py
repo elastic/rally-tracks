@@ -33,8 +33,8 @@ class DateHistogramHandler:
             self.request_body["time_zone"] = "UTC"
             if "min" in self.extended_bounds and "max" in self.extended_bounds:
                 try:
-                    self.max_bound = datetime.datetime.utcfromtimestamp(int(self.extended_bounds["max"]) / 1000)
-                    self.min_bound = datetime.datetime.utcfromtimestamp(int(self.extended_bounds["min"]) / 1000)
+                    self.max_bound = datetime.datetime.fromtimestamp(int(self.extended_bounds["max"]) / 1000, tz=datetime.timezone.utc)
+                    self.min_bound = datetime.datetime.fromtimestamp(int(self.extended_bounds["min"]) / 1000, tz=datetime.timezone.utc)
                 except ValueError:
                     raise exceptions.TrackConfigError(
                         f"Date Histogram aggregation requires epoch milliseconds for its "

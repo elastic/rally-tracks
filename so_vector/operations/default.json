@@ -52,7 +52,7 @@
   "param-source": "esql-knn-param-source",
   "k": 10,
   "num_candidates": 50,
-  "filter": "term(tags, \"java\")"
+  "filter": "match(tags, \"java\", {\"boost\": 0})"
 },
 {
   "name": "knn-recall-10-50-java",
@@ -90,7 +90,7 @@
   "param-source": "esql-knn-param-source",
   "k": 10,
   "num_candidates": 50,
-  "filter": "term(tags, \"css\")"
+  "filter": "match(tags, \"css\", {\"boost\": 0})"
 },
 {
   "name": "knn-recall-10-50-css",
@@ -128,7 +128,7 @@
   "param-source": "esql-knn-param-source",
   "k": 10,
   "num_candidates": 50,
-  "filter": "term(tags, \"concurrency\")"
+  "filter": "match(tags, \"concurrency\", {\"boost\": 0})"
 },
 {
   "name": "knn-recall-10-50-concurrency",
@@ -315,7 +315,6 @@
   "param-source": "knn-recall-param-source",
   "include-in-reporting": false
 },
-
 {
   "name": "knn-search-default-random-20-percent",
   "operation-type": "search",
@@ -376,7 +375,7 @@
   "operation-type": "search",
   "param-source": "knn-param-source",
   "k": 100,
-  "num_candidates": 300 
+  "num_candidates": 300
 },
 {
   "name": "esql-knn-search-100-300-match-all",
@@ -414,7 +413,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"css\")"
+  "filter": "match(tags, \"css\", {\"boost\": 0})"
 },
 {
   "name": "script-score-query-javascript",
@@ -436,7 +435,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"javascript\")"
+  "filter": "match(tags, \"javascript\", {\"boost\": 0})"
 },
 {
   "name": "script-score-query-concurrency",
@@ -458,7 +457,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"concurrency\")"
+  "filter": "match(tags, \"concurrency\", {\"boost\": 0})"
 },
 {
   "name": "script-score-query-ccs",
@@ -480,7 +479,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"ccs\")"
+  "filter": "match(tags, \"ccs\", {\"boost\": 0})"
 },
 {
   "name": "script-score-query-acceptedAnswerId",
@@ -522,7 +521,7 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10,
-  "filter": "term(tags, \"java\")"
+  "filter": "match(tags, \"java\")"
 },
 {
   "name": "script-score-query-match-all",
@@ -537,4 +536,26 @@
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10
+},
+{
+  "name": "script-score-query-10-50-random-10-percent",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "exact": true,
+  "k": 10,
+  "filter": {
+    "range": {
+      "questionId": {
+        "lte": 650000
+      }
+    }
+  }
+},
+{
+  "name": "esql-script-score-query-10-50-random-10-percent",
+  "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 10,
+  "exact": true,
+  "filter": "questionId <= 650000"
 }

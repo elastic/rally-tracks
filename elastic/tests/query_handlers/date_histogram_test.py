@@ -71,7 +71,7 @@ def test_process_contract_bounds_with_min_date():
         "fixed_interval": "1m",
     }
     date_histogram_handler = DateHistogramHandler(date_histogram_agg)
-    min_date = datetime.datetime.utcfromtimestamp(1606911780).replace(tzinfo=datetime.timezone.utc)
+    min_date = datetime.datetime.fromtimestamp(1606911780, tz=datetime.timezone.utc)
     date_histogram_handler.process(DateTimeValues(min_date=min_date, max_date=start, duration=None))
     assert date_histogram_agg["extended_bounds"]["min"] == 1606911780000
     assert date_histogram_agg["extended_bounds"]["max"] == 1606912380000

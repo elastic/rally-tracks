@@ -213,6 +213,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `recovery_large_max_batch_size` (default: `32MB`) - The maximum estimated size for the batch of translog operations to return.
 * `recovery_max_operations_count` (default: `16777216`) - The maximum number of translog operations to return in a single batch.
 * `run_esql_aggs` (default not defined) - Run ES|QL aggregation queries, covering gauges and counters (with rate)
+* `use_doc_values_skipper` (default not defined) - Set the index.mapping.use_doc_value_skippers index setting.
 
 ### License
 

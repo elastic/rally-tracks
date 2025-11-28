@@ -59,7 +59,7 @@ install: venv-create
 	# install pytest for tests
 	. $(VENV_ACTIVATE_FILE); pip3 install pytest==6.2.5 pytest-benchmark==3.2.2
 	# install dependencies for tests
-	. $(VENV_ACTIVATE_FILE); pip3 install geneve==0.0.3 pytest-asyncio==0.18.1 git+https://github.com/elastic/package-assets.git
+	. $(VENV_ACTIVATE_FILE); pip3 install geneve==0.3.0 pytest-asyncio==0.18.1 git+https://github.com/elastic/package-assets.git
 	# install (latest) Rally for smoke tests
 	. $(VENV_ACTIVATE_FILE); pip3 install git+ssh://git@github.com/elastic/rally.git --use-feature=2020-resolver
 

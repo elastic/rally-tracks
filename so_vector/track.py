@@ -152,9 +152,7 @@ class ESQLKnnParamSource(KnnParamSource):
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " and (" + self._params["filter"] + ")"
-            query += (
-                f"| KEEP _id, _score, _source | SORT _score desc | LIMIT {k}"
-            )
+            query += f"| KEEP _id, _score, _source | SORT _score desc | LIMIT {k}"
 
         return {"query": query}
 

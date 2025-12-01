@@ -150,7 +150,9 @@ class ESQLKnnParamSource(KnnParamSource):
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " and (" + self._params["filter"] + ")"
-            query += "| KEEP _id, _score, _source | SORT _score desc | LIMIT " + str(k)
+            query += (
+                f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | KEEP _id, _source, score | SORT score desc | LIMIT {k}"
+            )
 
         return {"query": query}
 

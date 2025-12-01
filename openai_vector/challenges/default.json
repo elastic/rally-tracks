@@ -31,16 +31,11 @@
       }
     },
     {
-      "name": "wait-until-merges-finish-after-index",
       "operation": {
-        "operation-type": "index-stats",
-        "index": "_all",
-        "condition": {
-          "path": "_all.total.merges.current",
-          "expected-value": 0
-        },
-        "retry-until-success": true,
-        "include-in-reporting": false
+        "operation-type": "force-merge",
+        "max-num-segments": {{max_num_segments | default(1)}},
+        "request-timeout": {{force_merge_timeout | default(7200)}},
+        "include-in-reporting": true
       }
     }
     {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
@@ -76,14 +71,7 @@
       "clients": {{ standalone_search_clients | default(8) | int }},
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
     }
-    {%- endfor %},
-    {
-      "name": "parallel-documents-indexing-bulk",
-      "operation": "parallel-documents-indexing",
-      "warmup-time-period": 60,
-      "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
-      "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
-    }
+    {%- endfor %}
     {%- for i in range(p_search_ops|length) %},
     {
       {%- if p_search_ops[i][2] > 0 -%}

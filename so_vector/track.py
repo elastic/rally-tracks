@@ -120,6 +120,7 @@ class KnnParamSource:
 
 class ESQLKnnParamSource(KnnParamSource):
     def params(self):
+        retrieve_source = self._params.get("retrieve_source", False)
         # if -1, then its unset. If set, just set it.
         oversample = self._params.get("oversample", -1)
         if oversample > -1 and self._exact_scan:
@@ -135,10 +136,12 @@ class ESQLKnnParamSource(KnnParamSource):
 
         if self._exact_scan:
             query = f"FROM {self._index_name}"
+            if retrieve_source:
+                query += " METADATA _source"
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " | where (" + self._params["filter"] + ")"
-            query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | drop titleVector | sort score desc | limit {k}"
+            query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | SORT score DESC | LIMIT {k}"
         else:
             # Construct options JSON.
             options = []
@@ -148,11 +151,19 @@ class ESQLKnnParamSource(KnnParamSource):
                 options.append(f'"rescore_oversample":{oversample}')
             options_param = "{" + ", ".join(options) + "}"
 
-            query = f"FROM {self._index_name} METADATA _score | WHERE KNN(titleVector, {query_vec}, {options_param})"
+            query = f"FROM {self._index_name} METADATA _score"
+            if retrieve_source:
+                query += ", _source"
+            query += f"| WHERE KNN(titleVector, {query_vec}, {options_param})"
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " and (" + self._params["filter"] + ")"
-            query += "| drop titleVector | sort _score desc | limit " + str(k)
+            query += "| SORT _score desc | LIMIT " + str(k)
+
+        if retrieve_source:
+            query += " | KEEP _source"
+        else:
+            query += " | DROP titleVector"
 
         return {"query": query}
 
@@ -333,7 +344,7 @@ class EsqlProfileRunner(runner.Runner):
             for phase_name in ["query", "planning"]:
                 if phase_name in profile:
                     took_nanos = profile.get(phase_name, []).get("took_nanos", 0)
-                    result[f"{phase_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds                
+                    result[f"{phase_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
 
         # Extract driver-level metrics
         drivers = profile.get("drivers", [])

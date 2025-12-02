@@ -22,6 +22,7 @@ from it.logs import BASE_PARAMS, params
 pytest_rally = pytest.importorskip("pytest_rally")
 
 
+@pytest.mark.track("elastic/logs")
 class TestLogs:
     def test_logs_fails_if_assets_not_installed(self, es_cluster, rally, capsys):
         ret = rally.race(track="elastic/logs", exclude_tasks="tag:setup")
@@ -42,6 +43,14 @@ class TestLogs:
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-streams",
+            track_params=params(),
+        )
+        assert ret == 0
+
+    def test_logs_partitioned_streams(self, es_cluster, rally):
+        ret = rally.race(
+            track="elastic/logs",
+            challenge="logging-partitioned-streams",
             track_params=params(),
         )
         assert ret == 0

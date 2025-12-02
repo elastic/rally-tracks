@@ -21,7 +21,26 @@
       "mappings": {
         "dynamic": false,
         "properties": {
+          "trace_id": {
+            "type": "keyword"
+          },
           "scope.name": {
+            "type": "keyword"
+          },
+          "service.name": {
+            "path": "resource.attributes.service.name",
+            "type": "alias"
+          },
+          "resource": {
+            "type": "object",
+            "properties": {
+              "attributes": {
+                "type": "object",
+                "subobjects": false
+              }
+            }
+          },
+          "span_id": {
             "type": "keyword"
           },
           "body.text": {
@@ -29,6 +48,10 @@
           },
           "severity_text": {
             "type": "keyword"
+          },
+          "span.id": {
+            "path": "span_id",
+            "type": "alias"
           },
           "body": {
             "type": "object",
@@ -39,12 +62,17 @@
               }
             }
           },
-          "scope.dropped_attributes_count": {
-            "type": "long"
+          "message": {
+            "path": "body.text",
+            "type": "alias"
           },
           "trace.id": {
             "path": "trace_id",
             "type": "alias"
+          },
+          "@timestamp": {
+            "ignore_malformed": false,
+            "type": "date"
           },
           "scope": {
             "type": "object",
@@ -55,66 +83,12 @@
               }
             }
           },
-          "resource.schema_url": {
-            "type": "keyword"
+          "severity_number": {
+            "type": "long"
           },
           "log.level": {
             "path": "severity_text",
             "type": "alias"
-          },
-          "host.name": {
-            "path": "resource.attributes.host.name",
-            "type": "alias"
-          },
-          "servce.name": {
-            "path": "resource.attributes.service.name",
-            "type": "alias"
-          },
-          "resource.attributes.host.name": {
-            "type": "keyword"
-          },
-          "resource.attributes.service.name": {
-            "type": "keyword"
-          },
-          "trace_id": {
-            "type": "keyword"
-          },
-          "resource": {
-            "type": "object",
-            "properties": {
-              "dropped_attributes_count": {
-                "type": "long"
-              },
-              "schema_url": {
-                "ignore_above": 1024,
-                "type": "keyword"
-              },
-              "attributes": {
-                "type": "object",
-                "subobjects": false
-              }
-            }
-          },
-          "span_id": {
-            "type": "keyword"
-          },
-          "span.id": {
-            "path": "span_id",
-            "type": "alias"
-          },
-          "message": {
-            "path": "body.text",
-            "type": "alias"
-          },
-          "@timestamp": {
-            "ignore_malformed": false,
-            "type": "date"
-          },
-          "dropped_attributes_count": {
-            "type": "long"
-          },
-          "severity_number": {
-            "type": "long"
           },
           "event_name": {
             "type": "keyword"
@@ -123,13 +97,14 @@
             "type": "object",
             "subobjects": false
           },
-          "scope.version": {
+          "host.name": {
+            "path": "resource.attributes.host.name",
+            "type": "alias"
+          },
+          "resource.attributes.host.name": {
             "type": "keyword"
           },
-          "resource.dropped_attributes_count": {
-            "type": "long"
-          },
-          "scope.schema_url": {
+          "resource.attributes.service.name": {
             "type": "keyword"
           }
         }

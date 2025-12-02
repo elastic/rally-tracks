@@ -1,0 +1,32 @@
+{
+  "name": "logs.child3@stream",
+  "index_template": {
+    "index_patterns": ["logs.child3"],
+    "template": {
+      "settings": {
+        "index": {
+          "default_pipeline": "logs.child3@stream.processing"
+        }
+      },
+      "mappings": {
+        "properties": {
+          "stream.name": {
+            "type": "constant_keyword",
+            "value": "logs.child3"
+          }
+        }
+      }
+    },
+    "composed_of": ["track-custom-shared-settings", "logs@stream.layer", "logs.child3@stream.layer"],
+    "priority": 1000,
+    "version": 1,
+    "_meta": {
+      "managed": true,
+      "description": "The index template for logs.child3 stream"
+    },
+    "data_stream": {
+      "hidden": false,
+      "allow_custom_routing": false
+    }
+  }
+}

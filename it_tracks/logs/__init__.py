@@ -15,20 +15,22 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import pytest
+BASE_PARAMS = {
+    "start_date": "2021-01-01T00-00-00Z",
+    "end_date": "2021-01-01T00-01-00Z",
+    "max_total_download_gb": "18",
+    "raw_data_volume_per_day": "72GB",
+    "max_generated_corpus_size": "1GB",
+    "wait_for_status": "green",
+    "force_data_generation": "true",
+    "number_of_shards": "2",
+    "number_of_replicas": "0",
+}
 
-from it.logs import BASE_PARAMS, params
 
-pytest_rally = pytest.importorskip("pytest_rally")
-
-
-@pytest.mark.track("elastic/logs")
-class TestLogsUnmapped:
-    def test_logs_chicken(self, es_cluster, rally):
-        custom = {"mapping": "unmapped"}
-        ret = rally.race(
-            track="elastic/logs",
-            challenge="logging-insist-chicken",
-            track_params=params(updates=custom),
-        )
-        assert ret == 0
+def params(updates=None):
+    base = BASE_PARAMS.copy()
+    if updates is None:
+        return base
+    else:
+        return {**base, **updates}

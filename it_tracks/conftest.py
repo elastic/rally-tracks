@@ -24,3 +24,11 @@ def es_cluster_cleanup(es_cluster):
     es = Elasticsearch(f"http://localhost:{es_cluster.http_port}")
     es.indices.delete(index="*")
     es.indices.delete_data_stream(name="*")
+<<<<<<< HEAD:it/conftest.py
+=======
+
+
+@pytest.fixture
+def es_release_build(es_cluster) -> bool:
+    return es_cluster.source_build_release
+>>>>>>> 72445f94 (Rename IT folders (#938)):it_tracks/conftest.py

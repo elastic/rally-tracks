@@ -123,7 +123,7 @@ def project_config(project, tmpdir_factory):
     rally_target_host = f"{es_hostname}:443"
 
     print("Waiting for DNS propagation")
-    for _ in range(6):
+    for _ in range(6):  # 6 * 30 = 180 seconds = 3 minutes
         time.sleep(30)
         with contextlib.suppress(subprocess.CalledProcessError):
             subprocess.run(["nslookup", es_hostname, "8.8.8.8"], check=True)
@@ -132,7 +132,7 @@ def project_config(project, tmpdir_factory):
         raise ValueError("Timed out waiting for DNS propagation")
 
     print("Waiting for Elasticsearch")
-    for _ in range(18):
+    for _ in range(60):  # 60 * 15 = 900 seconds = 15 minutes
         try:
             es = Elasticsearch(
                 f"https://{rally_target_host}",
@@ -153,7 +153,7 @@ def project_config(project, tmpdir_factory):
             break
         except Exception as e:
             print(f"GET / Failed with {str(e)}")
-            time.sleep(10)
+            time.sleep(15)
     else:
         raise ValueError("Timed out waiting for Elasticsearch")
 
@@ -171,7 +171,7 @@ def project_config(project, tmpdir_factory):
 
     # Confirm API key is working fine
     print("Testing API key")
-    for _ in range(18):
+    for _ in range(18):  # 18 * 10 = 180 seconds = 3 minutes
         try:
             es = Elasticsearch(
                 f"https://{rally_target_host}",

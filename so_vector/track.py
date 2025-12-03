@@ -74,7 +74,7 @@ class KnnParamSource:
         return self
 
     def params(self):
-        result = {"index": self._index_name, "cache": self._params.get("cache", False), "size": self._params.get("k", 10)}
+        result = {"index": self._index_name, "cache": self._params.get("cache", False), "results-per-page": self._params.get("k", 10)}
         num_candidates: int | None = self._params.get("num_candidates", None)
         # if -1, then its unset. If set, just set it.
         oversample = self._params.get("oversample", -1)

@@ -19,6 +19,11 @@ import json
 
 import pytest
 
+<<<<<<<< HEAD:it_tracks/test_logs.py
+========
+from it_tracks.logs import BASE_PARAMS, params
+
+>>>>>>>> fb0d773f (Rename IT folders (#938)):it_tracks/logs/test_logs.py
 pytest_rally = pytest.importorskip("pytest_rally")
 
 BASE_PARAMS = {

@@ -16,19 +16,16 @@
 # under the License.
 
 import pytest
-
-from it.logs import BASE_PARAMS, params
-
-pytest_rally = pytest.importorskip("pytest_rally")
+from elasticsearch import Elasticsearch
 
 
-@pytest.mark.track("elastic/logs")
-class TestLogsUnmapped:
-    def test_logs_chicken(self, es_cluster, rally):
-        custom = {"mapping": "unmapped"}
-        ret = rally.race(
-            track="elastic/logs",
-            challenge="logging-insist-chicken",
-            track_params=params(updates=custom),
-        )
-        assert ret == 0
+@pytest.fixture(scope="function")
+def es_cluster_cleanup(es_cluster):
+    es = Elasticsearch(f"http://localhost:{es_cluster.http_port}")
+    es.indices.delete(index="*")
+    es.indices.delete_data_stream(name="*")
+
+
+@pytest.fixture
+def es_release_build(es_cluster) -> bool:
+    return es_cluster.source_build_release

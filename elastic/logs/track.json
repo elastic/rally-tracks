@@ -75,6 +75,8 @@
 
 {% set p_mapping = ( mapping | default('mapped') ) %}
 
+{% set p_timestamp_nanos = (timestamp_nanos | default(false)) %}
+
 {% set p_integration_ratios = (integration_ratios | default({
     "kafka": {
       "corpora": {
@@ -394,7 +396,18 @@
     {
       "name": "track-shared-logsdb-mode",
       "template": "./templates/component/track-shared-logsdb-mode.json"
-    }
+    },
+    {% if p_timestamp_nanos %}
+      {
+        "name": "logs-timestamp-mapping",
+        "template": "./templates/component/logs-timestamp-date_nanos.json"
+      }
+    {% else %}
+      {
+        "name": "logs-timestamp-mapping",
+        "template": "./templates/component/logs-timestamp-date.json"
+      }
+    {% endif %}
   ],
   "composable-templates": [
     {% if p_mapping == "mapped" %}

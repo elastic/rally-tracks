@@ -38,4 +38,4 @@ class TestTrackRepository:
             ret = rally.race(track=track, challenge=challenge, track_params=track_params, **rally_options)
             assert ret == 0
         else:
-            pytest.skip(msg=f"{track}-{challenge} included in skip list")
+            pytest.skip(f"{track}-{challenge} included in skip list")

@@ -21,7 +21,7 @@ PYENV_REGEX = .pyenv/shims
 PY_BIN = python3
 # https://github.com/pypa/pip/issues/5599
 PIP_WRAPPER = $(PY_BIN) -m pip
-export PY38 = "3.8.13"
+export PY313 = "3.13.7"
 VIRTUAL_ENV ?= .venv
 VENV_ACTIVATE_FILE = $(VIRTUAL_ENV)/bin/activate
 VENV_ACTIVATE = . $(VENV_ACTIVATE_FILE)
@@ -31,8 +31,8 @@ PYENV_PREREQ_HELP = "\033[0;31mIMPORTANT\033[0m: please type \033[0;31mpyenv ini
 VE_MISSING_HELP = "\033[0;31mIMPORTANT\033[0m: Couldn't find $(PWD)/$(VIRTUAL_ENV); have you executed make venv-create?\033[0m\n"
 
 prereq:
-	pyenv install --skip-existing $(PY38)
-	pyenv local $(PY38)
+	pyenv install --skip-existing $(PY313)
+	pyenv local $(PY313)
 
 venv-create:
 	@if [[ ! -x $$(command -v pyenv) ]]; then \

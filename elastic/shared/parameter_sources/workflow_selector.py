@@ -59,8 +59,8 @@ class WorkflowSelectorParamSource:
         self.logger.info("Workflow [%s] is using seed [%s]", self.workflow, self.random_seed)
         self.number_of_tasks = track.selected_challenge_or_default.parameters.get("number-of-workflows")
         # for testing purposes only we allow a configurable now function
-        self._utc_now = kwargs.get("utc_now", datetime.utcnow)
-        self._init_date = self._utc_now().replace(tzinfo=timezone.utc)
+        self._utc_now = kwargs.get("utc_now", lambda: datetime.now(tz=timezone.utc))
+        self._init_date = self._utc_now()
         self._detailed_results = params.get(
             "detailed-results", track.selected_challenge_or_default.parameters.get("detailed-results", False)
         )
@@ -266,7 +266,7 @@ class WorkflowSelectorParamSource:
         else:
             # process fields - use the start_date + the time passed since we started, as the time
             # all dates for the action should be the same
-            query_max_date = self._max_date_start + (self._utc_now().replace(tzinfo=timezone.utc) - self._init_date)
+            query_max_date = self._max_date_start + (self._utc_now() - self._init_date)
 
         for query_handler in self.workflow_handlers[action_id]:
             # scale the duration based on the max if set

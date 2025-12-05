@@ -77,7 +77,7 @@ def parse_interval(offset: str) -> Optional[timedelta]:
         raise TimeParsingError(f"Invalid offset: {offset}")
 
 
-def parse_date_time(point: str, utcnow: Callable[..., datetime] = datetime.utcnow) -> Optional[datetime]:
+def parse_date_time(point: str, utcnow: Callable[..., datetime] = lambda: datetime.now(tz=timezone.utc)) -> Optional[datetime]:
     now = "now"
     if not point:
         return None

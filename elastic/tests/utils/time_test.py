@@ -138,7 +138,7 @@ def test_generate_new_bounds_preserve_interval():
     upper_bound = parse_date_optional_time("2020-01-03T12:00:00.000Z")
     lower_bound = parse_date_optional_time("2020-01-02T12:00:00.000Z")
 
-    utc_now = datetime.datetime.utcnow()
+    utc_now = datetime.datetime.now(tz=datetime.timezone.utc)
     date_data = DateTimeValues(min_date=None, max_date=utc_now, duration=None)
 
     new_lower, new_upper = date_data.generate_new_bounds(lower_bound, upper_bound)
@@ -151,7 +151,7 @@ def test_generate_new_bounds_replace_interval():
     upper_bound = parse_date_optional_time("2020-01-03T12:00:00.000Z")
     lower_bound = parse_date_optional_time("2020-01-02T12:00:00.000Z")
 
-    utc_now = datetime.datetime.utcnow()
+    utc_now = datetime.datetime.now(tz=datetime.timezone.utc)
     date_data = DateTimeValues(min_date=None, max_date=utc_now, duration=datetime.timedelta(minutes=1))
 
     new_lower, new_upper = date_data.generate_new_bounds(lower_bound, upper_bound)
@@ -172,7 +172,7 @@ def test_generate_new_bounds_respects_min_and_max_date():
 
 
 def test_calendar_intervals():
-    utc_now = datetime.datetime.utcnow()
+    utc_now = datetime.datetime.now(tz=datetime.timezone.utc)
     date_data = DateTimeValues(None, utc_now, None)
     assert date_data.calendar_interval is None
 
@@ -187,7 +187,7 @@ def test_calendar_intervals():
 
 
 def test_fixed_intervals():
-    utc_now = datetime.datetime.utcnow()
+    utc_now = datetime.datetime.now(tz=datetime.timezone.utc)
     date_data = DateTimeValues(None, utc_now, None)
     assert date_data.calendar_interval is None
 

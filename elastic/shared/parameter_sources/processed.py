@@ -79,7 +79,7 @@ class ProcessedCorpusParamSource:
         self._volume_per_day_gb = convert_to_gib(raw_volume_per_day)
         self.start_time = int(time.perf_counter())
         self._profile = params.get("profile", "fixed_interval")
-        now = datetime.utcnow().replace(tzinfo=timezone.utc)
+        now = datetime.now(tz=timezone.utc)
 
         def utc_now():
             return now

@@ -49,7 +49,7 @@ class TestTrackRepository:
     ]
 
     skip_challenges = {
-        "tsdb": ["downsample"],
+        "tsdb": ["downsample", "downsample-last-value"],
         "tsdb_k8s_queries": ["esql"],
         "http_logs": ["raw-docs-sampling"],
     }

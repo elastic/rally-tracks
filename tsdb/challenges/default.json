@@ -223,7 +223,7 @@
     },
     {
       "name": "downsample",
-      "description": "Indexes the whole document corpus and executes a few downsampling operations using different interval values",
+      "description": "Indexes the whole document corpus and executes a few downsampling operations using the aggregate method and different interval values",
       "default": false,
       "schedule": [
         {
@@ -395,6 +395,179 @@
           "iterations": 100
         }
         {% endif %}
+      ]
+    },
+    {
+      "name": "downsample-last-value",
+      "description": "Indexes the whole document corpus and executes a few downsampling operations using the last value method and different interval values",
+      "default": false,
+      "schedule": [
+        {
+          "tags": ["setup"],
+          "operation": {
+            "operation-type": "delete-index",
+              "index": ["tsdb", "tsdb-1s", "tsdb-1m", "tsdb-1h", "tsdb-1d"]
+            }
+          },
+          {
+            "tags": ["setup"],
+            "operation": {
+              "operation-type": "create-index",
+              "settings": {{index_settings | default({}) | tojson}}
+            }
+          },
+          {
+            "name": "check-cluster-health",
+            "tags": ["health"],
+            "operation": {
+              "operation-type": "cluster-health",
+              "index": "tsdb",
+              "request-params": {
+                "wait_for_status": "{{cluster_health | default('green')}}",
+                "wait_for_no_relocating_shards": "true"
+              },
+              "retry-until-success": true
+            }
+          },
+          {
+            "tags": ["index"],
+            "operation": "index",
+            "warmup-time-period": 240,
+            "clients": {{bulk_indexing_clients | default(8)}},
+            "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+          },
+          {
+            "name": "refresh-after-index",
+            "tags": ["index"],
+            "operation": "refresh"
+          },
+          {
+            "tags": ["index"],
+            "operation": {
+              "operation-type": "force-merge",
+              "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+              "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+              {%- endif %}
+            }
+          },
+          {
+            "name": "wait-until-merges-finish",
+            "tags": ["index"],
+            "operation": {
+              "operation-type": "index-stats",
+              "index": "_all",
+              "condition": {
+                "path": "_all.total.merges.current",
+                "expected-value": 0
+              },
+              "retry-until-success": true,
+              "include-in-reporting": false
+           }
+         },
+         {
+           "name": "refresh-after-force-merge",
+           "tags": ["index"],
+           "operation": "refresh"
+         },
+         {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+         {
+           "name": "post-ingest-sleep",
+           "tags": ["index"],
+           "operation": {
+             "operation-type": "sleep",
+             "duration": {{ post_ingest_sleep_duration|default(30) }}
+           }
+         },
+         {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+         {
+           "name": "block-source-index-writes",
+           "tags": ["index"],
+           "operation": {
+             "operation-type": "raw-request",
+             "path": "/tsdb/_block/write",
+             "method": "PUT"
+           }
+         },
+         {
+           "name": "downsample-1m",
+           "operation": {
+             "operation-type": "downsample",
+             "fixed-interval": "1m",
+             "sampling-method": "last-value"
+           }
+         },
+         {
+           "name": "downsample-1h",
+             "operation": {
+               "operation-type": "downsample",
+               "fixed-interval": "1h",
+               "sampling-method": "last-value"
+             }
+         },
+         {
+           "name": "downsample-1d",
+           "operation": {
+             "operation-type": "downsample",
+             "fixed-interval": "1d",
+             "sampling-method": "last-value"
+           }
+         },
+         {
+           "operation": "date-histo-entire-range-1m",
+           "warmup-iterations": 50,
+           "clients": {{ search_clients | default(1) | int }},
+           "iterations": 100
+         },
+         {
+           "operation": "date-histo-entire-range-1h",
+           "warmup-iterations": 50,
+           "clients": {{ search_clients | default(1) | int }},
+           "iterations": 100
+         },
+         {
+           "operation": "date-histo-entire-range-1d",
+           "warmup-iterations": 50,
+           "clients": {{ search_clients | default(1) | int }},
+           "iterations": 100
+         }
+         {% if p_index_mode == "time_series" and run_esql_aggs is defined %}
+         ,{
+           "operation": "esql-memory-usage-day-downsample-1m",
+           "warmup-iterations": 50,
+           "clients": {{ search_clients | default(1) | int }},
+           "iterations": 100
+         },
+         {
+           "operation": "esql-memory-usage-day-downsample-1h",
+           "warmup-iterations": 50,
+           "clients": {{ search_clients | default(1) | int }},
+           "iterations": 100
+         },
+         {
+           "operation": "esql-memory-usage-day-downsample-1d",
+           "warmup-iterations": 50,
+           "clients": {{ search_clients | default(1) | int }},
+           "iterations": 100
+         },
+         {
+           "operation": "esql-memory-pagefault-rate-day-downsample-1m",
+           "warmup-iterations": 50,
+           "clients": {{ search_clients | default(1) | int }},
+           "iterations": 100
+         },
+         {
+           "operation": "esql-memory-pagefault-rate-day-downsample-1h",
+           "warmup-iterations": 50,
+           "clients": {{ search_clients | default(1) | int }},
+           "iterations": 100
+         },
+         {
+           "operation": "esql-memory-pagefault-rate-day-downsample-1d",
+           "warmup-iterations": 50,
+           "clients": {{ search_clients | default(1) | int }},
+           "iterations": 100
+         }
+         {% endif %}
       ]
     },
     {

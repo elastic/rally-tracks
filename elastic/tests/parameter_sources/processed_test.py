@@ -468,6 +468,22 @@ def test_invalid_dates():
             params={},
         )
 
+    # start equal to end
+    with pytest.raises(TrackConfigError):
+        ProcessedCorpusParamSource(
+            track=StaticTrack(
+                parameters={
+                    "bulk-size": 10,
+                    "track-id": "test_file_write",
+                    "file-cache-dir": "./tmp",
+                    "raw-data-volume-per-day": "0.001MB",
+                    "start-date": "2020-09-01:00:00:00",
+                    "end-date": "2020-09-01:00:00:00",
+                }
+            ),
+            params={},
+        )
+
 
 def test_undocumented_params():
     cwd = os.path.dirname(__file__)

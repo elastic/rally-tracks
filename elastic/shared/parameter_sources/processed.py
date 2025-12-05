@@ -111,9 +111,9 @@ class ProcessedCorpusParamSource:
             self._end_date.isoformat(),
         )
 
-        if self._start_date > self._end_date:
+        if self._start_date >= self._end_date:
             raise exceptions.TrackConfigError(
-                f'"start-date" cannot be greater than "end-date" for operation ' f"\"{self._params.get('operation-type')}\""
+                f'"start-date" must be earlier than "end-date" for operation ' f"\"{self._params.get('operation-type')}\""
             )
         self._number_of_days = (self._end_date - self._start_date).total_seconds() / 86400
 

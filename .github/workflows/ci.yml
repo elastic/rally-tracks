@@ -29,7 +29,7 @@ jobs:
           cache-dependency-path: pyproject.toml
       - name: "Install dependencies"
         run: python -m pip install .[develop]
-      - uses: pre-commit/action@v3.0.1
+      - uses: pre-commit/action@v3.0.0
       - uses: elastic/es-perf-github-status@v2
         if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
         with:

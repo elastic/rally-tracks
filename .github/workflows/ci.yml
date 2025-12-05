@@ -155,8 +155,8 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: "temurin"
-          java-version: "21"
-      - run: echo "JAVA21_HOME=$JAVA_HOME_21_X64" >> $GITHUB_ENV
+          java-version: "17"
+      - run: echo "JAVA17_HOME=$JAVA_HOME_21_X64" >> $GITHUB_ENV
       - run: echo "JAVA11_HOME=$JAVA_HOME_11_X64" >> $GITHUB_ENV
       - name: Free Disk Space
         continue-on-error: true

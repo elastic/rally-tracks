@@ -28,20 +28,29 @@ In order to backport your PR, at least one `vX.Y` label has to be added.
 - Please supply all the labels that correspond to both current and past elasticsearch versions you expect this PR to work with, but choose only from all the available ones. 
 - If the PR you are merging is using functionality from future Elasticsearch versions, please wait for the feature freeze action of Elasticsearch to create the new label in this repository and then add it. In such case, it would be useful if you kept the 'backport pending' label attached to the PR, so the backport reminder can periodically notify you.
 
-Every `vX.Y` label is triggering a new PR unless there are merge conflicts. This is the backport action, the status of which is reported through a comment.
-- In case of successful backport action, you get a link to the PR opened against the target version branch, in which you are expected to review the changes to this version branch and when approved, it will be automatically merged.
-- In case of merge conflicts a series of manual actions are necessary:
+Every `vX.Y` label is triggering a new PR unless there are merge conflicts. This is the backport action, the status of which is reported through a comment. In case of successful backport action, you get a link to the PR opened against the target version branch, which has a `backport` label and it expects a review of the changes to the corresponding version branch. When approved, it will be automatically merged.
+
+# Merge conflicts
+In case of merge conflicts get ready for some manual actions. Backporting is essential for future development and testing, so please give it a shot. 
 
 1. Go to the [Backport tool](https://github.com/sorenlouv/backport?tab=readme-ov-file#backport-cli-tool) documentation and follow the guidelines to install it in your local `rally-tracks` directory. Note that you have to add your personal access secret token locally in `~/.backport/config.json` with the [specified](https://github.com/sorenlouv/backport/blob/main/docs/config-file-options.md#global-config-backportconfigjson) repository access. At the end of this step, you should be able to execute `backport` command inside rally-tracks repo.
 2. cd in your local `rally-tracks` repository and execute `backport --pr <merged_and_conflicting_pr_number>`. This will open an interactive dialog where you are required to selected branches to backport to. You can only select the version branches that have merge conflicts. After selecting the branches, backport tool will mention a directory in a message `Please fix the conflicts in /home/<user>/.backport/repositories/elastic/rally-tracks` and you will have to go and resolve those conflicts manually for all of the selected branches. If it is not easy to tackle multiple branches in a single sweep, repeat this procedure for each target version branch separately.
 3. After resolving the merge conflicts you can execute `backport --pr` again and this time it will be successful. PRs will be opened against the target version branches and they will be ready for approval and merge.
 
 
-### Backporting Notes
+# Backporting Notes
+- CI is essential to this procedure. Whenever you commit something in a backport PR, you check the test results.
 - In case of conflicts, git blame is a wonderful tool to understand what changes need to be included in a version branch before backporting your PR. You can always check the history of the files you touch between the target backport branch and the next version branch (or master). Also, be mindful of the files that are not changed, but refer to the changed files.
 - Sometimes it is necessary to remove individual operations from a track that are not supported by earlier versions. This graceful fallback is a compromise to allow to run a subset of the track on older versions of Elasticsearch too. If this is necessary then it's best to do these changes in a separate commit. 
 - You can backport individual commits to even earlier versions if necessary by cherry-picking them into the desired version branches.
 
+# Finish line
+For wrapping up ensure the following:
+- Your merged PR has all the correct version labels.
+- Every related backport PR has the `backport` label.
+- Every related backport PR is merged to the correct version branches.
+
+Finally, remove the `backport pending` label from your PR and you're good to go.
 
 License
 -------

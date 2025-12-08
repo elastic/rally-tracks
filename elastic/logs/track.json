@@ -75,6 +75,8 @@
 
 {% set p_mapping = ( mapping | default('mapped') ) %}
 
+{% set p_use_doc_values_skippers = (use_doc_values_skippers | default(true)) %}
+
 {% set p_integration_ratios = (integration_ratios | default({
     "kafka": {
       "corpora": {

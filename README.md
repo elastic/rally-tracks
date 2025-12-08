@@ -22,35 +22,25 @@ See all details in the [contributor guidelines](https://github.com/elastic/rally
 Backporting changes
 -------------------
 
-If you are a contributor with direct commit access to this repository then please backport your changes. This ensures that tracks do not work only for the latest `main` version of Elasticsearch but also for older versions. Apply backports with cherry-picks. Below you can find a walkthrough:
+As part of contributing to this repository, a reminder will periodically notify you that backport is pending. Backporting ensures that tracks do not work only for the latest `main` version of Elasticsearch but also for older versions, so it is important.
 
-Assume we've pushed commit `a7e0937` to master and want to backport it. This is a change to the `noaa` track. Let's check what branches are available for backporting:
+In order to backport your PR, at least one `vX.Y` label has to be added. 
+- Please supply all the labels that correspond to both current and past elasticsearch versions you expect this PR to work with, but choose only from all the available ones. 
+- If the PR you are merging is using functionality from future Elasticsearch versions, please wait for the feature freeze action of Elasticsearch to create the new label in this repository and then add it. In such case, it would be useful if you kept the 'backport pending' label attached to the PR, so the backport reminder can periodically notify you.
 
-```
-daniel@io:tracks/default ‹master›$ git branch -r
-  origin/1
-  origin/2
-  origin/5
-  origin/HEAD -> origin/master
-  origin/master
-```
+Every `vX.Y` label is triggering a new PR unless there are merge conflicts. This is the backport action, the status of which is reported through a comment.
+- In case of successful backport action, you get a link to the PR opened against the target version branch, in which you are expected to review the changes to this version branch and when approved, it will be automatically merged.
+- In case of merge conflicts a series of manual actions are necessary:
 
-We'll go backwards starting from branch `5`, then branch `2` and finally branch `1`. After applying a change, we will test whether the track works as is for an older version of Elasticsearch.
+1. Go to the [Backport tool](https://github.com/sorenlouv/backport?tab=readme-ov-file#backport-cli-tool) documentation and follow the guidelines to install it in your local `rally-tracks` directory. Note that you have to add your personal access secret token locally in `~/.backport/config.json` with the [specified](https://github.com/sorenlouv/backport/blob/main/docs/config-file-options.md#global-config-backportconfigjson) repository access. At the end of this step, you should be able to execute `backport` command inside rally-tracks repo.
+2. cd in your local `rally-tracks` repository and execute `backport --pr <merged_and_conflicting_pr_number>`. This will open an interactive dialog where you are required to selected branches to backport to. You can only select the version branches that have merge conflicts. After selecting the branches, backport tool will mention a directory in a message `Please fix the conflicts in /home/<user>/.backport/repositories/elastic/rally-tracks` and you will have to go and resolve those conflicts manually for all of the selected branches. If it is not easy to tackle multiple branches in a single sweep, repeat this procedure for each target version branch separately.
+3. After resolving the merge conflicts you can execute `backport --pr` again and this time it will be successful. PRs will be opened against the target version branches and they will be ready for approval and merge.
 
-```
-git checkout 5
-git cherry-pick a7e0937
 
-# test the change now with an Elasticsearch 5.x distribution
-esrally race --track=noaa --distribution-version=5.4.3 --test-mode
-
-# push the change
-git push origin 5
-```
-
-This particular track uses features that are only available in Elasticsearch 5 and later so we will stop here but the process continues until we've reached the earliest branch.
-
-Sometimes it is necessary to remove individual operations from a track that are not supported by earlier versions. This graceful fallback is a compromise to allow to run a subset of the track on older versions of Elasticsearch too. If this is necessary then it's best to do these changes in a separate commit. Also, don't forget to cherry-pick this separate commit too to even earlier versions if necessary.
+### Backporting Notes
+- In case of conflicts, git blame is a wonderful tool to understand what changes need to be included in a version branch before backporting your PR. You can always check the history of the files you touch between the target backport branch and the next version branch (or master). Also, be mindful of the files that are not changed, but refer to the changed files.
+- Sometimes it is necessary to remove individual operations from a track that are not supported by earlier versions. This graceful fallback is a compromise to allow to run a subset of the track on older versions of Elasticsearch too. If this is necessary then it's best to do these changes in a separate commit. 
+- You can backport individual commits to even earlier versions if necessary by cherry-picking them into the desired version branches.
 
 
 License

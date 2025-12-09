@@ -33,16 +33,25 @@ Every `vX.Y` label is triggering a new PR unless there are merge conflicts. This
 # Merge conflicts
 In case of merge conflicts get ready for some manual actions. Backporting is essential for future development and testing, so please give it a shot. 
 
-1. Go to the [Backport tool](https://github.com/sorenlouv/backport?tab=readme-ov-file#backport-cli-tool) documentation and follow the guidelines to install it in your local `rally-tracks` directory. Note that you have to add your personal access secret token locally in `~/.backport/config.json` with the [specified](https://github.com/sorenlouv/backport/blob/main/docs/config-file-options.md#global-config-backportconfigjson) repository access. At the end of this step, you should be able to execute `backport` command inside rally-tracks repo.
-2. cd in your local `rally-tracks` repository and execute `backport --pr <merged_and_conflicting_pr_number>`. This will open an interactive dialog where you are required to selected branches to backport to. You can only select the version branches that have merge conflicts. After selecting the branches, backport tool will mention a directory in a message `Please fix the conflicts in /home/<user>/.backport/repositories/elastic/rally-tracks` and you will have to go and resolve those conflicts manually for all of the selected branches. If it is not easy to tackle multiple branches in a single sweep, repeat this procedure for each target version branch separately.
-3. After resolving the merge conflicts you can execute `backport --pr` again and this time it will be successful. PRs will be opened against the target version branches and they will be ready for approval and merge.
+## Fork and cherry-pick
+1. Create a rally-tracks fork, and clone it locally.
+2. Pull and checkout to the intended version branch. 
+3. Create a new local branch from this version branch.
+4. Cherry-pick the commit from the PR that will be backported.
+5. Resolve merge conflicts, commit locally and push to fork.
+6. Open a PR against the target branch, add `backport` label manually.
+7. Request for review and merge.
+8. Repeat for other version branches. 
 
+## Use backport tool (requires node)
+1. Go to the [Backport tool](https://github.com/sorenlouv/backport?tab=readme-ov-file#backport-cli-tool) documentation and follow the guidelines to install it in your local `rally-tracks` directory. Note that you have to add your personal access secret token locally in `~/.backport/config.json` with the [specified](https://github.com/sorenlouv/backport/blob/main/docs/config-file-options.md#global-config-backportconfigjson) repository access. At the end of this step, you should be able to execute `backport` command inside rally-tracks repo.
+2. cd in your local `rally-tracks` repository and execute `backport --pr <merged_pr_number>`. This will open an interactive dialog where you are required to selected branches to backport to. You can only select the version branches that have merge conflicts. After selecting the branches, backport tool will mention some directory in a message `Please fix the conflicts in /home/<user>/.backport/repositories/elastic/rally-tracks` and you will have to go and resolve those conflicts manually for all of the selected branches. If it is not easy to tackle multiple branches in a single sweep, repeat this procedure for each target version branch separately.
+3. After resolving the merge conflicts you can execute `backport --pr <merged_pr_number>` which this time it will be successful. PRs will be opened against the target version branches and they will be ready for approval and merge.
 
 # Backporting Notes
-- CI is essential to this procedure. Whenever you commit something in a backport PR, you check the test results.
-- In case of conflicts, git blame is a wonderful tool to understand what changes need to be included in a version branch before backporting your PR. You can always check the history of the files you touch between the target backport branch and the next version branch (or master). Also, be mindful of the files that are not changed, but refer to the changed files.
-- Sometimes it is necessary to remove individual operations from a track that are not supported by earlier versions. This graceful fallback is a compromise to allow to run a subset of the track on older versions of Elasticsearch too. If this is necessary then it's best to do these changes in a separate commit. 
-- You can backport individual commits to even earlier versions if necessary by cherry-picking them into the desired version branches.
+- CI is essential to this procedure. Whenever you commit something in a backport PR, check the test results.
+- In case of conflicts, git blame is a wonderful tool to understand what changes need to be included in a version branch before backporting your PR. You can always check the history of the files you touch between the target backport branch and master version branch.
+- Sometimes it is necessary to remove individual operations from a track that are not supported by earlier versions. This graceful fallback is a compromise to allow to run a subset of the track on older versions of Elasticsearch too.
 
 # Finish line
 For wrapping up ensure the following:

@@ -279,6 +279,7 @@ The following parameters are available:
 * `query_request_params` (optional) - A map of query parameters that will be used with any querying.
 * `query_workflows` (optional) - A list of workflows to execute. By default, all workflows are used.
 * `include_esql_queries` (default: true for non-serverless clusters, false for serverless clusters): Whether to include ESQL and ESQL-related queries.
+* `use_doc_values_skipper` (default: true) - Enable doc_values_skippers, and remove indexes on host.name and @timestamp
 
 ### Snapshot parameters
 * `snapshot_counts` (default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).

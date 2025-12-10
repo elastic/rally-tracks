@@ -18,6 +18,7 @@ jobs:
     steps:
       - name: Backport Action
         uses: sorenlouv/backport-github-action@ad888e978060bc1b2798690dd9d03c4036560947  # v9.5.1
+        continue-on-error: true
         with:
           github_token: $BACKPORT_TOKEN
 

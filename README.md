@@ -22,16 +22,16 @@ See all details in the [contributor guidelines](https://github.com/elastic/rally
 Backporting changes
 -------------------
 
-As part of contributing to this repository, a reminder will periodically notify you that backport is pending. Backporting ensures that tracks do not work only for the latest `main` version of Elasticsearch but also for older versions, so it is important.
+Backporting ensures that tracks do not work only for the latest `main` version of Elasticsearch but also for older versions, so it is important. As part of contributing to this repository, a reminder will periodically notify you that backport is pending.
 
 In order to backport your PR, at least one `vX.Y` label has to be added. 
 - Please supply all the labels that correspond to both current and past elasticsearch versions you expect this PR to work with, but choose only from all the available ones. 
-- If the PR you are merging is using functionality from future Elasticsearch versions, please wait for the feature freeze action of Elasticsearch to create the new label in this repository and then add it. In such case, it would be useful if you kept the 'backport pending' label attached to the PR, so the backport reminder can periodically notify you.
+- If the PR being merged is using functionality from future Elasticsearch versions, please wait for the creation of new Elasticsearch `vX.Y` version branch. In such case, it would be useful if you kept the 'backport pending' label attached to the PR, so the backport reminder can periodically notify you.
 
-Every `vX.Y` label is triggering a new PR unless there are merge conflicts. This is the backport action, the status of which is reported through a comment. In case of successful backport action, you get a link to the PR opened against the target version branch, which has a `backport` label and it expects a review of the changes to the corresponding version branch. When approved, it will be automatically merged.
+When adding a `vX.Y` label, the creation of a new PR is triggered unless there are merge conflicts. Its status is reported through a comment and in case it is successfully created, you get a link to the PR opened against the target version branch. This new PR has a `backport` label and expects a review. When approved, it will be automatically merged.
 
 # Merge conflicts
-In case of merge conflicts get ready for some manual actions. Backporting is essential for future development and testing, so please give it a shot. 
+Merge conflicts need to be resolved manually. There are two ways to manually create a backport PR 
 
 ## Fork and cherry-pick
 1. Create a rally-tracks fork, and clone it locally.
@@ -40,7 +40,7 @@ In case of merge conflicts get ready for some manual actions. Backporting is ess
 4. Cherry-pick the commit from the PR that will be backported.
 5. Resolve merge conflicts, commit locally and push to fork.
 6. Open a PR against the target branch, add `backport` label manually.
-7. Request for review and merge.
+7. Request a review and merge.
 8. Repeat for other version branches. 
 
 ## Use backport tool (requires node)
@@ -59,7 +59,7 @@ For wrapping up ensure the following:
 - Every related backport PR has the `backport` label.
 - Every related backport PR is merged to the correct version branches.
 
-Finally, remove the `backport pending` label from your PR and you're good to go.
+Finally, remove the `backport pending` label from your PR.
 
 License
 -------

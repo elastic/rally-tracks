@@ -15,28 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import json
-
 import pytest
 
-<<<<<<<< HEAD:it_tracks/test_logs.py
-========
 from it_tracks.logs import BASE_PARAMS, params
 
->>>>>>>> fb0d773f (Rename IT folders (#938)):it_tracks/logs/test_logs.py
 pytest_rally = pytest.importorskip("pytest_rally")
-
-BASE_PARAMS = {
-    "start_date": "2021-01-01T00-00-00Z",
-    "end_date": "2021-01-01T00-01-00Z",
-    "max_total_download_gb": "18",
-    "raw_data_volume_per_day": "72GB",
-    "max_generated_corpus_size": "1GB",
-    "wait_for_status": "green",
-    "force_data_generation": "true",
-    "number_of_shards": "2",
-    "number_of_replicas": "0",
-}
 
 
 def params(updates=None):

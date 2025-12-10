@@ -350,7 +350,7 @@ def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: 
                 add_comment(info.number, f"{COMMENT_MARKER_BASE}\n@{author}\n{REMINDER_BODY}")
                 LOG.info(f"PR #{info.number}: initial reminder posted")
             else:
-                LOG.info(f"PR #{info.number}: cooling period not elapsed)")
+                LOG.info(f"PR #{info.number}: skip reminder")
         except Exception as ex:
             LOG.error(f"Remind error for PR #{pr.get('number', '?')}: {ex}")
             errors += 1

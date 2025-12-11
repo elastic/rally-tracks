@@ -24,11 +24,7 @@ env:
     BACKPORT_TOKEN: ${{ secrets.BACKPORT_TOKEN }}
 
 jobs:
-<<<<<<< HEAD
-  reminder:
-=======
-  label:
->>>>>>> 672866d3 (Attempt a fix 4 [skip ci] (#129))
+  label_and_remind:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -37,21 +33,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-<<<<<<< HEAD
-      - name: Add Backport pending label (single PR)
-        if: github.event_name == 'pull_request_target'
-        run: |
-          python github_ci_tools/scripts/backport.py --pr-mode label
-          python github_ci_tools/scripts/backport.py --pr-mode remind --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }}
-      - name: Add Backport pending label (bulk)
-=======
       - name: Add Backport pending label & remind (single PR)
         if: github.event_name == 'pull_request_target'
         run: |
           python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.pull_request.number }} label
           python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.pull_request.number }} remind --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }}
       - name: Add Backport pending label & remind (bulk)
->>>>>>> 672866d3 (Attempt a fix 4 [skip ci] (#129))
         if: github.event_name != 'pull_request_target'
         run: |
           python github_ci_tools/scripts/backport.py label --lookback-days ${{ github.event.inputs.lookback_days || '7' }}

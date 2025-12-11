@@ -268,12 +268,3 @@ def gh_mock(backport_mod, monkeypatch: pytest.MonkeyPatch) -> GitHubMock:
     mock = GitHubMock()
     monkeypatch.setattr(backport_mod, "gh_request", mock)
     return mock
-
-
-# --------------------------- Event Payload ---------------------------
-@pytest.fixture()
-def event_file(tmp_path, monkeypatch) -> Path:
-    """Create a temporary GitHub event JSON."""
-    path = tmp_path / "event.json"
-    monkeypatch.setenv("GITHUB_EVENT_PATH", str(path))
-    return path

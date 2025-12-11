@@ -1,4 +1,3 @@
-import json
 import logging
 import sys
 from dataclasses import asdict
@@ -145,17 +144,16 @@ def test_backport_cli_parsing(backport_mod, monkeypatch, case: BackportCliCase):
         raises_error=RuntimeError,
     ),
 )
-def test_prefetch_prs_in_single_pr_mode(backport_mod, event_file, case: GHInteractionCase):
-    # Prepare event payload file for single PR mode
-    payload = {"pull_request": asdict(case.repo.prs[0])}
-    event_file.write_text(json.dumps(payload), encoding="utf-8")
+def test_prefetch_prs_in_single_pr_mode(backport_mod, gh_mock, case: GHInteractionCase):
+    case.register(gh_mock)
+    backport_mod.CONFIG.repo = TEST_REPO
 
     # Prefetched PRs must be one, None or raise error
     if case.raises_error:
         with pytest.raises(case.raises_error):
-            prefetched_prs = backport_mod.prefetch_prs(pr_mode=True, lookback_days=case.lookback_days)
+            prefetched_prs = backport_mod.prefetch_prs(pr_number=case.repo.prs[0].number, lookback_days=case.lookback_days)
         return
-    prefetched_prs = backport_mod.prefetch_prs(pr_mode=True, lookback_days=case.lookback_days)
+    prefetched_prs = backport_mod.prefetch_prs(pr_number=case.repo.prs[0].number, lookback_days=case.lookback_days)
     if prefetched_prs:
         assert len(prefetched_prs) == 1
     prefetched_pr = prefetched_prs if prefetched_prs else None
@@ -164,7 +162,7 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, event_file, case: GHIntera
 
 
 @cases(
-    adds_repo_label_and_labels_only_w=BackportCliCase(
+    adds_repo_label_and_labels_only_within_lookback=BackportCliCase(
         argv=["backport.py", "label"],
         gh_interaction=GHInteractionCase(
             repo=RepoCase(repo_labels=[], prs=select_pull_requests()),
@@ -225,7 +223,7 @@ def test_backport_run(backport_mod, gh_mock, monkeypatch, case: BackportCliCase)
     args = backport_mod.parse_args()
     backport_mod.configure(args)
 
-    prefetched = backport_mod.prefetch_prs(args.pr_mode, args.lookback_days)
+    prefetched = backport_mod.prefetch_prs(args.pr_number, args.lookback_days)
     try:
         match args.command:
             case "label":

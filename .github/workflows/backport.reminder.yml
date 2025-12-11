@@ -8,20 +8,27 @@ on:
     - cron: '0 6 * * *'  # Every day at 06:00 UTC
   workflow_dispatch:
     inputs:
+      single_pr:
+        description: 'PR number to process (only for pull_request_target event)'
+        required: false
       lookback_days:
         description: 'How many days back to search merged PRs'
         required: false
         default: '7'
       pending_label_age_days:
-        description: 'Minimum age in days before reminding'
-        required: false
-        default: '14'
+          description: 'Minimum age in days before reminding'
+          required: false
+          default: '14'
 
 env:
     BACKPORT_TOKEN: ${{ secrets.BACKPORT_TOKEN }}
 
 jobs:
+<<<<<<< HEAD
   reminder:
+=======
+  label:
+>>>>>>> 672866d3 (Attempt a fix 4 [skip ci] (#129))
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,12 +37,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+<<<<<<< HEAD
       - name: Add Backport pending label (single PR)
         if: github.event_name == 'pull_request_target'
         run: |
           python github_ci_tools/scripts/backport.py --pr-mode label
           python github_ci_tools/scripts/backport.py --pr-mode remind --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }}
       - name: Add Backport pending label (bulk)
+=======
+      - name: Add Backport pending label & remind (single PR)
+        if: github.event_name == 'pull_request_target'
+        run: |
+          python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.pull_request.number }} label
+          python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.pull_request.number }} remind --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }}
+      - name: Add Backport pending label & remind (bulk)
+>>>>>>> 672866d3 (Attempt a fix 4 [skip ci] (#129))
         if: github.event_name != 'pull_request_target'
         run: |
           python github_ci_tools/scripts/backport.py label --lookback-days ${{ github.event.inputs.lookback_days || '7' }}

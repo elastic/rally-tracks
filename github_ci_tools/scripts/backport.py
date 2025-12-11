@@ -174,10 +174,14 @@ def load_event() -> dict:
     return data
 
 
-def list_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
-    """Query the GH API with a filter to iterate over PRs updated after a given timestamp."""
+def list_prs(q_filter: str, since: dt.datetime, number: int | None = None) -> Iterable[dict[str, Any]]:
+    """Query the GH API with a filter to iterate over PRs updated after a given timestamp.
+
+    Optionally restrict to a specific PR number when `number` is provided.
+    """
     q_date = since.strftime("%Y-%m-%d")
-    q = f"{q_filter} updated:>={q_date}"
+    num_clause = f" number:{number}" if number is not None else ""
+    q = f"{q_filter}{num_clause} updated:>={q_date}"
     LOG.debug(f"Fetch PRs with filter '{q}'")
     params = {"q": f"{q}", "per_page": "100"}
     for page in itertools.count(1):
@@ -389,38 +393,12 @@ def configure(args: argparse.Namespace) -> None:
     require_mandatory_vars()
 
 
-def prefetch_prs(pr_mode: bool, lookback_days: int) -> list[dict[str, Any]]:
-    if pr_mode:
-        event = load_event()
-        if event:
-            pr_data = event.get("pull_request")
-        else:
-            raise RuntimeError("Failed to load event data")
-        if not pr_data:
-            raise RuntimeError(f"No pull_request data in event: {event}")
-        # Ensure PR is merged.
-        merged_flag = pr_data.get("merged")
-        merged_at = pr_data.get("merged_at")
-        if not merged_flag and not merged_at:
-            raise RuntimeError(f"PR #{pr_data.get('number','?')} not merged yet; skipping.")
-        try:
-            merged_dt = dt.datetime.strptime(merged_at, ISO_FORMAT).replace(tzinfo=dt.timezone.utc)
-        except ValueError as e:
-            raise RuntimeError(f"Invalid merged_at format: {merged_at}") from e
-        now = dt.datetime.now(dt.timezone.utc)
-        age_days = (now - merged_dt).days
-        if age_days >= lookback_days + 1:
-            LOG.info(
-                f"PR #{pr_data.get('number','?')} merged_at {merged_at} age={age_days}d "
-                f"exceeds lookback_days={lookback_days}; filtering out."
-            )
-            return []
-        return [pr_data]
+def prefetch_prs(pr_number: int | None, lookback_days: int) -> list[dict[str, Any]]:
     now = dt.datetime.now(dt.timezone.utc)
     since = now - dt.timedelta(days=lookback_days)
-    repo = CONFIG.repo
-    # Note that we rely on is:merged to filter out unmerged PRs.
-    return list(list_prs(f"repo:{repo} is:pr is:merged", since))
+    if pr_number is not None:
+        return list(list_prs(f"repo:{CONFIG.repo} is:pr is:merged", since, number=pr_number))
+    return list(list_prs(f"repo:{CONFIG.repo} is:pr is:merged", since))
 
 
 def parse_args() -> argparse.Namespace:
@@ -437,9 +415,9 @@ def parse_args() -> argparse.Namespace:
             default=None,
         )
         parser.add_argument(
-            "--pr-mode",
-            action="store_true",
-            help="Single PR mode (use GITHUB_EVENT_PATH pull_request payload). Default: bulk scan via search API",
+            "--pr-number",
+            action="store",
+            help="Single PR mode. Default: bulk scan via search API",
         )
         parser.add_argument(
             "--dry-run",
@@ -506,7 +484,7 @@ def main():
     configure(args)
 
     LOG.debug(f"Parsed arguments: {args}")
-    prefetched = prefetch_prs(args.pr_mode, args.lookback_days)
+    prefetched = prefetch_prs(int(args.pr_number) if args.pr_number else None, args.lookback_days)
     LOG.debug(f"Prefetched {len(prefetched)} PRs for command '{args.command}': {[pr.get('number') for pr in prefetched]}")
     match args.command:
         case "label":

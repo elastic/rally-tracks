@@ -25,7 +25,7 @@ class TestCustomParameters:
     def test_tsdb_esql(self, es_cluster, rally):
         ret = rally.race(
             track="tsdb",
-            track_params={"run_esql_aggs": True, "index_mode": "time_series"},
+            track_params={"index_mode": "time_series"},
         )
         assert ret == 0
 
@@ -33,6 +33,6 @@ class TestCustomParameters:
     def test_tsdb_data_stream(self, es_cluster, rally):
         ret = rally.race(
             track="tsdb",
-            track_params={"run_esql_aggs": True, "index_mode": "time_series", "ingest_mode": "data_stream", "source_mode": "synthetic"},
+            track_params={"index_mode": "time_series", "ingest_mode": "data_stream", "source_mode": "synthetic"},
         )
         assert ret == 0

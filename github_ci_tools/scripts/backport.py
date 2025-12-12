@@ -315,7 +315,7 @@ def delete_reminders(info: PRInfo) -> None:
             LOG.info(f"Deleted comment ID {comment_id} on PR #{info.number}")
 
 
-def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: int, lookback_days: int) -> int:
+def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: int, remove: bool) -> int:
     """Post reminders using prefetched merged PR list."""
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for reminding")
@@ -327,7 +327,9 @@ def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: 
             if not pr:
                 continue
             info = PRInfo.from_dict(pr)
-            if pr_needs_reminder(info, threshold):
+            if remove is True:
+                delete_reminders(info)
+            elif pr_needs_reminder(info, threshold):
                 author = pr.get("user", {}).get("login", "PR author")
                 delete_reminders(info)
                 add_comment(info.number, f"{COMMENT_MARKER_BASE}\n@{author}\n{REMINDER_BODY}")
@@ -452,7 +454,6 @@ def parse_args() -> argparse.Namespace:
         p_label.add_argument(
             "--remove",
             action="store_true",
-            required=False,
             default=False,
             help="Removes backport pending label",
         )
@@ -472,6 +473,12 @@ def parse_args() -> argparse.Namespace:
             default=14,
             help="Days between reminders for the same PR (default: 14). Adds initial reminder if none posted yet.",
         )
+        p_remind.add_argument(
+            "--remove",
+            action="store_true",
+            default=False,
+            help="Remove backport pending reminder comments instead of adding new ones",
+        )
 
     except Exception:
         raise RuntimeError("Command parsing failed")
@@ -489,7 +496,7 @@ def main():
         case "label":
             return run_label(prefetched, args.remove)
         case "remind":
-            return run_remind(prefetched, args.pending_reminder_age_days, args.lookback_days)
+            return run_remind(prefetched, args.pending_reminder_age_days, args.remove)
         case _:
             raise NotImplementedError(f"Unknown command {args.command}")
 

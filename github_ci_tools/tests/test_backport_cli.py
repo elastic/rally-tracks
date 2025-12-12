@@ -232,7 +232,7 @@ def test_backport_run(backport_mod, gh_mock, monkeypatch, case: BackportCliCase)
                 result = backport_mod.run_remind(
                     prefetched,
                     args.pending_reminder_age_days,
-                    args.lookback_days,
+                    args.remove,
                 )
                 for pr in prefetched:
                     if pr.get("needs_pending", False) is False:

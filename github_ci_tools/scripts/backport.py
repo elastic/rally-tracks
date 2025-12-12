@@ -28,7 +28,7 @@ Usage: backport.py [options] <command> [flags]
 
 Options:
     --repo                               owner/repo
-    --pr-mode                            Single PR mode (use event payload); Handle PR through GITHUB_EVENT_PATH.
+    --pr-number                          Single PR mode.
     -v, --verbose                        Increase verbosity (can be repeated: -vv)
     -q, --quiet                          Decrease verbosity (can be repeated: -qq)
     --dry-run                            Simulate actions without modifying GitHub state
@@ -43,7 +43,7 @@ Flags:
     --remove                             Remove 'backport pending' label
 
 Quick usage:
-    backport.py label --pr-mode
+    backport.py --pr-number 42 label
     backport.py --repo owner/name label --lookback-days 7
     backport.py --repo owner/name remind --lookback-days 30 --pending-reminder-age-days 14
     backport.py --repo owner/name --dry-run -vv label --lookback-days 30
@@ -156,24 +156,7 @@ class PRInfo:
         return cls(number, labels)
 
 
-# ----------------------------- PR Extraction (single or bulk) -----------------------------
-def load_event() -> dict:
-    """Load the GitHub event payload from GITHUB_EVENT_PATH for single PR mode.
-
-    Returns an empty dict if the path is missing to allow callers to decide on fallback behavior.
-    """
-    path = os.environ.get("GITHUB_EVENT_PATH", "").strip()
-    if not path:
-        raise FileNotFoundError("GITHUB_EVENT_PATH environment variable is empty")
-    if not os.path.isfile(path):
-        raise FileNotFoundError(f"File not found: {path}")
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    if not isinstance(data, dict):
-        raise TypeError(f"Event data is a {type(data)}, want a dict.")
-    return data
-
-
+# ----------------------------- PR Extraction  -----------------------------
 def list_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
     """Query the GH API with a filter to iterate over PRs updated after a given timestamp."""
     q_date = since.strftime("%Y-%m-%d")
@@ -421,7 +404,7 @@ def parse_args() -> argparse.Namespace:
     try:
         parser = argparse.ArgumentParser(
             description="Backport utilities",
-            epilog="""\nExamples:\n  backport.py label --pr-mode\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30 --pending-reminder-age-days 14\n  backport.py --dry-run -vv label --lookback-days 30\n\nSingle PR mode (--pr-mode) reads the pull_request payload from GITHUB_EVENT_PATH.\nBulk mode searches merged PRs updated within --lookback-days.\n""",
+            epilog="""\nExamples:\n  backport.py --pr-number 42 label\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30 --pending-reminder-age-days 14\n  backport.py --dry-run -vv label --lookback-days 30\n\nSingle PR mode fetches PR by number (--pr-number) .\nBulk mode searches merged PRs updated within lookback (--lookback-days).\n""",
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
         parser.add_argument(
@@ -464,7 +447,7 @@ def parse_args() -> argparse.Namespace:
             type=int,
             required=False,
             default=7,
-            help="Days to look back (default: 7). Ignored in --pr-mode",
+            help="Days to look back (default: 7).",
         )
         p_label.add_argument(
             "--remove",
@@ -480,7 +463,7 @@ def parse_args() -> argparse.Namespace:
             type=int,
             required=False,
             default=7,
-            help="Days to look back (default: 7). Ignored in --pr-mode",
+            help="Days to look back (default: 7).",
         )
         p_remind.add_argument(
             "--pending-reminder-age-days",

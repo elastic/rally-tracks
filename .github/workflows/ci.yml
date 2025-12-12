@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [ master, '[0-9]*' ]
   pull_request:
   schedule:
     - cron: '0 14 * * *'
@@ -10,6 +11,8 @@ on:
 
 env:
   DEFAULT_BRANCH: master
+  # comma-separated list of paths that if changed will trigger a full CI run (Note: don't use trailing '/' at the end)
+  RUN_FULL_CI_WHEN_CHANGED: 'pyproject.toml,.github,it_tracks'
 
 permissions: "read-all"
 
@@ -18,10 +21,10 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.13"
           cache: pip
           cache-dependency-path: pyproject.toml
       - name: "Install dependencies"
@@ -34,20 +37,83 @@ jobs:
           slack_channel: ${{ secrets.SLACK_CHANNEL }}
           status: FAILED
 
+  determine-es-build:
+    runs-on: ubuntu-22.04
+    outputs:
+      revision: ${{ steps.revision-argument.outputs.revision }}
+      release_build: ${{ steps.release-build-argument.outputs.release_build }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Determine ES version"
+        id: es-version
+        run: |
+          ES_VERSION=$(cat es-version)
+          echo "Determined es-version: $ES_VERSION"
+          echo "version=$ES_VERSION" >> $GITHUB_OUTPUT
+      - name: "Determine --revision argument"
+        id: revision-argument
+        run: |
+          echo "revision= --revision=${{ steps.es-version.outputs.version }}" >> $GITHUB_OUTPUT
+      - name: "Determine ES release or snapshot"
+        id: release-build-argument
+        run: |
+          if [[ "${{ steps.es-version.outputs.version }}" == "current" || "${{ steps.es-version.outputs.version }}" == "latest" ]]; then
+            echo "release_build=" >> $GITHUB_OUTPUT
+          else
+            echo "release_build= --source-build-release" >> $GITHUB_OUTPUT
+          fi
+      - name: "Show revision argument"
+        if: ${{ steps.revision-argument.outputs.revision != '' }}
+        run: echo "Using${{ steps.revision-argument.outputs.revision }}"
+      - name: "Show release build argument"
+        if: ${{ steps.release-build-argument.outputs.release_build != '' }}
+        run: echo "Using${{ steps.release-build-argument.outputs.release_build }}"
+
+  filter-pr-changes:
+    runs-on: ubuntu-22.04
+    outputs:
+      track_filter: ${{ steps.track-filter.outputs.track_filter }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse repo and create filters.yml
+        run: python3 github_ci_tools/scripts/track-filter.py
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 #v3.0.2
+        id: changes
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filters: github_ci_tools/filters.yml
+      - name: Collect changed tracks and calculate --track-filter argument
+        id: track-filter
+        run: |
+            TRACKS=$(echo '${{ toJSON(steps.changes.outputs) }}' | jq -r '
+            to_entries
+            | map(select(.value == "true"))
+            | map(.key)
+            | join(",")
+            ')
+            if echo "$TRACKS" | grep -qw "full_ci"; then
+              echo 'track_filter=' >> $GITHUB_OUTPUT
+            else
+              echo "track_filter= --track-filter=$TRACKS" >> $GITHUB_OUTPUT
+            fi
+      - name: show track filter argument
+        if: ${{ steps.track-filter.outputs.track_filter != '' }}
+        run: echo "Using${{ steps.track-filter.outputs.track_filter }}"
+
   test:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
         os:
-          - macos-13
+          - macos-latest
           - ubuntu-latest
 
     runs-on: ${{ matrix.os }}
-    name: unit ${{ fromJson('{"macos-13":"macOS","ubuntu-latest":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }}
+    name: unit ${{ fromJson('{"macos-latest":"macOS","ubuntu-latest":"Ubuntu"}')[matrix.os] }} ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -64,36 +130,58 @@ jobs:
           status: FAILED
 
   rally-tracks-compat:
+    needs: 
+      - filter-pr-changes
+      - determine-es-build
+
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.11"]
+        python-version: ["3.10", "3.13"]
 
     runs-on: ubuntu-22.04
 
     name: rally-tracks-compat ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Check public IP address
+        run: curl -4s ifconfig.me
+        continue-on-error: true
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
           cache-dependency-path: pyproject.toml
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "17"
       - run: echo "JAVA17_HOME=$JAVA_HOME_17_X64" >> $GITHUB_ENV
       - run: echo "JAVA11_HOME=$JAVA_HOME_11_X64" >> $GITHUB_ENV
+      - name: Free Disk Space
+        continue-on-error: true
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be
+        with:
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+          tool-cache: false
+      - name: Check disk space before
+        run: df -h
       - name: "Install dependencies"
         run: python -m pip install .[develop]
-      - name: "Run tests"
-        run: hatch -v -e it run test
-        timeout-minutes: 120
+      - name: "Run tests${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-es-build.outputs.revision }}${{ needs.determine-es-build.outputs.release_build }}"
+        run: hatch -v -e it run test${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-es-build.outputs.revision }}${{ needs.determine-es-build.outputs.release_build }}
+        timeout-minutes: 160
         env:
           # elastic/endpoint fetches assets from GitHub, authenticate to avoid
           # being rate limited
           ASSETS_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check disk space after
+        run: df -h
       - uses: elastic/es-perf-github-status@v2
         if: ${{ failure() && ( github.event_name == 'schedule' || ( github.event_name == 'push' && github.ref_name == env.DEFAULT_BRANCH ) ) }}
         with:
@@ -101,7 +189,7 @@ jobs:
           slack_channel: ${{ secrets.SLACK_CHANNEL }}
           status: FAILED
       # Artifact will show up under "Artifacts" in the "Summary" page of runs
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: rally-tracks-compat-logs-${{ matrix.python-version }}

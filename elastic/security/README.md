@@ -137,7 +137,7 @@ This challenge executes indexing and querying sequentially. Queries will be issu
 
 ### Generate source events for detection rules (generate-alerts-source-events)
 
-This challenge is a demo usage of [Geneve](https://github.com/elastic/geneve) via the `events-emitter-source` [parameter source](https://github.com/elastic/rally-tracks/blob/master/elastic/security/parameter_sources/events_emitter.py), it generates source events but does not interact with anything else. It's executed as part of the [it/test_security.py](https://github.com/elastic/rally-tracks/blob/master/it/test_security.py) integration tests. Currently, Geneve is pinned to version [v0.2.0](https://github.com/elastic/rally-tracks/blob/master/elastic/security/track.json#L410). This is the only challenge that depends on Geneve and pyyaml (Geneve requires pyyaml).
+This challenge is a demo usage of [Geneve](https://github.com/elastic/geneve) via the `events-emitter-source` [parameter source](https://github.com/elastic/rally-tracks/blob/master/elastic/security/parameter_sources/events_emitter.py), it generates source events but does not interact with anything else. It's executed as part of the [it/test_security.py](https://github.com/elastic/rally-tracks/blob/master/it/test_security.py) integration tests. Currently, Geneve is pinned to version [v0.3.0](https://github.com/elastic/rally-tracks/blob/master/elastic/security/track.json#L410). This is the only challenge that depends on Geneve and pyyaml (Geneve requires pyyaml).
 
 ## Ratios
 

@@ -33,13 +33,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Add Backport pending label & remind (single PR)
-        if: github.event_name == 'pull_request_target' || (github.event_name == 'workflow_dispatch' && github.event.inputs.single_pr != '')
+      - name: Add Backport pending label & remind (pull request)
+        if: github.event_name == 'pull_request_target'
         run: |
-          python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.inputs.single_pr || github.event.pull_request.number }} label
-          python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.inputs.single_pr || github.event.pull_request.number }} remind --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }}
-      - name: Add Backport pending label & remind (bulk)
-        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (github.event.inputs.single_pr == '' || github.event.inputs.single_pr == null))
+          python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.pull_request.number }} label
+          python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.pull_request.number }} remind
+      - name: Add Backport pending label & remind (scheduled)
+        if: github.event_name == 'schedule'
         run: |
-          python github_ci_tools/scripts/backport.py label --lookback-days ${{ github.event.inputs.lookback_days || '7' }}
-          python github_ci_tools/scripts/backport.py remind --lookback-days ${{ github.event.inputs.lookback_days || '7' }} --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }}
+          python github_ci_tools/scripts/backport.py label
+          python github_ci_tools/scripts/backport.py remind
+      - name: Add Backport pending label & remind (workflow dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          pr_number_clause="${{ github.event.inputs.single_pr && format('--pr-number {0}', github.event.inputs.single_pr) || '' }}"
+          python github_ci_tools/scripts/backport.py $pr_number_clause label --lookback-days ${{ github.event.inputs.lookback_days || '7' }}
+          python github_ci_tools/scripts/backport.py $pr_number_clause remind --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }}

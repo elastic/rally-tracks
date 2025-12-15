@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import Any, Callable, TypeVar
 
 import pytest
@@ -95,8 +95,12 @@ class RepoCase:
                 gh_mock.add(
                     static_create_pending_label.method, static_create_pending_label.path, response=static_create_pending_label.response
                 )
-
-        pass
+        for pr in self.prs:
+            gh_mock.add(
+                "GET",
+                f"/repos/{self.name}/pulls/{pr.number}",
+                response=asdict(pr),
+            )
 
 
 # ---------------- Unified Interaction Case -----------------

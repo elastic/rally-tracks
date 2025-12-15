@@ -1,4 +1,4 @@
-name: Backport reminder
+name: Backport utilities
 
 on:
   pull_request_target:
@@ -8,20 +8,27 @@ on:
     - cron: '0 6 * * *'  # Every day at 06:00 UTC
   workflow_dispatch:
     inputs:
+      single_pr:
+        description: 'PR number to process (single-PR run; leave empty for bulk)'
+        required: false
       lookback_days:
-        description: 'How many days back to search merged PRs'
+        description: 'Lookback window for merged PRs (days)'
         required: false
         default: '7'
       pending_label_age_days:
-        description: 'Minimum age in days before reminding'
+        description: 'Minimum previous reminder age (days)'
         required: false
         default: '14'
+      remove:
+        description: 'If set to true, remove pending labels/reminders instead of adding/reminding'
+        required: false
+        default: 'false'
 
 env:
     BACKPORT_TOKEN: ${{ secrets.BACKPORT_TOKEN }}
 
 jobs:
-  reminder:
+  label_and_remind:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,13 +37,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Add Backport pending label (single PR)
+      - name: Add Backport pending label & remind (pull request)
         if: github.event_name == 'pull_request_target'
         run: |
-          python github_ci_tools/scripts/backport.py --pr-mode label
-          python github_ci_tools/scripts/backport.py --pr-mode remind --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }}
-      - name: Add Backport pending label (bulk)
-        if: github.event_name != 'pull_request_target'
+          python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.pull_request.number }} label
+          python github_ci_tools/scripts/backport.py --pr-number ${{ github.event.pull_request.number }} remind
+      - name: Add Backport pending label & remind (scheduled)
+        if: github.event_name == 'schedule'
         run: |
-          python github_ci_tools/scripts/backport.py label --lookback-days ${{ github.event.inputs.lookback_days || '7' }}
-          python github_ci_tools/scripts/backport.py remind --lookback-days ${{ github.event.inputs.lookback_days || '7' }} --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }}
+          python github_ci_tools/scripts/backport.py label
+          python github_ci_tools/scripts/backport.py remind
+      - name: Add Backport pending label & remind (workflow dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          pr_number_clause="${{ github.event.inputs.single_pr && format('--pr-number {0}', github.event.inputs.single_pr) || '' }}"
+          remove_clause="${{ github.event.inputs.remove == 'true' && '--remove' || '' }}"
+          python github_ci_tools/scripts/backport.py $pr_number_clause label --lookback-days ${{ github.event.inputs.lookback_days || '7' }} $remove_clause
+          python github_ci_tools/scripts/backport.py $pr_number_clause remind --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }} $remove_clause

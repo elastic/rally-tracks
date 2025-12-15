@@ -1,0 +1,20 @@
+{
+  "repoOwner": "elastic",
+  "repoName": "rally-tracks",
+  "targetBranchChoices": [
+    "9.2",
+    "9.1",
+    "9.0",
+    "8.19",
+  ],
+  "targetPRLabels": [
+    "backport"
+  ],
+  "branchLabelMapping": {
+    "^v(\\d{1,2})$" : "$1",
+    "^v(\\d{1,2}).(\\d{1,2})$" : "$1.$2"
+  },
+  "autoMerge": true,
+  "autoMergeMethod": "squash",
+  "prDescription": "{defaultPrDescription}\n\n<!--BACKPORT {commits} BACKPORT-->"
+}

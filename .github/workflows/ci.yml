@@ -177,13 +177,17 @@ jobs:
         run: df -h
       - name: "Install dependencies"
         run: python -m pip install .[develop]
+      - name: "echo CI variable"
+        run: echo "CI=$CI"
       - name: "Run tests${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-es-build.outputs.revision }}${{ needs.determine-es-build.outputs.release_build }}"
-        run: hatch -v -e it run test${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-es-build.outputs.revision }}${{ needs.determine-es-build.outputs.release_build }}
+        run: CI=false hatch -v -e it run test${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-es-build.outputs.revision }}${{ needs.determine-es-build.outputs.release_build }} && echo "Was set CI=$CI"
         timeout-minutes: 160
         env:
           # elastic/endpoint fetches assets from GitHub, authenticate to avoid
           # being rate limited
           ASSETS_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: "echo CI variable"
+        run: echo "CI=$CI"
       - name: Check disk space after
         run: df -h
       - uses: elastic/es-perf-github-status@v2

@@ -14,26 +14,23 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-import asyncio
+
+BASE_PARAMS = {
+    "start_date": "2021-01-01T00-00-00Z",
+    "end_date": "2021-01-01T00-01-00Z",
+    "max_total_download_gb": "18",
+    "raw_data_volume_per_day": "72GB",
+    "max_generated_corpus_size": "1GB",
+    "wait_for_status": "green",
+    "force_data_generation": "true",
+    "number_of_shards": "2",
+    "number_of_replicas": "0",
+}
 
 
-def as_future(result=None, exception=None):
-    """
-    Helper to create a future that completes immediately either with a result or exceptionally.
-    :param result: Regular result.
-    :param exception: Exceptional result.
-    :return: The corresponding future.
-    """
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    f = loop.create_future()
-    if exception and result:
-        raise AssertionError("Specify a result or an exception but not both")
-    if exception:
-        f.set_exception(exception)
+def params(updates=None):
+    base = BASE_PARAMS.copy()
+    if updates is None:
+        return base
     else:
-        f.set_result(result)
-    return f
+        return {**base, **updates}

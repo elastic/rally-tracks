@@ -16,33 +16,16 @@
 # under the License.
 
 import pytest
-
-pytest_rally = pytest.importorskip("pytest_rally")
-
-BASE_PARAMS = {
-    "source_mode": "synthetic",
-    "number_of_replicas": "0",
-}
+from elasticsearch import Elasticsearch
 
 
-def params(updates=None):
-    base = BASE_PARAMS.copy()
-    if updates is None:
-        return base
-    else:
-        return {**base, **updates}
+@pytest.fixture(scope="function")
+def es_cluster_cleanup(es_cluster):
+    es = Elasticsearch(f"http://localhost:{es_cluster.http_port}")
+    es.indices.delete(index="*")
+    es.indices.delete_data_stream(name="*")
 
 
-class TestSyntheticSource:
-    def test_tsdb_default(self, es_cluster, rally):
-        ret = rally.race(
-            track="tsdb",
-            track_params=params(),
-        )
-        assert ret == 0
-
-    def test_nyc_taxis_default(self, es_cluster, rally):
-        ret = rally.race(
-            track="nyc_taxis",
-            track_params=params(),
-        )
+@pytest.fixture
+def es_release_build(es_cluster) -> bool:
+    return es_cluster.source_build_release

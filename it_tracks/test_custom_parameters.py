@@ -14,26 +14,25 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-import asyncio
+
+import pytest
+
+pytest_rally = pytest.importorskip("pytest_rally")
 
 
-def as_future(result=None, exception=None):
-    """
-    Helper to create a future that completes immediately either with a result or exceptionally.
-    :param result: Regular result.
-    :param exception: Exceptional result.
-    :return: The corresponding future.
-    """
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    f = loop.create_future()
-    if exception and result:
-        raise AssertionError("Specify a result or an exception but not both")
-    if exception:
-        f.set_exception(exception)
-    else:
-        f.set_result(result)
-    return f
+class TestCustomParameters:
+    @pytest.mark.track("tsdb")
+    def test_tsdb_esql(self, es_cluster, rally):
+        ret = rally.race(
+            track="tsdb",
+            track_params={"index_mode": "time_series"},
+        )
+        assert ret == 0
+
+    @pytest.mark.track("tsdb")
+    def test_tsdb_data_stream(self, es_cluster, rally):
+        ret = rally.race(
+            track="tsdb",
+            track_params={"index_mode": "time_series", "ingest_mode": "data_stream", "source_mode": "synthetic"},
+        )
+        assert ret == 0

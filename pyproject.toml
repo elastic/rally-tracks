@@ -57,21 +57,22 @@ extra-dependencies = [
 test = "pytest {args}"
 
 [tool.hatch.envs.it.scripts]
-test = "pytest it --log-cli-level=INFO {args}"
+test = "pytest it_tracks --log-cli-level=INFO {args}"
 
 [tool.hatch.envs.it_serverless.scripts]
-test_user = "pytest -s it_serverless --log-cli-level=INFO {args}"
-test_operator = "pytest -s it_serverless --log-cli-level=INFO --operator {args}"
+test_user = "pytest -s it_tracks_serverless --log-cli-level=INFO {args}"
+test_operator = "pytest -s it_tracks_serverless --log-cli-level=INFO --operator {args}"
 
 [tool.pytest.ini_options]
 # set to true for more verbose output of tests
 log_cli = false
-addopts = "--verbose --color=yes --ignore=it --ignore=it_serverless"
+addopts = "--verbose --color=yes --ignore=it_tracks --ignore=it_tracks_serverless"
 junit_family = "xunit2"
 junit_logging = "all"
 asyncio_mode = "strict"
 markers = [
-    'track(name): Optionally associate a test class, function or module with a track. Usage: @pytest.mark.track("track1", "track2"). You can use a comma-separated list of track names. When given the --track-filter option (--track-filter=track1,track3), pytest will only run the tests marked with at least one of the track names. Unmarked objects will run by default.'
+    'track(name): Optionally associate a test class, function or module with a track. Usage: @pytest.mark.track("track1", "track2"). You can use a comma-separated list of track names. When given the --track-filter option (--track-filter=track1,track3), pytest will only run the tests marked with at least one of the track names. Unmarked objects will run by default.',
+    'es_cluster_car(car): mark test with the car to use for the es_cluster fixture',
 ]
 
 [tool.black]

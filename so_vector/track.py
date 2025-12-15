@@ -76,7 +76,7 @@ class KnnParamSource:
         return self
 
     def params(self):
-        result = {"index": self._index_name, "cache": self._params.get("cache", False), "size": self._params.get("k", 10)}
+        result = {"index": self._index_name, "cache": self._params.get("cache", False), "results-per-page": self._params.get("k", 10)}
         num_candidates: int | None = self._params.get("num_candidates", None)
         # if -1, then its unset. If set, just set it.
         oversample = self._params.get("oversample", -1)
@@ -120,7 +120,6 @@ class KnnParamSource:
 
 class ESQLKnnParamSource(KnnParamSource):
     def params(self):
-        retrieve_source = self._params.get("retrieve_source", False)
         # if -1, then its unset. If set, just set it.
         oversample = self._params.get("oversample", -1)
         if oversample > -1 and self._exact_scan:
@@ -135,13 +134,13 @@ class ESQLKnnParamSource(KnnParamSource):
             self._iters = 0
 
         if self._exact_scan:
-            query = f"FROM {self._index_name}"
-            if retrieve_source:
-                query += " METADATA _source"
+            query = f"FROM {self._index_name} METADATA _id, _source"
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " | where (" + self._params["filter"] + ")"
-            query += f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | SORT score DESC | LIMIT {k}"
+            query += (
+                f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | KEEP _id, _source, score | SORT score desc | LIMIT {k}"
+            )
         else:
             # Construct options JSON.
             options = []
@@ -151,19 +150,11 @@ class ESQLKnnParamSource(KnnParamSource):
                 options.append(f'"rescore_oversample":{oversample}')
             options_param = "{" + ", ".join(options) + "}"
 
-            query = f"FROM {self._index_name} METADATA _score"
-            if retrieve_source:
-                query += ", _source"
-            query += f"| WHERE KNN(titleVector, {query_vec}, {options_param})"
+            query = f"FROM {self._index_name} METADATA _id, _score, _source | WHERE KNN(titleVector, {query_vec}, {options_param})"
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " and (" + self._params["filter"] + ")"
-            query += "| SORT _score desc | LIMIT " + str(k)
-
-        if retrieve_source:
-            query += " | KEEP _source"
-        else:
-            query += " | DROP titleVector"
+            query += f"| KEEP _id, _score, _source | SORT _score desc | LIMIT {k}"
 
         return {"query": query}
 

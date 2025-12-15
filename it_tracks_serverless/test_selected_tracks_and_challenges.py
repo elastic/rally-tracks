@@ -17,7 +17,7 @@
 
 import pytest
 
-from .conftest import ServerlessProjectConfig
+from it_tracks_serverless.conftest import ServerlessProjectConfig
 
 pytest_rally = pytest.importorskip("pytest_rally")
 

@@ -28,7 +28,7 @@ Usage: backport.py [options] <command> [flags]
 
 Options:
     --repo                               owner/repo
-    --pr-mode                            Single PR mode (use event payload); Handle PR through GITHUB_EVENT_PATH.
+    --pr-number                          Single PR mode.
     -v, --verbose                        Increase verbosity (can be repeated: -vv)
     -q, --quiet                          Decrease verbosity (can be repeated: -qq)
     --dry-run                            Simulate actions without modifying GitHub state
@@ -43,7 +43,7 @@ Flags:
     --remove                             Remove 'backport pending' label
 
 Quick usage:
-    backport.py label --pr-mode
+    backport.py --pr-number 42 label
     backport.py --repo owner/name label --lookback-days 7
     backport.py --repo owner/name remind --lookback-days 30 --pending-reminder-age-days 14
     backport.py --repo owner/name --dry-run -vv label --lookback-days 30
@@ -156,24 +156,7 @@ class PRInfo:
         return cls(number, labels)
 
 
-# ----------------------------- PR Extraction (single or bulk) -----------------------------
-def load_event() -> dict:
-    """Load the GitHub event payload from GITHUB_EVENT_PATH for single PR mode.
-
-    Returns an empty dict if the path is missing to allow callers to decide on fallback behavior.
-    """
-    path = os.environ.get("GITHUB_EVENT_PATH", "").strip()
-    if not path:
-        raise FileNotFoundError("GITHUB_EVENT_PATH environment variable is empty")
-    if not os.path.isfile(path):
-        raise FileNotFoundError(f"File not found: {path}")
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    if not isinstance(data, dict):
-        raise TypeError(f"Event data is a {type(data)}, want a dict.")
-    return data
-
-
+# ----------------------------- PR Extraction  -----------------------------
 def list_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
     """Query the GH API with a filter to iterate over PRs updated after a given timestamp."""
     q_date = since.strftime("%Y-%m-%d")
@@ -332,7 +315,7 @@ def delete_reminders(info: PRInfo) -> None:
             LOG.info(f"Deleted comment ID {comment_id} on PR #{info.number}")
 
 
-def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: int, lookback_days: int) -> int:
+def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: int, remove: bool) -> int:
     """Post reminders using prefetched merged PR list."""
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for reminding")
@@ -344,13 +327,15 @@ def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: 
             if not pr:
                 continue
             info = PRInfo.from_dict(pr)
-            if pr_needs_reminder(info, threshold):
+            if remove is True:
+                delete_reminders(info)
+            elif pr_needs_reminder(info, threshold):
                 author = pr.get("user", {}).get("login", "PR author")
                 delete_reminders(info)
                 add_comment(info.number, f"{COMMENT_MARKER_BASE}\n@{author}\n{REMINDER_BODY}")
                 LOG.info(f"PR #{info.number}: initial reminder posted")
             else:
-                LOG.info(f"PR #{info.number}: cooling period not elapsed)")
+                LOG.info(f"PR #{info.number}: skip reminder")
         except Exception as ex:
             LOG.error(f"Remind error for PR #{pr.get('number', '?')}: {ex}")
             errors += 1
@@ -389,15 +374,10 @@ def configure(args: argparse.Namespace) -> None:
     require_mandatory_vars()
 
 
-def prefetch_prs(pr_mode: bool, lookback_days: int) -> list[dict[str, Any]]:
-    if pr_mode:
-        event = load_event()
-        if event:
-            pr_data = event.get("pull_request")
-        else:
-            raise RuntimeError("Failed to load event data")
-        if not pr_data:
-            raise RuntimeError(f"No pull_request data in event: {event}")
+def prefetch_prs(pr_number: int | None, lookback_days: int) -> list[dict[str, Any]]:
+    if pr_number is not None:
+        q_path = f"repos/{CONFIG.repo}/pulls/{pr_number}"
+        pr_data = gh_request(path=q_path)
         # Ensure PR is merged.
         merged_flag = pr_data.get("merged")
         merged_at = pr_data.get("merged_at")
@@ -418,16 +398,15 @@ def prefetch_prs(pr_mode: bool, lookback_days: int) -> list[dict[str, Any]]:
         return [pr_data]
     now = dt.datetime.now(dt.timezone.utc)
     since = now - dt.timedelta(days=lookback_days)
-    repo = CONFIG.repo
     # Note that we rely on is:merged to filter out unmerged PRs.
-    return list(list_prs(f"repo:{repo} is:pr is:merged", since))
+    return list(list_prs(f"repo:{CONFIG.repo} is:pr is:merged", since))
 
 
 def parse_args() -> argparse.Namespace:
     try:
         parser = argparse.ArgumentParser(
             description="Backport utilities",
-            epilog="""\nExamples:\n  backport.py label --pr-mode\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30 --pending-reminder-age-days 14\n  backport.py --dry-run -vv label --lookback-days 30\n\nSingle PR mode (--pr-mode) reads the pull_request payload from GITHUB_EVENT_PATH.\nBulk mode searches merged PRs updated within --lookback-days.\n""",
+            epilog="""\nExamples:\n  backport.py --pr-number 42 label\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30 --pending-reminder-age-days 14\n  backport.py --dry-run -vv label --lookback-days 30\n\nSingle PR mode fetches PR by number (--pr-number) .\nBulk mode searches merged PRs updated within lookback (--lookback-days).\n""",
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
         parser.add_argument(
@@ -437,9 +416,9 @@ def parse_args() -> argparse.Namespace:
             default=None,
         )
         parser.add_argument(
-            "--pr-mode",
-            action="store_true",
-            help="Single PR mode (use GITHUB_EVENT_PATH pull_request payload). Default: bulk scan via search API",
+            "--pr-number",
+            action="store",
+            help="Single PR mode. Default: bulk scan via search API",
         )
         parser.add_argument(
             "--dry-run",
@@ -470,12 +449,11 @@ def parse_args() -> argparse.Namespace:
             type=int,
             required=False,
             default=7,
-            help="Days to look back (default: 7). Ignored in --pr-mode",
+            help="Days to look back (default: 7).",
         )
         p_label.add_argument(
             "--remove",
             action="store_true",
-            required=False,
             default=False,
             help="Removes backport pending label",
         )
@@ -486,7 +464,7 @@ def parse_args() -> argparse.Namespace:
             type=int,
             required=False,
             default=7,
-            help="Days to look back (default: 7). Ignored in --pr-mode",
+            help="Days to look back (default: 7).",
         )
         p_remind.add_argument(
             "--pending-reminder-age-days",
@@ -494,6 +472,12 @@ def parse_args() -> argparse.Namespace:
             required=False,
             default=14,
             help="Days between reminders for the same PR (default: 14). Adds initial reminder if none posted yet.",
+        )
+        p_remind.add_argument(
+            "--remove",
+            action="store_true",
+            default=False,
+            help="Remove backport pending reminder comments instead of adding new ones",
         )
 
     except Exception:
@@ -506,13 +490,13 @@ def main():
     configure(args)
 
     LOG.debug(f"Parsed arguments: {args}")
-    prefetched = prefetch_prs(args.pr_mode, args.lookback_days)
+    prefetched = prefetch_prs(int(args.pr_number) if args.pr_number else None, args.lookback_days)
     LOG.debug(f"Prefetched {len(prefetched)} PRs for command '{args.command}': {[pr.get('number') for pr in prefetched]}")
     match args.command:
         case "label":
             return run_label(prefetched, args.remove)
         case "remind":
-            return run_remind(prefetched, args.pending_reminder_age_days, args.lookback_days)
+            return run_remind(prefetched, args.pending_reminder_age_days, args.remove)
         case _:
             raise NotImplementedError(f"Unknown command {args.command}")
 

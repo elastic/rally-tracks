@@ -240,7 +240,7 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
                 raise ValueError("Unknown query type: " + self._query_type)
 
             return {
-                "query": f"FROM {self._index_name} METADATA _score | WHERE { query_body } | SORT _score DESC | LIMIT { self._size }",
+                "query": f"FROM {self._index_name} METADATA _id, _score, _source | WHERE { query_body } | KEEP _id, _score, _source | SORT _score DESC | LIMIT { self._size }",
             }
 
         except StopIteration:

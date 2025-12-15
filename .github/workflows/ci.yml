@@ -12,7 +12,7 @@ on:
 env:
   DEFAULT_BRANCH: master
   # comma-separated list of paths that if changed will trigger a full CI run (Note: don't use trailing '/' at the end)
-  RUN_FULL_CI_WHEN_CHANGED: 'pyproject.toml,.github,it'
+  RUN_FULL_CI_WHEN_CHANGED: 'pyproject.toml,.github,it_tracks'
 
 permissions: "read-all"
 

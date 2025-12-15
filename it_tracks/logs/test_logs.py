@@ -17,7 +17,7 @@
 
 import pytest
 
-from it.logs import BASE_PARAMS, params
+from it_tracks.logs import BASE_PARAMS, params
 
 pytest_rally = pytest.importorskip("pytest_rally")
 

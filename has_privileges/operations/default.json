@@ -1,0 +1,20 @@
+{
+  "name": "create_roles_and_users",
+  "operation-type": "create_roles_and_users",
+  "num_roles": {{num_roles | default(1000)}},
+  "num_users": {{num_users | default(100)}},
+  "num_roles_per_user": {{num_roles_per_user | default(300)}},
+  "num_spaces": {{num_spaces | default(100)}},
+  "wildcard_mode": "{{wildcard_mode | default('both')}}"
+},
+{
+  "name": "create_kibana_app_privileges",
+  "operation-type": "create_kibana_app_privileges",
+  "version": "{{kibana_privileges_as_of | default('8.19.7')}}"
+},
+{
+  "name": "has_privileges",
+  "operation-type": "has_privileges",
+  "num_users": {{num_users | default(100)}},
+  "num_spaces": {{num_spaces | default(100)}}
+}

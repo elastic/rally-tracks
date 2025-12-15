@@ -78,11 +78,26 @@
     }
     {%- endfor %},
     {
-      "name": "parallel-documents-indexing-bulk",
-      "operation": "parallel-documents-indexing",
-      "warmup-time-period": 60,
-      "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
-      "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+      "parallel": {
+        "completed-by": "parallel-documents-indexing-bulk",
+        "tasks": [
+          {
+            "name": "parallel-documents-indexing-bulk",
+            "operation": "parallel-documents-indexing",
+            "warmup-time-period": 60,
+            "clients": {{ parallel_indexing_bulk_clients | default(1) | int }},
+            "time-period": {{ parallel_indexing_time_period | default(1800) | int }},
+            "target-throughput": {{ parallel_indexing_bulk_target_throughput | default(1) | int }}
+          },
+          {
+            "name": "parallel-documents-indexing-search-knn-10-100",
+            "operation": "knn-search-10-100",
+            "warmup-time-period": 60,
+            "clients": {{ parallel_indexing_search_clients | default(3) | int }},
+            "target-throughput": {{ parallel_indexing_search_target_throughput | default(100) | int }}
+          }
+        ]
+      }
     }
     {%- for i in range(p_search_ops|length) %},
     {

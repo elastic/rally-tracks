@@ -139,7 +139,7 @@ class ESQLKnnParamSource(KnnParamSource):
                 # Optionally append filter.
                 query += " | where (" + self._params["filter"] + ")"
             query += (
-                f"| EVAL score = V_DOT_PRODUCT(titleVector, {query_vec}) + 1.0 | KEEP _id, _source, score | SORT score desc | LIMIT {k}"
+                f"| EVAL score = V_DOT_PRODUCT(titleVector, ?query) + 1.0 | KEEP _id, _source, score | SORT score desc | LIMIT {k}"
             )
         else:
             # Construct options JSON.
@@ -150,13 +150,18 @@ class ESQLKnnParamSource(KnnParamSource):
                 options.append(f'"rescore_oversample":{oversample}')
             options_param = "{" + ", ".join(options) + "}"
 
-            query = f"FROM {self._index_name} METADATA _id, _score, _source | WHERE KNN(titleVector, {query_vec}, {options_param})"
+            query = f"FROM {self._index_name} METADATA _id, _score, _source | WHERE KNN(titleVector, ?query, {options_param})"
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " and (" + self._params["filter"] + ")"
             query += f"| KEEP _id, _score, _source | SORT _score desc | LIMIT {k}"
 
-        return {"query": query}
+        return {
+          "query": query,
+          "params": [{
+            "query": query_vec
+          }]
+        }
 
 
 class KnnVectorStore:
@@ -313,12 +318,14 @@ class EsqlProfileRunner(runner.Runner):
         params, request_params, transport_params, headers = self._transport_request_params(params)
         es = es.options(**transport_params)
 
-        # Get the ESQL query (mandatory parameter)
+        # Get the ESQL query and params (mandatory parameters)
         query = runner.mandatory(params, "query", self)
+        query_params = runner.mandatory(params, "params", self)
 
         # Build the request body with the query and profile enabled
         body = params.get("body", {})
         body["query"] = query
+        body["params"] = query_params
         body["profile"] = True
 
         # Add optional filter if provided

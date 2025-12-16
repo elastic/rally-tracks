@@ -7,6 +7,7 @@ import pytest
 from github_ci_tools.tests.resources.case_registry import (
     GHInteractAction,
     build_gh_routes_labels,
+    build_gh_routes_repo,
     case_by_number,
     expected_actions_for_prs,
     expected_actions_for_repo,
@@ -176,9 +177,10 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, gh_mock, case: GHInteracti
                 ),
                 *build_gh_routes_labels("GET", select_pull_requests_by_lookback(7)),
                 *build_gh_routes_labels("POST", select_pull_requests_by_lookback(7)),
+                *build_gh_routes_repo(),
             ],
             expected_order=[
-                *expected_actions_for_prs(GHInteractAction.LIST_PRS, select_pull_requests_by_lookback(7)),
+                *expected_actions_for_prs(GHInteractAction.ITER_PRS, select_pull_requests_by_lookback(7)),
                 *expected_actions_for_repo(GHInteractAction.REPO_GET_LABELS),
                 *expected_actions_for_repo(GHInteractAction.REPO_ADD_LABEL),
                 *expected_actions_for_prs(GHInteractAction.PR_ADD_PENDING_LABEL, select_pull_requests_by_lookback(7)),
@@ -204,7 +206,7 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, gh_mock, case: GHInteracti
             ],
             expected_order=[
                 # Actions are dynamically created based on the needs_pending and needs_reminder flags
-                *expected_actions_for_prs(GHInteractAction.LIST_PRS, select_pull_requests_by_lookback(7)),
+                *expected_actions_for_prs(GHInteractAction.ITER_PRS, select_pull_requests_by_lookback(7)),
             ],
         ),
     ),

@@ -1,10 +1,13 @@
 from dataclasses import asdict
 
+import pytest
+
 from github_ci_tools.tests.resources.case_registry import (
     GHInteractAction,
     build_gh_routes_labels,
     case_by_number,
     expected_actions_for_prs,
+    expected_actions_for_repo,
     select_pull_requests,
 )
 from github_ci_tools.tests.resources.cases import GHInteractionCase, RepoCase, cases
@@ -30,17 +33,25 @@ def test_repo_ensure_backport_pending_label(backport_mod, gh_mock, caplog, case:
 
     if case.needs_pending:
         if case.create_raises:
-            gh_mock.add(static_create_pending_label.method, static_create_pending_label.path, exception=RuntimeError("fail create"))
+            gh_mock.add(static_create_pending_label.method, static_create_pending_label.path, exception=RuntimeError("Could not create label"))
+            with pytest.raises(RuntimeError, match=backport_mod.COULD_NOT_CREATE_LABEL_ERROR):
+                backport_mod.ensure_backport_pending_label()
+            assertions = [
+                *expected_actions_for_repo(GHInteractAction.REPO_GET_LABELS),
+                (static_create_pending_label.method, static_create_pending_label.path),
+            ]
+            gh_mock.assert_calls_in_order(*assertions)
+            return
         else:
             gh_mock.add(static_create_pending_label.method, static_create_pending_label.path, response=static_create_pending_label.response)
+            backport_mod.ensure_backport_pending_label()
+    else:
+        backport_mod.ensure_backport_pending_label()
 
-    backport_mod.ensure_backport_pending_label()
-    assertions = [(static_get_labels.method, static_get_labels.path)]
-    if case.needs_pending:
+    assertions = [*expected_actions_for_repo(GHInteractAction.REPO_GET_LABELS)]
+    if case.needs_pending and not case.create_raises:
         assertions.append((static_create_pending_label.method, static_create_pending_label.path))
     gh_mock.assert_calls_in_order(*assertions)
-    if case.create_raises and case.needs_pending:
-        assert any(f"{backport_mod.COULD_NOT_CREATE_LABEL_WARNING}" in rec.message for rec in caplog.records)
 
 
 @cases(

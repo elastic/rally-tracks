@@ -78,19 +78,21 @@ VERSION_LABEL_RE = re.compile(r"^v\d{1,2}(?:\.\d{1,2})?$")
 BACKPORT_LABEL = "backport"
 PENDING_LABEL = "backport pending"
 PENDING_LABEL_COLOR = "fff2bf"
-COULD_NOT_CREATE_LABEL_WARNING = "Could not create label"
+COULD_NOT_CREATE_LABEL_ERROR = "Could not create label"
+COULD_NOT_REMOVE_LABEL_ERROR = "Could not remove label"
 GITHUB_API = "https://api.github.com"
 COMMENT_MARKER_BASE = "<!-- backport-pending-reminder -->"  # static for detection
 REMINDER_BODY = (
     "A backport is pending for this PR. Please add all required `vX.Y` version labels.\n\n"
+    "**How to proceed:**\n"
     "   - If it is intended for the current Elasticsearch release version, apply the corresponding version label.\n"
     "   - If it also supports past released versions, add those labels too.\n"
-    "   - If it only targets a future version, wait until that version label exists and then add it.\n"
-    "     (Each rally-tracks version label is created during the feature freeze of a new Elasticsearch branch).\n\n"
-    "Backporting entails: \n"
+    "   - If this PR introduces functionality dependent on future versions, please wait until the relevant `vX.Y` version branch is created. In such cases, retain the `backport pending` label to enable periodic notifications.\n"
+    "When a `vX.Y` label is added, a new pull request will be automatically created, unless merge conflicts are detected. If successful, a link to the newly opened backport PR will be provided in a comment.\n\n"
+    "**Final steps to complete the backporting process:**\n"
     "   1. Ensure the correct version labels exist in this PR.\n"
-    "   2. Ensure backport PRs have `backport` label and are passing tests.\n"
-    "   3. Merge backport PRs (you can approve yourself and enable auto-merge).\n"
+    "   2. Ensure each backport pull request is labeled with `backport`.\n"
+    "   3. Review and merge each backport pull request into the appropriate version branch.\n"
     "   4. Remove `backport pending` label from this PR once all backport PRs are merged.\n\n"
     "Thank you!"
 )
@@ -98,26 +100,26 @@ REMINDER_BODY = (
 
 @dataclass
 class BackportConfig:
-    token: str | None = None
-    repo: str | None = None
+    token: str = ""
+    repo: str = ""
     dry_run: bool = False
     log_level: int = logging.INFO
-    command: str | None = None
+    command: str = ""
     verbose: int = 0
     quiet: int = 0
 
 
 CONFIG = BackportConfig(
-    token=os.environ.get("BACKPORT_TOKEN"),
-    repo=os.environ.get("GITHUB_REPOSITORY"),
+    token=os.environ.get("BACKPORT_TOKEN", ""),
+    repo=os.environ.get("GITHUB_REPOSITORY", ""),
 )
 
 
 # ----------------------------- GH Helpers -----------------------------
 def gh_request(method: str = "GET", path: str = "", body: dict[str, Any] | None = None, params: dict[str, str] | None = None) -> Any:
-    if params:
-        path = f"{path}?{urlencode(params)}"
     url = f"{GITHUB_API}/{path}"
+    if params:
+        url += f"?{urlencode(params)}"
     data = None
     if body is not None:
         data = json.dumps(body).encode()
@@ -129,17 +131,13 @@ def gh_request(method: str = "GET", path: str = "", body: dict[str, Any] | None 
     req = urllib.request.Request(url, data=data, method=method)
     req.add_header("Authorization", f"Bearer {CONFIG.token}")
     req.add_header("Accept", "application/vnd.github+json")
-    try:
-        with urllib.request.urlopen(req) as resp:
-            charset = resp.headers.get_content_charset() or "utf-8"
-            txt = resp.read().decode(charset)
-            LOG.debug(f"Response {resp.status} {method}")
-            if resp.status >= 300:
-                raise RuntimeError(f"HTTP {resp.status}: {txt}")
-            return json.loads(txt) if txt.strip() else {}
-    except urllib.error.HTTPError as e:
-        err = e.read().decode()
-        raise RuntimeError(f"HTTP {e.code} {e.reason} {err}") from e
+    with urllib.request.urlopen(req) as resp:
+        charset = resp.headers.get_content_charset() or "utf-8"
+        txt = resp.read().decode(charset)
+        LOG.debug(f"Response {resp.status} {method}")
+        if resp.status >= 300:
+            raise RuntimeError(f"HTTP {resp.status}: {txt}")
+        return json.loads(txt) if txt.strip() else {}
 
 
 @dataclass
@@ -149,15 +147,16 @@ class PRInfo:
 
     @classmethod
     def from_dict(cls, pr: dict[str, Any]) -> "PRInfo":
-        number = int(pr.get("number") or pr.get("url", "").rstrip("/").strip().rsplit("/", 1) or -1)
-        labels = [lbl.get("name", "") for lbl in pr.get("labels", [])]
-        if number == -1 and not labels:
-            raise ValueError("...")
-        return cls(number, labels)
+        try:
+            number = int(pr.get("number") or pr.get("url", "").rstrip("/").strip().rsplit("/", 1))
+        except ValueError as e:
+            raise ValueError(f"No PR number in dict {pr}") from e
+        labels = [lbl["name"] for lbl in pr.get("labels", []) if "name" in lbl]
+        return cls(number=number, labels=labels)
 
 
 # ----------------------------- PR Extraction  -----------------------------
-def list_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
+def iter_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
     """Query the GH API with a filter to iterate over PRs updated after a given timestamp."""
     q_date = since.strftime("%Y-%m-%d")
     q = f"{q_filter} updated:>={q_date}"
@@ -181,27 +180,19 @@ def add_repository_label(repository: str | None, name: str, color: str):
         if is_dry_run()
         else LOG.info(f"Creating label '{name}' with color '{color}' in repo '{repository}'")
     )
-    gh_request(method="POST", path=f"repos/{repository}/labels", body={"name": name, "color": color})
-
-
-def repo_needs_pending_label(repo_labels: list[str]) -> bool:
-    LOG.debug(f"{PENDING_LABEL} in repo labels: {repo_labels} -> {PENDING_LABEL in repo_labels}")
-    return PENDING_LABEL not in repo_labels
+    try: 
+        gh_request(method="POST", path=f"repos/{repository}/labels", body={"name": name, "color": color})
+    except Exception as e:
+        raise RuntimeError(f"{COULD_NOT_CREATE_LABEL_ERROR}: {e}")
 
 
 def ensure_backport_pending_label() -> None:
     """If the exact PENDING_LABEL string does not appear at least once, we create it."""
-    try:
-        existing = gh_request(path=f"repos/{CONFIG.repo}/labels", params={"per_page": "100"})
-    except Exception as e:
-        existing = []
-    names = [lbl.get("name", "") for lbl in existing]
-    if not repo_needs_pending_label(names):
-        return
-    try:
-        add_repository_label(repository=CONFIG.repo, name=PENDING_LABEL, color=PENDING_LABEL_COLOR)
-    except Exception as e:
-        LOG.warning(f"{COULD_NOT_CREATE_LABEL_WARNING}: {e}")
+    # It checks if the label is already set.
+    for label in gh_request(path=f"repos/{CONFIG.repo}/labels", params={"per_page": "100"}):
+        if label.get("name") == PENDING_LABEL:
+            return
+    add_repository_label(repository=CONFIG.repo, name=PENDING_LABEL, color=PENDING_LABEL_COLOR)
 
 
 def pr_needs_pending_label(info: PRInfo) -> bool:
@@ -220,7 +211,10 @@ def remove_pull_request_label(pr_number: int, label: str) -> None:
         if is_dry_run()
         else LOG.info(f"Removing label '{label}' from PR #{pr_number}")
     )
-    gh_request(method="DELETE", path=f"repos/{CONFIG.repo}/issues/{pr_number}/labels", body={"labels": [label]})
+    try:
+        gh_request(method="DELETE", path=f"repos/{CONFIG.repo}/issues/{pr_number}/labels", body={"labels": [label]})
+    except Exception as e:
+        raise RuntimeError(f"{COULD_NOT_REMOVE_LABEL_ERROR}: {e}")
 
 
 def run_label(prefetched_prs: list[dict[str, Any]], remove: bool) -> int:
@@ -228,10 +222,7 @@ def run_label(prefetched_prs: list[dict[str, Any]], remove: bool) -> int:
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for labeling")
     # Ensure repository has pending label definition before any per-PR action.
-    try:
-        ensure_backport_pending_label()
-    except Exception as e:
-        raise RuntimeError(f"Cannot ensure that backport pending label exists in repo: {e}")
+    ensure_backport_pending_label()
     errors = 0
     for pr in prefetched_prs:
         try:
@@ -368,8 +359,8 @@ def configure(args: argparse.Namespace) -> None:
     CONFIG.quiet = args.quiet
     CONFIG.log_level = (CONFIG.quiet - CONFIG.verbose) * (logging.INFO - logging.DEBUG) + logging.INFO
     CONFIG.command = args.command
-    CONFIG.token = os.environ.get("BACKPORT_TOKEN")
-    CONFIG.repo = args.repo if args.repo is not None else os.environ.get("GITHUB_REPOSITORY")
+    CONFIG.token = os.environ.get("BACKPORT_TOKEN", "")
+    CONFIG.repo = args.repo if args.repo else os.environ.get("GITHUB_REPOSITORY", "")
     logging.basicConfig(level=CONFIG.log_level, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     require_mandatory_vars()
 
@@ -399,89 +390,85 @@ def prefetch_prs(pr_number: int | None, lookback_days: int) -> list[dict[str, An
     now = dt.datetime.now(dt.timezone.utc)
     since = now - dt.timedelta(days=lookback_days)
     # Note that we rely on is:merged to filter out unmerged PRs.
-    return list(list_prs(f"repo:{CONFIG.repo} is:pr is:merged", since))
+    return list(iter_prs(f"repo:{CONFIG.repo} is:pr is:merged", since))
 
 
 def parse_args() -> argparse.Namespace:
-    try:
-        parser = argparse.ArgumentParser(
-            description="Backport utilities",
-            epilog="""\nExamples:\n  backport.py --pr-number 42 label\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30 --pending-reminder-age-days 14\n  backport.py --dry-run -vv label --lookback-days 30\n\nSingle PR mode fetches PR by number (--pr-number) .\nBulk mode searches merged PRs updated within lookback (--lookback-days).\n""",
-            formatter_class=argparse.RawDescriptionHelpFormatter,
-        )
-        parser.add_argument(
-            "--repo",
-            help="Target repository in owner/repo form (overrides GITHUB_REPOSITORY env)",
-            required=False,
-            default=None,
-        )
-        parser.add_argument(
-            "--pr-number",
-            action="store",
-            help="Single PR mode. Default: bulk scan via search API",
-        )
-        parser.add_argument(
-            "--dry-run",
-            action="store_true",
-            help="Simulate actions without modifying GitHub state",
-        )
-        parser.add_argument(
-            "-v",
-            "--verbose",
-            action="count",
-            default=0,
-            help="Increase verbosity (can be used multiple times, e.g., -vv for more verbose)",
-        )
-        parser.add_argument(
-            "-q",
-            "--quiet",
-            action="count",
-            default=0,
-            help="Decrease verbosity (can be used multiple times)",
-        )
-        sub = parser.add_subparsers(dest="command", required=True)
+    parser = argparse.ArgumentParser(
+        description="Backport utilities",
+        epilog="""\nExamples:\n  backport.py --pr-number 42 label\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30 --pending-reminder-age-days 14\n  backport.py --dry-run -vv label --lookback-days 30\n\nSingle PR mode fetches PR by number (--pr-number) .\nBulk mode searches merged PRs updated within lookback (--lookback-days).\n""",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "--repo",
+        help="Target repository in owner/repo form (overrides GITHUB_REPOSITORY env)",
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
+        "--pr-number",
+        action="store",
+        help="Single PR mode. Default: bulk scan via search API",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Simulate actions without modifying GitHub state",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Increase verbosity (can be used multiple times, e.g., -vv for more verbose)",
+    )
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        action="count",
+        default=0,
+        help="Decrease verbosity (can be used multiple times)",
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
 
-        p_label = sub.add_parser(
-            "label", help="Add backport pending label to merged PRs lacking 'backport', 'backport pending' or version label"
-        )
-        p_label.add_argument(
-            "--lookback-days",
-            type=int,
-            required=False,
-            default=7,
-            help="Days to look back (default: 7).",
-        )
-        p_label.add_argument(
-            "--remove",
-            action="store_true",
-            default=False,
-            help="Removes backport pending label",
-        )
+    p_label = sub.add_parser(
+        "label", help="Add backport pending label to merged PRs lacking 'backport', 'backport pending' or version label"
+    )
+    p_label.add_argument(
+        "--lookback-days",
+        type=int,
+        required=False,
+        default=7,
+        help="Days to look back (default: 7).",
+    )
+    p_label.add_argument(
+        "--remove",
+        action="store_true",
+        default=False,
+        help="Removes backport pending label",
+    )
 
-        p_remind = sub.add_parser("remind", help="Post reminders on merged PRs still pending backport")
-        p_remind.add_argument(
-            "--lookback-days",
-            type=int,
-            required=False,
-            default=7,
-            help="Days to look back (default: 7).",
-        )
-        p_remind.add_argument(
-            "--pending-reminder-age-days",
-            type=int,
-            required=False,
-            default=14,
-            help="Days between reminders for the same PR (default: 14). Adds initial reminder if none posted yet.",
-        )
-        p_remind.add_argument(
-            "--remove",
-            action="store_true",
-            default=False,
-            help="Remove backport pending reminder comments instead of adding new ones",
-        )
-
-    except Exception:
-        raise RuntimeError("Command parsing failed")
+    p_remind = sub.add_parser("remind", help="Post reminders on merged PRs still pending backport")
+    p_remind.add_argument(
+        "--lookback-days",
+        type=int,
+        required=False,
+        default=7,
+        help="Days to look back (default: 7).",
+    )
+    p_remind.add_argument(
+        "--pending-reminder-age-days",
+        type=int,
+        required=False,
+        default=14,
+        help="Days between reminders for the same PR (default: 14). Adds initial reminder if none posted yet.",
+    )
+    p_remind.add_argument(
+        "--remove",
+        action="store_true",
+        default=False,
+        help="Remove backport pending reminder comments instead of adding new ones",
+    )
     return parser.parse_args()
 
 

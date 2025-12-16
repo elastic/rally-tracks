@@ -332,10 +332,11 @@ class EsqlProfileRunner(runner.Runner):
         # Build result entries for each profiled phase
         result = {}
         if profile:
-            for phase_name in ["query", "planning", "preanalysis", "analysis"]:
+            for phase_name in ["query", "planning", "parsing", "preanalysis", "analysis"]:
                 if phase_name in profile:
                     took_nanos = profile.get(phase_name, []).get("took_nanos", 0)
-                    result[f"{phase_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
+                    if (took_nanos > 0):
+                        result[f"{phase_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
 
         # Extract driver-level metrics
         drivers = profile.get("drivers", [])

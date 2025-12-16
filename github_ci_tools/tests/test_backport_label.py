@@ -33,7 +33,9 @@ def test_repo_ensure_backport_pending_label(backport_mod, gh_mock, caplog, case:
 
     if case.needs_pending:
         if case.create_raises:
-            gh_mock.add(static_create_pending_label.method, static_create_pending_label.path, exception=RuntimeError("Could not create label"))
+            gh_mock.add(
+                static_create_pending_label.method, static_create_pending_label.path, exception=RuntimeError("Could not create label")
+            )
             with pytest.raises(RuntimeError, match=backport_mod.COULD_NOT_CREATE_LABEL_ERROR):
                 backport_mod.ensure_backport_pending_label()
             assertions = [

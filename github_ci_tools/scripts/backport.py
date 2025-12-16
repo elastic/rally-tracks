@@ -180,7 +180,7 @@ def add_repository_label(repository: str | None, name: str, color: str):
         if is_dry_run()
         else LOG.info(f"Creating label '{name}' with color '{color}' in repo '{repository}'")
     )
-    try: 
+    try:
         gh_request(method="POST", path=f"repos/{repository}/labels", body={"name": name, "color": color})
     except Exception as e:
         raise RuntimeError(f"{COULD_NOT_CREATE_LABEL_ERROR}: {e}")

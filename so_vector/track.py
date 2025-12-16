@@ -363,6 +363,18 @@ class EsqlProfileRunner(runner.Runner):
                     metric_key = f"{driver_name}.{safe_operator_name}.process_ms"
                     result[metric_key] = result.get(metric_key, 0) + process_nanos / 1_000_000  # Convert to milliseconds
 
+        # Extract plan-level metrics
+        plans = profile.get("plans", [])
+        for plan in plans:
+            plan_name = plan.get("description", "unknown")
+
+            # Extract optimization level metrics
+            for optimization in ["logical_optimization_nanos", "physical_optimization_nanos", "reduction_nanos"]:
+                optimization_nanos = plan.get(optimization, 0)
+                if optimization_nanos > 0:
+                    metric_key = f"{plan_name}.{optimization}.took_ms"
+                    result[metric_key] = result.get(metric_key, 0) + optimization_nanos / 1_000_000  # Convert to milliseconds
+
         return result
 
     def __repr__(self, *args, **kwargs):

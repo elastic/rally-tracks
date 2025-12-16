@@ -136,9 +136,7 @@ class ESQLKnnParamSource(KnnParamSource):
             if "filter" in self._params:
                 # Optionally append filter.
                 query += " | where (" + self._params["filter"] + ")"
-            query += (
-                f"| EVAL score = V_DOT_PRODUCT(titleVector, ?query) + 1.0 | KEEP _id, _source, score | SORT score desc | LIMIT {k}"
-            )
+            query += f"| EVAL score = V_DOT_PRODUCT(titleVector, ?query) + 1.0 | KEEP _id, _source, score | SORT score desc | LIMIT {k}"
         else:
             # Construct options JSON.
             options = []
@@ -154,16 +152,7 @@ class ESQLKnnParamSource(KnnParamSource):
                 query += " and (" + self._params["filter"] + ")"
             query += f"| KEEP _id, _score, _source | SORT _score desc | LIMIT {k}"
 
-        return {
-            "query": query,
-            "body": {
-                "params": [
-                    {
-                        "query": query_vec
-                    }
-                ]
-            }
-        }
+        return {"query": query, "body": {"params": [{"query": query_vec}]}}
 
 
 class KnnVectorStore:

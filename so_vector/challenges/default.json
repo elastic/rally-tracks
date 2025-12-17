@@ -1,5 +1,5 @@
 {% set is_esql_enabled = (esql_enabled | default(false)) %}
-{% set is_esql_profiling_enabled = (esql_profiling_enabled | default(false)) %}
+{% set is_esql_profiling_enabled = (esql_profiling_enabled | default(true)) %}
 
 {
   "name": "index-and-search",

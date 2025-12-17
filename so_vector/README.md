@@ -65,7 +65,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `bulk_size` (default: 500)
 * `bulk_indexing_clients` (default: 1)
 * `esql_enabled` (default: false) : Controls if the ESQL-specific benchmarks are enabled.
-* `esql_profiling_enabled` (default: false) : True to add separate profiling runs for ESQL operations.
+* `esql_profiling_enabled` (default: true) : True to add separate profiling runs for ESQL operations.
 * `ingest_percentage` (default: 100)
 * `max_num_segments` (default: 1)
 * `force_merge_timeout` (default: 7200) : How long force merge should be allowed to run before aborting.

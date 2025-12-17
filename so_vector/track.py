@@ -286,8 +286,8 @@ class KnnRecallRunner:
     def __repr__(self, *args, **kwargs):
         return "knn-recall"
 
-class EsqlProfileRunner(runner.Runner):
 
+class EsqlProfileRunner(runner.Runner):
     """
     Runs an ES|QL query using profile: true, and adds the profile information to the result:
 
@@ -338,7 +338,7 @@ class EsqlProfileRunner(runner.Runner):
             for phase_name in ["query", "planning", "parsing", "preanalysis", "dependency_resolution", "analysis"]:
                 if phase_name in profile:
                     took_nanos = profile.get(phase_name, []).get("took_nanos", 0)
-                    if (took_nanos > 0):
+                    if took_nanos > 0:
                         result[f"{phase_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
 
         # Extract driver-level metrics

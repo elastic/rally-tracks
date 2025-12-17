@@ -335,7 +335,7 @@ class EsqlProfileRunner(runner.Runner):
         # Build took_ms entries for each profiled phase
         result = {}
         if profile:
-            for phase_name in ["query", "planning", "parsing", "preanalysis", "analysis"]:
+            for phase_name in ["query", "planning", "parsing", "preanalysis", "dependency_resolution", "analysis"]:
                 if phase_name in profile:
                     took_nanos = profile.get(phase_name, []).get("took_nanos", 0)
                     if (took_nanos > 0):

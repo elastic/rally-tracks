@@ -31,14 +31,15 @@ class TestPutLifecycle:
     @mock.patch("elasticsearch.Elasticsearch")
     @pytest.mark.asyncio
     async def test_put_lifecycle_with_all_params(self, es):
-        """Test configuring lifecycle with retention and enabled parameters"""
+        """Test configuring lifecycle with retention, enabled, and downsampling parameters"""
         # Mock responses
         es.indices.get_data_stream.return_value = as_future(
             {"data_streams": [{"name": "logs-test-default"}, {"name": "logs-test-staging"}]}
         )
         es.perform_request.return_value = as_future({})
 
-        params = {"data-stream": "logs-test-*", "data_retention": "7d", "enabled": True}
+        downsampling_cfg = {"interval": "1d", "labels": ["foo", "bar"]}
+        params = {"data-stream": "logs-test-*", "data_retention": "7d", "enabled": True, "downsampling": downsampling_cfg}
 
         ops, unit = await put_lifecycle(es, params)
 
@@ -52,15 +53,16 @@ class TestPutLifecycle:
         assert es.perform_request.call_count == 2
         calls = es.perform_request.call_args_list
 
+        expected_body = {"data_retention": "7d", "enabled": True, "downsampling": downsampling_cfg}
         # Check first call
         assert calls[0][1]["method"] == "PUT"
         assert calls[0][1]["path"] == "/_data_stream/logs-test-default/_lifecycle"
-        assert calls[0][1]["body"] == {"data_retention": "7d", "enabled": True}
+        assert calls[0][1]["body"] == expected_body
 
         # Check second call
         assert calls[1][1]["method"] == "PUT"
         assert calls[1][1]["path"] == "/_data_stream/logs-test-staging/_lifecycle"
-        assert calls[1][1]["body"] == {"data_retention": "7d", "enabled": True}
+        assert calls[1][1]["body"] == expected_body
 
     @mock.patch("elasticsearch.Elasticsearch")
     @pytest.mark.asyncio
@@ -97,6 +99,24 @@ class TestPutLifecycle:
 
         call_args = es.perform_request.call_args
         assert call_args[1]["body"] == {"data_retention": "30d"}
+
+    @mock.patch("elasticsearch.Elasticsearch")
+    @pytest.mark.asyncio
+    async def test_put_lifecycle_with_downsampling(self, es):
+        """Test configuring lifecycle with downsampling parameter"""
+        es.indices.get_data_stream.return_value = as_future({"data_streams": [{"name": "logs-downsampled-default"}]})
+        es.perform_request.return_value = as_future({})
+
+        downsampling_cfg = {"interval": "1d", "labels": ["foo", "bar"]}
+        params = {"data-stream": "logs-downsampled-default", "downsampling": downsampling_cfg}
+
+        ops, unit = await put_lifecycle(es, params)
+
+        assert ops == 1
+        assert unit == "ops"
+
+        call_args = es.perform_request.call_args
+        assert call_args[1]["body"] == {"downsampling": downsampling_cfg}
 
     @mock.patch("elasticsearch.Elasticsearch")
     @pytest.mark.asyncio

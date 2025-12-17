@@ -33,6 +33,7 @@ async def put_lifecycle(es, params):
     - data-stream: Name of the data stream (supports wildcards)
     - data_retention: Optional retention period (e.g., "7d", "30d")
     - enabled: Optional boolean to enable/disable lifecycle (default: true)
+    - downsampling: Optional dict for downsampling configuration
 
     Returns: Number of data streams configured
     """
@@ -48,9 +49,8 @@ async def put_lifecycle(es, params):
     if "enabled" in params:
         lifecycle_config["enabled"] = params["enabled"]
 
-    # If no specific config provided, enable with empty config (uses defaults)
-    if not lifecycle_config:
-        lifecycle_config = {}
+    if "downsampling" in params:
+        lifecycle_config["downsampling"] = params["downsampling"]
 
     logger.info(f"Configuring lifecycle on data stream [{data_stream}]: {lifecycle_config}")
 
@@ -65,7 +65,6 @@ async def put_lifecycle(es, params):
     ops = 0
     for ds_name in data_streams:
         try:
-            # Use raw API call for compatibility with older clients
             await es.perform_request(method="PUT", path=f"/_data_stream/{ds_name}/_lifecycle", body=lifecycle_config)
             logger.debug(f"Configured lifecycle on [{ds_name}]")
             ops += 1

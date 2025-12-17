@@ -313,12 +313,10 @@ class EsqlProfileRunner(runner.Runner):
 
         # Get the ESQL query and params (mandatory parameters)
         query = runner.mandatory(params, "query", self)
-        query_params = runner.mandatory(params, "params", self)
 
         # Build the request body with the query and profile enabled
         body = params.get("body", {})
         body["query"] = query
-        body["params"] = query_params
         body["profile"] = True
 
         # Add optional filter if provided
@@ -330,22 +328,11 @@ class EsqlProfileRunner(runner.Runner):
         if not bool(headers):
             headers = None
 
-        # Disable eager response parsing to avoid skewing results
-        es.return_raw_response()
-
-        # Capture absolute time before execution
-        absolute_time = time.time()
-
         # Execute the ESQL query with profiling
-        raw_response = await es.perform_request(method="POST", path="/_query", headers=headers, body=body, params=request_params)
+        response = await es.perform_request(method="POST", path="/_query", headers=headers, body=body, params=request_params)
+        profile = response["profile"]
 
-        # Parse the raw response (body is a BytesIO object, need to read it)
-        response = json.loads(raw_response.body.read())
-
-        # Extract the profile information
-        profile = response.get("profile", {})
-
-        # Build result entries for each profiled phase
+        # Build took_ms entries for each profiled phase
         result = {}
         if profile:
             for phase_name in ["query", "planning", "parsing", "preanalysis", "analysis"]:

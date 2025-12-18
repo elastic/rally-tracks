@@ -65,6 +65,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `bulk_size` (default: 500)
 * `bulk_indexing_clients` (default: 1)
 * `esql_enabled` (default: false) : Controls if the ESQL-specific benchmarks are enabled.
+* `esql_profiling_enabled` (default: true) : True to add separate profiling runs for ESQL operations.
 * `ingest_percentage` (default: 100)
 * `max_num_segments` (default: 1)
 * `force_merge_timeout` (default: 7200) : How long force merge should be allowed to run before aborting.
@@ -74,6 +75,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `corpora` (default: "so_vector_float"): The dataset to use. The default data set represents vectors as float arrays. Use "so_vector_base64" for the same dataset with vectors encoded as base64 strings.
 * `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
 * `iterations` (default: 100) - Number of measurement iterations that each client executes.
+* `profile_iterations` (default: 100) - Number of profiling iterations that each client executes.
 * `search_clients` (default: 8) - Number of clients that issue search requests in the multi-client search challenges.
 
 ### License

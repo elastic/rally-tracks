@@ -85,10 +85,11 @@ COMMENT_MARKER_BASE = "<!-- backport-pending-reminder -->"  # static for detecti
 REMINDER_BODY = (
     "A backport is pending for this PR. Please add all required `vX.Y` version labels.\n\n"
     "**How to proceed:**\n"
-    "   - If it is intended for the current Elasticsearch release version, apply the corresponding version label.\n"
+    "   - If it is intended for the current or next Elasticsearch release minor version, apply the corresponding version label.\n"
     "   - If it also supports past released versions, add those labels too.\n"
-    "   - If this PR introduces functionality dependent on future versions, please wait until the relevant `vX.Y` version branch is created. In such cases, retain the `backport pending` label to enable periodic notifications.\n"
+    "   - If it introduces functionality dependent on future versions, please wait until the relevant `vX.Y` label is created. In such cases, retain the `backport pending` label to enable periodic notifications.\n"
     "When a `vX.Y` label is added, a new pull request will be automatically created, unless merge conflicts are detected. If successful, a link to the newly opened backport PR will be provided in a comment.\n\n"
+    "In case of merge conflicts during backporting, create the backport PR manually following the steps from [README](https://github.com/elastic/rally-tracks?tab=readme-ov-file#merge-conflicts):\n"
     "**Final steps to complete the backporting process:**\n"
     "   1. Ensure the correct version labels exist in this PR.\n"
     "   2. Ensure each backport pull request is labeled with `backport`.\n"

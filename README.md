@@ -26,7 +26,7 @@ To initiate backporting of a pull request, at least one `vX.Y` label must be app
 - Please supply all the labels that correspond to next, current and past elasticsearch versions expected to work with this PR, but select only from the available ones.
 - If the PR being merged is using functionality from future Elasticsearch versions, please wait for the creation of Elasticsearch `vX.Y` version branch.
 
-When a `vX.Y` label is added, a new pull request is automatically created, unless merge conflicts are detected. The status of this process is reported via a comment, and if successful, a link to the newly opened pull request targeting the specified version branch is provided. This pull request will include a `backport` label and will require a review. Upon approval, it will be merged automatically.
+When a `vX.Y` label is added, a new pull request is automatically created, unless merge conflicts are detected or if the label supplied points to the next Elasticsearch minor version. The status of this process is reported via a comment, and if successful, a link to the newly opened pull request targeting the specified version branch is provided. This pull request will include a backport label and will require a review. Upon approval, it will be merged automatically.
 
 ## Merge conflicts
 Merge conflicts must be resolved manually. There are two primary methods for manually creating a backport pull request: 

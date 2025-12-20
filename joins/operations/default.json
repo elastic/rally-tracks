@@ -64,43 +64,43 @@
       "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_limit1",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | limit 1",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_limit1000",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | limit 1000",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_limit10000",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | limit 10000",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_keep_limit10000",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | keep @timestamp, lookup_keyword_0 | limit 10000",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_sort_limit10000",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | sort lookup_keyword_0 asc | limit 10000",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_limit1000",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | where lookup_keyword_0 like \"val 1*\" | limit 1000",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_{{idx_suffix[i]}}_keys_where_no_match",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | where concat(lookup_keyword_0, \"foo\") == \"bar\"",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
 {% endfor %}
 
@@ -110,7 +110,7 @@
       "name": "esql_lookup_join_100k_to_{{idx_suffix[i]}}",
       "operation-type": "esql",
       "query": "FROM join_base_idx | rename key_100000 as key_{{key_suffix[i]}}| lookup join lookup_idx_{{key_suffix[i]}}_f10 on key_{{key_suffix[i]}} | limit 1000",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
 {% endfor %}
 
@@ -118,11 +118,11 @@
       "name": "esql_lookup_join_100k_keys_x10_limit1000",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_100000_f10_x10 on key_100000 | limit 1000",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     },
     {
       "name": "esql_lookup_join_1k_100k_200k_500k",
       "operation-type": "esql",
       "query": "FROM join_base_idx | lookup join lookup_idx_1000_f10 on key_1000 | rename lookup_keyword_0 as lk_1k | lookup join lookup_idx_100000_f10 on key_100000 | rename lookup_keyword_0 as lk_100k | lookup join lookup_idx_200000_f10 on key_200000 | rename lookup_keyword_0 as lk_200k | lookup join lookup_idx_500000_f10 on key_500000 | rename lookup_keyword_0 as lk_500k | keep id, key_1000, key_100000, key_200000, key_500000, lk_1k, lk_100k, lk_200k, lk_500k | limit 1000",
-      "body": { "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
+      "body": { "accept_pragma_risks": true, "pragma": { "max_concurrent_shards_per_node": {{max_concurrent_shards_per_node | default(10)}} } }
     }

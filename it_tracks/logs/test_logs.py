@@ -17,21 +17,9 @@
 
 import pytest
 
-from .conftest import ServerlessProjectConfig
+from it_tracks.logs import BASE_PARAMS, params
 
 pytest_rally = pytest.importorskip("pytest_rally")
-
-BASE_PARAMS = {
-    "start_date": "2021-01-01T00-00-00Z",
-    "end_date": "2021-01-01T00-01-00Z",
-    "max_total_download_gb": "18",
-    "raw_data_volume_per_day": "72GB",
-    "max_generated_corpus_size": "1GB",
-    "wait_for_status": "green",
-    "force_data_generation": "true",
-    "number_of_shards": "2",
-    "number_of_replicas": "1",
-}
 
 
 def params(updates=None):
@@ -42,55 +30,46 @@ def params(updates=None):
         return {**base, **updates}
 
 
-@pytest.mark.operator_only
+@pytest.mark.track("elastic/logs")
 class TestLogs:
-    def test_logs_fails_if_assets_not_installed(self, operator, rally, capsys, project_config: ServerlessProjectConfig):
-        ret = rally.race(
-            track="elastic/logs",
-            exclude_tasks="tag:setup",
-            client_options=project_config.get_client_options_file(operator),
-            target_hosts=project_config.target_host,
-        )
+    def test_logs_fails_if_assets_not_installed(self, es_cluster, rally, capsys):
+        ret = rally.race(track="elastic/logs", exclude_tasks="tag:setup")
         message = "Index templates missing for packages: ['apache', 'kafka', 'mysql', 'nginx', 'postgresql', 'redis', 'system']"
         stdout = capsys.readouterr().out
         assert message in stdout
         assert ret != 0
 
-    def test_logs_default(self, operator, rally, project_config: ServerlessProjectConfig):
+    def test_logs_default(self, es_cluster, rally):
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-indexing",
-            track_params="number_of_replicas:1",
-            client_options=project_config.get_client_options_file(operator),
-            target_hosts=project_config.target_host,
+            track_params="number_of_replicas:0",
         )
         assert ret == 0
 
-    def test_logs_disk_usage(self, operator, rally, project_config: ServerlessProjectConfig):
-        # <index>/_stats not available for public user
-        if not operator:
-            pytest.skip()
+    def test_logs_disable_pipelines(self, es_cluster, rally):
+        custom = {"number_of_replicas": 0, "disable_pipelines": "true"}
+        ret = rally.race(
+            track="elastic/logs",
+            challenge="logging-indexing",
+            track_params=params(updates=custom),
+        )
+        assert ret == 0
+
+    def test_logs_disk_usage(self, es_cluster, rally):
         custom = {"number_of_shards": 4}
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-disk-usage",
             track_params=params(updates=custom),
-            client_options=project_config.get_client_options_file(operator),
-            target_hosts=project_config.target_host,
         )
         assert ret == 0
 
-    def test_logs_indexing_unthrottled(self, operator, rally, project_config: ServerlessProjectConfig):
-        ret = rally.race(
-            track="elastic/logs",
-            challenge="logging-indexing",
-            track_params=params(),
-            client_options=project_config.get_client_options_file(operator),
-            target_hosts=project_config.target_host,
-        )
+    def test_logs_indexing_unthrottled(self, es_cluster, rally):
+        ret = rally.race(track="elastic/logs", challenge="logging-indexing", track_params=params())
         assert ret == 0
 
-    def test_logs_querying(self, operator, rally, project_config: ServerlessProjectConfig):
+    def test_logs_querying(self, rally, es_cluster):
         custom = {
             "query_warmup_time_period": "1",
             "query_time_period": "1",
@@ -102,12 +81,10 @@ class TestLogs:
             challenge="logging-querying",
             track_params=params(updates=custom),
             exclude_tasks="tag:setup",
-            client_options=project_config.get_client_options_file(operator),
-            target_hosts=project_config.target_host,
         )
         assert ret == 0
 
-    def test_logs_indexing_querying_unthrottled(self, operator, rally, project_config: ServerlessProjectConfig):
+    def test_logs_indexing_querying_unthrottled(self, es_cluster, rally):
         custom = {
             "query_warmup_time_period": "1",
             "query_time_period": "1",
@@ -119,23 +96,19 @@ class TestLogs:
             challenge="logging-indexing-querying",
             track_params=params(updates=custom),
             exclude_tasks="tag:setup",
-            client_options=project_config.get_client_options_file(operator),
-            target_hosts=project_config.target_host,
         )
         assert ret == 0
 
-    def test_logs_indexing_throttled(self, operator, rally, project_config: ServerlessProjectConfig):
+    def test_logs_indexing_throttled(self, es_cluster, rally):
         custom = {"throttle_indexing": "true"}
         ret = rally.race(
             track="elastic/logs",
             challenge="logging-indexing",
             track_params=params(updates=custom),
-            client_options=project_config.get_client_options_file(operator),
-            target_hosts=project_config.target_host,
         )
         assert ret == 0
 
-    def test_logs_indexing_querying_throttled(self, operator, rally, project_config: ServerlessProjectConfig):
+    def test_logs_indexing_querying_throttled(self, es_cluster, rally):
         custom = {
             "query_warmup_time_period": "1",
             "query_time_period": "1",
@@ -148,12 +121,10 @@ class TestLogs:
             challenge="logging-indexing-querying",
             track_params=params(updates=custom),
             exclude_tasks="tag:setup",
-            client_options=project_config.get_client_options_file(operator),
-            target_hosts=project_config.target_host,
         )
         assert ret == 0
 
-    def test_logs_querying_with_preloaded_data(self, operator, rally, project_config: ServerlessProjectConfig):
+    def test_logs_querying_with_preloaded_data(self, es_cluster, rally):
         custom = {
             "bulk_start_date": "2020-09-30T00-00-00Z",
             "bulk_end_date": "2020-09-30T00-01-00Z",
@@ -166,7 +137,14 @@ class TestLogs:
             track="elastic/logs",
             challenge="logging-querying",
             track_params=params(updates=custom),
-            client_options=project_config.get_client_options_file(operator),
-            target_hosts=project_config.target_host,
+        )
+        assert ret == 0
+
+    def test_logs_many_shards_quantitative(self, es_cluster, rally):
+        custom = {"number_of_shards": 4}
+        ret = rally.race(
+            track="elastic/logs",
+            challenge="many-shards-quantitative",
+            track_params=params(updates=custom),
         )
         assert ret == 0

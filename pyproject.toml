@@ -6,10 +6,11 @@ build-backend = "hatchling.build"
 develop = [
     "hatch==1.7.0",
     "hatchling==1.18.0",
-    "black==23.3.0",
+    "click<8.3.0", # fix to a pre 8.3.0 version until https://github.com/pypa/hatch/issues/2050 resolved
+    "black==24.10.0",
     "isort==5.12.0",
     "pre-commit==3.3.3",
-    "pip==22.2",
+    "pip==25.2",
 ]
 
 [tool.hatch.metadata]
@@ -22,7 +23,7 @@ source = "vcs"
 name = "rally-tracks"
 readme = "README.md"
 dynamic = ["version"]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -33,37 +34,50 @@ exclude = [
 
 [tool.hatch.envs.default]
 dependencies = [
-    "esrally[develop] @ git+https://github.com/elastic/rally.git@master",
-    "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main",
+    "esrally[develop] @ git+https://github.com/elastic/rally.git@master"
+]
+
+[tool.hatch.envs.it]
+extra-dependencies = [
+    "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main"
+]
+
+[tool.hatch.envs.it_serverless]
+extra-dependencies = [
+    "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main"
 ]
 
 [tool.hatch.envs.unit]
 extra-dependencies = [
-    "geneve==0.0.3",
+    "geneve==0.3.0",
     "elastic-package-assets @ git+https://github.com/elastic/package-assets.git@main"
 ]
 
 [tool.hatch.envs.unit.scripts]
-test = "pytest"
+test = "pytest {args}"
 
 [tool.hatch.envs.it.scripts]
-test = "pytest it --log-cli-level=INFO"
+test = "pytest it_tracks --log-cli-level=INFO {args}"
 
 [tool.hatch.envs.it_serverless.scripts]
-test_user = "pytest -s it_serverless --log-cli-level=INFO"
-test_operator = "pytest -s it_serverless --log-cli-level=INFO --operator"
+test_user = "pytest -s it_tracks_serverless --log-cli-level=INFO {args}"
+test_operator = "pytest -s it_tracks_serverless --log-cli-level=INFO --operator {args}"
 
 [tool.pytest.ini_options]
 # set to true for more verbose output of tests
 log_cli = false
-addopts = "--verbose --color=yes --ignore=it --ignore=it_serverless"
+addopts = "--verbose --color=yes --ignore=it_tracks --ignore=it_tracks_serverless"
 junit_family = "xunit2"
 junit_logging = "all"
 asyncio_mode = "strict"
+markers = [
+    'track(name): Optionally associate a test class, function or module with a track. Usage: @pytest.mark.track("track1", "track2"). You can use a comma-separated list of track names. When given the --track-filter option (--track-filter=track1,track3), pytest will only run the tests marked with at least one of the track names. Unmarked objects will run by default.',
+    'es_cluster_car(car): mark test with the car to use for the es_cluster fixture',
+]
 
 [tool.black]
 line-length = 140
-target-version = ['py38']
+target-version = ['py310', 'py311', 'py312', 'py313']
 
 [tool.isort]
 profile = 'black'

@@ -14,26 +14,37 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-import asyncio
+
+import pytest
+
+pytest_rally = pytest.importorskip("pytest_rally")
+
+BASE_PARAMS = {
+    "source_mode": "synthetic",
+    "number_of_replicas": "0",
+}
 
 
-def as_future(result=None, exception=None):
-    """
-    Helper to create a future that completes immediately either with a result or exceptionally.
-    :param result: Regular result.
-    :param exception: Exceptional result.
-    :return: The corresponding future.
-    """
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    f = loop.create_future()
-    if exception and result:
-        raise AssertionError("Specify a result or an exception but not both")
-    if exception:
-        f.set_exception(exception)
+def params(updates=None):
+    base = BASE_PARAMS.copy()
+    if updates is None:
+        return base
     else:
-        f.set_result(result)
-    return f
+        return {**base, **updates}
+
+
+class TestSyntheticSource:
+    @pytest.mark.track("tsdb")
+    def test_tsdb_default(self, es_cluster, rally):
+        ret = rally.race(
+            track="tsdb",
+            track_params=params(),
+        )
+        assert ret == 0
+
+    @pytest.mark.track("nyc_taxis")
+    def test_nyc_taxis_default(self, es_cluster, rally):
+        ret = rally.race(
+            track="nyc_taxis",
+            track_params=params(),
+        )

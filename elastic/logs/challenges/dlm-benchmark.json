@@ -1,0 +1,65 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "dlm-benchmark",
+  "description": "Benchmark data stream lifecycle (DLM) performance with configurable poll interval and rollover settings",
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {% set p_dsl_poll_interval = (dsl_poll_interval | default("5s")) %}
+    {% set p_dsl_default_rollover = (dsl_default_rollover | default("max_age=1h,max_primary_shard_size=50gb")) %}
+    {% set p_dlm_retention = (dlm_retention | default("30d")) %}
+    {
+      "name": "update-dsl-settings",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "put-settings",
+        "body": {
+          "persistent": {
+            "data_streams.lifecycle.poll_interval": "{{ p_dsl_poll_interval }}"
+            {% if p_dsl_default_rollover %}
+            , "cluster.lifecycle.default.rollover": "{{ p_dsl_default_rollover }}"
+            {% endif %}
+          }
+        }
+      }
+    },
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "bulk-size": {{ p_bulk_size | default(5000) }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients | default(1) }}{% if p_throttle_indexing %},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "schedule": "timestamp-throttler",
+      "max-delay-secs": 1
+      {% endif %}
+    },
+    {
+      "name": "wait-for-data-stream-lifecycle",
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ dlm_wait_time | default(60) }}
+      }
+    },
+    {
+      "name": "compression-stats",
+      "operation": {
+        "operation-type": "compression-statistics",
+        "param-source": "create-datastream-source"
+      }
+    },
+    {
+      "name": "datastream-lifecycle-stats",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "GET",
+        "path": "/_data_stream/_stats?human=true",
+        "body": null
+      }
+    }
+  ]
+}

@@ -9,7 +9,11 @@
       }
     }
 {%- elif lifecycle == "dlm" or (not lifecycle and build_flavor == "serverless") %}
-    "lifecycle": {}
+    "lifecycle": {
+{%- if dlm_retention %}
+      "data_retention": "{{ dlm_retention }}"
+{%- endif %}
+    }
 {%- endif -%}
   }
 }

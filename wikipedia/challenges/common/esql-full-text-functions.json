@@ -89,19 +89,4 @@
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
   "iterations": {{ iterations | default(1000) }}
-},
-{
-  "name": "standalone-esql-term-search",
-  "operation": "query-esql-term-search",
-  "query-type": "match",
-  "clients": {{ standalone_search_clients | default(20) | int }},
-  "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
-},
-{
-  "name": "standalone-query-term-search",
-  "operation": "query-term-search",
-  "clients": {{ standalone_search_clients | default(20) | int }},
-  "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
 }

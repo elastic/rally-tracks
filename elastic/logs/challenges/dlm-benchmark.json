@@ -3,8 +3,6 @@
   "description": "Benchmark data stream lifecycle (DLM) performance with configurable poll interval and rollover settings",
   "schedule": [
     {% include "tasks/index-setup.json" %},
-    {% set p_dsl_poll_interval = (dsl_poll_interval | default("5s")) %}
-    {% set p_dsl_default_rollover = (dsl_default_rollover | default("max_age=1h,max_primary_shard_size=50gb")) %}
     {
       "name": "update-dsl-settings",
       "tags": ["setup"],
@@ -12,9 +10,9 @@
         "operation-type": "put-settings",
         "body": {
           "persistent": {
-            "data_streams.lifecycle.poll_interval": "{{ p_dsl_poll_interval }}"
-            {% if p_dsl_default_rollover %}
-            , "cluster.lifecycle.default.rollover": "{{ p_dsl_default_rollover }}"
+            "data_streams.lifecycle.poll_interval": "{{ dsl_poll_interval | default('5s') }}"
+            {% if dsl_default_rollover %}
+            , "cluster.lifecycle.default.rollover": "{{ dsl_default_rollover | default('max_age=1h,max_primary_shard_size=50gb') }}"
             {% endif %}
           }
         }

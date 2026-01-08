@@ -1,64 +1,77 @@
+{% set is_esql_profiling_enabled = (esql_profiling_enabled | default(true)) %}
 {
   "name": "delete-index",
-  "operation": "delete-index"
+  "operation": "delete-index",
+  "tags": ["setup"]
 },
 {
   "name": "create-index",
-  "operation": "create-index"
+  "operation": "create-index",
+  "tags": ["setup"]
 },
 {
   "name": "check-cluster-health",
-  "operation": "check-cluster-health"
+  "operation": "check-cluster-health",
+  "tags": ["setup"]
 },
 {
   "name": "initial-documents-indexing",
   "operation": "initial-documents-indexing",
+  "tags": ["index"],
   "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }},
   "clients": {{ initial_indexing_bulk_clients | default(5) | int }}
 },
 {
   "name": "refresh-after-index",
-  "operation": "refresh-after-index"
+  "operation": "refresh-after-index",
+  "tags": ["index"]
 },
 {
   "name": "force-merge",
-  "operation": "force-merge"
+  "operation": "force-merge",
+  "tags": ["index"]
 },
 {
   "name": "refresh-after-force-merge",
-  "operation": "refresh-after-force-merge"
+  "operation": "refresh-after-force-merge",
+  "tags": ["index"]
 },
 {
   "name": "wait-until-merges-finish-after-index",
-  "operation": "wait-until-merges-finish-after-index"
+  "operation": "wait-until-merges-finish-after-index",
+  "tags": ["index"]
 },
 {
   "name": "standalone-esql-match-search",
   "operation": "query-esql-match-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(1000) }},
+  "tags": ["esql"]
 },
 {
   "name": "standalone-query-match-search",
   "operation": "query-match-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(1000) }},
+  "tags": ["query-dsl"]
 },
 {
   "name": "standalone-esql-match-phrase-search",
   "operation": "query-esql-match-phrase-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(1000) }},
+  "tags": ["esql"]
 },
 {
   "name": "standalone-query-match-phrase-search",
   "operation": "query-match-phrase-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(1000) }},
+  "tags": ["query-dsl"]
 },
 {
   "name": "standalone-esql-qstr-search",
@@ -66,14 +79,16 @@
   "query-type": "match",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(1000) }},
+  "tags": ["esql"]
 },
 {
   "name": "standalone-query-string-search",
   "operation": "query-string-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(1000) }},
+  "tags": ["query-dsl"]
 },
 {
   "name": "standalone-esql-kql-search",
@@ -81,12 +96,51 @@
   "query-type": "match",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(1000) }},
+  "tags": ["esql"]
 },
 {
   "name": "standalone-query-kql-search",
   "operation": "query-kql-search",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
-  "iterations": {{ iterations | default(1000) }}
+  "iterations": {{ iterations | default(1000) }},
+  "tags": ["query-dsl"]
 }
+{% if is_esql_profiling_enabled %}
+,
+{
+  "name": "standalone-esql-profile-match-search",
+  "operation": "query-esql-profile-match-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ profile_iterations | default(100) }},
+  "tags": ["esql-profile"]
+},
+{
+  "name": "standalone-esql-profile-match-phrase-search",
+  "operation": "query-esql-profile-match-phrase-search",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ profile_iterations | default(100) }},
+  "tags": ["esql-profile"]
+},
+{
+  "name": "standalone-esql-profile-qstr-search",
+  "operation": "query-esql-profile-qstr-search",
+  "query-type": "match",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ profile_iterations | default(100) }},
+  "tags": ["esql-profile"]
+},
+{
+  "name": "standalone-esql-profile-kql-search",
+  "operation": "query-esql-profile-kql-search",
+  "query-type": "match",
+  "clients": {{ standalone_search_clients | default(20) | int }},
+  "warmup-iterations": {{ warmup_iterations | default(100) }},
+  "iterations": {{ profile_iterations | default(100) }},
+  "tags": ["esql-profile"]
+}
+{% endif %}

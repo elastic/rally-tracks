@@ -6,6 +6,7 @@ from os import getcwd
 from os.path import dirname
 from typing import Iterator, List
 
+from esrally.driver import runner
 from esrally.track.params import ParamSource
 
 QUERIES_DIRNAME: str = dirname(__file__)
@@ -282,6 +283,106 @@ class QueryParamSource(QueryIteratorParamSource):
             "cache": self._cache,
         }
 
+class EsqlProfileRunner(runner.Runner):
+    """
+    Runs an ES|QL query using profile: true, and adds the profile information to the result:
+
+    - meta.query.took_ms: Total query time took
+    - meta.planning.took_ms: Planning time before query execution, includes parsing, preanalysis, analysis
+    - meta.parsing.took_ms: Time it took to parse the ESQL query
+    - meta.preanalysis.took_ms: Preanalysis, including field_caps, enrich policies, lookup indices
+    - meta.analysis.took_ms: Analysis time before optimizations
+    - meta.<plan>.cpu_ms: Total plan CPU time
+    - meta.<plan>.took_ms: Total plan took time
+    - meta.<plan>.logical_optimization.took_ms: Plan logical optimization took time
+    - meta.<plan>.physical_optimization.took_ms: Plan physical optimization took time
+    - meta.<plan>.reduction.took_ms: : Node reduction plan generation took time
+    - meta.<plan>.<operator>.process_ms: Processing time for each operator in the plan
+    """
+
+    async def __call__(self, es, params):
+        import time
+
+        # Extract transport-level parameters (timeouts, headers, etc.)
+        params, request_params, transport_params, headers = self._transport_request_params(params)
+        es = es.options(**transport_params)
+
+        # Get the ESQL query and params (mandatory parameters)
+        query = runner.mandatory(params, "query", self)
+
+        # Build the request body with the query and profile enabled
+        body = params.get("body", {})
+        body["query"] = query
+        body["profile"] = True
+
+        # Add optional filter if provided
+        query_filter = params.get("filter")
+        if query_filter:
+            body["filter"] = query_filter
+
+        # Set headers if not provided (preserves prior behavior)
+        if not bool(headers):
+            headers = None
+
+        # Execute the ESQL query with profiling
+        response = await es.perform_request(method="POST", path="/_query", headers=headers, body=body, params=request_params)
+        profile = response["profile"]
+
+        # Build took_ms entries for each profiled phase
+        result = {}
+        if profile:
+            for phase_name in ["query", "planning", "parsing", "preanalysis", "dependency_resolution", "analysis"]:
+                if phase_name in profile:
+                    took_nanos = profile.get(phase_name, []).get("took_nanos", 0)
+                    if took_nanos > 0:
+                        result[f"{phase_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
+
+        # Extract driver-level metrics
+        drivers = profile.get("drivers", [])
+        for driver in drivers:
+            driver_name = driver.get("description", "unknown")
+            took_nanos = driver.get("took_nanos", 0)
+            cpu_nanos = driver.get("cpu_nanos", 0)
+
+            # Add driver-level timing metrics
+            result[f"{driver_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
+            result[f"{driver_name}.cpu_ms"] = cpu_nanos / 1_000_000
+
+            # Extract operator-level metrics
+            operators = driver.get("operators", [])
+            for idx, operator in enumerate(operators):
+                operator_name = operator.get("operator", f"operator_{idx}")
+                # Sanitize operator name for use as a metric key (remove brackets)
+                safe_operator_name = operator_name.split("[")[0] if "[" in operator_name else operator_name
+
+                # Get process_nanos and cpu_nanos from operator status
+                status = operator.get("status", {})
+
+                process_nanos = status.get("process_nanos", 0)
+                if process_nanos > 0:
+                    metric_key = f"{driver_name}.{safe_operator_name}.process_ms"
+                    result[metric_key] = result.get(metric_key, 0) + process_nanos / 1_000_000  # Convert to milliseconds
+
+        # Extract plan-level metrics
+        plans = profile.get("plans", [])
+        for plan in plans:
+            plan_name = plan.get("description", "unknown")
+
+            # Extract optimization level metrics
+            for optimization in ["logical_optimization_nanos", "physical_optimization_nanos", "reduction_nanos"]:
+                optimization_nanos = plan.get(optimization, 0)
+                if optimization_nanos > 0:
+                    # Remove "_nanos" suffix from the metric name
+                    metric_name = optimization.replace("_nanos", "")
+                    metric_key = f"{plan_name}.{metric_name}.took_ms"
+                    result[metric_key] = result.get(metric_key, 0) + optimization_nanos / 1_000_000  # Convert to milliseconds
+
+        return result
+
+    def __repr__(self, *args, **kwargs):
+        return "esql-profile"
+
+
 
 def register(registry):
     registry.register_param_source("query-search", QueryParamSource)
@@ -292,3 +393,4 @@ def register(registry):
     registry.register_param_source("pinned-search-param-source", PinnedSearchParamSource)
     registry.register_param_source("retriever-search", RetrieverParamSource)
     registry.register_param_source("esql-search", EsqlSearchParamSource)
+    registry.register_runner("esql-profile", EsqlProfileRunner(), async_runner=True)

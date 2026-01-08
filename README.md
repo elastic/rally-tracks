@@ -23,8 +23,7 @@ Contributions of new tracks should be compatible with the main version of Elasti
 Backporting ensures that tracks are compatible not only with the latest `main` version of Elasticsearch, but also with previous versions. For this reason, backporting is an important part of the contribution process. Periodic reminders will be issued when a backport is pending.
 
 To initiate backporting of a pull request, at least one `vX.Y` label must be applied.
-- Please supply all the labels that correspond to next, current and past elasticsearch versions expected to work with this PR, but select only from the available ones.
-- If the PR being merged is using functionality from future Elasticsearch versions, please wait for the creation of Elasticsearch `vX.Y` version branch.
+- Apply all the labels that correspond to Elasticsearch minor versions expected to work with this PR, but select only from the available ones.
 
 When a `vX.Y` label is added, a new pull request is automatically created, unless merge conflicts are detected or if the label supplied points to the next Elasticsearch minor version. The status of this process is reported via a comment, and if successful, a link to the newly opened pull request targeting the specified version branch is provided. This pull request will include a backport label and will require a review. Upon approval, it will be merged automatically.
 
@@ -61,7 +60,7 @@ To complete the process, ensure the following:
 - Each associated backport pull request is labeled with backport.
 - Each backport pull request is merged into the appropriate version branch.
 
-Finally, remove the `backport pending` label from the PR.
+Finally, remove the `backport pending` label.
 
 # License
 

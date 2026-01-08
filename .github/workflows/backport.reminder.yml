@@ -11,6 +11,10 @@ on:
       single_pr:
         description: 'PR number to process (single-PR run; leave empty for bulk)'
         required: false
+      lookback_mode:
+        description: "PR lookback basis: 'updated' (default) or 'merged'"
+        required: false
+        default: 'updated'
       lookback_days:
         description: 'Lookback window for merged PRs (days)'
         required: false
@@ -52,5 +56,5 @@ jobs:
         run: |
           pr_number_clause="${{ github.event.inputs.single_pr && format('--pr-number {0}', github.event.inputs.single_pr) || '' }}"
           remove_clause="${{ github.event.inputs.remove == 'true' && '--remove' || '' }}"
-          python github_ci_tools/scripts/backport.py $pr_number_clause label --lookback-days ${{ github.event.inputs.lookback_days || '7' }} $remove_clause
-          python github_ci_tools/scripts/backport.py $pr_number_clause remind --lookback-days ${{ github.event.inputs.lookback_days || '7' }} --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }} $remove_clause
+          python github_ci_tools/scripts/backport.py $pr_number_clause label --lookback-days ${{ github.event.inputs.lookback_days || '7' }} --lookback-mode ${{ github.event.inputs.lookback_mode || 'updated' }} $remove_clause
+          python github_ci_tools/scripts/backport.py $pr_number_clause remind --lookback-days ${{ github.event.inputs.lookback_days || '7' }} --lookback-mode ${{ github.event.inputs.lookback_mode || 'updated' }} --pending-reminder-age-days ${{ github.event.inputs.pending_label_age_days || '14' }} $remove_clause

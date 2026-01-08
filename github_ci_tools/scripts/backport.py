@@ -39,6 +39,7 @@ Commands:
 
 Flags:
     --lookback-days N                    Days to scan in bulk
+    --lookback-mode MODE                 Bulk mode lookback basis: updated (default) or merged
     --pending-reminder-age-days M           Days between reminders
     --remove                             Remove 'backport pending' label
 
@@ -84,7 +85,7 @@ GITHUB_API = "https://api.github.com"
 COMMENT_MARKER_BASE = "<!-- backport-pending-reminder -->"  # static for detection
 REMINDER_BODY = (
     "A backport is pending for this PR.\n"
-    "Apply all the labels that correspond to Elasticsearch minor versions expected to work with this PR, but select only from the available ones.\n" \
+    "Apply all the labels that correspond to Elasticsearch minor versions expected to work with this PR, but select only from the available ones.\n"
     "If intended for future releases, apply label for next minor\n\n"
     "When a `vX.Y` label is added, a new pull request will be automatically created, unless merge conflicts are detected or if the label supplied points to the next Elasticsearch minor version. If successful, a link to the newly opened backport PR will be provided in a comment.\n\n"
     "In case of merge conflicts during backporting, create the backport PR manually following the steps from [README](https://github.com/elastic/rally-tracks?tab=readme-ov-file#merge-conflicts):\n"
@@ -155,10 +156,10 @@ class PRInfo:
 
 
 # ----------------------------- PR Extraction  -----------------------------
-def iter_prs(q_filter: str, since: dt.datetime) -> Iterable[dict[str, Any]]:
-    """Query the GH API with a filter to iterate over PRs updated after a given timestamp."""
+def iter_prs(q_filter: str, since: dt.datetime, lookback_mode: str = "updated") -> Iterable[dict[str, Any]]:
+    """Query the GH API to iterate over PRs within the lookback window."""
     q_date = since.strftime("%Y-%m-%d")
-    q = f"{q_filter} updated:>={q_date}"
+    q = f"{q_filter} {lookback_mode}>={q_date}"
     LOG.debug(f"Fetch PRs with filter '{q}'")
     params = {"q": f"{q}", "per_page": "100"}
     for page in itertools.count(1):
@@ -364,7 +365,7 @@ def configure(args: argparse.Namespace) -> None:
     require_mandatory_vars()
 
 
-def prefetch_prs(pr_number: int | None, lookback_days: int) -> list[dict[str, Any]]:
+def prefetch_prs(pr_number: int | None, lookback_days: int, lookback_mode: str = "updated") -> list[dict[str, Any]]:
     if pr_number is not None:
         q_path = f"repos/{CONFIG.repo}/pulls/{pr_number}"
         pr_data = gh_request(path=q_path)
@@ -389,7 +390,7 @@ def prefetch_prs(pr_number: int | None, lookback_days: int) -> list[dict[str, An
     now = dt.datetime.now(dt.timezone.utc)
     since = now - dt.timedelta(days=lookback_days)
     # Note that we rely on is:merged to filter out unmerged PRs.
-    return list(iter_prs(f"repo:{CONFIG.repo} is:pr is:merged", since))
+    return list(iter_prs(f"repo:{CONFIG.repo} is:pr is:merged", since, lookback_mode=lookback_mode))
 
 
 def parse_args() -> argparse.Namespace:
@@ -441,6 +442,13 @@ def parse_args() -> argparse.Namespace:
         help="Days to look back (default: 7).",
     )
     p_label.add_argument(
+        "--lookback-mode",
+        choices=["updated", "merged"],
+        required=False,
+        default="updated",
+        help="Bulk mode lookback basis: 'updated' (default) or 'merged'.",
+    )
+    p_label.add_argument(
         "--remove",
         action="store_true",
         default=False,
@@ -454,6 +462,13 @@ def parse_args() -> argparse.Namespace:
         required=False,
         default=7,
         help="Days to look back (default: 7).",
+    )
+    p_remind.add_argument(
+        "--lookback-mode",
+        choices=["updated", "merged"],
+        required=False,
+        default="updated",
+        help="Bulk mode lookback basis: 'updated' (default) or 'merged'.",
     )
     p_remind.add_argument(
         "--pending-reminder-age-days",
@@ -476,7 +491,7 @@ def main():
     configure(args)
 
     LOG.debug(f"Parsed arguments: {args}")
-    prefetched = prefetch_prs(int(args.pr_number) if args.pr_number else None, args.lookback_days)
+    prefetched = prefetch_prs(int(args.pr_number) if args.pr_number else None, args.lookback_days, lookback_mode=args.lookback_mode)
     LOG.debug(f"Prefetched {len(prefetched)} PRs for command '{args.command}': {[pr.get('number') for pr in prefetched]}")
     match args.command:
         case "label":

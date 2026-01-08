@@ -362,7 +362,7 @@ def build_gh_routes_repo() -> list[GHRoute]:
     ]
 
 
-def expected_actions_for_prs(action: GHInteractAction, prs: list[PullRequestCase]) -> list[tuple[str, str]]:
+def expected_actions_for_prs(action: GHInteractAction, prs: list[PullRequestCase], lookback_mode: str = "updated") -> list[tuple[str, str]]:
     actions = []
     match action:
         case GHInteractAction.PR_ADD_PENDING_LABEL:
@@ -382,7 +382,7 @@ def expected_actions_for_prs(action: GHInteractAction, prs: list[PullRequestCase
             for pr in prs:
                 actions.append(("POST", f"/repos/{TEST_REPO}/issues/{pr.number}/comments"))
         case GHInteractAction.ITER_PRS:
-            actions.append(("GET", f"/search/issues...merged...updated..."))
+            actions.append(("GET", f"/search/issues...merged...{lookback_mode}..."))
         case _:
             raise ValueError(f"Unsupported PR action: {action}")
     return actions

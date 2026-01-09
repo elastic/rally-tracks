@@ -341,45 +341,45 @@ class EsqlProfileRunner(runner.Runner):
                     if took_nanos > 0:
                         result[f"{phase_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
 
-        # Extract driver-level metrics
-        drivers = profile.get("drivers", [])
-        for driver in drivers:
-            driver_name = driver.get("description", "unknown")
-            took_nanos = driver.get("took_nanos", 0)
-            cpu_nanos = driver.get("cpu_nanos", 0)
+            # Extract driver-level metrics
+            drivers = profile.get("drivers", [])
+            for driver in drivers:
+                driver_name = driver.get("description", "unknown")
+                took_nanos = driver.get("took_nanos", 0)
+                cpu_nanos = driver.get("cpu_nanos", 0)
 
-            # Add driver-level timing metrics
-            result[f"{driver_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
-            result[f"{driver_name}.cpu_ms"] = cpu_nanos / 1_000_000
+                # Add driver-level timing metrics
+                result[f"{driver_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
+                result[f"{driver_name}.cpu_ms"] = cpu_nanos / 1_000_000
 
-            # Extract operator-level metrics
-            operators = driver.get("operators", [])
-            for idx, operator in enumerate(operators):
-                operator_name = operator.get("operator", f"operator_{idx}")
-                # Sanitize operator name for use as a metric key (remove brackets)
-                safe_operator_name = operator_name.split("[")[0] if "[" in operator_name else operator_name
+                # Extract operator-level metrics
+                operators = driver.get("operators", [])
+                for idx, operator in enumerate(operators):
+                    operator_name = operator.get("operator", f"operator_{idx}")
+                    # Sanitize operator name for use as a metric key (remove brackets)
+                    safe_operator_name = operator_name.split("[")[0] if "[" in operator_name else operator_name
 
-                # Get process_nanos and cpu_nanos from operator status
-                status = operator.get("status", {})
+                    # Get process_nanos and cpu_nanos from operator status
+                    status = operator.get("status", {})
 
-                process_nanos = status.get("process_nanos", 0)
-                if process_nanos > 0:
-                    metric_key = f"{driver_name}.{safe_operator_name}.process_ms"
-                    result[metric_key] = result.get(metric_key, 0) + process_nanos / 1_000_000  # Convert to milliseconds
+                    process_nanos = status.get("process_nanos", 0)
+                    if process_nanos > 0:
+                        metric_key = f"{driver_name}.{safe_operator_name}.process_ms"
+                        result[metric_key] = result.get(metric_key, 0) + process_nanos / 1_000_000  # Convert to milliseconds
 
-        # Extract plan-level metrics
-        plans = profile.get("plans", [])
-        for plan in plans:
-            plan_name = plan.get("description", "unknown")
+            # Extract plan-level metrics
+            plans = profile.get("plans", [])
+            for plan in plans:
+                plan_name = plan.get("description", "unknown")
 
-            # Extract optimization level metrics
-            for optimization in ["logical_optimization_nanos", "physical_optimization_nanos", "reduction_nanos"]:
-                optimization_nanos = plan.get(optimization, 0)
-                if optimization_nanos > 0:
-                    # Remove "_nanos" suffix from the metric name
-                    metric_name = optimization.replace("_nanos", "")
-                    metric_key = f"{plan_name}.{metric_name}.took_ms"
-                    result[metric_key] = result.get(metric_key, 0) + optimization_nanos / 1_000_000  # Convert to milliseconds
+                # Extract optimization level metrics
+                for optimization in ["logical_optimization_nanos", "physical_optimization_nanos", "reduction_nanos"]:
+                    optimization_nanos = plan.get(optimization, 0)
+                    if optimization_nanos > 0:
+                        # Remove "_nanos" suffix from the metric name
+                        metric_name = optimization.replace("_nanos", "")
+                        metric_key = f"{plan_name}.{metric_name}.took_ms"
+                        result[metric_key] = result.get(metric_key, 0) + optimization_nanos / 1_000_000  # Convert to milliseconds
 
         return result
 

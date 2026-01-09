@@ -283,6 +283,7 @@ class QueryParamSource(QueryIteratorParamSource):
             "cache": self._cache,
         }
 
+
 class EsqlProfileRunner(runner.Runner):
     """
     Runs an ES|QL query using profile: true, and adds the profile information to the result:
@@ -381,7 +382,6 @@ class EsqlProfileRunner(runner.Runner):
 
     def __repr__(self, *args, **kwargs):
         return "esql-profile"
-
 
 
 def register(registry):

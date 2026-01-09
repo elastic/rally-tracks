@@ -930,6 +930,23 @@
           "operation": "refresh",
           "tags": ["setup"]
         },
+        {% if p_include_force_merge %}
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "index": "nyc_taxis",
+            "request-timeout": 7200,
+            "max-num-segments": {{ force_merge_max_num_segments | default(5) }}
+          }
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh"
+        },
+        {
+          "operation": "wait-until-merges-finish"
+        },
+        {% endif %}
         {
           "operation": "create-nyc-taxis-sample-index",
           "tags": ["setup"]

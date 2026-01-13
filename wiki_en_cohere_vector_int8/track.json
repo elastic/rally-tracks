@@ -1,5 +1,5 @@
 {% import "rally.helpers" as rally with context %}
-{% set _base_url = (base_url | default("TODO_REPLACE_LINK")) %}
+{% set _base_url = (base_url | default("https://rally-tracks.elastic.co/wiki_en_cohere_vector_int8")) %}
 {
   "version": 2,
   "description": "Benchmark for vector search using Cohere embed-multilingual-v3 int8 embeddings on English Wikipedia",

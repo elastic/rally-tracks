@@ -16,6 +16,7 @@
 # under the License.
 
 import bz2
+import base64
 import json
 import logging
 import os
@@ -24,6 +25,15 @@ from typing import List
 logger = logging.getLogger(__name__)
 QUERIES_FILENAME: str = "queries.json.bz2"
 TRUE_KNN_FILENAME: str = "true_neighbors.json.bz2"
+
+def query_parser(vector_query: bytes) -> List[int]:
+    vector_bytes = base64.b64decode(vector_query[:-1])
+    vector_list = list(vector_bytes)
+    # switch from uint8 to int8
+    for i in range(len(vector_list)):
+        if vector_list[i] > 127:
+            vector_list[i] -= 256
+    return vector_list
 
 
 class KnnParamSource:
@@ -43,7 +53,7 @@ class KnnParamSource:
         cwd = os.path.dirname(__file__)
         with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
             for vector_query in queries_file:
-                self._queries.append(json.loads(vector_query))
+                self._queries.append(query_parser(vector_query))
         self._iters = 0
         self._maxIters = len(self._queries)
         self.infinite = True
@@ -86,7 +96,7 @@ class KnnVectorStore:
                 self._query_nearest_neighbor_docids.append(json.loads(docids))
         with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
             for vector_query in queries_file:
-                self._queries.append(json.loads(vector_query))
+                self._queries.append(query_parser(vector_query))
 
     def get_query_vectors(self) -> List[List[float]]:
         return self._queries

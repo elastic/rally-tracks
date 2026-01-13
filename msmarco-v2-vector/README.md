@@ -27,7 +27,7 @@ done
 $ ls -1 cohere-documents-* > files.txt
 ```
 
-This will build 47 `cohere-documents-XX.json` file for the entire dataset of 138.3M documents and then bzip then. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
+This will build 47 `cohere-documents_float-XX.json` file for the entire dataset of 138.3M documents and then bzip then. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
 ### Example Document
 
 ```json
@@ -68,12 +68,14 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `vector_index_type` (default: bbq_hnsw)
  - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.
  - `index_refresh_interval` (default: unset): The index refresh interval.
+ - `corpora` (default: ["msmarco-v2_float-initial-indexing-1", ..."msmarco-v2_float-initial-indexing-8")
  - `initial_indexing_bulk_indexing_clients` (default: 5)
  - `initial_indexing_ingest_percentage` (default: 100)
  - `initial_indexing_bulk_size` (default: 500)
  - `initial_indexing_bulk_warmup` (default: 40)
  - `number_of_shards` (default: 1)
  - `number_of_replicas` (default: 0)
+ - `parallel_corpora` default: ("msmarco-v2_float-parallel-indexing")
  - `parallel_indexing_bulk_clients` (default: 1)
  - `parallel_indexing_bulk_target_throughput` (default: 1)
  - `parallel_indexing_search_clients` (default: 3)
@@ -83,6 +85,27 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `search_ops` (default: [(10, 20, 0), (10, 20, 20), (10, 50, 0), (10, 50, 20), (10, 100, 0), (10, 100, 20), (10, 200, 0), (10, 200, 20), (10, 500, 0), (10, 500, 20), (10, 1000, 0), (10, 1000, 20), (100, 120, 0), (100, 120, 120), (100, 200, 0), (100, 200, 120), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]): The search and recall operations to run (k, ef_search, num_rescore).
  - `standalone_search_iterations` (default: 10000)
  - `vector_index_type` (default: "int8_hnsw"): The index kind for storing the vectors.
+
+For running with Base64 encoded strings, use a parameter file like:
+
+```json
+{
+  "vector_index_type": "bbq_disk",
+  "corpora": [
+    "msmarco-v2_base64-initial-indexing-1",
+    "msmarco-v2_base64-initial-indexing-2",
+    "msmarco-v2_base64-initial-indexing-3",
+    "msmarco-v2_base64-initial-indexing-4",
+    "msmarco-v2_base64-initial-indexing-5",
+    "msmarco-v2_base64-initial-indexing-6",
+    "msmarco-v2_base64-initial-indexing-7",
+    "msmarco-v2_base64-initial-indexing-8"
+  ],
+  "parallel_corpora": [
+    "msmarco-v2_base64-parallel-indexing"
+  ]
+}
+```
 
 ### Parameters for ingest-autoscale challenge
 

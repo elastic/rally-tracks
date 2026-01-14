@@ -1,3 +1,4 @@
+{% set p_corpora = (corpora | default(["msmarco-v2_float-initial-indexing-1", "msmarco-v2_float-initial-indexing-2", "msmarco-v2_float-initial-indexing-3", "msmarco-v2_float-initial-indexing-4", "msmarco-v2_float-initial-indexing-5", "msmarco-v2_float-initial-indexing-6", "msmarco-v2_float-initial-indexing-7", "msmarco-v2_float-initial-indexing-8"])) %}
 {
   "name": "create-index",
   "operation-type": "create-index",
@@ -14,14 +15,18 @@
 {
   "name": "initial-documents-indexing",
   "operation-type": "bulk",
-  "corpora": ["msmarco-v2-initial-indexing-1", "msmarco-v2-initial-indexing-2", "msmarco-v2-initial-indexing-3", "msmarco-v2-initial-indexing-4", "msmarco-v2-initial-indexing-5", "msmarco-v2-initial-indexing-6", "msmarco-v2-initial-indexing-7", "msmarco-v2-initial-indexing-8"],
+  "corpora":  [
+    {% for doc_id in p_corpora %}
+       {{doc_id | tojson}}
+       {{ ", " if not loop.last else "" }}
+   {% endfor %}],
   "bulk-size": {{initial_indexing_bulk_size | default(500)}},
   "ingest-percentage": {{initial_indexing_ingest_percentage | default(100)}}
 },
 {
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
-  "corpora": "msmarco-v2-parallel-indexing",
+  "corpora": {{parallel_corpora | default("msmarco-v2_float-parallel-indexing") | tojson }},
   "bulk-size": {{parallel_indexing_bulk_size | default(50)}},
   "ingest-percentage": {{parallel_indexing_ingest_percentage | default(100)}}
 }

@@ -15,8 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import bz2
 import base64
+import bz2
 import json
 import logging
 import os

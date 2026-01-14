@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 QUERIES_FILENAME: str = "queries.json.bz2"
 TRUE_KNN_FILENAME: str = "true_neighbors.json.bz2"
 
+
 def query_parser(vector_query: bytes) -> List[int]:
     vector_bytes = base64.b64decode(vector_query[:-1])
     vector_list = list(vector_bytes)
@@ -105,9 +106,7 @@ class KnnVectorStore:
         if (query_id < 0) or (query_id >= len(self._query_nearest_neighbor_docids)):
             raise ValueError(f"Unknown query with id: '{query_id}' provided")
         if (size < 0) or (size > len(self._query_nearest_neighbor_docids[query_id])):
-            raise ValueError(
-                f"Invalid size: '{size}' provided for query with id: '{query_id}'"
-            )
+            raise ValueError(f"Invalid size: '{size}' provided for query with id: '{query_id}'")
         return self._query_nearest_neighbor_docids[query_id][:size]
 
 

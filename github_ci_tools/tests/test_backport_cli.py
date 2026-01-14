@@ -244,12 +244,13 @@ def test_backport_run(backport_mod, gh_mock, monkeypatch, case: BackportCliCase)
     backport_mod.configure(args)
 
     prefetched = backport_mod.prefetch_prs(args.pr_number, args.lookback_days, lookback_mode=args.lookback_mode)
+    result = None
     try:
         match args.command:
             case "label":
                 result = backport_mod.run_label(prefetched, args.remove)
             case "remind":
-                result = backport_mod.run_remind(prefetched, args.remove)
+                result = backport_mod.run_remind(prefetched, args.lookback_days, args.remove)
                 for pr in prefetched:
                     if pr.get("needs_pending", False) is False:
                         case.gh_interaction.expected_order += expected_actions_for_prs(
@@ -264,5 +265,6 @@ def test_backport_run(backport_mod, gh_mock, monkeypatch, case: BackportCliCase)
     except Exception as e:
         pytest.fail(f"backport_run raised unexpected exception: {e}")
 
+    assert result is not None
     assert result == 0
     gh_mock.assert_calls_in_order(*case.gh_interaction.expected_order)

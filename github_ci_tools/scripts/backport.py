@@ -50,7 +50,7 @@ Quick usage:
 
 Logic:
     Add label when: no version label (regex vX(.Y)), no pending or 'backport' label.
-    Remind when: pending label present AND (no previous reminder OR last reminder older than 14 days).
+    Remind when: pending label present AND (no previous reminder OR last reminder older than lookback window).
     Marker: <!-- backport-pending-reminder -->
 
 Exit codes: 0 success / 1 error.
@@ -77,7 +77,6 @@ ISO_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 VERSION_LABEL_RE = re.compile(r"^v\d{1,2}(?:\.\d{1,2})?$")
 BACKPORT_LABEL = "backport"
 PENDING_LABEL = "backport pending"
-PENDING_REMINDER_AGE_DAYS = 14
 PENDING_LABEL_COLOR = "fff2bf"
 COULD_NOT_CREATE_LABEL_ERROR = "Could not create label"
 COULD_NOT_REMOVE_LABEL_ERROR = "Could not remove label"
@@ -306,12 +305,12 @@ def delete_reminders(info: PRInfo) -> None:
             LOG.info(f"Deleted comment ID {comment_id} on PR #{info.number}")
 
 
-def run_remind(prefetched_prs: list[dict[str, Any]], remove: bool) -> int:
+def run_remind(prefetched_prs: list[dict[str, Any]], lookback_days: int, remove: bool) -> int:
     """Post reminders using prefetched merged PR list."""
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for reminding")
     now = dt.datetime.now(dt.timezone.utc)
-    threshold = now - dt.timedelta(days=PENDING_REMINDER_AGE_DAYS)
+    threshold = now - dt.timedelta(days=lookback_days)
     errors = 0
     for pr in prefetched_prs:
         try:
@@ -490,7 +489,7 @@ def main():
         case "label":
             return run_label(prefetched, args.remove)
         case "remind":
-            return run_remind(prefetched, args.remove)
+            return run_remind(prefetched, args.lookback_days, args.remove)
         case _:
             raise NotImplementedError(f"Unknown command {args.command}")
 

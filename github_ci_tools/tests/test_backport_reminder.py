@@ -80,19 +80,19 @@ def test_get_issue_comments(backport_mod, gh_mock, case: GHInteractionCase):
 
 
 @cases(
-    # pr_that_has_no_pending_label_does_not_get_commented=GHInteractionCase(
-    #     repo=RepoCase(prs=[case_by_number(101)]),
-    #     routes=[
-    #         *build_gh_routes_comments("GET", [case_by_number(101)]),
-    #     ],
-    # ),
-    # pr_has_pending_label_and_needs_reminder_gets_one=GHInteractionCase(
-    #     repo=RepoCase(prs=[case_by_number(108)]),
-    #     routes=[
-    #         *build_gh_routes_comments("GET", [case_by_number(108)]),
-    #         *build_gh_routes_comments("POST", [case_by_number(108)]),
-    #     ],
-    # ),
+    pr_that_has_no_pending_label_does_not_get_commented=GHInteractionCase(
+        repo=RepoCase(prs=[case_by_number(101)]),
+        routes=[
+            *build_gh_routes_comments("GET", [case_by_number(101)]),
+        ],
+    ),
+    pr_has_pending_label_and_needs_reminder_gets_one=GHInteractionCase(
+        repo=RepoCase(prs=[case_by_number(108)]),
+        routes=[
+            *build_gh_routes_comments("GET", [case_by_number(108)]),
+            *build_gh_routes_comments("POST", [case_by_number(108)]),
+        ],
+    ),
     all_prs_have_pending_label_and_needs_reminder_get_one=GHInteractionCase(
         repo=RepoCase(prs=select_pull_requests(backport_pending_in_labels=True, needs_reminder=True)),
         routes=[
@@ -100,20 +100,19 @@ def test_get_issue_comments(backport_mod, gh_mock, case: GHInteractionCase):
             *build_gh_routes_comments("POST", select_pull_requests(backport_pending_in_labels=True, needs_reminder=True)),
         ],
     ),
-    # all_prs_not_need_pending_and_has_reminder_does_not_get_one=GHInteractionCase(
-    #     repo=RepoCase(prs=select_pull_requests(backport_pending_in_labels=False, needs_reminder=False)),
-    #     routes=[
-    #         *build_gh_routes_comments("GET", select_pull_requests(backport_pending_in_labels=False, needs_reminder=False)),
-    #     ],
-    # ),
+    all_prs_not_need_pending_and_has_reminder_does_not_get_one=GHInteractionCase(
+        repo=RepoCase(prs=select_pull_requests(backport_pending_in_labels=False, needs_reminder=False)),
+        routes=[
+            *build_gh_routes_comments("GET", select_pull_requests(backport_pending_in_labels=False, needs_reminder=False)),
+        ],
+    ),
 )
 def test_remind_logic(backport_mod, gh_mock, case: GHInteractionCase):
     """Test of the exact logic as in run_label."""
     case.register(gh_mock)
-    threshold = backport_mod.dt.datetime.now(backport_mod.dt.timezone.utc) - backport_mod.dt.timedelta(days=case.pending_reminder_age_days)
+    threshold = backport_mod.dt.datetime.now(backport_mod.dt.timezone.utc) - backport_mod.dt.timedelta(days=backport_mod.PENDING_REMINDER_AGE_DAYS)
     for pr in case.repo.prs:
         # Test of the exact logic as in run_remind.
-
         needs_reminder = backport_mod.pr_needs_reminder(backport_mod.PRInfo.from_dict(asdict(pr)), threshold)
         assert needs_reminder is pr.needs_reminder
 

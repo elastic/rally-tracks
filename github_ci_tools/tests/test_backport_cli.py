@@ -46,23 +46,16 @@ from github_ci_tools.tests.utils import TEST_REPO, GHRoute
         expected_log_level=logging.INFO,
     ),
     remind_basic=BackportCliCase(
-        argv=["backport.py", "remind", "--lookback-days", "10", "--pending-reminder-age-days", "5"],
+        argv=["backport.py", "remind", "--lookback-days", "10"],
         env={"BACKPORT_TOKEN": "tok", "GITHUB_REPOSITORY": TEST_REPO},
-        expected_args={"command": "remind", "lookback_days": 10, "lookback_mode": "updated", "pending_reminder_age_days": 5},
+        expected_args={"command": "remind", "lookback_days": 10, "lookback_mode": "updated"},
         expected_config={"repo": TEST_REPO, "command": "remind", "verbose": 0, "quiet": 0},
         expected_log_level=logging.INFO,
     ),
     remind_default_pending_age=BackportCliCase(
         argv=["backport.py", "remind"],
         env={"BACKPORT_TOKEN": "tok"},
-        expected_args={"command": "remind", "lookback_days": 7, "pending_reminder_age_days": 14},
-        expected_config={"repo": TEST_REPO, "command": "remind", "verbose": 0, "quiet": 0},
-        expected_log_level=logging.INFO,
-    ),
-    remind_override_pending_age=BackportCliCase(
-        argv=["backport.py", "remind", "--lookback-days", "3", "--pending-reminder-age-days", "14"],
-        env={"BACKPORT_TOKEN": "tok"},
-        expected_args={"command": "remind", "lookback_days": 3, "pending_reminder_age_days": 14},
+        expected_args={"command": "remind", "lookback_days": 7},
         expected_config={"repo": TEST_REPO, "command": "remind", "verbose": 0, "quiet": 0},
         expected_log_level=logging.INFO,
     ),
@@ -190,12 +183,11 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, gh_mock, case: GHInteracti
         ),
     ),
     reminds_those_within_pending=BackportCliCase(
-        argv=["backport.py", "remind", "--lookback-days", "7", "--pending-reminder-age-days", "30"],
+        argv=["backport.py", "remind", "--lookback-days", "7"],
         gh_interaction=GHInteractionCase(
             # Has all the PRs
             repo=RepoCase(prs=select_pull_requests()),
             lookback_days=7,
-            pending_reminder_age_days=30,
             expected_prefetch_prs=[asdict(pr) for pr in select_pull_requests_by_lookback(7)],
             routes=[
                 GHRoute(
@@ -257,11 +249,7 @@ def test_backport_run(backport_mod, gh_mock, monkeypatch, case: BackportCliCase)
             case "label":
                 result = backport_mod.run_label(prefetched, args.remove)
             case "remind":
-                result = backport_mod.run_remind(
-                    prefetched,
-                    args.pending_reminder_age_days,
-                    args.remove,
-                )
+                result = backport_mod.run_remind(prefetched, args.remove)
                 for pr in prefetched:
                     if pr.get("needs_pending", False) is False:
                         case.gh_interaction.expected_order += expected_actions_for_prs(

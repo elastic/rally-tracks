@@ -40,18 +40,17 @@ Commands:
 Flags:
     --lookback-days N                    Days to scan in bulk
     --lookback-mode MODE                 Bulk mode lookback basis: updated (default) or merged
-    --pending-reminder-age-days M           Days between reminders
     --remove                             Remove 'backport pending' label
 
 Quick usage:
     backport.py --pr-number 42 label
     backport.py --repo owner/name label --lookback-days 7
-    backport.py --repo owner/name remind --lookback-days 30 --pending-reminder-age-days 14
+    backport.py --repo owner/name remind --lookback-days 30
     backport.py --repo owner/name --dry-run -vv label --lookback-days 30
 
 Logic:
     Add label when: no version label (regex vX(.Y)), no pending or 'backport' label.
-    Remind when: pending label present AND (no previous reminder OR last reminder older than M days).
+    Remind when: pending label present AND (no previous reminder OR last reminder older than 14 days).
     Marker: <!-- backport-pending-reminder -->
 
 Exit codes: 0 success / 1 error.
@@ -78,6 +77,7 @@ ISO_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 VERSION_LABEL_RE = re.compile(r"^v\d{1,2}(?:\.\d{1,2})?$")
 BACKPORT_LABEL = "backport"
 PENDING_LABEL = "backport pending"
+PENDING_REMINDER_AGE_DAYS = 14
 PENDING_LABEL_COLOR = "fff2bf"
 COULD_NOT_CREATE_LABEL_ERROR = "Could not create label"
 COULD_NOT_REMOVE_LABEL_ERROR = "Could not remove label"
@@ -306,12 +306,12 @@ def delete_reminders(info: PRInfo) -> None:
             LOG.info(f"Deleted comment ID {comment_id} on PR #{info.number}")
 
 
-def run_remind(prefetched_prs: list[dict[str, Any]], pending_reminder_age_days: int, remove: bool) -> int:
+def run_remind(prefetched_prs: list[dict[str, Any]], remove: bool) -> int:
     """Post reminders using prefetched merged PR list."""
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for reminding")
     now = dt.datetime.now(dt.timezone.utc)
-    threshold = now - dt.timedelta(days=pending_reminder_age_days)
+    threshold = now - dt.timedelta(days=PENDING_REMINDER_AGE_DAYS)
     errors = 0
     for pr in prefetched_prs:
         try:
@@ -396,7 +396,7 @@ def prefetch_prs(pr_number: int | None, lookback_days: int, lookback_mode: str =
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Backport utilities",
-        epilog="""\nExamples:\n  backport.py --pr-number 42 label\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30 --pending-reminder-age-days 14\n  backport.py --dry-run -vv label --lookback-days 30\n\nSingle PR mode fetches PR by number (--pr-number) .\nBulk mode searches merged PRs updated within lookback (--lookback-days).\n""",
+        epilog="""\nExamples:\n  backport.py --pr-number 42 label\n  backport.py label --lookback-days 7\n  backport.py remind --lookback-days 30\n  backport.py --dry-run -vv label --lookback-days 30\n\nSingle PR mode fetches PR by number (--pr-number) .\nBulk mode searches merged PRs updated within lookback (--lookback-days).\n""",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
@@ -471,13 +471,6 @@ def parse_args() -> argparse.Namespace:
         help="Bulk mode lookback basis: 'updated' (default) or 'merged'.",
     )
     p_remind.add_argument(
-        "--pending-reminder-age-days",
-        type=int,
-        required=False,
-        default=14,
-        help="Days between reminders for the same PR (default: 14). Adds initial reminder if none posted yet.",
-    )
-    p_remind.add_argument(
         "--remove",
         action="store_true",
         default=False,
@@ -497,7 +490,7 @@ def main():
         case "label":
             return run_label(prefetched, args.remove)
         case "remind":
-            return run_remind(prefetched, args.pending_reminder_age_days, args.remove)
+            return run_remind(prefetched, args.remove)
         case _:
             raise NotImplementedError(f"Unknown command {args.command}")
 

@@ -110,7 +110,9 @@ def test_get_issue_comments(backport_mod, gh_mock, case: GHInteractionCase):
 def test_remind_logic(backport_mod, gh_mock, case: GHInteractionCase):
     """Test of the exact logic as in run_label."""
     case.register(gh_mock)
-    threshold = backport_mod.dt.datetime.now(backport_mod.dt.timezone.utc) - backport_mod.dt.timedelta(days=backport_mod.PENDING_REMINDER_AGE_DAYS)
+    threshold = backport_mod.dt.datetime.now(backport_mod.dt.timezone.utc) - backport_mod.dt.timedelta(
+        days=backport_mod.PENDING_REMINDER_AGE_DAYS
+    )
     for pr in case.repo.prs:
         # Test of the exact logic as in run_remind.
         needs_reminder = backport_mod.pr_needs_reminder(backport_mod.PRInfo.from_dict(asdict(pr)), threshold)

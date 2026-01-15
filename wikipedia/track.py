@@ -247,7 +247,9 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
             else:
                 raise ValueError("Unknown query type: " + self._query_type)
 
-            body["query"] = f"FROM {self._index_name} METADATA _id, _score, _source | WHERE { query_body } | KEEP _id, _score, _source | SORT _score DESC | LIMIT { self._size }"
+            body["query"] = (
+                f"FROM {self._index_name} METADATA _id, _score, _source | WHERE { query_body } | KEEP _id, _score, _source | SORT _score DESC | LIMIT { self._size }"
+            )
 
             return body
 
@@ -328,8 +330,8 @@ class EsqlProfileRunner(runner.Runner):
         body["profile"] = True
         pragma = params.get("pragma", {})
         if pragma:
-          body["pragma"] = pragma
-          body["accept_pragma_risks"] = True
+            body["pragma"] = pragma
+            body["accept_pragma_risks"] = True
 
         # Add optional filter if provided
         query_filter = params.get("filter")
@@ -364,10 +366,10 @@ class EsqlProfileRunner(runner.Runner):
 
                 # Add driver-level timing metrics
                 for metric in ["took", "cpu"]:
-                  result_metric_name = f"{driver_name}.{metric}_ms"
-                  driver_metric_name = f"{driver_name}.{metric}_nanos"
-                  metric_value = result.get(result_metric_name, 0)
-                  result[result_metric_name] = (metric_value + driver.get(driver_metric_name, 0)) / 1_000_000  # Convert to milliseconds
+                    result_metric_name = f"{driver_name}.{metric}_ms"
+                    driver_metric_name = f"{driver_name}.{metric}_nanos"
+                    metric_value = result.get(result_metric_name, 0)
+                    result[result_metric_name] = (metric_value + driver.get(driver_metric_name, 0)) / 1_000_000  # Convert to milliseconds
 
                 # Extract operator-level metrics
                 operators = driver.get("operators", [])
@@ -388,7 +390,6 @@ class EsqlProfileRunner(runner.Runner):
                     if processed_slices > 0:
                         metric_key = f"{driver_name}.{safe_operator_name}.processed_slices"
                         result[metric_key] = result.get(metric_key, 0) + processed_slices
-
 
             # Extract plan-level metrics
             plans = profile.get("plans", [])

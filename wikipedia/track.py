@@ -223,8 +223,17 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
         self._search_fields = self._params["search-fields"]
         self._size = params.get("size", 20)
         self._query_type = self._params["query-type"]
+        self._pragma = self._params.get("pragma", {})
 
     def params(self):
+
+        body = {}
+
+        # Add pragma if provided
+        if self._pragma:
+            body["pragma"] = self._pragma
+            body["accept_pragma_risks"] = True
+
         try:
             query = next(self._queries_iterator)
             if self._query_type == "query-string":
@@ -238,9 +247,9 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
             else:
                 raise ValueError("Unknown query type: " + self._query_type)
 
-            return {
-                "query": f"FROM {self._index_name} METADATA _id, _score, _source | WHERE { query_body } | KEEP _id, _score, _source | SORT _score DESC | LIMIT { self._size }",
-            }
+            body["query"] = f"FROM {self._index_name} METADATA _id, _score, _source | WHERE { query_body } | KEEP _id, _score, _source | SORT _score DESC | LIMIT { self._size }"
+
+            return body
 
         except StopIteration:
             self._queries_iterator = iter(self._sample_queries)
@@ -293,12 +302,14 @@ class EsqlProfileRunner(runner.Runner):
     - meta.parsing.took_ms: Time it took to parse the ESQL query
     - meta.preanalysis.took_ms: Preanalysis, including field_caps, enrich policies, lookup indices
     - meta.analysis.took_ms: Analysis time before optimizations
-    - meta.<plan>.cpu_ms: Total plan CPU time
-    - meta.<plan>.took_ms: Total plan took time
-    - meta.<plan>.logical_optimization.took_ms: Plan logical optimization took time
-    - meta.<plan>.physical_optimization.took_ms: Plan physical optimization took time
-    - meta.<plan>.reduction.took_ms: : Node reduction plan generation took time
-    - meta.<plan>.<operator>.process_ms: Processing time for each operator in the plan
+    - meta.<driver>.cpu_ms: Total plan CPU time
+    - meta.<driver>.took_ms: Total driver took time
+    - meta.<driver>.number: Total number of drivers used
+    - meta.<driver>.logical_optimization.took_ms: Plan logical optimization took time
+    - meta.<driver>.physical_optimization.took_ms: Plan physical optimization took time
+    - meta.<driver>.reduction.took_ms: : Node reduction plan generation took time
+    - meta.<driver>.<operator>.process_ms: Processing time for each operator in the plan
+    - meta.<driver>.<operator>.processed_slices: Processed slices (if available)
     """
 
     async def __call__(self, es, params):
@@ -315,6 +326,10 @@ class EsqlProfileRunner(runner.Runner):
         body = params.get("body", {})
         body["query"] = query
         body["profile"] = True
+        pragma = params.get("pragma", {})
+        if pragma:
+          body["pragma"] = pragma
+          body["accept_pragma_risks"] = True
 
         # Add optional filter if provided
         query_filter = params.get("filter")
@@ -342,12 +357,17 @@ class EsqlProfileRunner(runner.Runner):
             drivers = profile.get("drivers", [])
             for driver in drivers:
                 driver_name = driver.get("description", "unknown")
-                took_nanos = driver.get("took_nanos", 0)
-                cpu_nanos = driver.get("cpu_nanos", 0)
+
+                # Add number of drivers
+                driver_number_name = f"{driver_name}.number"
+                result[driver_number_name] = result.get(driver_number_name, 0) + 1
 
                 # Add driver-level timing metrics
-                result[f"{driver_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
-                result[f"{driver_name}.cpu_ms"] = cpu_nanos / 1_000_000
+                for metric in ["took", "cpu"]:
+                  result_metric_name = f"{driver_name}.{metric}_ms"
+                  driver_metric_name = f"{driver_name}.{metric}_nanos"
+                  metric_value = result.get(result_metric_name, 0)
+                  result[result_metric_name] = (metric_value + driver.get(driver_metric_name, 0)) / 1_000_000  # Convert to milliseconds
 
                 # Extract operator-level metrics
                 operators = driver.get("operators", [])
@@ -363,6 +383,12 @@ class EsqlProfileRunner(runner.Runner):
                     if process_nanos > 0:
                         metric_key = f"{driver_name}.{safe_operator_name}.process_ms"
                         result[metric_key] = result.get(metric_key, 0) + process_nanos / 1_000_000  # Convert to milliseconds
+
+                    processed_slices = status.get("processed_slices", 0)
+                    if processed_slices > 0:
+                        metric_key = f"{driver_name}.{safe_operator_name}.processed_slices"
+                        result[metric_key] = result.get(metric_key, 0) + processed_slices
+
 
             # Extract plan-level metrics
             plans = profile.get("plans", [])

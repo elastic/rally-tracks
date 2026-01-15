@@ -1,0 +1,26 @@
+{
+  "settings": {
+    {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+      {% if preload_pagecache %}
+    "index.store.preload": [ "vec", "vex", "vem", "veq", "veqm", "veb", "vebm"],
+      {% endif %}
+    "index.number_of_shards": {{number_of_shards | default(1)}},
+    "index.number_of_replicas": {{number_of_replicas | default(0)}}
+    {%- endif -%}{# non-serverless-index-settings-marker-end #}
+  },
+  "mappings": {
+    "dynamic": false,
+    "properties": {
+      "emb": {
+        "type": "dense_vector",
+        "element_type": "byte",
+        "dims": 1024,
+        "index": true,
+        "similarity": "max_inner_product",
+        "index_options": {
+          "type": {{ vector_index_type | default("hnsw") | tojson }}
+        }
+      }
+    }
+  }
+}

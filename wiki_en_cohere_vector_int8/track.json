@@ -1,0 +1,80 @@
+{% import "rally.helpers" as rally with context %}
+{% set _base_url = (base_url | default("https://rally-tracks.elastic.co/wiki_en_cohere_vector_int8")) %}
+{
+  "version": 2,
+  "description": "Benchmark for vector search using Cohere embed-multilingual-v3 int8 embeddings on English Wikipedia",
+  "indices": [
+    {
+      "name": "wiki_en_cohere_vector_int8",
+      "body": "index-{{ mapping_type | default("vectors-only-with-docid") }}-mapping.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "cohere_wiki_int8_indexing_1",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-en-docs-int8-0.ndjson.zst",
+          "document-count": 10000000,
+          "compressed-bytes": 11883832039,
+          "uncompressed-bytes": 18353551734
+        }
+      ]
+    },
+    {
+      "name": "cohere_wiki_int8_indexing_2",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-en-docs-int8-1.ndjson.zst",
+          "document-count": 10000000,
+          "compressed-bytes": 11910905120,
+          "uncompressed-bytes": 18354948606
+        }
+      ]
+    },
+    {
+      "name": "cohere_wiki_int8_indexing_3",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-en-docs-int8-2.ndjson.zst",
+          "document-count": 10000000,
+          "compressed-bytes": 11968327459,
+          "uncompressed-bytes": 18472725017
+        }
+      ]
+    },
+    {
+      "name": "cohere_wiki_int8_indexing_4",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-en-docs-int8-3.ndjson.zst",
+          "document-count": 10000000,
+          "compressed-bytes": 11947655863,
+          "uncompressed-bytes": 18438708158
+        }
+      ]
+    },
+    {
+      "name": "cohere_wiki_int8_indexing_5",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-en-docs-int8-4.ndjson.zst",
+          "document-count": 1488110,
+          "compressed-bytes": 1771207700,
+          "uncompressed-bytes": 2730343442
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

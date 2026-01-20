@@ -12,6 +12,7 @@
     "properties": {
       "vector": {
         "type": "dense_vector",
+        "element_type": {{ element_type | default("float") | tojson }},
         "dims" : 96,
         "index" : true,
         "similarity": "dot_product",

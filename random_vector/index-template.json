@@ -22,6 +22,7 @@
         },
         "emb": {
           "type": "dense_vector",
+          "element_type": {{ element_type | default("float") | tojson }},
           "dims":  {{ dims | default(128) | tojson }},
           "similarity": "cosine",
           "index_options": {
@@ -36,6 +37,7 @@
             },
             "emb": {
               "type": "dense_vector",
+              "element_type": {{ element_type | default("float") | tojson }},
               "dims":  {{ dims | default(128) | tojson }},
               "similarity": "cosine",
               "index_options": {

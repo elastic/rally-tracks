@@ -52,3 +52,4 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - dims (default: 128)
  - partitions (default: 1000)
  - rescore_oversample (default: 0)
+ - element_type (default: "float"): Sets the dense_vector element type.

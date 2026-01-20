@@ -21,7 +21,7 @@
       },
       "emb": {
         "type": "dense_vector",
-        "element_type": "float",
+        "element_type": {{ element_type | default("float") | tojson }},
         "dims": 768,
         "index": true,
         "similarity": "max_inner_product",

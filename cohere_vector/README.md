@@ -57,3 +57,4 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - post_ingest_sleep_duration (default: 30): Sleep duration in seconds.
  - standalone_search_iterations (default: 10000)
  - vector_index_type (default: "hnsw"): The index kind for storing the vectors.
+ - element_type (default: "float"): Sets the dense_vector element type.

@@ -77,6 +77,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `iterations` (default: 100) - Number of measurement iterations that each client executes.
 * `profile_iterations` (default: 100) - Number of profiling iterations that each client executes.
 * `search_clients` (default: 8) - Number of clients that issue search requests in the multi-client search challenges.
+* `vector_index_element_type` (default: "float"): Sets the dense_vector element type.
 
 ### License
 We use the same license for the data as the original data: [CC-SA-4.0](http://creativecommons.org/licenses/by-sa/4.0/).

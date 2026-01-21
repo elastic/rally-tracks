@@ -28,11 +28,13 @@
       },
       "titleVector": {
         "type": "dense_vector",
+        "element_type": {{ vector_index_element_type | default("float") | tojson }},
         "dims" : 768,
         "index" : true,
         "similarity": "dot_product",
         "index_options": {
-          "type": {{ vector_index_type | default("bbq_hnsw") | tojson }}
+          "type": {{ vector_index_type | default("bbq_hnsw") | tojson }},
+          "on_disk_rescore": {{ vector_index_on_disk_rescore | default(false) | tojson }}
         }
       },
       "acceptedAnswerId": {

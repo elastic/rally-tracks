@@ -53,7 +53,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 - standalone_search_clients (default: 8)
 - standalone_search_iterations (default: 10000)
 - vector_index_type (default: "hnsw"): The index kind for storing the vectors.
-- element_type (default: "float"): Sets the dense_vector element type.
+- vector_index_element_type (default: "float"): Sets the dense_vector element type.
 - search_ops (default: [[10, 20, 0], [10, 20, 1], [10, 20, 2], [10, 50, 1], [10, 50, 2], [10, 100, 1], [100, 120, 1], [100, 120, 2], [100, 200, 1], [100, 200, 2], [100, 500, 1], [100, 500, 2]]): The vector search operations, formattied [k, num_candidates, oversample], where `oversample` indicates the ratio of extra `k` to gather and then rescore.
 
 ### License

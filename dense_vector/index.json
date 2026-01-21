@@ -12,12 +12,13 @@
     "properties": {
       "vector": {
         "type": "dense_vector",
-        "element_type": {{ element_type | default("float") | tojson }},
+        "element_type": {{ vector_index_element_type | default("float") | tojson }},
         "dims" : 96,
         "index" : true,
         "similarity": "dot_product",
         "index_options": {
           "type": {{ vector_index_type | default("int8_hnsw") | tojson }},
+          "on_disk_rescore": {{ vector_index_on_disk_rescore | default(false) | tojson }},
           "m": 32,
           "ef_construction": 100
         }

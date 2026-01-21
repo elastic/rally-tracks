@@ -68,6 +68,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `base_url` (default: `https://rally-tracks.elastic.co/cohere-msmarco-v2-embed-english-v3`): Specifies the bucket path from where to download the data set.
  - `vector_index_type` (default: bbq_hnsw)
  - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.
+ - `index_merge_scheduler_auto_throttle` (default: false): Whether to enable auto-throttling for the merge scheduler.
  - `index_refresh_interval` (default: unset): The index refresh interval.
  - `corpora` (default: ["msmarco-v2_float-initial-indexing-1", ..., "msmarco-v2_float-initial-indexing-8"])
  - `initial_indexing_bulk_indexing_clients` (default: 5)

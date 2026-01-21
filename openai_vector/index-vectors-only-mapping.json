@@ -13,7 +13,7 @@
     "properties": {
       "emb": {
         "type": "dense_vector",
-        "element_type": {{ element_type | default("float") | tojson }},
+        "element_type": {{ vector_index_element_type | default("float") | tojson }},
         "dims": 1536,
         "index": true,
         "similarity": "dot_product",

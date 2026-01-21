@@ -23,7 +23,6 @@ class RawBulkIndex(BulkIndex):
     Bulk indexes the given documents and provides enhanced stats on the raw data and index lag for throughput analysis.
     """
 
-
     async def __call__(self, es, params):
         """
         Provides the same detailed response as the Bulk Runner base implementation but adds additional metrics

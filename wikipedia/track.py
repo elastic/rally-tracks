@@ -260,7 +260,7 @@ class QueryParamSource(QueryIteratorParamSource):
             if self._query_type == "query-string":
                 query_body = {"query_string": {"query": query, "default_field": self._params["search-fields"]}}
             elif self._query_type == "kql":
-                query_body = {"kql": {"query": query, "default_field": self._params["search-fields"] }}
+                query_body = {"kql": {"query": query, "default_field": self._params["search-fields"]}}
             elif self._query_type == "match":
                 query_body = {"bool": {"should": [{"match": {"title": query}}, {"match": {"content": query}}]}}
             elif self._query_type == "multi_match":

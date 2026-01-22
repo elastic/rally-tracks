@@ -31,6 +31,6 @@ class RawBulkIndex(BulkIndex):
         cases we might lag or be ahead depending on the cluster/load drivers ability to keep up.
         """
         meta_data = await super().__call__(es, params)
-        if params.get("detailed-results", False):
+        if params.get("detailed-results"):
             meta_data.update(params["param-source-stats"])
         return meta_data

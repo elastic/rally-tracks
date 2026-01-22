@@ -23,15 +23,14 @@ class RawBulkIndex(BulkIndex):
     Bulk indexes the given documents and provides enhanced stats on the raw data and index lag for throughput analysis.
     """
 
-    def __init__(self):
-        super().__init__()
-
-    def detailed_stats(self, params, response):
+    async def __call__(self, es, params):
         """
         Provides the same detailed response as the Bulk Runner base implementation but adds additional metrics
         regarding the message size field (the raw size) as well as how far the indexed data is ahead or behind
         the actual data (in relative seconds). In this case of throttling this should be close to 0 but in other
         cases we might lag or be ahead depending on the cluster/load drivers ability to keep up.
         """
-        stats = super().detailed_stats(params, response)
-        return {**stats, **params["param-source-stats"]}
+        meta_data = await super().__call__(es, params)
+        if params.get("detailed-results"):
+            meta_data.update(params["param-source-stats"])
+        return meta_data

@@ -52,6 +52,7 @@ node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'
 * `enable_logsdb` (default: false) Determines whether the logsdb index mode gets used. If set then index sorting is configured to only use `@timestamp` field and the `source_enabled` parameter will have no effect.
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
+* `use_doc_values_skipper` (default: true): Configures the `index.mapping.use_doc_values_skipper` index setting.
 * `source_mode` (default: unset) - Specifies the source mode to be used.
 
 ### License

@@ -1,0 +1,82 @@
+{
+  "name": "index-and-search",
+  "description": "",
+  "default": true,
+  "schedule": [
+    {
+      "operation": {
+        "operation-type": "delete-index"
+      }
+    },
+    {
+      "name": "create-index",
+      "operation": "create-index"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": "check-cluster-health"
+    },
+    {
+      "name": "initial-documents-indexing",
+      "operation": "initial-documents-indexing",
+      "warmup-time-period": {{ initial_indexing_bulk_warmup | default(40) | int }},
+      "clients": {{ initial_indexing_bulk_indexing_clients | default(5) | int }}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "wait-until-merges-finish-after-index",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+    {
+      "name": "post-ingest-sleep",
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ post_ingest_sleep_duration|default(30) }}
+      }
+    },
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    {
+      "name": "hybrid-search-bm25-knn-single-client",
+      "operation": "hybrid-search-bm25-knn",
+      "warmup-iterations": 1000,
+      "iterations": {{ standalone_search_iterations | default(10000) | int }}
+    },
+    {
+    "name": "esql-hybrid-search-bm25-knn-single-client",
+    "operation": "esql-hybrid-search-bm25-knn",
+    "warmup-iterations": 1000,
+    "iterations": {{ standalone_search_iterations | default(10000) | int }}
+    },
+    {
+      "name": "hybrid-search-bm25-knn-multiple-clients",
+      "operation": "hybrid-search-bm25-knn",
+      "warmup-iterations": 1000,
+      "iterations": {{ standalone_search_iterations | default(10000) | int }},
+      "clients": {{ standalone_search_clients | default(8) | int }}
+    },
+    {
+    "name": "esql-hybrid-search-bm25-knn-multiple-clients",
+    "operation": "esql-hybrid-search-bm25-knn",
+    "warmup-iterations": 1000,
+    "iterations": {{ standalone_search_iterations | default(10000) | int }},
+    "clients": {{ standalone_search_clients | default(8) | int }}
+    }
+  ]
+}

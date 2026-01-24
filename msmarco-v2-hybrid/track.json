@@ -1,0 +1,698 @@
+{% import "rally.helpers" as rally with context %}
+{% set _base_url = (base_url | default("https://rally-tracks.elastic.co/cohere-msmarco-v2-embed-english-v3")) %}
+{
+  "version": 2,
+  "description": "Benchmark for vector search with msmarco-v2 passage data",
+  "dependencies": [
+    "pytrec_eval==0.5",
+    "numpy"
+  ],
+  "indices": [
+    {
+      "name": "msmarco-v2",
+      "body": "index-vectors-with-text-mapping.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "msmarco-v2_float-initial-indexing-1",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-01.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28876793130,
+          "uncompressed-bytes": 69370756479
+        },
+        {
+          "source-file": "cohere-documents-02.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28874410235,
+          "uncompressed-bytes": 69372610608
+        },
+        {
+          "source-file": "cohere-documents-03.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28870107274,
+          "uncompressed-bytes": 69357935898
+        },
+        {
+          "source-file": "cohere-documents-04.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28819385209,
+          "uncompressed-bytes": 69387568508
+        },
+        {
+          "source-file": "cohere-documents-05.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28775523169,
+          "uncompressed-bytes": 69365547764
+        },
+        {
+          "source-file": "cohere-documents-06.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28667861465,
+          "uncompressed-bytes": 69376763339
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_float-initial-indexing-2",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-07.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28813530857,
+          "uncompressed-bytes": 69373769167
+        },
+        {
+          "source-file": "cohere-documents-08.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28795476365,
+          "uncompressed-bytes": 69394717950
+        },
+        {
+          "source-file": "cohere-documents-09.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28908115037,
+          "uncompressed-bytes": 69390811579
+        },
+        {
+          "source-file": "cohere-documents-10.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28889397022,
+          "uncompressed-bytes": 69393991300
+        },
+        {
+          "source-file": "cohere-documents-11.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28859177108,
+          "uncompressed-bytes": 69382658750
+        },
+        {
+          "source-file": "cohere-documents-12.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28828516293,
+          "uncompressed-bytes": 69368235356
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_float-initial-indexing-3",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-13.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28632535253,
+          "uncompressed-bytes": 69289448579
+        },
+        {
+          "source-file": "cohere-documents-14.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28623097069,
+          "uncompressed-bytes": 69293416266
+        },
+        {
+          "source-file": "cohere-documents-15.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28746842258,
+          "uncompressed-bytes": 69328439091
+        },
+        {
+          "source-file": "cohere-documents-16.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28893139214,
+          "uncompressed-bytes": 69386227011
+        },
+        {
+          "source-file": "cohere-documents-17.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28850720945,
+          "uncompressed-bytes": 69382208085
+        },
+        {
+          "source-file": "cohere-documents-18.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28855618756,
+          "uncompressed-bytes": 69394344603
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_float-initial-indexing-4",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-19.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28821241695,
+          "uncompressed-bytes": 69388976244
+        },
+        {
+          "source-file": "cohere-documents-20.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28886203442,
+          "uncompressed-bytes": 69392178441
+        },
+        {
+          "source-file": "cohere-documents-21.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28796097723,
+          "uncompressed-bytes": 69370862933
+        },
+        {
+          "source-file": "cohere-documents-22.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28892752862,
+          "uncompressed-bytes": 69383010026
+        },
+        {
+          "source-file": "cohere-documents-23.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28824736931,
+          "uncompressed-bytes": 69390110271
+        },
+        {
+          "source-file": "cohere-documents-24.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28880424048,
+          "uncompressed-bytes": 69383061433
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_float-initial-indexing-5",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-25.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28836151415,
+          "uncompressed-bytes": 69386599821
+        },
+        {
+          "source-file": "cohere-documents-26.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28830061631,
+          "uncompressed-bytes": 69386821759
+        },
+        {
+          "source-file": "cohere-documents-27.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28856839314,
+          "uncompressed-bytes": 69381473943
+        },
+        {
+          "source-file": "cohere-documents-28.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28733471311,
+          "uncompressed-bytes": 69375548612
+        },
+        {
+          "source-file": "cohere-documents-29.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28791553222,
+          "uncompressed-bytes": 69375103260
+        },
+        {
+          "source-file": "cohere-documents-30.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28789821446,
+          "uncompressed-bytes": 69383630261
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_float-initial-indexing-6",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-31.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28780900737,
+          "uncompressed-bytes": 69381562222
+        },
+        {
+          "source-file": "cohere-documents-32.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28879008916,
+          "uncompressed-bytes": 69381166684
+        },
+        {
+          "source-file": "cohere-documents-33.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28808977002,
+          "uncompressed-bytes": 69376424253
+        },
+        {
+          "source-file": "cohere-documents-34.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28863959649,
+          "uncompressed-bytes": 69376031578
+        },
+        {
+          "source-file": "cohere-documents-35.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28822851938,
+          "uncompressed-bytes": 69383349470
+        },
+        {
+          "source-file": "cohere-documents-36.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28557724903,
+          "uncompressed-bytes": 69371848380
+        }
+       ]
+    },
+    {
+      "name": "msmarco-v2_float-initial-indexing-7",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-37.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28822771992,
+          "uncompressed-bytes": 69385430084
+        },
+        {
+          "source-file": "cohere-documents-38.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28836409229,
+          "uncompressed-bytes": 69385863364
+        },
+        {
+          "source-file": "cohere-documents-39.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28886057595,
+          "uncompressed-bytes": 69389450168
+        },
+        {
+          "source-file": "cohere-documents-40.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28860637573,
+          "uncompressed-bytes": 69387079658
+        },
+        {
+          "source-file": "cohere-documents-41.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28883333818,
+          "uncompressed-bytes": 69389464744
+        },
+        {
+          "source-file": "cohere-documents-42.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28870161085,
+          "uncompressed-bytes": 69379016493
+        }
+      ]
+    },
+    {
+        "name": "msmarco-v2_float-initial-indexing-8",
+        "base-url": "{{_base_url}}",
+        "documents": [
+        {
+          "source-file": "cohere-documents-43.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28917517489,
+          "uncompressed-bytes": 69380110843
+        },
+        {
+          "source-file": "cohere-documents-44.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28806194848,
+          "uncompressed-bytes": 69381438130
+        },
+        {
+          "source-file": "cohere-documents-45.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28791191781,
+          "uncompressed-bytes": 69427888107
+        },
+        {
+          "source-file": "cohere-documents-46.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 28812094268,
+          "uncompressed-bytes": 69398460297
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_float-parallel-indexing",
+      "base-url": "https://rally-tracks.elastic.co/cohere-msmarco-v2-embed-english-v3",
+      "documents": [
+        {
+          "source-file": "cohere-documents-47.json.bz2",
+          "document-count": 364198,
+          "compressed-bytes": 2953583160,
+          "uncompressed-bytes": 8421544547
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_base64-initial-indexing-1",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-01_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12374163247,
+          "uncompressed-bytes": 17578585938
+        },
+        {
+          "source-file": "cohere-documents-02_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12370580598,
+          "uncompressed-bytes": 17578145869
+        },
+        {
+          "source-file": "cohere-documents-03_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12363471153,
+          "uncompressed-bytes": 17566069533
+        },
+        {
+          "source-file": "cohere-documents-04_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12332991252,
+          "uncompressed-bytes": 17594684516
+        },
+        {
+          "source-file": "cohere-documents-05_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12316661004,
+          "uncompressed-bytes": 17574556255
+        },
+        {
+          "source-file": "cohere-documents-06_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12263764855,
+          "uncompressed-bytes": 17582950180
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_base64-initial-indexing-2",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-07_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12333228989,
+          "uncompressed-bytes": 17578382992
+        },
+        {
+          "source-file": "cohere-documents-08_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12318541752,
+          "uncompressed-bytes": 17598945890
+        },
+        {
+          "source-file": "cohere-documents-09_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12379052206,
+          "uncompressed-bytes": 17598131594
+        },
+        {
+          "source-file": "cohere-documents-10_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12372728949,
+          "uncompressed-bytes": 17599901532
+        },
+        {
+          "source-file": "cohere-documents-11_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12351544018,
+          "uncompressed-bytes": 17591096447
+        },
+        {
+          "source-file": "cohere-documents-12_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12337090689,
+          "uncompressed-bytes": 17578616804
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_base64-initial-indexing-3",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-13_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12252792514,
+          "uncompressed-bytes": 17515789650
+        },
+        {
+          "source-file": "cohere-documents-14_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12249698976,
+          "uncompressed-bytes": 17517583044
+        },
+        {
+          "source-file": "cohere-documents-15_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12306115838,
+          "uncompressed-bytes": 17546767235
+        },
+        {
+          "source-file": "cohere-documents-16_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12373496105,
+          "uncompressed-bytes": 17594502426
+        },
+        {
+          "source-file": "cohere-documents-17_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12332731059,
+          "uncompressed-bytes": 17585950402
+        },
+        {
+          "source-file": "cohere-documents-18_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12355900480,
+          "uncompressed-bytes": 17600068873
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_base64-initial-indexing-4",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-19_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12334214322,
+          "uncompressed-bytes": 17594586199
+        },
+        {
+          "source-file": "cohere-documents-20_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12368713438,
+          "uncompressed-bytes": 17596893284
+        },
+        {
+          "source-file": "cohere-documents-21_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12327472081,
+          "uncompressed-bytes": 17575206927
+        },
+        {
+          "source-file": "cohere-documents-22_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12376492665,
+          "uncompressed-bytes": 17592912194
+        },
+        {
+          "source-file": "cohere-documents-23_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12331794300,
+          "uncompressed-bytes": 17594144445
+        },
+        {
+          "source-file": "cohere-documents-24_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12366424962,
+          "uncompressed-bytes": 17588257693
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_base64-initial-indexing-5",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-25_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12335003793,
+          "uncompressed-bytes": 17590060752
+        },
+        {
+          "source-file": "cohere-documents-26_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12325849015,
+          "uncompressed-bytes": 17595619510
+        },
+        {
+          "source-file": "cohere-documents-27_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12351542543,
+          "uncompressed-bytes": 17593372212
+        },
+        {
+          "source-file": "cohere-documents-28_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12281785037,
+          "uncompressed-bytes": 17586532631
+        },
+        {
+          "source-file": "cohere-documents-29_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12307597659,
+          "uncompressed-bytes": 17581606079
+        },
+        {
+          "source-file": "cohere-documents-30_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12300694144,
+          "uncompressed-bytes": 17586308684
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_base64-initial-indexing-6",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-31_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12301406391,
+          "uncompressed-bytes": 17589158084
+        },
+        {
+          "source-file": "cohere-documents-32_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12362796294,
+          "uncompressed-bytes": 17591633970
+        },
+        {
+          "source-file": "cohere-documents-33_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12317487857,
+          "uncompressed-bytes": 17582302684
+        },
+        {
+          "source-file": "cohere-documents-34_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12345411439,
+          "uncompressed-bytes": 17584858269
+        },
+        {
+          "source-file": "cohere-documents-35_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12325427597,
+          "uncompressed-bytes": 17591330807
+        },
+        {
+          "source-file": "cohere-documents-36_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12204507257,
+          "uncompressed-bytes": 17576840320
+        }
+       ]
+    },
+    {
+      "name": "msmarco-v2_base64-initial-indexing-7",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-37_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12331561313,
+          "uncompressed-bytes": 17590332366
+        },
+        {
+          "source-file": "cohere-documents-38_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12333060464,
+          "uncompressed-bytes": 17591585885
+        },
+        {
+          "source-file": "cohere-documents-39_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12368832567,
+          "uncompressed-bytes": 17596033902
+        },
+        {
+          "source-file": "cohere-documents-40_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12350496750,
+          "uncompressed-bytes": 17593391600
+        },
+        {
+          "source-file": "cohere-documents-41_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12362124406,
+          "uncompressed-bytes": 17595343032
+        },
+        {
+          "source-file": "cohere-documents-42_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12354674746,
+          "uncompressed-bytes": 17583936285
+        }
+      ]
+    },
+    {
+        "name": "msmarco-v2_base64-initial-indexing-8",
+        "base-url": "{{_base_url}}",
+        "documents": [
+        {
+          "source-file": "cohere-documents-43_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12392648298,
+          "uncompressed-bytes": 17582987186
+        },
+        {
+          "source-file": "cohere-documents-44_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12308376403,
+          "uncompressed-bytes": 17587779171
+        },
+        {
+          "source-file": "cohere-documents-45_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12303651637,
+          "uncompressed-bytes": 17629721758
+        },
+        {
+          "source-file": "cohere-documents-46_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12302424070,
+          "uncompressed-bytes": 17602399459
+        }
+      ]
+    },
+    {
+      "name": "msmarco-v2_base64-parallel-indexing",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-47_base64.json.zst",
+          "document-count": 364198,
+          "compressed-bytes": 1501044589,
+          "uncompressed-bytes": 2133601661
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}
+
+

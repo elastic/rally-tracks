@@ -6,7 +6,8 @@
       {% endif %}
     "index.number_of_shards": {{number_of_shards | default(1)}},
     "index.number_of_replicas": {{number_of_replicas | default(0)}},
-    "index.merge.scheduler.auto_throttle": {{ index_merge_scheduler_auto_throttle | default(false) | tojson }}
+    "index.merge.scheduler.auto_throttle": {{ index_merge_scheduler_auto_throttle | default(false) | tojson }},
+    "index.merge.intra_merge_parallelism_enabled": {{ index_merge_intra_merge_parallelism_enabled | default(false) | tojson }}
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
   },
   "mappings": {

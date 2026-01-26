@@ -15,6 +15,9 @@
           "logsdb.route_on_sort_fields": true,
           {% endif %}
           "mapping": {
+            {% if use_doc_values_skipper | default(true) %}
+            "use_doc_values_skipper" : true,
+            {% endif %}
             "total_fields": {
               "limit": "10000"
             }

@@ -418,9 +418,11 @@ Track parameters are specified using `--track-params`; e.g., `--track-params="bu
 | `conflicts` | unset | The type of conflicts to simulate during bulk indexing. Valid values are `sequential` and `random`.  See the `conflicts` property in the [bulk operation documentation](https://esrally.readthedocs.io/en/latest/track.html#bulk) for details. This parameter is incompatible with data stream indexing. |
 | `conflict_probability` | `25` | A number between `0` and `100` defining the percentage of documents to replace on concflict. See the `conflict-probability` property in the [bulk operation documentation](https://esrally.readthedocs.io/en/latest/track.html#bulk) for details. This parameter is incompatible with data stream indexing. |
 | `on_conflict` | `index` | Valid values are `index` and `update`. Specifies if Rally should perform a new indexing action or update existing documents on id conflicts. See the `on-conflict` property in the [bulk operation documentation](https://esrally.readthedocs.io/en/latest/track.html#bulk) for details. This parameter is incompatible with data stream indexing. |
-| `data_stream` | `false` | By default, the track ingests to a standard index. A value of `true` ingests to a data stream.
+| `data_stream` | `false` | By default, the track ingests to a standard index. A value of `true` ingests to a data stream. |
+| `detailed_results` | `false` | Collect additional metrics. See the [documentation](https://esrally.readthedocs.io/en/latest/track.html#meta-data). |
 | `ingest_percentage` | `100` | A number between 0 and 100 representing how much of the document corpus should be indexed. |
 | `max_page_search_size` | `500` | Defines the initial composite aggregation page size for each checkpoint when creating transforms. |
+| `multi_target` | `false` | Index to multiple indices by event type. |
 | `number_of_shards` | `1` | Set the number of index primary shards. |
 | `number_of_replicas` | `0` | Set the number of replica shards per primary. |
 | `refresh_interval` | unest | Set the index refresh interval. |
@@ -440,9 +442,9 @@ Setup tasks for deleting/creating indices and data streams, deleting/creating te
 Showing details for track [github_archive]:
 
 * Description: GitHub timeline from gharchive.org
-* Documents: 21,435,282
-* Compressed Size: 7.6 GB
-* Uncompressed Size: 107.3 GB
+* Documents: 1,517,739,660
+* Compressed Size: 418.4GB
+* Uncompressed Size: 6.0TB
 
 ======================
 Challenge [index-only]
@@ -453,118 +455,78 @@ Index the document corpus
 Schedule:
 ----------
 
-1. delete-index
-2. delete-data-stream-gharchive
-3. create-index
-4. wait-for-cluster-health-status-green
-5. index (8 clients)
+1. create-ingest-pipeline-pipeline
+2. delete-index-gharchive
+3. delete-data-stream-gharchive
+4. delete-github-archive-template
+5. create-index-template
+6. create-index
+7. wait-for-cluster-health-status-green
+8. index (8 clients)
 
-========================================
-Challenge [parallel-indexing-and-search]
-========================================
-
-Index the document corpus, then perform parallel indexing and search operations
-
-Schedule:
-----------
-
-1. delete-index
-2. delete-data-stream-gharchive
-3. create-index
-4. wait-for-cluster-health-status-green
-5. index_corpora1 (8 clients)
-6. refresh-after-index
-7. add_filter_alias
-8. 3 parallel tasks (16 clients):
-	8.1 index_corpora2_parallel_task (8 clients)
-	8.2 alias_bool_query_1 (4 clients)
-	8.3 alias_bool_query_2 (4 clients)
-
-=============================================
-Challenge [index-and-search] (run by default)
-=============================================
-
-Index a document corpus, then search
-
-Schedule:
-----------
-
-1. delete-index
-2. delete-data-stream-gharchive
-3. create-index
-4. wait-for-cluster-health-status-green
-5. index (8 clients)
-6. refresh-after-index
-7. default
-8. default_1k
-```
-
-### Data streams
-
-```shell
-Showing details for track [github_archive]:
-
-* Description: GitHub timeline from gharchive.org
-* Documents: 21,435,282
-* Compressed Size: 7.6 GB
-* Uncompressed Size: 107.3 GB
-
-======================
-Challenge [index-only]
-======================
+==========================
+Challenge [index-only-1tb]
+==========================
 
 Index the document corpus
 
 Schedule:
 ----------
 
-1. delete-index-gharchive
-2. delete-all-data-streams
-3. delete-all-templates
-4. create-all-templates
-5. wait-for-cluster-health-status-green
-6. index (8 clients)
+1. create-ingest-pipeline-pipeline
+2. delete-index-gharchive
+3. delete-data-stream-gharchive
+4. delete-github-archive-template
+5. create-index-template
+6. create-index
+7. wait-for-cluster-health-status-green
+8. index_base_corpora (64 clients)
+9. index_1tb_raw (64 clients)
 
 ========================================
 Challenge [parallel-indexing-and-search]
 ========================================
 
-Index the document corpus, then perform parallel indexing and search operations
+Index the document corpus and perform additional searches
 
 Schedule:
 ----------
 
-1. delete-index-gharchive
-2. delete-all-data-streams
-3. delete-all-templates
-4. create-all-templates
-5. wait-for-cluster-health-status-green
-6. index_corpora1 (8 clients)
-7. refresh-after-index
-8. add_filter_alias
-9. 3 parallel tasks (16 clients):
-	9.1 index_corpora2_parallel_task (8 clients)
-	9.2 alias_bool_query_1 (4 clients)
-	9.3 alias_bool_query_2 (4 clients)
+1. create-ingest-pipeline-pipeline
+2. delete-index-gharchive
+3. delete-data-stream-gharchive
+4. delete-github-archive-template
+5. create-index-template
+6. create-index
+7. wait-for-cluster-health-status-green
+8. index_corpora1 (8 clients)
+9. refresh-after-index
+10. add_filter_alias
+11. 3 parallel tasks (16 clients):
+        11.1 index_corpora2_parallel_task (8 clients)
+        11.2 alias_bool_query_1 (4 clients)
+        11.3 alias_bool_query_2 (4 clients)
 
 =============================================
 Challenge [index-and-search] (run by default)
 =============================================
 
-Index a document corpus, then search
+Index the document corpus and search
 
 Schedule:
 ----------
 
-1. delete-index-gharchive
-2. delete-all-data-streams
-3. delete-all-templates
-4. create-all-templates
-5. wait-for-cluster-health-status-green
-6. index (8 clients)
-7. refresh-after-index
-8. default
-9. default_1k
+1. create-ingest-pipeline-pipeline
+2. delete-index-gharchive
+3. delete-data-stream-gharchive
+4. delete-github-archive-template
+5. create-index-template
+6. create-index
+7. wait-for-cluster-health-status-green
+8. index (8 clients)
+9. refresh-after-index
+10. default
+11. default_1k
 ```
 
 ### License

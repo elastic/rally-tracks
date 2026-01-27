@@ -1,0 +1,26 @@
+{
+  "name": "index_base_corpora",
+  "corpora": "github_archive0",
+  "operation-type": "bulk",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}}
+  {%- if conflicts is defined %},
+  "conflicts": "{{p_conflicts}}",
+  "on-conflict": "{{p_on_conflict}}",
+  "conflict-probability": {{p_conflict_probability}}
+  {%- endif %}
+  {{ rally.exists_set_param("detailed-results", p_detailed_results, default_value=False) }}
+},
+{
+  "name": "index_1tb_raw",
+  "corpora": ["github_archive1", "github_archive2", "github_archive3"],
+  "operation-type": "bulk",
+  "bulk-size": {{bulk_size | default(5000)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}}
+  {%- if conflicts is defined %},
+  "conflicts": "{{p_conflicts}}",
+  "on-conflict": "{{p_on_conflict}}",
+  "conflict-probability": {{p_conflict_probability}}
+  {%- endif %}
+  {{ rally.exists_set_param("detailed-results", p_detailed_results, default_value=False) }}
+}

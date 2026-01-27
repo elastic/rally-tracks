@@ -1,0 +1,37 @@
+{%- set lifecycle = "dlm" -%}
+{
+  "name": "dlm-benchmark",
+  "description": "Benchmark data stream lifecycle (DLM) performance with configurable poll interval and rollover settings. Supports creating thousands of data streams for scale testing.",
+  "schedule": [
+    {% include "tasks/dlm-setup.json" %},
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "dlm-bulk-source"
+      },
+      "clients": {{ p_bulk_indexing_clients }},
+      "params": {
+        "data-stream-prefix": "dlm-benchmark",
+        "data-stream-count": {{ p_dlm_datastream_count | default(10000) }},
+        "bulk-size": {{ p_bulk_size }}
+      }
+    },
+    {
+      "name": "wait-for-data-stream-lifecycle",
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ dlm_wait_time | default(60) }}
+      }
+    },
+    {
+      "name": "datastream-lifecycle-stats",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "GET",
+        "path": "/dlm-benchmark-*/_stats",
+        "body": null
+      }
+    }
+  ]
+}

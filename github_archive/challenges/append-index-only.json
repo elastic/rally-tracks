@@ -9,4 +9,19 @@
       "clients": {{bulk_indexing_clients | default(8)}}
     }
   ]
+},
+{
+  "name": "index-only-1tb",
+  "description": "Index the document corpus",
+  "schedule": [
+    {{ rally.collect(parts="../common/schedule_setup.json") }},
+    {
+      "operation": "index_base_corpora",
+      "clients": {{pre_index_bulk_indexing_clients | default(64)}}
+    },
+    {
+      "operation": "index_1tb_raw",
+      "clients": {{runtime_bulk_indexing_clients | default(64)}}
+    }
+  ]
 }

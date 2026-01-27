@@ -251,21 +251,14 @@ class HybridParamSource:
             "knn": knn_query
         }
 
-        # standard_retriever = {
-        #     "standard": {
-        #         "query": {
-        #             "combined_fields": {
-        #                 "query": query["text"],
-        #                 "fields": ["title", "text"]
-        #             }
-        #         }
-        #     }
-        # }
         standard_retriever = {
             "standard": {
                 "query": {
-                    "match": {
-                        "text": query["text"]
+                    "bool": {
+                        "should": [
+                            { "match": { "title": query["text"] } },
+                            { "match": { "text": query["text"] } }
+                        ]
                     }
                 }
             }
@@ -333,7 +326,7 @@ class EsqlHybridParamSource:
         if "filter" in self._params:
             knn_query += " and (" + self._params["filter"] + ")"
 
-        lexical_query = f"WHERE MATCH(text, ?query_text)"
+        lexical_query = f"WHERE MATCH(title, ?query_text) OR MATCH(text, ?query_text)"
 
         hybrid_query = f"FROM {self._index_name} METADATA _index, _id, _score"
         hybrid_query += f" | FORK ({lexical_query} | DROP emb) ({knn_query} | DROP emb) | FUSE | KEEP _index, _id, _score | LIMIT {self._size}"

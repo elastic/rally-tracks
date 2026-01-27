@@ -18,9 +18,6 @@
           "logsdb.default_sort_on_message_template": true,
           {% endif %}
           "mapping": {
-	    {% if use_doc_values_skipper | default(true) %}
-	    "use_doc_values_skipper" : true,
-            {% endif %}
             "total_fields": {
               "limit": "10000"
             }

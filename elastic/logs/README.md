@@ -231,7 +231,6 @@ The following parameters are available:
 * `recovery_max_operations_count (default: `16777216`) - The maximum number of translog operations to return in a single batch.
 * `patterned_text_message_field` (default: `false`) - If true use `pattern_text` for all message fields, else `match_only_text`. 
 * `patterned_text_index_options` (default: `docs`) - If set to `positions`, includes positions in the pattern_text message field index.
-* `use_doc_value_skipper` (default: `false`) - If true enable doc_value skippers on the @timestamp field in place of the BKD index
 
 ### Data Download Parameters
 

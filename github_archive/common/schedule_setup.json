@@ -1,8 +1,100 @@
-{%- if p_data_stream %}
 {
+  "name": "create-ingest-pipeline-pipeline",
   "operation": {
-    "name": "delete-index-gharchive",
+    "operation-type": "put-pipeline",
+    "include-in-reporting": false,
+    "id": "gharchive-pipeline",
+    "body": {
+      "description": "Ingest pipeline for the github_archive Rally track",
+      "processors": [
+        {
+          "set": {
+            "field": "@timestamp",
+            "value": {{ '"{{{_ingest.timestamp}}}"' }}
+          }
+        }{% if multi_target -%},
+        {
+          "reroute": {
+            "destination": "gharchive-event-push",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'PushEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-create",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'CreateEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-pr",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'PullRequestEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-comment",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'IssueCommentEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-watch",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'WatchEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-delete",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'DeleteEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-prreview",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'PullRequestReviewEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-issues",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'IssuesEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-fork",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'ForkEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-prreviewcomment",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'PullRequestReviewCommentEvent'"
+          }
+        }{% endif %}
+      ]
+    }
+  },
+  "tags": [
+    "setup"
+  ]
+},
+{
+  "name": "delete-index-gharchive",
+  "operation": {
     "operation-type": "delete-index",
+    "include-in-reporting": false,
     "index": "gharchive"
   },
   "tags": [
@@ -10,27 +102,32 @@
   ]
 },
 {
+  "name": "delete-data-stream-gharchive",
   "operation": {
-    "name": "delete-all-data-streams",
-    "operation-type": "delete-data-stream"
+    "operation-type": "delete-data-stream",
+    "include-in-reporting": false,
+    "data-stream": "gharchive*"
   },
   "tags": [
     "setup"
   ]
 },
 {
+  "name": "delete-github-archive-template",
   "operation": {
-    "name": "delete-all-templates",
-    "operation-type": "delete-composable-template"
+    "operation-type": "delete-composable-template",
+    "include-in-reporting": false,
+    "template": "github-archive-template"
   },
   "tags": [
     "setup"
   ]
 },
 {
+  "name": "create-index-template",
   "operation": {
-    "name": "create-all-templates",
     "operation-type": "create-composable-template",
+    "include-in-reporting": false,
     "request-params": {
       "create": "true"
     }
@@ -39,52 +136,34 @@
     "setup"
   ]
 },
+{%- if p_data_stream %}
 {
+  "name": "create-data-stream",
   "operation": {
-    "name": "wait-for-cluster-health-status-{{p_cluster_health}}",
-    "operation-type": "cluster-health",
-    "request-params": {
-      "wait_for_status": "{{p_cluster_health}}",
-      "wait_for_no_relocating_shards": "true"
-    },
-    "retry-until-success": true
+    "operation-type": "create-data-stream",
+    "include-in-reporting": false
   },
   "tags": [
     "setup"
   ]
-}
+},
 {%- else %}
 {
   "operation": {
-    "operation-type": "delete-index"
-  },
-  "tags": [
-    "setup"
-  ]
-},
-{
-  "operation": {
-    "name": "delete-data-stream-gharchive",
-    "operation-type": "delete-data-stream",
-    "data-stream": "gharchive"
-  },
-  "tags": [
-    "setup"
-  ]
-},
-{
-  "operation": {
     "operation-type": "create-index",
+    "include-in-reporting": false,
     "settings": {{ index_settings | default({}) | tojson }}
   },
   "tags": [
     "setup"
   ]
 },
+{% endif -%}
 {
+  "name": "wait-for-cluster-health-status-{{p_cluster_health}}",
   "operation": {
-    "name": "wait-for-cluster-health-status-{{p_cluster_health}}",
     "operation-type": "cluster-health",
+    "include-in-reporting": false,
     "request-params": {
       "wait_for_status": "{{p_cluster_health}}",
       "wait_for_no_relocating_shards": "true"
@@ -95,4 +174,3 @@
     "setup"
   ]
 }
-{% endif -%}

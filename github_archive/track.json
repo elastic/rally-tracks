@@ -3,10 +3,11 @@
 {%- set p_conflict_probability = conflict_probability | default(25) %}
 {%- set p_on_conflict = on_conflict | default('index') %}
 {%- set p_cluster_health = cluster_health | default('green') %}
+{% set p_detailed_results = detailed_results | default(false) -%}
+{% set _base_url = (base_url | default("https://rally-tracks.elastic.co/github_archive")) %}
 {
   "version": 2,
   "description": "GitHub timeline from gharchive.org",
-  {%- if p_data_stream %}
   "composable-templates": [
     {
       "name": "github-archive-template",
@@ -15,6 +16,7 @@
       "template": "index-template.json"
     }
   ],
+  {%- if p_data_stream %}
   "data-streams": [
     {
       "name": "gharchive"
@@ -23,15 +25,44 @@
   {%- else %}
   "indices": [
     {
-      "name": "gharchive",
-      "body": "index.json"
-    }
+      "name": "gharchive"
+    }{% if multi_target -%},
+    {
+      "name": "gharchive-event-push"
+    },
+    {
+      "name": "gharchive-event-create"
+    },
+    {
+      "name": "gharchive-event-pr"
+    },
+    {
+      "name": "gharchive-event-comment"
+    },
+    {
+      "name": "gharchive-event-watch"
+    },
+    {
+      "name": "gharchive-event-delete"
+    },
+    {
+      "name": "gharchive-event-prreview"
+    },
+    {
+      "name": "gharchive-event-issues"
+    },
+    {
+      "name": "gharchive-event-fork"
+    },
+    {
+      "name": "gharchive-event-prreviewcomment"
+    }{% endif %}
   ],
   {%- endif %}
   "corpora": [
     {
-      "name": "github_archive1",
-      "base-url": "https://rally-tracks.elastic.co/github_archive",
+      "name": "github_archive0",
+      "base-url": "{{_base_url}}",
       "documents": [
         {
           "source-file": "documents-20211001.json.bz2",
@@ -56,13 +87,7 @@
           "document-count": 3266945,
           "compressed-bytes": 1348701622,
           "uncompressed-bytes": 15284906890
-        }
-      ]
-    },
-    {
-    "name": "github_archive2",
-      "base-url": "https://rally-tracks.elastic.co/github_archive",
-      "documents": [
+        },
         {
           "source-file": "documents-20211005.json.bz2",
           "document-count": 3826969,
@@ -80,7 +105,721 @@
           "document-count": 1032874,
           "compressed-bytes": 354275829,
           "uncompressed-bytes": 3441940945
+        },
+        {
+          "source-file": "documents-20211008.json.zst",
+          "document-count": 1140800,
+          "compressed-bytes": 323227601,
+          "uncompressed-bytes": 3549512047
+        },
+        {
+          "source-file": "documents-20211009.json.zst",
+          "document-count": 1349859,
+          "compressed-bytes": 305331042,
+          "uncompressed-bytes": 3349041649
+        },
+        {
+          "source-file": "documents-20211010.json.zst",
+          "document-count": 1371894,
+          "compressed-bytes": 303714237,
+          "uncompressed-bytes": 3311508292
+        },
+        {
+          "source-file": "documents-20211011.json.zst",
+          "document-count": 1085079,
+          "compressed-bytes": 334677957,
+          "uncompressed-bytes": 4012048531
+        },
+        {
+          "source-file": "documents-20211012.json.zst",
+          "document-count": 1241591,
+          "compressed-bytes": 393790570,
+          "uncompressed-bytes": 6796627817
+        },
+        {
+          "source-file": "documents-20211013.json.zst",
+          "document-count": 1029920,
+          "compressed-bytes": 315858090,
+          "uncompressed-bytes": 3604569320
+        },
+        {
+          "source-file": "documents-20211014.json.zst",
+          "document-count": 1071193,
+          "compressed-bytes": 323693608,
+          "uncompressed-bytes": 3694536143
+        },
+        {
+          "source-file": "documents-20211015.json.zst",
+          "document-count": 1078139,
+          "compressed-bytes": 318712147,
+          "uncompressed-bytes": 3573656628
+        },
+        {
+          "source-file": "documents-20211016.json.zst",
+          "document-count": 1300098,
+          "compressed-bytes": 294208743,
+          "uncompressed-bytes": 3148804858
+        },
+        {
+          "source-file": "documents-20211017.json.zst",
+          "document-count": 1369883,
+          "compressed-bytes": 308691808,
+          "uncompressed-bytes": 3329895092
+        },
+        {
+          "source-file": "documents-20211018.json.zst",
+          "document-count": 1014229,
+          "compressed-bytes": 325117753,
+          "uncompressed-bytes": 3809949496
+        },
+        {
+          "source-file": "documents-20211019.json.zst",
+          "document-count": 1060244,
+          "compressed-bytes": 318847338,
+          "uncompressed-bytes": 3539680687
+        },
+        {
+          "source-file": "documents-20211020.json.zst",
+          "document-count": 1067527,
+          "compressed-bytes": 322645208,
+          "uncompressed-bytes": 3536875466
+        },
+        {
+          "source-file": "documents-20211021.json.zst",
+          "document-count": 1051387,
+          "compressed-bytes": 320252347,
+          "uncompressed-bytes": 3647509765
+        },
+        {
+          "source-file": "documents-20211022.json.zst",
+          "document-count":  257029,
+          "compressed-bytes": 67286647,
+          "uncompressed-bytes": 788482079
+        },
+        {
+          "source-file": "documents-20211023.json.zst",
+          "document-count":  103744,
+          "compressed-bytes": 24521430,
+          "uncompressed-bytes": 289932963
+        },
+        {
+          "source-file": "documents-20211024.json.zst",
+          "document-count":  163276,
+          "compressed-bytes": 34412798,
+          "uncompressed-bytes": 385516299
+        },
+        {
+          "source-file": "documents-20211025.json.zst",
+          "document-count":   57932,
+          "compressed-bytes": 14706748,
+          "uncompressed-bytes": 194439550
+        },
+        {
+          "source-file": "documents-20211029.json.zst",
+          "document-count":  681814,
+          "compressed-bytes": 214072530,
+          "uncompressed-bytes": 2761018552
+        },
+        {
+          "source-file": "documents-20211030.json.zst",
+          "document-count": 2222092,
+          "compressed-bytes": 540176636,
+          "uncompressed-bytes": 6712057324
+        },
+        {
+          "source-file": "documents-20211031.json.zst",
+          "document-count": 2307447,
+          "compressed-bytes": 551148700,
+          "uncompressed-bytes": 7010363029
+        }        
+      ]
+    },
+    {
+      "name": "github_archive1",
+      "base-url": "{{_base_url}}",
+      "documents": [
+          {
+            "source-file": "documents-20211101.json.zst",
+            "document-count": 3459956,
+            "compressed-bytes": 1120158723,
+            "uncompressed-bytes": 16237707169
+          },
+          {
+            "source-file": "documents-20211102.json.zst",
+            "document-count": 3197352,
+            "compressed-bytes": 1024424978,
+            "uncompressed-bytes": 13372137394
+          },
+          {
+            "source-file": "documents-20211103.json.zst",
+            "document-count": 3321785,
+            "compressed-bytes": 1070841483,
+            "uncompressed-bytes": 15185102455
+          },
+          {
+            "source-file": "documents-20211104.json.zst",
+            "document-count": 3330503,
+            "compressed-bytes": 1022727272,
+            "uncompressed-bytes": 14125341002
+          },
+          {
+            "source-file": "documents-20211105.json.zst",
+            "document-count": 3089465,
+            "compressed-bytes": 934952477,
+            "uncompressed-bytes": 11993685449
+          },
+          {
+            "source-file": "documents-20211106.json.zst",
+            "document-count": 2224859,
+            "compressed-bytes": 525894117,
+            "uncompressed-bytes": 6525933726
+          },
+          {
+            "source-file": "documents-20211107.json.zst",
+            "document-count": 2323724,
+            "compressed-bytes": 535503935,
+            "uncompressed-bytes": 6653636023
+          },
+          {
+            "source-file": "documents-20211108.json.zst",
+            "document-count": 3630415,
+            "compressed-bytes": 1128533475,
+            "uncompressed-bytes": 16088120844
+          },
+          {
+            "source-file": "documents-20211109.json.zst",
+            "document-count": 3466195,
+            "compressed-bytes": 1061072833,
+            "uncompressed-bytes": 13813960917
+          },
+          {
+            "source-file": "documents-20211110.json.zst",
+            "document-count": 3430620,
+            "compressed-bytes": 1052880718,
+            "uncompressed-bytes": 13884348386
+          },
+          {
+            "source-file": "documents-20211111.json.zst",
+            "document-count": 3259017,
+            "compressed-bytes": 981431487,
+            "uncompressed-bytes": 12487824223
+          },
+          {
+            "source-file": "documents-20211112.json.zst",
+            "document-count": 3154165,
+            "compressed-bytes": 921808093,
+            "uncompressed-bytes": 11597332311
+          },
+          {
+            "source-file": "documents-20211113.json.zst",
+            "document-count": 2261402,
+            "compressed-bytes": 526532147,
+            "uncompressed-bytes": 6421976688
+          },
+          {
+            "source-file": "documents-20211114.json.zst",
+            "document-count": 2358023,
+            "compressed-bytes": 528350937,
+            "uncompressed-bytes": 6482652488
+          },
+          {
+            "source-file": "documents-20211115.json.zst",
+            "document-count": 3489948,
+            "compressed-bytes": 1111918756,
+            "uncompressed-bytes": 15160272633
+          },
+          {
+            "source-file": "documents-20211116.json.zst",
+            "document-count": 3503810,
+            "compressed-bytes": 1120171341,
+            "uncompressed-bytes": 15119300899
+          },
+          {
+            "source-file": "documents-20211117.json.zst",
+            "document-count": 3405351,
+            "compressed-bytes": 1074133641,
+            "uncompressed-bytes": 13907173643
+          },
+          {
+            "source-file": "documents-20211118.json.zst",
+            "document-count": 3312198,
+            "compressed-bytes": 1060962393,
+            "uncompressed-bytes": 13899709983
+          },
+          {
+            "source-file": "documents-20211119.json.zst",
+            "document-count": 3087799,
+            "compressed-bytes": 972350142,
+            "uncompressed-bytes": 12780484616
+          },
+          {
+            "source-file": "documents-20211120.json.zst",
+            "document-count": 2185011,
+            "compressed-bytes": 516905092,
+            "uncompressed-bytes": 6345110339
+          },
+          {
+            "source-file": "documents-20211121.json.zst",
+            "document-count": 2249042,
+            "compressed-bytes": 531088110,
+            "uncompressed-bytes": 6635536544
+          },
+          {
+            "source-file": "documents-20211122.json.zst",
+            "document-count": 3386443,
+            "compressed-bytes": 1103770105,
+            "uncompressed-bytes": 15618526193
+          },
+          {
+            "source-file": "documents-20211123.json.zst",
+            "document-count": 3281947,
+            "compressed-bytes": 1035312583,
+            "uncompressed-bytes": 13376296413
+          },
+          {
+            "source-file": "documents-20211124.json.zst",
+            "document-count": 3275523,
+            "compressed-bytes": 1001172424,
+            "uncompressed-bytes": 13034922254
+          },
+          {
+            "source-file": "documents-20211125.json.zst",
+            "document-count": 3043898,
+            "compressed-bytes": 883753181,
+            "uncompressed-bytes": 11486018275
+          },
+          {
+            "source-file": "documents-20211126.json.zst",
+            "document-count": 2781786,
+            "compressed-bytes": 780218019,
+            "uncompressed-bytes": 10046805515
+          },
+          {
+            "source-file": "documents-20211127.json.zst",
+            "document-count": 2049398,
+            "compressed-bytes": 466971355,
+            "uncompressed-bytes": 5717844913
+          },
+          {
+            "source-file": "documents-20211128.json.zst",
+            "document-count": 2338164,
+            "compressed-bytes": 534075219,
+            "uncompressed-bytes": 6589931840
+          },
+          {
+            "source-file": "documents-20211129.json.zst",
+            "document-count": 3473617,
+            "compressed-bytes": 1114461835,
+            "uncompressed-bytes": 15321919278
+          },
+          {
+            "source-file": "documents-20211130.json.zst",
+            "document-count": 3580583,
+            "compressed-bytes": 1123094848,
+            "uncompressed-bytes": 15209934509
+          }        
+      ]
+    },
+    {
+    "name": "github_archive2",
+    "base-url": "{{_base_url}}",
+    "documents": [
+      {
+        "source-file": "documents-20211201.json.zst",
+        "document-count": 3607185,
+        "compressed-bytes": 1153822403,
+        "uncompressed-bytes": 15623913526
+      },
+      {
+        "source-file": "documents-20211202.json.zst",
+        "document-count": 3458209,
+        "compressed-bytes": 1055968404,
+        "uncompressed-bytes": 13650666797
+      },
+      {
+        "source-file": "documents-20211203.json.zst",
+        "document-count": 3254332,
+        "compressed-bytes": 969841492,
+        "uncompressed-bytes": 12404310132
+      },
+      {
+        "source-file": "documents-20211204.json.zst",
+        "document-count": 2469096,
+        "compressed-bytes": 556419610,
+        "uncompressed-bytes": 6912356058
+      },
+      {
+        "source-file": "documents-20211205.json.zst",
+        "document-count": 2468628,
+        "compressed-bytes": 546012029,
+        "uncompressed-bytes": 6781737526
+      },
+      {
+        "source-file": "documents-20211206.json.zst",
+        "document-count": 3623193,
+        "compressed-bytes": 1128089567,
+        "uncompressed-bytes": 15922978041
+      },
+      {
+        "source-file": "documents-20211207.json.zst",
+        "document-count": 3609173,
+        "compressed-bytes": 1076694082,
+        "uncompressed-bytes": 14321978167
+      },
+      {
+        "source-file": "documents-20211208.json.zst",
+        "document-count": 3517252,
+        "compressed-bytes": 1047762664,
+        "uncompressed-bytes": 13855719397
+      },
+      {
+        "source-file": "documents-20211209.json.zst",
+        "document-count": 3837425,
+        "compressed-bytes": 1147781622,
+        "uncompressed-bytes": 18043409319
+      },
+      {
+        "source-file": "documents-20211210.json.zst",
+        "document-count": 3522012,
+        "compressed-bytes": 1034028184,
+        "uncompressed-bytes": 14607250011
+      },
+      {
+        "source-file": "documents-20211211.json.zst",
+        "document-count": 2393475,
+        "compressed-bytes": 545593398,
+        "uncompressed-bytes": 6770510048
+      },
+      {
+        "source-file": "documents-20211212.json.zst",
+        "document-count": 2463806,
+        "compressed-bytes": 542374275,
+        "uncompressed-bytes": 6774772851
+      },
+      {
+        "source-file": "documents-20211213.json.zst",
+        "document-count": 3716569,
+        "compressed-bytes": 1145214010,
+        "uncompressed-bytes": 16870117000
+      },
+      {
+        "source-file": "documents-20211214.json.zst",
+        "document-count": 3756068,
+        "compressed-bytes": 1156715254,
+        "uncompressed-bytes": 16851525816
+      },
+      {
+        "source-file": "documents-20211215.json.zst",
+        "document-count": 3488516,
+        "compressed-bytes": 1075077444,
+        "uncompressed-bytes": 14001623143
+      },
+      {
+        "source-file": "documents-20211216.json.zst",
+        "document-count": 3425457,
+        "compressed-bytes": 1044374737,
+        "uncompressed-bytes": 13684083696
+      },
+      {
+        "source-file": "documents-20211217.json.zst",
+        "document-count": 3190474,
+        "compressed-bytes": 927700536,
+        "uncompressed-bytes": 12070722106
+      },
+      {
+        "source-file": "documents-20211218.json.zst",
+        "document-count": 2396731,
+        "compressed-bytes": 522975689,
+        "uncompressed-bytes": 6973852631
+      },
+      {
+        "source-file": "documents-20211219.json.zst",
+        "document-count": 2321205,
+        "compressed-bytes": 507469614,
+        "uncompressed-bytes": 6422642290
+      },
+      {
+        "source-file": "documents-20211220.json.zst",
+        "document-count": 3564587,
+        "compressed-bytes": 1031772721,
+        "uncompressed-bytes": 15145951788
+      },
+      {
+        "source-file": "documents-20211221.json.zst",
+        "document-count": 3198748,
+        "compressed-bytes": 945032356,
+        "uncompressed-bytes": 12472852594
+      },
+      {
+        "source-file": "documents-20211222.json.zst",
+        "document-count": 3081612,
+        "compressed-bytes": 885226351,
+        "uncompressed-bytes": 11434962320
+      },
+      {
+        "source-file": "documents-20211223.json.zst",
+        "document-count": 2830379,
+        "compressed-bytes": 787828806,
+        "uncompressed-bytes": 10200683451
+      },
+      {
+        "source-file": "documents-20211224.json.zst",
+        "document-count": 2332566,
+        "compressed-bytes": 562303013,
+        "uncompressed-bytes": 7397133256
+      },
+      {
+        "source-file": "documents-20211225.json.zst",
+        "document-count": 1787396,
+        "compressed-bytes": 351557553,
+        "uncompressed-bytes": 4405370207
+      },
+      {
+        "source-file": "documents-20211226.json.zst",
+        "document-count": 1943970,
+        "compressed-bytes": 408126440,
+        "uncompressed-bytes": 5026191427
+      },
+      {
+        "source-file": "documents-20211227.json.zst",
+        "document-count": 2729465,
+        "compressed-bytes": 712312514,
+        "uncompressed-bytes": 9988903958
+      },
+      {
+        "source-file": "documents-20211228.json.zst",
+        "document-count": 2777629,
+        "compressed-bytes": 704049693,
+        "uncompressed-bytes": 9172413621
+      },
+      {
+        "source-file": "documents-20211229.json.zst",
+        "document-count": 2790952,
+        "compressed-bytes": 713128364,
+        "uncompressed-bytes": 9238290404
+      },
+      {
+        "source-file": "documents-20211230.json.zst",
+        "document-count": 2640337,
+        "compressed-bytes": 668209135,
+        "uncompressed-bytes": 8725234304
+      },
+      {
+        "source-file": "documents-20211231.json.zst",
+        "document-count": 2327689,
+        "compressed-bytes": 539119431,
+        "uncompressed-bytes": 7459354978
+      }                
+      ]
+    },
+    {
+      "name": "github_archive3",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-2022-01.json.zst",
+          "document-count": 98833495,
+          "compressed-bytes": 29364218358,
+          "uncompressed-bytes": 419098857191
         }
+      ]
+    },
+    {
+      "name": "github_archive4",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20220201-14.json.zst",
+          "document-count": 53162021,
+          "compressed-bytes": 16493869990,
+          "uncompressed-bytes": 296971876511
+        },
+        {
+          "source-file": "documents-20220215-28.json.zst",
+          "document-count": 54217262,
+          "compressed-bytes": 15908393327,
+          "uncompressed-bytes": 296295399520
+        }
+      ]
+    },
+    {
+      "name": "github_archive5",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20220301-15.json.zst",
+          "document-count": 49237873,
+          "compressed-bytes": 14766496251,
+          "uncompressed-bytes": 217441932091
+        },
+        {
+          "source-file": "documents-20220316-31.json.zst",
+          "document-count": 54035839,
+          "compressed-bytes": 16363130748,
+          "uncompressed-bytes": 233883639593
+        }
+      ]
+    },
+    {
+      "name": "github_archive6",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20220401-15.json.zst",
+          "document-count": 51313507,
+          "compressed-bytes": 15410519020,
+          "uncompressed-bytes": 229202149991
+        },
+        {
+          "source-file": "documents-20220416-30.json.zst",
+          "document-count":48743853,
+          "compressed-bytes": 14522412053,
+          "uncompressed-bytes": 205233371216
+        }
+      ]
+    },
+    {
+      "name": "github_archive7",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20220501-15.json.zst",
+          "document-count":46158644,
+          "compressed-bytes": 13979029247,
+          "uncompressed-bytes": 180592956646
+        },
+        {
+          "source-file": "documents-20220516-31.json.zst",
+          "document-count":51813847,
+          "compressed-bytes": 15756365657,
+          "uncompressed-bytes": 231591319723
+        }
+      ]
+    },
+    {
+      "name": "github_archive8",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20220601-15.json.zst",
+          "document-count": 48538337,
+          "compressed-bytes": 14974423399,
+          "uncompressed-bytes": 219722843215
+        },
+        {
+          "source-file": "documents-20220616-30.json.zst",
+          "document-count": 47800232,
+          "compressed-bytes": 14278784351,
+          "uncompressed-bytes": 211828330638
+        }
+      ]
+    },
+    {
+      "name": "github_archive9",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20220701-15.json.zst",
+          "document-count": 47285798,
+          "compressed-bytes": 13698006483,
+          "uncompressed-bytes": 197829072723
+        },
+        {
+          "source-file": "documents-20220716-31.json.zst",
+          "document-count": 53387408,
+          "compressed-bytes": 15364844780,
+          "uncompressed-bytes": 219579333757
+        }
+      ]
+    },
+    {
+      "name": "github_archive10",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20220801-15.json.zst",
+          "document-count": 51270005,
+          "compressed-bytes": 15188354665,
+          "uncompressed-bytes": 208333045142
+        },
+        {
+          "source-file": "documents-20220816-31.json.zst",
+          "document-count": 56658680,
+          "compressed-bytes": 16806225724,
+          "uncompressed-bytes": 228934968993
+        }
+      ]
+    },
+    {
+      "name": "github_archive11",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20220901-15.json.zst",
+          "document-count":54955319,
+          "compressed-bytes": 15787085305,
+          "uncompressed-bytes": 216220591233
+        },
+        {
+          "source-file": "documents-20220916-30.json.zst",
+          "document-count":57145420,
+          "compressed-bytes": 16676902061,
+          "uncompressed-bytes": 220233947193
+        }
+      ]
+    },
+    {
+      "name": "github_archive12",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20221001-15.json.zst",
+          "document-count":60636072,
+          "compressed-bytes": 17116051326,
+          "uncompressed-bytes": 245949261877
+        },
+        {
+          "source-file": "documents-20221016-31.json.zst",
+          "document-count":65835694,
+          "compressed-bytes": 18954960884,
+          "uncompressed-bytes": 277564124579
+        }
+      ]
+    },
+    {
+      "name": "github_archive13",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20221101-15.json.zst",
+          "document-count": 58565500,
+          "compressed-bytes": 17679399789,
+          "uncompressed-bytes": 250403571709
+        },
+        {
+          "source-file": "documents-20221116-30.json.zst",
+          "document-count": 59288910,
+          "compressed-bytes": 17784623887,
+          "uncompressed-bytes": 276067338281
+        }
+      ]
+    },
+    {
+      "name": "github_archive14",
+      "base-url": "{{_base_url}}/2022",
+      "documents": [
+        {
+          "source-file": "documents-20221201-15.json.zst",
+          "document-count": 69703051,
+          "compressed-bytes": 22002554497,
+          "uncompressed-bytes": 410256894739
+        },
+        {
+          "source-file": "documents-20221216-31.json.zst",
+          "document-count": 52216299,
+          "compressed-bytes": 13891331360,
+          "uncompressed-bytes": 198842313395
+        }        
       ]
     }
   ],

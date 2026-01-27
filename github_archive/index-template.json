@@ -1,22 +1,39 @@
 {% import "rally.helpers" as rally with context %}
-
+{%- set p_use_ingest_pipeline = use_ingest_pipeline | default(true) %}
+{%- set p_data_stream = data_stream | default(false) %}
+{% set p_number_of_shards = number_of_shards | default(1) -%}
+{% set p_number_of_replicas = number_of_replicas | default(0) -%}
 {
-  "index_patterns": ["gharchive"],
+  "index_patterns": ["gharchive*"],
+  {% if p_data_stream -%}
   "data_stream": {},
+  {%- endif -%}
   "template": {
     "settings": {
       "index": {
+        {%- if index_mode %}
+        "mode": {{ index_mode | tojson }},
+        {%- endif -%}
         {# non-serverless-index-settings-marker-start #}
+        {%- if build_flavor != "serverless" -%}
+        "number_of_replicas": "{{p_number_of_replicas}}",
+        {% endif -%}
         {%- if build_flavor != "serverless" or serverless_operator == true -%}
-        "number_of_replicas": "{{number_of_replicas | default(0)}}",
-        "number_of_shards": "{{number_of_shards | default(1)}}",
+        "number_of_shards": "{{p_number_of_shards}}",
         "requests.cache.enable": false,
         {% endif -%}
         {# non-serverless-index-settings-marker-end #}
         {%- if refresh_interval -%}
-        "refresh_interval": {{ refresh_interval | tojson }}
+        "refresh_interval": {{ refresh_interval | tojson }},
         {% endif -%}
-        "codec": "{{codec | default('default')}}",
+        {%- if codec is defined -%}
+        "codec": "{{codec}}",
+        {% endif -%}
+        {%- if p_use_ingest_pipeline == true %}
+        "default_pipeline": "gharchive-pipeline",
+        "sort.field": ["type", "repo.id", "@timestamp"],
+        "sort.order": ["asc", "asc", "desc"],
+        {%- endif %}
         "mapping.total_fields.limit": 10000
       }
     },

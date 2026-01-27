@@ -61,4 +61,20 @@
   "oversample-rescore": {{p_search_ops[i][2]}},
   "include-in-reporting": false
 }
-{%- endfor %}
+{%- endfor %},
+{
+"name": "hybrid-search-bm25-knn",
+"operation-type": "raw-request",
+"param-source": "hybrid-bm25-knn-param-source",
+"size": 10,
+"k": 10,
+"num_candidates": 50
+},
+{
+"name": "esql-hybrid-search-bm25-knn",
+"operation-type": "esql",
+"param-source": "esql-hybrid-bm25-knn-param-source",
+"size": 10,
+"k": 10,
+"num_candidates": 50
+}

@@ -1,7 +1,7 @@
 {% import "rally.helpers" as rally with context %}
 {
   "version": 2,
-  "description": "Benchmarks API key creation and authentication performance",
+  "description": "Benchmarks API key authentication",
   "operations": [
     {{ rally.collect(parts="operations/*.json") }}
   ],

@@ -5,14 +5,15 @@
       "schedule": [
         {
           "operation": "create-roles-and-users"
-        }, 
+        },
         {
           "operation": "create-api-keys"
         },
         {
-          "name": "authenticate-api-keys",
-          "operation": "authenticate-api-keys",
-          "iterations": 10,
+          "name": "authenticate-with-api-key",
+          "operation": "authenticate-with-api-key",
+          "param-source": "api-key-param-source",
+          "iterations": 50000,
           "clients": 5
         }
       ]

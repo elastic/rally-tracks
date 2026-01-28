@@ -7,7 +7,7 @@ from datasets import DownloadMode, load_dataset
 
 DATASET_NAME: str = f"Cohere/msmarco-v2-embed-english-v3"
 DATASET_DL_PROCS: int = 6
-OUTPUT_FILENAME: str = "cohere-documents"
+OUTPUT_FILENAME: str = "cohere-documents_float"
 DEFAULT_MAX_DOCS = -1
 TOTAL_DOCS = 138364198
 MAX_DOCS_PER_FILE = 3_000_000

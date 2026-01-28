@@ -2,7 +2,8 @@
 
 This track benchmarks the dataset from [Cohere/msmarco-v2-embed-english-v3](https://huggingface.co/datasets/Cohere/msmarco-v2-embed-english-v3).
 The corpus contains the original 138M passages of the [MSMARCO (passage, version 2)](https://ir-datasets.com/msmarco-passage-v2.html) corpus embedded
-into 1024 dimensional vectors with the [Cohere `embed-english-v3.0` model](https://cohere.com/blog/introducing-embed-v3).
+into 1024 dimensional vectors with the [Cohere `embed-english-v3.0` model](https://cohere.com/blog/introducing-embed-v3). They are two versions
+of the corpus, one with float arrays and one with Base64 encoded strings, use the later for better performance.
 
 ### Generating the document dataset
 
@@ -27,7 +28,7 @@ done
 $ ls -1 cohere-documents-* > files.txt
 ```
 
-This will build 47 `cohere-documents-XX.json` file for the entire dataset of 138.3M documents and then bzip then. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
+This will build 47 `cohere-documents_float-XX.json` file for the entire dataset of 138.3M documents and then bzip them. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
 ### Example Document
 
 ```json
@@ -68,12 +69,14 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `vector_index_type` (default: bbq_hnsw)
  - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.
  - `index_refresh_interval` (default: unset): The index refresh interval.
+ - `corpora` (default: ["msmarco-v2_float-initial-indexing-1", ..., "msmarco-v2_float-initial-indexing-8"])
  - `initial_indexing_bulk_indexing_clients` (default: 5)
  - `initial_indexing_ingest_percentage` (default: 100)
  - `initial_indexing_bulk_size` (default: 500)
  - `initial_indexing_bulk_warmup` (default: 40)
  - `number_of_shards` (default: 1)
  - `number_of_replicas` (default: 0)
+ - `parallel_corpora` (default:"msmarco-v2_float-parallel-indexing")
  - `parallel_indexing_bulk_clients` (default: 1)
  - `parallel_indexing_bulk_target_throughput` (default: 1)
  - `parallel_indexing_search_clients` (default: 3)
@@ -84,6 +87,27 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `standalone_search_iterations` (default: 10000)
  - `vector_index_type` (default: "int8_hnsw"): The index kind for storing the vectors.
  - `vector_index_element_type` (default: "float"): Sets the dense_vector element type.
+
+For running with Base64 encoded strings, use a parameter file like:
+
+```json
+{
+  "vector_index_type": "bbq_disk",
+  "corpora": [
+    "msmarco-v2_base64-initial-indexing-1",
+    "msmarco-v2_base64-initial-indexing-2",
+    "msmarco-v2_base64-initial-indexing-3",
+    "msmarco-v2_base64-initial-indexing-4",
+    "msmarco-v2_base64-initial-indexing-5",
+    "msmarco-v2_base64-initial-indexing-6",
+    "msmarco-v2_base64-initial-indexing-7",
+    "msmarco-v2_base64-initial-indexing-8"
+  ],
+  "parallel_corpora": [
+    "msmarco-v2_base64-parallel-indexing"
+  ]
+}
+```
 
 ### Parameters for ingest-autoscale challenge
 

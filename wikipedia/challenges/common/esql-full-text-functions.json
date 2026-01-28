@@ -1,4 +1,5 @@
 {% set is_esql_profiling_enabled = (esql_profiling_enabled | default(true)) %}
+{% set is_esql_data_partitioning_enabled = (esql_data_partitioning_enabled | default(true)) %}
 {
   "name": "delete-index",
   "operation": "delete-index",
@@ -76,7 +77,6 @@
 {
   "name": "standalone-esql-qstr-search",
   "operation": "query-esql-qstr-search",
-  "query-type": "match",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
   "iterations": {{ iterations | default(1000) }},
@@ -93,7 +93,6 @@
 {
   "name": "standalone-esql-kql-search",
   "operation": "query-esql-kql-search",
-  "query-type": "match",
   "clients": {{ standalone_search_clients | default(20) | int }},
   "warmup-iterations": {{ warmup_iterations | default(100) }},
   "iterations": {{ iterations | default(1000) }},
@@ -112,7 +111,7 @@
 {
   "name": "standalone-esql-profile-match-search",
   "operation": "query-esql-profile-match-search",
-  "clients": {{ standalone_search_clients | default(20) | int }},
+  "clients": 1,
   "warmup-iterations": {{ warmup_iterations | default(100) }},
   "iterations": {{ profile_iterations | default(100) }},
   "tags": ["esql-profile"]
@@ -120,7 +119,7 @@
 {
   "name": "standalone-esql-profile-match-phrase-search",
   "operation": "query-esql-profile-match-phrase-search",
-  "clients": {{ standalone_search_clients | default(20) | int }},
+  "clients": 1,
   "warmup-iterations": {{ warmup_iterations | default(100) }},
   "iterations": {{ profile_iterations | default(100) }},
   "tags": ["esql-profile"]
@@ -128,8 +127,7 @@
 {
   "name": "standalone-esql-profile-qstr-search",
   "operation": "query-esql-profile-qstr-search",
-  "query-type": "match",
-  "clients": {{ standalone_search_clients | default(20) | int }},
+  "clients": 1,
   "warmup-iterations": {{ warmup_iterations | default(100) }},
   "iterations": {{ profile_iterations | default(100) }},
   "tags": ["esql-profile"]
@@ -137,10 +135,44 @@
 {
   "name": "standalone-esql-profile-kql-search",
   "operation": "query-esql-profile-kql-search",
-  "query-type": "match",
-  "clients": {{ standalone_search_clients | default(20) | int }},
+  "clients": 1,
   "warmup-iterations": {{ warmup_iterations | default(100) }},
   "iterations": {{ profile_iterations | default(100) }},
   "tags": ["esql-profile"]
+}
+{% endif %}
+{% if is_esql_data_partitioning_enabled %}
+,
+{
+"name": "standalone-esql-partitioning-match-search",
+"operation": "query-esql-partitioning-match-search",
+"clients": 1,
+"warmup-iterations": {{ warmup_iterations | default(100) }},
+"iterations": {{ profile_iterations | default(100) }},
+"tags": ["esql-data-partition"]
+},
+{
+"name": "standalone-esql-partitioning-match-phrase-search",
+"operation": "query-esql-partitioning-match-phrase-search",
+"clients": 1,
+"warmup-iterations": {{ warmup_iterations | default(100) }},
+"iterations": {{ profile_iterations | default(100) }},
+"tags": ["esql-data-partition"]
+},
+{
+"name": "standalone-esql-partitioning-qstr-search",
+"operation": "query-esql-partitioning-qstr-search",
+"clients": 1,
+"warmup-iterations": {{ warmup_iterations | default(100) }},
+"iterations": {{ profile_iterations | default(100) }},
+"tags": ["esql-data-partition"]
+},
+{
+"name": "standalone-esql-partitioning-kql-search",
+"operation": "query-esql-partitioning-kql-search",
+"clients": 1,
+"warmup-iterations": {{ warmup_iterations | default(100) }},
+"iterations": {{ profile_iterations | default(100) }},
+"tags": ["esql-data-partition"]
 }
 {% endif %}

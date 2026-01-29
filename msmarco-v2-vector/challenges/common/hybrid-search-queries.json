@@ -1,3 +1,4 @@
+{% set is_esql_profiling_enabled = (esql_profiling_enabled | default(true)) %}
 {
   "operation": {
     "operation-type": "delete-index"
@@ -48,28 +49,43 @@
 },
 {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
 {
-  "name": "hybrid-search-bm25-knn-single-client",
+  "name": "hybrid-search-single-client",
   "operation": "hybrid-search-bm25-knn",
   "warmup-iterations": 1000,
   "iterations": {{ standalone_search_iterations | default(10000) | int }}
 },
 {
-"name": "esql-hybrid-search-bm25-knn-single-client",
+"name": "esql-hybrid-search-single-client",
 "operation": "esql-hybrid-search-bm25-knn",
 "warmup-iterations": 1000,
 "iterations": {{ standalone_search_iterations | default(10000) | int }}
 },
 {
-  "name": "hybrid-search-bm25-knn-multiple-clients",
+  "name": "hybrid-search-multiple-clients",
   "operation": "hybrid-search-bm25-knn",
   "warmup-iterations": 1000,
   "iterations": {{ standalone_search_iterations | default(10000) | int }},
   "clients": {{ standalone_search_clients | default(8) | int }}
 },
 {
-"name": "esql-hybrid-search-bm25-knn-multiple-clients",
+"name": "esql-hybrid-search-multiple-clients",
 "operation": "esql-hybrid-search-bm25-knn",
 "warmup-iterations": 1000,
 "iterations": {{ standalone_search_iterations | default(10000) | int }},
 "clients": {{ standalone_search_clients | default(8) | int }}
 }
+{% if is_esql_profiling_enabled %},
+{
+"name": "esql-profile-hybrid-search-single-client",
+"operation": "esql-profile-hybrid-search-bm25-knn",
+"warmup-iterations": 1000,
+"iterations": {{ standalone_search_iterations | default(10000) | int }}
+},
+{
+"name": "esql-profile-hybrid-search-bm25-knn-multiple-clients",
+"operation": "esql-profile-hybrid-search-bm25-knn",
+"warmup-iterations": 1000,
+"iterations": {{ standalone_search_iterations | default(10000) | int }},
+"clients": {{ standalone_search_clients | default(8) | int }}
+}
+{% endif %}

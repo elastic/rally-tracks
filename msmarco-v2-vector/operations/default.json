@@ -64,7 +64,7 @@
 {%- endfor %},
 {
 "name": "hybrid-search-bm25-knn",
-"operation-type": "raw-request",
+"operation-type": "search",
 "param-source": "hybrid-bm25-knn-param-source",
 "size": 10,
 "k": 10,
@@ -73,6 +73,14 @@
 {
 "name": "esql-hybrid-search-bm25-knn",
 "operation-type": "esql",
+"param-source": "esql-hybrid-bm25-knn-param-source",
+"size": 10,
+"k": 10,
+"num_candidates": 50
+},
+{
+"name": "esql-profile-hybrid-search-bm25-knn",
+"operation-type": "esql-profile",
 "param-source": "esql-hybrid-bm25-knn-param-source",
 "size": 10,
 "k": 10,

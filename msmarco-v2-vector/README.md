@@ -164,5 +164,21 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
     - `as_search_clients` (default: [1,2,4,8,16])
     - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
 
+### Parameters for hybrid-search-queries-dsl-and-esql challenge
+
+Use mapping_type = `vectors-with-text` for this track. Since we perform lexical search on the text field,
+
+- Mapping:
+  - `vector_index_type` (default: int8_hnsw)
+- Initial indexing:
+  - `initial_indexing_bulk_indexing_clients` (default: 5)
+  - `initial_indexing_ingest_percentage` (default: 100)
+  - `initial_indexing_bulk_size` (default: 500)
+  - `initial_indexing_bulk_warmup` (default: 40)
+  - `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+  - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
+- Search Operations:
+  - `standalone_search_iterations` (default: 10000)
+
 When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.

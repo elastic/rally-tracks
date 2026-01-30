@@ -19,6 +19,13 @@
   "ingest-percentage": {{initial_indexing_ingest_percentage | default(100)}}
 },
 {
+  "name": "knn-search-10-100",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "k": 10,
+  "num-candidates": 100
+},
+{
   "name": "parallel-documents-indexing",
   "operation-type": "bulk",
   "corpora": {{parallel_indexing_corpora | default("openai_parallel_indexing_floats") | tojson}},

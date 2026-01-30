@@ -1,10 +1,13 @@
 import bz2
 import csv
 import json
+import logging
 import os
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
+
+logger = logging.getLogger(__name__)
 
 Qrels = Dict[str, Dict[str, int]]
 Results = Dict[str, Dict[str, float]]
@@ -188,7 +191,7 @@ class KnnRecallRunner:
                 min_recall = min(min_recall, current_recall)
         relevance_res = calc_ndcg(qrels, results, [top_k])
         best_relevance_res = calc_ndcg(qrels, best_results, [top_k])
-        return (
+        result = (
             {
                 f"best_ndcg_{top_k}": best_relevance_res[f"ndcg_cut@{top_k}"],
                 f"ndcg_{top_k}": relevance_res[f"ndcg_cut@{top_k}"],
@@ -202,6 +205,8 @@ class KnnRecallRunner:
             if exact_total > 0
             else None
         )
+        logger.info(f"Recall results: {result}")
+        return result
 
     def __repr__(self, *args, **kwargs):
         return "knn-recall"

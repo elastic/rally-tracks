@@ -69,7 +69,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `vector_index_type` (default: bbq_hnsw)
  - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.
  - `index_refresh_interval` (default: unset): The index refresh interval.
- - `corpora` (default: ["msmarco-v2_float-initial-indexing-1", ..., "msmarco-v2_float-initial-indexing-8"])
+ - `corpora` (default: ["msmarco-v2_float-initial-indexing-1", ..., "msmarco-v2_float-initial-indexing-16"])
  - `initial_indexing_bulk_indexing_clients` (default: 5)
  - `initial_indexing_ingest_percentage` (default: 100)
  - `initial_indexing_bulk_size` (default: 500)
@@ -101,7 +101,15 @@ For running with Base64 encoded strings, use a parameter file like:
     "msmarco-v2_base64-initial-indexing-5",
     "msmarco-v2_base64-initial-indexing-6",
     "msmarco-v2_base64-initial-indexing-7",
-    "msmarco-v2_base64-initial-indexing-8"
+    "msmarco-v2_base64-initial-indexing-8",
+    "msmarco-v2_base64-initial-indexing-9",
+    "msmarco-v2_base64-initial-indexing-10",
+    "msmarco-v2_base64-initial-indexing-11",
+    "msmarco-v2_base64-initial-indexing-12",
+    "msmarco-v2_base64-initial-indexing-13",
+    "msmarco-v2_base64-initial-indexing-14",
+    "msmarco-v2_base64-initial-indexing-15",
+    "msmarco-v2_base64-initial-indexing-16"
   ],
   "parallel_corpora": [
     "msmarco-v2_base64-parallel-indexing"

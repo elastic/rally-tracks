@@ -1,4 +1,4 @@
-{% set p_corpora = (corpora | default(["msmarco-v2_float-initial-indexing-1", "msmarco-v2_float-initial-indexing-2", "msmarco-v2_float-initial-indexing-3", "msmarco-v2_float-initial-indexing-4", "msmarco-v2_float-initial-indexing-5", "msmarco-v2_float-initial-indexing-6", "msmarco-v2_float-initial-indexing-7", "msmarco-v2_float-initial-indexing-8"])) %}
+{% set p_corpora = (corpora | default(["msmarco-v2_float-initial-indexing-1", "msmarco-v2_float-initial-indexing-2", "msmarco-v2_float-initial-indexing-3", "msmarco-v2_float-initial-indexing-4", "msmarco-v2_float-initial-indexing-5", "msmarco-v2_float-initial-indexing-6", "msmarco-v2_float-initial-indexing-7", "msmarco-v2_float-initial-indexing-8", "msmarco-v2_float-initial-indexing-9", "msmarco-v2_float-initial-indexing-10", "msmarco-v2_float-initial-indexing-11", "msmarco-v2_float-initial-indexing-12", "msmarco-v2_float-initial-indexing-13", "msmarco-v2_float-initial-indexing-14", "msmarco-v2_float-initial-indexing-15", "msmarco-v2_float-initial-indexing-16"])) %}
 {
   "name": "create-index",
   "operation-type": "create-index",

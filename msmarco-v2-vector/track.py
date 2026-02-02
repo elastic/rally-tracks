@@ -274,7 +274,8 @@ class HybridParamSource:
                         "retrievers": [
                             standard_retriever,
                             knn_retriever
-                        ]
+                        ],
+                        "rank_window_size": self._size
                     }
                 },
                 "size": self._size
@@ -332,7 +333,7 @@ class EsqlHybridParamSource:
         hybrid_query += (f" | FORK"
                          f" ({lexical_query} | DROP emb | SORT _score DESC | LIMIT {self._size})"
                          f" ({knn_query} | DROP emb | SORT _score DESC | LIMIT {self._size})"
-                         f" | FUSE"
+                         f" | FUSE | SORT _score DESC"
                          f" | KEEP _index, _id, _score | LIMIT {self._size}")
 
         query_vector = query["emb"]

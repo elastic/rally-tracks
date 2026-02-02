@@ -135,6 +135,7 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
   - `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
   - `iterations` (default: 100) - Number of measurement iterations that each client executes.
   - `esql_profiling_enabled` (default: true) : True to add separate profiling runs for ESQL operations.
+  - `esql_data_partitioning_enabled` (default: true) : True to add separate profiling runs for ESQL operations that use SEGMENT data partitioning.
   - `profile_iterations` (default: 100) - Number of profiling iterations that each client executes.
 
 

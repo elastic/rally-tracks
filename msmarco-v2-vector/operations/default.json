@@ -66,23 +66,23 @@
 "name": "hybrid-search-bm25-knn",
 "operation-type": "search",
 "param-source": "hybrid-bm25-knn-param-source",
-"size": 10,
-"k": 10,
-"num_candidates": 50
+"size": 100,
+"k": 100,
+"num-candidates": 200
 },
 {
 "name": "esql-hybrid-search-bm25-knn",
 "operation-type": "esql",
 "param-source": "esql-hybrid-bm25-knn-param-source",
-"size": 10,
-"k": 10,
-"num_candidates": 50
+"size": 100,
+"k": 100,
+"num-candidates": 200
 },
 {
 "name": "esql-profile-hybrid-search-bm25-knn",
 "operation-type": "esql-profile",
 "param-source": "esql-hybrid-bm25-knn-param-source",
-"size": 10,
-"k": 10,
-"num_candidates": 50
+"size": 100,
+"k": 100,
+"num-candidates": 200
 }

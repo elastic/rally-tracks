@@ -324,6 +324,7 @@ class EsqlHybridParamSource:
 
         options = []
         options.append(f'"min_candidates":{num_candidates}')
+        options.append(f'"k":{top_k}')
         if self._params.get("oversample-rescore", -1) >= 0:
             options.append(f'"rescore_oversample":{self._params.get("oversample-rescore")}')
         knn_options = "{" + ", ".join(options) + "}"
@@ -337,7 +338,7 @@ class EsqlHybridParamSource:
         hybrid_query = f"FROM {self._index_name} METADATA _index, _id, _score"
         hybrid_query += (f" | FORK"
                          f" ({lexical_query} | DROP emb | SORT _score DESC | LIMIT {self._size})"
-                         f" ({knn_query} | DROP emb | SORT _score DESC | LIMIT {self._size})"
+                         f" ({knn_query} | DROP emb | SORT _score DESC | LIMIT {top_k})"
                          f" | FUSE | SORT _score DESC"
                          f" | KEEP _index, _id, _score | LIMIT {self._size}")
 

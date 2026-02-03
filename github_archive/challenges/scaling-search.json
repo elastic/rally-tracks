@@ -1,0 +1,77 @@
+{
+  "name": "scaling-search",
+  "description": "Index the document corpus and perform additional searches",
+  "schedule": [
+    {{ rally.collect(parts="../common/schedule_setup.json") }},
+    {
+      "operation": "index_corpora1",
+      "clients": {{initial_indexing_clients | default(32)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {
+      "operation": "add_filter_alias"
+    }
+      {%- set p_runtime_search_clients=runtime_search_clients | default(8) %}
+      {%- set p_scale_steps=scaling_steps | default([0.1, 0.25, 0.50, 0.80, 1.0, 1.5, 2.0, 5.0]) -%}
+      {% for step in p_scale_steps %}
+          {%- set scaled_search_clients=(step*p_runtime_search_clients) |round(0, "ceil")|int %},
+    {
+      "parallel": {
+      "time-period": {{search_time_period | default(1800)}},
+      "tasks": [
+        {
+            "name":  "alias_bool_query_1_{{scaled_search_clients}}",
+            "operation": "alias_bool_query_1",
+            "warmup-time-period": {{search_warmup_time_period | default(300)}},
+            "clients": {{scaled_search_clients}}
+        },
+        {
+            "name": "alias_bool_query_2_{{scaled_search_clients}}",
+            "operation": "alias_bool_query_2",
+            "warmup-time-period": {{search_warmup_time_period | default(300)}},
+            "clients": {{scaled_search_clients}}
+        },
+        {
+          "name": "filter_query_{{scaled_search_clients}}",
+          "operation": "filter_query",
+          "warmup-time-period": {{search_warmup_time_period | default(300)}},
+          "clients": {{scaled_search_clients}}
+        },
+        {
+            "name": "default_{{scaled_search_clients}}",
+            "operation": "default",
+            "warmup-time-period": {{search_warmup_time_period | default(300)}},
+            "clients": {{scaled_search_clients}}
+        },
+        {
+            "name": "created_at_histo_{{scaled_search_clients}}",
+            "operation": "autohisto_agg",
+            "warmup-time-period": {{search_warmup_time_period | default(300)}},
+            "clients": {{scaled_search_clients}}
+        },
+        {
+            "name": "range_{{scaled_search_clients}}",
+            "operation": "range",
+            "warmup-time-period": {{search_warmup_time_period | default(300)}},
+            "clients": {{scaled_search_clients}}
+        },
+        {
+          "name": "top-es-contributors-weekly_{{scaled_search_clients}}",
+          "operation": "top-es-contributors-weekly",
+          "clients": {{scaled_search_clients}},
+          "target-interval": 4
+        },
+        {
+          "name": "top-10-esql_{{scaled_search_clients}}",
+          "operation": "top-10-repos-esql",
+          "clients": {{scaled_search_clients}}
+        }
+      ]
+      }
+    }
+      {%- endfor %}
+    ]
+}

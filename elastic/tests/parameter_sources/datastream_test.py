@@ -14,10 +14,6 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-import os
-
-# Import from logs track.py where SequentialDataStreamParamSource and DLMBulkIndexParamSource are defined
-import sys
 
 from shared.parameter_sources.datastream import (
     CreateDataStreamParamSource,

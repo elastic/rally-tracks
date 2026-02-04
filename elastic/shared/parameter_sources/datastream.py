@@ -151,7 +151,7 @@ class DLMBulkIndexParamSource:
         self._data_stream_count = params.get("data-stream-count", 10000)
         self._bulk_size = params.get("bulk-size", 1000)
         self._current_stream = 0
-        self.infinite = True  # For continuous indexing
+        self.infinite = True
 
     def partition(self, partition_index, total_partitions):
         """Each client gets a different starting data stream to distribute load evenly."""

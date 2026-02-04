@@ -20,7 +20,7 @@ from shared.parameter_sources.datastream import (
     CreateDataStreamParamSource,
     DataStreamParamSource,
     DLMBulkIndexParamSource,
-    SequentialDataStreamParamSource
+    SequentialDataStreamParamSource,
 )
 from shared.parameter_sources.initial_indices import InitialIndicesParamSource
 from shared.parameter_sources.processed import ProcessedCorpusParamSource

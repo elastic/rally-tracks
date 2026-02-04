@@ -14,17 +14,19 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
+import os
+
+# Import from logs track.py where SequentialDataStreamParamSource and DLMBulkIndexParamSource are defined
+import sys
+
 from shared.parameter_sources.datastream import (
     CreateDataStreamParamSource,
     DataStreamParamSource,
 )
 from tests.parameter_sources import StaticTrack
 
-# Import from logs track.py where SequentialDataStreamParamSource and DLMBulkIndexParamSource are defined
-import sys
-import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../logs'))
-from track import SequentialDataStreamParamSource, DLMBulkIndexParamSource
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../logs"))
+from track import DLMBulkIndexParamSource, SequentialDataStreamParamSource
 
 
 def test_read_track_data_streams():
@@ -109,10 +111,7 @@ def test_create_no_data_streams():
 
 def test_sequential_datastream_basic():
     """Test basic sequential data stream name generation."""
-    source = SequentialDataStreamParamSource(
-        StaticTrack(),
-        params={"data-stream-prefix": "test-ds", "start-index": 0}
-    )
+    source = SequentialDataStreamParamSource(StaticTrack(), params={"data-stream-prefix": "test-ds", "start-index": 0})
 
     # Generate 5 data stream names
     expected_names = ["test-ds-0", "test-ds-1", "test-ds-2", "test-ds-3", "test-ds-4"]
@@ -124,10 +123,7 @@ def test_sequential_datastream_basic():
 
 def test_sequential_datastream_custom_start_index():
     """Test sequential data stream generation with custom start index."""
-    source = SequentialDataStreamParamSource(
-        StaticTrack(),
-        params={"data-stream-prefix": "dlm-benchmark", "start-index": 100}
-    )
+    source = SequentialDataStreamParamSource(StaticTrack(), params={"data-stream-prefix": "dlm-benchmark", "start-index": 100})
 
     params = source.params()
     assert params["data-stream"] == "dlm-benchmark-100"
@@ -138,8 +134,7 @@ def test_sequential_datastream_custom_start_index():
 def test_sequential_datastream_ignore_existing():
     """Test that ignore-existing parameter is passed through."""
     source = SequentialDataStreamParamSource(
-        StaticTrack(),
-        params={"data-stream-prefix": "test", "start-index": 0, "ignore-existing": True}
+        StaticTrack(), params={"data-stream-prefix": "test", "start-index": 0, "ignore-existing": True}
     )
 
     params = source.params()
@@ -148,10 +143,7 @@ def test_sequential_datastream_ignore_existing():
 
 def test_sequential_datastream_partition():
     """Test partitioning across multiple clients."""
-    source = SequentialDataStreamParamSource(
-        StaticTrack(),
-        params={"data-stream-prefix": "test-ds", "start-index": 0}
-    )
+    source = SequentialDataStreamParamSource(StaticTrack(), params={"data-stream-prefix": "test-ds", "start-index": 0})
 
     # Partition into 3 clients
     partition_0 = source.partition(0, 3)
@@ -177,14 +169,7 @@ def test_sequential_datastream_partition():
 
 def test_dlm_bulk_basic():
     """Test basic DLM bulk parameter generation."""
-    source = DLMBulkIndexParamSource(
-        StaticTrack(),
-        params={
-            "data-stream-prefix": "dlm-test",
-            "data-stream-count": 5,
-            "bulk-size": 10
-        }
-    )
+    source = DLMBulkIndexParamSource(StaticTrack(), params={"data-stream-prefix": "dlm-test", "data-stream-count": 5, "bulk-size": 10})
 
     params = source.params()
 
@@ -200,6 +185,7 @@ def test_dlm_bulk_basic():
 
     # Check that first line is metadata with _index
     import json
+
     first_line = json.loads(lines[0])
     assert "create" in first_line
     assert "_index" in first_line["create"]
@@ -216,14 +202,7 @@ def test_dlm_bulk_basic():
 
 def test_dlm_bulk_round_robin():
     """Test that DLM bulk indexes round-robin through data streams."""
-    source = DLMBulkIndexParamSource(
-        StaticTrack(),
-        params={
-            "data-stream-prefix": "dlm-test",
-            "data-stream-count": 3,
-            "bulk-size": 1
-        }
-    )
+    source = DLMBulkIndexParamSource(StaticTrack(), params={"data-stream-prefix": "dlm-test", "data-stream-count": 3, "bulk-size": 1})
 
     import json
 
@@ -254,14 +233,7 @@ def test_dlm_bulk_round_robin():
 
 def test_dlm_bulk_partition():
     """Test DLM bulk partitioning across multiple clients."""
-    source = DLMBulkIndexParamSource(
-        StaticTrack(),
-        params={
-            "data-stream-prefix": "dlm-test",
-            "data-stream-count": 10,
-            "bulk-size": 1
-        }
-    )
+    source = DLMBulkIndexParamSource(StaticTrack(), params={"data-stream-prefix": "dlm-test", "data-stream-count": 10, "bulk-size": 1})
 
     import json
 
@@ -301,14 +273,7 @@ def test_dlm_bulk_partition():
 
 def test_dlm_bulk_document_structure():
     """Test that generated documents have the correct structure."""
-    source = DLMBulkIndexParamSource(
-        StaticTrack(),
-        params={
-            "data-stream-prefix": "dlm-test",
-            "data-stream-count": 1,
-            "bulk-size": 5
-        }
-    )
+    source = DLMBulkIndexParamSource(StaticTrack(), params={"data-stream-prefix": "dlm-test", "data-stream-count": 1, "bulk-size": 5})
 
     import json
 
@@ -332,14 +297,7 @@ def test_dlm_bulk_document_structure():
 
 def test_dlm_bulk_infinite():
     """Test that DLM bulk source is marked as infinite."""
-    source = DLMBulkIndexParamSource(
-        StaticTrack(),
-        params={
-            "data-stream-prefix": "dlm-test",
-            "data-stream-count": 1,
-            "bulk-size": 1
-        }
-    )
+    source = DLMBulkIndexParamSource(StaticTrack(), params={"data-stream-prefix": "dlm-test", "data-stream-count": 1, "bulk-size": 1})
 
     assert source.infinite == True
 
@@ -347,4 +305,3 @@ def test_dlm_bulk_infinite():
     for _ in range(100):
         params = source.params()
         assert params is not None
-

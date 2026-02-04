@@ -22,11 +22,10 @@ import sys
 from shared.parameter_sources.datastream import (
     CreateDataStreamParamSource,
     DataStreamParamSource,
+    DLMBulkIndexParamSource,
+    SequentialDataStreamParamSource,
 )
 from tests.parameter_sources import StaticTrack
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../logs"))
-from track import DLMBulkIndexParamSource, SequentialDataStreamParamSource
 
 
 def test_read_track_data_streams():
@@ -118,7 +117,7 @@ def test_sequential_datastream_basic():
     for i in range(5):
         params = source.params()
         assert params["data-stream"] == expected_names[i]
-        assert params["ignore-existing"] == False
+        assert params["ignore-existing"] is False
 
 
 def test_sequential_datastream_custom_start_index():
@@ -138,7 +137,7 @@ def test_sequential_datastream_ignore_existing():
     )
 
     params = source.params()
-    assert params["ignore-existing"] == True
+    assert params["ignore-existing"] is True
 
 
 def test_sequential_datastream_partition():
@@ -175,7 +174,7 @@ def test_dlm_bulk_basic():
 
     # Check returned parameters
     assert "body" in params
-    assert params["action-metadata-present"] == True
+    assert params["action-metadata-present"] is True
     assert params["bulk-size"] == 10
     assert params["unit"] == "docs"
 
@@ -299,7 +298,7 @@ def test_dlm_bulk_infinite():
     """Test that DLM bulk source is marked as infinite."""
     source = DLMBulkIndexParamSource(StaticTrack(), params={"data-stream-prefix": "dlm-test", "data-stream-count": 1, "bulk-size": 1})
 
-    assert source.infinite == True
+    assert source.infinite is True
 
     # Should be able to generate many bulks without stopping
     for _ in range(100):

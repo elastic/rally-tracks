@@ -86,30 +86,29 @@ class CreateDataStreamParamSource:
         return params
 
 
-"""
-Parameter source for creating a large number of data streams with
-sequential naming (e.g., datastream-0, datastream-1, ...).
-
-
-Usage in track.json:
-{
-    "name": "create-datastreams",
-    "operation": {
-    "operation-type": "create-datastream",
-    "param-source": "sequential-datastream-source"
-    },
-    "clients": 8,
-    "warmup-iterations": 0,
-    "iterations": 10000,
-    "params": {
-      "data-stream-prefix": "dlm-benchmark",
-      "start-index": 0
-    }
-}
-"""
-
-
 class SequentialDataStreamParamSource:
+    """
+    Parameter source for creating a large number of data streams with
+    sequential naming (e.g., datastream-0, datastream-1, ...).
+
+
+    Usage in track.json:
+    {
+        "name": "create-datastreams",
+        "operation": {
+        "operation-type": "create-datastream",
+        "param-source": "sequential-datastream-source"
+        },
+        "clients": 8,
+        "warmup-iterations": 0,
+        "iterations": 10000,
+        "params": {
+          "data-stream-prefix": "dlm-benchmark",
+          "start-index": 0
+        }
+    }
+    """
+
     def __init__(self, track, params, **kwargs):
         self._params = params
         self._prefix = params.get("data-stream-prefix", "datastream")
@@ -152,7 +151,6 @@ class DLMBulkIndexParamSource:
         self._data_stream_count = params.get("data-stream-count", 10000)
         self._bulk_size = params.get("bulk-size", 1000)
         self._current_stream = 0
-        self._start_time = datetime.now(tz=timezone.utc)
         self.infinite = True  # For continuous indexing
 
     def partition(self, partition_index, total_partitions):
@@ -166,7 +164,6 @@ class DLMBulkIndexParamSource:
         partitioned._bulk_size = self._bulk_size
         partitioned._current_stream = partition_index % self._data_stream_count
         partitioned._step = total_partitions
-        partitioned._start_time = self._start_time
         partitioned.infinite = True
         return partitioned
 

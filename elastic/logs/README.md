@@ -347,6 +347,7 @@ The challenge indexes data and waits for lifecycle operations to complete before
 - `dsl_poll_interval` (default: `5s`) - How often lifecycle coordinator checks for actions
 - `dsl_default_rollover` (default: `max_age=1h,max_primary_shard_size=50gb`) - Rollover conditions
 - `dlm_wait_time` (default: `60`) - Seconds to wait for lifecycle operations
+- `lifecycle` - Set to `dlm` to enable Data Lifecycle Management
 
 **Note:** This challenge automatically sets `lifecycle:dlm` - you do not need to pass it as a parameter.
 

@@ -1,9 +1,102 @@
-{%- set lifecycle = "dlm" -%}
 {
   "name": "dlm-benchmark",
   "description": "Benchmark data stream lifecycle (DLM) performance with configurable poll interval and rollover settings. Supports creating thousands of data streams for scale testing.",
   "schedule": [
-    {% include "tasks/dlm-setup.json" %},
+    {
+      "name": "delete-all-dlm-benchmark-datastreams",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "delete-data-stream",
+        "data-stream": "dlm-benchmark-*"
+      }
+    },
+    {
+      "name": "delete-dlm-benchmark-composable-template",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "delete-composable-template",
+        "templates": "dlm-benchmark",
+        "only-if-exists": true
+      }
+    },
+    {
+      "name": "delete-track-lifecycle-component-template",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "delete-component-template",
+        "templates": "track-data-stream-lifecycle",
+        "only-if-exists": true
+      }
+    },
+    {
+      "name": "create-track-data-stream-lifecycle-component",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "create-component-template",
+        "template": "track-data-stream-lifecycle",
+        "body": {
+          "template": {
+            "lifecycle": {
+              {%- if dlm_retention %}
+              "data_retention": "{{ dlm_retention }}"
+              {%- endif %}
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "create-dlm-benchmark-template",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "create-composable-template",
+        "template": "dlm-benchmark",
+        "body": {
+          "index_patterns": ["dlm-benchmark-*"],
+          "data_stream": {},
+          "composed_of": ["track-data-stream-lifecycle"],
+          "priority": 300,
+          "_meta": {
+            "description": "Generic template for DLM benchmark data streams"
+          }
+        }
+      }
+    },
+    {
+      "name": "update-dsl-settings",
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "put-settings",
+        "body": {
+          "persistent": {
+            "data_streams.lifecycle.poll_interval": "{{ dsl_poll_interval | default('5s') }}"
+            {% if dsl_default_rollover %}
+          , "cluster.lifecycle.default.rollover": "{{ dsl_default_rollover | default('max_age=1h,max_primary_shard_size=50gb') }}"
+            {% endif %}
+          , "cluster.max_shards_per_node": 500000
+          , "cluster.routing.allocation.node_concurrent_recoveries": 200
+          , "cluster.routing.allocation.node_initial_primaries_recoveries": 100
+          }
+        }
+      }
+    },
+    {
+      "name": "create-datastreams",
+      "operation": {
+        "operation-type": "create-datastream",
+        "param-source": "sequential-datastream-source",
+        "data-stream-prefix": "dlm-benchmark",
+        "start-index": 0
+      },
+      "clients": 8,
+      "warmup-iterations": 0,
+      "iterations": {{ dlm_datastream_count | default(5000) }},
+      "params": {
+        "data-stream-prefix": "dlm-benchmark",
+        "start-index": 0,
+        "ignore-existing": false
+      }
+    },
     {
       "name": "bulk-index",
       "operation": {
@@ -13,7 +106,7 @@
       "clients": {{ p_bulk_indexing_clients }},
       "params": {
         "data-stream-prefix": "dlm-benchmark",
-        "data-stream-count": {{ p_dlm_datastream_count | default(10000) }},
+        "data-stream-count": {{ dlm_datastream_count | default(10000) }},
         "bulk-size": {{ p_bulk_size }}
       }
     },

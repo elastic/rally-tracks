@@ -282,7 +282,7 @@ class QueryParamSource(QueryIteratorParamSource):
             },
             "index": self._index_name,
             "cache": self._cache,
-            "detailed-results": self._detailed_results
+            "detailed-results": self._detailed_results,
         }
 
 

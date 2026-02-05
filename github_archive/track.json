@@ -3,6 +3,7 @@
 {%- set p_conflict_probability = conflict_probability | default(25) %}
 {%- set p_on_conflict = on_conflict | default('index') %}
 {%- set p_cluster_health = cluster_health | default('green') %}
+{% set p_use_ingest_pipeline = use_ingest_pipeline | default(true) -%}
 {% set p_detailed_results = detailed_results | default(false) -%}
 {% set _base_url = (base_url | default("https://rally-tracks.elastic.co/github_archive")) %}
 {% set p_query_end_date = query_end_date | default("2021-10-05") -%}

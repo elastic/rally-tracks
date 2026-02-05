@@ -39,6 +39,12 @@
         "similarity": "dot_product",
         "index_options": {
           "type": {{ vector_index_type | default("bbq_hnsw") | tojson }}
+          {%- if hnsw_m is defined %},
+          "m": {{ hnsw_m }}
+          {%- endif %}
+          {%- if hnsw_ef_construction is defined %},
+          "ef_construction": {{ hnsw_ef_construction }}
+          {%- endif %}
         }
       }
     }

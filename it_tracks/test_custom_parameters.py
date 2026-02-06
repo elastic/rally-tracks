@@ -36,3 +36,15 @@ class TestCustomParameters:
             track_params={"run_esql_aggs": True, "index_mode": "time_series", "ingest_mode": "data_stream", "source_mode": "synthetic"},
         )
         assert ret == 0
+
+
+    @pytest.mark.track("github_archive")
+    def test_ghub_archive_data_stream(self, es_cluster, rally, track, challenge):
+        if track == "github_archive":
+            ret = rally.race(
+                track="github_archive",
+                challenge=challenge,
+                track_params={"data_stream": true},
+                
+            )
+            assert ret == 0

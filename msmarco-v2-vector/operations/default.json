@@ -20,7 +20,7 @@
        {{doc_id | tojson}}
        {{ ", " if not loop.last else "" }}
    {% endfor %}],
-  "bulk-size": {{initial_indexing_bulk_size | default(500)}},
+  "bulk-size": {{initial_indexing_bulk_size | default(1000)}},
   "ingest-percentage": {{initial_indexing_ingest_percentage | default(100)}}
 },
 {

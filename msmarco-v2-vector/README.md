@@ -76,7 +76,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `corpora` (default: ["msmarco-v2_float-initial-indexing-1", ..., "msmarco-v2_float-initial-indexing-8"])
  - `initial_indexing_bulk_indexing_clients` (default: 5)
  - `initial_indexing_ingest_percentage` (default: 100)
- - `initial_indexing_bulk_size` (default: 500)
+ - `initial_indexing_bulk_size` (default: 1000)
  - `initial_indexing_bulk_warmup` (default: 40)
  - `number_of_shards` (default: 1)
  - `number_of_replicas` (default: 0)

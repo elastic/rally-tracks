@@ -224,6 +224,7 @@ class HybridParamSource:
         self._index_name = params.get("index", default_index)
         self._cache = params.get("cache", False)
         self._size = params.get("size", 10)
+        self._source = params.get("source", False)
         self._params = params
         self._queries = []
 
@@ -240,14 +241,19 @@ class HybridParamSource:
 
     def params(self):
         top_k = self._params.get("k", 10)
-        num_candidates = self._params.get("num-candidates", 50)
+        num_candidates = self._params.get("num-candidates", top_k * 1.5)
 
         query = self._queries[self._iters]
         self._iters += 1
         if self._iters >= self._maxIters:
             self._iters = 0
 
-        knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}
+        knn_query = {
+            "field": "emb",
+            "query_vector": query["emb"],
+            "k": top_k,
+            "num_candidates": num_candidates
+        }
         if self._params.get("oversample-rescore", -1) >= 0:
             knn_query["rescore_vector"] = {"oversample": self._params.get("oversample-rescore")}
         if "filter" in self._params:
@@ -273,7 +279,7 @@ class HybridParamSource:
         return {
             "index": self._index_name,
             "body": {
-                "_source": False,
+                "_source": self._source,
                 "retriever": {
                     "rrf": {
                         "retrievers": [
@@ -299,6 +305,7 @@ class EsqlHybridParamSource:
         self._index_name = params.get("index", default_index)
         self._cache = params.get("cache", False)
         self._size = params.get("size", 10)
+        self._keep_all = params.get("keep-all", False)
         self._params = params
         self._queries = []
 
@@ -315,7 +322,7 @@ class EsqlHybridParamSource:
 
     def params(self):
         top_k = self._params.get("k", 10)
-        num_candidates = self._params.get("num-candidates", 50)
+        num_candidates = self._params.get("num-candidates", None)
 
         query = self._queries[self._iters]
         self._iters += 1
@@ -323,7 +330,8 @@ class EsqlHybridParamSource:
             self._iters = 0
 
         options = []
-        options.append(f'"min_candidates":{num_candidates}')
+        if num_candidates is not None:
+            options.append(f'"min_candidates":{num_candidates}')
         options.append(f'"k":{top_k}')
         if self._params.get("oversample-rescore", -1) >= 0:
             options.append(f'"rescore_oversample":{self._params.get("oversample-rescore")}')
@@ -339,8 +347,12 @@ class EsqlHybridParamSource:
         hybrid_query += (f" | FORK"
                          f" ({lexical_query} | DROP emb | SORT _score DESC | LIMIT {self._size})"
                          f" ({knn_query} | DROP emb | SORT _score DESC | LIMIT {top_k})"
-                         f" | FUSE | SORT _score DESC"
-                         f" | KEEP _index, _id, _score | LIMIT {self._size}")
+                         f" | FUSE | SORT _score DESC")
+
+        if not self._keep_all:
+            hybrid_query += " | KEEP _index, _id, _score"
+
+        hybrid_query += f" | LIMIT {self._size}"
 
         query_vector = query["emb"]
         query_text = query["text"]

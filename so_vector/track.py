@@ -71,12 +71,18 @@ class KnnParamSource:
         self.infinite = True
         self._iters = 0
         self._maxIters = len(self._queries)
+        self._detailed_results = params.get("detailed-results", False)
 
     def partition(self, partition_index, total_partitions):
         return self
 
     def params(self):
-        result = {"index": self._index_name, "cache": self._params.get("cache", False), "results-per-page": self._params.get("k", 10)}
+        result = {
+            "index": self._index_name,
+            "cache": self._params.get("cache", False),
+            "results-per-page": self._params.get("k", 10),
+            "detailed-results": self._detailed_results,
+        }
         num_candidates: int | None = self._params.get("num_candidates", None)
         # if -1, then its unset. If set, just set it.
         oversample = self._params.get("oversample", -1)

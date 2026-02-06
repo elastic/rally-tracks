@@ -21,7 +21,11 @@
        {{ ", " if not loop.last else "" }}
    {% endfor %}],
   "bulk-size": {{initial_indexing_bulk_size | default(500)}},
+  {%- if initial_indexing_ingest_doc_count is defined %}
+  "ingest-doc-count": {{ initial_indexing_ingest_doc_count }}
+  {%- else %}
   "ingest-percentage": {{initial_indexing_ingest_percentage | default(100)}}
+  {%- endif %}   
 },
 {
   "name": "parallel-documents-indexing",

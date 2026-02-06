@@ -71,9 +71,13 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `index_refresh_interval` (default: unset): The index refresh interval.
  - `corpora` (default: ["msmarco-v2_float-initial-indexing-1", ..., "msmarco-v2_float-initial-indexing-8"])
  - `initial_indexing_bulk_indexing_clients` (default: 5)
- - `initial_indexing_ingest_percentage` (default: 100)
  - `initial_indexing_bulk_size` (default: 500)
  - `initial_indexing_bulk_warmup` (default: 40)
+ - `initial_indexing_ingest_doc_count` (default: unset) The absolute number of docs to ingest. Incompatible with `initial_indexing_ingest_percentage`  
+ - `initial_indexing_ingest_percentage` (default: 100)
+ - `include_initial_indexing` (default: true) If `true` run the initial indexing and post index sleep steps. If `false` the data should have been pre-ingested
+ - `include_parallel_indexing` (default: true) Include the parallel indexing benchmark
+ - `include_recall` (default: true) Include the recall benchmark
  - `number_of_shards` (default: 1)
  - `number_of_replicas` (default: 0)
  - `parallel_corpora` (default:"msmarco-v2_float-parallel-indexing")

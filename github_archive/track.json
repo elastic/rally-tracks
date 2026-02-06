@@ -794,9 +794,6 @@
       {% if p_data_stream -%}
       "target-data-stream": "gharchive",
       {% endif -%}
-      {% if p_data_stream -%}
-      "target-data-stream": "gharchive",
-      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20220901-15.json.zst",

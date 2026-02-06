@@ -38,42 +38,80 @@
     "retry-until-success": true,
     "include-in-reporting": false
   }
-},
-{# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+}
+{# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%},
 {
   "name": "post-ingest-sleep",
   "operation": {
     "operation-type": "sleep",
     "duration": {{ post_ingest_sleep_duration|default(30) }}
   }
-},
+}
 {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+
+{%- set p_hybrid_knn_ops = (hybrid_knn_ops | default([(10, 0), (10, 50), (100, 200), (100, 300)]) ) -%}
+{%- set client_opts = ["single-client", "multiple-clients"] -%}
+
+{%- for clients in client_opts -%}
+{%- for i in range(p_hybrid_knn_ops|length) -%},
 {
-  "name": "hybrid-search-single-client",
-  "operation": "hybrid-search-bm25-knn",
+  {%- if p_hybrid_knn_ops[i][1] > 0 -%}
+    "name": "hybrid-search-{{clients}}-{{p_hybrid_knn_ops[i][0]}}-{{p_hybrid_knn_ops[i][1]}}",
+    "operation": "hybrid-search-bm25-knn-{{p_hybrid_knn_ops[i][0]}}-{{p_hybrid_knn_ops[i][1]}}"
+  {%- else -%}
+    "name": "hybrid-search-{{clients}}-{{p_hybrid_knn_ops[i][0]}}",
+    "operation": "hybrid-search-bm25-knn-{{p_hybrid_knn_ops[i][0]}}"
+  {%- endif -%},
   "warmup-iterations": 1000,
   "iterations": {{ standalone_search_iterations | default(10000) | int }}
-},
-{
-"name": "esql-hybrid-search-single-client",
-"operation": "esql-hybrid-search-bm25-knn",
-"warmup-iterations": 1000,
-"iterations": {{ standalone_search_iterations | default(10000) | int }}
-},
-{
-  "name": "hybrid-search-multiple-clients",
-  "operation": "hybrid-search-bm25-knn",
-  "warmup-iterations": 1000,
-  "iterations": {{ standalone_search_iterations | default(10000) | int }},
+  {%- if clients == "multiple-clients" -%},
   "clients": {{ standalone_search_clients | default(8) | int }}
+  {%- endif -%}
 },
 {
-"name": "esql-hybrid-search-multiple-clients",
-"operation": "esql-hybrid-search-bm25-knn",
-"warmup-iterations": 1000,
-"iterations": {{ standalone_search_iterations | default(10000) | int }},
-"clients": {{ standalone_search_clients | default(8) | int }}
+  {%- if p_hybrid_knn_ops[i][1] > 0 -%}
+    "name": "esql-hybrid-search-{{clients}}-{{p_hybrid_knn_ops[i][0]}}-{{p_hybrid_knn_ops[i][1]}}",
+    "operation": "esql-hybrid-search-bm25-knn-{{p_hybrid_knn_ops[i][0]}}-{{p_hybrid_knn_ops[i][1]}}"
+  {%- else -%}
+    "name": "esql-hybrid-search-{{clients}}-{{p_hybrid_knn_ops[i][0]}}",
+    "operation": "esql-hybrid-search-bm25-knn-{{p_hybrid_knn_ops[i][0]}}"
+  {%- endif -%},
+  "warmup-iterations": 1000,
+  "iterations": {{ standalone_search_iterations | default(10000) | int }}
+  {%- if clients == "multiple-clients" -%},
+  "clients": {{ standalone_search_clients | default(8) | int }}
+  {%- endif -%}
+},
+{
+  {%- if p_hybrid_knn_ops[i][1] > 0 -%}
+    "name": "hybrid-search-{{clients}}-{{p_hybrid_knn_ops[i][0]}}-{{p_hybrid_knn_ops[i][1]}}-source",
+    "operation": "hybrid-search-bm25-knn-{{p_hybrid_knn_ops[i][0]}}-{{p_hybrid_knn_ops[i][1]}}-source"
+  {%- else -%}
+    "name": "hybrid-search-{{clients}}-{{p_hybrid_knn_ops[i][0]}}-source",
+    "operation": "hybrid-search-bm25-knn-{{p_hybrid_knn_ops[i][0]}}-source"
+  {%- endif -%},
+  "warmup-iterations": 1000,
+  "iterations": {{ standalone_search_iterations | default(10000) | int }}
+  {%- if clients == "multiple-clients" -%},
+  "clients": {{ standalone_search_clients | default(8) | int }}
+  {%- endif -%}
+},
+{
+  {%- if p_hybrid_knn_ops[i][1] > 0 -%}
+    "name": "esql-hybrid-search-{{clients}}-{{p_hybrid_knn_ops[i][0]}}-{{p_hybrid_knn_ops[i][1]}}-source",
+    "operation": "esql-hybrid-search-bm25-knn-{{p_hybrid_knn_ops[i][0]}}-{{p_hybrid_knn_ops[i][1]}}-source"
+  {%- else -%}
+    "name": "esql-hybrid-search-{{clients}}-{{p_hybrid_knn_ops[i][0]}}-source",
+    "operation": "esql-hybrid-search-bm25-knn-{{p_hybrid_knn_ops[i][0]}}-source"
+  {%- endif -%},
+  "warmup-iterations": 1000,
+  "iterations": {{ standalone_search_iterations | default(10000) | int }}
+  {%- if clients == "multiple-clients" -%},
+  "clients": {{ standalone_search_clients | default(8) | int }}
+  {%- endif -%}
 }
+{%- endfor -%}
+{%- endfor -%}
 {% if is_esql_profiling_enabled %},
 {
 "name": "esql-profile-hybrid-search-single-client",

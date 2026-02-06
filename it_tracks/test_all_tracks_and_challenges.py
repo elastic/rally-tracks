@@ -52,8 +52,8 @@ class TestTrackRepository:
                 track_params = {"runtime_fields": "true"}
             ret = rally.race(track=track, challenge=challenge, track_params=track_params, **rally_options)
             assert ret == 0
-            if track in track_multiple_params:
-                extended_track_params = track_params | track_multiple_params.get(track, {})
+            if track in self.track_multiple_params:
+                extended_track_params = track_params | self.track_multiple_params.get(track, {})
                 ret = rally.race(track=track, challenge=challenge, track_params=extended_track_params, **rally_options)
                 assert ret == 0
         else:

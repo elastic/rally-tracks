@@ -37,7 +37,6 @@ class TestCustomParameters:
         )
         assert ret == 0
 
-
     @pytest.mark.track("github_archive")
     def test_ghub_archive_data_stream(self, es_cluster, rally, track, challenge):
         if track == "github_archive":
@@ -45,6 +44,5 @@ class TestCustomParameters:
                 track="github_archive",
                 challenge=challenge,
                 track_params={"data_stream": true},
-                
             )
             assert ret == 0

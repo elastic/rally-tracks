@@ -3,6 +3,7 @@
   "description": "",
   "default": true,
   "schedule": [
+    {# include-initial-indexing-marker-start #}{%- if include_initial_indexing|default(true) -%}
     {
       "operation": {
         "operation-type": "delete-index"
@@ -42,17 +43,18 @@
         "retry-until-success": true,
         "include-in-reporting": false
       }
-    }
-    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%},
+    },
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
     {
       "name": "post-ingest-sleep",
       "operation": {
         "operation-type": "sleep",
         "duration": {{ post_ingest_sleep_duration|default(30) }}
       }
-    }
+    },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
-    {%- for i in range(p_search_ops|length) %},
+    {%- endif -%}{# include-initial-indexing-marker-end #}
+    {%- for i in range(p_search_ops|length) %}
     {
       {%- if p_search_ops[i][2] > 0 -%}
         "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-single-client",
@@ -61,7 +63,7 @@
         "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-single-client",
         "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
       {%- endif -%},
-      "warmup-iterations": 1000,
+      "warmup-iterations": {{ standalone_search_warmup_iterations | default(1000) | int }},
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
     },
     {
@@ -72,11 +74,12 @@
         "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-multiple-clients",
         "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
       {%- endif -%},
-      "warmup-iterations": 1000,
+      "warmup-iterations": {{ standalone_search_warmup_iterations | default(1000) | int }},
       "clients": {{ standalone_search_clients | default(8) | int }},
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
-    }
-    {%- endfor %},
+    }{%- if not loop.last %},{%- endif %}
+    {%- endfor %}
+    {%- if include_parallel_indexing|default(true) %},
     {
       "parallel": {
         "completed-by": "parallel-documents-indexing-bulk",
@@ -97,6 +100,8 @@
         ]
       }
     }
+    {%- endif %}
+    {% if include_recall|default(true) %}
     {%- for i in range(p_search_ops|length) %},
     {
       {%- if p_search_ops[i][2] > 0 -%}
@@ -106,6 +111,7 @@
       {%- endif -%}
     }
     {%- endfor %}
+    {%- endif %}
   ]
 },
 {

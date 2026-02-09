@@ -2,7 +2,7 @@
     {
       "name": "apache_match_esql_query",
       "operation-type": "esql-profile",
-      "query": "FROM {{p_esql_target_prefix}}logs-*| WHERE event.dataset: \"apache.access\" AND http.response.status_code: 404 AND user_agent.name: \"Firefox\" | SORT @timestamp DESC | LIMIT 500",
+      "query": "FROM {{p_esql_target_prefix}}logs-* METADATA _source | WHERE event.dataset: \"apache.access\" AND http.response.status_code: 404 AND user_agent.name: \"Firefox\" | SORT @timestamp DESC | LIMIT 500 | KEEP _source",
       "filter": {
         "range": {
           "@timestamp": {
@@ -16,7 +16,7 @@
     {
       "name": "apache_equals_esql_query",
       "operation-type": "esql-profile",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE event.dataset == \"apache.access\" AND http.response.status_code == 404 AND user_agent.name == \"Firefox\" | SORT @timestamp DESC | LIMIT 500",
+      "query": "FROM {{p_esql_target_prefix}}logs-* METADATA _source | WHERE event.dataset == \"apache.access\" AND http.response.status_code == 404 AND user_agent.name == \"Firefox\" | SORT @timestamp DESC | LIMIT 500 | KEEP _source",
       "filter": {
         "range": {
           "@timestamp": {
@@ -85,7 +85,7 @@
     {
       "name": "kafka_qstr_esql_query",
       "operation-type": "esql-profile",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE QSTR(\"event.dataset: kafka.log AND Connection * disconnected\") | SORT @timestamp DESC | LIMIT 500",
+      "query": "FROM {{p_esql_target_prefix}}logs-* METADATA _source | WHERE QSTR(\"event.dataset: kafka.log AND Connection * disconnected\") | SORT @timestamp DESC | LIMIT 500 | KEEP _source",
       "filter": {
         "range": {
           "@timestamp": {
@@ -99,7 +99,7 @@
     {
       "name": "kafka_like_esql_query",
       "operation-type": "esql-profile",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE event.dataset == \"kafka.log\" AND message LIKE \"Connection * disconnected\" | SORT @timestamp DESC | LIMIT 500",
+      "query": "FROM {{p_esql_target_prefix}}logs-* METADATA _source | WHERE event.dataset == \"kafka.log\" AND message LIKE \"Connection * disconnected\" | SORT @timestamp DESC | LIMIT 500 | KEEP _source",
       "filter": {
         "range": {
           "@timestamp": {
@@ -163,7 +163,7 @@
     {
       "name": "qstr_esql_query",
       "operation-type": "esql-profile",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE QSTR(\"slack\") | SORT @timestamp DESC | LIMIT 500",
+      "query": "FROM {{p_esql_target_prefix}}logs-* METADATA _source | WHERE QSTR(\"slack\") | SORT @timestamp DESC | LIMIT 500 | KEEP _source",
       "filter": {
         "range": {
           "@timestamp": {
@@ -215,7 +215,7 @@
     {
       "name": "kql_esql_query",
       "operation-type": "esql-profile",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE kql(\"query\") | SORT @timestamp DESC | LIMIT 500",
+      "query": "FROM {{p_esql_target_prefix}}logs-* METADATA _source | WHERE kql(\"query\") | SORT @timestamp DESC | LIMIT 500 | KEEP _source",
       "filter": {
         "range": {
           "@timestamp": {
@@ -229,7 +229,7 @@
     {
       "name": "kql_like_esql_query",
       "operation-type": "esql-profile",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE message like \"*query*\" | SORT @timestamp DESC | LIMIT 500",
+      "query": "FROM {{p_esql_target_prefix}}logs-* METADATA _source | WHERE message like \"*query*\" | SORT @timestamp DESC | LIMIT 500 | KEEP _source",
       "filter": {
         "range": {
           "@timestamp": {
@@ -281,7 +281,7 @@
     {
       "name": "syslog_qstr_esql_query",
       "operation-type": "esql-profile",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE QSTR(\"event.dataset: system.syslog\") AND QSTR(\"Stopped*\") | SORT @timestamp DESC | LIMIT 500",
+      "query": "FROM {{p_esql_target_prefix}}logs-* METADATA _source | WHERE QSTR(\"event.dataset: system.syslog\") AND QSTR(\"Stopped*\") | SORT @timestamp DESC | LIMIT 500 | KEEP _source",
       "filter": {
         "range": {
           "@timestamp": {
@@ -295,7 +295,7 @@
     {
       "name": "syslog_like_esql_query",
       "operation-type": "esql-profile",
-      "query": "FROM {{p_esql_target_prefix}}logs-* | WHERE event.dataset == \"system.syslog\" AND message LIKE \"Stopped*\" | SORT @timestamp DESC | LIMIT 500",
+      "query": "FROM {{p_esql_target_prefix}}logs-* METADATA _source | WHERE event.dataset == \"system.syslog\" AND message LIKE \"Stopped*\" | SORT @timestamp DESC | LIMIT 500 | KEEP _source",
       "filter": {
         "range": {
           "@timestamp": {

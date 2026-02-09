@@ -40,7 +40,7 @@
           "expected-value": 0
         },
         "retry-until-success": true,
-        "include-in-reporting": false
+        "include-in-reporting": true
       }
     }
     {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%},

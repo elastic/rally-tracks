@@ -158,7 +158,7 @@ class PRInfo:
 def iter_prs(q_filter: str, since: dt.datetime, lookback_mode: str = "updated") -> Iterable[dict[str, Any]]:
     """Query the GH API to iterate over PRs within the lookback window."""
     q_date = since.strftime("%Y-%m-%d")
-    q = f"{q_filter} {lookback_mode}>={q_date}"
+    q = f"{q_filter} {lookback_mode}:>={q_date}"
     LOG.debug(f"Fetch PRs with filter '{q}'")
     params = {"q": f"{q}", "per_page": "100"}
     for page in itertools.count(1):

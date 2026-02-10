@@ -80,17 +80,17 @@ def test_get_issue_comments(backport_mod, gh_mock, case: GHInteractionCase):
 
 
 @cases(
-    pr_that_has_no_pending_label_does_not_get_commented=GHInteractionCase(
+    pr_that_has_no_pending_label_does_not_get_reminder=GHInteractionCase(
         repo=RepoCase(prs=[case_by_number(101)]),
         routes=[
             *build_gh_routes_comments("GET", [case_by_number(101)]),
         ],
     ),
     pr_has_pending_label_and_needs_reminder_gets_one=GHInteractionCase(
-        repo=RepoCase(prs=[case_by_number(108)]),
+        repo=RepoCase(prs=[case_by_number(110)]),
         routes=[
-            *build_gh_routes_comments("GET", [case_by_number(108)]),
-            *build_gh_routes_comments("POST", [case_by_number(108)]),
+            *build_gh_routes_comments("GET", [case_by_number(110)]),
+            *build_gh_routes_comments("POST", [case_by_number(110)]),
         ],
     ),
     all_prs_have_pending_label_and_needs_reminder_get_one=GHInteractionCase(

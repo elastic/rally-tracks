@@ -114,6 +114,18 @@ PR_CASES: list[PullRequestCase] = [
             COMMENTS["really_old_reminder"],
         ],
     ),
+    _pr(
+        number=110,
+        merged_at="2025-10-23T10:00:00Z",
+        labels=LABELS["pending"],
+        backport_pending_in_labels=True,
+        needs_reminder=True,
+        comments=[
+            COMMENTS["reminder_slightly_older_than_a_week"],
+            COMMENTS["old_reminder"],
+            COMMENTS["old_comment"],
+        ],
+    ),
     # Unmerged PRs should be ignored no matter what their state is.
     _pr(number=201, merged=False, needs_pending=True, needs_reminder=True),
     _pr(

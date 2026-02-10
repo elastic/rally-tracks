@@ -285,7 +285,7 @@ def pr_needs_reminder(info: PRInfo, threshold: dt.datetime) -> bool:
     prev_time = last_reminder_time(comments, COMMENT_MARKER_BASE)
     if prev_time is None:
         return True
-    return prev_time < threshold
+    return prev_time.date() <= threshold.date()
 
 
 def delete_reminders(info: PRInfo) -> None:

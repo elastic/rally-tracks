@@ -36,7 +36,6 @@ from urllib.parse import urlencode
 
 import pytest
 
-from github_ci_tools.scripts import backport
 from github_ci_tools.tests.utils import NOW, TEST_REPO, convert_str_to_date
 
 
@@ -54,8 +53,10 @@ def set_env() -> None:
 
 # --------------------------- Module Loader ---------------------------
 @pytest.fixture(scope="function")
-def backport_mod(monkeypatch) -> Any:
-    module = backport
+def backport_mod(set_env, monkeypatch) -> Any:
+    # Lazy import so module-level CONFIG reads env vars set by `set_env`.
+    from github_ci_tools.scripts import backport as module
+
     fixed = convert_str_to_date(NOW)
 
     class FixedDateTime(dt.datetime):

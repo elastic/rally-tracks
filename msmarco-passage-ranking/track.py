@@ -75,18 +75,10 @@ def generate_rrf_hybrid_query(
     rank_window_size=100,
     rank_constant=60,
 ):
-    bm25_retriever = {
-        "standard": {
-            "query": generate_bm25_query(text_field, query, query_boost)["query"]
-        }
-    }
+    bm25_retriever = {"standard": {"query": generate_bm25_query(text_field, query, query_boost)["query"]}}
 
     weighted_terms_retriever = {
-        "standard": {
-            "query": generate_weighted_terms_query(
-                text_expansion_field, query_expansion, query_expansion_boost
-            )["query"]
-        }
+        "standard": {"query": generate_weighted_terms_query(text_expansion_field, query_expansion, query_expansion_boost)["query"]}
     }
 
     return {

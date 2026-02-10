@@ -6,6 +6,7 @@ import os
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
+
 from esrally.driver import runner
 
 logger = logging.getLogger(__name__)
@@ -212,6 +213,7 @@ class KnnRecallRunner:
     def __repr__(self, *args, **kwargs):
         return "knn-recall"
 
+
 class HybridParamSource:
     def __init__(self, track, params, **kwargs):
         # choose a suitable index: if there is only one defined for this track
@@ -248,50 +250,27 @@ class HybridParamSource:
         if self._iters >= self._maxIters:
             self._iters = 0
 
-        knn_query = {
-            "field": "emb",
-            "query_vector": query["emb"],
-            "k": top_k,
-            "num_candidates": num_candidates
-        }
+        knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}
         if self._params.get("oversample-rescore", -1) >= 0:
             knn_query["rescore_vector"] = {"oversample": self._params.get("oversample-rescore")}
         if "filter" in self._params:
             knn_query["filter"] = self._params["filter"]
 
-        knn_retriever = {
-            "knn": knn_query
-        }
+        knn_retriever = {"knn": knn_query}
 
         standard_retriever = {
-            "standard": {
-                "query": {
-                    "bool": {
-                        "should": [
-                            { "match": { "title": query["text"] } },
-                            { "match": { "text": query["text"] } }
-                        ]
-                    }
-                }
-            }
+            "standard": {"query": {"bool": {"should": [{"match": {"title": query["text"]}}, {"match": {"text": query["text"]}}]}}}
         }
 
         return {
             "index": self._index_name,
             "body": {
                 "_source": self._source,
-                "retriever": {
-                    "rrf": {
-                        "retrievers": [
-                            standard_retriever,
-                            knn_retriever
-                        ],
-                        "rank_window_size": self._size
-                    }
-                },
-                "size": self._size
-            }
+                "retriever": {"rrf": {"retrievers": [standard_retriever, knn_retriever], "rank_window_size": self._size}},
+                "size": self._size,
+            },
         }
+
 
 class EsqlHybridParamSource:
     def __init__(self, track, params, **kwargs):
@@ -344,10 +323,12 @@ class EsqlHybridParamSource:
         lexical_query = f"WHERE MATCH(title, ?query_text) OR MATCH(text, ?query_text)"
 
         hybrid_query = f"FROM {self._index_name} METADATA _index, _id, _score"
-        hybrid_query += (f" | FORK"
-                         f" ({lexical_query} | DROP emb | SORT _score DESC | LIMIT {self._size})"
-                         f" ({knn_query} | DROP emb | SORT _score DESC | LIMIT {top_k})"
-                         f" | FUSE | SORT _score DESC")
+        hybrid_query += (
+            f" | FORK"
+            f" ({lexical_query} | DROP emb | SORT _score DESC | LIMIT {self._size})"
+            f" ({knn_query} | DROP emb | SORT _score DESC | LIMIT {top_k})"
+            f" | FUSE | SORT _score DESC"
+        )
 
         if not self._keep_all:
             hybrid_query += " | KEEP _index, _id, _score"
@@ -357,7 +338,8 @@ class EsqlHybridParamSource:
         query_vector = query["emb"]
         query_text = query["text"]
         params = [{"query_vector": query_vector}, {"query_text": query_text}]
-        return {"query": hybrid_query, "body": {"params": params }}
+        return {"query": hybrid_query, "body": {"params": params}}
+
 
 class EsqlProfileRunner(runner.Runner):
     """
@@ -457,6 +439,7 @@ class EsqlProfileRunner(runner.Runner):
 
     def __repr__(self, *args, **kwargs):
         return "esql-profile"
+
 
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)

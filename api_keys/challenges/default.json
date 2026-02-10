@@ -1,0 +1,21 @@
+    {
+      "name": "api-keys",
+      "description": "Benchmarking API keys creation and authentication",
+      "default": true,
+      "schedule": [
+        {
+          "operation": "create-roles-and-users"
+        },
+        {
+          "operation": "create-api-keys"
+        },
+        {
+          "name": "authenticate-with-api-key",
+          "operation": "authenticate-with-api-key",
+          "param-source": "api-key-param-source",
+          "iterations": 50000,
+          "clients": 5
+        }
+      ]
+    }
+    

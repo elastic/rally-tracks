@@ -365,7 +365,6 @@ def configure(args: argparse.Namespace) -> None:
 
 
 def prefetch_prs(pr_number: int | None, lookback_days: int, lookback_mode: str = "updated") -> list[dict[str, Any]]:
-    lookback_days += 3  # Add a safe margin of 3 days to avoid edge cases like github availability issues.
     if pr_number is not None:
         q_path = f"repos/{CONFIG.repo}/pulls/{pr_number}"
         pr_data = gh_request(path=q_path)
@@ -383,12 +382,12 @@ def prefetch_prs(pr_number: int | None, lookback_days: int, lookback_mode: str =
         if age_days > lookback_days:
             LOG.info(
                 f"PR #{pr_data.get('number','?')} merged_at {merged_at} age={age_days}d "
-                f"exceeds lookback_days={lookback_days}; filtering out."
+                f"exceeds {lookback_days} days; filtering out."
             )
             return []
         return [pr_data]
     now = dt.datetime.now(dt.timezone.utc)
-    since = now - dt.timedelta(days=lookback_days)
+    since = now - dt.timedelta(days=lookback_days+2) # Add safety margin for edge cases.
     # Note that we rely on is:merged to filter out unmerged PRs.
     return list(iter_prs(f"repo:{CONFIG.repo} is:pr is:merged", since, lookback_mode=lookback_mode))
 

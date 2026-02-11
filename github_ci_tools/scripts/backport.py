@@ -380,7 +380,7 @@ def prefetch_prs(pr_number: int | None, lookback_days: int, lookback_mode: str =
             raise RuntimeError(f"Invalid merged_at format: {merged_at}") from e
         now = dt.datetime.now(dt.timezone.utc)
         age_days = (now - merged_dt).days
-        if age_days >= lookback_days:
+        if age_days > lookback_days:
             LOG.info(
                 f"PR #{pr_data.get('number','?')} merged_at {merged_at} age={age_days}d "
                 f"exceeds lookback_days={lookback_days}; filtering out."

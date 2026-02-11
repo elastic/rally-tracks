@@ -1,4 +1,5 @@
 {% set is_esql_enabled = (esql_enabled | default(false)) %}
+{% set is_esql_profiling_enabled = (esql_profiling_enabled | default(true)) %}
 
 {
   "name": "index-and-search",
@@ -431,6 +432,32 @@
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     }
+    {% if is_esql_profiling_enabled %}
+    ,{
+      "name": "esql-profile-knn-search-default-match-all",
+      "tags": ["profile"],
+      "operation": "esql-profile-knn-search-default-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-knn-search-100-300-match-all",
+      "tags": ["profile"],
+      "operation": "esql-profile-knn-search-100-300-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    },
+    {
+      "name": "esql-profile-script-score-query-match-all",
+      "tags": ["profile"],
+      "operation": "esql-profile-script-score-query-match-all",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ profile_iterations | default(100) }},
+      "clients": 1
+    }
+    {% endif %}
 {% endif %}
 {# non-serverless-after-force-merge-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       {% if p_include_force_merge %}

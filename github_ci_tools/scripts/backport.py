@@ -365,7 +365,7 @@ def configure(args: argparse.Namespace) -> None:
 
 
 def prefetch_prs(pr_number: int | None, lookback_days: int, lookback_mode: str = "updated") -> list[dict[str, Any]]:
-    lookback_days += 3 # Add a safe margin of 3 days to avoid edge cases like github availability issues.
+    lookback_days += 3  # Add a safe margin of 3 days to avoid edge cases like github availability issues.
     if pr_number is not None:
         q_path = f"repos/{CONFIG.repo}/pulls/{pr_number}"
         pr_data = gh_request(path=q_path)

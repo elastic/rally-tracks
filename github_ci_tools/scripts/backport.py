@@ -381,13 +381,12 @@ def prefetch_prs(pr_number: int | None, lookback_days: int, lookback_mode: str =
         age_days = (now - merged_dt).days
         if age_days > lookback_days:
             LOG.info(
-                f"PR #{pr_data.get('number','?')} merged_at {merged_at} age={age_days}d "
-                f"exceeds {lookback_days} days; filtering out."
+                f"PR #{pr_data.get('number','?')} merged_at {merged_at} age={age_days}d " f"exceeds {lookback_days} days; filtering out."
             )
             return []
         return [pr_data]
     now = dt.datetime.now(dt.timezone.utc)
-    since = now - dt.timedelta(days=lookback_days+2) # Add safety margin for edge cases.
+    since = now - dt.timedelta(days=lookback_days + 2)  # Add safety margin for edge cases.
     # Note that we rely on is:merged to filter out unmerged PRs.
     return list(iter_prs(f"repo:{CONFIG.repo} is:pr is:merged", since, lookback_mode=lookback_mode))
 

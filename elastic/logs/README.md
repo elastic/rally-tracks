@@ -348,7 +348,7 @@ The challenge indexes data and waits for lifecycle operations to complete before
 - `dsl_default_rollover` (default: `max_age=1h,max_primary_shard_size=50gb`) - Rollover conditions
 - `dlm_wait_time` (default: `60`) - Seconds to wait for lifecycle operations
 - `dlm_datastream_count` (default: `10000`) - Number of data streams to create
-- `dlm_retention` (default: none) - Retention period before deletion
+- `dlm_retention` (default: `90d`) - Retention period before deletion
 - `lifecycle` - Set to `dlm` to enable Data Lifecycle Management
 
 **Note:** This challenge automatically sets `lifecycle:dlm` - you do not need to pass it as a parameter.

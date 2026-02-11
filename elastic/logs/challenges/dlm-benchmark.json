@@ -37,9 +37,8 @@
         "body": {
           "template": {
             "lifecycle": {
-              {%- if dlm_retention %}
-              "data_retention": "{{ dlm_retention }}"
-              {%- endif %}
+              "data_retention": "{{ dlm_retention | default("90d")}}",
+              "enabled": true
             }
           }
         }
@@ -90,9 +89,9 @@
       },
       "clients": 8,
       "warmup-iterations": 0,
-      "iterations": {{ dlm_datastream_count | default(5000) }},
+      "iterations": {{ dlm_datastream_count | default(10000) }},
       "params": {
-        "data-stream-prefix": "dlm-benchmark",
+        "data-stream-prefix": "dlm-benchmark-",
         "start-index": 0,
         "ignore-existing": false
       }
@@ -105,7 +104,7 @@
       },
       "clients": {{ p_bulk_indexing_clients }},
       "params": {
-        "data-stream-prefix": "dlm-benchmark",
+        "data-stream-prefix": "dlm-benchmark-",
         "data-stream-count": {{ dlm_datastream_count | default(10000) }},
         "bulk-size": {{ p_bulk_size }}
       }

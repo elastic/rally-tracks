@@ -310,9 +310,7 @@ def run_remind(prefetched_prs: list[dict[str, Any]], lookback_days: int, remove:
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for reminding")
     now = dt.datetime.now(dt.timezone.utc)
-    threshold = now - dt.timedelta(
-        days=lookback_days + 2
-    )  # Add a safe margin of 2 days to avoid edge cases around midnight or github availability issues.
+    threshold = now - dt.timedelta(days=lookback_days)
     errors = 0
     for pr in prefetched_prs:
         try:
@@ -367,6 +365,7 @@ def configure(args: argparse.Namespace) -> None:
 
 
 def prefetch_prs(pr_number: int | None, lookback_days: int, lookback_mode: str = "updated") -> list[dict[str, Any]]:
+    lookback_days += 3 # Add a safe margin of 3 days to avoid edge cases like github availability issues.
     if pr_number is not None:
         q_path = f"repos/{CONFIG.repo}/pulls/{pr_number}"
         pr_data = gh_request(path=q_path)
@@ -381,7 +380,7 @@ def prefetch_prs(pr_number: int | None, lookback_days: int, lookback_mode: str =
             raise RuntimeError(f"Invalid merged_at format: {merged_at}") from e
         now = dt.datetime.now(dt.timezone.utc)
         age_days = (now - merged_dt).days
-        if age_days >= lookback_days + 1:
+        if age_days >= lookback_days:
             LOG.info(
                 f"PR #{pr_data.get('number','?')} merged_at {merged_at} age={age_days}d "
                 f"exceeds lookback_days={lookback_days}; filtering out."

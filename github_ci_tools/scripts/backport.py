@@ -310,7 +310,9 @@ def run_remind(prefetched_prs: list[dict[str, Any]], lookback_days: int, remove:
     if not prefetched_prs:
         raise RuntimeError("No PRs prefetched for reminding")
     now = dt.datetime.now(dt.timezone.utc)
-    threshold = now - dt.timedelta(days=lookback_days)
+    threshold = now - dt.timedelta(
+        days=lookback_days + 2
+    )  # Add a safe margin of 2 days to avoid edge cases around midnight or github availability issues.
     errors = 0
     for pr in prefetched_prs:
         try:

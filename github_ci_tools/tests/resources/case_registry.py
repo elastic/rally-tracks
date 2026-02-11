@@ -114,6 +114,18 @@ PR_CASES: list[PullRequestCase] = [
             COMMENTS["really_old_reminder"],
         ],
     ),
+    _pr(
+        number=110,
+        merged_at="2025-10-23T10:00:00Z",
+        labels=LABELS["pending"],
+        backport_pending_in_labels=True,
+        needs_reminder=True,
+        comments=[
+            COMMENTS["reminder_slightly_older_than_a_week"],
+            COMMENTS["old_reminder"],
+            COMMENTS["old_comment"],
+        ],
+    ),
     # Unmerged PRs should be ignored no matter what their state is.
     _pr(number=201, merged=False, needs_pending=True, needs_reminder=True),
     _pr(
@@ -291,7 +303,7 @@ class GHInteractAction(Enum):
     PR_POST_REMINDER_COMMENT = "post_reminder_comment"
     REPO_GET_LABELS = "get_repo_labels"
     REPO_ADD_LABEL = "add_repo_label"
-    LIST_PRS = "list_prs"
+    ITER_PRS = "iter_prs"
 
 
 def build_gh_routes_comments(method: str, prs: list[PullRequestCase]) -> list[GHRoute]:
@@ -347,7 +359,22 @@ def build_gh_routes_labels(method: str, prs: list[PullRequestCase]) -> list[GHRo
     return routes
 
 
-def expected_actions_for_prs(action: GHInteractAction, prs: list[PullRequestCase]) -> list[tuple[str, str]]:
+def build_gh_routes_repo() -> list[GHRoute]:
+    return [
+        GHRoute(
+            f"/repos/{TEST_REPO}/labels",
+            method="GET",
+            response={},
+        ),
+        GHRoute(
+            f"/repos/{TEST_REPO}/labels",
+            method="POST",
+            response={},
+        ),
+    ]
+
+
+def expected_actions_for_prs(action: GHInteractAction, prs: list[PullRequestCase], lookback_mode: str = "updated") -> list[tuple[str, str]]:
     actions = []
     match action:
         case GHInteractAction.PR_ADD_PENDING_LABEL:
@@ -366,8 +393,8 @@ def expected_actions_for_prs(action: GHInteractAction, prs: list[PullRequestCase
         case GHInteractAction.PR_POST_REMINDER_COMMENT:
             for pr in prs:
                 actions.append(("POST", f"/repos/{TEST_REPO}/issues/{pr.number}/comments"))
-        case GHInteractAction.LIST_PRS:
-            actions.append(("GET", f"/search/issues...merged...updated..."))
+        case GHInteractAction.ITER_PRS:
+            actions.append(("GET", f"/search/issues...merged...{lookback_mode}..."))
         case _:
             raise ValueError(f"Unsupported PR action: {action}")
     return actions

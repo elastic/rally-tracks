@@ -94,8 +94,8 @@
             "type": "keyword"
           },
           "attributes": {
-            "type": "object",
-            "subobjects": false
+            "type": "flattened",
+            "index": "false"
           },
           "host.name": {
             "path": "resource.attributes.host.name",

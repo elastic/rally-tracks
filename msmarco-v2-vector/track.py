@@ -98,9 +98,13 @@ class KnnParamSource:
 
     def params(self):
         top_k = self._params.get("k", 10)
+        visit_percentage = self._params.get("visit-percentage")
         num_candidates = self._params.get("num-candidates", 50)
         query_vec = self._queries[self._iters]
-        knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
+        if(visit_percentage is None):
+            knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
+        else:
+            knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "visit_percentage": visit_percentage}
         if self._params.get("oversample-rescore", -1) >= 0:
             knn_query["rescore_vector"] = {"oversample": self._params.get("oversample-rescore")}
         if "filter" in self._params:
@@ -139,6 +143,7 @@ class KnnRecallParamSource:
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
+            "visit_percentage": self._params.get("visit_percentage", -1),
             "oversample_rescore": self._params.get("oversample-rescore", -1),
         }
 

@@ -37,7 +37,9 @@
 {%- set p_search_ops = (search_ops | default([(10, 20, 0), (10, 20, 1), (10, 50, 0), (10, 50, 2), (10, 100, 0), (10, 100, 2), (10, 200, 0), (10, 200, 2), (10, 500, 0), (10, 500, 2), (10, 1000, 0), (10, 1000, 2), (100, 120, 0), (100, 120, 1), (100, 200, 0), (100, 200, 1), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]))%}
 {%- for i in range(p_search_ops|length) %},
 {
-  {%- if p_search_ops[i][2] > 0 -%}
+  {%- if p_search_ops[i]|length > 3 and p_search_ops[i][3] > 0 -%}
+    "name": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-{{p_search_ops[i][3]}}"
+  {%- elif p_search_ops[i][2] > 0 -%}
     "name": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
   {%- else -%}
     "name": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
@@ -46,10 +48,15 @@
   "param-source": "knn-param-source",
   "k": {{p_search_ops[i][0]}},
   "num-candidates": {{p_search_ops[i][1]}},
+  {%- if p_search_ops[i]|length > 3 -%}
+    "visit-percentage": {{p_search_ops[i][3]}},
+  {%- endif -%}
   "oversample-rescore": {{p_search_ops[i][2]}}
 },
 {
-  {%- if p_search_ops[i][2] > 0 -%}
+  {%- if p_search_ops[i]|length > 3 and p_search_ops[i][3] > 0 -%}
+    "name": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-{{p_search_ops[i][3]}}"
+  {%- elif p_search_ops[i][2] > 0 -%}
     "name": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
   {%- else -%}
     "name": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"
@@ -58,6 +65,9 @@
   "param-source": "knn-recall-param-source",
   "k": {{p_search_ops[i][0]}},
   "num-candidates": {{p_search_ops[i][1]}},
+  {%- if p_search_ops[i]|length > 3 -%}
+    "visit-percentage": {{p_search_ops[i][3]}},
+  {%- endif -%}
   "oversample-rescore": {{p_search_ops[i][2]}},
   "include-in-reporting": false
 }

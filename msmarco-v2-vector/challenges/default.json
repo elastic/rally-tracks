@@ -137,4 +137,12 @@
   "schedule": [
     {{ rally.collect(parts="common/ingest-search-autoscale-schedule.json") }}
   ]
+},
+{
+  "name": "hybrid-search-queries-dsl-and-esql",
+  "description": "Benchmark hybrid search queries using query DSL and ESQL",
+  "default": false,
+  "schedule": [
+    {{ rally.collect(parts="common/hybrid-search-queries.json") }}
+  ]
 }

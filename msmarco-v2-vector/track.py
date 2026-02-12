@@ -226,7 +226,7 @@ class HybridParamSource:
         self._index_name = params.get("index", default_index)
         self._cache = params.get("cache", False)
         self._size = params.get("size", 10)
-        self._source = params.get("source", False)
+        self._source = params.get("source", True)
         self._params = params
         self._queries = []
 
@@ -284,7 +284,7 @@ class EsqlHybridParamSource:
         self._index_name = params.get("index", default_index)
         self._cache = params.get("cache", False)
         self._size = params.get("size", 10)
-        self._keep_all = params.get("keep-all", False)
+        self._keep_all = params.get("keep-all", True)
         self._params = params
         self._queries = []
 

@@ -76,7 +76,8 @@
   "k": {{p_hybrid_knn_ops[i][0]}}
   {%- if p_hybrid_knn_ops[i][1] > 0 -%},
   "num-candidates": {{p_hybrid_knn_ops[i][1]}}
-  {%- endif -%}
+  {%- endif -%},
+  "source": false
 },
 {
   {%- if p_hybrid_knn_ops[i][1] > 0 -%}
@@ -105,7 +106,8 @@
   "k": {{p_hybrid_knn_ops[i][0]}}
   {%- if p_hybrid_knn_ops[i][1] > 0 -%},
   "num-candidates": {{p_hybrid_knn_ops[i][1]}}
-  {%- endif -%}
+  {%- endif -%},
+  "keep-all": false
 },
 {
   {%- if p_hybrid_knn_ops[i][1] > 0 -%}

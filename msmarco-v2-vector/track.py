@@ -324,10 +324,7 @@ class EsqlHybridParamSource:
 
         hybrid_query = f"FROM {self._index_name} METADATA _index, _id, _score"
         hybrid_query += (
-            f" | FORK"
-            f" ({lexical_query} | DROP emb)"
-            f" ({knn_query} | DROP emb)"
-            f" | FUSE | SORT _score DESC | LIMIT {self._size}"
+            f" | FORK" f" ({lexical_query} | DROP emb)" f" ({knn_query} | DROP emb)" f" | FUSE | SORT _score DESC | LIMIT {self._size}"
         )
 
         if not self._keep_all:

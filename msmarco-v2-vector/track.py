@@ -103,7 +103,7 @@ class KnnParamSource:
         visit_percentage = self._params.get("visit-percentage")
         num_candidates = self._params.get("num-candidates", 50)
         query_vec = self._queries[self._iters]
-        if(visit_percentage is None):
+        if visit_percentage is None:
             knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
         else:
             knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "visit_percentage": visit_percentage}

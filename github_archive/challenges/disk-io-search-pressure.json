@@ -1,0 +1,105 @@
+{
+  "name": "disk-io-search-pressure",
+  "description": "Index ~1TB corpus then run intensive concurrent searches to create maximum disk I/O pressure",
+  "schedule": [
+    {{ rally.collect(parts="../common/schedule_setup.json") }},
+    {
+      "operation": "index_base_corpora",
+      "warmup-time-period": 120,
+      "clients": {{bulk_indexing_clients | default(16)}}
+    },
+    {
+      "operation": "index_1tb_raw",
+      "warmup-time-period": 120,
+      "clients": {{bulk_indexing_clients | default(16)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {
+      "name": "set-replicas-for-search",
+      "operation": {
+        "operation-type": "raw-request",
+        "method": "PUT",
+        "path": "/gharchive/_settings",
+        "body": {
+          "index": {
+            "number_of_replicas": {{search_replicas | default(1)}}
+          }
+        }
+      }
+    },
+    {
+      "name": "wait-for-green-after-replicas",
+      "operation": {
+        "operation-type": "cluster-health",
+        "include-in-reporting": false,
+        "request-params": {
+          "wait_for_status": "green",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": "add_filter_alias"
+    },
+    {%- set p_runtime_search_clients=runtime_search_clients | default(16) %}
+    {
+      "parallel": {
+        "time-period": {{search_time_period | default(3600)}},
+        "tasks": [
+          {
+            "name": "pressure_default_1k",
+            "operation": "default_1k",
+            "warmup-time-period": {{search_warmup_time_period | default(120)}},
+            "clients": {{p_runtime_search_clients}}
+          },
+          {
+            "name": "pressure_filter_query",
+            "operation": "filter_query",
+            "warmup-time-period": {{search_warmup_time_period | default(120)}},
+            "clients": {{p_runtime_search_clients}}
+          },
+          {
+            "name": "pressure_alias_bool_query_1",
+            "operation": "alias_bool_query_1",
+            "warmup-time-period": {{search_warmup_time_period | default(120)}},
+            "clients": {{p_runtime_search_clients}}
+          },
+          {
+            "name": "pressure_alias_bool_query_2",
+            "operation": "alias_bool_query_2",
+            "warmup-time-period": {{search_warmup_time_period | default(120)}},
+            "clients": {{p_runtime_search_clients}}
+          },
+          {
+            "name": "pressure_range",
+            "operation": "range",
+            "warmup-time-period": {{search_warmup_time_period | default(120)}},
+            "clients": {{p_runtime_search_clients}}
+          },
+          {
+            "name": "pressure_autohisto_agg",
+            "operation": "autohisto_agg",
+            "warmup-time-period": {{search_warmup_time_period | default(120)}},
+            "clients": {{p_runtime_search_clients}}
+          },
+          {
+            "name": "pressure_top_es_contributors",
+            "operation": "top-es-contributors-weekly",
+            "warmup-time-period": {{search_warmup_time_period | default(120)}},
+            "clients": {{p_runtime_search_clients}}
+          },
+          {
+            "name": "pressure_esql",
+            "operation": "top-10-repos-esql",
+            "warmup-time-period": {{search_warmup_time_period | default(120)}},
+            "clients": {{p_runtime_search_clients}}
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -100,9 +100,13 @@ class KnnParamSource:
 
     def params(self):
         top_k = self._params.get("k", 10)
+        visit_percentage = self._params.get("visit-percentage")
         num_candidates = self._params.get("num-candidates", 50)
         query_vec = self._queries[self._iters]
-        knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
+        if visit_percentage is None:
+            knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
+        else:
+            knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "visit_percentage": visit_percentage}
         if self._params.get("oversample-rescore", -1) >= 0:
             knn_query["rescore_vector"] = {"oversample": self._params.get("oversample-rescore")}
         if "filter" in self._params:
@@ -141,6 +145,7 @@ class KnnRecallParamSource:
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
+            "visit_percentage": self._params.get("visit-percentage", -1),
             "oversample_rescore": self._params.get("oversample-rescore", -1),
         }
 
@@ -149,6 +154,7 @@ class KnnRecallRunner:
     async def __call__(self, es, params):
         top_k = params["size"]
         num_candidates = params["num_candidates"]
+        visit_percentage = params["visit_percentage"]
         index = params["index"]
         request_cache = params["cache"]
 
@@ -165,7 +171,10 @@ class KnnRecallRunner:
                 query = json.loads(line)
                 query_id = query["query_id"]
 
-                knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}
+                if visit_percentage is not None and visit_percentage > 0:
+                    knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "visit_percentage": visit_percentage}
+                else:
+                    knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}
                 if params["oversample_rescore"] >= 0:
                     knn_query["rescore_vector"] = {"oversample": params["oversample_rescore"]}
                 body = {
@@ -201,6 +210,7 @@ class KnnRecallRunner:
                 "min_recall": min_recall,
                 "k": top_k,
                 "num_candidates": num_candidates,
+                "visit_percentage": visit_percentage,
                 "avg_nodes_visited": statistics.mean(nodes_visited) if any([x > 0 for x in nodes_visited]) else None,
                 "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99) if any([x > 0 for x in nodes_visited]) else None,
             }

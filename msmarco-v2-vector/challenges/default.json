@@ -56,7 +56,10 @@
     {%- endif -%}{# include-initial-indexing-marker-end #}
     {%- for i in range(p_search_ops|length) %}
     {
-      {%- if p_search_ops[i][2] > 0 -%}
+      {%- if p_search_ops[i]|length > 3 and p_search_ops[i][3] > 0 -%}
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-{{p_search_ops[i][3]}}-single-client",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-{{p_search_ops[i][3]}}"
+      {%- elif p_search_ops[i][2] > 0 -%}
         "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-single-client",
         "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
       {%- else -%}
@@ -67,7 +70,10 @@
       "iterations": {{ standalone_search_iterations | default(10000) | int }}
     },
     {
-      {%- if p_search_ops[i][2] > 0 -%}
+      {%- if p_search_ops[i]|length > 3 and p_search_ops[i][3] > 0 -%}
+        "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-{{p_search_ops[i][3]}}-multiple-clients",
+        "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-{{p_search_ops[i][3]}}"
+      {%- elif p_search_ops[i][2] > 0 -%}
         "name": "standalone-search-knn-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-multiple-clients",
         "operation": "knn-search-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
       {%- else -%}
@@ -104,7 +110,9 @@
     {% if include_recall|default(true) %}
     {%- for i in range(p_search_ops|length) %},
     {
-      {%- if p_search_ops[i][2] > 0 -%}
+      {%- if p_search_ops[i]|length > 3 and p_search_ops[i][3] > 0 -%}
+        "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}-{{p_search_ops[i][3]}}"
+      {%- elif p_search_ops[i][2] > 0 -%}
         "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}-{{p_search_ops[i][2]}}"
       {%- else -%}
         "operation": "knn-recall-{{p_search_ops[i][0]}}-{{p_search_ops[i][1]}}"

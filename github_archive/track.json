@@ -10,6 +10,7 @@
 {% set p_query_start_date = query_start_date | default("2021-10-01") -%}
 {% set p_query_end_timestamp = query_end_timestamp | default("2021-10-01T12:00:00") -%}
 {% set p_query_start_timestamp = query_start_timestamp | default("2021-10-01T10:00:00") -%}
+{% set p_search_cache = search_cache | default(false) -%}
 {
   "version": 2,
   "description": "GitHub timeline from gharchive.org",

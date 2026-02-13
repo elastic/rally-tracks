@@ -171,7 +171,7 @@ class KnnRecallRunner:
                 query = json.loads(line)
                 query_id = query["query_id"]
 
-                if visit_percentage > 0:
+                if visit_percentage is not None and visit_percentage > 0:
                     knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "visit_percentage": visit_percentage}
                 else:
                     knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}

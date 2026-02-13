@@ -373,6 +373,11 @@ class EsqlProfileRunner(runner.Runner):
                         metric_key = f"{driver_name}.{safe_operator_name}.process_ms"
                         result[metric_key] = result.get(metric_key, 0) + process_nanos / 1_000_000  # Convert to milliseconds
 
+                    processed_slices = status.get("processed_slices", 0)
+                    if processed_slices > 0:
+                        metric_key = f"{driver_name}.{safe_operator_name}.processed_slices"
+                        result[metric_key] = result.get(metric_key, 0) + processed_slices
+
             # Extract plan-level metrics
             plans = profile.get("plans", [])
             for plan in plans:

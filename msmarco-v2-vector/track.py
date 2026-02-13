@@ -145,7 +145,7 @@ class KnnRecallParamSource:
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
-            "visit_percentage": self._params.get("visit_percentage", -1),
+            "visit_percentage": self._params.get("visit-percentage", -1),
             "oversample_rescore": self._params.get("oversample-rescore", -1),
         }
 
@@ -171,6 +171,7 @@ class KnnRecallRunner:
                 query = json.loads(line)
                 query_id = query["query_id"]
 
+                logger.info(f"visit_percentage: {visit_percentage}")
                 if visit_percentage > 0:
                     knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "visit_percentage": visit_percentage}
                 else:

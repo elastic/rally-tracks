@@ -125,9 +125,7 @@ def generate_linear_hybrid_query(
     """Linear retriever combining BM25 + weighted terms with score normalization. Requires ES 8.18+."""
     bm25_standard = {"standard": {"query": generate_bm25_query(text_field, query, 1)["query"]}}
 
-    weighted_terms_standard = {
-        "standard": {"query": generate_weighted_terms_query(text_expansion_field, query_expansion, 1)["query"]}
-    }
+    weighted_terms_standard = {"standard": {"query": generate_weighted_terms_query(text_expansion_field, query_expansion, 1)["query"]}}
 
     return {
         "retriever": {

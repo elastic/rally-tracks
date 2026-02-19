@@ -91,7 +91,6 @@ def generate_rrf_hybrid_query(
     rank_window_size,
     rank_constant,
 ):
-    """RRF retriever combining BM25 + weighted terms. Requires ES 8.14+."""
     bm25_retriever = {"standard": {"query": generate_bm25_query(text_field, query, query_boost)["query"]}}
 
     weighted_terms_retriever = {
@@ -122,7 +121,6 @@ def generate_linear_hybrid_query(
     rank_window_size,
     normalizer,
 ):
-    """Linear retriever combining BM25 + weighted terms with score normalization. Requires ES 8.18+."""
     bm25_standard = {"standard": {"query": generate_bm25_query(text_field, query, 1)["query"]}}
 
     weighted_terms_standard = {"standard": {"query": generate_weighted_terms_query(text_expansion_field, query_expansion, 1)["query"]}}

@@ -68,7 +68,7 @@ def generate_bm25_query(text_field, query, boost=1.0):
 def generate_combine_bm25_weighted_terms_query(
     text_field, text_expansion_field, query, query_boost, query_expansion, query_expansion_boost
 ):
-    """Legacy hybrid using bool/should. Works on all 8.x versions (pre-8.14 backward compat)."""
+    """Hybrid using bool/should. Works on all 8.x versions (pre-8.14 backward compat)."""
     return {
         "query": {
             "bool": {

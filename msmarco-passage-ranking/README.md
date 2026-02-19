@@ -8,7 +8,7 @@ To compare search performance, the following strategies are employed:
 * `rrf`: Hybrid using the [RRF retriever](https://www.elastic.co/guide/en/elasticsearch/reference/current/rrf.html) combining BM25 + text expansion via reciprocal rank fusion. **Requires ES 8.14+.**
 * `linear`: Hybrid using the [linear retriever](https://www.elastic.co/guide/en/elasticsearch/reference/current/linear-retriever.html) with configurable score normalization and per-retriever weighting. **Requires ES 8.18+.**
 
-It's important to highlight that the text-expansion and hybrid strategies are dependent on a dataset that has undergone query token expansion.
+It's important to highlight that the `text_expansion`, `hybrid`, `rrf`, and `linear` strategies are dependent on a dataset that has undergone query token expansion.
 
 Additional properties can be sent in to `text_expansion` and `hybrid`: `prune` will prune insignificant tokens from the text expansion query and `rescore` will issue a rescore query that rescores with the pruned tokens. Both of these values default to `false`.
 

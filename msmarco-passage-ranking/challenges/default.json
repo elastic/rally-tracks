@@ -126,7 +126,7 @@
       "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
-{
+    {
       "name": "hybrid-search-maxwand-enabled",
       "operation": "hybrid-search-maxwand-enabled",
       "warmup-iterations": {{search_warmup_iterations | default(100)}},

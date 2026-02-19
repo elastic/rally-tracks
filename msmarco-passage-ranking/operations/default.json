@@ -93,8 +93,10 @@
    "operation-type": "search",
    "param-source": "query_param_source",
    "query_source": "queries.json",
-   "query_strategy": "hybrid",
+   "query_strategy": "{{query_strategy | default('rrf')}}",
    "text_expansion_field": "text_expansion_elser",
+   "rank_window_size": {{rank_window_size | default(10)}},
+   "rank_constant": {{rank_constant | default(60)}},
    "track_total_hits": true
 },
 {
@@ -102,56 +104,10 @@
    "operation-type": "search",
    "param-source": "query_param_source",
    "query_source": "queries.json",
-   "query_strategy": "hybrid",
-   "text_expansion_field": "text_expansion_elser",
-   "track_total_hits": false
-},
-{
-   "name": "rrf-hybrid-search-maxwand-disabled",
-   "operation-type": "search",
-   "param-source": "query_param_source",
-   "query_source": "queries.json",
-   "query_strategy": "rrf",
+   "query_strategy": "{{query_strategy | default('rrf')}}",
    "text_expansion_field": "text_expansion_elser",
    "rank_window_size": {{rank_window_size | default(10)}},
    "rank_constant": {{rank_constant | default(60)}},
-   "track_total_hits": true
-},
-{
-   "name": "rrf-hybrid-search-maxwand-enabled",
-   "operation-type": "search",
-   "param-source": "query_param_source",
-   "query_source": "queries.json",
-   "query_strategy": "rrf",
-   "text_expansion_field": "text_expansion_elser",
-   "rank_window_size": {{rank_window_size | default(10)}},
-   "rank_constant": {{rank_constant | default(60)}},
-   "track_total_hits": false
-},
-{
-   "name": "linear-hybrid-search-maxwand-disabled",
-   "operation-type": "search",
-   "param-source": "query_param_source",
-   "query_source": "queries.json",
-   "query_strategy": "linear",
-   "text_expansion_field": "text_expansion_elser",
-   "rank_window_size": {{rank_window_size | default(10)}},
-   "normalizer": "{{normalizer | default('minmax')}}",
-   "query_boost": {{query_boost | default(1)}},
-   "query_expansion_boost": {{query_expansion_boost | default(1)}},
-   "track_total_hits": true
-},
-{
-   "name": "linear-hybrid-search-maxwand-enabled",
-   "operation-type": "search",
-   "param-source": "query_param_source",
-   "query_source": "queries.json",
-   "query_strategy": "linear",
-   "text_expansion_field": "text_expansion_elser",
-   "rank_window_size": {{rank_window_size | default(10)}},
-   "normalizer": "{{normalizer | default('minmax')}}",
-   "query_boost": {{query_boost | default(1)}},
-   "query_expansion_boost": {{query_expansion_boost | default(1)}},
    "track_total_hits": false
 },
 {

@@ -2,9 +2,11 @@
 
 This track assesses the search performance of the dataset available at [microsoft/MSMARCO-Passage-Ranking](https://github.com/microsoft/MSMARCO-Passage-Ranking).
 To compare search performance, the following strategies are employed:
-* `bm25`: This is a straightforward strategy that involves indexing the text fields using a standard analyzer and querying using the match query method.
-* `text-expansion`: In this strategy, we utilize a sparse model to expand both the documents and queries with weighted tokens. It's worth noting that the original dataset has already been augmented with these weighted tokens.
-* `hybrid`: The hybrid strategy combines both the bm25 and text-expansion approaches at query time. This is achieved through a simple boolean logic and a query type-specific boost.
+* `bm25`: Standard BM25 match query on the `text` field.
+* `text_expansion`: Weighted terms query using sparse token expansions. Supports `prune` and `rescore` options.
+* `hybrid`: Legacy hybrid combining BM25 + text expansion via `bool/should`. Retained for backward compatibility with ES versions prior to 8.14.
+* `rrf`: Hybrid using the [RRF retriever](https://www.elastic.co/guide/en/elasticsearch/reference/current/rrf.html) combining BM25 + text expansion via reciprocal rank fusion. **Requires ES 8.14+.**
+* `linear`: Hybrid using the [linear retriever](https://www.elastic.co/guide/en/elasticsearch/reference/current/linear-retriever.html) with configurable score normalization and per-retriever weighting. **Requires ES 8.18+.**
 
 It's important to highlight that the text-expansion and hybrid strategies are dependent on a dataset that has undergone query token expansion.
 
@@ -623,6 +625,11 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `search_iterations` (default: 1000)
 * `search_warmup_iterations` (default: 100)
 * `rescored_num_candidates` (default: 100)
+* `rank_window_size` (default: 10): Number of top results from each retriever before fusion. Used by `rrf` and `linear` strategies.
+* `rank_constant` (default: 60): RRF ranking constant. Used by `rrf` strategy.
+* `normalizer` (default: `minmax`): Score normalization method. Used by `linear` strategy.
+* `query_boost` (default: 1): Weight for the BM25 retriever. Used by `linear` strategy.
+* `query_expansion_boost` (default: 1): Weight for the text expansion retriever. Used by `linear` strategy.
 
 ### License
 Terms and Conditions for using the MS MARCO datasets can be found at https://microsoft.github.io/msmarco/

@@ -127,15 +127,15 @@
       "clients": {{search_clients | default(1)}}
     },
     {
-      "name": "hybrid-search-maxwand-enabled",
-      "operation": "hybrid-search-maxwand-enabled",
+      "name": "rrf-hybrid-search-maxwand-enabled",
+      "operation": "rrf-hybrid-search-maxwand-enabled",
       "warmup-iterations": {{search_warmup_iterations | default(100)}},
       "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}
     },
     {
-      "name": "hybrid-search-maxwand-disabled",
-      "operation": "hybrid-search-maxwand-disabled",
+      "name": "rrf-hybrid-search-maxwand-disabled",
+      "operation": "rrf-hybrid-search-maxwand-disabled",
       "warmup-iterations": {{search_warmup_iterations | default(100)}},
       "iterations": {{search_iterations | default(1000)}},
       "clients": {{search_clients | default(1)}}

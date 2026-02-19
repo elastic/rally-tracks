@@ -16,6 +16,9 @@
             "sort.field": [ "host.id", "@timestamp" ],
             "sort.order": [ "asc", "desc" ],
             "sort.missing": ["_first", "_last"]
+            {%- if index_disabled_by_default -%},
+            "mapping.index_disabled_by_default": {{ index_disabled_by_default | tojson }}
+            {%- endif %}
         }
         {% endif %}
       }

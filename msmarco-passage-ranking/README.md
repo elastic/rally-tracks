@@ -2,11 +2,11 @@
 
 This track assesses the search performance of the dataset available at [microsoft/MSMARCO-Passage-Ranking](https://github.com/microsoft/MSMARCO-Passage-Ranking).
 To compare search performance, the following strategies are employed:
-* `bm25`: Standard BM25 match query on the `text` field.
-* `text_expansion`: Weighted terms query using sparse token expansions. Supports `prune` and `rescore` options.
-* `hybrid`: Legacy hybrid combining BM25 + text expansion via `bool/should`. Retained for backward compatibility with ES versions prior to 8.14.
+* `bm25`: This is a straightforward strategy that involves indexing the text fields using a standard analyzer and querying using the match query method.
+* `text-expansion`: In this strategy, we utilize a sparse model to expand both the documents and queries with weighted tokens. It's worth noting that the original dataset has already been augmented with these weighted tokens.
 * `rrf`: Hybrid using the [RRF retriever](https://www.elastic.co/guide/en/elasticsearch/reference/current/rrf.html) combining BM25 + text expansion via reciprocal rank fusion. **Requires ES 8.14+.**
 * `linear`: Hybrid using the [linear retriever](https://www.elastic.co/guide/en/elasticsearch/reference/current/linear-retriever.html) with configurable score normalization and per-retriever weighting. **Requires ES 8.18+.**
+* `hybrid`: The hybrid strategy combines both the bm25 and text-expansion approaches at query time. This is achieved through a simple boolean logic and a query type-specific boost. `rrf`, and `linear` is preferred for ES 8.14+.
 
 It's important to highlight that the `text_expansion`, `hybrid`, `rrf`, and `linear` strategies are dependent on a dataset that has undergone query token expansion.
 

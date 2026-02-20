@@ -6,6 +6,7 @@
     {
       "operation": "index_corpora1",
       "clients": {{initial_indexing_clients | default(32)}}
+      {{ rally.exists_set_param("target-throughput", pre_bulk_indexing_target_throughput) }}
     },
     {
       "name": "refresh-after-index",

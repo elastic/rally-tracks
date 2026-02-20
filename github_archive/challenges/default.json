@@ -8,6 +8,7 @@
       "operation": "index",
       "warmup-time-period": 240,
       "clients": {{bulk_indexing_clients | default(8)}}
+      {{ rally.exists_set_param("target-throughput", pre_bulk_indexing_target_throughput) }}
     },
     {
       "name": "refresh-after-index",

@@ -7,6 +7,7 @@
       "operation": "index_corpora1",
       "warmup-time-period": 240,
       "clients": {{bulk_indexing_clients | default(8)}}
+      {{ rally.exists_set_param("target-throughput", pre_bulk_indexing_target_throughput) }}
     },
     {
       "name": "refresh-after-index",
@@ -33,8 +34,8 @@
               "conflict-probability": {{p_conflict_probability}}
               {%- endif %}
             },
-            "clients": {{runtime_bulk_indexing_clients | default(8)}},
-            "target-throughput": "10 docs/s"
+            "clients": {{runtime_bulk_indexing_clients | default(8)}}
+            {{ rally.exists_set_param("target-throughput", runtime_bulk_indexing_target_throughput, default_value="10 docs/s") }}
           },
           {
             "operation": "alias_bool_query_1",

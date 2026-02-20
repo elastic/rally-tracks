@@ -7,6 +7,7 @@
       "operation": "index",
       "warmup-time-period": 240,
       "clients": {{bulk_indexing_clients | default(8)}}
+      {{ rally.exists_set_param("target-throughput", runtime_bulk_indexing_target_throughput) }}
     }
   ]
 },
@@ -18,10 +19,12 @@
     {
       "operation": "index_base_corpora",
       "clients": {{pre_index_bulk_indexing_clients | default(8)}}
+      {{ rally.exists_set_param("target-throughput", pre_bulk_indexing_target_throughput) }}
     },
     {
       "operation": "index_1tb_raw",
       "clients": {{runtime_bulk_indexing_clients | default(8)}}
+      {{ rally.exists_set_param("target-throughput", runtime_bulk_indexing_target_throughput) }}
     }
   ]
 }

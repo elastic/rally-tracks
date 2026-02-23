@@ -13,7 +13,7 @@
             "ignore_malformed": "true"
           },
           "sort": {
-            "field": ["attributes.log.file.path", "resource.attributes.host.name", "@timestamp"],
+            "field": ["resource.attributes.log.file.path", "resource.attributes.host.name", "@timestamp"],
             "order": ["asc", "asc", "desc"]
           }
         }
@@ -107,7 +107,7 @@
           "resource.attributes.service.name": {
             "type": "keyword"
           },
-          "attributes.log.file.path": {
+          "resource.attributes.log.file.path": {
             "type": "keyword"
           }
         }

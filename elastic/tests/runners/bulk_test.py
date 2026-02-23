@@ -18,6 +18,7 @@
 from unittest import mock
 
 import pytest
+from elastic_transport import ApiResponse, ApiResponseMeta, HttpHeaders, NodeConfig
 from shared.runners.bulk import RawBulkIndex
 from tests import as_future
 
@@ -25,90 +26,98 @@ from tests import as_future
 @mock.patch("elasticsearch.Elasticsearch")
 @pytest.mark.asyncio
 async def test_detailed_stats(es, tmp_path):
+    _headers = HttpHeaders()
+    _headers["content-type"] = "application/json"
+    _node = NodeConfig(scheme="http", host="localhost", port=9200)
+    BULK_RESPONSE_META = ApiResponseMeta(status=200, http_version="1.1", headers=_headers, duration=0.1, node=_node)
+
     es.bulk.return_value = as_future(
-        {
-            "took": 30,
-            "ingest_took": 20,
-            "errors": True,
-            "items": [
-                {
-                    "index": {
-                        "_index": "test",
-                        "_type": "_doc",
-                        "_id": "1",
-                        "_version": 1,
-                        "result": "created",
-                        "_shards": {"total": 2, "successful": 1, "failed": 0},
-                        "created": True,
-                        "status": 201,
-                        "_seq_no": 0,
-                    }
-                },
-                {
-                    "update": {
-                        "_index": "test",
-                        "_type": "_doc",
-                        "_id": "2",
-                        "_version": 2,
-                        "result": "updated",
-                        "_shards": {"total": 2, "successful": 1, "failed": 0},
-                        "status": 200,
-                        "_seq_no": 1,
-                    }
-                },
-                {
-                    "index": {
-                        "_index": "test",
-                        "_type": "_doc",
-                        "_id": "3",
-                        "_version": 1,
-                        "result": "noop",
-                        "_shards": {"total": 2, "successful": 0, "failed": 2},
-                        "created": False,
-                        "status": 500,
-                        "_seq_no": -2,
-                    }
-                },
-                {
-                    "index": {
-                        "_index": "test",
-                        "_type": "_doc",
-                        "_id": "4",
-                        "_version": 1,
-                        "result": "noop",
-                        "_shards": {"total": 2, "successful": 1, "failed": 1},
-                        "created": False,
-                        "status": 500,
-                        "_seq_no": -2,
-                    }
-                },
-                {
-                    "index": {
-                        "_index": "test",
-                        "_type": "_doc",
-                        "_id": "5",
-                        "_version": 1,
-                        "result": "created",
-                        "_shards": {"total": 2, "successful": 1, "failed": 0},
-                        "created": True,
-                        "status": 201,
-                        "_seq_no": 4,
-                    }
-                },
-                {
-                    "update": {
-                        "_index": "test",
-                        "_type": "_doc",
-                        "_id": "6",
-                        "_version": 2,
-                        "result": "noop",
-                        "_shards": {"total": 2, "successful": 0, "failed": 2},
-                        "status": 404,
-                        "_seq_no": 5,
-                    }
-                },
-            ],
-        }
+        ApiResponse(
+            body={
+                "took": 30,
+                "ingest_took": 20,
+                "errors": True,
+                "items": [
+                    {
+                        "index": {
+                            "_index": "test",
+                            "_type": "_doc",
+                            "_id": "1",
+                            "_version": 1,
+                            "result": "created",
+                            "_shards": {"total": 2, "successful": 1, "failed": 0},
+                            "created": True,
+                            "status": 201,
+                            "_seq_no": 0,
+                        }
+                    },
+                    {
+                        "update": {
+                            "_index": "test",
+                            "_type": "_doc",
+                            "_id": "2",
+                            "_version": 2,
+                            "result": "updated",
+                            "_shards": {"total": 2, "successful": 1, "failed": 0},
+                            "status": 200,
+                            "_seq_no": 1,
+                        }
+                    },
+                    {
+                        "index": {
+                            "_index": "test",
+                            "_type": "_doc",
+                            "_id": "3",
+                            "_version": 1,
+                            "result": "noop",
+                            "_shards": {"total": 2, "successful": 0, "failed": 2},
+                            "created": False,
+                            "status": 500,
+                            "_seq_no": -2,
+                        }
+                    },
+                    {
+                        "index": {
+                            "_index": "test",
+                            "_type": "_doc",
+                            "_id": "4",
+                            "_version": 1,
+                            "result": "noop",
+                            "_shards": {"total": 2, "successful": 1, "failed": 1},
+                            "created": False,
+                            "status": 500,
+                            "_seq_no": -2,
+                        }
+                    },
+                    {
+                        "index": {
+                            "_index": "test",
+                            "_type": "_doc",
+                            "_id": "5",
+                            "_version": 1,
+                            "result": "created",
+                            "_shards": {"total": 2, "successful": 1, "failed": 0},
+                            "created": True,
+                            "status": 201,
+                            "_seq_no": 4,
+                        }
+                    },
+                    {
+                        "update": {
+                            "_index": "test",
+                            "_type": "_doc",
+                            "_id": "6",
+                            "_version": 2,
+                            "result": "noop",
+                            "_shards": {"total": 2, "successful": 0, "failed": 2},
+                            "status": 404,
+                            "_seq_no": 5,
+                        }
+                    },
+                ],
+            },
+            meta=BULK_RESPONSE_META,
+        )
     )
     bulk = RawBulkIndex()
     bulk_params = {
@@ -146,7 +155,7 @@ async def test_detailed_stats(es, tmp_path):
     assert result["ingest_took"] == 20
     assert result["weight"] == 6
     assert result["unit"] == "docs"
-    assert result["success"] == False
+    assert result["success"] is False
     assert result["error-count"] == 3
     assert result["error-type"] == "bulk"
     assert result["raw-size-bytes"] == 200

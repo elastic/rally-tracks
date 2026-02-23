@@ -18,9 +18,9 @@
 from unittest import mock
 
 import pytest
+from elastic_transport import ApiResponse, ApiResponseMeta, HttpHeaders, NodeConfig
 from shared.runners.bulk import RawBulkIndex
 from tests import as_future
-from elastic_transport import ApiResponse, ApiResponseMeta, HttpHeaders, NodeConfig
 
 
 @mock.patch("elasticsearch.Elasticsearch")

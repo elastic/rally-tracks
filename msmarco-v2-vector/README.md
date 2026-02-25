@@ -91,6 +91,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `standalone_search_iterations` (default: 10000)
  - `vector_index_type` (default: "int8_hnsw"): The index kind for storing the vectors.
  - `vector_index_element_type` (default: "float"): Sets the dense_vector element type.
+ - `enable_experimental_features` (default: false): Enables experimental dense vector features that may break backward compatibility.
 
 For running with Base64 encoded strings, use a parameter file like:
 

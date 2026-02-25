@@ -53,3 +53,4 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - partitions (default: 1000)
  - rescore_oversample (default: 0)
  - vector_index_element_type (default: "float"): Sets the dense_vector element type.
+ - enable_experimental_features (default: false): Enables experimental dense vector features that may break backward compatibility.

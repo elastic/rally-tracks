@@ -4,7 +4,7 @@
   "bulk-size": {{bulk_size | default(5000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
   {%- if conflicts is defined %},
-  "conflicts": {{conflicts}},
+  "conflicts": {{conflicts | tojson}},
   "on-conflict": {{p_on_conflict | tojson}},
   "conflict-probability": {{p_conflict_probability}}
   {%- endif %}
@@ -16,7 +16,7 @@
   "bulk-size": {{bulk_size | default(5000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
   {%- if conflicts is defined %},
-  "conflicts": {{conflicts}},
+  "conflicts": {{conflicts | tojson}},
   "on-conflict": {{p_on_conflict | tojson}},
   "conflict-probability": {{p_conflict_probability}}
   {%- endif %}
@@ -28,7 +28,7 @@
   "bulk-size": {{bulk_size | default(5000)}},
   "ingest-percentage": {{ingest_percentage | default(100)}}
   {%- if conflicts is defined %},
-  "conflicts": {{conflicts}},
+  "conflicts": {{conflicts | tojson}},
   "on-conflict": {{p_on_conflict | tojson}},
   "conflict-probability": {{p_conflict_probability}}
   {%- endif %}

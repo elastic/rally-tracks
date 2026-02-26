@@ -1,31 +1,26 @@
 {
   "name": "index-and-search",
-  "description": "Index Wikipedia docs then run semantic or BM25 searches. Parameterize with model=(elser|jina|bm25) and language=(en|es|dv).",
+  "description": "Index Wikipedia docs then run semantic or BM25 searches. Parameterize with model=(elser|jina|bm25).",
   "default": true,
   "schedule": [
+    { "operation": "delete-index" },
+    { "operation": "create-index" },
+    { "operation": "check-cluster-health" },
     {
-      "operation": "delete-index"
+      "operation": "index-documents-en",
+      "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     {
-      "operation": "create-index"
+      "operation": "index-documents-es",
+      "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     {
-      "operation": "check-cluster-health"
+      "operation": "index-documents-dv",
+      "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
-    {
-      "operation": "index-documents",
-      "clients": {{ bulk_indexing_clients | default(1) | int }},
-      "corpora": ["wikipedia-en", "wikipedia-es", "wikipedia-dv"]
-    },
-    {
-      "operation": "refresh-after-index"
-    },
-    {
-      "operation": "force-merge"
-    },
-    {
-      "operation": "refresh-after-merge"
-    },
+    { "operation": "refresh-after-index" },
+    { "operation": "force-merge" },
+    { "operation": "refresh-after-merge" },
     {
       "operation": "search",
       "clients": {{ search_clients | default(1) | int }},
@@ -38,28 +33,23 @@
   "name": "index-only",
   "description": "Index all three language corpora — use to measure ingest throughput and final index size.",
   "schedule": [
+    { "operation": "delete-index" },
+    { "operation": "create-index" },
+    { "operation": "check-cluster-health" },
     {
-      "operation": "delete-index"
+      "operation": "index-documents-en",
+      "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     {
-      "operation": "create-index"
+      "operation": "index-documents-es",
+      "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     {
-      "operation": "check-cluster-health"
+      "operation": "index-documents-dv",
+      "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
-    {
-      "operation": "index-documents",
-      "clients": {{ bulk_indexing_clients | default(1) | int }},
-      "corpora": ["wikipedia-en", "wikipedia-es", "wikipedia-dv"]
-    },
-    {
-      "operation": "refresh-after-index"
-    },
-    {
-      "operation": "force-merge"
-    },
-    {
-      "operation": "refresh-after-merge"
-    }
+    { "operation": "refresh-after-index" },
+    { "operation": "force-merge" },
+    { "operation": "refresh-after-merge" }
   ]
 }

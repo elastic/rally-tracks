@@ -16,8 +16,23 @@
   "include-in-reporting": false
 },
 {
-  "name": "index-documents",
+  "name": "index-documents-en",
   "operation-type": "bulk",
+  "corpus": "wikipedia-en",
+  "bulk-size": {{ bulk_size | default(100) | int }},
+  "ingest-percentage": {{ ingest_percentage | default(100) | float }}
+},
+{
+  "name": "index-documents-es",
+  "operation-type": "bulk",
+  "corpus": "wikipedia-es",
+  "bulk-size": {{ bulk_size | default(100) | int }},
+  "ingest-percentage": {{ ingest_percentage | default(100) | float }}
+},
+{
+  "name": "index-documents-dv",
+  "operation-type": "bulk",
+  "corpus": "wikipedia-dv",
   "bulk-size": {{ bulk_size | default(100) | int }},
   "ingest-percentage": {{ ingest_percentage | default(100) | float }}
 },

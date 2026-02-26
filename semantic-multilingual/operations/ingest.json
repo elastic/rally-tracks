@@ -16,6 +16,30 @@
   "include-in-reporting": false
 },
 {
+  "name": "create-inference-endpoint",
+  "operation-type": "raw-request",
+  "path": "/_inference/{{ task_type | default('sparse_embedding') }}/semantic-multilingual-model",
+  "method": "PUT",
+  "body": {
+    "service": "{{ inference_service | default('elser') }}",
+    "service_settings": {
+      "model_id": "{{ inference_model_id | default('.elser_model_2') }}",
+      "num_allocations": {{ num_allocations | default(1) | int }},
+      "num_threads": {{ num_threads | default(1) | int }}
+    }
+  },
+  "request-timeout": 30000,
+  "include-in-reporting": false
+},
+{
+  "name": "delete-inference-endpoint",
+  "operation-type": "raw-request",
+  "path": "/_inference/{{ task_type | default('sparse_embedding') }}/semantic-multilingual-model",
+  "method": "DELETE",
+  "include-in-reporting": false,
+  "ignore": 404
+},
+{
   "name": "index-documents",
   "operation-type": "bulk",
   "bulk-size": {{ bulk_size | default(100) | int }},

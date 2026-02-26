@@ -1,6 +1,9 @@
 {% import "rally.helpers" as rally with context %}
-{% set _model    = model    | default("bm25") %}
-{% set _data_url = data_url | default("") %}
+{% set _model             = model             | default("bm25") %}
+{% set _data_url          = data_url          | default("") %}
+{% set _inference_service  = inference_service  | default("elser") %}
+{% set _inference_model_id = inference_model_id | default(".elser_model_2") %}
+{% set _task_type          = task_type          | default("sparse_embedding") %}
 {
   "version": 2,
   "description": "Benchmark comparing ELSER, Jina V5, and BM25 on multilingual Wikipedia (EN/ES/DV)",

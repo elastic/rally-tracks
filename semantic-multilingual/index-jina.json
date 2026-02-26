@@ -11,7 +11,7 @@
     "properties": {
       "id":       { "type": "keyword" },
       "title":    { "type": "keyword" },
-      "content":  { "type": "semantic_text", "inference_id": ".jina-embeddings-v5-text-small" },
+      "content":  { "type": "semantic_text", "inference_id": "semantic-multilingual-model" },
       "language": { "type": "keyword" },
       "url":      { "type": "keyword" }
     }

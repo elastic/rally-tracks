@@ -1,0 +1,60 @@
+{% import "rally.helpers" as rally with context %}
+{% set _model    = model    | default("bm25") %}
+{% set _data_url = data_url | default("") %}
+{
+  "version": 2,
+  "description": "Benchmark comparing ELSER, Jina V5, and BM25 on multilingual Wikipedia (EN/ES/DV)",
+  "indices": [
+    {
+      "name": "wiki-{{ _model }}",
+      "body": "index-{{ _model }}.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "wikipedia-en",
+      "base-url": "{{ _data_url }}",
+      "documents": [
+        {
+          "source-file": "wikipedia_en.json.bz2",
+          "document-count": 100000,
+          "compressed-bytes": 107763187,
+          "uncompressed-bytes": 358384011
+        }
+      ],
+      "meta": { "language": "en" }
+    },
+    {
+      "name": "wikipedia-es",
+      "base-url": "{{ _data_url }}",
+      "documents": [
+        {
+          "source-file": "wikipedia_es.json.bz2",
+          "document-count": 100000,
+          "compressed-bytes": 105591588,
+          "uncompressed-bytes": 364111202
+        }
+      ],
+      "meta": { "language": "es" }
+    },
+    {
+      "name": "wikipedia-dv",
+      "base-url": "{{ _data_url }}",
+      "documents": [
+        {
+          "source-file": "wikipedia_dv.json.bz2",
+          "document-count": 89,
+          "compressed-bytes": 94893,
+          "uncompressed-bytes": 640785
+        }
+      ],
+      "meta": { "language": "dv" }
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

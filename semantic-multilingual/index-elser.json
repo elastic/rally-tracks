@@ -1,0 +1,15 @@
+{
+  "settings": {
+    "index.number_of_replicas": {{ number_of_replicas | default(0) | int }},
+    "index.number_of_shards": {{ number_of_shards | default(1) | int }}
+  },
+  "mappings": {
+    "properties": {
+      "id":       { "type": "keyword" },
+      "title":    { "type": "keyword" },
+      "content":  { "type": "semantic_text", "inference_id": ".elser-2-elasticsearch" },
+      "language": { "type": "keyword" },
+      "url":      { "type": "keyword" }
+    }
+  }
+}

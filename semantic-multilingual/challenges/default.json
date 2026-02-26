@@ -7,15 +7,33 @@
     { "operation": "create-index" },
     { "operation": "check-cluster-health" },
     {
-      "operation": "index-documents-en",
+      "operation": {
+        "name": "index-documents-en",
+        "operation-type": "bulk",
+        "bulk-size": {{ bulk_size | default(100) | int }},
+        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
+      },
+      "corpus": "wikipedia-en",
       "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     {
-      "operation": "index-documents-es",
+      "operation": {
+        "name": "index-documents-es",
+        "operation-type": "bulk",
+        "bulk-size": {{ bulk_size | default(100) | int }},
+        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
+      },
+      "corpus": "wikipedia-es",
       "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     {
-      "operation": "index-documents-dv",
+      "operation": {
+        "name": "index-documents-dv",
+        "operation-type": "bulk",
+        "bulk-size": {{ bulk_size | default(100) | int }},
+        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
+      },
+      "corpus": "wikipedia-dv",
       "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     { "operation": "refresh-after-index" },
@@ -37,15 +55,33 @@
     { "operation": "create-index" },
     { "operation": "check-cluster-health" },
     {
-      "operation": "index-documents-en",
+      "operation": {
+        "name": "index-documents-en",
+        "operation-type": "bulk",
+        "bulk-size": {{ bulk_size | default(100) | int }},
+        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
+      },
+      "corpus": "wikipedia-en",
       "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     {
-      "operation": "index-documents-es",
+      "operation": {
+        "name": "index-documents-es",
+        "operation-type": "bulk",
+        "bulk-size": {{ bulk_size | default(100) | int }},
+        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
+      },
+      "corpus": "wikipedia-es",
       "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     {
-      "operation": "index-documents-dv",
+      "operation": {
+        "name": "index-documents-dv",
+        "operation-type": "bulk",
+        "bulk-size": {{ bulk_size | default(100) | int }},
+        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
+      },
+      "corpus": "wikipedia-dv",
       "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     { "operation": "refresh-after-index" },

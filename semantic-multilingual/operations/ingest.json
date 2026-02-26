@@ -19,7 +19,7 @@
   "name": "index-documents",
   "operation-type": "bulk",
   "bulk-size": {{ bulk_size | default(100) | int }},
-  "ingest-percentage": {{ ingest_percentage | default(100) | int }}
+  "ingest-percentage": {{ ingest_percentage | default(100) | float }}
 },
 {
   "name": "refresh-after-index",

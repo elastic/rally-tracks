@@ -23,9 +23,14 @@
   "body": {
     "service": "{{ inference_service | default('elser') }}",
     "service_settings": {
+      {% if inference_service | default('elser') == 'jinaai' %}
+      "api_key": "{{ inference_api_key | default('') }}",
+      "model_id": "{{ inference_model_id | default('jina-embeddings-v5-text-small') }}"
+      {% else %}
       "model_id": "{{ inference_model_id | default('.elser_model_2') }}",
       "num_allocations": {{ num_allocations | default(1) | int }},
       "num_threads": {{ num_threads | default(1) | int }}
+      {% endif %}
     }
   },
   "request-timeout": 30000,

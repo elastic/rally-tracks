@@ -12,43 +12,16 @@
   ],
   "corpora": [
     {
-      "name": "wikipedia-en",
+      "name": "wikipedia-all",
       "base-url": "{{ _data_url }}",
       "documents": [
         {
-          "source-file": "wikipedia_en.json.bz2",
-          "document-count": 100000,
-          "compressed-bytes": 107763187,
-          "uncompressed-bytes": 358384011
+          "source-file": "wikipedia_all.json.bz2",
+          "document-count": 200089,
+          "compressed-bytes": 213606400,
+          "uncompressed-bytes": 723135998
         }
-      ],
-      "meta": { "language": "en" }
-    },
-    {
-      "name": "wikipedia-es",
-      "base-url": "{{ _data_url }}",
-      "documents": [
-        {
-          "source-file": "wikipedia_es.json.bz2",
-          "document-count": 100000,
-          "compressed-bytes": 105591588,
-          "uncompressed-bytes": 364111202
-        }
-      ],
-      "meta": { "language": "es" }
-    },
-    {
-      "name": "wikipedia-dv",
-      "base-url": "{{ _data_url }}",
-      "documents": [
-        {
-          "source-file": "wikipedia_dv.json.bz2",
-          "document-count": 89,
-          "compressed-bytes": 94893,
-          "uncompressed-bytes": 640785
-        }
-      ],
-      "meta": { "language": "dv" }
+      ]
     }
   ],
   "operations": [

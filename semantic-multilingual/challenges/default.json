@@ -7,33 +7,7 @@
     { "operation": "create-index" },
     { "operation": "check-cluster-health" },
     {
-      "operation": {
-        "name": "index-documents-en",
-        "operation-type": "bulk",
-        "bulk-size": {{ bulk_size | default(100) | int }},
-        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
-      },
-      "corpus": "wikipedia-en",
-      "clients": {{ bulk_indexing_clients | default(1) | int }}
-    },
-    {
-      "operation": {
-        "name": "index-documents-es",
-        "operation-type": "bulk",
-        "bulk-size": {{ bulk_size | default(100) | int }},
-        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
-      },
-      "corpus": "wikipedia-es",
-      "clients": {{ bulk_indexing_clients | default(1) | int }}
-    },
-    {
-      "operation": {
-        "name": "index-documents-dv",
-        "operation-type": "bulk",
-        "bulk-size": {{ bulk_size | default(100) | int }},
-        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
-      },
-      "corpus": "wikipedia-dv",
+      "operation": "index-documents",
       "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     { "operation": "refresh-after-index" },
@@ -49,39 +23,13 @@
 },
 {
   "name": "index-only",
-  "description": "Index all three language corpora — use to measure ingest throughput and final index size.",
+  "description": "Index all Wikipedia docs (EN+ES+DV merged) — use to measure ingest throughput and final index size.",
   "schedule": [
     { "operation": "delete-index" },
     { "operation": "create-index" },
     { "operation": "check-cluster-health" },
     {
-      "operation": {
-        "name": "index-documents-en",
-        "operation-type": "bulk",
-        "bulk-size": {{ bulk_size | default(100) | int }},
-        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
-      },
-      "corpus": "wikipedia-en",
-      "clients": {{ bulk_indexing_clients | default(1) | int }}
-    },
-    {
-      "operation": {
-        "name": "index-documents-es",
-        "operation-type": "bulk",
-        "bulk-size": {{ bulk_size | default(100) | int }},
-        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
-      },
-      "corpus": "wikipedia-es",
-      "clients": {{ bulk_indexing_clients | default(1) | int }}
-    },
-    {
-      "operation": {
-        "name": "index-documents-dv",
-        "operation-type": "bulk",
-        "bulk-size": {{ bulk_size | default(100) | int }},
-        "ingest-percentage": {{ ingest_percentage | default(100) | float }}
-      },
-      "corpus": "wikipedia-dv",
+      "operation": "index-documents",
       "clients": {{ bulk_indexing_clients | default(1) | int }}
     },
     { "operation": "refresh-after-index" },

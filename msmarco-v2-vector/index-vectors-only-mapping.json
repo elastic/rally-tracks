@@ -1,3 +1,5 @@
+{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
+
 {
   "settings": {
     "index": {
@@ -6,10 +8,12 @@
       "refresh_interval": {{ index_refresh_interval | tojson }},
       {%- endif %}
       {% if preload_pagecache %}
-      "store.preload": [ "vec", "vex", "vem"],
+      "store.preload": [ "vec", "vex", "vem"]
       {% endif %}
+      {% if p_include_non_serverless_index_settings %},
       "number_of_shards": {{number_of_shards | default(1)}},
-      "number_of_replicas": {{number_of_replicas | default(0)}}{% if enable_experimental_features | default(false) %},
+      "number_of_replicas": {{number_of_replicas | default(0)}}
+      {% endif %}{% if enable_experimental_features | default(false) %},
       "dense_vector.experimental_features": true{% endif %}
       {% if aggressive_merge_policy %},
       "merge": {

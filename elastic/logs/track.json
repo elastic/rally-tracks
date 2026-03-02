@@ -20,6 +20,7 @@
 {% set p_query_warmup_time_period = (query_warmup_time_period | default(120)) %}
 {% set p_query_time_period = (query_time_period | default(900)) %}
 {% set p_query_request_params = (query_request_params | default({}))%}
+{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
 {% set p_include_esql_queries = (include_esql_queries | default(build_flavor != "serverless")) %}
 
 {% set p_throttle_indexing = (throttle_indexing | default(false)) %}

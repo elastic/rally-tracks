@@ -1,17 +1,25 @@
 {% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
 
 {
+  {%- set comma = joiner(",") -%}
   "settings": {
-    {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-      {% if preload_pagecache %}
+    {# non-serverless-index-settings-marker-start #}
+    {%- if build_flavor != "serverless" or serverless_operator == true -%}
+    {% if preload_pagecache %}
+    {{comma()}}
     "index.store.preload": [ "vec", "vex", "vem"]
-      {% endif %}
-      {% if p_include_non_serverless_index_settings %},
+    {% endif %}
+    {% if p_include_non_serverless_index_settings %}
+    {{comma()}}
     "index.number_of_shards": {{number_of_shards | default(1)}},
     "index.number_of_replicas": {{number_of_replicas | default(0)}}
-      {% endif %}{% if enable_experimental_features | default(false) %},
-    "index.dense_vector.experimental_features": true{% endif %}
-    {%- endif -%}{# non-serverless-index-settings-marker-end #}
+    {% endif %}
+    {% if enable_experimental_features | default(false) %}
+    {{comma()}}
+    "index.dense_vector.experimental_features": true
+    {% endif %}
+    {%- endif -%}
+    {# non-serverless-index-settings-marker-end #}
   },
   "mappings": {
     "properties": {

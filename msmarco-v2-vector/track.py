@@ -360,6 +360,11 @@ class EsqlProfileRunner(runner.Runner):
     - meta.parsing.took_ms: Time it took to parse the ESQL query
     - meta.preanalysis.took_ms: Preanalysis, including field_caps, enrich policies, lookup indices
     - meta.analysis.took_ms: Analysis time before optimizations
+    - meta.<driver>.number: Count of driver instances
+    - meta.<driver>.took_ms: Maximum took time across all driver instances
+    - meta.<driver>.cpu_ms: Maximum CPU time across all driver instances
+    - meta.<driver>.took_total_ms: Sum of took times across all driver instances
+    - meta.<driver>.cpu_total_ms: Sum of CPU times across all driver instances
     - meta.<plan>.cpu_ms: Total plan CPU time
     - meta.<plan>.took_ms: Total plan took time
     - meta.<plan>.logical_optimization.took_ms: Plan logical optimization took time
@@ -412,9 +417,27 @@ class EsqlProfileRunner(runner.Runner):
                 took_nanos = driver.get("took_nanos", 0)
                 cpu_nanos = driver.get("cpu_nanos", 0)
 
-                # Add driver-level timing metrics
-                result[f"{driver_name}.took_ms"] = took_nanos / 1_000_000  # Convert to milliseconds
-                result[f"{driver_name}.cpu_ms"] = cpu_nanos / 1_000_000
+                # Convert to milliseconds
+                took_ms = took_nanos / 1_000_000
+                cpu_ms = cpu_nanos / 1_000_000
+
+                # Add number of drivers (count)
+                driver_count_key = f"{driver_name}.number"
+                result[driver_count_key] = result.get(driver_count_key, 0) + 1
+
+                # Add driver-level timing metrics - MAX values
+                took_key = f"{driver_name}.took_ms"
+                result[took_key] = max(result.get(took_key, 0), took_ms)
+
+                cpu_key = f"{driver_name}.cpu_ms"
+                result[cpu_key] = max(result.get(cpu_key, 0), cpu_ms)
+
+                # Add driver-level timing metrics - TOTAL (SUM) values
+                took_total_key = f"{driver_name}.took_total_ms"
+                result[took_total_key] = result.get(took_total_key, 0) + took_ms
+
+                cpu_total_key = f"{driver_name}.cpu_total_ms"
+                result[cpu_total_key] = result.get(cpu_total_key, 0) + cpu_ms
 
                 # Extract operator-level metrics
                 operators = driver.get("operators", [])

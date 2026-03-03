@@ -14,13 +14,23 @@
   "name": "check-cluster-health",
   "operation": "check-cluster-health"
 },
+{% set p_corpora = (corpora | default(["msmarco-v2_float-initial-indexing-1", "msmarco-v2_float-initial-indexing-2", "msmarco-v2_float-initial-indexing-3", "msmarco-v2_float-initial-indexing-4", "msmarco-v2_float-initial-indexing-5", "msmarco-v2_float-initial-indexing-6", "msmarco-v2_float-initial-indexing-7", "msmarco-v2_float-initial-indexing-8"])) %}
 {
   "name": "initial-ingest",
   "clients": {{ initial_ingest_clients | default(4) | int}},
   "operation": {
     "operation-type": "bulk",
-    "bulk-size": {{ initial_ingest_bulk_size | default(100) | int}},
-    "ingest-percentage": {{initial_ingest_percentage | default(100) | int}}
+    "bulk-size": {{ initial_ingest_bulk_size | default(500) | int}},
+    "corpora":  [
+      {% for doc_id in p_corpora %}
+        {{doc_id | tojson}}
+        {{ ", " if not loop.last else "" }}
+      {% endfor %}],
+    {%- if initial_indexing_ingest_doc_count is defined %}
+    "ingest-doc-count": {{ initial_indexing_ingest_doc_count }}
+    {%- else %}
+    "ingest-percentage": {{initial_indexing_ingest_percentage | default(100)}}
+    {%- endif %}
   }
 }
 {%- set p_vector_index_type = (vector_index_type | default("bbq_hnsw"))%}
@@ -40,6 +50,9 @@
     "num-candidates": 100,
     {%- if p_vector_index_type == "bbq_hnsw" %}
     "oversample-rescore": 3,
+    {%- elif p_vector_index_type == "bbq_disk" %}
+    "oversample-rescore": 5,
+    "visit-percentage": 2,
     {%- endif %}
     "looped": true
   },
@@ -56,6 +69,9 @@
     "num-candidates": 500,
     {%- if p_vector_index_type == "bbq_hnsw" %}
     "oversample-rescore": 3,
+    {%- elif p_vector_index_type == "bbq_disk" %}
+    "oversample-rescore": 5,
+    "visit-percentage": 3,
     {%- endif %}
     "looped": true
   },
@@ -73,6 +89,9 @@
     "num-candidates": 100,
     {%- if p_vector_index_type == "bbq_hnsw" %}
     "oversample-rescore": 3,
+    {%- elif p_vector_index_type == "bbq_disk" %}
+    "oversample-rescore": 5,
+    "visit-percentage": 2,
     {%- endif %}
     "looped": true
   },
@@ -90,6 +109,9 @@
     "num-candidates": 500,
     {%- if p_vector_index_type == "bbq_hnsw" %}
     "oversample-rescore": 3,
+    {%- elif p_vector_index_type == "bbq_disk" %}
+    "oversample-rescore": 5,
+    "visit-percentage": 3,
     {%- endif %}
     "looped": true
   },

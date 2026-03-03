@@ -1,17 +1,28 @@
+{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
+
 {
+{%- set comma = joiner(",") -%}
   "settings": {
     "index": {
       {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       {%- if index_refresh_interval is defined %}
-      "refresh_interval": {{ index_refresh_interval | tojson }},
+      {{comma()}}
+      "refresh_interval": {{ index_refresh_interval | tojson }}
       {%- endif %}
       {% if preload_pagecache %}
-      "store.preload": [ "vec", "vex", "vem"],
+      {{comma()}}
+      "store.preload": [ "vec", "vex", "vem"]
       {% endif %}
+      {% if p_include_non_serverless_index_settings %}
+      {{comma()}}
       "number_of_shards": {{number_of_shards | default(1)}},
-      "number_of_replicas": {{number_of_replicas | default(0)}}{% if enable_experimental_features | default(false) %},
+      "number_of_replicas": {{number_of_replicas | default(0)}}
+      {% endif %}
+      {% if enable_experimental_features | default(false) %}
+      {{comma()}}
       "dense_vector.experimental_features": true{% endif %}
-      {% if aggressive_merge_policy %},
+      {% if aggressive_merge_policy %}
+      {{comma()}}
       "merge": {
         "policy": {
           "max_merged_segment": "25gb",

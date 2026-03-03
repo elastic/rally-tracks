@@ -504,7 +504,7 @@ async def test_invalid_min_max():
     param_source = WorkflowSelectorParamSource(
         track=StaticTrack(
             parameters={
-                "query-min-date": "2020-01-02",
+                "query-min-date": "2020-01-03",
                 "query_max-date-start": "2020-01-01",
                 "query-average-interval": "1d",
                 "number-of-workflows": 1,
@@ -522,8 +522,8 @@ async def test_invalid_min_max():
     with pytest.raises(TrackConfigError) as err:
         param_source.params()
     assert (
-        err.value.message == "query-min-date 2020-01-02 00:00:00+00:00 cannot be larger than effective "
-        "query-max-date 2020-01-01 00:00:00+00:00"
+        err.value.message == "query-min-date 2020-01-03 00:00:00+00:00 cannot be larger than effective "
+        "query-max-date 2020-01-02 00:00:00+00:00"
     )
 
 

@@ -3,6 +3,7 @@ import csv
 import json
 import logging
 import os
+import random
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
@@ -91,6 +92,8 @@ class KnnParamSource:
         with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
             for vector_query in queries_file:
                 self._queries.append(json.loads(vector_query))
+
+        self._queries = random.shuffle(self._queries)
         self._iters = 0
         self._maxIters = len(self._queries)
         self.infinite = True

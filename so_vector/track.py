@@ -340,26 +340,13 @@ class EsqlProfileRunner(runner.Runner):
             headers = None
 
         # Execute the ESQL query with profiling
-        response = await es.perform_request(
-            method="POST",
-            path="/_query",
-            headers=headers,
-            body=body,
-            params=request_params,
-        )
+        response = await es.perform_request(method="POST", path="/_query", headers=headers, body=body, params=request_params)
         profile = response["profile"]
 
         # Build took_ms entries for each profiled phase
         result = {}
         if profile:
-            for phase_name in [
-                "query",
-                "planning",
-                "parsing",
-                "preanalysis",
-                "dependency_resolution",
-                "analysis",
-            ]:
+            for phase_name in ["query", "planning", "parsing", "preanalysis", "dependency_resolution", "analysis"]:
                 if phase_name in profile:
                     took_nanos = profile.get(phase_name, []).get("took_nanos", 0)
                     if took_nanos > 0:
@@ -420,11 +407,7 @@ class EsqlProfileRunner(runner.Runner):
                 plan_name = plan.get("description", "unknown")
 
                 # Extract optimization level metrics
-                for optimization in [
-                    "logical_optimization_nanos",
-                    "physical_optimization_nanos",
-                    "reduction_nanos",
-                ]:
+                for optimization in ["logical_optimization_nanos", "physical_optimization_nanos", "reduction_nanos"]:
                     optimization_nanos = plan.get(optimization, 0)
                     if optimization_nanos > 0:
                         # Remove "_nanos" suffix from the metric name

@@ -15,7 +15,7 @@
       {% if aggressive_merge_policy %},
       "merge": {
         "policy": {
-          "max_merged_segment": "25gb",
+          "max_merged_segment": "10gb",
           "floor_segment": "1gb",
           "segments_per_tier": 5
         }

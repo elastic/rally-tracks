@@ -217,18 +217,6 @@
     },
     {
       "name": "logs-redis.slowlog-default"
-    },
-    {
-      "name": "logs"
-    },
-    {
-      "name": "logs.child1"
-    },
-    {
-      "name": "logs.child2"
-    },
-    {
-      "name": "logs.child3"
     }
   ],
   "component-templates": [
@@ -355,26 +343,6 @@
         "template": "./templates/component/logs-system.syslog@custom.json"
     },
     {% endif %}
-    {
-      "name": "logs@stream.layer",
-      "template": "./templates/component/logs@stream.layer.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs.child1@stream.layer",
-      "template": "./templates/component/logs.child1@stream.layer.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs.child2@stream.layer",
-      "template": "./templates/component/logs.child2@stream.layer.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs.child3@stream.layer",
-      "template": "./templates/component/logs.child3@stream.layer.json",
-      "template-path": "component_template"
-    },
     {
         "name": "track-custom-mappings",
         "template": "./templates/component/track-custom-mappings.json"
@@ -505,7 +473,7 @@
         "index-pattern": "auditbeatquantitative-*",
         "delete-matching-indices": false,
         "template": "./templates/composable/auditbeat-quantitative.json"
-    },
+    }
     {% endif %}
     {% if p_mapping == "unmapped" %}
     {
@@ -514,36 +482,8 @@
         "delete-matching-indices": false,
         "template": "./templates/composable/logs-dynamic-false.json",
         "template-path": "index_template"
-    },
-    {% endif %}
-    {
-      "name": "logs@stream",
-      "index-pattern": "logs",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs@stream.json",
-      "template-path": "index_template"
-    },
-    {
-      "name": "logs.child1@stream",
-      "index-pattern": "logs.child1",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs.child1@stream.json",
-      "template-path": "index_template"
-    },
-    {
-      "name": "logs.child2@stream",
-      "index-pattern": "logs.child2",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs.child2@stream.json",
-      "template-path": "index_template"
-    },
-    {
-      "name": "logs.child3@stream",
-      "index-pattern": "logs.child3",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs.child3@stream.json",
-      "template-path": "index_template"
     }
+    {% endif %}
   ],
   "corpora": [
     {

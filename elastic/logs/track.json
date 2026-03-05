@@ -233,19 +233,16 @@
   ],
   "component-templates": [
     {% if p_mapping == "mapped" %}
-    {% if build_flavor != "serverless" %}
       {
           "name": ".fleet_agent_id_verification-1",
           "template": "./templates/component/.fleet_agent_id_verification-1.json",
           "template-path": "component_template"
-
       },
       {
           "name": ".fleet_globals-1",
           "template": "./templates/component/.fleet_globals-1.json",
           "template-path": "component_template"
       },
-    {% endif %}
     {
         "name": "logs-apache.access@package",
         "template": "./templates/component/logs-apache.access@package.json",

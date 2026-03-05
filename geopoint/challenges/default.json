@@ -380,10 +380,22 @@
           "tags": ["geo_grid"]
         },
         {
+          "operation": "geoGrid_geohash-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["geo_grid", "esql"]
+        },
+        {
           "operation": "geoGrid_geotile",
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["geo_grid"]
+        },
+        {
+          "operation": "geoGrid_geotile-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["geo_grid", "esql"]
         },
         {
           "operation": "geoGrid_geohex",
@@ -392,10 +404,22 @@
           "tags": ["geo_grid"]
         },
         {
+          "operation": "geoGrid_geohex-esql",
+          "warmup-iterations": 1,
+          "iterations": 2,
+          "tags": ["geo_grid", "esql"]
+        },
+        {
           "operation": "geoGrid_aggs_geohash",
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["geo_grid"]
+        },
+        {
+          "operation": "geoGrid_aggs_geohash-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["geo_grid", "esql"]
         },
         {
           "operation": "geoGrid_aggs_geotile",
@@ -404,10 +428,22 @@
           "tags": ["geo_grid"]
         },
         {
+          "operation": "geoGrid_aggs_geotile-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["geo_grid", "esql"]
+        },
+        {
           "operation": "geoGrid_aggs_geohex",
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["geo_grid"]
+        },
+        {
+          "operation": "geoGrid_aggs_geohex-esql",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["geo_grid", "esql"]
         }
       ]
     },

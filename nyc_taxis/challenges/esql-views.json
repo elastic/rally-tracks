@@ -79,6 +79,31 @@
         {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
 
         {
+          "operation": "delete-view-d3-filtered",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d2-filtered",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d1-filtered",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d3",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d2",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d1",
+          "tags": ["setup"]
+        },
+
+        {
           "name": "baseline-avg-limit0",
           "operation": "avg_passenger_count_esql_limit_0",
           "tags": ["baseline", "limit0"],
@@ -111,30 +136,6 @@
           "iterations": 50
         },
 
-        {
-          "operation": "delete-view-d3-filtered",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-view-d2-filtered",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-view-d1-filtered",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-view-d3",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-view-d2",
-          "tags": ["setup"]
-        },
-        {
-          "operation": "delete-view-d1",
-          "tags": ["setup"]
-        },
         {
           "operation": "create-view-d1",
           "tags": ["setup"]

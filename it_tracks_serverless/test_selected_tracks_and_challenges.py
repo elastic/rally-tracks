@@ -52,6 +52,7 @@ class TestTrackRepository:
         "tsdb": ["downsample"],
         "tsdb_k8s_queries": ["esql"],
         "http_logs": ["raw-docs-sampling"],
+        "nyc_taxis": ["esql-views"],
     }
     skip_challenges_user = {
         "geonames": ["append-no-conflicts"],

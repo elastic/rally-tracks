@@ -1,0 +1,360 @@
+    {
+      "name": "esql-views",
+      "description": "Benchmarks ES|QL view resolution overhead: regression detection (existing queries with views in cluster state) and view-based queries at various nesting depths with and without filters. Requires the views feature flag: -E es.esql_views_feature_flag_enabled=true",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "delete-index",
+          "tags": ["setup"]
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
+              "index.translog.flush_threshold_size": "4g",
+                {% endif %}
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
+              "index.codec": "best_compression",
+              "index.refresh_interval": "30s"
+            }{%- endif %}
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "nyc_taxis",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          },
+          "tags": ["setup"]
+        },
+        {
+          "operation": "index",
+          "warmup-time-period": 240,
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+          "tags": ["setup"]
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh",
+          "tags": ["setup"]
+        },
+        {% if p_include_force_merge %}
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "index": "nyc_taxis",
+            "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+            "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+            {%- endif %}
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "wait-until-merges-finish",
+          "tags": ["setup"]
+        },
+        {% endif %}
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration|default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+
+        {
+          "operation": "delete-view-d3-filtered",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d2-filtered",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d1-filtered",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d3",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d2",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "delete-view-d1",
+          "tags": ["setup"]
+        },
+
+        {
+          "name": "baseline-avg-limit0",
+          "operation": "avg_passenger_count_esql_limit_0",
+          "tags": ["baseline", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "name": "baseline-avg-filtered-limit0",
+          "operation": "avg_passenger_count_filtered_esql_limit_0",
+          "tags": ["baseline", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "name": "baseline-sort-limit0",
+          "operation": "sort_by_ts_esql_limit_0",
+          "tags": ["baseline", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "name": "baseline-date-hist-limit0",
+          "operation": "date_histogram_calendar_interval_esql_limit_0",
+          "tags": ["baseline", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+
+        {
+          "operation": "create-view-d1",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-view-d2",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-view-d3",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-view-d1-filtered",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-view-d2-filtered",
+          "tags": ["setup"]
+        },
+        {
+          "operation": "create-view-d3-filtered",
+          "tags": ["setup"]
+        },
+
+        {
+          "name": "with-views-avg-limit0",
+          "operation": "avg_passenger_count_esql_limit_0",
+          "tags": ["regression", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "name": "with-views-avg-filtered-limit0",
+          "operation": "avg_passenger_count_filtered_esql_limit_0",
+          "tags": ["regression", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "name": "with-views-sort-limit0",
+          "operation": "sort_by_ts_esql_limit_0",
+          "tags": ["regression", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "name": "with-views-date-hist-limit0",
+          "operation": "date_histogram_calendar_interval_esql_limit_0",
+          "tags": ["regression", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+
+        {
+          "operation": "esql_view_d1_avg_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d2_avg_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_avg_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d1_filtered_avg_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d2_filtered_avg_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_filtered_avg_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d1_sort_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_sort_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_filtered_sort_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d1_date_hist_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_date_hist_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_filtered_date_hist_limit_0",
+          "tags": ["views", "limit0"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+
+        {
+          "operation": "esql_view_d1_avg",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d2_avg",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_avg",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d1_filtered_avg",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d2_filtered_avg",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_filtered_avg",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d1_filtered_avg_with_outer_filter",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_filtered_avg_with_outer_filter",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d1_sort",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_sort",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "esql_view_d3_filtered_sort",
+          "tags": ["views", "execution"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        }
+      ]
+    }

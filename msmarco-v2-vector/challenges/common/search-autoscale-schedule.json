@@ -1,3 +1,4 @@
+{# include-initial-indexing-marker-start #}{%- if include_initial_indexing|default(true) -%}
 {
   "name": "delete-index",
   "operation": {
@@ -14,7 +15,7 @@
   "name": "check-cluster-health",
   "operation": "check-cluster-health"
 },
-{% set p_corpora = (corpora | default(["msmarco-v2_float-initial-indexing-1", "msmarco-v2_float-initial-indexing-2", "msmarco-v2_float-initial-indexing-3", "msmarco-v2_float-initial-indexing-4", "msmarco-v2_float-initial-indexing-5", "msmarco-v2_float-initial-indexing-6", "msmarco-v2_float-initial-indexing-7", "msmarco-v2_float-initial-indexing-8"])) %}
+{% set p_corpora = (corpora | default(["msmarco-v2_base64-initial-indexing-1", "msmarco-v2_base64-initial-indexing-2", "msmarco-v2_base64-initial-indexing-3", "msmarco-v2_base64-initial-indexing-4", "msmarco-v2_base64-initial-indexing-5", "msmarco-v2_base64-initial-indexing-6", "msmarco-v2_base64-initial-indexing-7", "msmarco-v2_base64-initial-indexing-8"])) %}
 {
   "name": "initial-ingest",
   "clients": {{ initial_ingest_clients | default(4) | int}},
@@ -33,6 +34,7 @@
     {%- endif %}
   }
 }
+{%- endif -%}{# include-initial-indexing-marker-end #}
 {%- set p_vector_index_type = (vector_index_type | default("bbq_hnsw"))%}
 {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600,600,600,600,600]))%}
 {%- set p_as_time_periods = (as_time_periods | default([1800,1800,1800,1800,1800]))%}

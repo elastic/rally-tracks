@@ -136,6 +136,7 @@ When `as_ingest_target_throughputs` is a positive number, the ingest throughput 
 - Mapping:
   - `vector_index_type` (default: bbq_hnsw)
 - Initial indexing:
+    - `include_initial_indexing` (default: true) If `true` run the initial indexing and post index sleep steps. If `false` the data should have been pre-ingested and just the queries are run
     - `initial_ingest_clients` (default: 4)
     - `initial_ingest_bulk_size` (default: 100)
 - Search Operations:

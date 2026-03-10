@@ -51,6 +51,7 @@ class TestTrackRepository:
     skip_challenges = {
         "tsdb": ["downsample"],
         "tsdb_k8s_queries": ["esql"],
+        "nyc_taxis": ["esql-views"],
     }
     skip_challenges_user = {
         "geonames": ["append-no-conflicts"],

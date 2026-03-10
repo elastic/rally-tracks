@@ -68,6 +68,7 @@ def generate_bm25_query(text_field, query, boost=1.0):
 def generate_combine_bm25_weighted_terms_query(
     text_field, text_expansion_field, query, query_boost, query_expansion, query_expansion_boost
 ):
+    """Hybrid using bool/should. Works on all 8.x versions (pre-8.14 backward compat)."""
     return {
         "query": {
             "bool": {
@@ -75,6 +76,71 @@ def generate_combine_bm25_weighted_terms_query(
                     generate_bm25_query(text_field, query, query_boost)["query"],
                     generate_weighted_terms_query(text_expansion_field, query_expansion, query_expansion_boost)["query"],
                 ]
+            }
+        }
+    }
+
+
+def generate_rrf_hybrid_query(
+    text_field,
+    text_expansion_field,
+    query,
+    query_boost,
+    query_expansion,
+    query_expansion_boost,
+    rank_window_size,
+    rank_constant,
+):
+    bm25_retriever = {"standard": {"query": generate_bm25_query(text_field, query, query_boost)["query"]}}
+
+    weighted_terms_retriever = {
+        "standard": {"query": generate_weighted_terms_query(text_expansion_field, query_expansion, query_expansion_boost)["query"]}
+    }
+
+    return {
+        "retriever": {
+            "rrf": {
+                "retrievers": [
+                    bm25_retriever,
+                    weighted_terms_retriever,
+                ],
+                "rank_window_size": rank_window_size,
+                "rank_constant": rank_constant,
+            }
+        }
+    }
+
+
+def generate_linear_hybrid_query(
+    text_field,
+    text_expansion_field,
+    query,
+    query_boost,
+    query_expansion,
+    query_expansion_boost,
+    rank_window_size,
+    normalizer,
+):
+    bm25_standard = {"standard": {"query": generate_bm25_query(text_field, query, 1)["query"]}}
+
+    weighted_terms_standard = {"standard": {"query": generate_weighted_terms_query(text_expansion_field, query_expansion, 1)["query"]}}
+
+    return {
+        "retriever": {
+            "linear": {
+                "retrievers": [
+                    {
+                        "retriever": bm25_standard,
+                        "weight": query_boost,
+                        "normalizer": normalizer,
+                    },
+                    {
+                        "retriever": weighted_terms_standard,
+                        "weight": query_expansion_boost,
+                        "normalizer": normalizer,
+                    },
+                ],
+                "rank_window_size": rank_window_size,
             }
         }
     }
@@ -159,10 +225,40 @@ class QueryParamsSource:
                 )
         elif self._query_strategy == "hybrid":
             query = generate_combine_bm25_weighted_terms_query(
-                self._text_field, self._text_expansion_field, query_obj["query"], 1, query_obj[self._text_expansion_field], 1
+                self._text_field,
+                self._text_expansion_field,
+                query_obj["query"],
+                1,
+                query_obj[self._text_expansion_field],
+                1,
+            )
+        elif self._query_strategy == "rrf":
+            query = generate_rrf_hybrid_query(
+                self._text_field,
+                self._text_expansion_field,
+                query_obj["query"],
+                1,
+                query_obj[self._text_expansion_field],
+                1,
+                rank_window_size=self._params.get("rank_window_size", 10),
+                rank_constant=self._params.get("rank_constant", 60),
+            )
+        elif self._query_strategy == "linear":
+            query = generate_linear_hybrid_query(
+                self._text_field,
+                self._text_expansion_field,
+                query_obj["query"],
+                self._params.get("query_boost", 1),
+                query_obj[self._text_expansion_field],
+                self._params.get("query_expansion_boost", 1),
+                rank_window_size=self._params.get("rank_window_size", 10),
+                normalizer=self._params.get("normalizer", "minmax"),
             )
         else:
-            raise Exception(f"The query strategy \\`{self._query_strategy}]\\` is not implemented")
+            raise Exception(
+                f"The query strategy `{self._query_strategy}` is not implemented. "
+                f"Supported strategies: bm25, text_expansion, hybrid, rrf, linear"
+            )
 
         self._iters = (self._iters + 1) % len(self._queries)
         query["track_total_hits"] = self._track_total_hits

@@ -19,6 +19,7 @@
             {% if use_doc_values_skipper | default(true) %}
             ,"mapping.use_doc_values_skipper": true
             {% endif %}
+            ,"index.use_time_series_doc_values_format_large_binary_block_size": true
         }
         {% endif %}
       }

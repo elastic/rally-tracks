@@ -15,7 +15,8 @@
             {% endif %}
             "sort.field": [ "host.id", "@timestamp" ],
             "sort.order": [ "asc", "desc" ],
-            "sort.missing": ["_first", "_last"]
+            "sort.missing": ["_first", "_last"],
+            "index.use_time_series_doc_values_format_large_binary_block_size": true
         }
         {% endif %}
       }

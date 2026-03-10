@@ -20,7 +20,7 @@
             ,"mapping.use_doc_values_skipper": true
             {% endif %}
             {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-            ,"index.use_time_series_doc_values_format_large_binary_block_size": true
+            ,"use_time_series_doc_values_format_large_binary_block_size": true
             {%- endif -%}{# non-serverless-index-settings-marker-end #}
         }
         {% endif %}

@@ -622,9 +622,6 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `number_of_shards` (default: 1)
 * `number_of_replicas` (default: 0)
 * `search_clients` (default: 1)
-* `search_iterations` (default: 1000)
-* `search_warmup_iterations` (default: 100)
-* `rescored_num_candidates` (default: 100)
 * `rank_window_size` (default: 10): Number of top results from each retriever before fusion. Used by `rrf` and `linear` strategies.
 * `rank_constant` (default: 60): RRF ranking constant. Used by `rrf` strategy.
 * `normalizer` (default: `minmax`): Score normalization method. Used by `linear` strategy.

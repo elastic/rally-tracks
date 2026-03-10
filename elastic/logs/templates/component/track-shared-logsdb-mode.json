@@ -1,4 +1,3 @@
-{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
 {
     "template": {
       "settings": {

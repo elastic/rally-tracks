@@ -21,7 +21,7 @@
 {% set p_query_time_period = (query_time_period | default(900)) %}
 {% set p_query_request_params = (query_request_params | default({}))%}
 {% set p_include_esql_queries = (include_esql_queries | default(build_flavor != "serverless")) %}
-
+{% set p_exclude_serverless_templates = (exclude_serverless_templates | default(build_flavor == "serverless")) %}
 {% set p_throttle_indexing = (throttle_indexing | default(false)) %}
 {% set p_max_download_gb = (max_total_download_gb | default(2 * num_corpus)) %}
 {% set p_max_download_per_corpus_gb = ([p_max_download_gb / num_corpus, 1] | max | int ) %}
@@ -233,6 +233,7 @@
   ],
   "component-templates": [
     {% if p_mapping == "mapped" %}
+    {% if p_exclude_serverless_templates %}
       {
           "name": ".fleet_agent_id_verification-1",
           "template": "./templates/component/.fleet_agent_id_verification-1.json",
@@ -243,6 +244,7 @@
           "template": "./templates/component/.fleet_globals-1.json",
           "template-path": "component_template"
       },
+    {% endif %}
     {
         "name": "logs-apache.access@package",
         "template": "./templates/component/logs-apache.access@package.json",

@@ -507,6 +507,26 @@
       "query": "FROM osm* | WHERE ST_Within(shape, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
     },
     {
+      "name": "st-envelope-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | EVAL env = ST_ENVELOPE(shape) | KEEP env | LIMIT 10"
+    },
+    {
+      "name": "st-envelope-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | EVAL env = ST_ENVELOPE(shape), points = ST_NPOINTS(env) | WHERE points > 0 | STATS count = COUNT(*) BY points"
+    },
+    {
+      "name": "st-simplify-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | KEEP simplified | LIMIT 10"
+    },
+    {
+      "name": "st-simplify-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | EVAL simplified = ST_SIMPLIFY(shape, 0.01), points = ST_NPOINTS(simplified) | WHERE points > 0 | STATS count = COUNT(*) BY points"
+    },
+    {
       "name": "mvt-hits",
       "operation-type": "search",
       "index": "osm*",

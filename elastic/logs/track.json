@@ -233,7 +233,7 @@
   ],
   "component-templates": [
     {% if p_mapping == "mapped" %}
-    {% if p_exclude_serverless_templates %}
+    {% if p_exclude_serverless_templates != true %}
       {
           "name": ".fleet_agent_id_verification-1",
           "template": "./templates/component/.fleet_agent_id_verification-1.json",

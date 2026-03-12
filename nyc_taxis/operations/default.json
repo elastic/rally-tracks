@@ -1501,7 +1501,7 @@
           "field": "payment_type",
           "inner_hits": {
             "name": "top_hits",
-            "size": 1000,
+            "size": 50,
             "sort": [{ "pickup_datetime": "desc" }],
             "_source": false,
             "fields": ["pickup_datetime", "dropoff_datetime", "trip_distance"]
@@ -1512,13 +1512,13 @@
     {
       "name": "topnby_by_payment_type_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance, payment_type | LIMIT 1000 BY payment_type"
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance, payment_type | LIMIT 50 BY payment_type"
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
     {
       "name": "topnby_by_payment_type_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance, payment_type | LIMIT 1000 BY payment_type",
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance, payment_type | LIMIT 50 BY payment_type",
       "body": {
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }
@@ -1528,13 +1528,13 @@
     {
       "name": "topnby_by_payment_type_vendor_id_esql_segment_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance, payment_type, vendor_id | LIMIT 1000 BY payment_type, vendor_id"
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance, payment_type, vendor_id | LIMIT 50 BY payment_type, vendor_id"
     },
   {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
     {
       "name": "topnby_by_payment_type_vendor_id_esql_doc_partitioning",
       "operation-type": "esql",
-      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance, payment_type, vendor_id | LIMIT 1000 BY payment_type, vendor_id",
+      "query" : "FROM nyc_taxis | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance, payment_type, vendor_id | LIMIT 50 BY payment_type, vendor_id",
       "body": {
         "accept_pragma_risks": true,
         "pragma": { "data_partitioning": "doc" }

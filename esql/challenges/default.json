@@ -71,6 +71,35 @@
           "iterations": {{query_iterations | default(100)}}
         },
 
+        {
+          "operation": "from_idx_limit_1_by_key_1000",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "from_idx_limit_10_by_key_1000",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "from_idx_limit_1000_by_key_1000",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "from_idx_limit_10000_by_key_1000",
+          "tags": ["esql_large_schema"],
+          "clients":  {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+
 
         {
           "operation": "from_idx_limit_1_drop_null",

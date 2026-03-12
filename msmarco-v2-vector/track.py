@@ -350,6 +350,7 @@ class EsqlHybridParamSource:
         params = [{"query_vector": query_vector}, {"query_text": query_text}]
         return {"query": hybrid_query, "body": {"params": params}}
 
+
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)

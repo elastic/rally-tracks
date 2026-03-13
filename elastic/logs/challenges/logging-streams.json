@@ -94,7 +94,10 @@
       "name": "delete-index",
       "operation": {
         "operation-type": "delete-index",
-        "index": "{{ stream_name | default('logs.ecs') }}"
+        "index": "{{ stream_name | default('logs.ecs') }}",
+        "request-params": {
+          "ignore_unavailable": "true"
+        }
       }
     }
   ]

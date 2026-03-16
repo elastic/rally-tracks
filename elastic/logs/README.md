@@ -435,6 +435,14 @@ This challenge also uses the following task specific parameters:
 * `reindex_max_concurrent_indices` (default: 1) The maximum number of data stream backing indices that will be reindexed at the same time.
 * `reindex_max_requests_per_second` (default: 1000) The average maximum number of documents that will be reindexed per second, per backing index.
 
+### Logging Streams (logging-streams)
+
+Indexes logs into a stream without dynamic mappings, either throttled or un-throttled, for a specified time period and volume per day.
+
+The target stream can be configured via the `stream_name` parameter (default: `logs.ecs`).
+
+Note that this challenge requires the target stream to be preconfigured using Kibana. This can be achieved by using `esbench` to run this challenge.
+
 ## Changing the Datasets
 
 The generated dataset is influenced by 2 key configurations:

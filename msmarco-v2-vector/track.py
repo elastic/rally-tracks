@@ -16,7 +16,7 @@ Results = Dict[str, Dict[str, float]]
 
 QUERIES_FILENAME: str = "queries.json.bz2"
 QUERIES_RECALL_FILENAME: str = "queries-recall.json.bz2"
-QUERIES_RECALL_10M_FILENAME: str = "queries-recall.json.bz2"
+QUERIES_RECALL_10M_FILENAME: str = "queries-recall-10m.json.bz2"
 
 
 def extract_vector_operations_count(knn_result):

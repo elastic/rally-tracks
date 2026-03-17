@@ -309,14 +309,14 @@
         },
         {
           "operation": "centroid",
-          "warmup-iterations": 100,
-          "iterations": 50,
+          "warmup-iterations": 20,
+          "iterations": 20,
           "tags": ["centroid"]
         },
         {
           "operation": "centroid-esql",
-          "warmup-iterations": 100,
-          "iterations": 50,
+          "warmup-iterations": 20,
+          "iterations": 20,
           "tags": ["centroid", "esql"]
         },
         {

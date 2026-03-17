@@ -13,8 +13,8 @@
             "ignore_malformed": "true"
           },
           "sort": {
-            "field": ["resource.attributes.host.name", "@timestamp"],
-            "order": ["asc", "desc"]
+            "field": ["resource.attributes.log.file.path", "resource.attributes.host.name", "@timestamp"],
+            "order": ["asc", "asc", "desc"]
           }
         }
       },
@@ -35,8 +35,7 @@
             "type": "object",
             "properties": {
               "attributes": {
-                "type": "object",
-                "subobjects": false
+                "type": "flattened"
               }
             }
           },
@@ -94,18 +93,12 @@
             "type": "keyword"
           },
           "attributes": {
-            "type": "object",
-            "subobjects": false
+            "type": "flattened",
+            "index": "false"
           },
           "host.name": {
             "path": "resource.attributes.host.name",
             "type": "alias"
-          },
-          "resource.attributes.host.name": {
-            "type": "keyword"
-          },
-          "resource.attributes.service.name": {
-            "type": "keyword"
           }
         }
       }

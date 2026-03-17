@@ -344,6 +344,30 @@
           "tags": ["bbox", "esql"]
         },
         {
+          "operation": "st-envelope-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["esql", "st_envelope"]
+        },
+        {
+          "operation": "st-envelope-count-esql",
+          "warmup-iterations": 3,
+          "iterations": 10,
+          "tags": ["esql", "st_envelope"]
+        },
+        {
+          "operation": "st-simplify-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["esql", "st_simplify"]
+        },
+        {
+          "operation": "st-simplify-count-esql",
+          "warmup-iterations": 1,
+          "iterations": 2,
+          "tags": ["esql", "st_simplify"]
+        },
+        {
           "operation": "mvt-hits",
           "warmup-iterations": 50,
           "iterations": 50,

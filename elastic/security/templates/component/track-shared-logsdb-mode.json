@@ -18,6 +18,7 @@
             "sort.missing": ["_first", "_last"]
             {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" -%}
             ,"use_time_series_doc_values_format_large_binary_block_size": true
+            ,"disable_sequence_numbers": true
             {%- endif -%}{# non-serverless-index-settings-marker-end #}
         }
         {% endif %}

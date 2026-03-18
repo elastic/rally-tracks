@@ -320,6 +320,18 @@
           "tags": ["polygon", "bounds", "centroid", "esql"]
         },
         {
+          "operation": "polygon-bounds",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "bounds"]
+        },
+        {
+          "operation": "polygon-bounds-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "bounds", "esql"]
+        },
+        {
           "operation": "bounds",
           "warmup-iterations": 100,
           "iterations": 50,

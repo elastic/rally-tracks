@@ -296,6 +296,78 @@
           "tags": ["polygon", "esql"]
         },
         {
+          "operation": "polygon-centroid",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "centroid"]
+        },
+        {
+          "operation": "polygon-centroid-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "centroid", "esql"]
+        },
+        {
+          "operation": "polygon-bounds-centroid",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "bounds", "centroid"]
+        },
+        {
+          "operation": "polygon-bounds-centroid-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "bounds", "centroid", "esql"]
+        },
+        {
+          "operation": "polygon-bounds",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "bounds"]
+        },
+        {
+          "operation": "polygon-bounds-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "bounds", "esql"]
+        },
+        {
+          "operation": "bounds",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["bounds"]
+        },
+        {
+          "operation": "bounds-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["esql", "bounds"]
+        },
+        {
+          "operation": "bounds-centroid",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["bounds", "centroid"]
+        },
+        {
+          "operation": "bounds-centroid-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["esql", "bounds", "centroid"]
+        },
+        {
+          "operation": "centroid",
+          "warmup-iterations": 20,
+          "iterations": 20,
+          "tags": ["centroid"]
+        },
+        {
+          "operation": "centroid-esql",
+          "warmup-iterations": 20,
+          "iterations": 20,
+          "tags": ["centroid", "esql"]
+        },
+        {
           "operation": "bbox-intersects",
           "warmup-iterations": 100,
           "iterations": 50,

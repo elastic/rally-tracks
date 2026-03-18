@@ -132,6 +132,187 @@
       "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(size)"
     },
     {
+      "name": "polygon-centroid",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              }
+            }
+          }
+        },
+        "aggs": {
+          "centroid": {
+            "geo_centroid": {
+              "field": "shape"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-centroid-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS centroid=ST_CENTROID_AGG(shape)"
+    },
+    {
+      "name": "polygon-bounds-centroid",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              }
+            }
+          }
+        },
+        "aggs": {
+          "envelope": {
+            "geo_bounds": {
+              "field": "shape"
+            }
+          },
+          "centroid": {
+            "geo_centroid": {
+              "field": "shape"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-bounds-centroid-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS envelope = ST_EXTENT_AGG(shape), centroid = ST_CENTROID_AGG(shape)"
+    },
+    {
+      "name": "polygon-bounds",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "shape": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              }
+            }
+          }
+        },
+        "aggs": {
+          "envelope": {
+            "geo_bounds": {
+              "field": "shape"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "polygon-bounds-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS envelope = ST_EXTENT_AGG(shape)"
+    },
+    {
+      "name": "bounds",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "envelope": {
+            "geo_bounds": {
+              "field": "shape"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "bounds-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | STATS envelope = ST_EXTENT_AGG(shape)"
+    },
+    {
+      "name": "bounds-centroid",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "envelope": {
+            "geo_bounds": {
+              "field": "shape"
+            }
+          },
+          "centroid": {
+            "geo_centroid": {
+              "field": "shape"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "bounds-centroid-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | STATS envelope = ST_EXTENT_AGG(shape), centroid = ST_CENTROID_AGG(shape)"
+    },
+    {
+      "name": "centroid",
+      "operation-type": "search",
+      "index": "osm*",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "centroid": {
+            "geo_centroid": {
+              "field": "shape"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "centroid-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | STATS centroid=ST_CENTROID_AGG(shape)"
+    },
+    {
       "name": "polygon-intersects-oresund",
       "operation-type": "search",
       "index": "osm*",

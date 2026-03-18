@@ -1,7 +1,9 @@
 {
   "index_patterns": ["vectors-benchmark-*"],
   "priority": 500,
-  "data_stream": {},
+  "data_stream": {
+    "allow_custom_routing": true
+  },
   "template": {
     "settings": {
       {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
@@ -14,6 +16,9 @@
       }
     },
     "mappings": {
+      "_routing": {
+        "required": true
+      },
       "properties": {
         "@timestamp": {
           "type": "date"

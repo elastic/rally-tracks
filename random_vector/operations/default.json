@@ -12,7 +12,10 @@
   "operation-type": "bulk",
   "param-source": "random-bulk-param-source",
   "dims": {{ dims | default(128) | int }},
-  "partitions": {{ partitions | default(1000) | int }},
+  "small-partitions": {{ small_partitions | default(100) | int }},
+  "medium-partitions": {{ medium_partitions | default(20) | int }},
+  "large-partitions": {{ large_partitions | default(5) | int }},
+  "partition-seed": {{ partition_seed | default(42) | int }},
   "bulk-size": {{ index_bulk_size | default(1000) | int}},
   "paragraph-size": {{paragraph_size | default(1) | int}}
 },
@@ -21,7 +24,61 @@
   "operation-type": "search",
   "param-source": "knn-param-source",
   "dims": {{ dims | default(128) | int }},
-  "partitions": {{ partitions | default(1000) | int }},
+  "small-partitions": {{ small_partitions | default(100) | int }},
+  "medium-partitions": {{ medium_partitions | default(20) | int }},
+  "large-partitions": {{ large_partitions | default(5) | int }},
+  "partition-seed": {{ partition_seed | default(42) | int }},
+  "rescore-oversample": {{ rescore_oversample | default(0) | int }},
+    {%- if paragraph_size | default(1) | int > 1 -%}
+  "field": "nested.emb"
+    {%- else %}
+  "field": "emb"
+    {%- endif %}
+},
+{
+  "name": "brute-force-filtered-search-small-partition",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "dims": {{ dims | default(128) | int }},
+  "small-partitions": {{ small_partitions | default(100) | int }},
+  "medium-partitions": {{ medium_partitions | default(20) | int }},
+  "large-partitions": {{ large_partitions | default(5) | int }},
+  "partition-seed": {{ partition_seed | default(42) | int }},
+  "partition-tier": "small",
+  "rescore-oversample": {{ rescore_oversample | default(0) | int }},
+    {%- if paragraph_size | default(1) | int > 1 -%}
+  "field": "nested.emb"
+    {%- else %}
+  "field": "emb"
+    {%- endif %}
+},
+{
+  "name": "brute-force-filtered-search-medium-partition",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "dims": {{ dims | default(128) | int }},
+  "small-partitions": {{ small_partitions | default(100) | int }},
+  "medium-partitions": {{ medium_partitions | default(20) | int }},
+  "large-partitions": {{ large_partitions | default(5) | int }},
+  "partition-seed": {{ partition_seed | default(42) | int }},
+  "partition-tier": "medium",
+  "rescore-oversample": {{ rescore_oversample | default(0) | int }},
+    {%- if paragraph_size | default(1) | int > 1 -%}
+  "field": "nested.emb"
+    {%- else %}
+  "field": "emb"
+    {%- endif %}
+},
+{
+  "name": "brute-force-filtered-search-large-partition",
+  "operation-type": "search",
+  "param-source": "knn-param-source",
+  "dims": {{ dims | default(128) | int }},
+  "small-partitions": {{ small_partitions | default(100) | int }},
+  "medium-partitions": {{ medium_partitions | default(20) | int }},
+  "large-partitions": {{ large_partitions | default(5) | int }},
+  "partition-seed": {{ partition_seed | default(42) | int }},
+  "partition-tier": "large",
   "rescore-oversample": {{ rescore_oversample | default(0) | int }},
     {%- if paragraph_size | default(1) | int > 1 -%}
   "field": "nested.emb"

@@ -14,6 +14,7 @@ Results = Dict[str, Dict[str, float]]
 
 QUERIES_FILENAME: str = "queries.json.bz2"
 QUERIES_RECALL_FILENAME: str = "queries-recall.json.bz2"
+QUERIES_RECALL_10M_FILENAME: str = "queries-recall-10m.json.bz2"
 
 
 def extract_vector_operations_count(knn_result):
@@ -140,6 +141,7 @@ class KnnRecallParamSource:
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
             "oversample_rescore": self._params.get("oversample-rescore", -1),
+            "recall_doc_set": self._params.get("recall-doc-set", -1),
         }
 
 
@@ -149,6 +151,7 @@ class KnnRecallRunner:
         num_candidates = params["num_candidates"]
         index = params["index"]
         request_cache = params["cache"]
+        recall_doc_set = params["recall_doc_set"]
 
         cwd = os.path.dirname(__file__)
         qrels = read_qrels(os.path.join(cwd, "qrels.tsv"))
@@ -158,7 +161,13 @@ class KnnRecallRunner:
         exact_total = 0
         min_recall = top_k
         nodes_visited = []
-        with bz2.open(os.path.join(cwd, QUERIES_RECALL_FILENAME), "r") as queries_file:
+
+        if recall_doc_set == "10m":
+            queries_recall = QUERIES_RECALL_10M_FILENAME
+        else:
+            queries_recall = QUERIES_RECALL_FILENAME
+
+        with bz2.open(os.path.join(cwd, queries_recall), "r") as queries_file:
             for line in queries_file:
                 query = json.loads(line)
                 query_id = query["query_id"]

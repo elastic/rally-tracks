@@ -326,6 +326,12 @@
           "tags": ["bounds"]
         },
         {
+          "operation": "bounds-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["esql", "bounds"]
+        },
+        {
           "operation": "bounds-centroid",
           "warmup-iterations": 100,
           "iterations": 50,

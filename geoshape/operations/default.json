@@ -226,6 +226,11 @@
       }
     },
     {
+      "name": "bounds-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | STATS envelope = ST_EXTENT_AGG(shape)"
+    },
+    {
       "name": "bounds-centroid",
       "operation-type": "search",
       "index": "osm*",

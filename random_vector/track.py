@@ -1,6 +1,6 @@
-from bisect import bisect_left
 import random
 import time
+from bisect import bisect_left
 
 from esrally.track.params import ParamSource
 

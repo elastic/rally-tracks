@@ -308,6 +308,36 @@
           "tags": ["polygon", "centroid", "esql"]
         },
         {
+          "operation": "polygon-bounds-centroid",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "bounds", "centroid"]
+        },
+        {
+          "operation": "polygon-bounds-centroid-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["polygon", "bounds", "centroid", "esql"]
+        },
+        {
+          "operation": "bounds",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["bounds"]
+        },
+        {
+          "operation": "bounds-centroid",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["bounds", "centroid"]
+        },
+        {
+          "operation": "bounds-centroid-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["esql", "bounds", "centroid"]
+        },
+        {
           "operation": "centroid",
           "warmup-iterations": 20,
           "iterations": 20,

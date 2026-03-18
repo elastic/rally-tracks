@@ -435,6 +435,18 @@ This challenge also uses the following task specific parameters:
 * `reindex_max_concurrent_indices` (default: 1) The maximum number of data stream backing indices that will be reindexed at the same time.
 * `reindex_max_requests_per_second` (default: 1000) The average maximum number of documents that will be reindexed per second, per backing index.
 
+### Logging Streams (logging-streams)
+
+Indexes logs into a stream without dynamic mappings, either throttled or un-throttled, for a specified time period and volume per day.
+
+The target stream can be configured via the `stream_name` parameter (default: `logs.ecs`).
+
+Note that this challenge requires an additional step of configuring the target stream using Kibana. To do this:
+
+1. Install and run [Kibana](https://www.elastic.co/docs/deploy-manage/deploy/self-managed/install-kibana)
+2. Set up the desired target [stream](https://www.elastic.co/docs/solutions/observability/streams/streams)
+3. When running the challenge, [specify the target ES cluster](https://esrally.readthedocs.io/en/latest/recipes.html#benchmarking-an-existing-cluster) that Kibana is connected to
+
 ## Changing the Datasets
 
 The generated dataset is influenced by 2 key configurations:

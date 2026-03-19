@@ -12,10 +12,10 @@
             {% if index_mode %},{% endif %}"mapping.source.mode": {{ source_mode | tojson }}
             {% endif %}
             {% if use_synthetic_source_recovery %}
-            {% if index_mode or source_mode %},{% endif %}"recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}},
+            {% if index_mode or source_mode %},{% endif %}"recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}}
             {% endif %}
             {% if synthetic_source_keep %}
-            {% if index_mode or source_mod or use_synthetic_source_recovery %},{% endif %}"mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson}},
+            {% if index_mode or source_mod or use_synthetic_source_recovery %},{% endif %}"mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson}}
             {% endif %}
             {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
             {% if index_mode or source_mod or use_synthetic_source_recovery %},{% endif %}"use_time_series_doc_values_format_large_binary_block_size": true

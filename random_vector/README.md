@@ -18,9 +18,9 @@ Partitions are organized into three tiers with configurable counts:
 
 The distribution follows a realistic pattern: many small partitions, fewer medium, and fewest large.
 
-Each partition's exact document count is determined by a seeded RNG (`partition_seed`, default: 42), ensuring reproducible runs. During indexing, documents are assigned to partitions via weighted random sampling proportional to each partition's target size.
+Each partition's exact document count is determined by a seeded RNG (`partition_seed`, default: 42), ensuring reproducible runs. Partitions are named by tier (for example, `small-0`, `medium-3`, `large-1`). During indexing, documents are assigned to partitions via weighted random sampling proportional to each partition's target size.
 
-The index is sorted by `partition_id` and documents are routed by `partition_id`, keeping each partition's data co-located.
+The index is sorted by `partition_id` and can optionally be routed by `partition_id`, keeping each partition's data co-located.
 
 ## Indexing
 
@@ -41,7 +41,7 @@ Each document indexed includes:
 * A random vector with `dims` dimensions.
 * A partition ID assigned via weighted random selection.
 
-The index is sorted by partition ID and documents are routed by partition ID.
+The index is sorted by partition ID and can optionally be routed by partition ID.
 This ensures that vectors from the same partition are stored close together, improving the efficiency of filtered searches.
 
 ## Search Operations
@@ -84,6 +84,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - medium_partitions (default: 20): Number of medium partitions (10k–100k docs each).
  - large_partitions (default: 5): Number of large partitions (100k–1M docs each).
  - partition_seed (default: 42): Seed for deterministic partition size assignment.
- - rescore_oversample (default: 0)
+ - custom_routing (default: false): Enable routing by partition ID when the routing template is selected.
+ - rescore_oversample (default: -1): `-1` uses the index default, `0` disables rescore, and values greater than `0` set an explicit oversample.
  - vector_index_element_type (default: "float"): Sets the dense_vector element type.
  - enable_experimental_features (default: false): Enables experimental dense vector features that may break backward compatibility.

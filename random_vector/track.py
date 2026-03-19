@@ -27,15 +27,13 @@ def build_partition_registry(small_partitions, medium_partitions, large_partitio
     partitions = []
     cumulative_weights = []
     cumulative_weight = 0
-    partition_id = 0
     for tier, count in [(TIER_SMALL, small_partitions), (TIER_MEDIUM, medium_partitions), (TIER_LARGE, large_partitions)]:
         lo, hi = TIER_RANGES[tier]
-        for _ in range(count):
+        for i in range(count):
             target_size = rng.randint(lo, hi)
-            partitions.append((str(partition_id), target_size, tier))
+            partitions.append((f"{tier}-{i}", target_size, tier))
             cumulative_weight += target_size
             cumulative_weights.append(cumulative_weight)
-            partition_id += 1
 
     if not partitions:
         raise ValueError("At least one partition must be configured")
@@ -72,6 +70,7 @@ class RandomBulkParamSource(ParamSource):
         self._index_name = track.data_streams[0].name
         self._dims = params.get("dims", 128)
         self._paragraph_size = params.get("paragraph-size", 1)
+        self._custom_routing = params.get("custom-routing", False)
 
         small, medium, large, seed = extract_partition_config(params)
         self._partitions, self._cumulative = build_partition_registry(small, medium, large, seed)
@@ -83,7 +82,9 @@ class RandomBulkParamSource(ParamSource):
         bulk_data = []
         for _ in range(self._bulk_size):
             partition_id, _, _ = pick_partition(self._partitions, self._cumulative)
-            metadata = {"_index": self._index_name, "routing": partition_id}
+            metadata = {"_index": self._index_name}
+            if self._custom_routing:
+                metadata["routing"] = partition_id
             bulk_data.append({"create": metadata})
             doc = {"@timestamp": timestamp, "partition_id": partition_id}
             if self._paragraph_size > 1:
@@ -127,18 +128,22 @@ class RandomSearchParamSource:
         self._field = params.get("field", "emb")
         self._dims = params.get("dims", 128)
         self._top_k = params.get("k", 10)
-        self._rescore_oversample = params.get("rescore-oversample", 0)
-
-        small, medium, large, seed = extract_partition_config(params)
-        self._partitions, _ = build_partition_registry(small, medium, large, seed)
+        self._rescore_oversample = params.get("rescore-oversample", -1)
 
         partition_tier = params.get("partition-tier", None)
         if partition_tier is not None:
             if partition_tier not in TIERS:
                 raise ValueError(f"partition-tier must be one of: {', '.join(TIERS)}")
-            self._tier_partitions = [p for p in self._partitions if p[2] == partition_tier]
+            count = params.get(f"{partition_tier}-partitions")
+            if count is None or count <= 0:
+                raise ValueError(f"{partition_tier}-partitions must be positive when partition-tier is set")
+            self._partition_tier = partition_tier
+            self._tier_partition_count = count
+            self._partitions = None
         else:
-            self._tier_partitions = self._partitions
+            small, medium, large, seed = extract_partition_config(params)
+            self._partitions, _ = build_partition_registry(small, medium, large, seed)
+            self._partition_tier = None
 
         self.infinite = True
 
@@ -148,8 +153,11 @@ class RandomSearchParamSource:
     def params(self):
         import numpy as np
 
-        partition = random.choice(self._tier_partitions)
-        partition_id = partition[0]
+        if self._partition_tier is not None:
+            partition_id = f"{self._partition_tier}-{random.randrange(self._tier_partition_count)}"
+        else:
+            partition = random.choice(self._partitions)
+            partition_id = partition[0]
         query_vec = np.random.rand(self._dims).tolist()
         query = generate_knn_query(self._field, query_vec, partition_id, self._top_k, self._rescore_oversample)
         return {"index": self._index_name, "cache": self._cache, "size": self._top_k, "body": query}

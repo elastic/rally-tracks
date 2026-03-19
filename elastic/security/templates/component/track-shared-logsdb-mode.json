@@ -16,7 +16,7 @@
             "sort.field": [ "host.id", "@timestamp" ],
             "sort.order": [ "asc", "desc" ],
             "sort.missing": ["_first", "_last"]
-            {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" -%}
+            {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
             ,"use_time_series_doc_values_format_large_binary_block_size": true
             {% if index_mode == "logsdb" or index_mode == "time_series" %}
             ,"disable_sequence_numbers": true

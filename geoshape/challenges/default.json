@@ -416,18 +416,6 @@
           "tags": ["bbox", "esql"]
         },
         {
-          "operation": "st-envelope-esql",
-          "warmup-iterations": 100,
-          "iterations": 50,
-          "tags": ["esql", "st_envelope"]
-        },
-        {
-          "operation": "st-envelope-count-esql",
-          "warmup-iterations": 3,
-          "iterations": 10,
-          "tags": ["esql", "st_envelope"]
-        },
-        {
           "operation": "st-simplify-esql",
           "warmup-iterations": 100,
           "iterations": 50,

@@ -709,6 +709,7 @@
       "name": "geoGrid_geohash",
       "operation-type": "search",
       "body": {
+        "size": 10,
         "query": {
           "geo_grid": {
             "location": {
@@ -719,9 +720,15 @@
       }
     },
     {
+      "name": "geoGrid_geohash-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_GEOHASH(location, 2) == TO_GEOHASH(\"u0\") | LIMIT 10"
+    },
+    {
       "name": "geoGrid_geotile",
       "operation-type": "search",
       "body": {
+        "size": 10,
         "query": {
           "geo_grid": {
             "location": {
@@ -732,9 +739,15 @@
       }
     },
     {
+      "name": "geoGrid_geotile-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_GEOTILE(location, 6) == TO_GEOTILE(\"6/32/22\") | LIMIT 10"
+    },
+    {
       "name": "geoGrid_geohex",
       "operation-type": "search",
       "body": {
+        "size": 10,
         "query": {
           "geo_grid": {
             "location": {
@@ -743,6 +756,11 @@
           }
         }
       }
+    },
+    {
+      "name": "geoGrid_geohex-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_GEOHEX(location, 1) == TO_GEOHEX(\"811fbffffffffff\") | LIMIT 10"
     },
     {
       "name": "geoGrid_aggs_geohash",
@@ -772,6 +790,11 @@
       }
     },
     {
+      "name": "geoGrid_aggs_geohash-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | EVAL geohash = ST_GEOHASH(location, 5, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | STATS count = COUNT(*) BY geohash"
+    },
+    {
       "name": "geoGrid_aggs_geotile",
       "operation-type": "search",
       "body": {
@@ -799,6 +822,11 @@
       }
     },
     {
+      "name": "geoGrid_aggs_geotile-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | EVAL geotile = ST_GEOTILE(location, 13, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | STATS count = COUNT(*) BY geotile"
+    },
+    {
       "name": "geoGrid_aggs_geohex",
       "operation-type": "search",
       "body": {
@@ -824,4 +852,9 @@
           }
         }
       }
+    },
+    {
+      "name": "geoGrid_aggs_geohex-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | EVAL geohex = ST_GEOHEX(location, 6, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | STATS count = COUNT(*) BY geohex"
     }

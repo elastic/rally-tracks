@@ -1,6 +1,5 @@
 import random
 import time
-from bisect import bisect_left
 
 from esrally.track.params import ParamSource
 
@@ -17,35 +16,72 @@ TIER_RANGES = {
 }
 
 
-def build_partition_registry(small_partitions, medium_partitions, large_partitions, partition_seed):
-    """
-    Build a deterministic partition registry from the given counts and seed.
-    Returns a list of (partition_id, target_size, tier) tuples and a list of
-    cumulative weights for weighted random selection during indexing.
-    """
-    rng = random.Random(partition_seed)
-    partitions = []
-    cumulative_weights = []
-    cumulative_weight = 0
-    for tier, count in [(TIER_SMALL, small_partitions), (TIER_MEDIUM, medium_partitions), (TIER_LARGE, large_partitions)]:
-        lo, hi = TIER_RANGES[tier]
-        for i in range(count):
-            target_size = rng.randint(lo, hi)
-            partitions.append((f"{tier}-{i}", target_size, tier))
-            cumulative_weight += target_size
-            cumulative_weights.append(cumulative_weight)
+class PartitionRegistry:
+    """Lightweight partition registry that derives partition IDs on the fly.
 
-    if not partitions:
-        raise ValueError("At least one partition must be configured")
+    Instead of materializing a list of every partition, this stores only
+    per-tier counts and uses two-level selection (pick tier, then pick
+    index within tier).  Memory usage is O(num_tiers) regardless of how
+    many partitions are configured.
+    """
 
-    return partitions, cumulative_weights
+    def __init__(self, small_partitions, medium_partitions, large_partitions):
+        self._rng = random.Random()
+        tier_counts = [
+            (TIER_SMALL, small_partitions),
+            (TIER_MEDIUM, medium_partitions),
+            (TIER_LARGE, large_partitions),
+        ]
+
+        # For weighted indexing: weight each tier by count * midpoint(range)
+        # so larger-tier partitions receive proportionally more documents.
+        self._weighted_tiers = []
+        self._weighted_cumulative = []
+        cum = 0.0
+        for tier, count in tier_counts:
+            if count > 0:
+                lo, hi = TIER_RANGES[tier]
+                cum += count * (lo + hi) / 2
+                self._weighted_tiers.append((tier, count))
+                self._weighted_cumulative.append(cum)
+
+        # For uniform search: weight each tier by its partition count
+        # so every partition is equally likely to be queried.
+        self._uniform_tiers = []
+        self._uniform_cumulative = []
+        cum_count = 0
+        for tier, count in tier_counts:
+            if count > 0:
+                cum_count += count
+                self._uniform_tiers.append((tier, count))
+                self._uniform_cumulative.append(cum_count)
+
+        if not self._weighted_tiers:
+            raise ValueError("At least one partition must be configured")
+
+    def pick_weighted(self):
+        """Select a partition weighted by expected tier size (for indexing)."""
+        return self._pick(self._rng, self._weighted_tiers, self._weighted_cumulative)
+
+    def pick_uniform(self):
+        """Select a partition uniformly at random (for search)."""
+        return self._pick(self._rng, self._uniform_tiers, self._uniform_cumulative)
+
+    @staticmethod
+    def _pick(rng, tiers, cumulative):
+        r = rng.random() * cumulative[-1]
+        for cum_w, (tier, count) in zip(cumulative, tiers):
+            if r < cum_w:
+                return f"{tier}-{rng.randrange(count)}"
+        # Fallback for floating-point edge case (r == cumulative[-1])
+        tier, count = tiers[-1]
+        return f"{tier}-{rng.randrange(count)}"
 
 
 def extract_partition_config(params):
     small = params.get("small-partitions", 100)
     medium = params.get("medium-partitions", 20)
     large = params.get("large-partitions", 5)
-    seed = params.get("partition-seed", 42)
 
     for name, value in (("small-partitions", small), ("medium-partitions", medium), ("large-partitions", large)):
         if value < 0:
@@ -54,13 +90,7 @@ def extract_partition_config(params):
     if small + medium + large == 0:
         raise ValueError("At least one partition must be configured")
 
-    return small, medium, large, seed
-
-
-def pick_partition(partitions, cumulative_weights):
-    """Select a partition using weighted random sampling (proportional to target size)."""
-    partition_index = bisect_left(cumulative_weights, random.randint(1, cumulative_weights[-1]))
-    return partitions[partition_index]
+    return small, medium, large
 
 
 class RandomBulkParamSource(ParamSource):
@@ -72,8 +102,8 @@ class RandomBulkParamSource(ParamSource):
         self._paragraph_size = params.get("paragraph-size", 1)
         self._custom_routing = params.get("custom-routing", False)
 
-        small, medium, large, seed = extract_partition_config(params)
-        self._partitions, self._cumulative = build_partition_registry(small, medium, large, seed)
+        small, medium, large = extract_partition_config(params)
+        self._registry = PartitionRegistry(small, medium, large)
 
     def params(self):
         import numpy as np
@@ -81,7 +111,7 @@ class RandomBulkParamSource(ParamSource):
         timestamp = int(time.time()) * 1000
         bulk_data = []
         for _ in range(self._bulk_size):
-            partition_id, _, _ = pick_partition(self._partitions, self._cumulative)
+            partition_id = self._registry.pick_weighted()
             metadata = {"_index": self._index_name}
             if self._custom_routing:
                 metadata["routing"] = partition_id
@@ -139,10 +169,10 @@ class RandomSearchParamSource:
                 raise ValueError(f"{partition_tier}-partitions must be positive when partition-tier is set")
             self._partition_tier = partition_tier
             self._tier_partition_count = count
-            self._partitions = None
+            self._registry = None
         else:
-            small, medium, large, seed = extract_partition_config(params)
-            self._partitions, _ = build_partition_registry(small, medium, large, seed)
+            small, medium, large = extract_partition_config(params)
+            self._registry = PartitionRegistry(small, medium, large)
             self._partition_tier = None
 
         self.infinite = True
@@ -156,8 +186,7 @@ class RandomSearchParamSource:
         if self._partition_tier is not None:
             partition_id = f"{self._partition_tier}-{random.randrange(self._tier_partition_count)}"
         else:
-            partition = random.choice(self._partitions)
-            partition_id = partition[0]
+            partition_id = self._registry.pick_uniform()
         query_vec = np.random.rand(self._dims).tolist()
         query = generate_knn_query(self._field, query_vec, partition_id, self._top_k, self._rescore_oversample)
         return {"index": self._index_name, "cache": self._cache, "size": self._top_k, "body": query}

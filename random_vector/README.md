@@ -18,7 +18,9 @@ Partitions are organized into three tiers with configurable counts:
 
 The distribution follows a realistic pattern: many small partitions, fewer medium, and fewest large.
 
-Each partition's exact document count is determined by a seeded RNG (`partition_seed`, default: 42), ensuring reproducible runs. Partitions are named by tier (for example, `small-0`, `medium-3`, `large-1`). During indexing, documents are assigned to partitions via weighted random sampling proportional to each partition's target size.
+Partitions are named by tier (for example, `small-0`, `medium-3`, `large-1`). During indexing, documents are assigned to partitions via two-level weighted random sampling: a tier is chosen proportional to the tier's aggregate expected size, then a partition within that tier is chosen uniformly. This avoids materializing a list of every partition, keeping memory usage constant regardless of partition count.
+
+Partition selection and vector generation are non-deterministic across runs — this was also the case in prior versions. The former `partition_seed` parameter only controlled per-partition target sizes, not runtime document assignment. Since the new design derives tier weights from fixed range midpoints rather than per-partition sizes, `partition_seed` is no longer needed. Reproducibility comes from the statistical distribution (tier counts and size ranges), not from identical document sequences.
 
 The index is sorted by `partition_id` and can optionally be routed by `partition_id`, keeping each partition's data co-located.
 
@@ -83,7 +85,6 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - small_partitions (default: 100): Number of small partitions (1k–10k docs each).
  - medium_partitions (default: 20): Number of medium partitions (10k–100k docs each).
  - large_partitions (default: 5): Number of large partitions (100k–1M docs each).
- - partition_seed (default: 42): Seed for deterministic partition size assignment.
  - custom_routing (default: false): Enable routing by partition ID when the routing template is selected.
  - rescore_oversample (default: -1): `-1` uses the index default, `0` disables rescore, and values greater than `0` set an explicit oversample.
  - vector_index_element_type (default: "float"): Sets the dense_vector element type.

@@ -15,7 +15,6 @@
   "small-partitions": {{ small_partitions | default(100) | int }},
   "medium-partitions": {{ medium_partitions | default(20) | int }},
   "large-partitions": {{ large_partitions | default(5) | int }},
-  "partition-seed": {{ partition_seed | default(42) | int }},
   "custom-routing": {{ custom_routing | default(false) | tojson }},
   "bulk-size": {{ index_bulk_size | default(1000) | int}},
   "paragraph-size": {{paragraph_size | default(1) | int}}
@@ -28,7 +27,6 @@
   "small-partitions": {{ small_partitions | default(100) | int }},
   "medium-partitions": {{ medium_partitions | default(20) | int }},
   "large-partitions": {{ large_partitions | default(5) | int }},
-  "partition-seed": {{ partition_seed | default(42) | int }},
   "rescore-oversample": {{ rescore_oversample | default(-1) | int }},
     {%- if paragraph_size | default(1) | int > 1 -%}
   "field": "nested.emb"

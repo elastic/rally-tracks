@@ -145,7 +145,7 @@ def generate_knn_query(field_name, query_vector, partition_id, k, rescore_oversa
         "filter": {"term": {"partition_id": partition_id}},
     }
 
-    if rescore_oversample > 0:
+    if rescore_oversample >= 0:
         knn_query["rescore_vector"] = {"oversample": rescore_oversample}
 
     return {"knn": knn_query}

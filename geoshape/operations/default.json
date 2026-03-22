@@ -708,6 +708,21 @@
       "query": "FROM osm* | EVAL simplified = ST_SIMPLIFY(shape, 0.01), points = ST_NPOINTS(simplified) | WHERE points > 0 | STATS count = COUNT(size) BY points"
     },
     {
+      "name": "st-geometrytype-stats-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | EVAL geometry_type = ST_GEOMETRYTYPE(shape) | STATS count = COUNT(*) BY geometry_type"
+    },
+    {
+      "name": "st-dimension-stats-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | EVAL dimension = ST_DIMENSION(shape) | STATS count = COUNT(*) BY dimension"
+    },
+    {
+      "name": "st-isempty-stats-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | EVAL is_empty = ST_ISEMPTY(shape) | STATS count = COUNT(*) BY is_empty"
+    },
+    {
       "name": "mvt-hits",
       "operation-type": "search",
       "index": "osm*",

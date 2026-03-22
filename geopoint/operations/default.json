@@ -857,4 +857,19 @@
       "name": "geoGrid_aggs_geohex-esql",
       "operation-type": "esql",
       "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | EVAL geohex = ST_GEOHEX(location, 6, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | STATS count = COUNT(*) BY geohex"
+    },
+    {
+      "name": "st-geometrytype-stats-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL geometry_type = ST_GEOMETRYTYPE(location) | STATS count = COUNT(*) BY geometry_type"
+    },
+    {
+      "name": "st-dimension-stats-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL dimension = ST_DIMENSION(location) | STATS count = COUNT(*) BY dimension"
+    },
+    {
+      "name": "st-isempty-stats-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL is_empty = ST_ISEMPTY(location) | STATS count = COUNT(*) BY is_empty"
     }

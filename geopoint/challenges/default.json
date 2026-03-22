@@ -444,6 +444,24 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["geo_grid", "esql"]
+        },
+        {
+          "operation": "st-geometrytype-stats-esql",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["esql", "st_geometrytype"]
+        },
+        {
+          "operation": "st-dimension-stats-esql",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["esql", "st_dimension"]
+        },
+        {
+          "operation": "st-isempty-stats-esql",
+          "warmup-iterations": 50,
+          "iterations": 50,
+          "tags": ["esql", "st_isempty"]
         }
       ]
     },

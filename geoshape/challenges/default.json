@@ -428,6 +428,24 @@
           "tags": ["esql", "st_simplify"]
         },
         {
+          "operation": "st-geometrytype-stats-esql",
+          "warmup-iterations": 10,
+          "iterations": 10,
+          "tags": ["esql", "st_geometrytype"]
+        },
+        {
+          "operation": "st-dimension-stats-esql",
+          "warmup-iterations": 10,
+          "iterations": 10,
+          "tags": ["esql", "st_dimension"]
+        },
+        {
+          "operation": "st-isempty-stats-esql",
+          "warmup-iterations": 10,
+          "iterations": 10,
+          "tags": ["esql", "st_isempty"]
+        },
+        {
           "operation": "mvt-hits",
           "warmup-iterations": 50,
           "iterations": 50,

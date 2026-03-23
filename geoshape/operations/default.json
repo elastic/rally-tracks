@@ -695,7 +695,7 @@
     {
       "name": "st-envelope-count-esql",
       "operation-type": "esql",
-      "query": "FROM osm* | EVAL env = ST_ENVELOPE(shape), points = ST_NPOINTS(env) | WHERE points > 0 | STATS count = COUNT(size) BY points"
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON ((-0.7 51.2, -0.4 51.2, -0.4 51.3, -0.7 51.3, -0.7 51.2))\")) | EVAL env = ST_ENVELOPE(shape), points = ST_NPOINTS(env) | WHERE points > 0 | STATS count = COUNT(size) BY points"
     },
     {
       "name": "st-simplify-esql",
@@ -705,22 +705,37 @@
     {
       "name": "st-simplify-count-esql",
       "operation-type": "esql",
-      "query": "FROM osm* | EVAL simplified = ST_SIMPLIFY(shape, 0.01), points = ST_NPOINTS(simplified) | WHERE points > 0 | STATS count = COUNT(size) BY points"
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON ((-0.7 51.2, -0.4 51.2, -0.4 51.3, -0.7 51.3, -0.7 51.2))\")) | EVAL simplified = ST_SIMPLIFY(shape, 0.01), points = ST_NPOINTS(simplified) | WHERE points > 0 | STATS count = COUNT(size) BY points"
     },
     {
-      "name": "st-geometrytype-stats-esql",
+      "name": "st-geometrytype-esql",
       "operation-type": "esql",
-      "query": "FROM osm* | EVAL geometry_type = ST_GEOMETRYTYPE(shape) | STATS count = COUNT(*) BY geometry_type"
+      "query": "FROM osm* | EVAL geometry_type = ST_GEOMETRYTYPE(shape) | KEEP geometry_type | LIMIT 10"
     },
     {
-      "name": "st-dimension-stats-esql",
+      "name": "st-geometrytype-count-esql",
       "operation-type": "esql",
-      "query": "FROM osm* | EVAL dimension = ST_DIMENSION(shape) | STATS count = COUNT(*) BY dimension"
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON ((-0.7 51.2, -0.4 51.2, -0.4 51.3, -0.7 51.3, -0.7 51.2))\")) | EVAL geometry_type = ST_GEOMETRYTYPE(shape) | STATS count = COUNT(*) BY geometry_type"
     },
     {
-      "name": "st-isempty-stats-esql",
+      "name": "st-dimension-esql",
       "operation-type": "esql",
-      "query": "FROM osm* | EVAL is_empty = ST_ISEMPTY(shape) | STATS count = COUNT(*) BY is_empty"
+      "query": "FROM osm* | EVAL dimension = ST_DIMENSION(shape) | KEEP dimension | LIMIT 10"
+    },
+    {
+      "name": "st-dimension-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON ((-0.7 51.2, -0.4 51.2, -0.4 51.3, -0.7 51.3, -0.7 51.2))\")) | EVAL dimension = ST_DIMENSION(shape) | STATS count = COUNT(*) BY dimension"
+    },
+    {
+      "name": "st-isempty-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | EVAL is_empty = ST_ISEMPTY(shape) | KEEP is_empty | LIMIT 10"
+    },
+    {
+      "name": "st-isempty-count-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"POLYGON ((-0.7 51.2, -0.4 51.2, -0.4 51.3, -0.7 51.3, -0.7 51.2))\")) | EVAL is_empty = ST_ISEMPTY(shape) | STATS count = COUNT(*) BY is_empty"
     },
     {
       "name": "mvt-hits",

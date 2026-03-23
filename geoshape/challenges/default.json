@@ -333,38 +333,38 @@
         },
         {
           "operation": "bounds",
-          "warmup-iterations": 10,
-          "iterations": 10,
+          "warmup-iterations": 5,
+          "iterations": 5,
           "tags": ["bounds"]
         },
         {
           "operation": "bounds-esql",
-          "warmup-iterations": 10,
-          "iterations": 10,
+          "warmup-iterations": 5,
+          "iterations": 5,
           "tags": ["esql", "bounds"]
         },
         {
           "operation": "bounds-centroid",
-          "warmup-iterations": 10,
-          "iterations": 10,
+          "warmup-iterations": 5
+          "iterations": 5,
           "tags": ["bounds", "centroid"]
         },
         {
           "operation": "bounds-centroid-esql",
-          "warmup-iterations": 10,
-          "iterations": 10,
+          "warmup-iterations": 5,
+          "iterations": 5,
           "tags": ["esql", "bounds", "centroid"]
         },
         {
           "operation": "centroid",
-          "warmup-iterations": 10,
-          "iterations": 10,
+          "warmup-iterations": 5,
+          "iterations": 5,
           "tags": ["centroid"]
         },
         {
           "operation": "centroid-esql",
-          "warmup-iterations": 10,
-          "iterations": 10,
+          "warmup-iterations": 5,
+          "iterations": 5,
           "tags": ["centroid", "esql"]
         },
         {
@@ -422,27 +422,57 @@
           "tags": ["esql", "st_envelope"]
         },
         {
+          "operation": "st-envelope-count-esql",
+          "warmup-iterations": 5,
+          "iterations": 5,
+          "tags": ["esql", "st_envelope"]
+        },
+        {
           "operation": "st-simplify-esql",
           "warmup-iterations": 100,
           "iterations": 50,
           "tags": ["esql", "st_simplify"]
         },
         {
-          "operation": "st-geometrytype-stats-esql",
-          "warmup-iterations": 10,
-          "iterations": 10,
+          "operation": "st-simplify-count-esql",
+          "warmup-iterations": 5,
+          "iterations": 5,
+          "tags": ["esql", "st_simplify"]
+        },
+        {
+          "operation": "st-geometrytype-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
           "tags": ["esql", "st_geometrytype"]
         },
         {
-          "operation": "st-dimension-stats-esql",
-          "warmup-iterations": 10,
-          "iterations": 10,
+          "operation": "st-geometrytype-count-esql",
+          "warmup-iterations": 5,
+          "iterations": 5,
+          "tags": ["esql", "st_geometrytype"]
+        },
+        {
+          "operation": "st-dimension-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
           "tags": ["esql", "st_dimension"]
         },
         {
-          "operation": "st-isempty-stats-esql",
-          "warmup-iterations": 10,
-          "iterations": 10,
+          "operation": "st-dimension-count-esql",
+          "warmup-iterations": 5,
+          "iterations": 5,
+          "tags": ["esql", "st_dimension"]
+        },
+        {
+          "operation": "st-isempty-esql",
+          "warmup-iterations": 100,
+          "iterations": 50,
+          "tags": ["esql", "st_isempty"]
+        },
+        {
+          "operation": "st-isempty-count-esql",
+          "warmup-iterations": 5,
+          "iterations": 5,
           "tags": ["esql", "st_isempty"]
         },
         {

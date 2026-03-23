@@ -6,7 +6,7 @@
     {
       "name": "vector-index-template",
       "index-pattern": "vectors-benchmark-*",
-      "template": "index-template.json"
+      "template": "index-template{{ '-routing' if custom_routing | default(false) else '' }}.json"
     }
   ],
   "data-streams": [

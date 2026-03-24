@@ -153,13 +153,13 @@
         },
         {
           "operation": "polygon-centroid",
-          "warmup-iterations": 100,
+          "warmup-iterations": 50,
           "iterations": 50,
           "tags": ["polygon", "centroid"]
         },
         {
           "operation": "polygon-centroid-esql",
-          "warmup-iterations": 100,
+          "warmup-iterations": 50,
           "iterations": 50,
           "tags": ["polygon", "centroid", "esql"]
         },
@@ -183,13 +183,13 @@
         },
         {
           "operation": "bbox-intersects",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["bbox"]
         },
         {
           "operation": "bbox-intersects-esql",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["bbox", "esql"]
         },

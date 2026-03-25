@@ -14,7 +14,7 @@
             {% if synthetic_source_keep %}
             {% if index_mode or codec or source_mode %},{% endif %}"mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson }}
             {% endif %}
-            {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+            {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" -%}
             {% if use_doc_values_skipper | default(true) %}
             {% if index_mode or codec or source_mode or synthetic_source_keep or synthetic_source_keep %},{% endif %}"mapping.use_doc_values_skipper": true
             {% endif %}

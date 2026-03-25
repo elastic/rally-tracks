@@ -3,7 +3,7 @@
       "settings": {
         "index": {
             {% if index_mode %}
-            "mode": {{ index_mode | tojson }}
+            "mode": {{ index_mode | tojson }},
             "sort.field": [ "host.id", "@timestamp" ],
             "sort.order": [ "asc", "desc" ],
             "sort.missing": ["_first", "_last"]

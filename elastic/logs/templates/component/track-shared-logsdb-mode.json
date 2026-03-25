@@ -21,6 +21,9 @@
             {% if use_synthetic_source_recovery %}
             ,"recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}}
             {% endif %}
+            {% if use_time_series_doc_values_format %}
+            ,"use_time_series_doc_values_format": {{use_time_series_doc_values_format | tojson}}
+            {% endif %}
             ,"use_time_series_doc_values_format_large_binary_block_size": true
             {% if index_mode == "logsdb" or index_mode == "time_series" %}
             ,"disable_sequence_numbers": true

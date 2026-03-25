@@ -153,79 +153,79 @@
         },
         {
           "operation": "polygon-centroid",
-          "warmup-iterations": 100,
+          "warmup-iterations": 50,
           "iterations": 50,
           "tags": ["polygon", "centroid"]
         },
         {
           "operation": "polygon-centroid-esql",
-          "warmup-iterations": 100,
+          "warmup-iterations": 50,
           "iterations": 50,
           "tags": ["polygon", "centroid", "esql"]
         },
         {
           "operation": "centroid",
-          "warmup-iterations": 100,
-          "iterations": 50,
+          "warmup-iterations": 20,
+          "iterations": 20,
           "tags": ["centroid"]
         },
         {
           "operation": "centroid-esql",
-          "warmup-iterations": 100,
-          "iterations": 50,
+          "warmup-iterations": 20,
+          "iterations": 20,
           "tags": ["centroid", "esql"]
         },
         {
           "operation": "centroid-to_geopoint-esql",
-          "warmup-iterations": 100,
-          "iterations": 50,
+          "warmup-iterations": 20,
+          "iterations": 20,
           "tags": ["centroid", "esql"]
         },
         {
           "operation": "bbox-intersects",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["bbox"]
         },
         {
           "operation": "bbox-intersects-esql",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["bbox", "esql"]
         },
         {
           "operation": "distanceFilter",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["distance"]
         },
         {
           "operation": "distanceFilter-esql",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["distance", "esql"]
         },
         {
           "operation": "distanceFilterEQ",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["distance", "esql"]
         },
         {
           "operation": "distanceFilterEQ-esql",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["distance", "esql"]
         },
         {
           "operation": "distanceFilterGTE",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["distance", "esql"]
         },
         {
           "operation": "distanceFilterGTE-esql",
-          "warmup-iterations": 200,
+          "warmup-iterations": 100,
           "iterations": 100,
           "tags": ["distance", "esql"]
         },
@@ -345,68 +345,68 @@
         },
         {
           "operation": "distanceFilterSort",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["distance", "sort"]
         },
         {
           "operation": "distanceFilterSort-esql",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["distance", "esql", "sort"]
         },
         {
           "operation": "distanceFilterSort-esql-partial",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["distance", "esql", "sort"]
         },
         {
           "operation": "distanceRange",
-          "warmup-iterations": 40,
-          "iterations": 20,
+          "warmup-iterations": 10,
+          "iterations": 10,
           "tags": ["distance", "aggs"]
         },
         {
           "operation": "distanceFilterRange",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["distance", "aggs"]
         },
         {
           "operation": "geoGrid_geohash",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["geo_grid"]
         },
         {
           "operation": "geoGrid_geohash-esql",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["geo_grid", "esql"]
         },
         {
           "operation": "geoGrid_geotile",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["geo_grid"]
         },
         {
           "operation": "geoGrid_geotile-esql",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["geo_grid", "esql"]
         },
         {
           "operation": "geoGrid_geohex",
-          "warmup-iterations": 200,
-          "iterations": 100,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["geo_grid"]
         },
         {
           "operation": "geoGrid_geohex-esql",
-          "warmup-iterations": 1,
-          "iterations": 2,
+          "warmup-iterations": 50,
+          "iterations": 50,
           "tags": ["geo_grid", "esql"]
         },
         {

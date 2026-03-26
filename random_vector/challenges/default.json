@@ -44,6 +44,10 @@
         "request-timeout": 1000,
         "include-in-reporting": true
       }
+    },
+    {
+      "name": "wait-until-cluster-is-ready",
+      "operation": "check-cluster-health"
     }{%- if small_partitions | default(100) | int > 0 %},
     {
       "name": "small-partition-search",

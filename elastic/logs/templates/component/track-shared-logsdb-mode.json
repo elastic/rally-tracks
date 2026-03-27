@@ -3,7 +3,8 @@
       "settings": {
         {% if index_mode %}
         "index": {
-            "mode": {{ index_mode | tojson }}
+            "mode": {{ index_mode | tojson }},
+            "mapping.index_disabled_by_default": true
             {% if codec %}
             ,"codec": {{codec | tojson}}
             {% endif %}

@@ -4,6 +4,7 @@
         {% if index_mode %}
         "index": {
             "mode": {{ index_mode | tojson }},
+            "mapping.index_disabled_by_default": true,
             {% if source_mode %}
             "mapping.source.mode": {{ source_mode | tojson }},
             {% endif %}

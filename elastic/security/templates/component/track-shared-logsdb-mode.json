@@ -18,6 +18,9 @@
             "sort.order": [ "asc", "desc" ],
             "sort.missing": ["_first", "_last"]
             {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" -%}
+            {% if use_time_series_doc_values_format %}
+            ,"use_time_series_doc_values_format": {{use_time_series_doc_values_format | tojson}}
+            {% endif %}
             ,"use_time_series_doc_values_format_large_binary_block_size": true
             {% if index_mode == "logsdb" or index_mode == "time_series" %}
             ,"disable_sequence_numbers": true

@@ -5,7 +5,7 @@
         "index": {
             "mode": {{ index_mode | tojson }},
             "mapping.index_disabled_by_default": true,
-            {% if source_mode %}
+            {% if source_mode is defined %}
             "mapping.source.mode": {{ source_mode | tojson }},
             {% endif %}
             {% if use_synthetic_source_recovery %}
@@ -18,7 +18,7 @@
             "sort.order": [ "asc", "desc" ],
             "sort.missing": ["_first", "_last"]
             {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" -%}
-            {% if use_time_series_doc_values_format %}
+            {% if use_time_series_doc_values_format is defined %}
             ,"use_time_series_doc_values_format": {{use_time_series_doc_values_format | tojson}}
             {% endif %}
             ,"use_time_series_doc_values_format_large_binary_block_size": true

@@ -218,10 +218,7 @@ class KnnRecallParamSource:
         import numpy as np
 
         query_vectors = [np.random.rand(self._dims).tolist() for _ in range(self._recall_iterations)]
-        partition_ids = [
-            f"{self._partition_tier}-{random.randrange(self._tier_partition_count)}"
-            for _ in range(self._recall_iterations)
-        ]
+        partition_ids = [f"{self._partition_tier}-{random.randrange(self._tier_partition_count)}" for _ in range(self._recall_iterations)]
         return {
             "index": self._index_name,
             "field": self._field,

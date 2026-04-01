@@ -64,6 +64,13 @@
       "warmup-iterations": 500,
       "iterations": {{ search_iterations | default(10000) | int }},
       "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "small-partition-recall",
+      "operation": "knn-recall-small-partition",
+      "warmup-iterations": 0,
+      "iterations": 1,
+      "clients": 1
     }{%- endif %}{%- if medium_partitions | default(20) | int > 0 %},
     {
       "name": "medium-partition-search",
@@ -71,6 +78,13 @@
       "warmup-iterations": 500,
       "iterations": {{ search_iterations | default(10000) | int }},
       "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "medium-partition-recall",
+      "operation": "knn-recall-medium-partition",
+      "warmup-iterations": 0,
+      "iterations": 1,
+      "clients": 1
     }{%- endif %}{%- if large_partitions | default(5) | int > 0 %},
     {
       "name": "large-partition-search",
@@ -78,6 +92,13 @@
       "warmup-iterations": 500,
       "iterations": {{ search_iterations | default(10000) | int }},
       "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "large-partition-recall",
+      "operation": "knn-recall-large-partition",
+      "warmup-iterations": 0,
+      "iterations": 1,
+      "clients": 1
     }{%- endif %}
   ]
 }

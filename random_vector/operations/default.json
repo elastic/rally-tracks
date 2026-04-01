@@ -75,5 +75,47 @@
     {%- else %}
   "field": "emb"
     {%- endif %}
+},
+{
+  "name": "knn-recall-small-partition",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "request-timeout": 600,
+  "include-in-reporting": false,
+  "dims": {{ dims | default(128) | int }},
+  "k": 10,
+  "small-partitions": {{ small_partitions | default(100) | int }},
+  "partition-tier": "small",
+  "rescore-oversample": {{ rescore_oversample | default(-1) | int }},
+  "recall-iterations": {{ recall_iterations | default(100) | int }},
+  "field": "emb"
+},
+{
+  "name": "knn-recall-medium-partition",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "request-timeout": 600,
+  "include-in-reporting": false,
+  "dims": {{ dims | default(128) | int }},
+  "k": 10,
+  "medium-partitions": {{ medium_partitions | default(20) | int }},
+  "partition-tier": "medium",
+  "rescore-oversample": {{ rescore_oversample | default(-1) | int }},
+  "recall-iterations": {{ recall_iterations | default(100) | int }},
+  "field": "emb"
+},
+{
+  "name": "knn-recall-large-partition",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "request-timeout": 600,
+  "include-in-reporting": false,
+  "dims": {{ dims | default(128) | int }},
+  "k": 10,
+  "large-partitions": {{ large_partitions | default(5) | int }},
+  "partition-tier": "large",
+  "rescore-oversample": {{ rescore_oversample | default(-1) | int }},
+  "recall-iterations": {{ recall_iterations | default(100) | int }},
+  "field": "emb"
 }
 

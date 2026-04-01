@@ -192,6 +192,104 @@ class RandomSearchParamSource:
         return {"index": self._index_name, "cache": self._cache, "size": self._top_k, "body": query}
 
 
+class KnnRecallParamSource:
+    def __init__(self, track, params, **kwargs):
+        self._index_name = track.data_streams[0].name
+        self._field = params.get("field", "emb")
+        self._dims = params.get("dims", 128)
+        self._top_k = params.get("k", 10)
+        self._rescore_oversample = params.get("rescore-oversample", -1)
+        self._recall_iterations = params.get("recall-iterations", 100)
+
+        partition_tier = params.get("partition-tier")
+        if partition_tier not in TIERS:
+            raise ValueError(f"partition-tier must be one of: {', '.join(TIERS)}")
+        count = params.get(f"{partition_tier}-partitions")
+        if count is None or count <= 0:
+            raise ValueError(f"{partition_tier}-partitions must be positive when partition-tier is set")
+        self._partition_tier = partition_tier
+        self._tier_partition_count = count
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        return self
+
+    def params(self):
+        import numpy as np
+
+        query_vectors = [np.random.rand(self._dims).tolist() for _ in range(self._recall_iterations)]
+        partition_ids = [
+            f"{self._partition_tier}-{random.randrange(self._tier_partition_count)}"
+            for _ in range(self._recall_iterations)
+        ]
+        return {
+            "index": self._index_name,
+            "field": self._field,
+            "k": self._top_k,
+            "rescore_oversample": self._rescore_oversample,
+            "query_vectors": query_vectors,
+            "partition_ids": partition_ids,
+        }
+
+
+class KnnRecallRunner:
+    async def __call__(self, es, params):
+        k = params["k"]
+        index = params["index"]
+        field = params["field"]
+        rescore_oversample = params["rescore_oversample"]
+        query_vectors = params["query_vectors"]
+        partition_ids = params["partition_ids"]
+
+        recall_total = 0
+        exact_total = 0
+        min_recall = k
+        max_recall = 0
+
+        for query_vec, partition_id in zip(query_vectors, partition_ids):
+            knn_body = generate_knn_query(field, query_vec, partition_id, k, rescore_oversample)
+            knn_body["_source"] = False
+            knn_result = await es.search(body=knn_body, index=index, size=k)
+            knn_hits = [hit["_id"] for hit in knn_result["hits"]["hits"]]
+
+            exact_body = {
+                "query": {
+                    "script_score": {
+                        "query": {"term": {"partition_id": partition_id}},
+                        "script": {
+                            "source": f"cosineSimilarity(params.query, '{field}') + 1.0",
+                            "params": {"query": query_vec},
+                        },
+                    }
+                },
+                "_source": False,
+            }
+            exact_result = await es.search(body=exact_body, index=index, size=k)
+            exact_hits = [hit["_id"] for hit in exact_result["hits"]["hits"]]
+
+            current_recall = len(set(knn_hits).intersection(set(exact_hits)))
+            recall_total += current_recall
+            exact_total += len(exact_hits)
+            min_recall = min(min_recall, current_recall)
+            max_recall = max(max_recall, current_recall)
+
+        return (
+            {
+                "avg_recall": recall_total / exact_total,
+                "min_recall": min_recall,
+                "max_recall": max_recall,
+                "k": k,
+            }
+            if exact_total > 0
+            else None
+        )
+
+    def __repr__(self, *args, **kwargs):
+        return "knn-recall"
+
+
 def register(registry):
     registry.register_param_source("random-bulk-param-source", RandomBulkParamSource)
     registry.register_param_source("knn-param-source", RandomSearchParamSource)
+    registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
+    registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

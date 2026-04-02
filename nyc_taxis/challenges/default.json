@@ -1797,4 +1797,13 @@
       "schedule": [
         {{ rally.collect(parts="common/autoscale-v2-schedule.json") }}
       ]
+    },
+    {
+      "name": "index-and-search-with-stages",
+      "description": "Index the document corpus and perform additional searches allowing for configuring a set of steps where a different number of search clients can be configured for every step",
+      "default": false,
+      "schedule": [
+        {{ rally.collect(parts="common/nyc_querying_in_stages.json") }}
+      ]
     }
+

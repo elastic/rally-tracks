@@ -16,21 +16,42 @@ def build_heavy_has_privileges_body():
     checkPrivileges evaluation on every call.  Each invocation produces a unique
     body so the per-role hasPrivilegesCache always misses."""
     cluster_privs = [
-        "monitor", "manage", "manage_security", "manage_pipeline",
-        "manage_index_templates", "manage_ml", "manage_watcher",
-        "manage_transform", "manage_ccr", "manage_ilm",
+        "monitor",
+        "manage",
+        "manage_security",
+        "manage_pipeline",
+        "manage_index_templates",
+        "manage_ml",
+        "manage_watcher",
+        "manage_transform",
+        "manage_ccr",
+        "manage_ilm",
     ]
 
     index_privs = []
     for _ in range(50):
         base = "".join(random.choices(string.ascii_lowercase + string.digits, k=10))
-        index_privs.append({
-            "names": [f"*{base}*" for _ in range(3)],
-            "privileges": random.sample(
-                ["read", "write", "delete", "create", "create_index", "index",
-                 "monitor", "manage", "view_index_metadata", "delete_index"], k=4),
-            "allow_restricted_indices": False,
-        })
+        index_privs.append(
+            {
+                "names": [f"*{base}*" for _ in range(3)],
+                "privileges": random.sample(
+                    [
+                        "read",
+                        "write",
+                        "delete",
+                        "create",
+                        "create_index",
+                        "index",
+                        "monitor",
+                        "manage",
+                        "view_index_metadata",
+                        "delete_index",
+                    ],
+                    k=4,
+                ),
+                "allow_restricted_indices": False,
+            }
+        )
 
     return {"cluster": cluster_privs, "index": index_privs}
 
@@ -43,10 +64,12 @@ async def check_netty_worker_count(es, params):
         count = node.get("settings", {}).get("http", {}).get("netty", {}).get("worker_count", None)
         if count is None or int(count) != 1:
             from esrally import exceptions
+
             raise exceptions.InvalidSyntax(
                 f"Node [{node.get('name', node_id)}] has http.netty.worker_count={count}. "
                 f"This track requires http.netty.worker_count: 1 in elasticsearch.yml "
-                f"to deterministically reproduce Netty event-loop head-of-line blocking.")
+                f"to deterministically reproduce Netty event-loop head-of-line blocking."
+            )
 
 
 async def create_roles_and_users(es, params):
@@ -57,9 +80,9 @@ async def create_roles_and_users(es, params):
     index_privileges_per_role = params.get("index_privileges_per_role", 10)
 
     from esrally import exceptions
+
     if num_roles_per_user > num_roles:
-        raise exceptions.InvalidSyntax(
-            f"num_roles_per_user ({num_roles_per_user}) cannot exceed num_roles ({num_roles})")
+        raise exceptions.InvalidSyntax(f"num_roles_per_user ({num_roles_per_user}) cannot exceed num_roles ({num_roles})")
 
     roles = [f"role_{i}" for i in range(num_roles)]
 

@@ -18,6 +18,15 @@
       }
     },
     {
+      "name": "warmup_has_privileges",
+      "operation": {
+        "operation-type": "has_privileges",
+        "num_users": {{num_users | default(1)}}
+      },
+      "iterations": {{warmup_iterations | default(3)}},
+      "clients": 1
+    },
+    {
       "parallel": {
         "completed-by": "has_privileges",
         "tasks": [
@@ -27,7 +36,6 @@
               "operation-type": "has_privileges",
               "num_users": {{num_users | default(1)}}
             },
-            "warmup-iterations": {{warmup_iterations | default(3)}},
             "iterations": {{iterations | default(100)}},
             "clients": {{has_privileges_clients | default(1)}}
           },

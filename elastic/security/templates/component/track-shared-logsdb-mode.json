@@ -1,26 +1,32 @@
 {
     "template": {
       "settings": {
-        {% if index_mode %}
         "index": {
+            {% if index_mode %}
             "mode": {{ index_mode | tojson }},
-            {% if source_mode %}
-            "mapping.source.mode": {{ source_mode | tojson }},
-            {% endif %}
-            {% if use_synthetic_source_recovery %}
-            "recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}},
-            {% endif %}
-            {% if synthetic_source_keep %}
-            "mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson}},
-            {% endif %}
             "sort.field": [ "host.id", "@timestamp" ],
             "sort.order": [ "asc", "desc" ],
             "sort.missing": ["_first", "_last"]
-            {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
-            ,"use_time_series_doc_values_format_large_binary_block_size": true
+            {% endif %}
+            {% if source_mode %}
+            {% if index_mode %},{% endif %}"mapping.source.mode": {{ source_mode | tojson }}
+            {% endif %}
+            {% if synthetic_source_keep %}
+            {% if index_mode or source_mode %},{% endif %}"mapping.synthetic_source_keep": {{ synthetic_source_keep | tojson}}
+            {% endif %}
+            {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" -%}
+            {% if use_synthetic_source_recovery %}
+            {% if index_mode or source_mode or synthetic_source_keep %},{% endif %}"recovery.use_synthetic_source": {{use_synthetic_source_recovery | tojson}}
+            {% endif %}
+            {% if index_mode or source_mode or synthetic_source_keep or use_synthetic_source_recovery %},{% endif %}"use_time_series_doc_values_format_large_binary_block_size": true
+            {% if use_time_series_doc_values_format %}
+            ,"use_time_series_doc_values_format": {{use_time_series_doc_values_format | tojson}}
+            {% endif %}
+            {% if index_mode == "logsdb" or index_mode == "time_series" %}
+            ,"disable_sequence_numbers": true
+            {% endif %}
             {%- endif -%}{# non-serverless-index-settings-marker-end #}
         }
-        {% endif %}
       }
     }
   }

@@ -104,6 +104,8 @@ def project():
             "optimized_for": "vector",
         },
     )
+    # Emitted for Buildkite parsing in .buildkite/it/run_serverless.sh.
+    print(f"SERVERLESS_PROJECT_ID={created_project['id']}")
 
     yield created_project
 

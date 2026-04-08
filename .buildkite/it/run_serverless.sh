@@ -16,6 +16,40 @@ PYTHON_VERSION="$1"
 TEST_NAME="$2"
 IFS=',' read -ra RUN_FULL_CI_WHEN_CHANGED <<< "$3"
 
+function annotate_serverless_logs {
+    local test_name="$1"
+    local start_time="$2"
+    local end_time="$3"
+    local exit_status="$4"
+    local output_file="$5"
+
+    if ! command -v buildkite-agent >/dev/null 2>&1; then
+        return
+    fi
+
+    local project_id
+    project_id=$(grep -Eo 'SERVERLESS_PROJECT_ID=[A-Za-z0-9-]+' "$output_file" | tail -1 | cut -d= -f2)
+    if [[ -z "$project_id" ]]; then
+        return
+    fi
+
+    local serverless_url_prefix="https://overview.qa.cld.elstc.co"
+    local serverless_log_path="/app/dashboards#/view/serverless-es-project-logs?_g=(time:(from:'%s',to:'%s'))&_a=(query:(language:kuery,query:'serverless.project.id:%s'))"
+    local serverless_log_url
+    # shellcheck disable=SC2059
+    serverless_log_url=$(printf "${serverless_url_prefix}${serverless_log_path}" "$start_time" "$end_time" "$project_id")
+
+    local style="info"
+    local priority="3"
+    if [[ $exit_status -ne 0 ]]; then
+        style="error"
+        priority="10"
+    fi
+
+    echo "$test_name #${BUILDKITE_RETRY_COUNT:-0} | Serverless ES Project Logs: [click]($serverless_log_url)" | \
+        buildkite-agent annotate --style "$style" --context "serverless-es-project-logs-${test_name}-${BUILDKITE_RETRY_COUNT:-0}" --priority "$priority"
+}
+
 echo "--- System dependencies"
 
 retry 5 sudo add-apt-repository --yes ppa:deadsnakes/ppa
@@ -62,4 +96,14 @@ fi
 
 echo "--- Run IT serverless test \"$TEST_NAME\"$TRACK_FILTER_ARG :pytest:"
 
-hatch -v -e it_serverless run $TEST_NAME$TRACK_FILTER_ARG
+START_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+OUTPUT_FILE="run_serverless_${TEST_NAME}.log"
+set +e
+hatch -v -e it_serverless run $TEST_NAME$TRACK_FILTER_ARG 2>&1 | tee "$OUTPUT_FILE"
+EXIT_STATUS=${PIPESTATUS[0]}
+set -e
+END_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+annotate_serverless_logs "$TEST_NAME" "$START_TIME" "$END_TIME" "$EXIT_STATUS" "$OUTPUT_FILE"
+
+exit $EXIT_STATUS

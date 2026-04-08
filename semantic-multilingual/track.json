@@ -1,0 +1,36 @@
+{% import "rally.helpers" as rally with context %}
+{% set _model             = model             | default("bm25") %}
+{% set _data_url          = data_url          | default("") %}
+{% set _inference_service  = inference_service  | default("elser") %}
+{% set _inference_model_id = inference_model_id | default(".elser_model_2") %}
+{% set _task_type          = task_type          | default("sparse_embedding") %}
+{
+  "version": 2,
+  "description": "Benchmark comparing ELSER, Jina V5, and BM25 on multilingual Wikipedia (EN/ES/DV)",
+  "indices": [
+    {
+      "name": "wiki-{{ _model }}",
+      "body": "index-{{ _model }}.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "wikipedia-all",
+      "base-url": "{{ _data_url }}",
+      "documents": [
+        {
+          "source-file": "wikipedia_all.json.bz2",
+          "document-count": 200089,
+          "compressed-bytes": 213406471,
+          "uncompressed-bytes": 723135998
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

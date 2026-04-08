@@ -1,0 +1,19 @@
+{
+  "settings": {
+    "index": {
+      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+      "number_of_shards": {{ number_of_shards | default(1) | int }},
+      "number_of_replicas": {{ number_of_replicas | default(0) | int }}
+      {%- endif -%}{# non-serverless-index-settings-marker-end #}
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id":       { "type": "keyword" },
+      "title":    { "type": "keyword" },
+      "content":  { "type": "semantic_text", "inference_id": "semantic-multilingual-model" },
+      "language": { "type": "keyword" },
+      "url":      { "type": "keyword" }
+    }
+  }
+}

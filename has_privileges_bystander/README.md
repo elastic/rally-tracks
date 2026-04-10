@@ -1,26 +1,16 @@
 # Has-Privileges Bystander Blocking Track
 
-Demonstrates Netty event-loop head-of-line blocking caused by expensive `_has_privileges` index privilege evaluation.
+Benchmarks expensive `_has_privileges` requests alongside lightweight bystander requests to measure head-of-line blocking on Netty event-loop threads.
 
 ## What This Track Shows
 
-When a `_has_privileges` request triggers expensive DFA (automaton) operations in `IndicesPermission.checkResourcePrivileges`, it blocks the Netty event loop thread synchronously. Any other HTTP request ("bystander") bound to the same event loop must wait in line, causing latency outliers unrelated to the bystander request's own cost.
+When a `_has_privileges` request triggers expensive DFA (automaton) operations in `IndicesPermission.checkResourcePrivileges`, it can block the Netty event loop thread synchronously. Any other HTTP request ("bystander") bound to the same event loop must wait in line, causing latency outliers unrelated to the bystander request's own cost.
 
-The track runs `_has_privileges` requests alongside trivial `GET /` bystander requests on a single Netty event loop, then compares their latency distributions. A successful reproduction shows bystander p100 latency approaching `has_privileges` p100.
+The track runs expensive `_has_privileges` requests alongside lightweight bystander requests, then compares their latency distributions. Head-of-line blocking manifests as bystander p100 latency approaching `has_privileges` p100.
 
 ## Cluster Prerequisites
 
-The target Elasticsearch cluster must be configured with the following **static** settings in `elasticsearch.yml` (requires node restart):
-
-```yaml
-http.netty.worker_count: 1
-```
-
-This forces all HTTP connections onto a single Netty event loop thread, making the blocking effect deterministic. Without this, blocking still occurs but only affects the ~1/N fraction of bystander requests that happen to land on the same event loop as a slow `has_privileges` request.
-
-The track validates this setting at startup and fails with a clear error if it is not configured.
-
-X-Pack Security must be enabled (default in recent ES versions).
+X-Pack Security must be enabled (default in recent ES versions). No special static settings are required.
 
 ## Parameters
 
@@ -36,7 +26,8 @@ All parameters can be configured via `--track-params`:
 | `iterations` | integer | 100 | Number of `has_privileges` requests to measure |
 | `warmup_iterations` | integer | 3 | Warmup iterations before measurement |
 | `has_privileges_clients` | integer | 1 | Concurrent `has_privileges` clients |
-| `bystander_clients` | integer | 1 | Concurrent bystander (`GET /`) clients |
+| `bystander_clients` | integer | 1 | Concurrent bystander (`GET /`) clients (used when `cached_bystander_clients` is 0) |
+| `cached_bystander_clients` | integer | 0 | Concurrent bystander clients using lightweight cached `_has_privileges` requests instead of `GET /` |
 
 ### Wildcard Modes
 
@@ -59,27 +50,75 @@ esrally race --track-path=has_privileges_bystander \
   --track-params="iterations:50"
 ```
 
-### With Rally-Provisioned Cluster
-
-Not directly supported because `http.netty.worker_count` is a static setting that must be in `elasticsearch.yml` before the node starts. You would need a custom car definition that includes this setting.
-
 ## How It Works
 
-1. **`check_netty_worker_count`** -- verifies `http.netty.worker_count: 1` on all nodes
-2. **`create_roles_and_users`** -- creates roles with randomized wildcard index patterns and assigns them to test users
-3. **Parallel phase** -- runs concurrently until `has_privileges` completes:
+1. **`create_roles_and_users`** -- creates roles with randomized wildcard index patterns and assigns them to test users. If `cached_bystander_clients > 0`, also creates a `bystander_user` with a single simple role.
+2. **Parallel phase** -- runs concurrently until `has_privileges` completes:
    - **`has_privileges`** -- sends `_has_privileges` requests with a large, unique request body (50 index expressions with wildcard patterns, 10 cluster privileges). Each body is randomized to defeat the per-role `hasPrivilegesCache`.
-   - **`cluster_info`** -- sends trivial `GET /` requests continuously as bystander traffic
+   - **`has_privileges_cached`** (when `cached_bystander_clients > 0`) -- sends lightweight `_has_privileges` requests as `bystander_user` with a simple cached role. These hit the role cache and complete quickly unless blocked.
+   - **`cluster_info`** (when `cached_bystander_clients == 0`) -- sends trivial `GET /` requests continuously as bystander traffic.
 
 ## Interpreting Results
 
 | Metric | What to look for |
 |---|---|
 | `has_privileges` p50 | Baseline cost of index privilege evaluation (~2s with defaults) |
-| `cluster_info` p50 | Should be <1ms (trivial request, no contention) |
-| `cluster_info` p100 | Should approach `has_privileges` p100 (proves blocking) |
+| bystander p50 | Should be <1ms (trivial request, no contention) |
+| bystander p100 | Approaches `has_privileges` p100 when head-of-line blocking is present |
 
-If `cluster_info` p100 is close to `has_privileges` p100, a bystander request was blocked behind a full `_has_privileges` evaluation on the shared event loop.
+If bystander p100 is close to `has_privileges` p100, a bystander request was blocked behind a full `_has_privileges` evaluation on the shared Netty event loop.
+
+## Comparison Benchmarking
+
+To compare two ES builds (e.g., a baseline release vs. a branch with a fix), run the track against each build with a tagged `--race-id`, then use `esrally compare`.
+
+### 1. Run the baseline
+
+Start the baseline ES (e.g., 9.3.3), then:
+
+```bash
+esrally race --track-path=has_privileges_bystander \
+  --pipeline=benchmark-only \
+  --target-hosts=http://localhost:9200 \
+  --client-options="basic_auth_user:'elastic',basic_auth_password:'password'" \
+  --track-params='{"cached_bystander_clients": 8, "has_privileges_clients": 2, "iterations": 10, "warmup_iterations": 1}' \
+  --on-error=abort \
+  --race-id=baseline-933 \
+  --user-tag="version:9.3.3"
+```
+
+### 2. Run the contender
+
+Stop the baseline, start the contender ES, then run the same command with a different `--race-id` and `--user-tag`:
+
+```bash
+esrally race --track-path=has_privileges_bystander \
+  --pipeline=benchmark-only \
+  --target-hosts=http://localhost:9200 \
+  --client-options="basic_auth_user:'elastic',basic_auth_password:'password'" \
+  --track-params='{"cached_bystander_clients": 8, "has_privileges_clients": 2, "iterations": 10, "warmup_iterations": 1}' \
+  --on-error=abort \
+  --race-id=contender-branch \
+  --user-tag="version:my-branch"
+```
+
+### 3. Compare
+
+```bash
+esrally compare --baseline=baseline-933 --contender=contender-branch
+```
+
+### Key metrics to watch
+
+| Metric | Indicates |
+|---|---|
+| `has_privileges` p50/p100 | Cost of the expensive authorization path |
+| `has_privileges_cached` p50 | Steady-state bystander latency (should be sub-ms) |
+| `has_privileges_cached` p100 | Worst-case bystander latency -- drops dramatically when head-of-line blocking is eliminated |
+| `has_privileges_cached` throughput | Bystander throughput under contention |
+| error rate | Non-zero on either task indicates a functional regression (e.g., auth context leak) |
+
+A successful fix for head-of-line blocking shows bystander p100 dropping from ~2s (matching `has_privileges` latency) to sub-200ms, while bystander p50 stays sub-millisecond.
 
 ## Cost Center
 

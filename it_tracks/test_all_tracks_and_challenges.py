@@ -31,6 +31,7 @@ class TestTrackRepository:
         "openai_vector",
         "random_vector",
         "has_privileges",
+        "has_privileges_bystander",
     ]
     disable_assertions = {
         "http_logs": ["append-no-conflicts", "runtime-fields"],

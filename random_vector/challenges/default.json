@@ -1,3 +1,10 @@
+{%- set _vp_raw = visit_percentages | default("") | string | trim -%}
+{%- if _vp_raw -%}
+{%- set _vp_list = _vp_raw.split(",") | map("trim") | map("int") | list -%}
+{%- else -%}
+{%- set _vp_list = [rescore_oversample | default(-1) | int] -%}
+{%- endif -%}
+{%- set _multi_vp = _vp_list | length > 1 -%}
 {
   "name": "index-and-search",
   "description": "Index documents with variable-sized partitions and benchmark filtered knn search per partition tier.",
@@ -57,48 +64,36 @@
     {
       "name": "wait-until-cluster-is-ready",
       "operation": "check-cluster-health"
-    }{%- if small_partitions | default(100) | int > 0 %},
+    }{%- if small_partitions | default(100) | int > 0 -%}
+    {%- for vp in _vp_list %},
     {
-      "name": "small-partition-search",
-      "operation": "brute-force-filtered-search-small-partition",
+      "name": "small-partition-search{% if _multi_vp %}-vp{{ vp }}{% endif %}",
+      "operation": "brute-force-filtered-search-small-partition{% if _multi_vp %}-vp{{ vp }}{% endif %}",
       "warmup-iterations": 500,
       "iterations": {{ search_iterations | default(10000) | int }},
       "clients": {{ search_clients | default(8) | int }}
-    },
+    }
+    {%- endfor -%}
+    {%- endif -%}{%- if medium_partitions | default(20) | int > 0 -%}
+    {%- for vp in _vp_list %},
     {
-      "name": "small-partition-recall",
-      "operation": "knn-recall-small-partition",
-      "warmup-iterations": 0,
-      "iterations": 1,
-      "clients": 1
-    }{%- endif %}{%- if medium_partitions | default(20) | int > 0 %},
-    {
-      "name": "medium-partition-search",
-      "operation": "brute-force-filtered-search-medium-partition",
+      "name": "medium-partition-search{% if _multi_vp %}-vp{{ vp }}{% endif %}",
+      "operation": "brute-force-filtered-search-medium-partition{% if _multi_vp %}-vp{{ vp }}{% endif %}",
       "warmup-iterations": 500,
       "iterations": {{ search_iterations | default(10000) | int }},
       "clients": {{ search_clients | default(8) | int }}
-    },
+    }
+    {%- endfor -%}
+    {%- endif -%}{%- if large_partitions | default(5) | int > 0 -%}
+    {%- for vp in _vp_list %},
     {
-      "name": "medium-partition-recall",
-      "operation": "knn-recall-medium-partition",
-      "warmup-iterations": 0,
-      "iterations": 1,
-      "clients": 1
-    }{%- endif %}{%- if large_partitions | default(5) | int > 0 %},
-    {
-      "name": "large-partition-search",
-      "operation": "brute-force-filtered-search-large-partition",
+      "name": "large-partition-search{% if _multi_vp %}-vp{{ vp }}{% endif %}",
+      "operation": "brute-force-filtered-search-large-partition{% if _multi_vp %}-vp{{ vp }}{% endif %}",
       "warmup-iterations": 500,
       "iterations": {{ search_iterations | default(10000) | int }},
       "clients": {{ search_clients | default(8) | int }}
-    },
-    {
-      "name": "large-partition-recall",
-      "operation": "knn-recall-large-partition",
-      "warmup-iterations": 0,
-      "iterations": 1,
-      "clients": 1
-    }{%- endif %}
+    }
+    {%- endfor -%}
+    {%- endif %}
   ]
 }

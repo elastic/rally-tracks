@@ -10,7 +10,7 @@ from github_ci_tools.tests.resources.case_registry import (
     expected_actions_for_repo,
     select_pull_requests,
 )
-from github_ci_tools.tests.resources.cases import GHInteractionCase, RepoCase, cases
+from github_ci_tools.tests.resources.cases import GHInteractionCase, PullRequestCase, RepoCase, cases
 from github_ci_tools.tests.utils import LABELS, STATIC_ROUTES
 
 
@@ -87,3 +87,29 @@ def test_label_logic(backport_mod, gh_mock, case: GHInteractionCase):
             backport_mod.add_pull_request_label(pr.number, backport_mod.PENDING_LABEL)
             case.expected_order += expected_actions_for_prs(GHInteractAction.PR_ADD_PENDING_LABEL, [case_by_number(pr.number)])
     gh_mock.assert_calls_in_order(*case.expected_order)
+
+
+@cases(
+    no_version_labels_needs_pending=PullRequestCase(number=501, labels=[], needs_pending=True),
+    single_version_label_no_pending=PullRequestCase(number=502, labels=LABELS["versioned"], needs_pending=False),
+    multiple_version_labels_no_pending=PullRequestCase(number=503, labels=LABELS["multiple_versioned"], needs_pending=False),
+    single_version_with_other_labels_no_pending=PullRequestCase(
+        number=504, labels=[*LABELS["versioned"], LABELS["backport_typo"][0]], needs_pending=False
+    ),
+    multiple_versions_with_other_labels_no_pending=PullRequestCase(
+        number=505, labels=[*LABELS["multiple_versioned_with_other"]], needs_pending=False
+    ),
+    has_backport_label_no_pending=PullRequestCase(number=506, labels=LABELS["backport"], needs_pending=False),
+    has_pending_label_no_pending=PullRequestCase(number=507, labels=LABELS["pending"], needs_pending=False),
+    has_both_version_and_pending_no_pending=PullRequestCase(number=508, labels=LABELS["versioned_pending"], needs_pending=False),
+)
+def test_version_label_scenarios(backport_mod, case: PullRequestCase):
+    """Test pr_needs_pending_label with various version label configurations.
+
+    Covers:
+    - PRs with no version labels (should need pending)
+    - PRs with single version label (should NOT need pending)
+    - PRs with multiple version labels (should NOT need pending)
+    """
+    pr_info = backport_mod.PRInfo.from_dict(asdict(case))
+    assert backport_mod.pr_needs_pending_label(pr_info) is case.needs_pending

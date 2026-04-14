@@ -21,7 +21,7 @@
 
 - Apply 'backport pending' label to merged PRs that require backport.
 - Post reminder comments on such PRs that have a 'backport pending' label
-but a version label (e.g. vX.Y) has not been added yet. 
+but a version label (e.g. vX.Y) has not been added yet.
 - Omits PRs labeled 'backport'.
 
 Usage: backport.py [options] <command> [flags]
@@ -63,8 +63,6 @@ import json
 import logging
 import os
 import re
-import sys
-import urllib.error
 import urllib.request
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -195,8 +193,23 @@ def ensure_backport_pending_label() -> None:
     add_repository_label(repository=CONFIG.repo, name=PENDING_LABEL, color=PENDING_LABEL_COLOR)
 
 
+def load_defined_patterns() -> list[str]:
+    config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".backportrc.json"))
+    try:
+        with open(config_path, encoding="utf-8") as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        LOG.warning("No .backportrc.json found at %s; using default version label pattern", config_path)
+        return [VERSION_LABEL_RE]
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"Invalid JSON in {config_path}: {e}") from e
+    patterns = config.get("branchLabelMapping", {}).keys()
+    patterns_re = [re.compile(p) for p in patterns]
+    return patterns_re
+
+
 def pr_needs_pending_label(info: PRInfo) -> bool:
-    has_version_label = any(VERSION_LABEL_RE.match(label) for label in info.labels)
+    has_version_label = any(any(pattern.match(label) for pattern in load_defined_patterns()) for label in info.labels)
     return PENDING_LABEL not in info.labels and BACKPORT_LABEL not in info.labels and not has_version_label
 
 

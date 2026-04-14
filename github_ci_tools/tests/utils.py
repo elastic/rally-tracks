@@ -124,6 +124,8 @@ LABELS = {
     "versioned_typo": [Label(name) for name in ["v9.2124215s", "123.v2.1sada", "version9.2", "..v9.2..", "v!@#9.20%^@"]],
     "versioned_pending": [Label(name) for name in ["v9.2", PENDING_LABEL]],  # for remove tests
     "versioned_pending_typo": [Label(name) for name in ["v9.2", "backport pend"]],
+    "multiple_versioned": [Label(name) for name in ["v9.2", "v8.15", "vServerless"]],
+    "multiple_versioned_with_other": [Label(name) for name in ["v9.2", "v8.15", "documentation"]],
 }
 
 COMMENT_MARKER_BASE = "<!-- backport-pending-reminder -->"

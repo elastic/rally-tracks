@@ -86,13 +86,14 @@ REMINDER_BODY = (
     "A backport is pending for this PR.\n"
     "Apply all the labels that correspond to Elasticsearch minor versions expected to work with this PR, but select only from the available ones.\n"
     "If intended for future releases, apply label for next minor\n\n"
+    "If the PR is only applicable for serverless, add the vServerless label"
     "When a `vX.Y` label is added, a new pull request will be automatically created, unless merge conflicts are detected or if the label supplied points to the next Elasticsearch minor version. If successful, a link to the newly opened backport PR will be provided in a comment.\n\n"
     "In case of merge conflicts during backporting, create the backport PR manually following the steps from [README](https://github.com/elastic/rally-tracks?tab=readme-ov-file#merge-conflicts):\n"
     "**Final steps to complete the backporting process:**\n"
     "   1. Ensure the correct version labels exist in this PR.\n"
     "   2. Ensure each backport pull request is labeled with `backport`.\n"
     "   3. Review and merge each backport pull request into the appropriate version branch.\n"
-    "   4. Remove `backport pending` label from this PR once all backport PRs are merged.\n\n"
+    "   4. Remove `backport pending` label from this PR once all backport PRs are merged. Note: a version label must be added, otherwise the bot will add back the ´backport pending´ label. \n\n"
     "Thank you!"
 )
 

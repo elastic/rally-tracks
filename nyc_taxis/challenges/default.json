@@ -1771,48 +1771,6 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
-        },
-        {
-          "operation": "two_subqueries_avg_with_sort",
-          "tags": ["subquery", "stats", "sort"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 20
-        },
-        {
-          "operation": "four_subqueries_avg_with_sort",
-          "tags": ["subquery", "stats", "sort"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 20
-        },
-        {
-          "operation": "eight_subqueries_avg_with_sort",
-          "tags": ["subquery", "stats", "sort"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 20
-        },
-        {
-          "operation": "two_subqueries_date_histogram_with_sort",
-          "tags": ["subquery", "stats", "sort"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 20
-        },
-        {
-          "operation": "four_subqueries_date_histogram_with_sort",
-          "tags": ["subquery", "stats", "sort"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 20
-        },
-        {
-          "operation": "eight_subqueries_date_histogram_with_sort",
-          "tags": ["subquery", "stats", "sort"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 20
         }
       ]
     },

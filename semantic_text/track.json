@@ -1,0 +1,60 @@
+{% import "rally.helpers" as rally with context %}
+{% set _base_url = (base_url | default( "https://rally-tracks.elastic.co/semantic_text")) %}
+{
+  "version": 2,
+  "description": "Benchmark for tuning semantic_text bbq_disk options using Wikipedia data",
+  "dependencies": [
+    "pytrec_eval==0.5",
+    "numpy"
+  ],
+  "indices": [
+    {
+      "name": "semantic-text-index",
+      "body": "index-mapping.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "BeIR-dbpedia-entity",
+      "base-url": "{{_base_url}}/beir-embeddings-jina-v5-small",
+      "documents": [
+        {
+          "source-file": "dbpedia_corpus_2.jsonl",
+          "document-count": 1000,
+          "compressed-bytes": 17813350,
+          "uncompressed-bytes": 17813350
+        }
+      ]
+    },
+    {
+      "name": "mteb-wikipedia-en",
+      "base-url": "{{_base_url}}/mteb/WikipediaRetrievalMultilingual",
+      "documents": [
+        {
+          "source-file": "corpus_chunks_en.jsonl.bz2",
+          "document-count": 15384,
+          "compressed-bytes": 31220278,
+          "uncompressed-bytes": 275114593
+        }
+      ]
+    },
+    {
+      "name": "mteb-wikipedia-fr",
+      "base-url": "{{_base_url}}/mteb-wikipedia-multilingual/fr",
+      "documents": [
+        {
+          "source-file": "corpus_chunks_fr.jsonl",
+          "document-count": 1000,
+          "compressed-bytes": 17813350,
+          "uncompressed-bytes": 17813350
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

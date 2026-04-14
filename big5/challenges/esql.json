@@ -1,0 +1,184 @@
+{
+  "name": "big5-esql",
+  "description": "ESQL equivalents of the Big5 QueryDSL benchmarks",
+  "schedule": [
+    {
+      "operation": "create-ilm-policy"
+    },
+    {
+      "operation": "create-index-template"
+    },
+    {
+      "operation": "create-data-stream"
+    },
+    {
+      "operation": "bulk-index",
+      "clients": {{ bulk_indexing_clients | default(1) }}
+    },
+    {
+      "operation": "esql_default",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_desc_sort_timestamp",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_asc_sort_timestamp",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_desc_sort_with_after_timestamp",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_asc_sort_with_after_timestamp",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_desc_sort_timestamp_with_match",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_asc_sort_timestamp_with_match",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_term",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_multi_terms_keyword",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_keyword_terms",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_keyword_terms_low_cardinality",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_multi_terms",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_multi_terms_three_keyword",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_date_histogram_daily",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_numeric",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_keyword_in_range",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_date_histogram_hourly_agg",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_date_histogram_minute_agg",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_query_string_on_message",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_query_string_on_message_filtered",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_query_string_on_message_filtered_sorted_num",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_keyword_with_match",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_numeric_desc",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_numeric_asc",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_numeric_desc_with_match",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_numeric_asc_with_match",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_field_conjunction_big_range_big_term_query",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_field_disjunction_big_range_small_term_query",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_field_conjunction_small_range_small_term_query",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_field_conjunction_small_range_big_term_query",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_auto_date_histo",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_auto_date_histo_with_metrics",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    }
+  ]
+}

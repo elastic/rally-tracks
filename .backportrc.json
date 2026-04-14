@@ -5,6 +5,7 @@
   "targetPRLabels" : [ "backport" ],
   "branchLabelMapping" : {
     "^v9.5$" : "master",
+    "^vServerless": "master",
     "^v(\\d{1,2}).(\\d{1,2})$" : "$1.$2"
   },
   "autoMerge": true,

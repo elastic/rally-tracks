@@ -56,22 +56,6 @@ def build_heavy_has_privileges_body():
     return {"cluster": cluster_privs, "index": index_privs}
 
 
-async def check_netty_worker_count(es, params):
-    """Verify that the target cluster is running with http.netty.worker_count: 1.
-    This is required to deterministically reproduce event-loop head-of-line blocking."""
-    resp = await es.nodes.info(metric="settings")
-    for node_id, node in resp["nodes"].items():
-        count = node.get("settings", {}).get("http", {}).get("netty", {}).get("worker_count", None)
-        if count is None or int(count) != 1:
-            from esrally import exceptions
-
-            raise exceptions.InvalidSyntax(
-                f"Node [{node.get('name', node_id)}] has http.netty.worker_count={count}. "
-                f"This track requires http.netty.worker_count: 1 in elasticsearch.yml "
-                f"to deterministically reproduce Netty event-loop head-of-line blocking."
-            )
-
-
 async def create_roles_and_users(es, params):
     num_roles = params.get("num_roles", 100)
     num_users = params.get("num_users", 1)
@@ -107,6 +91,18 @@ async def create_roles_and_users(es, params):
             roles=random.sample(roles, k=num_roles_per_user),
         )
 
+    if params.get("cached_bystander_clients", 0) > 0:
+        await es.security.put_role(
+            name="bystander_role",
+            indices=[{"names": ["test-index"], "privileges": ["read"]}],
+            cluster=["monitor"],
+        )
+        await es.security.put_user(
+            username="bystander_user",
+            password="password",
+            roles=["bystander_role"],
+        )
+
 
 async def has_privileges(es, params):
     num_users = params.get("num_users", 1)
@@ -117,12 +113,18 @@ async def has_privileges(es, params):
     ).security.has_privileges(body=body)
 
 
+async def has_privileges_cached(es, params):
+    await es.options(
+        basic_auth=("bystander_user", "password"),
+    ).security.has_privileges(body={"cluster": ["monitor"], "index": [{"names": ["test-index"], "privileges": ["read"]}]})
+
+
 async def cluster_info(es, params):
     await es.info()
 
 
 def register(registry):
-    registry.register_runner("check_netty_worker_count", check_netty_worker_count, async_runner=True)
     registry.register_runner("create_roles_and_users", create_roles_and_users, async_runner=True)
     registry.register_runner("has_privileges", has_privileges, async_runner=True)
+    registry.register_runner("has_privileges_cached", has_privileges_cached, async_runner=True)
     registry.register_runner("cluster_info", cluster_info, async_runner=True)

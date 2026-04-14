@@ -1,12 +1,7 @@
 {
   "version": 2,
-  "description": "Demonstrates Netty event-loop head-of-line blocking caused by expensive _has_privileges requests. Requires http.netty.worker_count:1 on the target cluster.",
+  "description": "Benchmarks expensive _has_privileges requests alongside lightweight bystander requests.",
   "schedule": [
-    {
-      "operation": {
-        "operation-type": "check_netty_worker_count"
-      }
-    },
     {
       "operation": {
         "operation-type": "create_roles_and_users",
@@ -14,7 +9,8 @@
         "num_users": {{num_users | default(1)}},
         "num_roles_per_user": {{num_roles_per_user | default(100)}},
         "wildcard_mode": "{{wildcard_mode | default('both')}}",
-        "index_privileges_per_role": {{index_privileges_per_role | default(10)}}
+        "index_privileges_per_role": {{index_privileges_per_role | default(10)}},
+        "cached_bystander_clients": {{cached_bystander_clients | default(0)}}
       }
     },
     {
@@ -26,6 +22,16 @@
       "iterations": {{warmup_iterations | default(3)}},
       "clients": 1
     },
+{% if cached_bystander_clients | default(0) > 0 %}
+    {
+      "name": "warmup_has_privileges_cached",
+      "operation": {
+        "operation-type": "has_privileges_cached"
+      },
+      "iterations": 5,
+      "clients": 1
+    },
+{% endif %}
     {
       "parallel": {
         "completed-by": "has_privileges",
@@ -39,6 +45,16 @@
             "iterations": {{iterations | default(100)}},
             "clients": {{has_privileges_clients | default(1)}}
           },
+{% if cached_bystander_clients | default(0) > 0 %}
+          {
+            "name": "has_privileges_cached",
+            "operation": {
+              "operation-type": "has_privileges_cached"
+            },
+            "iterations": 10000000,
+            "clients": {{cached_bystander_clients}}
+          }
+{% else %}
           {
             "name": "cluster_info",
             "operation": {
@@ -47,6 +63,7 @@
             "iterations": 10000000,
             "clients": {{bystander_clients | default(1)}}
           }
+{% endif %}
         ]
       }
     }

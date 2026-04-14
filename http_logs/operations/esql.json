@@ -1,0 +1,88 @@
+    {
+      "name": "esql_default",
+      "operation-type": "esql",
+      "query": "FROM logs-*"
+    },
+    {
+      "name": "esql_term",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE request.raw == \"GET / HTTP/1.0\""
+    },
+    {
+      "name": "esql_range",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE @timestamp >= \"1998-05-15T00:00:00.000Z\""
+    },
+    {
+      "name": "esql_200s_in_range",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" AND status == 200"
+    },
+    {
+      "name": "esql_400s_in_range",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" AND status == 400"
+    },
+
+    {
+      "name": "esql_hourly_agg",
+      "operation-type": "esql",
+      "query": "FROM logs-* | STATS count=COUNT(*) BY bucket=DATE_TRUNC(1 hour, @timestamp) | SORT bucket"
+    },
+
+    {
+      "name": "esql_desc_sort_timestamp",
+      "operation-type": "esql",
+      "query": "FROM logs-* | SORT @timestamp DESC"
+    },
+    {
+      "name": "esql_asc_sort_timestamp",
+      "operation-type": "esql",
+      "query": "FROM logs-* | SORT @timestamp ASC"
+    },
+    {
+      "name": "esql_desc_sort_with_after_timestamp",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE @timestamp < \"1998-06-10T00:00:00.000Z\" | SORT @timestamp DESC"
+    },
+    {
+      "name": "esql_asc_sort_with_after_timestamp",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE @timestamp > \"1998-06-10T00:00:00.000Z\" | SORT @timestamp ASC"
+    },
+    {
+      "name": "esql_desc_sort_timestamp_with_match",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE status == 200 | SORT @timestamp DESC"
+    },
+
+    {
+      "name": "esql_sort_size_desc",
+      "operation-type": "esql",
+      "query": "FROM logs-* | SORT size DESC"
+    },
+    {
+      "name": "esql_sort_size_asc",
+      "operation-type": "esql",
+      "query": "FROM logs-* | SORT size ASC"
+    },
+    {
+      "name": "esql_sort_status_desc",
+      "operation-type": "esql",
+      "query": "FROM logs-* | SORT status DESC"
+    },
+    {
+      "name": "esql_sort_status_asc",
+      "operation-type": "esql",
+      "query": "FROM logs-* | SORT status ASC"
+    },
+    {
+      "name": "esql_sort_keyword_with_match",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE status == 200 | SORT geoip.country_name ASC"
+    },
+    {
+      "name": "esql_sort_numeric_with_match",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE status == 200 | SORT size DESC"
+    }

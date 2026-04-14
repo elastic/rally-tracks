@@ -10,7 +10,12 @@ from github_ci_tools.tests.resources.case_registry import (
     expected_actions_for_repo,
     select_pull_requests,
 )
-from github_ci_tools.tests.resources.cases import GHInteractionCase, PullRequestCase, RepoCase, cases
+from github_ci_tools.tests.resources.cases import (
+    GHInteractionCase,
+    PullRequestCase,
+    RepoCase,
+    cases,
+)
 from github_ci_tools.tests.utils import LABELS, STATIC_ROUTES
 
 

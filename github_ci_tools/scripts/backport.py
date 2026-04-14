@@ -21,7 +21,7 @@
 
 - Apply 'backport pending' label to merged PRs that require backport.
 - Post reminder comments on such PRs that have a 'backport pending' label
-but a version label (e.g. vX.Y) has not been added yet. 
+but a version label (e.g. vX.Y) has not been added yet.
 - Omits PRs labeled 'backport'.
 
 Usage: backport.py [options] <command> [flags]
@@ -63,8 +63,6 @@ import json
 import logging
 import os
 import re
-import sys
-import urllib.error
 import urllib.request
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -86,13 +84,14 @@ REMINDER_BODY = (
     "A backport is pending for this PR.\n"
     "Apply all the labels that correspond to Elasticsearch minor versions expected to work with this PR, but select only from the available ones.\n"
     "If intended for future releases, apply label for next minor\n\n"
+    "If the PR is only applicable for serverless, add the `vServerless` label.\n\n"
     "When a `vX.Y` label is added, a new pull request will be automatically created, unless merge conflicts are detected or if the label supplied points to the next Elasticsearch minor version. If successful, a link to the newly opened backport PR will be provided in a comment.\n\n"
     "In case of merge conflicts during backporting, create the backport PR manually following the steps from [README](https://github.com/elastic/rally-tracks?tab=readme-ov-file#merge-conflicts):\n"
     "**Final steps to complete the backporting process:**\n"
     "   1. Ensure the correct version labels exist in this PR.\n"
     "   2. Ensure each backport pull request is labeled with `backport`.\n"
     "   3. Review and merge each backport pull request into the appropriate version branch.\n"
-    "   4. Remove `backport pending` label from this PR once all backport PRs are merged.\n\n"
+    "   4. Remove `backport pending` label from this PR once all backport PRs are merged. Note: a version label must be added, otherwise the bot will add back the ´backport pending´ label. \n\n"
     "Thank you!"
 )
 
@@ -194,8 +193,23 @@ def ensure_backport_pending_label() -> None:
     add_repository_label(repository=CONFIG.repo, name=PENDING_LABEL, color=PENDING_LABEL_COLOR)
 
 
+def load_defined_patterns() -> list[str]:
+    config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".backportrc.json"))
+    try:
+        with open(config_path, encoding="utf-8") as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        LOG.warning("No .backportrc.json found at %s; using default version label pattern", config_path)
+        return [VERSION_LABEL_RE]
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"Invalid JSON in {config_path}: {e}") from e
+    patterns = config.get("branchLabelMapping", {}).keys()
+    patterns_re = [re.compile(p) for p in patterns]
+    return patterns_re
+
+
 def pr_needs_pending_label(info: PRInfo) -> bool:
-    has_version_label = any(VERSION_LABEL_RE.match(label) for label in info.labels)
+    has_version_label = any(any(pattern.match(label) for pattern in load_defined_patterns()) for label in info.labels)
     return PENDING_LABEL not in info.labels and BACKPORT_LABEL not in info.labels and not has_version_label
 
 

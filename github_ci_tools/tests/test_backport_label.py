@@ -107,6 +107,7 @@ def test_label_logic(backport_mod, gh_mock, case: GHInteractionCase):
     has_backport_label_no_pending=PullRequestCase(number=506, labels=LABELS["backport"], needs_pending=False),
     has_pending_label_no_pending=PullRequestCase(number=507, labels=LABELS["pending"], needs_pending=False),
     has_both_version_and_pending_no_pending=PullRequestCase(number=508, labels=LABELS["versioned_pending"], needs_pending=False),
+    just_serverless_label_no_pending=PullRequestCase(number=509, labels=LABELS["serverless"], needs_pending=False),
 )
 def test_version_label_scenarios(backport_mod, case: PullRequestCase):
     """Test pr_needs_pending_label with various version label configurations.

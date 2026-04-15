@@ -85,6 +85,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `parallel_indexing_bulk_target_throughput` (default: 1)
  - `parallel_indexing_search_clients` (default: 3)
  - `parallel_indexing_search_target_throughput` (default: 100)
+ - `force_merge_max_num_segments` (default: unset)
  - `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
  - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
  - `search_ops` (default: [(10, 20, 0), (10, 20, 20), (10, 50, 0), (10, 50, 20), (10, 100, 0), (10, 100, 20), (10, 200, 0), (10, 200, 20), (10, 500, 0), (10, 500, 20), (10, 1000, 0), (10, 1000, 20), (100, 120, 0), (100, 120, 120), (100, 200, 0), (100, 200, 120), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]): The search and recall operations to run (k, ef_search, num_rescore).
@@ -187,3 +188,34 @@ Use mapping_type = `vectors-with-text` for this track since we perform lexical s
 
 When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
+
+### Force merge (optional)
+
+The `force_merge_max_num_segments` parameter enables an optional force merge step in the
+default `index-and-search` challenge. When set, a force merge is triggered after initial
+indexing and natural merge completion, but before any search or recall operations run.
+The step reduces each shard to at most the specified number of segments, then waits for
+all merges to finish before proceeding.
+
+This is disabled by default. To enable it, set the parameter to the desired maximum
+number of segments per shard:
+
+```json
+{
+  "force_merge_max_num_segments": 16
+}
+```
+
+This is particularly useful for HNSW vector search benchmarks where small segments can
+degrade recall. Each segment builds an independent HNSW graph, and segments with very
+few vectors produce lower-quality graphs. After bulk indexing, the tail end of flushed
+segments may not be merged by the normal merge policy, leaving many small segments.
+Force merging consolidates these into larger segments with better-quality HNSW graphs,
+leading to more consistent recall measurements.
+
+Choose a value based on the total docs per shard and the target segment size. For
+example, with 6 shards over 138M documents (~23M docs/shard), setting
+`force_merge_max_num_segments` to `16` yields segments of roughly 1.4M documents each.
+Setting it to `1` produces a single segment per shard with the best possible recall, at
+the cost of a longer merge.
+

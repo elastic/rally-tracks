@@ -53,6 +53,25 @@
       }
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    {%- if force_merge_max_num_segments is defined %},
+    {
+      "name": "force-merge-after-index",
+      "operation": "force-merge"
+    },
+    {
+      "name": "wait-until-force-merge-completes",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": true
+      }
+    }
+    {%- endif %}
     {%- endif -%}{# include-initial-indexing-marker-end #}
     {%- for i in range(p_search_ops|length) %}
     {

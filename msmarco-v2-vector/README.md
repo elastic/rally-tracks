@@ -206,16 +206,3 @@ number of segments per shard:
 }
 ```
 
-This is particularly useful for HNSW vector search benchmarks where small segments can
-degrade recall. Each segment builds an independent HNSW graph, and segments with very
-few vectors produce lower-quality graphs. After bulk indexing, the tail end of flushed
-segments may not be merged by the normal merge policy, leaving many small segments.
-Force merging consolidates these into larger segments with better-quality HNSW graphs,
-leading to more consistent recall measurements.
-
-Choose a value based on the total docs per shard and the target segment size. For
-example, with 6 shards over 138M documents (~23M docs/shard), setting
-`force_merge_max_num_segments` to `16` yields segments of roughly 1.4M documents each.
-Setting it to `1` produces a single segment per shard with the best possible recall, at
-the cost of a longer merge.
-

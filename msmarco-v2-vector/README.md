@@ -85,6 +85,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `parallel_indexing_bulk_target_throughput` (default: 1)
  - `parallel_indexing_search_clients` (default: 3)
  - `parallel_indexing_search_target_throughput` (default: 100)
+ - `force_merge_max_num_segments` (default: unset)
  - `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
  - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
  - `search_ops` (default: [(10, 20, 0), (10, 20, 20), (10, 50, 0), (10, 50, 20), (10, 100, 0), (10, 100, 20), (10, 200, 0), (10, 200, 20), (10, 500, 0), (10, 500, 20), (10, 1000, 0), (10, 1000, 20), (100, 120, 0), (100, 120, 120), (100, 200, 0), (100, 200, 120), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]): The search and recall operations to run (k, ef_search, num_rescore).
@@ -166,3 +167,21 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
 
 When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
+
+### Force merge (optional)
+
+The `force_merge_max_num_segments` parameter enables an optional force merge step in the
+default `index-and-search` challenge. When set, a force merge is triggered after initial
+indexing and natural merge completion, but before any search or recall operations run.
+The step reduces each shard to at most the specified number of segments, then waits for
+all merges to finish before proceeding.
+
+This is disabled by default. To enable it, set the parameter to the desired maximum
+number of segments per shard:
+
+```json
+{
+  "force_merge_max_num_segments": 16
+}
+```
+

@@ -33,7 +33,7 @@
   "corpora": {{parallel_corpora | default("msmarco-v2_float-parallel-indexing") | tojson }},
   "bulk-size": {{parallel_indexing_bulk_size | default(50)}},
   "ingest-percentage": {{parallel_indexing_ingest_percentage | default(100)}}
-}
+},
 {
   "name": "force-merge",
   "operation-type": "force-merge",

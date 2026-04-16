@@ -53,7 +53,7 @@
       }
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
-    {%- if force_merge_max_num_segments is defined %},
+    {%- if force_merge_max_num_segments is defined %}
     {
       "name": "force-merge-after-index",
       "operation": "force-merge"

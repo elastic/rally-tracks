@@ -70,7 +70,7 @@
         "retry-until-success": true,
         "include-in-reporting": true
       }
-    }
+    },
     {%- endif %}
     {%- endif -%}{# include-initial-indexing-marker-end #}
     {%- for i in range(p_search_ops|length) %}

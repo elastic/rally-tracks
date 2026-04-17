@@ -1136,34 +1136,39 @@
           "operation": "topnby_by_payment_type_query",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50
+          "iterations": 50,
+          "tags": ["limitby"]
         },
         {
           "operation": "topnby_by_payment_type_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50
+          "iterations": 50,
+          "tags": ["limitby"]
         },
       {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
         {
           "operation": "topnby_by_payment_type_esql_doc_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50
+          "iterations": 50,
+          "tags": ["limitby"]
         },
       {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "topnby_by_payment_type_vendor_id_esql_segment_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50
+          "iterations": 50,
+          "tags": ["limitby"]
         },
       {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
         {
           "operation": "topnby_by_payment_type_vendor_id_esql_doc_partitioning",
           "clients": 1,
           "warmup-iterations": 10,
-          "iterations": 50
+          "iterations": 50,
+          "tags": ["limitby"]
         },
       {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {

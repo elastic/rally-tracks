@@ -57,6 +57,11 @@
     },
 
     {
+      "name": "esql_asc_sort_timestamp_with_match",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE status == 200 | SORT @timestamp ASC"
+    },
+    {
       "name": "esql_sort_size_desc",
       "operation-type": "esql",
       "query": "FROM logs-* | SORT size DESC"

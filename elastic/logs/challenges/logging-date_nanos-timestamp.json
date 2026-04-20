@@ -1,0 +1,41 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-date_nanos-timestamp",
+  "description": "Simple logs indexing challenge that maps @timestamp to date type",
+  "schedule": [
+    {
+      "name": "logs-custom-component-template",
+      "operation": {
+        "operation-type": "create-component-template",
+        "template": "logs@custom",
+        "body": {
+          "template": {
+            "mappings": {
+              "properties": {
+                "@timestamp": {
+                  "type": "date_nanos"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "bulk-index",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "bulk-size": {{ p_bulk_size }},
+        "detailed-results": true
+      },
+      "clients": {{ p_bulk_indexing_clients }}{% if p_throttle_indexing %},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "schedule": "timestamp-throttler",
+      "max-delay-secs": 1
+      {% endif %}
+    }
+  ]
+}

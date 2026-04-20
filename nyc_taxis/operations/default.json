@@ -1489,22 +1489,27 @@
     },
   {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
     {
-      "name": "topnby_by_payment_type_query",
+      "name": "topnby_by_payment_type_search",
       "operation-type": "search",
       "index": "nyc_taxis",
       "body": {
-        "size": 10,
-        "_source": false,
-        "fields": ["pickup_datetime", "dropoff_datetime", "trip_distance", "payment_type"],
-        "sort": { "pickup_datetime": "desc" },
-        "collapse": {
-          "field": "payment_type",
-          "inner_hits": {
-            "name": "top_hits",
-            "size": 50,
-            "sort": [{ "pickup_datetime": "desc" }],
-            "_source": false,
-            "fields": ["pickup_datetime", "dropoff_datetime", "trip_distance", "payment_type"]
+        "size": 0,
+        "aggs": {
+          "by_payment_type": {
+            "terms": {
+              "field": "payment_type",
+              "size": 1000
+            },
+            "aggs": {
+              "top_trips": {
+                "top_hits": {
+                  "size": 50,
+                  "sort": [{ "pickup_datetime": { "order": "desc" } }],
+                  "_source": false,
+                  "fields": ["pickup_datetime", "dropoff_datetime", "trip_distance", "payment_type"]
+                }
+              }
+            }
           }
         }
       }

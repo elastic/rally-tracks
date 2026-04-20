@@ -21,7 +21,7 @@
 {% set p_query_time_period = (query_time_period | default(900)) %}
 {% set p_query_request_params = (query_request_params | default({}))%}
 {% set p_include_esql_queries = (include_esql_queries | default(build_flavor != "serverless")) %}
-
+{% set p_exclude_serverless_templates = (exclude_serverless_templates | default(build_flavor == "serverless")) %}
 {% set p_throttle_indexing = (throttle_indexing | default(false)) %}
 {% set p_max_download_gb = (max_total_download_gb | default(2 * num_corpus)) %}
 {% set p_max_download_per_corpus_gb = ([p_max_download_gb / num_corpus, 1] | max | int ) %}
@@ -74,8 +74,6 @@
 {% set es_version = "7.13.2" %}
 
 {% set p_mapping = ( mapping | default('mapped') ) %}
-
-{% set p_use_doc_values_skippers = (use_doc_values_skippers | default(true)) %}
 
 {% set p_integration_ratios = (integration_ratios | default({
     "kafka": {
@@ -219,28 +217,15 @@
     },
     {
       "name": "logs-redis.slowlog-default"
-    },
-    {
-      "name": "logs"
-    },
-    {
-      "name": "logs.child1"
-    },
-    {
-      "name": "logs.child2"
-    },
-    {
-      "name": "logs.child3"
     }
   ],
   "component-templates": [
     {% if p_mapping == "mapped" %}
-    {% if build_flavor != "serverless" %}
+    {% if p_exclude_serverless_templates != true %}
       {
           "name": ".fleet_agent_id_verification-1",
           "template": "./templates/component/.fleet_agent_id_verification-1.json",
           "template-path": "component_template"
-
       },
       {
           "name": ".fleet_globals-1",
@@ -357,26 +342,6 @@
         "template": "./templates/component/logs-system.syslog@custom.json"
     },
     {% endif %}
-    {
-      "name": "logs@stream.layer",
-      "template": "./templates/component/logs@stream.layer.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs.child1@stream.layer",
-      "template": "./templates/component/logs.child1@stream.layer.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs.child2@stream.layer",
-      "template": "./templates/component/logs.child2@stream.layer.json",
-      "template-path": "component_template"
-    },
-    {
-      "name": "logs.child3@stream.layer",
-      "template": "./templates/component/logs.child3@stream.layer.json",
-      "template-path": "component_template"
-    },
     {
         "name": "track-custom-mappings",
         "template": "./templates/component/track-custom-mappings.json"
@@ -507,7 +472,7 @@
         "index-pattern": "auditbeatquantitative-*",
         "delete-matching-indices": false,
         "template": "./templates/composable/auditbeat-quantitative.json"
-    },
+    }
     {% endif %}
     {% if p_mapping == "unmapped" %}
     {
@@ -516,36 +481,8 @@
         "delete-matching-indices": false,
         "template": "./templates/composable/logs-dynamic-false.json",
         "template-path": "index_template"
-    },
-    {% endif %}
-    {
-      "name": "logs@stream",
-      "index-pattern": "logs",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs@stream.json",
-      "template-path": "index_template"
-    },
-    {
-      "name": "logs.child1@stream",
-      "index-pattern": "logs.child1",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs.child1@stream.json",
-      "template-path": "index_template"
-    },
-    {
-      "name": "logs.child2@stream",
-      "index-pattern": "logs.child2",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs.child2@stream.json",
-      "template-path": "index_template"
-    },
-    {
-      "name": "logs.child3@stream",
-      "index-pattern": "logs.child3",
-      "delete-matching-indices": false,
-      "template": "./templates/composable/logs.child3@stream.json",
-      "template-path": "index_template"
     }
+    {% endif %}
   ],
   "corpora": [
     {

@@ -15,10 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
+from esrally.driver import runner
 from shared import parameter_sources
 from shared.parameter_sources.datastream import (
     CreateDataStreamParamSource,
     DataStreamParamSource,
+    DLMBulkIndexParamSource,
+    SequentialDataStreamParamSource,
 )
 from shared.parameter_sources.initial_indices import InitialIndicesParamSource
 from shared.parameter_sources.processed import ProcessedCorpusParamSource
@@ -69,6 +72,8 @@ def register(registry):
 
     registry.register_param_source("datastream-source", DataStreamParamSource)
     registry.register_param_source("create-datastream-source", CreateDataStreamParamSource)
+    registry.register_param_source("sequential-datastream-source", SequentialDataStreamParamSource)
+    registry.register_param_source("dlm-bulk-source", DLMBulkIndexParamSource)
     registry.register_runner("create-datastream", datastream.create, async_runner=True)
     registry.register_runner("compression-statistics", datastream.compression_stats, async_runner=True)
     registry.register_runner("check-datastream", datastream.check_health, async_runner=True)

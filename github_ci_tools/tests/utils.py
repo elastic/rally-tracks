@@ -110,12 +110,6 @@ SEARCH_ISSUES_PER_PAGE = 100
 NOW = "2025-10-30T12:00:00Z"
 ISO_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
-AGES = {
-    "old_7_days": dt.datetime.strptime("2025-10-23T12:00:00Z", ISO_FORMAT).replace(tzinfo=dt.timezone.utc),
-    "old_14_days": dt.datetime.strptime("2025-10-16T12:00:00Z", ISO_FORMAT).replace(tzinfo=dt.timezone.utc),
-    "really_old": dt.datetime.strptime("2023-10-01T12:00:00Z", ISO_FORMAT).replace(tzinfo=dt.timezone.utc),
-}
-
 # Note that we should not import from the backport module directly to avoid circular imports.
 PENDING_LABEL = "backport pending"
 PENDING_LABEL_COLOR = "fff2bf"
@@ -130,11 +124,19 @@ LABELS = {
     "versioned_typo": [Label(name) for name in ["v9.2124215s", "123.v2.1sada", "version9.2", "..v9.2..", "v!@#9.20%^@"]],
     "versioned_pending": [Label(name) for name in ["v9.2", PENDING_LABEL]],  # for remove tests
     "versioned_pending_typo": [Label(name) for name in ["v9.2", "backport pend"]],
+    "multiple_versioned": [Label(name) for name in ["v9.2", "v8.15", "vServerless"]],
+    "multiple_versioned_with_other": [Label(name) for name in ["v9.2", "v8.15", "documentation"]],
+    "serverless": [Label("vServerless")],
 }
 
 COMMENT_MARKER_BASE = "<!-- backport-pending-reminder -->"
 COMMENTS = {
     "recent_reminder": Comment(f"{COMMENT_MARKER_BASE}\nThis is a recent reminder.", created_at="2025-10-23T12:00:00Z", is_reminder=True),
+    "reminder_slightly_older_than_a_week": Comment(
+        f"{COMMENT_MARKER_BASE}\nThis is a recent reminder, just above the 7 days threshold.",
+        created_at="2025-10-23T10:00:00Z",
+        is_reminder=True,
+    ),
     "old_reminder": Comment(f"{COMMENT_MARKER_BASE}\nThis is an old reminder.", created_at="2025-10-01T12:00:00Z", is_reminder=True),
     "really_old_reminder": Comment(
         f"\nThis is a really old reminder.{COMMENT_MARKER_BASE}", created_at="2023-10-01T12:00:00Z", is_reminder=True

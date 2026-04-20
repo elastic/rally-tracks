@@ -231,7 +231,6 @@ The following parameters are available:
 * `recovery_max_operations_count (default: `16777216`) - The maximum number of translog operations to return in a single batch.
 * `patterned_text_message_field` (default: `false`) - If true use `pattern_text` for all message fields, else `match_only_text`. 
 * `patterned_text_index_options` (default: `docs`) - If set to `positions`, includes positions in the pattern_text message field index.
-* `use_doc_value_skipper` (default: `false`) - If true enable doc_value skippers on the @timestamp field in place of the BKD index
 
 ### Data Download Parameters
 
@@ -334,6 +333,25 @@ This challenge aims to establish the indexing throughput that can be supported b
 
 In order to optimise indexing throughput, users may wish to consider modifying the `bulk_indexing_clients` and `bulk_size`.
 
+### DLM Benchmark (dlm-benchmark)
+
+This challenge benchmarks Elasticsearch's Data Stream Lifecycle (DLM) feature. It automatically configures data streams to use DLM and allows you to test and measure:
+
+- Rollover behavior with different poll intervals
+- Impact of different rollover conditions  
+- Overall lifecycle coordinator overhead
+
+The challenge indexes data and waits for lifecycle operations to complete before collecting statistics. Key parameters include:
+
+- `dsl_poll_interval` (default: `5s`) - How often lifecycle coordinator checks for actions
+- `dsl_default_rollover` (default: `max_age=1h,max_primary_shard_size=50gb`) - Rollover conditions
+- `dlm_wait_time` (default: `60`) - Seconds to wait for lifecycle operations
+- `dlm_datastream_count` (default: `10000`) - Number of data streams to create
+- `dlm_retention` (default: `90d`) - Retention period before deletion
+- `lifecycle` - Set to `dlm` to enable Data Lifecycle Management
+
+**Note:** This challenge automatically sets `lifecycle:dlm` - you do not need to pass it as a parameter.
+
 ### Logging Querying (logging-querying)
 
 This challenge simulates Kibana load via so-called workflows. Workflows execute concurrently at random intervals, and each workflow executes their actions sequentially until completion. An exponentially distributed random delay occurs between each action - the mean of this distribution can be controlled through the parameter `think_time_interval`. This simulates the user pausing and thinking between actions. A random delay (also exponentially distributed and controlled via a parameter `workflow_time_interval`) occurs between executing workflows. This is the main parameter users should use to control individual levels of user activity. Queries will be issued for the period specified by the parameter `query_time_period`. No indexing will occur.
@@ -416,6 +434,18 @@ The snapshot parameters are used to define the correct snapshot, with `restore_d
 This challenge also uses the following task specific parameters:
 * `reindex_max_concurrent_indices` (default: 1) The maximum number of data stream backing indices that will be reindexed at the same time.
 * `reindex_max_requests_per_second` (default: 1000) The average maximum number of documents that will be reindexed per second, per backing index.
+
+### Logging Streams (logging-streams)
+
+Indexes logs into a stream without dynamic mappings, either throttled or un-throttled, for a specified time period and volume per day.
+
+The target stream can be configured via the `stream_name` parameter (default: `logs.ecs`).
+
+Note that this challenge requires an additional step of configuring the target stream using Kibana. To do this:
+
+1. Install and run [Kibana](https://www.elastic.co/docs/deploy-manage/deploy/self-managed/install-kibana)
+2. Set up the desired target [stream](https://www.elastic.co/docs/solutions/observability/streams/streams)
+3. When running the challenge, [specify the target ES cluster](https://esrally.readthedocs.io/en/latest/recipes.html#benchmarking-an-existing-cluster) that Kibana is connected to
 
 ## Changing the Datasets
 

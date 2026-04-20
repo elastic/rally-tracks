@@ -84,3 +84,114 @@ class CreateDataStreamParamSource:
         params = self._params.copy()
         params["data-stream"] = data_stream
         return params
+
+
+class SequentialDataStreamParamSource:
+    """
+    Parameter source for creating a large number of data streams with
+    sequential naming (e.g., datastream-0, datastream-1, ...).
+
+
+    Usage in track.json:
+    {
+        "name": "create-datastreams",
+        "operation": {
+        "operation-type": "create-datastream",
+        "param-source": "sequential-datastream-source"
+        },
+        "clients": 8,
+        "warmup-iterations": 0,
+        "iterations": 10000,
+        "params": {
+          "data-stream-prefix": "dlm-benchmark",
+          "start-index": 0
+        }
+    }
+    """
+
+    def __init__(self, track, params, **kwargs):
+        self._params = params
+        self._prefix = params.get("data-stream-prefix", "datastream")
+        self._start_index = params.get("start-index", 0)
+        self._current_index = self._start_index
+        self.infinite = False
+
+    def partition(self, partition_index, total_partitions):
+        """
+        Partition the parameter source across multiple clients.
+        Each partition gets a subset of the sequential indices.
+        """
+        partitioned = SequentialDataStreamParamSource.__new__(SequentialDataStreamParamSource)
+        partitioned._params = self._params
+        partitioned._prefix = self._prefix
+        partitioned._start_index = self._start_index + partition_index
+        partitioned._current_index = partitioned._start_index
+        partitioned._step = total_partitions
+        partitioned.infinite = False
+        return partitioned
+
+    def params(self):
+        data_stream_name = f"{self._prefix}-{self._current_index}"
+        self._current_index += getattr(self, "_step", 1)
+        return {**self._params, "data-stream": data_stream_name, "ignore-existing": self._params.get("ignore-existing", False)}
+
+
+class DLMBulkIndexParamSource:
+    """
+    Parameter source for bulk indexing to DLM benchmark data streams.
+    Generates simple documents and distributes them across dlm-benchmark-* data streams.
+    """
+
+    def __init__(self, track, params, **kwargs):
+        import time
+        from datetime import datetime, timezone
+
+        self._params = params
+        self._prefix = params.get("data-stream-prefix", "dlm-benchmark")
+        self._data_stream_count = params.get("data-stream-count", 10000)
+        self._bulk_size = params.get("bulk-size", 1000)
+        self._current_stream = 0
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        """Each client gets a different starting data stream to distribute load evenly."""
+        import copy
+
+        partitioned = DLMBulkIndexParamSource.__new__(DLMBulkIndexParamSource)
+        partitioned._params = self._params
+        partitioned._prefix = self._prefix
+        partitioned._data_stream_count = self._data_stream_count
+        partitioned._bulk_size = self._bulk_size
+        partitioned._current_stream = partition_index % self._data_stream_count
+        partitioned._step = total_partitions
+        partitioned.infinite = True
+        return partitioned
+
+    def params(self):
+        import json
+        from datetime import datetime, timezone
+
+        # Round-robin through data streams
+        data_stream_name = f"{self._prefix}-{self._current_stream}"
+        self._current_stream = (self._current_stream + getattr(self, "_step", 1)) % self._data_stream_count
+
+        # Generate bulk request body
+        bulk_lines = []
+        timestamp = datetime.now(tz=timezone.utc).isoformat()
+
+        for i in range(self._bulk_size):
+            # Metadata line
+            bulk_lines.append(json.dumps({"create": {"_index": data_stream_name}}))
+            # Document line
+            doc = {
+                "@timestamp": timestamp,
+                "message": f"DLM benchmark test message {i}",
+                "host": {"hostname": f"host-{i % 100}"},
+                "service": {"name": "dlm-benchmark"},
+                "log": {"level": "info"},
+            }
+            bulk_lines.append(json.dumps(doc))
+
+        body = "\n".join(bulk_lines) + "\n"
+
+        return {"body": body, "action-metadata-present": True, "bulk-size": self._bulk_size, "unit": "docs"}

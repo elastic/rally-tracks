@@ -1,0 +1,253 @@
+    {
+      "name": "create-view-d1",
+      "operation-type": "raw-request",
+      "include-in-reporting": false,
+      "method": "PUT",
+      "path": "/_query/view/nyc_view_d1",
+      "body": {
+        "query": "FROM nyc_taxis"
+      }
+    },
+    {
+      "name": "create-view-d2",
+      "operation-type": "raw-request",
+      "include-in-reporting": false,
+      "method": "PUT",
+      "path": "/_query/view/nyc_view_d2",
+      "body": {
+        "query": "FROM nyc_view_d1"
+      }
+    },
+    {
+      "name": "create-view-d3",
+      "operation-type": "raw-request",
+      "include-in-reporting": false,
+      "method": "PUT",
+      "path": "/_query/view/nyc_view_d3",
+      "body": {
+        "query": "FROM nyc_view_d2"
+      }
+    },
+    {
+      "name": "create-view-d1-filtered",
+      "operation-type": "raw-request",
+      "include-in-reporting": false,
+      "method": "PUT",
+      "path": "/_query/view/nyc_view_d1_filtered",
+      "body": {
+        "query": "FROM nyc_taxis | WHERE total_amount > 0"
+      }
+    },
+    {
+      "name": "create-view-d2-filtered",
+      "operation-type": "raw-request",
+      "include-in-reporting": false,
+      "method": "PUT",
+      "path": "/_query/view/nyc_view_d2_filtered",
+      "body": {
+        "query": "FROM nyc_view_d1_filtered | WHERE passenger_count > 0"
+      }
+    },
+    {
+      "name": "create-view-d3-filtered",
+      "operation-type": "raw-request",
+      "include-in-reporting": false,
+      "method": "PUT",
+      "path": "/_query/view/nyc_view_d3_filtered",
+      "body": {
+        "query": "FROM nyc_view_d2_filtered | WHERE trip_distance > 0"
+      }
+    },
+    {
+      "name": "delete-view-d1",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_query/view/nyc_view_d1"
+    },
+    {
+      "name": "delete-view-d2",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_query/view/nyc_view_d2"
+    },
+    {
+      "name": "delete-view-d3",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_query/view/nyc_view_d3"
+    },
+    {
+      "name": "delete-view-d1-filtered",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_query/view/nyc_view_d1_filtered"
+    },
+    {
+      "name": "delete-view-d2-filtered",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_query/view/nyc_view_d2_filtered"
+    },
+    {
+      "name": "delete-view-d3-filtered",
+      "operation-type": "raw-request",
+      "ignore": [404],
+      "include-in-reporting": false,
+      "method": "DELETE",
+      "path": "/_query/view/nyc_view_d3_filtered"
+    },
+    {
+      "name": "esql_view_d1_avg_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d1 | stats avg(passenger_count) | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d2_avg_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d2 | stats avg(passenger_count) | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d3_avg_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3 | stats avg(passenger_count) | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d1_filtered_avg_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d1_filtered | stats avg(passenger_count) | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d2_filtered_avg_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d2_filtered | stats avg(passenger_count) | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d3_filtered_avg_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3_filtered | stats avg(passenger_count) | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d1_sort_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d1 | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d3_sort_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3 | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d3_filtered_sort_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3_filtered | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d1_date_hist_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d1 | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d3_date_hist_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3 | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d3_filtered_date_hist_limit_0",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3_filtered | where dropoff_datetime < \"2015-03-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 week, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time | LIMIT 0"
+    },
+    {
+      "name": "esql_view_d1_avg",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d1 | stats avg(passenger_count)"
+    },
+    {
+      "name": "esql_view_d2_avg",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d2 | stats avg(passenger_count)"
+    },
+    {
+      "name": "esql_view_d3_avg",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3 | stats avg(passenger_count)"
+    },
+    {
+      "name": "esql_view_d1_filtered_avg",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d1_filtered | stats avg(passenger_count)"
+    },
+    {
+      "name": "esql_view_d2_filtered_avg",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d2_filtered | stats avg(passenger_count)"
+    },
+    {
+      "name": "esql_view_d3_filtered_avg",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3_filtered | stats avg(passenger_count)"
+    },
+    {
+      "name": "esql_view_d1_filtered_avg_with_outer_filter",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d1_filtered | where rate_code_id==\"2\" | stats avg(passenger_count)"
+    },
+    {
+      "name": "esql_view_d3_filtered_avg_with_outer_filter",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3_filtered | where rate_code_id==\"2\" | stats avg(passenger_count)"
+    },
+    {
+      "name": "esql_view_d1_sort",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d1 | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000"
+    },
+    {
+      "name": "esql_view_d3_sort",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3 | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000"
+    },
+    {
+      "name": "esql_view_d3_filtered_sort",
+      "operation-type": "esql",
+      "query": "FROM nyc_view_d3_filtered | sort pickup_datetime desc | KEEP pickup_datetime, dropoff_datetime, trip_distance | LIMIT 1000"
+    },
+    {
+      "name": "two_subqueries_avg_with_sort",
+      "operation-type": "esql",
+      "query" : "FROM (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count)"
+    },
+    {
+      "name": "four_subqueries_avg_with_sort",
+      "operation-type": "esql",
+      "query" : "FROM (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count)"
+    },
+    {
+      "name": "eight_subqueries_avg_with_sort",
+      "operation-type": "esql",
+      "query" : "FROM (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count), (FROM nyc_taxis | stats avg(total_amount) by passenger_count | sort passenger_count)"
+    },
+    {
+      "name": "two_subqueries_date_histogram_with_sort",
+      "operation-type": "esql",
+      "query": "FROM (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time)"
+    },
+    {
+      "name": "four_subqueries_date_histogram_with_sort",
+      "operation-type": "esql",
+      "query": "FROM (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time)"
+    },
+    {
+      "name": "eight_subqueries_date_histogram_with_sort",
+      "operation-type": "esql",
+      "query": "FROM (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time), (FROM nyc_taxis | where dropoff_datetime < \"2016-01-01T00:00:00\" AND dropoff_datetime >= \"2015-01-01T00:00:00\" | eval dropoffs_over_time=date_trunc(1 month, dropoff_datetime) | stats c = count(dropoff_datetime) by dropoffs_over_time | sort dropoffs_over_time)"
+    }

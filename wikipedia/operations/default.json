@@ -146,6 +146,7 @@
   "param-source": "query-search",
   "query-type": "query-string",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
@@ -170,6 +171,7 @@
   "param-source": "query-search",
   "query-type": "multi_match",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
@@ -194,6 +196,7 @@
   "param-source": "query-search",
   "query-type": "match_phrase",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
@@ -218,6 +221,7 @@
   "param-source": "query-search",
   "query-type": "kql",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {

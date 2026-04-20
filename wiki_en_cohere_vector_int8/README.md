@@ -70,6 +70,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 | `number_of_replicas` | `0` | Number of index replicas |
 | `preload_pagecache` | (unset) | Whether to preload vector files to page cache |
 | `index_settings` | `{}` | Additional index settings |
+| `enable_experimental_features` | `false` | Enables experimental dense vector features that may break backward compatibility |
 
 ### Example Usage
 

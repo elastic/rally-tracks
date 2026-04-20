@@ -75,9 +75,13 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `index_refresh_interval` (default: unset): The index refresh interval.
  - `corpora` (default: ["msmarco-v2_float-initial-indexing-1", ..., "msmarco-v2_float-initial-indexing-8"])
  - `initial_indexing_bulk_indexing_clients` (default: 5)
- - `initial_indexing_ingest_percentage` (default: 100)
  - `initial_indexing_bulk_size` (default: 1000)
  - `initial_indexing_bulk_warmup` (default: 40)
+ - `initial_indexing_ingest_doc_count` (default: unset) The absolute number of docs to ingest. Incompatible with `initial_indexing_ingest_percentage`  
+ - `initial_indexing_ingest_percentage` (default: 100)
+ - `include_initial_indexing` (default: true) If `true` run the initial indexing and post index sleep steps. If `false` the data should have been pre-ingested
+ - `include_parallel_indexing` (default: true) Include the parallel indexing benchmark
+ - `include_recall` (default: true) Include the recall benchmark
  - `number_of_shards` (default: 1)
  - `number_of_replicas` (default: 0)
  - `parallel_corpora` (default:"msmarco-v2_float-parallel-indexing")
@@ -85,12 +89,15 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `parallel_indexing_bulk_target_throughput` (default: 1)
  - `parallel_indexing_search_clients` (default: 3)
  - `parallel_indexing_search_target_throughput` (default: 100)
+ - `force_merge_max_num_segments` (default: unset)
  - `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
  - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
  - `search_ops` (default: [(10, 20, 0), (10, 20, 20), (10, 50, 0), (10, 50, 20), (10, 100, 0), (10, 100, 20), (10, 200, 0), (10, 200, 20), (10, 500, 0), (10, 500, 20), (10, 1000, 0), (10, 1000, 20), (100, 120, 0), (100, 120, 120), (100, 200, 0), (100, 200, 120), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]): The search and recall operations to run (k, ef_search, num_rescore).
  - `standalone_search_iterations` (default: 10000)
  - `vector_index_type` (default: "int8_hnsw"): The index kind for storing the vectors.
  - `vector_index_element_type` (default: "float"): Sets the dense_vector element type.
+ - `enable_experimental_features` (default: false): Enables experimental dense vector features that may break backward compatibility.
+ - `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 
 For running with Base64 encoded strings, use a parameter file like:
 
@@ -134,6 +141,7 @@ When `as_ingest_target_throughputs` is a positive number, the ingest throughput 
 - Mapping:
   - `vector_index_type` (default: bbq_hnsw)
 - Initial indexing:
+    - `include_initial_indexing` (default: true) If `true` run the initial indexing and post index sleep steps. If `false` the data should have been pre-ingested and just the queries are run
     - `initial_ingest_clients` (default: 4)
     - `initial_ingest_bulk_size` (default: 100)
 - Search Operations:
@@ -164,5 +172,41 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
     - `as_search_clients` (default: [1,2,4,8,16])
     - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
 
+### Parameters for hybrid-search-queries-dsl-and-esql challenge
+
+Use mapping_type = `vectors-with-text` for this track since we perform lexical search on the title and text fields
+
+- Mapping:
+  - `vector_index_type` (default: int8_hnsw)
+- Initial indexing:
+  - `initial_indexing_bulk_indexing_clients` (default: 5)
+  - `initial_indexing_ingest_percentage` (default: 100)
+  - `initial_indexing_bulk_size` (default: 500)
+  - `initial_indexing_bulk_warmup` (default: 40)
+  - `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+  - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
+- Search Operations:
+  - `standalone_search_iterations` (default: 10000)
+  - `standalone_search_clients` (default: 8)
+  - `hybrid_knn_ops` ((k, num_candidates) pairs, default([(10, 0), (10, 50), (100, 200), (100, 300)]))
+
 When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
+
+### Force merge (optional)
+
+The `force_merge_max_num_segments` parameter enables an optional force merge step in the
+default `index-and-search` challenge. When set, a force merge is triggered after initial
+indexing and natural merge completion, but before any search or recall operations run.
+The step reduces each shard to at most the specified number of segments, then waits for
+all merges to finish before proceeding.
+
+This is disabled by default. To enable it, set the parameter to the desired maximum
+number of segments per shard:
+
+```json
+{
+  "force_merge_max_num_segments": 16
+}
+```
+

@@ -2,12 +2,12 @@ import bz2
 import csv
 import json
 import logging
-import numpy as np
 import os
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
 
+import numpy as np
 from esrally.driver import runner
 
 logger = logging.getLogger(__name__)

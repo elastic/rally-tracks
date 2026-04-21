@@ -38,7 +38,7 @@
   "num-candidates": {{num_candidates | default(100)}},
   "visit-percentage": {{visit_perc}},
   "oversample-rescore": {{oversample}},
-  "include-in-reporting": false
+  "include-in-reporting": true
 },
 {
   "name": "measure-performance-{{visit_perc}}-{{oversample}}",

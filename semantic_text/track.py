@@ -369,7 +369,7 @@ class KnnRecallRunner:
         request_cache = params["cache"]
 
         qrels = read_qrels(params["qrels_path"])
-        results = defaultdict(dict)
+        knn_results = defaultdict(dict)
         brute_force_results = defaultdict(dict)
         recall_total = 0
         exact_total = 0
@@ -398,9 +398,9 @@ class KnnRecallRunner:
                 knn_hits = []
                 for hit in knn_result["hits"]["hits"]:
                     doc_id = hit["fields"]["doc_id"][0]
-                    if doc_id not in results[query_id]:
+                    if doc_id not in knn_results[query_id]:
                         knn_hits.append(doc_id)
-                    results[query_id][doc_id] = max(results[query_id].get(doc_id, 0), hit["_score"])
+                    knn_results[query_id][doc_id] = max(knn_results[query_id].get(doc_id, 0), hit["_score"])
 
                 # Generate brute force results
                 bf_body = {
@@ -437,7 +437,7 @@ class KnnRecallRunner:
                     _log_sample_query(
                         query_idx,
                         query_id,
-                        knn_doc_scores=dict(results[query_id]),
+                        knn_doc_scores=dict(knn_results[query_id]),
                         bf_doc_scores=dict(brute_force_results[query_id]),
                         qrels=qrels,
                         recall=current_recall,
@@ -445,16 +445,20 @@ class KnnRecallRunner:
                     )
                 query_idx += 1
 
-        relevance_res = calc_ndcg(qrels, results, [top_k])
-        brute_force_relevance_res = calc_ndcg(qrels, brute_force_results, [top_k])
+        knn_ndcg = calc_ndcg(qrels, knn_results, [top_k])
+        brute_force_ndcg = calc_ndcg(qrels, brute_force_results, [top_k])
+        knn_mrr = calc_mrr(qrels, knn_results)
+        brute_force_mrr = calc_mrr(qrels, brute_force_results)
 
         if exact_total == 0:
             logger.warning("No brute-force hits found; cannot compute recall or NDCG.")
             return None
 
         result = {
-            f"bruteforce_ndcg_{top_k}": brute_force_relevance_res[f"ndcg_cut@{top_k}"],
-            f"knn_ndcg_{top_k}": relevance_res[f"ndcg_cut@{top_k}"],
+            f"bruteforce_ndcg_{top_k}": brute_force_ndcg[f"ndcg_cut@{top_k}"],
+            f"knn_ndcg_{top_k}": knn_ndcg[f"ndcg_cut@{top_k}"],
+            "bruteforce_mrr": brute_force_mrr,
+            "knn_mrr": knn_mrr,
             "avg_recall": recall_total / exact_total,
             "min_recall": min_recall,
             "k": top_k,
@@ -469,6 +473,8 @@ class KnnRecallRunner:
             "  min_recall                    : %d\n"
             "  knn_ndcg@%d                   : %.4f\n"
             "  bruteforce_ndcg@%d            : %.4f\n"
+            "  knn_mrr                       : %.4f\n"
+            "  bruteforce_mrr                : %.4f\n"
             "  avg_nodes_visited             : %s\n"
             "  99th_percentile_nodes_visited : %s\n"
             "  k=%d  num_candidates=%s  visit_percentage=%s",
@@ -477,6 +483,8 @@ class KnnRecallRunner:
             result["min_recall"],
             top_k, result[f"knn_ndcg_{top_k}"],
             top_k, result[f"bruteforce_ndcg_{top_k}"],
+            knn_mrr,
+            brute_force_mrr,
             result["avg_nodes_visited"],
             result["99th_percentile_nodes_visited"],
             top_k, num_candidates, visit_percentage,

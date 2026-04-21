@@ -46,7 +46,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `index_settings`: A list of index settings. Index settings defined elsewhere need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
-* `auto_expand_replicas` (default: "0-all"): Set the auto_expand_replicas behaviour for lookup indices.
+* `auto_expand_replicas` (default: "0-all"): Set the auto_expand_replicas behaviour for lookup indices. Only applied on non-serverless clusters (or serverless operator), as the setting is not allowed on Serverless.
 * `query_clients` (default 1): number of queries to be run in parallel
 
 

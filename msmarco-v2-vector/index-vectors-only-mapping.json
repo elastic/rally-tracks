@@ -16,7 +16,8 @@
       {% if p_include_non_serverless_index_settings %}
       {{comma()}}
       "number_of_shards": {{number_of_shards | default(1)}},
-      "number_of_replicas": {{number_of_replicas | default(0)}}
+      "number_of_replicas": {{number_of_replicas | default(0)}},
+      "merge.scheduler.auto_throttle": {{ index_merge_scheduler_auto_throttle | default(true) | tojson }}
       {% endif %}
       {% if enable_experimental_features | default(false) %}
       {{comma()}}
@@ -49,6 +50,12 @@
         "similarity": "dot_product",
         "index_options": {
           "type": {{ vector_index_type | default("bbq_hnsw") | tojson }}
+          {%- if hnsw_m is defined %},
+          "m": {{ hnsw_m }}
+          {%- endif %}
+          {%- if hnsw_ef_construction is defined %},
+          "ef_construction": {{ hnsw_ef_construction }}
+          {%- endif %}
         }
       }
     }

@@ -55,6 +55,8 @@
   {%- endif -%},
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "random-query": true,
+  "dims": 1024,
   "k": {{p_search_ops[i][0]}},
   "num-candidates": {{p_search_ops[i][1]}},
   {%- if p_search_ops[i]|length > 3 -%}
@@ -150,10 +152,10 @@
 }
 {%- endfor -%},
 {
-"name": "esql-profile-hybrid-search-bm25-knn",
-"operation-type": "esql-profile",
-"param-source": "esql-hybrid-bm25-knn-param-source",
-"size": 100,
-"k": 100,
-"num-candidates": 200
+  "name": "esql-profile-hybrid-search-bm25-knn",
+  "operation-type": "esql-profile",
+  "param-source": "esql-hybrid-bm25-knn-param-source",
+  "size": 100,
+  "k": 100,
+  "num-candidates": 200
 }

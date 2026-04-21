@@ -2,6 +2,7 @@ import bz2
 import csv
 import json
 import logging
+import numpy as np
 import os
 import statistics
 from collections import defaultdict
@@ -87,14 +88,29 @@ class KnnParamSource:
         self._cache = params.get("cache", False)
         self._params = params
         self._queries = []
+        self._random_query = params.get("random-query", False)
+        self._dims = params.get("dims")
 
-        cwd = os.path.dirname(__file__)
-        with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
-            for vector_query in queries_file:
-                self._queries.append(json.loads(vector_query))
+        if self._random_query:
+            if self._dims is None:
+                raise ValueError("'dims' parameter is required when 'random-vector-query' is enabled")
+            if not isinstance(self._dims, int) or self._dims <= 0:
+                raise ValueError(f"'dims' must be a positive integer, got [{self._dims}]")
+            self._maxIters = 1
+        else:
+            cwd = os.path.dirname(__file__)
+            with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
+                for vector_query in queries_file:
+                    self._queries.append(json.loads(vector_query))
+            self._maxIters = len(self._queries)
+
         self._iters = 0
-        self._maxIters = len(self._queries)
         self.infinite = True
+
+    def _random_normalized_vector(self, dims):
+        v = np.random.normal(size=dims)
+        v /= np.linalg.norm(v)
+        return v.tolist()
 
     def partition(self, partition_index, total_partitions):
         return self
@@ -103,15 +119,23 @@ class KnnParamSource:
         top_k = self._params.get("k", 10)
         visit_percentage = self._params.get("visit-percentage")
         num_candidates = self._params.get("num-candidates", 50)
-        query_vec = self._queries[self._iters]
+
+        if self._random_query:
+            query_vec = self._random_normalized_vector(self._dims)
+        else:
+            query_vec = self._queries[self._iters]
+
         if visit_percentage is None:
             knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
         else:
             knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "visit_percentage": visit_percentage}
+
         if self._params.get("oversample-rescore", -1) >= 0:
             knn_query["rescore_vector"] = {"oversample": self._params.get("oversample-rescore")}
+
         if "filter" in self._params:
             knn_query["filter"] = self._params["filter"]
+
         result = {
             "index": self._index_name,
             "cache": self._params.get("cache", False),

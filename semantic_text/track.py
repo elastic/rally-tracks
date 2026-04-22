@@ -463,6 +463,7 @@ class KnnRecallRunner:
             "min_recall": min_recall,
             "k": top_k,
             "num_candidates": num_candidates,
+            "oversample_rescore": params["oversample_rescore"],
             "visit_percentage": visit_percentage,
             "avg_nodes_visited": statistics.mean(nodes_visited) if any(x > 0 for x in nodes_visited) else None,
             "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99) if any(x > 0 for x in nodes_visited) else None,
@@ -477,7 +478,7 @@ class KnnRecallRunner:
             "  bruteforce_mrr                : %.4f\n"
             "  avg_nodes_visited             : %s\n"
             "  99th_percentile_nodes_visited : %s\n"
-            "  k=%d  num_candidates=%s  visit_percentage=%s",
+            "  k=%d  num_candidates=%s  oversample_rescore=%s visit_percentage=%s",
             query_idx,
             result["avg_recall"],
             result["min_recall"],
@@ -487,7 +488,7 @@ class KnnRecallRunner:
             brute_force_mrr,
             result["avg_nodes_visited"],
             result["99th_percentile_nodes_visited"],
-            top_k, num_candidates, visit_percentage,
+            top_k, num_candidates, params["oversample_rescore"], visit_percentage,
         )
         return result
 

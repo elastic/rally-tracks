@@ -1,5 +1,5 @@
 {% import "rally.helpers" as rally with context %}
-{% set _base_url = (base_url | default( "https://rally-tracks.elastic.co/semantic_text")) %}
+{% set _base_url = (base_url | default( "https://rally-tracks.elastic.co/semantic_text/")) %}
 {
   "version": 2,
   "description": "Benchmark for tuning semantic_text bbq_disk options using Wikipedia data",
@@ -16,10 +16,10 @@
   "corpora": [
     {
       "name": "BeIR-dbpedia-entity",
-      "base-url": "{{_base_url}}/beir-datasets/dbpedia-embeddings-jina-v5-small",
+      "base-url": "{{_base_url}}/beir-datasets/dbpedia/embeddings-jina-v5-small",
       "documents": [
         {
-          "source-file": "dbpedia_corpus_2.jsonl",
+          "source-file": "corpus_embeddings.jsonl.bz2",
           "document-count": 1000,
           "compressed-bytes": 17813350,
           "uncompressed-bytes": 17813350
@@ -28,10 +28,10 @@
     },
     {
       "name": "mteb-wikipedia-en",
-      "base-url": "{{_base_url}}/mteb/WikipediaRetrievalMultilingual",
+      "base-url": "{{_base_url}}/mteb/WikipediaRetrievalMultilingual/en/embeddings-jina-v5-small",
       "documents": [
         {
-          "source-file": "corpus_chunks_en.jsonl.bz2",
+          "source-file": "corpus_embeddings.jsonl.bz2",
           "document-count": 15384,
           "compressed-bytes": 31220278,
           "uncompressed-bytes": 275114593
@@ -40,10 +40,10 @@
     },
     {
       "name": "mteb-wikipedia-fr",
-      "base-url": "{{_base_url}}/mteb-wikipedia-multilingual/fr",
+      "base-url": "{{_base_url}}/mteb/WikipediaRetrievalMultilingual/fr/embeddings-jina-v5-small",
       "documents": [
         {
-          "source-file": "corpus_chunks_fr.jsonl",
+          "source-file": "corpus_embeddings.jsonl.bz2",
           "document-count": 1000,
           "compressed-bytes": 17813350,
           "uncompressed-bytes": 17813350

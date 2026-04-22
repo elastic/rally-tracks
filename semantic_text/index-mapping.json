@@ -55,7 +55,7 @@
             "oversample": {{ oversample | default(3.0) | tojson }}
           },
           "on_disk_rescore": false,
-          "bits": 1,
+          "bits": {{ bits | default(1) | tojson }},
           "precondition": false
         }
       }

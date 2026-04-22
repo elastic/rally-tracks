@@ -1,5 +1,5 @@
 {% import "rally.helpers" as rally with context %}
-{% set _base_url = (base_url | default( "https://rally-tracks.elastic.co/semantic_text/")) %}
+{% set _base_url = (base_url | default( "https://rally-tracks.elastic.co/semantic_text")) %}
 {
   "version": 2,
   "description": "Benchmark for tuning semantic_text bbq_disk options using Wikipedia data",
@@ -47,6 +47,18 @@
           "document-count": 1000,
           "compressed-bytes": 17813350,
           "uncompressed-bytes": 17813350
+        }
+      ]
+    },
+    {
+      "name": "mteb-trec-covid",
+      "base-url": "{{_base_url}}/mteb/trec-covid/embeddings-jina-v5-small",
+      "documents": [
+        {
+          "source-file": "corpus_embeddings.jsonl.bz2",
+          "document-count": 212315,
+          "compressed-bytes": 419610775,
+          "uncompressed-bytes": 3894583488
         }
       ]
     }

@@ -1,0 +1,114 @@
+    {
+      "name": "index-append",
+      "operation-type": "bulk",
+      "bulk-size": {{ bulk_size | default(500) }},
+      "ingest-percentage": {{ ingest_percentage | default(100) }}
+    },
+    {
+      "name": "match-all",
+      "operation-type": "search",
+      "response-compression-enabled": false,
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "term-query",
+      "operation-type": "search",
+      "response-compression-enabled": false,
+      "body": {
+        "query": {
+          "term": {
+            "body": "physician"
+          }
+        }
+      }
+    },
+    {
+      "name": "match-query",
+      "operation-type": "search",
+      "response-compression-enabled": false,
+      "body": {
+        "query": {
+          "match": {
+            "body": "treatment"
+          }
+        }
+      }
+    },
+    {
+      "name": "phrase-query",
+      "operation-type": "search",
+      "response-compression-enabled": false,
+      "body": {
+        "query": {
+          "match_phrase": {
+            "body": "clinical trial"
+          }
+        }
+      }
+    },
+    {
+      "name": "keyword-term-query",
+      "operation-type": "search",
+      "response-compression-enabled": false,
+      "body": {
+        "query": {
+          "term": {
+            "name": "Smith"
+          }
+        }
+      }
+    },
+    {
+      "name": "range-query",
+      "operation-type": "search",
+      "response-compression-enabled": false,
+      "body": {
+        "query": {
+          "range": {
+            "timestamp": {
+              "gte": "2000-01-01 00:00:00",
+              "lte": "2010-12-31 23:59:59"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "relocate-shard",
+      "operation-type": "relocate-shard",
+      "index": "{{ target_index | default('search_shard_warming') }}",
+      "shard_id": {{ shard_id | default(0) }}
+    },
+    {
+      "name": "wait-for-recovery",
+      "operation-type": "wait-for-recovery",
+      "index": "{{ target_index | default('search_shard_warming') }}",
+      "timeout_seconds": {{ recovery_timeout | default(300) }},
+      "poll_interval_seconds": {{ recovery_poll_interval | default(2) }}
+    },
+    {
+      "name": "clear-allocation-exclusions",
+      "operation-type": "clear-allocation-exclusions"
+    },
+    {
+      "name": "wait-for-green",
+      "operation-type": "wait-for-green",
+      "index": "{{ target_index | default('search_shard_warming') }}",
+      "timeout": "{{ health_timeout | default('5m') }}"
+    },
+    {
+      "name": "record-stats-before",
+      "operation-type": "record-shard-stats",
+      "index": "{{ target_index | default('search_shard_warming') }}",
+      "label": "before_relocation"
+    },
+    {
+      "name": "record-stats-after",
+      "operation-type": "record-shard-stats",
+      "index": "{{ target_index | default('search_shard_warming') }}",
+      "label": "after_relocation"
+    }

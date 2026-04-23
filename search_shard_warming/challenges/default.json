@@ -1,0 +1,494 @@
+    {
+      "name": "offline-warming-benchmark",
+      "description": "Indexes documents, establishes a baseline search latency, forces shard relocation to trigger offline blob cache warming, then measures search latency after warming to evaluate its effectiveness.",
+      "default": true,
+      "schedule": [
+        {
+          "operation": {
+            "operation-type": "put-settings",
+            "body": {
+              "transient": {
+                "search.default_search_timeout": "{{ default_search_timeout | default(-1) }}"
+              }
+            }
+          }
+        },
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{ index_settings | default({}) | tojson }}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "{{ target_index | default('search_shard_warming') }}",
+            "request-params": {
+              "wait_for_status": "{{ cluster_health | default('green') }}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "#COMMENT": "Phase 1: Ingest data",
+          "operation": "index-append",
+          "warmup-time-period": 240,
+          "clients": {{ bulk_indexing_clients | default(8) }},
+          "ignore-response-error-level": "{{ error_level | default('non-fatal') }}"
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh"
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "max-num-segments": {{ max_num_segments | default(-1) }},
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh"
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration | default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+        {
+          "#COMMENT": "Phase 2: Baseline search latency (fully warmed cache)",
+          "name": "record-stats-before",
+          "operation": "record-stats-before"
+        },
+        {
+          "name": "baseline-match-all",
+          "operation": "match-all",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "name": "baseline-term-query",
+          "operation": "term-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "name": "baseline-match-query",
+          "operation": "match-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "name": "baseline-phrase-query",
+          "operation": "phrase-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "name": "baseline-keyword-term-query",
+          "operation": "keyword-term-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "name": "baseline-range-query",
+          "operation": "range-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "#COMMENT": "Phase 3: Trigger shard relocation to force recovery and offline warming",
+          "operation": "relocate-shard"
+        },
+        {
+          "operation": "wait-for-recovery"
+        },
+        {
+          "operation": "wait-for-green"
+        },
+        {
+          "#COMMENT": "Phase 4: Measure search latency immediately after relocation (cache may still be warming)",
+          "name": "post-relocate-match-all",
+          "operation": "match-all",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "post-relocate-term-query",
+          "operation": "term-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "post-relocate-match-query",
+          "operation": "match-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "post-relocate-phrase-query",
+          "operation": "phrase-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "post-relocate-keyword-term-query",
+          "operation": "keyword-term-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "post-relocate-range-query",
+          "operation": "range-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "record-stats-after",
+          "operation": "record-stats-after"
+        },
+        {
+          "#COMMENT": "Phase 5: Cleanup allocation exclusions",
+          "operation": "clear-allocation-exclusions"
+        }
+      ]
+    },
+    {
+      "name": "offline-warming-repeated-relocations",
+      "description": "Performs multiple rounds of shard relocation to observe how offline warming performs across successive recovery cycles. Useful for measuring warming consistency and cache hit rate stability.",
+      "schedule": [
+        {
+          "operation": {
+            "operation-type": "put-settings",
+            "body": {
+              "transient": {
+                "search.default_search_timeout": "{{ default_search_timeout | default(-1) }}"
+              }
+            }
+          }
+        },
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{ index_settings | default({}) | tojson }}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "{{ target_index | default('search_shard_warming') }}",
+            "request-params": {
+              "wait_for_status": "{{ cluster_health | default('green') }}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "index-append",
+          "warmup-time-period": 240,
+          "clients": {{ bulk_indexing_clients | default(8) }},
+          "ignore-response-error-level": "{{ error_level | default('non-fatal') }}"
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh"
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "max-num-segments": {{ max_num_segments | default(-1) }},
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh"
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration | default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+        {
+          "#COMMENT": "Baseline searches",
+          "name": "baseline-term-query",
+          "operation": "term-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "name": "baseline-match-query",
+          "operation": "match-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "#COMMENT": "Round 1: Relocate and measure",
+          "name": "round-1-relocate",
+          "operation": "relocate-shard"
+        },
+        {
+          "name": "round-1-wait-recovery",
+          "operation": "wait-for-recovery"
+        },
+        {
+          "name": "round-1-wait-green",
+          "operation": "wait-for-green"
+        },
+        {
+          "name": "round-1-term-query",
+          "operation": "term-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "round-1-match-query",
+          "operation": "match-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "round-1-clear-exclusions",
+          "operation": "clear-allocation-exclusions"
+        },
+        {
+          "#COMMENT": "Round 2: Relocate again and measure",
+          "name": "round-2-relocate",
+          "operation": "relocate-shard"
+        },
+        {
+          "name": "round-2-wait-recovery",
+          "operation": "wait-for-recovery"
+        },
+        {
+          "name": "round-2-wait-green",
+          "operation": "wait-for-green"
+        },
+        {
+          "name": "round-2-term-query",
+          "operation": "term-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "round-2-match-query",
+          "operation": "match-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "round-2-clear-exclusions",
+          "operation": "clear-allocation-exclusions"
+        },
+        {
+          "#COMMENT": "Round 3: Relocate once more and measure",
+          "name": "round-3-relocate",
+          "operation": "relocate-shard"
+        },
+        {
+          "name": "round-3-wait-recovery",
+          "operation": "wait-for-recovery"
+        },
+        {
+          "name": "round-3-wait-green",
+          "operation": "wait-for-green"
+        },
+        {
+          "name": "round-3-term-query",
+          "operation": "term-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "round-3-match-query",
+          "operation": "match-query",
+          "warmup-iterations": 0,
+          "iterations": {{ post_relocate_iterations | default(500) }},
+          "target-throughput": {{ post_relocate_throughput | default(20) }}
+        },
+        {
+          "name": "round-3-clear-exclusions",
+          "operation": "clear-allocation-exclusions"
+        }
+      ]
+    },
+    {
+      "name": "baseline-only",
+      "description": "Indexes documents and runs search operations without any shard relocation. Use this as a control benchmark to compare against the offline warming challenges.",
+      "schedule": [
+        {
+          "operation": {
+            "operation-type": "put-settings",
+            "body": {
+              "transient": {
+                "search.default_search_timeout": "{{ default_search_timeout | default(-1) }}"
+              }
+            }
+          }
+        },
+        {
+          "operation": "delete-index"
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {{ index_settings | default({}) | tojson }}
+          }
+        },
+        {
+          "name": "check-cluster-health",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "{{ target_index | default('search_shard_warming') }}",
+            "request-params": {
+              "wait_for_status": "{{ cluster_health | default('green') }}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          }
+        },
+        {
+          "operation": "index-append",
+          "warmup-time-period": 240,
+          "clients": {{ bulk_indexing_clients | default(8) }},
+          "ignore-response-error-level": "{{ error_level | default('non-fatal') }}"
+        },
+        {
+          "name": "refresh-after-index",
+          "operation": "refresh"
+        },
+        {
+          "operation": {
+            "operation-type": "force-merge",
+            "max-num-segments": {{ max_num_segments | default(-1) }},
+            "request-timeout": 7200
+          }
+        },
+        {
+          "name": "refresh-after-force-merge",
+          "operation": "refresh"
+        },
+        {
+          "name": "wait-until-merges-finish",
+          "operation": {
+            "operation-type": "index-stats",
+            "index": "_all",
+            "condition": {
+              "path": "_all.total.merges.current",
+              "expected-value": 0
+            },
+            "retry-until-success": true,
+            "include-in-reporting": false
+          }
+        },
+        {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+        {
+          "name": "post-ingest-sleep",
+          "operation": {
+            "operation-type": "sleep",
+            "duration": {{ post_ingest_sleep_duration | default(30) }}
+          }
+        },
+        {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+        {
+          "operation": "match-all",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "operation": "term-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "operation": "match-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "operation": "phrase-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "operation": "keyword-term-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        },
+        {
+          "operation": "range-query",
+          "warmup-iterations": {{ baseline_warmup_iterations | default(200) }},
+          "iterations": {{ baseline_iterations | default(500) }},
+          "target-throughput": {{ baseline_throughput | default(20) }}
+        }
+      ]
+    }

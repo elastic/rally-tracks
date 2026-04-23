@@ -263,7 +263,7 @@ def read_qrels(qrels_input_file):
         tsv_reader = csv.reader(input_file, delimiter="\t")
         for row in tsv_reader:
             query_id, doc_id, score = row[0], row[1], row[2]
-            qrels[query_id][doc_id] = int(score)
+            qrels[query_id][doc_id] = int(float(score))
 
     return qrels
 

@@ -69,7 +69,7 @@
   "num-candidates": {{p_search_ops[i][1]}},
   "oversample-rescore": {{p_search_ops[i][2]}},
   "include-in-reporting": false,
-  {%- if initial_indexing_ingest_doc_count is defined and initial_indexing_ingest_doc_count == 10000000 -%}
+  {%- if initial_indexing_ingest_doc_count is defined and initial_indexing_ingest_doc_count | int == 10000000 -%}
     "recall-doc-set": "10m"
   {%- else -%}
     "recall-doc-set": "full"

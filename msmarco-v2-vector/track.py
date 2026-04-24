@@ -174,6 +174,7 @@ class KnnRecallRunner:
             queries_recall = QUERIES_RECALL_10M_FILENAME
         else:
             queries_recall = QUERIES_RECALL_FILENAME
+        logger.info(f"recall_doc_set={recall_doc_set!r} (type={type(recall_doc_set).__name__}), using recall file: {queries_recall}")
 
         with bz2.open(os.path.join(cwd, queries_recall), "r") as queries_file:
             for line in queries_file:

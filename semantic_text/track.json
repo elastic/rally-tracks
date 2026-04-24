@@ -15,14 +15,33 @@
   ],
   "corpora": [
     {
-      "name": "BeIR-dbpedia-entity",
-      "base-url": "{{_base_url}}/beir-datasets/dbpedia/embeddings-jina-v5-small",
+      "name": "beir-dbpedia",
+      "base-url": "{{_base_url}}/beir/dbpedia/embeddings-jina-v5-small",
       "documents": [
         {
-          "source-file": "corpus_embeddings.jsonl.bz2",
-          "document-count": 1000,
-          "compressed-bytes": 17813350,
-          "uncompressed-bytes": 17813350
+          "source-file": "corpus_with_embeddings_part001.jsonl.bz2",
+          "document-count": 1000000,
+          "compressed-bytes": 2014584982
+        },
+        {
+          "source-file": "corpus_with_embeddings_part002.jsonl.bz2",
+          "document-count": 1000000,
+          "compressed-bytes": 1997458690
+        },
+        {
+          "source-file": "corpus_with_embeddings_part003.jsonl.bz2",
+          "document-count": 1000000,
+          "compressed-bytes": 1987837797
+        },
+        {
+          "source-file": "corpus_with_embeddings_part004.jsonl.bz2",
+          "document-count": 1000000,
+          "compressed-bytes": 1988720106
+        },
+        {
+          "source-file": "corpus_with_embeddings_part005.jsonl.bz2",
+          "document-count": 637432,
+          "compressed-bytes": 1264316504
         }
       ]
     },

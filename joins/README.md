@@ -48,6 +48,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 * `auto_expand_replicas` (default: "0-all"): Set the auto_expand_replicas behaviour for lookup indices. Only applied on non-serverless clusters (or serverless operator), as the setting is not allowed on Serverless.
 * `query_clients` (default 1): number of queries to be run in parallel
+* `project_routing` (optional): a full ES|QL project routing expression (Lucene syntax). When set, `SET project_routing="<expr>";` is prepended to every ES|QL query. When unset (default), queries run unchanged. Examples: `_alias:my-project`, `_alias:p1,p2`, `_alias:_origin`, `_alias:*`.
 
 
 ### License

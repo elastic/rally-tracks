@@ -58,6 +58,18 @@
       ]
     },
     {
+      "name": "mteb-stackoverflow-qa",
+      "base-url": "{{_base_url}}/mteb/stackoverflow-QA/embeddings-jina-v5-small",
+      "documents": [
+        {
+        "source-file": "corpus_embeddings.jsonl.bz2",
+        "document-count": 25613,
+        "compressed-bytes": 56713429,
+        "uncompressed-bytes": 472285285
+        }
+      ]
+    },
+    {
       "name": "mteb-wikipedia-fr",
       "base-url": "{{_base_url}}/mteb/WikipediaRetrievalMultilingual/fr/embeddings-jina-v5-small",
       "documents": [

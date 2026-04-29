@@ -35,7 +35,7 @@
   "operation-type": "knn-recall",
   "param-source": "knn-recall-param-source",
   "k": {{k_value | default(10)}},
-  "num-candidates": {{num_candidates | default(100)}},
+  "num-candidates": {{num_candidates | default(15)}},
   "visit-percentage": {{visit_perc}},
   "oversample-rescore": {{oversample}},
   "include-in-reporting": true
@@ -45,7 +45,7 @@
   "operation-type": "search",
   "param-source": "knn-param-source",
   "k": {{k_value | default(10)}},
-  "num-candidates": {{num_candidates | default(100)}},
+  "num-candidates": {{num_candidates | default(15)}},
   "visit-percentage": {{visit_perc}},
   "oversample-rescore": {{oversample}}
 }

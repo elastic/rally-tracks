@@ -1,0 +1,87 @@
+{
+  "name": "index-and-search",
+  "description": "",
+  "default": true,
+  "parameters": {
+    "corpora": {{ (corpora | default(["BeIR-dbpedia-entity"])) | tojson }},
+    "query_filename": {{ (query_filename | default("queries.jsonl.bz2")) | tojson }},
+    "qrels_filename": {{ (qrels_filename | default("qrels.tsv.bz2")) | tojson }}
+  },
+  "schedule": [
+    {# include-initial-indexing-marker-start #}{%- if include_initial_indexing|default(true) -%}
+    {
+      "operation": {
+        "operation-type": "delete-index"
+      }
+    },
+    {
+      "name": "create-index",
+      "operation": "create-index"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": "check-cluster-health"
+    },
+    {
+      "name": "initial-documents-indexing",
+      "operation": "initial-documents-indexing",
+      "warmup-time-period": {{ initial_indexing_bulk_warmup | default(40) | int }},
+      "clients": {{ initial_indexing_bulk_indexing_clients | default(5) | int }}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "wait-until-merges-finish-after-index",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    }
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%},
+    {
+      "name": "post-ingest-sleep",
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ post_ingest_sleep_duration|default(30) }}
+      }
+    }
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    {%- endif -%}{# include-initial-indexing-marker-end #}
+
+    {%- for visit_perc in (visit_perc_values | default([0, 5, 10])) -%}
+    {%- for oversample in (oversample_values | default([1.0, 1.5, 2.0, 2.5, 3.0])) -%},
+    {
+      "name": "recall-{{visit_perc}}-{{oversample}}",
+      "operation": "measure-recall-{{visit_perc}}-{{oversample}}"
+    },
+    {
+      "name": "performance-single-client-visit={{visit_perc}}-oversample={{oversample}}",
+      "operation": "measure-performance-{{visit_perc}}-{{oversample}}",
+      "warmup-iterations": {{standalone_search_warmup_iterations | default(1000) | int}},
+      "iterations": {{standalone_search_iterations | default(10000) | int}}
+    }
+    {%- for clients in (num_clients | default([2, 4, 8, 16])) %},
+    {
+      "name": "performance-clients={{clients}}-visit={{visit_perc}}-oversample={{oversample}}",
+      "operation": "measure-performance-{{visit_perc}}-{{oversample}}",
+      "warmup-iterations": {{standalone_search_warmup_iterations | default(1000) | int}},
+      "iterations": {{standalone_search_iterations | default(10000) | int}},
+      "clients": {{clients}}
+    }
+    {%- endfor -%}
+    {%- endfor -%}
+    {%- endfor -%}
+  ]
+}

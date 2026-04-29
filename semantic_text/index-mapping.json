@@ -1,0 +1,65 @@
+{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
+{% set p_index_type = (index_type | default("bbq_disk")) %}
+
+{
+  {%- set comma = joiner(",") -%}
+  "settings": {
+    {# non-serverless-index-settings-marker-start #}
+    {%- if build_flavor != "serverless" or serverless_operator == true -%}
+    {% if preload_pagecache %}
+    {{comma()}}
+    "index.store.preload": [ "vec", "vex", "vem"]
+    {% endif %}
+    {% if p_include_non_serverless_index_settings %}
+    {{comma()}}
+    "index.number_of_shards": {{number_of_shards | default(1)}},
+    "index.number_of_replicas": {{number_of_replicas | default(0)}}
+    {% endif %}
+    {% if enable_experimental_features | default(false) %}
+    {{comma()}}
+    "index.dense_vector.experimental_features": true
+    {% endif %}
+    {%- endif -%}
+    {# non-serverless-index-settings-marker-end #}
+  },
+  "mappings": {
+    "properties": {
+      "doc_id": {
+        "type": "keyword"
+      },
+      "chunk_id": {
+        "type": "keyword"
+      },
+      "chunk_start": {
+        "type": "integer"
+      },
+      "chunk_end": {
+        "type": "integer"
+      },
+      "chunk_text": {
+        "type": "text"
+      },
+      {%- if p_index_type == "bbq_disk" -%}
+      "embedding": {
+        "type": "dense_vector",
+        "element_type": "bfloat16",
+        "dims": 1024,
+        "index": true,
+        "similarity": "cosine",
+        "index_options": {
+          "type": "bbq_disk",
+          "cluster_size": 384,
+          "flat_index_threshold": -1,
+          "default_visit_percentage": {{ visit_percentage | default(0) | tojson }},
+          "rescore_vector": {
+            "oversample": {{ oversample | default(3.0) | tojson }}
+          },
+          "on_disk_rescore": false,
+          "bits": {{ bits | default(1) | tojson }},
+          "precondition": false
+        }
+      }
+      {%- endif -%}
+    }
+  }
+}

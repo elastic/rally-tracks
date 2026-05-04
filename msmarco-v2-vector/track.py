@@ -7,7 +7,6 @@ import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
 
-import numpy as np
 from esrally.driver import runner
 
 logger = logging.getLogger(__name__)
@@ -108,6 +107,8 @@ class KnnParamSource:
         self.infinite = True
 
     def _random_normalized_vector(self, dims):
+        import numpy as np
+
         v = np.random.normal(size=dims)
         v /= np.linalg.norm(v)
         return v.tolist()

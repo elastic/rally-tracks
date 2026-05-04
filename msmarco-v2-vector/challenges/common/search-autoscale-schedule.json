@@ -48,6 +48,8 @@
   "operation": {
     "operation-type": "search",
     "param-source": "knn-param-source",
+    "random-query": true,
+    "dims": 1024,
     "k": 10,
     "num-candidates": 100,
     {%- if p_vector_index_type == "bbq_hnsw" %}
@@ -67,6 +69,8 @@
   "operation": {
     "operation-type": "search",
     "param-source": "knn-param-source",
+    "random-query": true,
+    "dims": 1024,
     "k": 100,
     "num-candidates": 500,
     {%- if p_vector_index_type == "bbq_hnsw" %}
@@ -87,6 +91,8 @@
   "operation": {
     "operation-type": "search",
     "param-source": "knn-param-source",
+    "random-query": true,
+    "dims": 1024,
     "k": 10,
     "num-candidates": 100,
     {%- if p_vector_index_type == "bbq_hnsw" %}
@@ -107,6 +113,8 @@
   "operation": {
     "operation-type": "search",
     "param-source": "knn-param-source",
+    "random-query": true,
+    "dims": 1024,
     "k": 100,
     "num-candidates": 500,
     {%- if p_vector_index_type == "bbq_hnsw" %}

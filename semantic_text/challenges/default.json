@@ -37,6 +37,16 @@
       }
     },
     {
+      "name": "force-merge",
+      "operation": {
+        "operation-type": "force-merge",
+        "mode" : "polling",
+        "max-num-segments": {{ max_num_segments | default(1) }},
+        "request-timeout": 7200,
+        "include-in-reporting": true
+      }
+    },
+    {
       "name": "wait-until-merges-finish-after-index",
       "operation": {
         "operation-type": "index-stats",

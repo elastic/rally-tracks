@@ -297,7 +297,7 @@ class KnnParamSource:
     def params(self):
         top_k = self._params.get("k", 10)
         visit_percentage = self._params.get("visit-percentage")
-        num_candidates = self._params.get("num-candidates", 50)
+        num_candidates = self._params.get("num-candidates", 15)
         query_vec = self._queries[self._iters]["embedding"]
         if visit_percentage is None:
             knn_query = {"field": "embedding", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
@@ -383,7 +383,7 @@ class KnnRecallRunner:
                 query_id = query["query_id"]
 
                 if visit_percentage is not None and visit_percentage > 0:
-                    knn_query = {"field": "embedding", "query_vector": query["embedding"], "k": top_k, "visit_percentage": visit_percentage}
+                    knn_query = {"field": "embedding", "query_vector": query["embedding"], "k": top_k, "num_candidates": num_candidates, "visit_percentage": visit_percentage}
                 else:
                     knn_query = {"field": "embedding", "query_vector": query["embedding"], "k": top_k, "num_candidates": num_candidates}
                 if params["oversample_rescore"] >= 0:

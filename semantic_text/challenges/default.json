@@ -73,14 +73,14 @@
     {%- for visit_perc in (visit_perc_values | default([0, 5, 10])) -%}
     {%- for oversample in (oversample_values | default([1.0, 1.5, 2.0, 2.5, 3.0])) -%},
     {
-      "name": "recall-{{visit_perc}}-{{oversample}}",
-      "operation": "measure-recall-{{visit_perc}}-{{oversample}}"
-    },
-    {
       "name": "performance-single-client-visit={{visit_perc}}-oversample={{oversample}}",
       "operation": "measure-performance-{{visit_perc}}-{{oversample}}",
       "warmup-iterations": {{standalone_search_warmup_iterations | default(1000) | int}},
       "iterations": {{standalone_search_iterations | default(10000) | int}}
+    },
+    {
+      "name": "recall-{{visit_perc}}-{{oversample}}",
+      "operation": "measure-recall-{{visit_perc}}-{{oversample}}"
     }
     {%- for clients in (num_clients | default([2, 4, 8, 16])) %},
     {

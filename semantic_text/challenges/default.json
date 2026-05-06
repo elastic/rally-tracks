@@ -77,11 +77,13 @@
       "operation": "measure-performance-{{visit_perc}}-{{oversample}}",
       "warmup-iterations": {{standalone_search_warmup_iterations | default(1000) | int}},
       "iterations": {{standalone_search_iterations | default(10000) | int}}
-    },
+    }
+    {%- if calculate_recall | default(true) -%},
     {
       "name": "recall-{{visit_perc}}-{{oversample}}",
       "operation": "measure-recall-{{visit_perc}}-{{oversample}}"
     }
+    {%- endif -%}
     {%- for clients in (num_clients | default([2, 4, 8, 16])) %},
     {
       "name": "performance-clients={{clients}}-visit={{visit_perc}}-oversample={{oversample}}",

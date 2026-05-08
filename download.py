@@ -33,9 +33,57 @@ ROOT = Path(".rally/benchmarks")
 REPO_URL = "https://github.com/elastic/rally-tracks.git"
 
 
+class TemplateRenderError(Exception):
+    """Raised when a Jinja2 track.json cannot be rendered."""
+
+
 # ---------------------------------------------------------------------------
 # Template rendering
 # ---------------------------------------------------------------------------
+
+def _extract_corpora(rendered: str) -> list | None:
+    """
+    Locate and parse the corpora array from a partially-invalid rendered
+    template using bracket-depth matching.
+
+    A simple regex like r'"corpora"\\s*:\\s*(\\[.*?\\])' will stop at the
+    first closing bracket it finds — which is typically the end of the first
+    nested "documents" array, not the end of the full corpora array.  Walking
+    bracket depth handles arbitrary nesting correctly.
+    """
+    m = re.search(r'"corpora"\s*:\s*\[', rendered)
+    if not m:
+        return None
+
+    start = m.end() - 1  # index of the opening '['
+    depth = 0
+    in_string = False
+    i = start
+
+    while i < len(rendered):
+        ch = rendered[i]
+        if in_string:
+            if ch == "\\":
+                i += 2  # skip escaped character
+                continue
+            if ch == '"':
+                in_string = False
+        else:
+            if ch == '"':
+                in_string = True
+            elif ch == "[":
+                depth += 1
+            elif ch == "]":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        return json.loads(rendered[start : i + 1])
+                    except json.JSONDecodeError:
+                        return None
+        i += 1
+
+    return None
+
 
 def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
     """
@@ -59,12 +107,10 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
     try:
         import jinja2
     except ImportError:
-        print(
-            "Warning: jinja2 is not installed; cannot render templated track.json.\n"
-            "Install esrally or run `pip install jinja2` and retry.",
-            file=sys.stderr,
+        raise TemplateRenderError(
+            "jinja2 is not installed; cannot render templated track.json. "
+            "Install esrally or run `pip install jinja2` and retry."
         )
-        return None
 
     # rally.helpers provides a `collect` macro that globs and inlines other
     # JSON files (used for challenges/operations, never for corpora).
@@ -82,8 +128,7 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
     try:
         rendered = env.from_string(source).render(build_flavor="oss", **extra_vars)
     except Exception as exc:
-        print(f"Warning: template rendering failed: {exc}", file=sys.stderr)
-        return None
+        raise TemplateRenderError(f"template rendering failed: {exc}") from exc
 
     try:
         return json.loads(rendered)
@@ -93,14 +138,15 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
             "attempting to extract the corpora section only.",
             file=sys.stderr,
         )
-        # Salvage just the corpora array so we still know what to download
-        m = re.search(r'"corpora"\s*:\s*(\[.*?\])\s*[,}]', rendered, re.DOTALL)
-        if m:
-            try:
-                return {"corpora": json.loads(m.group(1))}
-            except json.JSONDecodeError:
-                pass
-        return None
+        # Salvage just the corpora array using bracket-depth matching so that
+        # nested arrays (e.g. "documents": [...]) are not mistaken for the end
+        # of the corpora array.
+        corpora = _extract_corpora(rendered)
+        if corpora is not None:
+            return {"corpora": corpora}
+        raise TemplateRenderError(
+            f"rendered template is not valid JSON and corpora section could not be extracted: {exc}"
+        ) from exc
 
 
 # ---------------------------------------------------------------------------
@@ -255,6 +301,7 @@ def main() -> None:
     # ── 1. Clone or reuse the rally-tracks repository ────────────────────
     if not repo_target.exists():
         print(f"Cloning rally-tracks → {repo_target} …")
+        repo_target.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(["git", "clone", REPO_URL, str(repo_target)], check=True)
 
     track_dir = repo_target / track
@@ -270,21 +317,33 @@ def main() -> None:
     if args.max_total_download_gb is not None:
         extra["max_total_download_gb"] = args.max_total_download_gb
 
-    track_data = render_track_json(track_dir, extra)
-
-    if track_data and track_data.get("corpora"):
-        to_download = corpus_files(track_data)
-        print(f"Found {len(to_download)} corpus file(s) from track.json.")
-    else:
-        to_download = files_txt_entries(track_dir, track)
-        if to_download:
-            print(f"Found {len(to_download)} file(s) from files.txt.")
+    try:
+        track_data = render_track_json(track_dir, extra)
+    except TemplateRenderError as exc:
+        # Rendering failed — only safe to continue if a files.txt fallback exists.
+        fallback = files_txt_entries(track_dir, track)
+        if fallback:
+            print(f"Warning: {exc}", file=sys.stderr)
+            print(f"Falling back to files.txt ({len(fallback)} file(s)).")
+            to_download = fallback
         else:
-            print("No downloadable data files found; packaging track description only.")
+            print(f"Error: {exc}", file=sys.stderr)
+            sys.exit(1)
+    else:
+        if track_data and track_data.get("corpora"):
+            to_download = corpus_files(track_data)
+            print(f"Found {len(to_download)} corpus file(s) from track.json.")
+        else:
+            to_download = files_txt_entries(track_dir, track)
+            if to_download:
+                print(f"Found {len(to_download)} file(s) from files.txt.")
+            else:
+                print("No downloadable data files found; packaging track description only.")
 
     # ── 3. Download missing files ─────────────────────────────────────────
     print()
     local_files: list[Path] = []
+    failed_urls: list[str] = []
     for url, rel in to_download:
         dest = data_root / rel
         if dest.exists() and not args.no_cache:
@@ -293,6 +352,15 @@ def main() -> None:
         else:
             if download_file(url, dest):
                 local_files.append(dest)
+            else:
+                failed_urls.append(url)
+
+    if failed_urls:
+        print(f"\nError: {len(failed_urls)} file(s) failed to download:", file=sys.stderr)
+        for url in failed_urls:
+            print(f"  {url}", file=sys.stderr)
+        print("Archive not created. Fix the errors above and retry.", file=sys.stderr)
+        sys.exit(1)
 
     # ── 4. Build tar archive ──────────────────────────────────────────────
     archive_name = f"rally-track-data-{track.replace('/', '-')}.tar"

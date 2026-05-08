@@ -3,6 +3,7 @@ import csv
 import json
 import logging
 import os
+import random
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
@@ -89,6 +90,7 @@ class KnnParamSource:
         self._queries = []
         self._random_query = params.get("random-query", False)
         self._dims = params.get("dims")
+        self._seed = params.get("seed")
 
         if self._random_query:
             if self._dims is None:
@@ -101,6 +103,9 @@ class KnnParamSource:
             with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
                 for vector_query in queries_file:
                     self._queries.append(json.loads(vector_query))
+
+            # Shuffle the queries. _seed can be None
+            random.Random(self._seed).shuffle(self._queries)
             self._maxIters = len(self._queries)
 
         self._iters = 0

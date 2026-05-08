@@ -41,6 +41,7 @@ class TemplateRenderError(Exception):
 # Template rendering
 # ---------------------------------------------------------------------------
 
+
 def _extract_corpora(rendered: str) -> list | None:
     """
     Locate and parse the corpora array from a partially-invalid rendered
@@ -108,8 +109,7 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
         import jinja2
     except ImportError:
         raise TemplateRenderError(
-            "jinja2 is not installed; cannot render templated track.json. "
-            "Install esrally or run `pip install jinja2` and retry."
+            "jinja2 is not installed; cannot render templated track.json. " "Install esrally or run `pip install jinja2` and retry."
         )
 
     # rally.helpers provides a `collect` macro that globs and inlines other
@@ -118,10 +118,12 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
     # will still be valid JSON.
     mock_helpers = "{% macro collect(parts) %}{% endmacro %}"
 
-    loader = jinja2.ChoiceLoader([
-        jinja2.DictLoader({"rally.helpers": mock_helpers}),
-        jinja2.FileSystemLoader(str(track_dir)),
-    ])
+    loader = jinja2.ChoiceLoader(
+        [
+            jinja2.DictLoader({"rally.helpers": mock_helpers}),
+            jinja2.FileSystemLoader(str(track_dir)),
+        ]
+    )
     env = jinja2.Environment(loader=loader, undefined=jinja2.Undefined)
     env.filters["tojson"] = json.dumps
 
@@ -134,8 +136,7 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
         return json.loads(rendered)
     except json.JSONDecodeError as exc:
         print(
-            f"Warning: rendered template is not fully valid JSON ({exc}); "
-            "attempting to extract the corpora section only.",
+            f"Warning: rendered template is not fully valid JSON ({exc}); " "attempting to extract the corpora section only.",
             file=sys.stderr,
         )
         # Salvage just the corpora array using bracket-depth matching so that
@@ -144,14 +145,13 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
         corpora = _extract_corpora(rendered)
         if corpora is not None:
             return {"corpora": corpora}
-        raise TemplateRenderError(
-            f"rendered template is not valid JSON and corpora section could not be extracted: {exc}"
-        ) from exc
+        raise TemplateRenderError(f"rendered template is not valid JSON and corpora section could not be extracted: {exc}") from exc
 
 
 # ---------------------------------------------------------------------------
 # Corpus file enumeration
 # ---------------------------------------------------------------------------
+
 
 def corpus_files(track_data: dict) -> list[tuple[str, str]]:
     """
@@ -182,9 +182,10 @@ def corpus_files(track_data: dict) -> list[tuple[str, str]]:
 
             # Strip CDN prefix → local relative path under data/
             if url.startswith(cdn + "/"):
-                rel = url[len(cdn) + 1:]
+                rel = url[len(cdn) + 1 :]
             else:
                 from urllib.parse import urlparse
+
                 parsed = urlparse(url)
                 rel = (parsed.netloc + parsed.path).lstrip("/")
 
@@ -214,6 +215,7 @@ def files_txt_entries(track_dir: Path, track: str) -> list[tuple[str, str]]:
 # Download helper
 # ---------------------------------------------------------------------------
 
+
 def _ssl_context() -> ssl.SSLContext:
     """
     Return an SSL context backed by certifi's CA bundle when available
@@ -227,6 +229,7 @@ def _ssl_context() -> ssl.SSLContext:
     """
     try:
         import certifi
+
         return ssl.create_default_context(cafile=certifi.where())
     except ImportError:
         return ssl.create_default_context()
@@ -260,6 +263,7 @@ def download_file(url: str, dest: Path) -> bool:
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     ap = argparse.ArgumentParser(

@@ -1,0 +1,171 @@
+    {
+      "name": "esql_default",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | LIMIT 100"
+    },
+    {
+      "name": "esql_term",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE log.file.path == \"/var/log/messages/fuschiashoulder\" | LIMIT 100"
+    },
+    {
+      "name": "esql_range",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-01T00:00:00.000Z\" AND @timestamp < \"2023-01-03T00:00:00.000Z\" | LIMIT 100"
+    },
+    {
+      "name": "esql_range_numeric",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE metrics.size >= 20 AND metrics.size <= 200 | LIMIT 100"
+    },
+    {
+      "name": "esql_keyword_in_range",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-01T00:00:00.000Z\" AND @timestamp < \"2023-01-03T00:00:00.000Z\" AND process.name == \"kernel\" | LIMIT 100"
+    },
+
+    {
+      "name": "esql_desc_sort_timestamp",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | SORT @timestamp DESC | LIMIT 100"
+    },
+    {
+      "name": "esql_asc_sort_timestamp",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | SORT @timestamp ASC | LIMIT 100"
+    },
+    {
+      "name": "esql_desc_sort_with_after_timestamp",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp < \"2023-01-06T23:59:58.000Z\" | SORT @timestamp DESC | LIMIT 100"
+    },
+    {
+      "name": "esql_asc_sort_with_after_timestamp",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp > \"2023-01-01T23:59:58.000Z\" | SORT @timestamp ASC | LIMIT 100"
+    },
+    {
+      "name": "esql_desc_sort_timestamp_with_match",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE process.name == \"kernel\" | SORT @timestamp DESC | LIMIT 100"
+    },
+    {
+      "name": "esql_asc_sort_timestamp_with_match",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE process.name == \"kernel\" | SORT @timestamp ASC | LIMIT 100"
+    },
+    {
+      "name": "esql_sort_keyword_with_match",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE process.name == \"kernel\" | SORT meta.file ASC | LIMIT 100"
+    },
+    {
+      "name": "esql_sort_numeric_desc",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | SORT metrics.size DESC | LIMIT 100"
+    },
+    {
+      "name": "esql_sort_numeric_asc",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | SORT metrics.size ASC | LIMIT 100"
+    },
+    {
+      "name": "esql_sort_numeric_desc_with_match",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE log.file.path == \"/var/log/messages/solarshark\" | SORT metrics.size DESC | LIMIT 100"
+    },
+    {
+      "name": "esql_sort_numeric_asc_with_match",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE log.file.path == \"/var/log/messages/solarshark\" | SORT metrics.size ASC | LIMIT 100"
+    },
+
+    {
+      "name": "esql_date_histogram_hourly_agg",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | STATS count=COUNT(*) BY bucket=DATE_TRUNC(1 hour, @timestamp) | SORT bucket | LIMIT 100"
+    },
+    {
+      "name": "esql_date_histogram_minute_agg",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-01T00:00:00.000Z\" AND @timestamp < \"2023-01-03T00:00:00.000Z\" | STATS count=COUNT(*) BY bucket=DATE_TRUNC(1 minute, @timestamp) | SORT bucket | LIMIT 100"
+    },
+
+    {
+      "name": "esql_range_auto_date_histo",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | EVAL size_bucket = CASE(metrics.size < -10, \"lt_neg10\", metrics.size >= -10 AND metrics.size < 10, \"neg10_to_10\", metrics.size >= 10 AND metrics.size < 100, \"10_to_100\", metrics.size >= 100 AND metrics.size < 1000, \"100_to_1000\", metrics.size >= 1000 AND metrics.size < 2000, \"1000_to_2000\", \"gte_2000\") | STATS count=COUNT(*) BY size_bucket, date_bucket=BUCKET(@timestamp, 20, \"2023-01-01T00:00:00.000Z\", \"2023-01-08T00:00:00.000Z\") | SORT size_bucket, date_bucket | LIMIT 100"
+    },
+    {
+      "name": "esql_range_auto_date_histo_with_metrics",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | EVAL size_bucket = CASE(metrics.size < 100, \"lt_100\", metrics.size >= 100 AND metrics.size < 1000, \"100_to_1000\", metrics.size >= 1000 AND metrics.size < 2000, \"1000_to_2000\", \"gte_2000\") | STATS tmin=MIN(metrics.tmin), tavg=AVG(metrics.size), tmax=MAX(metrics.size) BY size_bucket, date_bucket=BUCKET(@timestamp, 10, \"2023-01-01T00:00:00.000Z\", \"2023-01-08T00:00:00.000Z\") | SORT size_bucket, date_bucket | LIMIT 100"
+    },
+
+    {
+      "name": "esql_keyword_terms",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | STATS count=COUNT(*) BY aws.cloudwatch.log_stream | SORT count DESC | LIMIT 500"
+    },
+    {
+      "name": "esql_keyword_terms_low_cardinality",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | STATS count=COUNT(*) BY aws.cloudwatch.log_stream | SORT count DESC | LIMIT 50"
+    },
+    {
+      "name": "esql_multi_terms_keyword",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-05T00:00:00.000Z\" AND @timestamp < \"2023-01-05T05:00:00.000Z\" | STATS count=COUNT(*) BY process.name, cloud.region | SORT count DESC | LIMIT 10"
+    },
+    {
+      "name": "esql_multi_terms",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-02T00:00:00.000Z\" AND @timestamp < \"2023-01-02T10:00:00.000Z\" | STATS count=COUNT(*) BY process.name, cloud.region | SORT process.name DESC, cloud.region ASC | LIMIT 100"
+    },
+    {
+      "name": "esql_multi_terms_three_keyword",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-02T00:00:00.000Z\" AND @timestamp < \"2023-01-02T10:00:00.000Z\" | STATS count=COUNT(*) BY process.name, cloud.region, aws.cloudwatch.log_stream | SORT process.name DESC, cloud.region ASC, aws.cloudwatch.log_stream ASC | LIMIT 100"
+    },
+    {
+      "name": "esql_date_histogram_daily",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2022-12-30T00:00:00.000Z\" AND @timestamp < \"2023-01-07T12:00:00.000Z\" | STATS count=COUNT(*) BY bucket=DATE_TRUNC(1 day, @timestamp) | SORT bucket | LIMIT 100"
+    },
+
+    {
+      "name": "esql_range_field_conjunction_big_range_big_term_query",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE process.name == \"systemd\" AND metrics.size >= 1 AND metrics.size <= 100 | LIMIT 100"
+    },
+    {
+      "name": "esql_range_field_disjunction_big_range_small_term_query",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE aws.cloudwatch.log_stream == \"indigodagger\" OR (metrics.size >= 1 AND metrics.size <= 100) | LIMIT 100"
+    },
+    {
+      "name": "esql_range_field_conjunction_small_range_small_term_query",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE aws.cloudwatch.log_stream == \"indigodagger\" OR (metrics.size >= 10 AND metrics.size <= 20) | LIMIT 100"
+    },
+    {
+      "name": "esql_range_field_conjunction_small_range_big_term_query",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE metrics.size >= 20 AND metrics.size <= 30 | LIMIT 100"
+    },
+
+    {
+      "name": "esql_query_string_on_message",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE QSTR(\"message: monkey jackal bear\") | LIMIT 100"
+    },
+    {
+      "name": "esql_query_string_on_message_filtered",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-03T00:00:00.000Z\" AND @timestamp < \"2023-01-03T10:00:00.000Z\" AND QSTR(\"message: monkey jackal bear\") | LIMIT 100"
+    },
+    {
+      "name": "esql_query_string_on_message_filtered_sorted_num",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-03T00:00:00.000Z\" AND @timestamp < \"2023-01-03T10:00:00.000Z\" AND QSTR(\"message: monkey jackal bear\") | SORT @timestamp ASC | LIMIT 100"
+    }

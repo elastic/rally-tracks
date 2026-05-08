@@ -1,12 +1,28 @@
 # Random Vector Track
 
-This track is intended for benchmarking filtered vector search using randomly generated vectors.
+This track is intended for benchmarking filtered vector search using randomly generated vectors in a **multi-partition** setup.
 By default, it uses the `bbq_flat` `vector_index_type` to evaluate the performance of brute-force search with partition ID-based filtering.
 
 The `paragraph_size` parameter determines how many random vectors are indexed per document.
 
 * If `paragraph_size` is set to `1` (the default), each document contains a single top-level random vector.
 * If `paragraph_size` is greater than `1`, that number of random vectors is indexed as nested fields within each document.
+
+## Multi-Partition Model
+
+Partitions are organized into three tiers with configurable counts:
+
+* **Small partitions** (`small_partitions`, default: 100): 1,000–10,000 documents each
+* **Medium partitions** (`medium_partitions`, default: 20): 10,000–100,000 documents each
+* **Large partitions** (`large_partitions`, default: 5): 100,000–1,000,000 documents each
+
+The distribution follows a realistic pattern: many small partitions, fewer medium, and fewest large.
+
+Partitions are named by tier (for example, `small-0`, `medium-3`, `large-1`). During indexing, documents are assigned to partitions via two-level weighted random sampling: a tier is chosen proportional to the tier's aggregate expected size, then a partition within that tier is chosen uniformly. This avoids materializing a list of every partition, keeping memory usage constant regardless of partition count.
+
+Partition selection and vector generation are non-deterministic across runs — this was also the case in prior versions. The former `partition_seed` parameter only controlled per-partition target sizes, not runtime document assignment. Since the new design derives tier weights from fixed range midpoints rather than per-partition sizes, `partition_seed` is no longer needed. Reproducibility comes from the statistical distribution (tier counts and size ranges), not from identical document sequences.
+
+The index is sorted by `partition_id` and can optionally be routed by `partition_id`, keeping each partition's data co-located.
 
 ## Indexing
 
@@ -25,15 +41,31 @@ The total number of documents indexed is:
 Each document indexed includes:
 
 * A random vector with `dims` dimensions.
-* A randomly assigned partition ID.
+* A partition ID assigned via weighted random selection.
 
-The index is sorted by partition ID. 
+The index is sorted by partition ID and can optionally be routed by partition ID.
 This ensures that vectors from the same partition are stored close together, improving the efficiency of filtered searches.
 
 ## Search Operations
 
-Search operations involve filtering by a random partition ID and scoring against a random query vector. 
-These operations are executed against the index using various DSL flavors, including script score and knn section.
+Search tasks are broken up by partition tier to separately measure QPS and latency for small, medium, and large partitions:
+
+* `small-partition-search`: Queries only small-tier partitions
+* `medium-partition-search`: Queries only medium-tier partitions
+* `large-partition-search`: Queries only large-tier partitions
+
+Each search phase filters by a randomly chosen partition ID within the tier and scores against a random query vector.
+
+## Nightly Benchmarking
+
+For nightly runs, use the following recommended parameters:
+
+```
+--track-params="dims:1024,vector_index_type:bbq_flat"
+--track-params="dims:1024,vector_index_type:bbq_disk"
+```
+
+Run both `bbq_flat` and `bbq_disk` to capture performance on both index types.
 
 ### Parameters
 
@@ -47,9 +79,13 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - index_clients (default: 1)
  - index_iterations (default: 1000)
  - index_bulk_size (default: 1000)
- - search_iterations (default: 1000)
+ - search_iterations (default: 10000)
  - search_clients (default: 8)
- - dims (default: 128)
- - partitions (default: 1000)
- - rescore_oversample (default: 0)
+ - dims (default: 128): Number of dimensions for the random vectors. Use 1024 for nightly runs.
+ - small_partitions (default: 100): Number of small partitions (1k–10k docs each).
+ - medium_partitions (default: 20): Number of medium partitions (10k–100k docs each).
+ - large_partitions (default: 5): Number of large partitions (100k–1M docs each).
+ - custom_routing (default: false): Enable routing by partition ID when the routing template is selected.
+ - rescore_oversample (default: -1): `-1` uses the index default, `0` disables rescore, and values greater than `0` set an explicit oversample.
  - vector_index_element_type (default: "float"): Sets the dense_vector element type.
+ - enable_experimental_features (default: false): Enables experimental dense vector features that may break backward compatibility.

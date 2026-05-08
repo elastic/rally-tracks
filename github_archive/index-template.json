@@ -1,7 +1,6 @@
 {% import "rally.helpers" as rally with context %}
 {%- set p_use_ingest_pipeline = use_ingest_pipeline | default(true) %}
 {%- set p_data_stream = data_stream | default(false) %}
-{% set p_number_of_shards = number_of_shards | default(1) -%}
 {% set p_number_of_replicas = number_of_replicas | default(0) -%}
 {
   "index_patterns": ["gharchive*"],
@@ -19,7 +18,9 @@
         "number_of_replicas": "{{p_number_of_replicas}}",
         {% endif -%}
         {%- if build_flavor != "serverless" or serverless_operator == true -%}
-        "number_of_shards": "{{p_number_of_shards}}",
+        {% if number_of_shards is defined -%}
+          "number_of_shards": "{{number_of_shards}}",
+        {%- endif -%}
         "requests.cache.enable": false,
         {% endif -%}
         {# non-serverless-index-settings-marker-end #}

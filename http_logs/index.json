@@ -10,8 +10,8 @@
     {% if synthetic_source_keep %}
     "index.mapping.synthetic_source_keep": "{{synthetic_source_keep}}",
     {% endif %}
-    {% if use_doc_values_skipper %}
-    "index.mapping.use_doc_values_skipper" : "{{ use_doc_values_skipper | tojson }}",
+    {% if use_doc_values_skipper | default(true)  %}
+    "index.mapping.use_doc_values_skipper" : "true",
     {% endif %}
     "index.sort.field": ["@timestamp"],
     "index.sort.order":["desc"]

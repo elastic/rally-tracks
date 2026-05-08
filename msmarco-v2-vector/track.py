@@ -1,17 +1,22 @@
 import bz2
 import csv
 import json
+import logging
 import os
-import random
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
+
+from esrally.driver import runner
+
+logger = logging.getLogger(__name__)
 
 Qrels = Dict[str, Dict[str, int]]
 Results = Dict[str, Dict[str, float]]
 
 QUERIES_FILENAME: str = "queries.json.bz2"
 QUERIES_RECALL_FILENAME: str = "queries-recall.json.bz2"
+QUERIES_RECALL_10M_FILENAME: str = "queries-recall-10m.json.bz2"
 
 
 def extract_vector_operations_count(knn_result):
@@ -82,29 +87,56 @@ class KnnParamSource:
         self._cache = params.get("cache", False)
         self._params = params
         self._queries = []
+        self._random_query = params.get("random-query", False)
+        self._dims = params.get("dims")
 
-        cwd = os.path.dirname(__file__)
-        with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
-            for vector_query in queries_file:
-                self._queries.append(json.loads(vector_query))
+        if self._random_query:
+            if self._dims is None:
+                raise ValueError("'dims' parameter is required when 'random-vector-query' is enabled")
+            if not isinstance(self._dims, int) or self._dims <= 0:
+                raise ValueError(f"'dims' must be a positive integer, got [{self._dims}]")
+            self._maxIters = 1
+        else:
+            cwd = os.path.dirname(__file__)
+            with bz2.open(os.path.join(cwd, QUERIES_FILENAME), "r") as queries_file:
+                for vector_query in queries_file:
+                    self._queries.append(json.loads(vector_query))
+            self._maxIters = len(self._queries)
 
-        self._queries = random.shuffle(self._queries)
         self._iters = 0
-        self._maxIters = len(self._queries)
         self.infinite = True
+
+    def _random_normalized_vector(self, dims):
+        import numpy as np
+
+        v = np.random.normal(size=dims)
+        v /= np.linalg.norm(v)
+        return v.tolist()
 
     def partition(self, partition_index, total_partitions):
         return self
 
     def params(self):
         top_k = self._params.get("k", 10)
+        visit_percentage = self._params.get("visit-percentage")
         num_candidates = self._params.get("num-candidates", 50)
-        query_vec = self._queries[self._iters]
-        knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
+
+        if self._random_query:
+            query_vec = self._random_normalized_vector(self._dims)
+        else:
+            query_vec = self._queries[self._iters]
+
+        if visit_percentage is None:
+            knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "num_candidates": num_candidates}
+        else:
+            knn_query = {"field": "emb", "query_vector": query_vec, "k": top_k, "visit_percentage": visit_percentage}
+
         if self._params.get("oversample-rescore", -1) >= 0:
             knn_query["rescore_vector"] = {"oversample": self._params.get("oversample-rescore")}
+
         if "filter" in self._params:
             knn_query["filter"] = self._params["filter"]
+
         result = {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
@@ -139,7 +171,9 @@ class KnnRecallParamSource:
             "cache": self._params.get("cache", False),
             "size": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
+            "visit_percentage": self._params.get("visit-percentage", -1),
             "oversample_rescore": self._params.get("oversample-rescore", -1),
+            "recall_doc_set": self._params.get("recall-doc-set", -1),
         }
 
 
@@ -147,8 +181,10 @@ class KnnRecallRunner:
     async def __call__(self, es, params):
         top_k = params["size"]
         num_candidates = params["num_candidates"]
+        visit_percentage = params["visit_percentage"]
         index = params["index"]
         request_cache = params["cache"]
+        recall_doc_set = params["recall_doc_set"]
 
         cwd = os.path.dirname(__file__)
         qrels = read_qrels(os.path.join(cwd, "qrels.tsv"))
@@ -158,12 +194,22 @@ class KnnRecallRunner:
         exact_total = 0
         min_recall = top_k
         nodes_visited = []
-        with bz2.open(os.path.join(cwd, QUERIES_RECALL_FILENAME), "r") as queries_file:
+
+        if recall_doc_set == "10m":
+            queries_recall = QUERIES_RECALL_10M_FILENAME
+        else:
+            queries_recall = QUERIES_RECALL_FILENAME
+        logger.info(f"recall_doc_set={recall_doc_set!r} (type={type(recall_doc_set).__name__}), using recall file: {queries_recall}")
+
+        with bz2.open(os.path.join(cwd, queries_recall), "r") as queries_file:
             for line in queries_file:
                 query = json.loads(line)
                 query_id = query["query_id"]
 
-                knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}
+                if visit_percentage is not None and visit_percentage > 0:
+                    knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "visit_percentage": visit_percentage}
+                else:
+                    knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}
                 if params["oversample_rescore"] >= 0:
                     knn_query["rescore_vector"] = {"oversample": params["oversample_rescore"]}
                 body = {
@@ -191,7 +237,7 @@ class KnnRecallRunner:
                 min_recall = min(min_recall, current_recall)
         relevance_res = calc_ndcg(qrels, results, [top_k])
         best_relevance_res = calc_ndcg(qrels, best_results, [top_k])
-        return (
+        result = (
             {
                 f"best_ndcg_{top_k}": best_relevance_res[f"ndcg_cut@{top_k}"],
                 f"ndcg_{top_k}": relevance_res[f"ndcg_cut@{top_k}"],
@@ -199,18 +245,150 @@ class KnnRecallRunner:
                 "min_recall": min_recall,
                 "k": top_k,
                 "num_candidates": num_candidates,
+                "visit_percentage": visit_percentage,
                 "avg_nodes_visited": statistics.mean(nodes_visited) if any([x > 0 for x in nodes_visited]) else None,
                 "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99) if any([x > 0 for x in nodes_visited]) else None,
             }
             if exact_total > 0
             else None
         )
+        logger.info(f"Recall results: {result}")
+        return result
 
     def __repr__(self, *args, **kwargs):
         return "knn-recall"
 
 
+class HybridParamSource:
+    def __init__(self, track, params, **kwargs):
+        # choose a suitable index: if there is only one defined for this track
+        # choose that one, but let the user always override index
+        if len(track.indices) == 1:
+            default_index = track.indices[0].name
+        else:
+            default_index = "_all"
+
+        self._index_name = params.get("index", default_index)
+        self._cache = params.get("cache", False)
+        self._size = params.get("size", 10)
+        self._source = params.get("source", True)
+        self._params = params
+        self._queries = []
+
+        cwd = os.path.dirname(__file__)
+        with bz2.open(os.path.join(cwd, QUERIES_RECALL_FILENAME), "r") as queries_file:
+            for vector_query in queries_file:
+                self._queries.append(json.loads(vector_query))
+        self._iters = 0
+        self._maxIters = len(self._queries)
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        return self
+
+    def params(self):
+        top_k = self._params.get("k", 10)
+        num_candidates = self._params.get("num-candidates", top_k * 1.5)
+
+        query = self._queries[self._iters]
+        self._iters += 1
+        if self._iters >= self._maxIters:
+            self._iters = 0
+
+        knn_query = {"field": "emb", "query_vector": query["emb"], "k": top_k, "num_candidates": num_candidates}
+        if self._params.get("oversample-rescore", -1) >= 0:
+            knn_query["rescore_vector"] = {"oversample": self._params.get("oversample-rescore")}
+        if "filter" in self._params:
+            knn_query["filter"] = self._params["filter"]
+
+        knn_retriever = {"knn": knn_query}
+
+        standard_retriever = {
+            "standard": {"query": {"bool": {"should": [{"match": {"title": query["text"]}}, {"match": {"text": query["text"]}}]}}}
+        }
+
+        return {
+            "index": self._index_name,
+            "body": {
+                "_source": self._source,
+                "retriever": {"rrf": {"retrievers": [standard_retriever, knn_retriever], "rank_window_size": self._size}},
+                "size": self._size,
+            },
+        }
+
+
+class EsqlHybridParamSource:
+    def __init__(self, track, params, **kwargs):
+        # choose a suitable index: if there is only one defined for this track
+        # choose that one, but let the user always override index
+        if len(track.indices) == 1:
+            default_index = track.indices[0].name
+        else:
+            default_index = "_all"
+
+        self._index_name = params.get("index", default_index)
+        self._cache = params.get("cache", False)
+        self._size = params.get("size", 10)
+        self._keep_all = params.get("keep-all", True)
+        self._params = params
+        self._queries = []
+
+        cwd = os.path.dirname(__file__)
+        with bz2.open(os.path.join(cwd, QUERIES_RECALL_FILENAME), "r") as queries_file:
+            for vector_query in queries_file:
+                self._queries.append(json.loads(vector_query))
+        self._iters = 0
+        self._maxIters = len(self._queries)
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        return self
+
+    def params(self):
+        top_k = self._params.get("k", 10)
+        num_candidates = self._params.get("num-candidates", None)
+
+        query = self._queries[self._iters]
+        self._iters += 1
+        if self._iters >= self._maxIters:
+            self._iters = 0
+
+        options = []
+        if num_candidates is not None:
+            options.append(f'"min_candidates":{num_candidates}')
+        options.append(f'"k":{top_k}')
+        if self._params.get("oversample-rescore", -1) >= 0:
+            options.append(f'"rescore_oversample":{self._params.get("oversample-rescore")}')
+        knn_options = "{" + ", ".join(options) + "}"
+        knn_query = f"WHERE KNN(emb, ?query_vector, {knn_options})"
+
+        if "filter" in self._params:
+            knn_query += " and (" + self._params["filter"] + ")"
+
+        lexical_query = f"WHERE MATCH(title, ?query_text) OR MATCH(text, ?query_text)"
+
+        hybrid_query = f"FROM {self._index_name} METADATA _index, _id, _score"
+        hybrid_query += (
+            f" | FORK"
+            f" ({lexical_query} | SORT _score DESC | LIMIT {self._size} | DROP emb )"
+            f" ({knn_query} | SORT _score DESC | LIMIT {self._size} | DROP emb)"
+            f" | FUSE | SORT _score DESC"
+        )
+
+        if not self._keep_all:
+            hybrid_query += " | KEEP _index, _id, _score"
+
+        hybrid_query += f" | LIMIT {self._size}"
+
+        query_vector = query["emb"]
+        query_text = query["text"]
+        params = [{"query_vector": query_vector}, {"query_text": query_text}]
+        return {"query": hybrid_query, "body": {"params": params}}
+
+
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
+    registry.register_param_source("hybrid-bm25-knn-param-source", HybridParamSource)
+    registry.register_param_source("esql-hybrid-bm25-knn-param-source", EsqlHybridParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

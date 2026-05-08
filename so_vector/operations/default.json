@@ -36,6 +36,7 @@
   "name": "knn-search-10-50-java",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "k": 10,
   "num_candidates": 50,
   "filter": {
@@ -58,6 +59,7 @@
   "name": "knn-search-10-50-css",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "k": 10,
   "num_candidates": 50,
   "filter": {
@@ -80,6 +82,7 @@
   "name": "knn-search-10-50-concurrency",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "k": 10,
   "num_candidates": 50,
   "filter": {
@@ -118,6 +121,7 @@
   "name": "knn-search-10-50-random-10-percent",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "k": 10,
   "num_candidates": 50,
   "filter": {
@@ -156,6 +160,7 @@
   "name": "knn-search-100-300-random-10-percent",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "k": 100,
   "num_candidates": 300,
   "filter": {
@@ -194,6 +199,7 @@
   "name": "knn-search-10-50-random-20-percent",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "k": 10,
   "num_candidates": 50,
   "filter": {
@@ -216,6 +222,7 @@
   "name": "knn-search-100-300-random-20-percent",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "k": 100,
   "num_candidates": 300,
   "filter": {
@@ -237,8 +244,9 @@
 {
   "name": "knn-search-default-match-all",
   "operation-type": "search",
-  "param-source": "knn-param-source"
-},
+  "param-source": "knn-param-source",
+  "detailed-results": true
+  },
 {
   "name": "esql-knn-search-default-match-all",
   "operation-type": "esql",
@@ -260,6 +268,7 @@
   "name": "knn-search-default-random-20-percent",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "filter": {
     "range": {
       "questionId": {
@@ -301,6 +310,7 @@
   "name": "knn-search-100-300-match-all",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "k": 100,
   "num_candidates": 300
 },
@@ -331,6 +341,7 @@
   "name": "script-score-query-concurrency",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "exact": true,
   "k": 10,
   "filter": {
@@ -353,6 +364,7 @@
   "name": "script-score-query-acceptedAnswerId",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "exact": true,
   "k": 10,
   "filter": {
@@ -373,6 +385,7 @@
   "name": "script-score-query-match-all",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "exact": true,
   "k": 10
 },
@@ -394,6 +407,7 @@
   "name": "script-score-query-10-50-random-10-percent",
   "operation-type": "search",
   "param-source": "knn-param-source",
+  "detailed-results": true,
   "exact": true,
   "k": 10,
   "filter": {

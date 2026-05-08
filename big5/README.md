@@ -87,3 +87,4 @@ The following parameters are available:
 * `target_opensearch` (default: false) - Whether the target is an OpenSearch cluster
 * `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
 * `iterations` (default: 1000) - Number of measurement iterations that each client executes.
+* `query_clients` (default: 1) - Number of clients issuing queries in parallel. Applies to the `big5-esql` challenge only; ignored by the default Big5 QueryDSL challenge.

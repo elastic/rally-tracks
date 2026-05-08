@@ -1,0 +1,217 @@
+{
+  "name": "big5-esql",
+  "description": "ESQL equivalents of the Big5 QueryDSL benchmarks",
+  "schedule": [
+    {
+      "operation": "create-ilm-policy"
+    },
+    {
+      "operation": "create-index-template"
+    },
+    {
+      "operation": "create-data-stream"
+    },
+    {
+      "operation": "bulk-index",
+      "clients": {{ bulk_indexing_clients | default(1) }}
+    },
+    {
+      "operation": "esql_default",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_desc_sort_timestamp",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_asc_sort_timestamp",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_desc_sort_with_after_timestamp",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_asc_sort_with_after_timestamp",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_desc_sort_timestamp_with_match",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_asc_sort_timestamp_with_match",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_term",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_multi_terms_keyword",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_keyword_terms",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_keyword_terms_low_cardinality",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_multi_terms",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_multi_terms_three_keyword",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_date_histogram_daily",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_numeric",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_keyword_in_range",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_date_histogram_hourly_agg",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_date_histogram_minute_agg",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_query_string_on_message",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_query_string_on_message_filtered",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_query_string_on_message_filtered_sorted_num",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_keyword_with_match",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_numeric_desc",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_numeric_asc",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_numeric_desc_with_match",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_sort_numeric_asc_with_match",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_field_conjunction_big_range_big_term_query",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_field_disjunction_big_range_small_term_query",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_field_conjunction_small_range_small_term_query",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_field_conjunction_small_range_big_term_query",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_auto_date_histo",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_range_auto_date_histo_with_metrics",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    }
+  ]
+}

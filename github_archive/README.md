@@ -411,7 +411,7 @@ Track parameters are specified using `--track-params`; e.g., `--track-params="bu
 
 | Parameter | Default | Description |
 | --- | --- | --- |
-| `bulk_size` | `5000` | The number of batched documents per bulk request. |
+| `bulk_size` | `1000` | The number of batched documents per bulk request. |
 | `bulk_indexing_clients` | `8` | Number of clients issuing bulk indexing requests |
 | `cluster_health` | `green` | Minimum cluster status required before proceeding to bulk indexing. Valid values are `green`, `yellow`, and `red`. |
 | `codec` | `default` | The index compression codec to use. Use `best_compression` for higher compression at the cost of CPU. |
@@ -425,6 +425,7 @@ Track parameters are specified using `--track-params`; e.g., `--track-params="bu
 | `multi_target` | `false` | Index to multiple indices by event type. |
 | `number_of_shards` | `1` | Set the number of index primary shards. |
 | `number_of_replicas` | `0` | Set the number of replica shards per primary. |
+| `pre_index_bulk_indexing_clients` | `8` | The number of bulk indexing clients when indexing the base corpus. |
 | `refresh_interval` | unest | Set the index refresh interval. |
 | `runtime_bulk_indexing_clients` | `8` | The number of bulk indexing clients during parallel indexing and search tasks. |
 | `runtime_bulk_size` | `100` | The number of batched documents per bulk request during parallel indexing and search tasks. |

@@ -34,6 +34,27 @@
     },
 
     {
+      "name": "from_idx_limit_1_by_key_1000",
+      "operation-type": "esql",
+      "query": "FROM idx_* | LIMIT 1 BY key_1000"
+    },
+    {
+      "name": "from_idx_limit_10_by_key_1000",
+      "operation-type": "esql",
+      "query": "FROM idx_* | LIMIT 10 BY key_1000"
+    },
+    {
+      "name": "from_idx_limit_1000_by_key_1000",
+      "operation-type": "esql",
+      "query": "FROM idx_* | LIMIT 1000 BY key_1000"
+    },
+    {
+      "name": "from_idx_limit_10000_by_key_1000",
+      "operation-type": "esql",
+      "query": "FROM idx_* | LIMIT 10000 BY key_1000"
+    },
+
+    {
       "name": "from_idx_limit_1_drop_null",
       "operation-type": "esql",
       "query": "FROM idx_* | limit 1",

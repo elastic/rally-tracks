@@ -5,54 +5,16 @@
   "schedule": [
     {% include "tasks/index-setup.json" %},
     {
-      "name": "setup-pipeline",
-      "operation": {
-        "operation-type": "put-pipeline",
-        "id": "logs@stream.processing",
-        "body": {
-          "description": "Pipeline for processing logs stream",
-          "processors": [
-            {
-              "set": {
-                "description": "If '@timestamp' is missing, set it with the ingest timestamp",
-                "field": "@timestamp",
-                "override": false,
-                "copy_from": "_ingest.timestamp"
-              }
-            },
-            {
-              "normalize_for_stream": {}
-            },
-            {
-              "script": {
-                "source": "ctx[\"stream.name\"] = params.field",
-                "lang": "painless",
-                "params": {
-                  "field": "logs"
-                }
-              }
-            },
-            {
-              "pipeline": {
-                "name": "logs@stream.reroutes",
-                "ignore_missing_pipeline": true
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "setup-redirect",
       "operation": {
         "operation-type": "put-pipeline",
         "id": "logs@custom",
         "body": {
-          "description": "Sends all data to the 'logs' index. This is easier than changing the index name in the source.",
+          "description": "Sends all data to the stream. This is easier than changing the index name in the source.",
           "processors": [
             {
               "reroute": {
-                "destination": "logs"
+                "destination": "{{ stream_name | default('logs.ecs') }}"
               }
             }
           ]
@@ -69,7 +31,7 @@
           "processors": [
             {
               "reroute": {
-                "destination": "logs"
+                "destination": "{{ stream_name | default('logs.ecs') }}"
               }
             }
           ]
@@ -97,14 +59,14 @@
       "name": "compression-stats",
       "operation": {
         "operation-type": "compression-statistics",
-        "data-stream": "logs"
+        "data-stream": "{{ stream_name | default('logs.ecs') }}"
       }
     },
     {
       "name": "force-merge-datastreams",
       "operation": {
         "operation-type": "force-merge",
-        "index": "logs",
+        "index": "{{ stream_name | default('logs.ecs') }}",
         "mode": "polling",
         "max-num-segments": 1,
         "request-timeout": 60
@@ -114,7 +76,7 @@
       "name": "compression-stats-after-merge",
       "operation": {
         "operation-type": "compression-statistics",
-        "data-stream": "logs"
+        "data-stream": "{{ stream_name | default('logs.ecs') }}"
       }
     },
     {

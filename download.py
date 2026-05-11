@@ -239,12 +239,16 @@ def download_file(url: str, dest: Path) -> bool:
     """Download url to dest, streaming in chunks.  Returns True on success."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     print(f"  ↓  {url}")
+    tmp = dest.with_suffix(dest.suffix + ".tmp")
     try:
         req = urllib.request.Request(url)
-        with urllib.request.urlopen(req, context=_ssl_context()) as resp:
-            with open(dest, "wb") as fh:
+        with urllib.request.urlopen(req, context=_ssl_context(), timeout=300) as resp:
+            with open(tmp, "wb") as fh:
                 shutil.copyfileobj(resp, fh)
+        tmp.rename(dest)
         return True
+    except TimeoutError:
+        print(f"     WARN download timed out after  300 s — {url}", file=sys.stderr)
     except ssl.SSLCertVerificationError as exc:
         print(
             f"     SSL certificate verification failed: {exc}\n"
@@ -257,6 +261,9 @@ def download_file(url: str, dest: Path) -> bool:
         print(f"     WARN {exc.code} {exc.reason} — {url}", file=sys.stderr)
     except urllib.error.URLError as exc:
         print(f"     WARN {exc.reason} — {url}", file=sys.stderr)
+    finally:
+        if tmp.exists():
+            tmp.unlink()
     return False
 
 

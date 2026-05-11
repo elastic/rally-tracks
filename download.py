@@ -241,6 +241,9 @@ def _ssl_context() -> ssl.SSLContext:
         return ssl.create_default_context()
 
 
+_DOWNLOAD_TIMEOUT_S = 600  # 10 minutes; covers both connect and read
+
+
 def download_file(url: str, dest: Path) -> bool:
     """Download url to dest, streaming in chunks.  Returns True on success."""
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -248,7 +251,7 @@ def download_file(url: str, dest: Path) -> bool:
     tmp = dest.with_suffix(dest.suffix + ".tmp")
     try:
         req = urllib.request.Request(url)
-        with urllib.request.urlopen(req, context=_ssl_context(), timeout=300) as resp:
+        with urllib.request.urlopen(req, context=_ssl_context(), timeout=_DOWNLOAD_TIMEOUT_S) as resp:
             with open(tmp, "wb") as fh:
                 shutil.copyfileobj(resp, fh)
         tmp.replace(dest)
@@ -374,14 +377,9 @@ def main() -> None:
             if download_file(url, dest):
                 local_files.append(dest)
             else:
-                failed_urls.append(url)
-
-    if failed_urls:
-        print(f"\nError: {len(failed_urls)} file(s) failed to download:", file=sys.stderr)
-        for url in failed_urls:
-            print(f"  {url}", file=sys.stderr)
-        print("Archive not created. Fix the errors above and retry.", file=sys.stderr)
-        sys.exit(1)
+                print(f"\nError: download failed for {url}", file=sys.stderr)
+                print("Aborting — fix the error above and retry.", file=sys.stderr)
+                sys.exit(1)
 
     # ── 4. Build tar archive ──────────────────────────────────────────────
     archive_name = f"rally-track-data-{track.replace('/', '-')}.tar"

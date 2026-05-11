@@ -26,6 +26,7 @@ import subprocess
 import sys
 import tarfile
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -159,14 +160,21 @@ def corpus_files(track_data: dict) -> list[tuple[str, str]]:
     Return de-duplicated (full_url, local_relative_path) pairs for every
     source-file referenced in the track's corpora section.
 
-    local_relative_path mirrors the URL path after the CDN host so Rally can
-    locate the cached files under ~/.rally/benchmarks/data/.
+    Rally uses two different on-disk layouts depending on the download source:
+
+    - CDN (rally-tracks.elastic.co): files are stored under the URL path,
+      e.g. observability/logging/apache/apache.access/raw/document-0.json.bz2
+
+    - Non-CDN (e.g. storage.googleapis.com): files are stored under the corpus
+      name, e.g. k8s-container/doc-ds-metrics-kubernetes.container.json.bz2
+      matching loader.py: local.dataset.cache/{corpus.name}/{source-file}
     """
     cdn = RALLY_CDN.rstrip("/")
     seen: set[str] = set()
     result: list[tuple[str, str]] = []
 
     for corpus in track_data.get("corpora", []):
+        corpus_name = corpus.get("name", "")
         # base-url may appear at corpus level, document level, or both.
         corpus_base = corpus.get("base-url", "").rstrip("/")
 
@@ -181,14 +189,10 @@ def corpus_files(track_data: dict) -> list[tuple[str, str]]:
                 continue
             seen.add(url)
 
-            # Strip CDN prefix → local relative path under data/
             if url.startswith(cdn + "/"):
-                rel = url[len(cdn) + 1 :]
+                rel = urllib.parse.urlparse(url).path.lstrip("/")
             else:
-                from urllib.parse import urlparse
-
-                parsed = urlparse(url)
-                rel = (parsed.netloc + parsed.path).lstrip("/")
+                rel = f"{corpus_name}/{source}"
 
             result.append((url, rel))
 

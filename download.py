@@ -245,7 +245,7 @@ def download_file(url: str, dest: Path) -> bool:
         with urllib.request.urlopen(req, context=_ssl_context(), timeout=300) as resp:
             with open(tmp, "wb") as fh:
                 shutil.copyfileobj(resp, fh)
-        tmp.rename(dest)
+        tmp.replace(dest)
         return True
     except TimeoutError:
         print(f"     WARN download timed out after  300 s — {url}", file=sys.stderr)

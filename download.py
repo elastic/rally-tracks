@@ -317,6 +317,10 @@ def main() -> None:
 
     # ── 1. Clone or reuse the rally-tracks repository ────────────────────
     if not repo_target.exists():
+        if not shutil.which("git"):
+            print("error: 'git' is required to clone rally-tracks but was not found on PATH.", file=sys.stderr)
+            print("       Install git (https://git-scm.com) and re-run this script.", file=sys.stderr)
+            sys.exit(1)
         print(f"Cloning rally-tracks → {repo_target} …")
         repo_target.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(["git", "clone", REPO_URL, str(repo_target)], check=True)

@@ -17,6 +17,7 @@ Examples:
 """
 
 import argparse
+import functools
 import json
 import re
 import shutil
@@ -216,6 +217,7 @@ def files_txt_entries(track_dir: Path, track: str) -> list[tuple[str, str]]:
 # ---------------------------------------------------------------------------
 
 
+@functools.lru_cache(maxsize=1)
 def _ssl_context() -> ssl.SSLContext:
     """
     Return an SSL context backed by certifi's CA bundle when available
@@ -375,15 +377,21 @@ def main() -> None:
 
     # ── 4. Build tar archive ──────────────────────────────────────────────
     archive_name = f"rally-track-data-{track.replace('/', '-')}.tar"
-    archive_path = Path.cwd() / archive_name
+    # Write next to this script, not in cwd, so the archive is never inside
+    # a directory being archived (which would cause it to include itself).
+    archive_path = Path(__file__).parent.resolve() / archive_name
+
+    def _exclude_archive(tarinfo: tarfile.TarInfo) -> tarfile.TarInfo | None:
+        """Drop the archive file itself if it happens to sit inside a source tree."""
+        return None if Path(tarinfo.name).resolve() == archive_path else tarinfo
 
     print(f"\nBuilding {archive_name} …")
     with tarfile.open(archive_path, "w") as tar:
         # Always include the full cloned track repository
-        tar.add(repo_target, arcname=str(repo_target.relative_to(home)))
+        tar.add(repo_target, arcname=str(repo_target.relative_to(home)), filter=_exclude_archive)
         # Add each downloaded data file at its correct relative path
         for dest in local_files:
-            tar.add(dest, arcname=str(dest.relative_to(home)))
+            tar.add(dest, arcname=str(dest.relative_to(home)), filter=_exclude_archive)
 
     print(f"\nCreated {archive_name}. Next steps:")
     print("  1. Copy it to the user home directory on the target machine(s).")

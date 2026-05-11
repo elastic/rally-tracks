@@ -20,6 +20,7 @@
   "clients": {{ initial_ingest_clients | default(4) | int }},
   "operation": {
     "operation-type": "bulk",
+    "param-source": "bulk-copy-docid-param-source",
     "bulk-size": {{ initial_ingest_bulk_size | default(100) | int }},
     "corpora":  [
       {% for doc_id in p_corpora %}
@@ -67,6 +68,7 @@
         "clients": {{p_update_clients}},
         "operation": {
           "operation-type": "bulk",
+          "param-source": "bulk-copy-docid-param-source",
           "bulk-size": {{p_update_bulk_size}},
           "corpora":  [
             {% for doc_id in p_corpora %}

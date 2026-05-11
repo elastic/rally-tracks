@@ -175,6 +175,8 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
 
 Initial ingest, wait for merges to settle, then run a single parallel phase that updates a percentage of the corpus (by re-indexing documents with the same `_id` from the same corpus) at a target docs/s while running queries. The search task runs until the update task completes (via `completed-by`).
 
+Both bulk tasks use the `bulk-copy-docid-param-source` from `track.py`, which copies each document's `docid` field into the bulk action line as `_id`. The corpus is not rewritten — the `docid` value is left in place as a field and also used as the document `_id`, so re-ingestion overwrites existing documents instead of appending new ones with fresh auto-generated `_id`s.
+
 - Mapping:
     - `vector_index_type` (default: bbq_disk)
 - Initial indexing (always ingests the full configured corpora):

@@ -197,4 +197,12 @@
     "schedule": [
       {{ rally.collect(parts="common/ingest-search-autoscale-schedule.json") }}
     ]
+  },
+  {
+    "name": "parallel-update-search",
+    "description": "Initial ingest, wait for merges, then in parallel update a percentage of the corpus at a target docs/s while running queries",
+    "default": false,
+    "schedule": [
+      {{ rally.collect(parts="common/parallel-update-search-schedule.json") }}
+    ]
   }

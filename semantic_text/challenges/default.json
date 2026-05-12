@@ -35,7 +35,8 @@
         "request-timeout": 1000,
         "include-in-reporting": true
       }
-    },
+    }
+    {%- if force_merge_enabled | default(true) -%},
     {
       "name": "force-merge",
       "operation": {
@@ -45,7 +46,8 @@
         "request-timeout": 7200,
         "include-in-reporting": true
       }
-    },
+    }
+    {%- endif -%},
     {
       "name": "wait-until-merges-finish-after-index",
       "operation": {

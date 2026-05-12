@@ -19,6 +19,7 @@ Examples:
 import argparse
 import functools
 import json
+import os
 import re
 import shutil
 import ssl
@@ -31,8 +32,16 @@ import urllib.request
 from pathlib import Path
 
 RALLY_CDN = "https://rally-tracks.elastic.co"
-ROOT = Path(".rally/benchmarks")
+RALLY_ROOT = Path(".rally/benchmarks")
 REPO_URL = "https://github.com/elastic/rally-tracks.git"
+
+
+def _rally_home() -> Path:
+    """Return the Rally home directory, honouring RALLY_HOME if set."""
+    env = os.environ.get("RALLY_HOME")
+    if env:
+        return Path(env).expanduser().resolve()
+    return Path.home() / ".rally"
 
 
 class TemplateRenderError(Exception):
@@ -155,21 +164,23 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
 # ---------------------------------------------------------------------------
 
 
-def corpus_files(track_data: dict) -> list[tuple[str, str]]:
+def corpus_files(track_data: dict, track: str) -> list[tuple[str, str]]:
     """
     Return de-duplicated (full_url, local_relative_path) pairs for every
     source-file referenced in the track's corpora section.
 
-    Rally uses two different on-disk layouts depending on the download source:
+    Rally stores all corpus files under:
+      local.dataset.cache / <track_basename> / <corpus_name> / <source-file>
 
-    - CDN (rally-tracks.elastic.co): files are stored under the URL path,
-      e.g. observability/logging/apache/apache.access/raw/document-0.json.bz2
+    where track_basename is the last path component of the track name
+    (e.g. "logs" for "elastic/logs").
 
-    - Non-CDN (e.g. storage.googleapis.com): files are stored under the corpus
-      name, e.g. k8s-container/doc-ds-metrics-kubernetes.container.json.bz2
-      matching loader.py: local.dataset.cache/{corpus.name}/{source-file}
+    Non-CDN files (e.g. storage.googleapis.com) omit the track prefix and
+    use just <corpus_name>/<source-file>, matching Rally's loader.py behaviour
+    for externally-hosted corpora.
     """
     cdn = RALLY_CDN.rstrip("/")
+    track_basename = track.split("/")[-1]
     seen: set[str] = set()
     result: list[tuple[str, str]] = []
 
@@ -190,8 +201,10 @@ def corpus_files(track_data: dict) -> list[tuple[str, str]]:
             seen.add(url)
 
             if url.startswith(cdn + "/"):
-                rel = urllib.parse.urlparse(url).path.lstrip("/")
+                # CDN-hosted: Rally caches at <track_basename>/<corpus>/<file>
+                rel = f"{track_basename}/{corpus_name}/{source}"
             else:
+                # Non-CDN (e.g. GCS): Rally caches at <corpus>/<file>
                 rel = f"{corpus_name}/{source}"
 
             result.append((url, rel))
@@ -314,9 +327,9 @@ def main() -> None:
     args = ap.parse_args()
 
     track = args.track
-    home = Path.home()
-    repo_target = home / ROOT / "tracks" / "default"
-    data_root = home / ROOT / "data"
+    rally_home = _rally_home()
+    repo_target = rally_home / "benchmarks" / "tracks" / "default"
+    data_root = rally_home / "benchmarks" / "data"
 
     # ── 1. Clone or reuse the rally-tracks repository ────────────────────
     if not repo_target.exists():
@@ -355,7 +368,7 @@ def main() -> None:
             sys.exit(1)
     else:
         if track_data and track_data.get("corpora"):
-            to_download = corpus_files(track_data)
+            to_download = corpus_files(track_data, track)
             print(f"Found {len(to_download)} corpus file(s) from track.json.")
         else:
             to_download = files_txt_entries(track_dir, track)
@@ -371,7 +384,7 @@ def main() -> None:
     for url, rel in to_download:
         dest = data_root / rel
         if dest.exists() and not args.no_cache:
-            print(f"  ✓  {dest.relative_to(home)}  (cached)")
+            print(f"  ✓  {dest.relative_to(rally_home.parent)}  (cached)")
             local_files.append(dest)
         else:
             if download_file(url, dest):
@@ -391,17 +404,21 @@ def main() -> None:
         """Drop the archive file itself if it happens to sit inside a source tree."""
         return None if Path(tarinfo.name).resolve() == archive_path else tarinfo
 
+    # Tar paths are relative to rally_home.parent so that extracting at ~
+    # (or wherever rally_home lives) places everything correctly.
+    tar_base = rally_home.parent
     print(f"\nBuilding {archive_name} …")
     with tarfile.open(archive_path, "w") as tar:
         # Always include the full cloned track repository
-        tar.add(repo_target, arcname=str(repo_target.relative_to(home)), filter=_exclude_archive)
+        tar.add(repo_target, arcname=str(repo_target.relative_to(tar_base)), filter=_exclude_archive)
         # Add each downloaded data file at its correct relative path
         for dest in local_files:
-            tar.add(dest, arcname=str(dest.relative_to(home)), filter=_exclude_archive)
+            tar.add(dest, arcname=str(dest.relative_to(tar_base)), filter=_exclude_archive)
 
+    rel_root = rally_home.relative_to(tar_base)
     print(f"\nCreated {archive_name}. Next steps:")
-    print("  1. Copy it to the user home directory on the target machine(s).")
-    print(f"  2. Extract with:  tar -xf {archive_name}   (extracts to ~/{ROOT})")
+    print(f"  1. Copy it to {tar_base} on the target machine(s).")
+    print(f"  2. Extract with:  tar -xf {archive_name}   (extracts to ~/{rel_root}/benchmarks)")
 
 
 if __name__ == "__main__":

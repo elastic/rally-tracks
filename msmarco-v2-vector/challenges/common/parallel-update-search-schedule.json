@@ -1,0 +1,118 @@
+{
+  "name": "delete-index",
+  "operation": {
+    "operation-type": "delete-index"
+  }
+},
+{
+  "name": "create-index",
+  "operation": {
+    "operation-type": "create-index"
+  }
+},
+{
+  "name": "check-cluster-health",
+  "operation": "check-cluster-health"
+},
+{% set p_corpora = (corpora | default(["msmarco-v2_base64-initial-indexing-1"])) %}
+{
+  "name": "initial-ingest",
+  "clients": {{ initial_ingest_clients | default(4) | int }},
+  "operation": {
+    "operation-type": "bulk",
+    "param-source": "bulk-copy-docid-param-source",
+    "bulk-size": {{ initial_ingest_bulk_size | default(100) | int }},
+    "corpora":  [
+      {% for doc_id in p_corpora %}
+        {{doc_id | tojson}}
+        {{ ", " if not loop.last else "" }}
+      {% endfor %}]
+  }
+},
+{
+  "name": "refresh-after-initial-ingest",
+  "operation": {
+    "operation-type": "refresh",
+    "request-timeout": 1000,
+    "include-in-reporting": true
+  }
+},
+{
+  "name": "wait-until-merges-finish-after-initial-ingest",
+  "operation": {
+    "operation-type": "index-stats",
+    "index": "_all",
+    "condition": {
+      "path": "_all.total.merges.current",
+      "expected-value": 0
+    },
+    "retry-until-success": true,
+    "retry-wait-period": 10,
+    "include-in-reporting": false
+  }
+}
+{%- set p_vector_index_type = (vector_index_type | default("bbq_disk")) %}
+{%- set p_update_percentage = (update_percentage | default(10)) %}
+{%- set p_update_clients = (update_clients | default(1)) %}
+{%- set p_update_bulk_size = (update_bulk_size | default(100)) %}
+{%- set p_update_target_throughput_docs_per_sec = (update_target_throughput_docs_per_sec | default(1000)) %}
+{%- set p_search_clients = (search_clients | default(4)) %}
+{%- set p_search_target_throughput = (search_target_throughput | default(-1)) %}
+{%- set p_search_warmup_time_period = (search_warmup_time_period | default(60)) %},
+{
+  "parallel": {
+    "completed-by": "parallel-update-c{{p_update_clients}}-b{{p_update_bulk_size}}-p{{p_update_percentage}}",
+    "tasks": [
+      {
+        "name": "parallel-update-c{{p_update_clients}}-b{{p_update_bulk_size}}-p{{p_update_percentage}}",
+        "clients": {{p_update_clients}},
+        "operation": {
+          "operation-type": "bulk",
+          "param-source": "bulk-copy-docid-param-source",
+          "bulk-size": {{p_update_bulk_size}},
+          "corpora":  [
+            {% for doc_id in p_corpora %}
+              {{doc_id | tojson}}
+              {{ ", " if not loop.last else "" }}
+            {% endfor %}],
+          "ingest-percentage": {{p_update_percentage}}
+        },
+        "target-throughput": {{ p_update_target_throughput_docs_per_sec / p_update_bulk_size }}
+      },
+  {%- if p_search_target_throughput < 0 %}
+      {
+        "name": "parallel-search-c{{p_search_clients}}-s10",
+        "clients": {{p_search_clients}},
+        "operation": {
+          "operation-type": "search",
+          "param-source": "knn-param-source",
+          "random-query": true,
+          "dims": 1024,
+          "k": 10,
+          "num-candidates": 100,
+          "visit-percentage": 2,
+          "looped": true
+        },
+        "warmup-time-period": {{p_search_warmup_time_period}}
+      }
+  {%- else %}
+      {
+        "name": "parallel-search-c{{p_search_clients}}-s10-t{{p_search_target_throughput}}",
+        "clients": {{p_search_clients}},
+        "operation": {
+          "operation-type": "search",
+          "param-source": "knn-param-source",
+          "random-query": true,
+          "dims": 1024,
+          "k": 10,
+          "num-candidates": 100,
+          "visit-percentage": 2,
+          "looped": true
+        },
+        "warmup-time-period": {{p_search_warmup_time_period}},
+        "target-throughput": {{p_search_target_throughput}}
+      }
+  {%- endif %}
+    ]
+  }
+}

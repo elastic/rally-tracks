@@ -4,11 +4,13 @@ import json
 import logging
 import os
 import random
+import re
 import statistics
 from collections import defaultdict
 from typing import Any, Dict, List
 
 from esrally.driver import runner
+from esrally.track.params import BulkIndexParamSource
 
 logger = logging.getLogger(__name__)
 
@@ -391,9 +393,78 @@ class EsqlHybridParamSource:
         return {"query": hybrid_query, "body": {"params": params}}
 
 
+class BulkCopyDocIdParamSource:
+    # Wraps Rally's standard bulk param source so each bulk action line carries
+    # _id=<docid> taken from the doc itself. The corpus is not rewritten — the
+    # docid field is read from the JSON doc body and merged into the action
+    # line that Rally already emits. This makes re-ingesting the same corpus
+    # an actual update of existing docs rather than appending new ones under
+    # fresh auto-generated _ids.
+
+    _DOCID_RE = re.compile(rb'"docid"\s*:\s*"([^"]+)"')
+
+    def __init__(self, track, params, **kwargs):
+        self._inner = BulkIndexParamSource(track, params, **kwargs)
+        self.infinite = self._inner.infinite
+
+    def partition(self, partition_index, total_partitions):
+        return _DocIdRewritingPartition(self._inner.partition(partition_index, total_partitions), self._DOCID_RE)
+
+
+class _DocIdRewritingPartition:
+    def __init__(self, inner, docid_re):
+        self._inner = inner
+        self._docid_re = docid_re
+        self.infinite = inner.infinite
+
+    @property
+    def percent_completed(self):
+        return self._inner.percent_completed
+
+    def partition(self, partition_index, total_partitions):
+        return self
+
+    def params(self):
+        p = self._inner.params()
+        body = p["body"]
+        body_was_str = isinstance(body, str)
+        body_bytes = body.encode("utf-8") if body_was_str else body
+        new_body = self._rewrite_body(body_bytes)
+        p["body"] = new_body.decode("utf-8") if body_was_str else new_body
+        return p
+
+    def _rewrite_body(self, body_bytes):
+        lines = body_bytes.split(b"\n")
+        out = []
+        i = 0
+        n = len(lines)
+        while i < n:
+            line = lines[i]
+            if not line:
+                i += 1
+                continue
+            if i + 1 >= n:
+                out.append(line)
+                break
+            doc_line = lines[i + 1]
+            i += 2
+            match = self._docid_re.search(doc_line)
+            if match is None:
+                out.append(line)
+            else:
+                action = json.loads(line)
+                verb = next(iter(action))
+                action[verb]["_id"] = match.group(1).decode("utf-8")
+                out.append(json.dumps(action, separators=(",", ":")).encode("utf-8"))
+            out.append(doc_line)
+        out.append(b"")
+        return b"\n".join(out)
+
+
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_param_source("hybrid-bm25-knn-param-source", HybridParamSource)
     registry.register_param_source("esql-hybrid-bm25-knn-param-source", EsqlHybridParamSource)
+    registry.register_param_source("bulk-copy-docid-param-source", BulkCopyDocIdParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

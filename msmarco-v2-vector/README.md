@@ -171,6 +171,28 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
     - `as_search_clients` (default: [1,2,4,8,16])
     - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
 
+### Parameters for parallel-update-search challenge
+
+Initial ingest, wait for merges to settle, then run a single parallel phase that updates a percentage of the corpus (by re-indexing documents with the same `_id` from the same corpus) at a target docs/s while running queries. The search task runs until the update task completes (via `completed-by`).
+
+Both bulk tasks use the `bulk-copy-docid-param-source` from `track.py`, which copies each document's `docid` field into the bulk action line as `_id`. The corpus is not rewritten — the `docid` value is left in place as a field and also used as the document `_id`, so re-ingestion overwrites existing documents instead of appending new ones with fresh auto-generated `_id`s.
+
+- Mapping:
+    - `vector_index_type` (default: bbq_hnsw)
+- Initial indexing (always ingests the full configured corpora):
+    - `corpora` (default: `["msmarco-v2_base64-initial-indexing-1"]`): The corpora to ingest and later target with updates. The update task re-indexes documents from this same set so they remain true updates rather than new docs.
+    - `initial_ingest_clients` (default: 4)
+    - `initial_ingest_bulk_size` (default: 100)
+- Update operation (X% of the corpus at Y docs/s):
+    - `update_percentage` (default: 10): Percentage of the corpus to update.
+    - `update_clients` (default: 1)
+    - `update_bulk_size` (default: 100)
+    - `update_target_throughput_docs_per_sec` (default: 1000): Update throughput in documents per second. The schedule converts this to the bulks/s value Rally expects via `update_target_throughput_docs_per_sec / update_bulk_size`, so the effective docs/s rate is the value you set, spread across `update_clients`.
+- Search operation:
+    - `search_clients` (default: 4)
+    - `search_target_throughput` (default: -1): Target throughput for the search task in operations per second (one operation = one query). If negative, search runs unthrottled.
+    - `search_warmup_time_period` (default: 60)
+
 ### Parameters for hybrid-search-queries-dsl-and-esql challenge
 
 Use mapping_type = `vectors-with-text` for this track since we perform lexical search on the title and text fields

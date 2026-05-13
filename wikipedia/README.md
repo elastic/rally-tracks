@@ -122,6 +122,24 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
 When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
 
+### Parameters for parallel-update-search challenge
+
+Initial ingest of the full corpus, wait for merges to settle, then run a single parallel phase that updates a percentage of the corpus (by re-indexing the same documents) at a target docs/s while running queries. The search task runs until the update task completes (via `completed-by`).
+
+- Initial indexing (always ingests the full corpus):
+  - `initial_ingest_clients` (default: 4)
+  - `initial_ingest_bulk_size` (default: 100)
+- Update operation (X% of the corpus at Y docs/s):
+  - `update_percentage` (default: 10): Percentage of the corpus to update.
+  - `update_clients` (default: 1)
+  - `update_bulk_size` (default: 100)
+  - `update_target_throughput_docs_per_sec` (default: 1000): Update throughput in documents per second. The schedule converts this to the bulks/s value Rally expects via `update_target_throughput_docs_per_sec / update_bulk_size`, so the effective docs/s rate is the value you set, spread across `update_clients`.
+- Search operation:
+  - `search_clients` (default: 4)
+  - `search_size` (default: 10)
+  - `search_target_throughput` (default: -1): Target throughput for the search task in operations per second (one operation = one query). If negative, search runs unthrottled.
+  - `search_warmup_time_period` (default: 60)
+
 ### Parameters for esql-full-text-functions challenge
 
 - Initial indexing:

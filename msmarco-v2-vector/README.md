@@ -178,7 +178,7 @@ Initial ingest, wait for merges to settle, then run a single parallel phase that
 Both bulk tasks use the `bulk-copy-docid-param-source` from `track.py`, which copies each document's `docid` field into the bulk action line as `_id`. The corpus is not rewritten — the `docid` value is left in place as a field and also used as the document `_id`, so re-ingestion overwrites existing documents instead of appending new ones with fresh auto-generated `_id`s.
 
 - Mapping:
-    - `vector_index_type` (default: bbq_disk)
+    - `vector_index_type` (default: bbq_hnsw)
 - Initial indexing (always ingests the full configured corpora):
     - `corpora` (default: `["msmarco-v2_base64-initial-indexing-1"]`): The corpora to ingest and later target with updates. The update task re-indexes documents from this same set so they remain true updates rather than new docs.
     - `initial_ingest_clients` (default: 4)

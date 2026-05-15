@@ -1,9 +1,12 @@
 {
+{%- set comma = joiner(",") -%}
   "settings": {
     {% if index_mode is defined %}
-    "index.mode": {{ index_mode | tojson }},
+    {{comma()}}
+    "index.mode": {{ index_mode | tojson }}
     {% endif %}
     {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    {{comma()}}
       {% if preload_pagecache %}
     "index.store.preload": [ "vec", "vex", "vem", "veq", "veqm", "veb", "vebm"],
       {% endif %}

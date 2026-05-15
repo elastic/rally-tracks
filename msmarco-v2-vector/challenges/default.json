@@ -40,8 +40,8 @@
           "path": "_all.total.merges.current",
           "expected-value": 0
         },
-        "retry-until-success": true,
-        "retry-wait-period": 10,
+        "retries": 1440,
+        "retry-wait-period": 30,
         "include-in-reporting": false
       }
     },
@@ -68,8 +68,8 @@
           "path": "_all.total.merges.current",
           "expected-value": 0
         },
-        "retry-until-success": true,
-        "retry-wait-period": 10,
+        "retries": 1440,
+        "retry-wait-period": 30,
         "include-in-reporting": true
       }
     },

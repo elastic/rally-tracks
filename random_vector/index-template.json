@@ -4,6 +4,9 @@
   "data_stream": {},
   "template": {
     "settings": {
+      {% if index_mode is defined %}
+      "index.mode": {{ index_mode | tojson }},
+      {% endif %}
       {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       "number_of_shards": {{number_of_shards | default(1)}},
       "number_of_replicas": {{number_of_replicas | default(0)}}{% if enable_experimental_features | default(false) %},

@@ -1,7 +1,13 @@
 {
+{%- set comma = joiner(",") -%}
   "settings": {
     "index": {
+      {% if index_mode is defined %}
+      {{comma()}}
+      "mode": {{ index_mode | tojson }}
+      {% endif %}
       {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+      {{comma()}}
       "number_of_shards": {{ number_of_shards | default(2) }},
       "number_of_replicas": {{ number_of_replicas | default(0) }}{% if enable_experimental_features | default(false) %},
       "dense_vector.experimental_features": true{% endif %}

@@ -1,8 +1,12 @@
 {% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
 
 {
-  {%- set comma = joiner(",") -%}
+{%- set comma = joiner(",") -%}
   "settings": {
+    {% if index_mode is defined %}
+    {{comma()}}
+    "index.mode": {{ index_mode | tojson }}
+    {% endif %}
     {# non-serverless-index-settings-marker-start #}
     {%- if build_flavor != "serverless" or serverless_operator == true -%}
     {% if preload_pagecache %}

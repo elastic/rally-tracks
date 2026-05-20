@@ -1,0 +1,32 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Benchmark for evaluating offline blob cache warming effectiveness during search shard recovery in serverless Elasticsearch. Forces shard relocations and measures search latency before and after recovery to quantify the impact of cache warming on search performance.",
+  "indices": [
+    {
+      "name": "{{ target_index | default('search_shard_warming') }}",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "pmc",
+      "base-url": "https://rally-tracks.elastic.co/pmc",
+      "documents": [
+        {
+          "source-file": "documents.json.bz2",
+          "document-count": 574199,
+          "compressed-bytes": 5931724449,
+          "uncompressed-bytes": 23256051757
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

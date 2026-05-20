@@ -114,12 +114,11 @@ class KnnParamSource:
         self.infinite = True
 
     def _random_normalized_vector(self, dims):
-        import math
-        import random
+        import numpy as np
 
-        v = [random.gauss(0, 1) for _ in range(dims)]
-        norm = math.sqrt(sum(x * x for x in v))
-        return [x / norm for x in v]
+        v = np.random.normal(size=dims)
+        v /= np.linalg.norm(v)
+        return v.tolist()
 
     def partition(self, partition_index, total_partitions):
         return self

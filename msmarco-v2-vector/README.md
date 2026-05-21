@@ -120,6 +120,13 @@ For running with Base64 encoded strings, use a parameter file like:
 }
 ```
 
+For a 10 million document dataset use
+```
+  "corpora": [
+    "msmarco-v2_base64-10-million"
+  ],
+```
+
 ### Parameters for ingest-autoscale challenge
 
 - Mapping:

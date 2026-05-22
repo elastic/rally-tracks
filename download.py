@@ -2,25 +2,26 @@
 """
 Pre-download Rally track data for offline use.
 
-For tracks that define corpora in track.json (Jinja2 templates), renders the
-template with default parameters and downloads every referenced corpus file.
-For tracks that still use a static files.txt, that is used as a fallback.
+Renders track.json (including Jinja2 templates) with default parameters and
+downloads every referenced corpus file. Local paths match Rally's layout:
+~/.rally/benchmarks/data/<corpus_name>/<source-file>, except elastic/logs and
+elastic/security which use ~/.rally/benchmarks/data/<track>/<corpus_name>/<source-file>.
 
 Usage:
-  ./download.py TRACK [--max-total-download-gb N] [--no-cache]
+  ./download.py TRACK [--track-param KEY=VALUE ...] [--track-params STR] [--no-cache]
 
 Examples:
   ./download.py geonames
   ./download.py elastic/logs
   ./download.py elastic/security
-  ./download.py elastic/logs --max-total-download-gb 36
+  ./download.py elastic/logs --track-param=max_total_download_gb=36
+  ./download.py elastic/logs --track-params="max_total_download_gb:36"
 """
 
 import argparse
 import functools
 import json
 import os
-import re
 import shutil
 import ssl
 import subprocess
@@ -36,65 +37,84 @@ RALLY_ROOT = Path(".rally/benchmarks")
 REPO_URL = "https://github.com/elastic/rally-tracks.git"
 
 
-def _rally_home() -> Path:
-    """Return the Rally home directory, honouring RALLY_HOME if set."""
-    env = os.environ.get("RALLY_HOME")
-    if env:
-        return Path(env).expanduser().resolve()
-    return Path.home() / ".rally"
+def rally_confdir():
+    default_home = os.path.expanduser("~")
+    return os.path.join(os.getenv("RALLY_HOME", default_home), ".rally")
 
 
 class TemplateRenderError(Exception):
     """Raised when a Jinja2 track.json cannot be rendered."""
 
 
+def _convert_param_value(value: str):
+    """Coerce a track-param string to a Python value (mirrors esrally.utils.opts)."""
+    if value.lower() == "true":
+        return True
+    if value.lower() == "false":
+        return False
+    if value.lower() in ("none", "null"):
+        return None
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        pass
+    if (value.startswith("{") and value.endswith("}")) or (value.startswith("[") and value.endswith("]")):
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            pass
+    return value
+
+
+def parse_track_param(spec: str) -> tuple[str, object]:
+    """Parse a single KEY=VALUE or KEY:VALUE track parameter."""
+    for sep in ("=", ":"):
+        if sep in spec:
+            key, value = spec.split(sep, 1)
+            return key.strip(), _convert_param_value(value.strip())
+    raise argparse.ArgumentTypeError(f"track parameter must be KEY=VALUE or KEY:VALUE, got: {spec!r}")
+
+
+def parse_track_params(spec: str) -> dict:
+    """
+    Parse Rally-style --track-params (comma-separated key:value pairs).
+
+    Same format as esrally: ``max_total_download_gb:36,number_of_replicas:0``.
+    """
+    if not spec:
+        return {}
+    try:
+        from esrally.utils import opts
+
+        return opts.to_dict(spec)
+    except ImportError:
+        pass
+    result = {}
+    for item in spec.split(","):
+        item = item.strip()
+        if not item:
+            continue
+        key, value = parse_track_param(item)
+        result[key] = value
+    return result
+
+
+def build_track_params(track_param_args: list[str], track_params: str) -> dict:
+    """Merge --track-param and --track-params into a single template-vars dict."""
+    params = parse_track_params(track_params)
+    for spec in track_param_args:
+        key, value = parse_track_param(spec)
+        params[key] = value
+    return params
+
+
 # ---------------------------------------------------------------------------
 # Template rendering
 # ---------------------------------------------------------------------------
-
-
-def _extract_corpora(rendered: str) -> list | None:
-    """
-    Locate and parse the corpora array from a partially-invalid rendered
-    template using bracket-depth matching.
-
-    A simple regex like r'"corpora"\\s*:\\s*(\\[.*?\\])' will stop at the
-    first closing bracket it finds — which is typically the end of the first
-    nested "documents" array, not the end of the full corpora array.  Walking
-    bracket depth handles arbitrary nesting correctly.
-    """
-    m = re.search(r'"corpora"\s*:\s*\[', rendered)
-    if not m:
-        return None
-
-    start = m.end() - 1  # index of the opening '['
-    depth = 0
-    in_string = False
-    i = start
-
-    while i < len(rendered):
-        ch = rendered[i]
-        if in_string:
-            if ch == "\\":
-                i += 2  # skip escaped character
-                continue
-            if ch == '"':
-                in_string = False
-        else:
-            if ch == '"':
-                in_string = True
-            elif ch == "[":
-                depth += 1
-            elif ch == "]":
-                depth -= 1
-                if depth == 0:
-                    try:
-                        return json.loads(rendered[start : i + 1])
-                    except json.JSONDecodeError:
-                        return None
-        i += 1
-
-    return None
 
 
 def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
@@ -109,18 +129,16 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
 
     source = path.read_text()
 
-    # Plain JSON — no rendering needed
-    if "{%" not in source and "{{" not in source:
-        try:
-            return json.loads(source)
-        except json.JSONDecodeError:
-            return None
+    try:
+        return json.loads(source)
+    except json.JSONDecodeError:
+        pass
 
     try:
         import jinja2
     except ImportError:
         raise TemplateRenderError(
-            "jinja2 is not installed; cannot render templated track.json. " "Install esrally or run `pip install jinja2` and retry."
+            "jinja2 is not installed; cannot render templated track.json. Install esrally or run `pip install jinja2` and retry."
         )
 
     # rally.helpers provides a `collect` macro that globs and inlines other
@@ -146,41 +164,34 @@ def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
     try:
         return json.loads(rendered)
     except json.JSONDecodeError as exc:
-        print(
-            f"Warning: rendered template is not fully valid JSON ({exc}); " "attempting to extract the corpora section only.",
-            file=sys.stderr,
-        )
-        # Salvage just the corpora array using bracket-depth matching so that
-        # nested arrays (e.g. "documents": [...]) are not mistaken for the end
-        # of the corpora array.
-        corpora = _extract_corpora(rendered)
-        if corpora is not None:
-            return {"corpora": corpora}
-        raise TemplateRenderError(f"rendered template is not valid JSON and corpora section could not be extracted: {exc}") from exc
+        raise TemplateRenderError(f"rendered template is not valid JSON: {exc}") from exc
 
 
 # ---------------------------------------------------------------------------
 # Corpus file enumeration
 # ---------------------------------------------------------------------------
 
+# Tracks using shared DataGenerator, which downloads under data_root/<track.name>/.
+_TRACK_PREFIXED_DATA = frozenset({"elastic/logs", "elastic/security"})
+
+
+def corpus_rel_path(track: str, corpus_name: str, source: str) -> str:
+    """
+    Local path under ~/.rally/benchmarks/data for a corpus source file.
+
+    Default (standard Rally tracks): <corpus_name>/<source-file>
+    elastic/logs and elastic/security (DataGenerator): <track>/<corpus_name>/<source-file>
+    """
+    if track in _TRACK_PREFIXED_DATA:
+        return f"{track}/{corpus_name}/{source}"
+    return f"{corpus_name}/{source}"
+
 
 def corpus_files(track_data: dict, track: str) -> list[tuple[str, str]]:
     """
     Return de-duplicated (full_url, local_relative_path) pairs for every
     source-file referenced in the track's corpora section.
-
-    Rally stores all corpus files under:
-      local.dataset.cache / <track_basename> / <corpus_name> / <source-file>
-
-    where track_basename is the last path component of the track name
-    (e.g. "logs" for "elastic/logs").
-
-    Non-CDN files (e.g. storage.googleapis.com) omit the track prefix and
-    use just <corpus_name>/<source-file>, matching Rally's loader.py behaviour
-    for externally-hosted corpora.
     """
-    cdn = RALLY_CDN.rstrip("/")
-    track_basename = track.split("/")[-1]
     seen: set[str] = set()
     result: list[tuple[str, str]] = []
 
@@ -200,33 +211,9 @@ def corpus_files(track_data: dict, track: str) -> list[tuple[str, str]]:
                 continue
             seen.add(url)
 
-            if url.startswith(cdn + "/"):
-                # CDN-hosted: Rally caches at <track_basename>/<corpus>/<file>
-                rel = f"{track_basename}/{corpus_name}/{source}"
-            else:
-                # Non-CDN (e.g. GCS): Rally caches at <corpus>/<file>
-                rel = f"{corpus_name}/{source}"
-
-            result.append((url, rel))
+            result.append((url, corpus_rel_path(track, corpus_name, source)))
 
     return result
-
-
-def files_txt_entries(track_dir: Path, track: str) -> list[tuple[str, str]]:
-    """Read files.txt and return (url, local_relative_path) pairs."""
-    p = track_dir / "files.txt"
-    if not p.exists():
-        return []
-
-    entries = []
-    for line in p.read_text().splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        url = f"{RALLY_CDN}/{track}/{line}"
-        rel = f"{track}/{line}"
-        entries.append((url, rel))
-    return entries
 
 
 # ---------------------------------------------------------------------------
@@ -311,23 +298,27 @@ def main() -> None:
         help="Re-download files even if they already exist locally.",
     )
     ap.add_argument(
-        "--max-total-download-gb",
-        type=int,
-        default=None,
-        metavar="N",
-        dest="max_total_download_gb",
+        "--track-param",
+        action="append",
+        default=[],
+        metavar="KEY=VALUE",
+        dest="track_param",
         help=(
-            "Maps directly to the track parameter max_total_download_gb. "
-            "Controls how many document files are downloaded per corpus: "
-            "files_per_corpus = max(N / num_corpora, 1). "
-            "Defaults to the track's own default (typically 2 × num_corpora, "
-            "e.g. 36 for elastic/logs with 18 corpora → 2 files per corpus)."
+            "Track parameter for track.json Jinja rendering (repeatable). "
+            "Use KEY=VALUE or KEY:VALUE. Example: --track-param=max_total_download_gb=36"
+        ),
+    )
+    ap.add_argument(
+        "--track-params",
+        default="",
+        help=(
+            "Comma-separated key:value pairs, same format as esrally --track-params. Example: --track-params='max_total_download_gb:36,number_of_replicas:0'"
         ),
     )
     args = ap.parse_args()
 
     track = args.track
-    rally_home = _rally_home()
+    rally_home = Path(rally_confdir())
     repo_target = rally_home / "benchmarks" / "tracks" / "default"
     data_root = rally_home / "benchmarks" / "data"
 
@@ -335,7 +326,7 @@ def main() -> None:
     if not repo_target.exists():
         if not shutil.which("git"):
             print("error: 'git' is required to clone rally-tracks but was not found on PATH.", file=sys.stderr)
-            print("       Install git (https://git-scm.com) and re-run this script.", file=sys.stderr)
+            print("       Install git and re-run this script.", file=sys.stderr)
             sys.exit(1)
         print(f"Cloning rally-tracks → {repo_target} …")
         repo_target.parent.mkdir(parents=True, exist_ok=True)
@@ -350,37 +341,26 @@ def main() -> None:
         sys.exit(1)
 
     # ── 2. Collect files to download ─────────────────────────────────────
-    extra: dict = {}
-    if args.max_total_download_gb is not None:
-        extra["max_total_download_gb"] = args.max_total_download_gb
+    track_params = build_track_params(args.track_param, args.track_params)
+    if track_params:
+        print(f"Track parameters: {', '.join(f'{k}={v!r}' for k, v in sorted(track_params.items()))}")
 
     try:
-        track_data = render_track_json(track_dir, extra)
+        track_data = render_track_json(track_dir, track_params)
     except TemplateRenderError as exc:
-        # Rendering failed — only safe to continue if a files.txt fallback exists.
-        fallback = files_txt_entries(track_dir, track)
-        if fallback:
-            print(f"Warning: {exc}", file=sys.stderr)
-            print(f"Falling back to files.txt ({len(fallback)} file(s)).")
-            to_download = fallback
-        else:
-            print(f"Error: {exc}", file=sys.stderr)
-            sys.exit(1)
+        print(f"Error: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+    if track_data and track_data.get("corpora"):
+        to_download = corpus_files(track_data, track)
+        print(f"Found {len(to_download)} corpus file(s) from track.json.")
     else:
-        if track_data and track_data.get("corpora"):
-            to_download = corpus_files(track_data, track)
-            print(f"Found {len(to_download)} corpus file(s) from track.json.")
-        else:
-            to_download = files_txt_entries(track_dir, track)
-            if to_download:
-                print(f"Found {len(to_download)} file(s) from files.txt.")
-            else:
-                print("No downloadable data files found; packaging track description only.")
+        print("No downloadable data files found; packaging track description only.")
+        to_download = []
 
     # ── 3. Download missing files ─────────────────────────────────────────
     print()
     local_files: list[Path] = []
-    failed_urls: list[str] = []
     for url, rel in to_download:
         dest = data_root / rel
         if dest.exists() and not args.no_cache:

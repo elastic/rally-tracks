@@ -22,7 +22,7 @@ EOF
 
 if ! PYTHON="$(_pick_python)"; then
     echo "error: Python 3.${MIN_PYTHON_MINOR}+ is required but was not found on PATH." >&2
-    echo "       Install it from https://www.python.org/downloads/ and re-run this script." >&2
+    echo "       Install the minimum supported Python version and re-run this script." >&2
     exit 1
 fi
 

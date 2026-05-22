@@ -120,8 +120,9 @@ For running with Base64 encoded strings, use a parameter file like:
 }
 ```
 
-For a 10 million document dataset use
-```
+For a 10 million document dataset use:
+
+```json
   "corpora": [
     "msmarco-v2_base64-10-million"
   ],

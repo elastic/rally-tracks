@@ -1,8 +1,21 @@
-{# Multi-column LIMIT BY on mapped keyword fields. Defaults match idx_0 (field_0_*). Override via track-params: limit_by_source_index, limit_by_field_prefix, limit_by_field_count (defaults to n_fields). #}
-{% set p_n_fields = (n_fields | default(500)) %}
-{% set p_limit_by_field_count = (limit_by_field_count | default(p_n_fields)) %}
-{% set p_limit_by_source_index = (limit_by_source_index | default("idx_0")) %}
-{% set p_limit_by_field_prefix = (limit_by_field_prefix | default("field_0")) %}
+{# Multi-column LIMIT BY: FROM idx_* with BY spanning every field_<p>_* family present for this track (idx_0 → p=0; idx_i → p = i % 20). Uses the same n_fields as mappings (track default 500). #}
+{% macro wide_schema_limit_by_fields(n_ix) -%}
+{%- set nf = n_fields | default(500) -%}
+{%- set w = namespace(first=true) -%}
+{%- for p in range(0, 20) -%}
+  {%- set pu = namespace(used=(p == 0)) -%}
+  {%- for ii in range(1, n_ix) -%}
+    {%- if (ii % 20) == p -%}
+      {%- set pu.used = true -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if pu.used -%}
+    {%- for j in range(0, nf) -%}
+      {%- if not w.first -%}, {%- endif -%}field_{{ p }}_{{ j }}{%- set w.first = false -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- endmacro %}
 
     {
       "name": "index-base",
@@ -63,17 +76,17 @@
     {
       "name": "from_idx_limit_1_by_all_mapped_keyword_fields_limit_1",
       "operation-type": "esql",
-      "query": "FROM {{ p_limit_by_source_index }} | LIMIT 1 BY {% for i in range(0, p_limit_by_field_count) %}{% if loop.index0 > 0 %}, {% endif %}{{ p_limit_by_field_prefix }}_{{ i }}{% endfor %} | LIMIT 1"
+      "query": "FROM idx_* | LIMIT 1 BY {{ wide_schema_limit_by_fields(n_indices) }} | LIMIT 1"
     },
     {
       "name": "from_idx_limit_1_by_all_mapped_keyword_fields_limit_100",
       "operation-type": "esql",
-      "query": "FROM {{ p_limit_by_source_index }} | LIMIT 1 BY {% for i in range(0, p_limit_by_field_count) %}{% if loop.index0 > 0 %}, {% endif %}{{ p_limit_by_field_prefix }}_{{ i }}{% endfor %} | LIMIT 100"
+      "query": "FROM idx_* | LIMIT 1 BY {{ wide_schema_limit_by_fields(n_indices) }} | LIMIT 100"
     },
     {
       "name": "from_idx_limit_1_by_all_mapped_keyword_fields_limit_1000",
       "operation-type": "esql",
-      "query": "FROM {{ p_limit_by_source_index }} | LIMIT 1 BY {% for i in range(0, p_limit_by_field_count) %}{% if loop.index0 > 0 %}, {% endif %}{{ p_limit_by_field_prefix }}_{{ i }}{% endfor %} | LIMIT 1000"
+      "query": "FROM idx_* | LIMIT 1 BY {{ wide_schema_limit_by_fields(n_indices) }} | LIMIT 1000"
     },
 
     {

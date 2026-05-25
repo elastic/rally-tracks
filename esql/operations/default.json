@@ -1,3 +1,9 @@
+{# Multi-column LIMIT BY on mapped keyword fields. Defaults match idx_0 (field_0_*). Override via track-params: limit_by_source_index, limit_by_field_prefix, limit_by_field_count (defaults to n_fields). #}
+{% set p_n_fields = (n_fields | default(500)) %}
+{% set p_limit_by_field_count = (limit_by_field_count | default(p_n_fields)) %}
+{% set p_limit_by_source_index = (limit_by_source_index | default("idx_0")) %}
+{% set p_limit_by_field_prefix = (limit_by_field_prefix | default("field_0")) %}
+
     {
       "name": "index-base",
       "operation-type": "bulk",
@@ -52,6 +58,22 @@
       "name": "from_idx_limit_10000_by_key_1000",
       "operation-type": "esql",
       "query": "FROM idx_* | LIMIT 10000 BY key_1000"
+    },
+
+    {
+      "name": "from_idx_limit_1_by_all_mapped_keyword_fields_limit_1",
+      "operation-type": "esql",
+      "query": "FROM {{ p_limit_by_source_index }} | LIMIT 1 BY {% for i in range(0, p_limit_by_field_count) %}{% if loop.index0 > 0 %}, {% endif %}{{ p_limit_by_field_prefix }}_{{ i }}{% endfor %} | LIMIT 1"
+    },
+    {
+      "name": "from_idx_limit_1_by_all_mapped_keyword_fields_limit_100",
+      "operation-type": "esql",
+      "query": "FROM {{ p_limit_by_source_index }} | LIMIT 1 BY {% for i in range(0, p_limit_by_field_count) %}{% if loop.index0 > 0 %}, {% endif %}{{ p_limit_by_field_prefix }}_{{ i }}{% endfor %} | LIMIT 100"
+    },
+    {
+      "name": "from_idx_limit_1_by_all_mapped_keyword_fields_limit_1000",
+      "operation-type": "esql",
+      "query": "FROM {{ p_limit_by_source_index }} | LIMIT 1 BY {% for i in range(0, p_limit_by_field_count) %}{% if loop.index0 > 0 %}, {% endif %}{{ p_limit_by_field_prefix }}_{{ i }}{% endfor %} | LIMIT 1000"
     },
 
     {

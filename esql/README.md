@@ -17,7 +17,8 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `auto_expand_replicas` (default: "0-all"): Set the auto_expand_replicas behaviour for lookup indices.
 * `query_clients` (default 1): number of queries to be run in parallel
 * `query_iterations` (default 100): number of itrerations per query 
-* `n_indices` (default 1): number of queries to be run in parallel
+* `n_indices` (default 5): how many indices the track creates (`idx_1` … `idx_{n_indices-1}` plus `idx_0`). The wide `LIMIT BY` benchmarks use `FROM idx_*` and include every `field_<p>_*` family that exists for those indices (`p` is `0` for `idx_0`, and `i % 20` for `idx_i`, matching each index’s mapping template).
+* `n_fields` (default 500): how many keyword columns each family has in the mappings (`field_<p>_0` … `field_<p>_{n_fields-1}`); the wide `LIMIT BY` benchmarks list the same count per active prefix.
 
 ### Snapshot parameters
 * `snapshot_counts` (default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).

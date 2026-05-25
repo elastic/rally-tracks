@@ -89,3 +89,4 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - rescore_oversample (default: -1): `-1` uses the index default, `0` disables rescore, and values greater than `0` set an explicit oversample.
  - vector_index_element_type (default: "float"): Sets the dense_vector element type.
  - enable_experimental_features (default: false): Enables experimental dense vector features that may break backward compatibility.
+ - index_mode (default: not set, uses "standard"): If defined, sets the index mode (e.g., "vectordb_document").

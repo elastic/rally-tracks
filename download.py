@@ -8,32 +8,24 @@ downloads every referenced corpus file. Local paths match Rally's layout:
 elastic/security which use ~/.rally/benchmarks/data/<track>/<corpus_name>/<source-file>.
 
 Usage:
-  ./download.py TRACK [--track-param KEY=VALUE ...] [--track-params STR] [--no-cache]
+  ./download.py TRACK [--track-params STR] [--no-cache]
 
 Examples:
   ./download.py geonames
   ./download.py elastic/logs
   ./download.py elastic/security
-  ./download.py elastic/logs --track-param=max_total_download_gb=36
   ./download.py elastic/logs --track-params="max_total_download_gb:36"
 """
 
 import argparse
-import functools
 import json
 import os
 import shutil
-import ssl
 import subprocess
 import sys
 import tarfile
-import urllib.error
-import urllib.parse
-import urllib.request
 from pathlib import Path
 
-RALLY_CDN = "https://rally-tracks.elastic.co"
-RALLY_ROOT = Path(".rally/benchmarks")
 REPO_URL = "https://github.com/elastic/rally-tracks.git"
 
 
@@ -43,73 +35,26 @@ def rally_confdir():
 
 
 class TemplateRenderError(Exception):
-    """Raised when a Jinja2 track.json cannot be rendered."""
+    """Raised when track.json cannot be rendered or parsed."""
 
 
-def _convert_param_value(value: str):
-    """Coerce a track-param string to a Python value (mirrors esrally.utils.opts)."""
-    if value.lower() == "true":
-        return True
-    if value.lower() == "false":
-        return False
-    if value.lower() in ("none", "null"):
-        return None
-    try:
-        return int(value)
-    except ValueError:
-        pass
-    try:
-        return float(value)
-    except ValueError:
-        pass
-    if (value.startswith("{") and value.endswith("}")) or (value.startswith("[") and value.endswith("]")):
-        try:
-            return json.loads(value)
-        except json.JSONDecodeError:
-            pass
-    return value
+class DownloadError(Exception):
+    """Raised when a corpus file download fails."""
 
 
-def parse_track_param(spec: str) -> tuple[str, object]:
-    """Parse a single KEY=VALUE or KEY:VALUE track parameter."""
-    for sep in ("=", ":"):
-        if sep in spec:
-            key, value = spec.split(sep, 1)
-            return key.strip(), _convert_param_value(value.strip())
-    raise argparse.ArgumentTypeError(f"track parameter must be KEY=VALUE or KEY:VALUE, got: {spec!r}")
-
-
-def parse_track_params(spec: str) -> dict:
-    """
-    Parse Rally-style --track-params (comma-separated key:value pairs).
-
-    Same format as esrally: ``max_total_download_gb:36,number_of_replicas:0``.
-    """
-    if not spec:
-        return {}
+def _require_esrally():
     try:
         from esrally.utils import opts
 
-        return opts.to_dict(spec)
+        return opts
     except ImportError:
-        pass
-    result = {}
-    for item in spec.split(","):
-        item = item.strip()
-        if not item:
-            continue
-        key, value = parse_track_param(item)
-        result[key] = value
-    return result
-
-
-def build_track_params(track_param_args: list[str], track_params: str) -> dict:
-    """Merge --track-param and --track-params into a single template-vars dict."""
-    params = parse_track_params(track_params)
-    for spec in track_param_args:
-        key, value = parse_track_param(spec)
-        params[key] = value
-    return params
+        print(
+            "error: esrally is required to run download.py.\n"
+            "       Install with: pip install esrally\n"
+            "       Or use the project dev environment (see pyproject.toml).",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 
 # ---------------------------------------------------------------------------
@@ -117,47 +62,30 @@ def build_track_params(track_param_args: list[str], track_params: str) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def render_track_json(track_dir: Path, extra_vars: dict) -> dict | None:
+def render_track_json(track_dir: Path, track_params: dict) -> dict:
     """
-    Render track.json (which may be a Jinja2 template) and return the parsed
-    dict.  Returns None when the file is absent, Jinja2 is unavailable, or
-    parsing fails.
+    Load or render track.json and return the parsed dict.
+
+    Plain JSON is returned as-is. Templated tracks are rendered with esrally's
+    render_template_from_file (same as esrally race / render-track).
     """
     path = track_dir / "track.json"
     if not path.exists():
-        return None
-
-    source = path.read_text()
+        raise TemplateRenderError(f"track.json not found in {track_dir}")
 
     try:
-        return json.loads(source)
+        return json.loads(path.read_text())
     except json.JSONDecodeError:
         pass
 
+    from esrally.track.loader import render_template_from_file
+
     try:
-        import jinja2
-    except ImportError:
-        raise TemplateRenderError(
-            "jinja2 is not installed; cannot render templated track.json. Install esrally or run `pip install jinja2` and retry."
+        rendered = render_template_from_file(
+            str(path),
+            track_params,
+            build_flavor="oss",
         )
-
-    # rally.helpers provides a `collect` macro that globs and inlines other
-    # JSON files (used for challenges/operations, never for corpora).
-    # Stub it out so it emits an empty string — the rendered corpora array
-    # will still be valid JSON.
-    mock_helpers = "{% macro collect(parts) %}{% endmacro %}"
-
-    loader = jinja2.ChoiceLoader(
-        [
-            jinja2.DictLoader({"rally.helpers": mock_helpers}),
-            jinja2.FileSystemLoader(str(track_dir)),
-        ]
-    )
-    env = jinja2.Environment(loader=loader, undefined=jinja2.Undefined)
-    env.filters["tojson"] = json.dumps
-
-    try:
-        rendered = env.from_string(source).render(build_flavor="oss", **extra_vars)
     except Exception as exc:
         raise TemplateRenderError(f"template rendering failed: {exc}") from exc
 
@@ -221,59 +149,16 @@ def corpus_files(track_data: dict, track: str) -> list[tuple[str, str]]:
 # ---------------------------------------------------------------------------
 
 
-@functools.lru_cache(maxsize=1)
-def _ssl_context() -> ssl.SSLContext:
-    """
-    Return an SSL context backed by certifi's CA bundle when available
-    (esrally depends on certifi, so it is usually present), otherwise fall
-    back to the default system context.
+def download_file(url: str, dest: Path) -> None:
+    """Download url to dest using esrally.utils.net.download."""
+    from esrally.utils import net
 
-    On macOS, the Python.org installer ships its own OpenSSL that is NOT
-    linked to the system keychain, causing CERTIFICATE_VERIFY_FAILED errors
-    with the bare default context.  certifi carries its own up-to-date CA
-    bundle and sidesteps this entirely.
-    """
-    try:
-        import certifi
-
-        return ssl.create_default_context(cafile=certifi.where())
-    except ImportError:
-        return ssl.create_default_context()
-
-
-_DOWNLOAD_TIMEOUT_S = 600  # 10 minutes; covers both connect and read
-
-
-def download_file(url: str, dest: Path) -> bool:
-    """Download url to dest, streaming in chunks.  Returns True on success."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     print(f"  ↓  {url}")
-    tmp = dest.with_suffix(dest.suffix + ".tmp")
     try:
-        req = urllib.request.Request(url)
-        with urllib.request.urlopen(req, context=_ssl_context(), timeout=_DOWNLOAD_TIMEOUT_S) as resp:
-            with open(tmp, "wb") as fh:
-                shutil.copyfileobj(resp, fh)
-        tmp.replace(dest)
-        return True
-    except TimeoutError:
-        print(f"     WARN download timed out after  300 s — {url}", file=sys.stderr)
-    except ssl.SSLCertVerificationError as exc:
-        print(
-            f"     SSL certificate verification failed: {exc}\n"
-            f"     Fix options:\n"
-            f"       • pip install certifi\n"
-            f"       • On macOS: open /Applications/Python*/Install\\ Certificates.command",
-            file=sys.stderr,
-        )
-    except urllib.error.HTTPError as exc:
-        print(f"     WARN {exc.code} {exc.reason} — {url}", file=sys.stderr)
-    except urllib.error.URLError as exc:
-        print(f"     WARN {exc.reason} — {url}", file=sys.stderr)
-    finally:
-        if tmp.exists():
-            tmp.unlink()
-    return False
+        net.download(url, str(dest))
+    except Exception as exc:
+        raise DownloadError(f"download failed for {url}: {exc}") from exc
 
 
 # ---------------------------------------------------------------------------
@@ -294,28 +179,15 @@ def main() -> None:
     ap.add_argument(
         "--no-cache",
         action="store_true",
-        default=False,
         help="Re-download files even if they already exist locally.",
-    )
-    ap.add_argument(
-        "--track-param",
-        action="append",
-        default=[],
-        metavar="KEY=VALUE",
-        dest="track_param",
-        help=(
-            "Track parameter for track.json Jinja rendering (repeatable). "
-            "Use KEY=VALUE or KEY:VALUE. Example: --track-param=max_total_download_gb=36"
-        ),
     )
     ap.add_argument(
         "--track-params",
         default="",
-        help=(
-            "Comma-separated key:value pairs, same format as esrally --track-params. Example: --track-params='max_total_download_gb:36,number_of_replicas:0'"
-        ),
+        help="Same as esrally race --track-params: comma-separated key:value pairs or a JSON file.",
     )
     args = ap.parse_args()
+    rally_opts = _require_esrally()
 
     track = args.track
     rally_home = Path(rally_confdir())
@@ -341,7 +213,7 @@ def main() -> None:
         sys.exit(1)
 
     # ── 2. Collect files to download ─────────────────────────────────────
-    track_params = build_track_params(args.track_param, args.track_params)
+    track_params = rally_opts.to_dict(args.track_params)
     if track_params:
         print(f"Track parameters: {', '.join(f'{k}={v!r}' for k, v in sorted(track_params.items()))}")
 
@@ -351,7 +223,7 @@ def main() -> None:
         print(f"Error: {exc}", file=sys.stderr)
         sys.exit(1)
 
-    if track_data and track_data.get("corpora"):
+    if track_data.get("corpora"):
         to_download = corpus_files(track_data, track)
         print(f"Found {len(to_download)} corpus file(s) from track.json.")
     else:
@@ -367,10 +239,11 @@ def main() -> None:
             print(f"  ✓  {dest.relative_to(rally_home.parent)}  (cached)")
             local_files.append(dest)
         else:
-            if download_file(url, dest):
+            try:
+                download_file(url, dest)
                 local_files.append(dest)
-            else:
-                print(f"\nError: download failed for {url}", file=sys.stderr)
+            except DownloadError as exc:
+                print(f"\nError: {exc}", file=sys.stderr)
                 print("Aborting — fix the error above and retry.", file=sys.stderr)
                 sys.exit(1)
 

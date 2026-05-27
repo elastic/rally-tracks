@@ -48,12 +48,8 @@ def _require_esrally():
 
         return opts
     except ImportError:
-        print(
-            "error: esrally is required to run download.py.\n"
-            "       Install with: pip install esrally\n"
-            "       Or use the project dev environment (see pyproject.toml).",
-            file=sys.stderr,
-        )
+        print("error: esrally is required to run download.py.", file=sys.stderr)
+        print("       Install with: pip install esrally", file=sys.stderr)
         sys.exit(1)
 
 

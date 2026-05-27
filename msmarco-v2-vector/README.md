@@ -24,7 +24,6 @@ done
 $ for file in cohere-documents-*; do
   bzip2 -k $file
 done
-$ ls -1 cohere-documents-* > files.txt
 ```
 
 This will build 47 `cohere-documents-XX.json` file for the entire dataset of 138.3M documents and then bzip then. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.

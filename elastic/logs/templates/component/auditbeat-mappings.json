@@ -616,7 +616,7 @@
               "type": "boolean"
             },
             "trigger": {
-              "type": "nested",
+              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
               "properties": {
                 "type": {
                   "ignore_above": 1024,
@@ -1562,7 +1562,7 @@
               "type": "keyword"
             },
             "sections": {
-              "type": "nested",
+              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
               "properties": {
                 "chi2": {
                   "type": "long"
@@ -1602,7 +1602,7 @@
               "type": "keyword"
             },
             "segments": {
-              "type": "nested",
+              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
               "properties": {
                 "type": {
                   "ignore_above": 1024,
@@ -4063,7 +4063,7 @@
                   "type": "keyword"
                 },
                 "sections": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "var_entropy": {
                       "type": "long"
@@ -4102,7 +4102,7 @@
                   }
                 },
                 "segments": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "type": {
                       "ignore_above": 1024,
@@ -4350,7 +4350,7 @@
                   "type": "keyword"
                 },
                 "sections": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "var_entropy": {
                       "type": "long"
@@ -4448,7 +4448,7 @@
                   "type": "long"
                 },
                 "sections": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "var_entropy": {
                       "type": "long"
@@ -5189,7 +5189,7 @@
                       "type": "date"
                     },
                     "sections": {
-                      "type": "nested",
+                      "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                       "properties": {
                         "chi2": {
                           "type": "long"
@@ -5229,7 +5229,7 @@
                       "type": "keyword"
                     },
                     "segments": {
-                      "type": "nested",
+                      "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                       "properties": {
                         "type": {
                           "ignore_above": 1024,
@@ -5492,7 +5492,7 @@
                   "type": "keyword"
                 },
                 "sections": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "chi2": {
                       "type": "long"
@@ -5532,7 +5532,7 @@
                   "type": "keyword"
                 },
                 "segments": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "type": {
                       "ignore_above": 1024,
@@ -6870,7 +6870,7 @@
                           "type": "date"
                         },
                         "sections": {
-                          "type": "nested",
+                          "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                           "properties": {
                             "chi2": {
                               "type": "long"
@@ -6914,7 +6914,7 @@
                           "type": "keyword"
                         },
                         "segments": {
-                          "type": "nested",
+                          "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                           "properties": {
                             "type": {
                               "ignore_above": 1024,
@@ -7234,7 +7234,7 @@
               }
             },
             "enrichments": {
-              "type": "nested",
+              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
               "properties": {
                 "indicator": {
                   "type": "object",
@@ -7699,7 +7699,7 @@
                               "type": "keyword"
                             },
                             "sections": {
-                              "type": "nested",
+                              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                               "properties": {
                                 "chi2": {
                                   "type": "long"
@@ -7735,7 +7735,7 @@
                               }
                             },
                             "segments": {
-                              "type": "nested",
+                              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                               "properties": {
                                 "type": {
                                   "ignore_above": 1024,

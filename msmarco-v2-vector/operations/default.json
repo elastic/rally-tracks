@@ -81,7 +81,7 @@
   {%- endif -%}
   "oversample-rescore": {{p_search_ops[i][2]}},
   "include-in-reporting": false,
-  {%- if initial_indexing_ingest_doc_count is defined and initial_indexing_ingest_doc_count | int == 10000000 -%}
+  {%- if p_corpora | length == 1 and p_corpora[0] == "msmarco-v2_base64-10-million" -%}
     "recall-doc-set": "10m"
   {%- else -%}
     "recall-doc-set": "full"

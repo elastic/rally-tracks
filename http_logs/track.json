@@ -51,7 +51,7 @@
     }
   ],
   "corpora": [
-      {%- if ingest_pipeline is defined and ingest_pipeline == "grok" or runtime_fields is defined %}
+      {%- if ingest_pipeline_name is defined and ingest_pipeline_name == "grok" or runtime_fields is defined %}
         {
           "name": "http_logs_unparsed",
           "base-url": "https://rally-tracks.elastic.co/http_logs",

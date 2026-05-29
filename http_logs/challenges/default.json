@@ -162,10 +162,10 @@
           }
         },
         {
-        "operation": "create-http-log-{{ingest_pipeline | default('baseline')}}-pipeline"
+        "operation": "create-http-log-{{ingest_pipeline_name | default('baseline')}}-pipeline"
         },
         {
-          "operation": "index-append-with-ingest-{{ingest_pipeline | default('baseline')}}-pipeline",
+          "operation": "index-append-with-ingest-{{ingest_pipeline_name | default('baseline')}}-pipeline",
           "warmup-time-period": 240,
           "clients": {{bulk_indexing_clients | default(8)}},
           "ignore-response-error-level": "{{error_level | default('non-fatal')}}"

@@ -25,7 +25,7 @@ from dataclasses import dataclass
 
 import pytest
 import requests
-from elasticsearch import Elasticsearch
+from test_utils.es_client import create_rally_elasticsearch_client
 
 BASE_URL = os.environ["RALLY_IT_SERVERLESS_BASE_URL"]
 API_KEY = os.environ["RALLY_IT_SERVERLESS_API_KEY"]
@@ -134,7 +134,7 @@ def project_config(project, tmpdir_factory):
     print("Waiting for Elasticsearch")
     for _ in range(60):  # 60 * 15 = 900 seconds = 15 minutes
         try:
-            es = Elasticsearch(
+            es = create_rally_elasticsearch_client(
                 f"https://{rally_target_host}",
                 basic_auth=(
                     credentials["username"],
@@ -173,7 +173,7 @@ def project_config(project, tmpdir_factory):
     print("Testing API key")
     for _ in range(18):  # 18 * 10 = 180 seconds = 3 minutes
         try:
-            es = Elasticsearch(
+            es = create_rally_elasticsearch_client(
                 f"https://{rally_target_host}",
                 api_key=api_key.body["encoded"],
                 request_timeout=10,

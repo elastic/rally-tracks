@@ -27,7 +27,7 @@
     {%- endif %}
     "properties": {
       "@timestamp": {
-        {%- if ingest_pipeline is defined and ingest_pipeline == "grok" %}
+        {%- if ingest_pipeline_name is defined and ingest_pipeline_name == "grok" %}
         "format": "strict_date_optional_time",
         {%- else %}
         "format": "epoch_second",

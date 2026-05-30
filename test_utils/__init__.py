@@ -6,7 +6,7 @@
 # not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-# 	http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing,
 # software distributed under the License is distributed on an
@@ -14,19 +14,3 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-
-import pytest
-
-from test_utils.es_client import create_rally_elasticsearch_client
-
-
-@pytest.fixture(scope="function")
-def es_cluster_cleanup(es_cluster):
-    es = create_rally_elasticsearch_client(f"http://localhost:{es_cluster.http_port}")
-    es.indices.delete(index="*")
-    es.indices.delete_data_stream(name="*")
-
-
-@pytest.fixture
-def es_release_build(es_cluster) -> bool:
-    return es_cluster.source_build_release

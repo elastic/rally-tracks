@@ -16,6 +16,7 @@
 # under the License.
 
 import pytest
+
 from test_utils.es_client import create_rally_elasticsearch_client
 
 

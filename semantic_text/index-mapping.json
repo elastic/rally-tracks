@@ -42,7 +42,7 @@
       {%- if p_index_type == "bbq_disk" -%}
       "embedding": {
         "type": "dense_vector",
-        "element_type": "bfloat16",
+        "element_type": {{ vector_index_element_type | default("bfloat16") | tojson }},
         "dims": 1024,
         "index": true,
         "similarity": "cosine",

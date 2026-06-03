@@ -43,8 +43,8 @@ This track allows to overwrite the following parameters with Rally 0.8.0+ using 
 * `source_enabled` (default: true): A boolean defining whether the `_source` field is stored in the index.
 * `index_settings`: A list of index settings. Index settings defined elsewhere (e.g. `number_of_replicas`) need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
-* `ingest_pipeline`: Only applicable for `--challenge=append-index-only-with-ingest-pipeline`, selects which ingest
-node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'geoip'`. For example: `--challenge=append-index-only-with-ingest-pipeline --track-params="ingest_pipeline:'baseline'" `
+* `ingest_pipeline_name`: Only applicable for `--challenge=append-index-only-with-ingest-pipeline`, selects which ingest
+node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'geoip'`. For example: `--challenge=append-index-only-with-ingest-pipeline --track-params="ingest_pipeline_name:'baseline'" `
 * `runtime_fields`: If defined the challenge loads the `unparsed` set of documents, indexing the `@timestamp` and the raw `message` field and the runtime fields required for the `runtime-fields` challenge.
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
 * `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.

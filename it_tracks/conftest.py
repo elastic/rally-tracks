@@ -15,16 +15,24 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import contextlib
+
 import pytest
+from esrally.client import EsClientFactory
 
 from test_utils.es_client import create_rally_elasticsearch_client
 
 
 @pytest.fixture(scope="function")
 def es_cluster_cleanup(es_cluster):
-    es = create_rally_elasticsearch_client(f"http://localhost:{es_cluster.http_port}")
-    es.indices.delete(index="*")
-    es.indices.delete_data_stream(name="*")
+    with contextlib.closing(
+        EsClientFactory(
+            [f"http://localhost:{es_cluster.http_port}"],
+            client_options={},
+        ).create()
+    ) as es:
+        es.indices.delete(index="*")
+        es.indices.delete_data_stream(name="*")
 
 
 @pytest.fixture

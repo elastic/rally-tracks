@@ -25,6 +25,7 @@ from dataclasses import dataclass
 
 import pytest
 import requests
+from esrally.client import EsClientFactory
 
 from test_utils.es_client import create_rally_elasticsearch_client
 
@@ -135,21 +136,23 @@ def project_config(project, tmpdir_factory):
     print("Waiting for Elasticsearch")
     for _ in range(60):  # 60 * 15 = 900 seconds = 15 minutes
         try:
-            es = create_rally_elasticsearch_client(
-                f"https://{rally_target_host}",
-                basic_auth=(
-                    credentials["username"],
-                    credentials["password"],
-                ),
-                request_timeout=10,
-            )
-            info = es.info()
-            print("GET /")
-            print(json.dumps(info.body, indent=2))
+            with contextlib.closing(
+                EsClientFactory(
+                    [f"https://{rally_target_host}"],
+                    {
+                        "use_ssl": True,
+                        "basic_auth": (credentials["username"], credentials["password"]),
+                        "request_timeout": 10,
+                    },
+                ).create()
+            ) as es:
+                info = es.info()
+                print("GET /")
+                print(json.dumps(info.body, indent=2))
 
-            authenticate = es.perform_request(method="GET", path="/_security/_authenticate")
-            print("GET /_security/_authenticate")
-            print(json.dumps(authenticate.body, indent=2))
+                authenticate = es.perform_request(method="GET", path="/_security/_authenticate")
+                print("GET /_security/_authenticate")
+                print(json.dumps(authenticate.body, indent=2))
 
             break
         except Exception as e:

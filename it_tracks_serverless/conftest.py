@@ -25,7 +25,7 @@ from dataclasses import dataclass
 
 import pytest
 import requests
-from esrally.client import EsClientFactory
+from esrally.client.synchronous import RallySyncElasticsearch
 
 BASE_URL = os.environ["RALLY_IT_SERVERLESS_BASE_URL"]
 API_KEY = os.environ["RALLY_IT_SERVERLESS_API_KEY"]
@@ -135,14 +135,11 @@ def project_config(project, tmpdir_factory):
     for _ in range(60):  # 60 * 15 = 900 seconds = 15 minutes
         try:
             with contextlib.closing(
-                EsClientFactory(
-                    [f"https://{rally_target_host}"],
-                    {
-                        "use_ssl": True,
-                        "basic_auth": (credentials["username"], credentials["password"]),
-                        "request_timeout": 10,
-                    },
-                ).create()
+                RallySyncElasticsearch(
+                    f"https://{rally_target_host}",
+                    basic_auth=(credentials["username"], credentials["password"]),
+                    request_timeout=10,
+                )
             ) as es:
                 info = es.info()
                 print("GET /")

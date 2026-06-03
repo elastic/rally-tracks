@@ -18,17 +18,12 @@
 import contextlib
 
 import pytest
-from esrally.client import EsClientFactory
+from esrally.client.synchronous import RallySyncElasticsearch
 
 
 @pytest.fixture(scope="function")
 def es_cluster_cleanup(es_cluster):
-    with contextlib.closing(
-        EsClientFactory(
-            [f"http://localhost:{es_cluster.http_port}"],
-            client_options={},
-        ).create()
-    ) as es:
+    with contextlib.closing(RallySyncElasticsearch(f"http://localhost:{es_cluster.http_port}")) as es:
         es.indices.delete(index="*")
         es.indices.delete_data_stream(name="*")
 

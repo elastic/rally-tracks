@@ -19,7 +19,6 @@ import contextlib
 
 import pytest
 from esrally.client import EsClientFactory
-
 from test_utils.es_client import create_rally_elasticsearch_client
 
 

@@ -26,7 +26,6 @@ from dataclasses import dataclass
 import pytest
 import requests
 from esrally.client import EsClientFactory
-
 from test_utils.es_client import create_rally_elasticsearch_client
 
 BASE_URL = os.environ["RALLY_IT_SERVERLESS_BASE_URL"]

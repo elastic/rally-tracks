@@ -25,7 +25,7 @@ retry 5 sudo apt-get install -y \
 
 echo "--- Install uv"
 
-curl -LsSf https://astral.sh/uv/install.sh | sh
+curl -LsSf https://astral.sh/uv/0.11.19/install.sh | env UV_UNMANAGED_INSTALL="${HOME}/.local/bin" sh
 source "${HOME}/.local/bin/env"
 
 echo "--- Create virtual environment"

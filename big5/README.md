@@ -88,5 +88,5 @@ The following parameters are available:
 * `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
 * `iterations` (default: 1000) - Number of measurement iterations that each client executes.
 * `query_clients` (default: 1) - Number of clients issuing queries in parallel. Applies to the `big5-esql` challenge only; ignored by the default Big5 QueryDSL challenge.
-* `index_mode` (default: standard) - Index mode to use for the data.
+* `index_mode` (default: null, which means logsdb will be used since the data matches `logs-*-*`) - Index mode to use for the data.
 * `mapping_source_mode` (default: null, which means to use the index mode's default) - Index mapping source mode for data.

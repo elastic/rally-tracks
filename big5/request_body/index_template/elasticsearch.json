@@ -34,9 +34,11 @@
           "source": {
             "mode": "{{ p_mapping_source_mode }}"
           }
-        },
+        }
         {% endif %}
-        "mode": "{{ p_index_mode }}"
+        {% if p_index_mode != null %}
+        ,"mode": "{{ p_index_mode }}"
+        {% endif %}
       }
     },
     "mappings": {

@@ -34,39 +34,39 @@
 {%- for i in range(p_as_warmup_time_periods|length) %},
 {
   "parallel": {
-    "warmup-time-period": {{p_as_time_periods[i]}},
-    "time-period": {{p_as_warmup_time_periods[i]}},
+    "warmup-time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},
+    "time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
     "tasks": [
-  {%- if p_as_ingest_target_throughputs[i] < 0 %}
+  {%- if p_as_ingest_target_throughputs[i % (p_as_ingest_target_throughputs|length)] < 0 %}
       {
-        "name": "parallel-ingest-{{loop.index}}-c{{p_as_ingest_clients[i]}}-b{{p_ingest_bulk_size}}",
-        "clients": {{p_as_ingest_clients[i]}},
+        "name": "parallel-ingest-{{loop.index}}-c{{p_as_ingest_clients[i % (p_as_ingest_clients|length)]}}-b{{p_ingest_bulk_size}}",
+        "clients": {{p_as_ingest_clients[i % (p_as_ingest_clients|length)]}},
         "operation": {
           "operation-type": "bulk",
           "bulk-size": {{p_ingest_bulk_size}},
           "looped": true
         },
-        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-        "time-period": {{p_as_time_periods[i]}}
+        "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+        "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}}
       },
   {%- else %}
   {
-    "name": "parallel-ingest-{{loop.index}}-c{{p_as_ingest_clients[i]}}-b{{p_ingest_bulk_size}}",
-    "clients": {{p_as_ingest_clients[i]}},
+    "name": "parallel-ingest-{{loop.index}}-c{{p_as_ingest_clients[i % (p_as_ingest_clients|length)]}}-b{{p_ingest_bulk_size}}",
+    "clients": {{p_as_ingest_clients[i % (p_as_ingest_clients|length)]}},
     "operation": {
       "operation-type": "bulk",
       "bulk-size": {{p_ingest_bulk_size}},
       "looped": true
     },
-    "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-    "time-period": {{p_as_time_periods[i]}},
-    "target-throughput": {{p_as_ingest_target_throughputs[i]}}
+    "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+    "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},
+    "target-throughput": {{p_as_ingest_target_throughputs[i % (p_as_ingest_target_throughputs|length)]}}
   },
   {%- endif %}
-  {%- if p_as_search_target_throughputs[i] < 0 %}
+  {%- if p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)] < 0 %}
       {
-        "name": "parallel-search-{{loop.index}}-c{{p_as_search_clients[i]}}-s10",
-        "clients": {{p_as_search_clients[i]}},
+        "name": "parallel-search-{{loop.index}}-c{{p_as_search_clients[i % (p_as_search_clients|length)]}}-s10",
+        "clients": {{p_as_search_clients[i % (p_as_search_clients|length)]}},
         "operation": {
           "operation-type": "search",
           "param-source": "knn-param-source",
@@ -79,13 +79,13 @@
           {%- endif %}
           "looped": true
         },
-        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-        "time-period": {{p_as_time_periods[i]}}
+        "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+        "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}}
       }
   {%- else %}
       {
-        "name": "parallel-search-{{loop.index}}-c{{p_as_search_clients[i]}}-s10-t{{p_as_search_target_throughputs[i]}}",
-        "clients": {{p_as_search_clients[i]}},
+        "name": "parallel-search-{{loop.index}}-c{{p_as_search_clients[i % (p_as_search_clients|length)]}}-s10-t{{p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)]}}",
+        "clients": {{p_as_search_clients[i % (p_as_search_clients|length)]}},
         "operation": {
           "operation-type": "search",
           "param-source": "knn-param-source",
@@ -98,9 +98,9 @@
           {%- endif %}
           "looped": true
         },
-        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-        "time-period": {{p_as_time_periods[i]}},
-        "target-throughput": {{p_as_search_target_throughputs[i]}}
+        "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+        "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},
+        "target-throughput": {{p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)]}}
       }
   {%- endif %}
     ]

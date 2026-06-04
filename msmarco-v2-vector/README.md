@@ -127,6 +127,14 @@ For a 10 million document dataset use:
   ],
 ```
 
+### Autoscale parameter conventions
+
+The three autoscale challenges (`ingest-autoscale`, `search-autoscale`, `ingest-search-autoscale`) share the same array parameter conventions:
+
+- `as_warmup_time_periods` defines the number of phases. All other `as_*` arrays wrap via modulo, so a shorter array repeats automatically. A single-element array applies that value to every phase.
+- `as_warmup_time_periods` values of `0` are valid and mean "no warmup". They are clamped to `1` internally to satisfy Rally's schema requirement.
+- Target throughput arrays (`as_search_target_throughputs`, `as_ingest_target_throughputs`) use `-1` to mean unlimited throughput. Any positive value caps throughput in operations per second.
+
 ### Parameters for ingest-autoscale challenge
 
 - Mapping:

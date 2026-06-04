@@ -138,6 +138,24 @@ def project_config(project, tmpdir_factory):
             request_timeout=10,
         )
     ) as es:
+        print("Waiting for Elasticsearch")
+        for _ in range(60):  # 60 * 15 = 900 seconds = 15 minutes
+            try:
+                info = es.info()
+                print("GET /")
+                print(json.dumps(info.body, indent=2))
+
+                authenticate = es.perform_request(method="GET", path="/_security/_authenticate")
+                print("GET /_security/_authenticate")
+                print(json.dumps(authenticate.body, indent=2))
+
+                break
+            except Exception as e:
+                print(f"GET / Failed with {str(e)}")
+                time.sleep(15)
+        else:
+            raise ValueError("Timed out waiting for Elasticsearch")
+
         # Create API key to test Rally with a public user privileges
         print("Waiting for API key")
         for _ in range(18):
@@ -150,22 +168,24 @@ def project_config(project, tmpdir_factory):
         else:
             raise ValueError("Timed out waiting for API key")
 
-        # Confirm API key is working fine
-        print("Testing API key")
-        for _ in range(18):  # 18 * 10 = 180 seconds = 3 minutes
-            try:
-                es = create_rally_elasticsearch_client(
+    # Confirm API key is working fine
+    print("Testing API key")
+    for _ in range(18):  # 18 * 10 = 180 seconds = 3 minutes
+        try:
+            with contextlib.closing(
+                RallySyncElasticsearch(
                     f"https://{rally_target_host}",
                     api_key=api_key.body["encoded"],
                     request_timeout=10,
                 )
+            ) as es:
                 info = es.info()
-                break
-            except Exception as e:
-                print(f"API verification failed with {str(e)}")
-                time.sleep(10)
-        else:
-            raise ValueError("Timed out verifying API key")
+            break
+        except Exception as e:
+            print(f"API verification failed with {str(e)}")
+            time.sleep(10)
+    else:
+        raise ValueError("Timed out verifying API key")
 
     project_config = ServerlessProjectConfig(
         rally_target_host,

@@ -124,9 +124,7 @@ class TestSearchAutoscaleSchedule:
 
     def test_two_element_throughput_roundrobin_across_four_phases(self):
         # [500, 2500] over 4 phases → target-throughput per phase: 500, 2500, 500, 2500
-        steps = render_search(
-            {"as_warmup_time_periods": [30, 0, 0, 0], "as_search_target_throughputs": [500, 2500]}
-        )
+        steps = render_search({"as_warmup_time_periods": [30, 0, 0, 0], "as_search_target_throughputs": [500, 2500]})
         phase_throughputs = [steps[i * 2]["target-throughput"] for i in range(4)]
         assert phase_throughputs == [500, 2500, 500, 2500]
 
@@ -231,7 +229,8 @@ INGEST_HEADER_STEPS = 4  # delete-index, create-index, check-cluster-health, ini
 
 def ingest_phase_steps(items):
     return [
-        item for item in items
+        item
+        for item in items
         if isinstance(item.get("operation"), dict)
         and item["operation"].get("operation-type") == "bulk"
         and "warmup-time-period" in item  # excludes the initial-ingest step
@@ -285,8 +284,6 @@ class TestIngestAutoscaleSchedule:
 
     def test_two_element_throughput_roundrobin_across_four_phases(self):
         # [200, 400] over 4 phases → target-throughput per phase: 200, 400, 200, 400
-        items = render_ingest(
-            {"as_warmup_time_periods": [30, 0, 0, 0], "as_ingest_target_throughputs": [200, 400]}
-        )
+        items = render_ingest({"as_warmup_time_periods": [30, 0, 0, 0], "as_ingest_target_throughputs": [200, 400]})
         steps = ingest_phase_steps(items)
         assert [s["target-throughput"] for s in steps] == [200, 400, 200, 400]

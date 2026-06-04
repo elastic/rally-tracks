@@ -59,16 +59,16 @@ uv-add:
 ifndef ARGS
 	$(error Missing arguments. Use make uv-add ARGS="...")
 endif
-	uv add $$ARGS
+	uv add $(ARGS)
 
 uv-lock:
 	uv lock
 
 venv: uv $(VENV_ACTIVATE_FILE)
+	uv sync --locked --group develop --group unit
 
 $(VENV_ACTIVATE_FILE):
 	uv venv --allow-existing --seed
-	uv sync --locked --group develop --group unit
 
 clean-venv:
 	rm -rf '$(VIRTUAL_ENV)'

@@ -15,12 +15,14 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import contextlib
+
 import pytest
-from elasticsearch import Elasticsearch
+from esrally.client.synchronous import RallySyncElasticsearch
 
 
 @pytest.fixture(scope="function")
 def es_cluster_cleanup(es_cluster):
-    es = Elasticsearch(f"http://localhost:{es_cluster.http_port}")
-    es.indices.delete(index="*")
-    es.indices.delete_data_stream(name="*")
+    with contextlib.closing(RallySyncElasticsearch(f"http://localhost:{es_cluster.http_port}")) as es:
+        es.indices.delete(index="*")
+        es.indices.delete_data_stream(name="*")

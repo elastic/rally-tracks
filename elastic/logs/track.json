@@ -456,7 +456,7 @@
           {% if not i == 0 %},{% endif %}
           {
           "target-data-stream": "logs-kafka.log-default",
-          "source-file": "document-{{i}}.json.bz2",
+          "source-file": "document-{{i}}.json.zst",
           {# These "document-count" values equate to approximately 1GB of de-compressed data. #}
           "document-count": 312333
           }
@@ -471,7 +471,7 @@
           {% if not i == 0 %},{% endif %}
           {
             "target-data-stream": "logs-nginx.access-default",
-            "source-file": "document-{{i}}.json.bz2",
+            "source-file": "document-{{i}}.json.zst",
             "document-count": 277500
           }
         {% endfor %}
@@ -485,7 +485,7 @@
           {% if not i == 0 %},{% endif %}
           {
             "target-data-stream": "logs-nginx.access-default",
-            "source-file": "document-{{i}}.json.bz2",
+            "source-file": "document-{{i}}.json.zst",
             "document-count": 648000
           }
         {% endfor %}
@@ -499,7 +499,7 @@
           {% if not i == 0 %},{% endif %}
           {
             "target-data-stream": "logs-nginx.error-default",
-            "source-file": "document-{{i}}.json.bz2",
+            "source-file": "document-{{i}}.json.zst",
             "document-count": 263000
           }
         {% endfor %}
@@ -513,7 +513,7 @@
           {% if not i == 0 %},{% endif %}
           {
             "target-data-stream": "logs-nginx.error-default",
-            "source-file": "document-{{i}}.json.bz2",
+            "source-file": "document-{{i}}.json.zst",
             "document-count": 591705
           }
         {% endfor %}
@@ -527,7 +527,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-k8-application.log-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 660000
             }
           {% endfor %}
@@ -541,7 +541,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-k8-application.log-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 570000
             }
           {% endfor %}
@@ -553,7 +553,7 @@
         "documents": [
           {
             "target-data-stream": "logs-mysql.error-default",
-            "source-file": "document-0.json.bz2",
+            "source-file": "document-0.json.zst",
             "document-count": 86390
           }
         ]
@@ -566,7 +566,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-mysql.slowlog-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 287000
             }
           {% endfor %}
@@ -580,7 +580,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-system.auth-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 666666
             }
           {% endfor %}
@@ -594,7 +594,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-system.syslog-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 645000
             }
           {% endfor %}
@@ -608,7 +608,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-system.auth-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 880000
             }
           {% endfor %}
@@ -622,7 +622,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-system.syslog-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 734450
             }
           {% endfor %}
@@ -636,7 +636,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-postgresql.log-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 285400
             }
           {% endfor %}
@@ -650,7 +650,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-apache.access-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 322200
             }
           {% endfor %}
@@ -662,7 +662,7 @@
         "documents": [
           {
             "target-data-stream": "logs-apache.error-default",
-            "source-file": "document-0.json.bz2",
+            "source-file": "document-0.json.zst",
             "document-count": 310000
           }
         ]
@@ -675,7 +675,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-redis.log-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 343090
             }
           {% endfor %}
@@ -689,7 +689,7 @@
             {% if not i == 0 %},{% endif %}
             {
               "target-data-stream": "logs-redis.slowlog-default",
-              "source-file": "document-{{i}}.json.bz2",
+              "source-file": "document-{{i}}.json.zst",
               "document-count": 550000
             }
           {% endfor %}

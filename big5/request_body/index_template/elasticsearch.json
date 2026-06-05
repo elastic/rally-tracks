@@ -28,9 +28,9 @@
             "message"
           ]
         },
-        "number_of_replicas": {{ p_number_of_replicas }},
+        "number_of_replicas": {{ p_number_of_replicas }}
         {% if p_mapping_source_mode != null %}
-        "mapping": {
+        ,"mapping": {
           "source": {
             "mode": "{{ p_mapping_source_mode }}"
           }

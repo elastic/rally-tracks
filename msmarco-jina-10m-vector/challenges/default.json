@@ -1,0 +1,123 @@
+{% macro op_suffix(k, nc) -%}
+{%- if k is none -%}default{%- else -%}{{ k }}{%- endif -%}-{%- if nc is none -%}default{%- else -%}{{ nc }}{%- endif -%}
+{%- endmacro %}
+{% macro search_recall_tasks(name_suffix, tag) %}
+{%- for i in range(p_search_ops|length) %},
+    {
+      "name": "search-knn-{{ op_suffix(p_search_ops[i][0], p_search_ops[i][1] if p_search_ops[i]|length > 1 else none) }}-single-client{{ name_suffix }}",
+      "tags": [{{ tag | tojson }}],
+      "operation": "knn-search-{{ op_suffix(p_search_ops[i][0], p_search_ops[i][1] if p_search_ops[i]|length > 1 else none) }}",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": 1
+    },
+    {
+      "name": "search-knn-{{ op_suffix(p_search_ops[i][0], p_search_ops[i][1] if p_search_ops[i]|length > 1 else none) }}-multi-client{{ name_suffix }}",
+      "tags": [{{ tag | tojson }}],
+      "operation": "knn-search-{{ op_suffix(p_search_ops[i][0], p_search_ops[i][1] if p_search_ops[i]|length > 1 else none) }}",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {
+      "name": "recall-knn-{{ op_suffix(p_search_ops[i][0], p_search_ops[i][1] if p_search_ops[i]|length > 1 else none) }}{{ name_suffix }}",
+      "tags": [{{ tag | tojson }}],
+      "operation": "knn-recall-{{ op_suffix(p_search_ops[i][0], p_search_ops[i][1] if p_search_ops[i]|length > 1 else none) }}",
+      "warmup-iterations": 0,
+      "iterations": 1,
+      "clients": 1
+    }
+{%- endfor %}
+{%- endmacro %}
+{% set p_include_force_merge = (include_force_merge | default(build_flavor != "serverless")) %}
+{%- set p_search_ops = (search_ops | default([(None, None), (10, 15), (10, 50), (10, 100), (50, 100), (100, 150)])) %}
+{
+  "name": "index-and-search",
+  "description": "Index 10M Jina embeddings, run kNN search and recall before and after force-merge",
+  "default": true,
+  "schedule": [
+    {
+      "operation": {
+        "operation-type": "delete-index"
+      }
+    },
+    {
+      "name": "create-index",
+      "operation": "create-index"
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": "check-cluster-health"
+    },
+    {
+      "name": "index-append",
+      "operation": "index-append",
+      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+      "clients": {{ bulk_indexing_clients | default(5) | int }}
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "wait-until-merges-finish-after-index",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retries": 1440,
+        "retry-on-error": true,
+        "retry-wait-period": 30,
+        "include-in-reporting": false
+      }
+    }
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+    ,{
+      "name": "post-ingest-sleep",
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ post_ingest_sleep_duration|default(30) }}
+      }
+    }
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    {{ search_recall_tasks("", "pre-force-merge") }}
+    {# non-serverless-force-merge-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+    {%- if p_include_force_merge %},
+    {
+      "name": "force-merge-after-index",
+      "tags": ["force-merge"],
+      "operation": "force-merge"
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "tags": ["force-merge"],
+      "operation": "refresh-after-force-merge"
+    },
+    {
+      "name": "wait-until-force-merge-completes",
+      "tags": ["force-merge"],
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retries": 1440,
+        "retry-on-error": true,
+        "retry-wait-period": 30,
+        "include-in-reporting": true
+      }
+    }
+    {{ search_recall_tasks("-force-merge", "post-force-merge") }}
+    {%- endif -%}
+    {%- endif -%}{# non-serverless-force-merge-marker-end #}
+  ]
+}

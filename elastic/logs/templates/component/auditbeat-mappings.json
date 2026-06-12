@@ -23,6 +23,10 @@
         {%- endif -%}{# non-serverless-index-settings-marker-end #}
         "query": {
           "default_field": [
+            {% if index_mode | default('') == 'logsdb_columnar' %}
+            "message",
+            "error.message"
+            {% else %}
             "message",
             "tags",
             "agent.ephemeral_id",
@@ -351,6 +355,7 @@
             "jolokia.url",
             "file.pe.import_hash",
             "fields.*"
+            {% endif %}
           ]
         }
       }

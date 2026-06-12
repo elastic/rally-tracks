@@ -24,6 +24,10 @@
           },
           "query": {
             "default_field": [
+              {% if index_mode | default('') == 'logsdb_columnar' %}
+              "message",
+              "error.message"
+              {% else %}
               "cloud.account.id",
               "cloud.availability_zone",
               "cloud.instance.id",
@@ -99,6 +103,7 @@
               "system.auth.useradd.shell",
               "system.auth.syslog.version",
               "version"
+              {% endif %}
             ]
           }
         }

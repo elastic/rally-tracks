@@ -28,6 +28,7 @@ class TestTrackRepository:
         "sql",
         "elser-ingest-speedtest",
         "msmarco-v2-vector",
+        "msmarco-jina-10m-vector",
         "openai_vector",
         "random_vector",
         "has_privileges",

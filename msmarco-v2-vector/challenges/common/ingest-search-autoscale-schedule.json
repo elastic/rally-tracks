@@ -24,14 +24,15 @@
   }
 }
 {%- set p_vector_index_type = (vector_index_type | default("bbq_hnsw"))%}
-{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600,600,600,600,600]))%}
-{%- set p_as_ingest_target_throughputs = (as_ingest_target_throughputs | default([-1,-1,-1,-1,-1]))%}
-{%- set p_as_time_periods = (as_time_periods | default([1800,1800,1800,1800,1800]))%}
-{%- set p_as_ingest_clients = (as_ingest_clients | default([1,1,1,1,1]))%}
+{%- set p_as_phases = (as_phases | default(5))%}
+{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600]))%}
+{%- set p_as_ingest_target_throughputs = (as_ingest_target_throughputs | default([-1]))%}
+{%- set p_as_time_periods = (as_time_periods | default([1800]))%}
+{%- set p_as_ingest_clients = (as_ingest_clients | default([1]))%}
 {%- set p_ingest_bulk_size = (ingest_bulk_size | default(100))%}
 {%- set p_as_search_clients = (as_search_clients | default([1,2,4,8,16]))%}
-{%- set p_as_search_target_throughputs = (as_search_target_throughputs | default([-1,-1,-1,-1,-1]))%}
-{%- for i in range(p_as_warmup_time_periods|length) %},
+{%- set p_as_search_target_throughputs = (as_search_target_throughputs | default([-1]))%}
+{%- for i in range(p_as_phases) %},
 {
   "parallel": {
     "warmup-time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},

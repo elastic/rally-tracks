@@ -24,6 +24,11 @@
           },
           "query": {
             "default_field": [
+              {% if index_mode | default('') == 'logsdb_columnar' %}
+              "message",
+              "error.message",
+              "kafka.log.trace.message"
+              {% else %}
               "cloud.account.id",
               "cloud.availability_zone",
               "cloud.instance.id",
@@ -62,6 +67,7 @@
               "kafka.log.thread",
               "kafka.log.trace.class",
               "kafka.log.trace.message"
+              {% endif %}
             ]
           }
         }

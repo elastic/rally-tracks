@@ -18,7 +18,7 @@
             "total_fields": {
               "limit": "10000"
             }
-          },
+          }{%- if index_mode | default('') != 'logsdb_columnar' %},
           "query": {
             "default_field": [
               "cloud.account.id",
@@ -78,7 +78,7 @@
               "user_agent.version",
               "nginx.access.remote_ip_list"
             ]
-          }
+          }{%- endif %}
         }
       },
       "mappings": {

@@ -21,7 +21,7 @@
             "total_fields": {
               "limit": "10000"
             }
-          },
+          }{%- if index_mode | default('') != 'logsdb_columnar' %},
           "query": {
             "default_field": [
               "cloud.account.id",
@@ -53,7 +53,7 @@
               "redis.slowlog.key",
               "redis.slowlog.args"
             ]
-          }
+          }{%- endif %}
         }
       },
       "mappings": {

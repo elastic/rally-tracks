@@ -516,8 +516,7 @@ See all details in the [contributor guidelines](https://github.com/elastic/rally
 This track contains associated unit tests. In order to run them, please issue the following commands:
 
 ```
-# only required once for the initial setup
-make prereq
+# only required once after installing uv
 make install
 # to run the tests
 make test

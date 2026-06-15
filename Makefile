@@ -15,60 +15,104 @@
 # specific language governing permissions and limitations
 # under the License.
 
-SHELL = /bin/bash
-# We assume an active virtualenv for development
-PYENV_REGEX = .pyenv/shims
-PY_BIN = python3
-# https://github.com/pypa/pip/issues/5599
-PIP_WRAPPER = $(PY_BIN) -m pip
-export PY313 = "3.13.7"
-VIRTUAL_ENV ?= .venv
-VENV_ACTIVATE_FILE = $(VIRTUAL_ENV)/bin/activate
-VENV_ACTIVATE = . $(VENV_ACTIVATE_FILE)
-VEPYTHON = $(VIRTUAL_ENV)/bin/$(PY_BIN)
-PYENV_ERROR = "\033[0;31mIMPORTANT\033[0m: Please install pyenv.\n"
-PYENV_PREREQ_HELP = "\033[0;31mIMPORTANT\033[0m: please type \033[0;31mpyenv init\033[0m, follow the instructions there and restart your terminal before proceeding any further.\n"
-VE_MISSING_HELP = "\033[0;31mIMPORTANT\033[0m: Couldn't find $(PWD)/$(VIRTUAL_ENV); have you executed make venv-create?\033[0m\n"
+SHELL := /bin/bash
 
-prereq:
-	pyenv install --skip-existing $(PY313)
-	pyenv local $(PY313)
+PY_VERSION ?= 3.13
+VIRTUAL_ENV ?= .venv-$(PY_VERSION)
+VENV_ACTIVATE_FILE := $(VIRTUAL_ENV)/bin/activate
+VENV_ACTIVATE := source $(VENV_ACTIVATE_FILE)
+export UV_PYTHON := $(PY_VERSION)
+export UV_PROJECT_ENVIRONMENT := $(VIRTUAL_ENV)
 
-venv-create:
-	@if [[ ! -x $$(command -v pyenv) ]]; then \
-		printf $(PYENV_ERROR); \
+.PHONY: \
+	uv \
+	uv-add \
+	uv-lock \
+	venv \
+	clean-venv \
+	install \
+	reinstall \
+	lint \
+	format \
+	precommit \
+	pre-commit \
+	test \
+	test-3.10 \
+	test-3.11 \
+	test-3.12 \
+	test-3.13 \
+	it \
+	it-serverless \
+	it_serverless \
+	sdist \
+	clean \
+	shell \
+	sh
+
+uv:
+	@if [[ ! -x $$(command -v uv) ]]; then \
+		printf "Please install uv: https://docs.astral.sh/uv/getting-started/installation/\n"; \
 		exit 1; \
-	fi;
-	@if [[ ! -f $(VENV_ACTIVATE_FILE) ]]; then \
-		eval "$$(pyenv init -)" && eval "$$(pyenv init --path)" && $(PY_BIN) -mvenv $(VIRTUAL_ENV); \
-		printf "Created python3 venv under $(PWD)/$(VIRTUAL_ENV).\n"; \
-	fi;
-
-check-venv:
-	@if [[ ! -f $(VENV_ACTIVATE_FILE) ]]; then \
-	printf $(VE_MISSING_HELP); \
 	fi
 
-install: venv-create
-	. $(VENV_ACTIVATE_FILE); $(PIP_WRAPPER) install .[develop]
+uv-add:
+ifndef ARGS
+	$(error Missing arguments. Use make uv-add ARGS="...")
+endif
+	uv add $(ARGS)
 
-shell: check-venv
-	. $(VENV_ACTIVATE_FILE); hatch -v shell
+uv-lock:
+	uv lock
 
-test: check-venv
-	. $(VENV_ACTIVATE_FILE); hatch -v -e unit run test
+venv: uv $(VENV_ACTIVATE_FILE)
+	uv sync --locked --group develop --group unit
 
-it: check-venv
-	. $(VENV_ACTIVATE_FILE); hatch -v -e it run test
+$(VENV_ACTIVATE_FILE):
+	uv venv --allow-existing --seed
 
-sdist: check-venv
-	. $(VENV_ACTIVATE_FILE); hatch -v build -t sdist -c
+clean-venv:
+	rm -rf '$(VIRTUAL_ENV)'
 
-precommit: check-venv
-	@. $(VENV_ACTIVATE_FILE); pre-commit run --all-files
+install: venv
+	uv sync --locked --group develop --group unit
+
+reinstall: clean-venv
+	$(MAKE) venv
+
+lint: venv
+	uv run --locked --group develop -- pre-commit run --all-files
+
+format: lint
+
+precommit pre-commit: venv
+	uv run --locked --group develop -- pre-commit run
+
+test: venv
+	uv run --locked --group unit -- pytest $(ARGS)
+
+test-3.10:
+	$(MAKE) test PY_VERSION=3.10
+
+test-3.11:
+	$(MAKE) test PY_VERSION=3.11
+
+test-3.12:
+	$(MAKE) test PY_VERSION=3.12
+
+test-3.13:
+	$(MAKE) test PY_VERSION=3.13
+
+it: venv
+	uv run --locked --group it -- pytest it_tracks --log-cli-level=INFO $(ARGS)
+
+it-serverless it_serverless: venv
+	uv run --locked --group it-serverless -- pytest -s it_tracks_serverless --log-cli-level=INFO $(ARGS)
+
+sdist: venv
+	uv build --sdist
 
 clean:
-	rm -rf .pytest_cache
-	. $(VENV_ACTIVATE_FILE); hatch -v clean
+	rm -rf .pytest_cache build dist rally_tracks.egg-info
 
-.PHONY: prereq venv-create check-venv install shell test it sdist clean
+shell sh: venv
+	$(VENV_ACTIVATE); $(SHELL)

@@ -23,7 +23,13 @@
     "ingest-percentage": {{initial_ingest_percentage | default(100) | int}}
   }
 }
-{%- set p_as_phases = (as_phases | default(5))%}
+{%- if as_phases is defined %}
+{%- set p_as_phases = as_phases %}
+{%- elif as_warmup_time_periods is defined %}
+{%- set p_as_phases = as_warmup_time_periods|length %}
+{%- else %}
+{%- set p_as_phases = 5 %}
+{%- endif %}
 {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600]))%}
 {%- set p_as_ingest_target_throughputs = (as_ingest_target_throughputs | default([-1]))%}
 {%- set p_as_time_periods = (as_time_periods | default([1800]))%}

@@ -131,7 +131,7 @@ For a 10 million document dataset use:
 
 The three autoscale challenges (`ingest-autoscale`, `search-autoscale`, `ingest-search-autoscale`) share the same array parameter conventions:
 
-- `as_phases` defines the number of measurement phases. All `as_*` arrays are indexed via modulo (`i % len(array)`), so a 1-element array repeats that value for every phase and an `as_phases`-element array assigns one value per phase. Per-track parameter validation is not yet supported natively by Rally; until then, mismatched array lengths wrap silently.
+- `as_phases` defines the number of measurement phases (default: 5 when neither `as_phases` nor `as_warmup_time_periods` is set; falls back to `len(as_warmup_time_periods)` when only `as_warmup_time_periods` is provided, preserving backward compatibility with existing configurations). All `as_*` arrays are indexed via modulo (`i % len(array)`), so a 1-element array repeats that value for every phase and an `as_phases`-element array assigns one value per phase. Per-track parameter validation is not yet supported natively by Rally; until then, mismatched array lengths wrap silently.
 - `as_warmup_time_periods` values of `0` are valid and mean "no warmup". They are clamped to `1` internally to satisfy Rally's schema requirement.
 - Target throughput arrays (`as_search_target_throughputs`, `as_ingest_target_throughputs`) use `-1` to mean unlimited throughput. Any positive value caps throughput in operations per second.
 
@@ -144,7 +144,7 @@ The three autoscale challenges (`ingest-autoscale`, `search-autoscale`, `ingest-
     - `initial_ingest_bulk_size` (default: 100)
 - Ingest Operations:
     - `ingest_bulk_size` (default: 100)
-    - `as_phases` (default: 5)
+    - `as_phases` (default: 5, or `len(as_warmup_time_periods)` if provided without `as_phases`)
     - `as_warmup_time_periods` (default: [600])
     - `as_time_periods` (default: [1800])
     - `as_ingest_clients` (default: [1,2,4,8,16])
@@ -162,7 +162,7 @@ When `as_ingest_target_throughputs` is a positive number, the ingest throughput 
     - `initial_ingest_bulk_size` (default: 100)
 - Search Operations:
     - `search_size` (default: 10)
-    - `as_phases` (default: 5)
+    - `as_phases` (default: 5, or `len(as_warmup_time_periods)` if provided without `as_phases`)
     - `as_warmup_time_periods` (default: [600])
     - `as_time_periods` (default: [1800])
     - `as_search_clients` (default: [1,2,4,8,16])
@@ -178,7 +178,7 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
     - `initial_ingest_clients` (default: 4)
     - `initial_ingest_bulk_size` (default: 100)
 - Operations:
-    - `as_phases` (default: 5)
+    - `as_phases` (default: 5, or `len(as_warmup_time_periods)` if provided without `as_phases`)
     - `as_warmup_time_periods` (default: [600])
     - `as_time_periods` (default: [1800])
 - Ingest Operations:

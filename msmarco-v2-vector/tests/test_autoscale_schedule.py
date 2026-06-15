@@ -84,6 +84,11 @@ class TestSearchAutoscaleSchedule:
         # remaining phases clamped to 1
         assert all(s["warmup-time-period"] == 1 for s in steps[2:])
 
+    def test_as_warmup_time_periods_drives_phases_when_as_phases_absent(self):
+        # backward compat: existing configs that pass as_warmup_time_periods without as_phases
+        steps = render_search({"as_warmup_time_periods": [1200], "as_search_clients": [1000], "as_search_target_throughputs": [1000]})
+        assert len(steps) == 2  # 1 phase × 2 query sizes
+
     def test_single_element_time_periods_repeats(self):
         steps = render_search({"as_phases": 4, "as_search_clients": [1], "as_time_periods": [1800]})
         assert all(s["time-period"] == 1800 for s in steps)
@@ -166,6 +171,11 @@ class TestIngestSearchAutoscaleSchedule:
         assert all(t["warmup-time-period"] == 30 for t in first_phase_tasks)
         for task in all_tasks(items)[len(first_phase_tasks) :]:
             assert task["warmup-time-period"] == 1
+
+    def test_as_warmup_time_periods_drives_phases_when_as_phases_absent(self):
+        # backward compat: as_warmup_time_periods length sets phase count when as_phases is not given
+        items = render_ingest_search({"as_warmup_time_periods": [1200], "as_search_clients": [1000]})
+        assert len(parallel_steps(items)) == 1
 
     def test_single_element_time_periods_repeats(self):
         items = render_ingest_search({"as_phases": 4, "as_search_clients": [1], "as_time_periods": [900]})
@@ -253,6 +263,11 @@ class TestIngestAutoscaleSchedule:
         steps = ingest_phase_steps(items)
         assert steps[0]["warmup-time-period"] == 30
         assert all(s["warmup-time-period"] == 1 for s in steps[1:])
+
+    def test_as_warmup_time_periods_drives_phases_when_as_phases_absent(self):
+        # backward compat: as_warmup_time_periods length sets phase count when as_phases is not given
+        items = render_ingest({"as_warmup_time_periods": [1200], "as_ingest_clients": [1]})
+        assert len(ingest_phase_steps(items)) == 1
 
     def test_single_element_clients_repeats(self):
         items = render_ingest({"as_phases": 4, "as_ingest_clients": [4]})

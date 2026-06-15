@@ -36,7 +36,13 @@
 },
 {%- endif -%}{# include-initial-indexing-marker-end #}
 {%- set p_vector_index_type = (vector_index_type | default("bbq_hnsw"))%}
-{%- set p_as_phases = (as_phases | default(5))%}
+{%- if as_phases is defined %}
+{%- set p_as_phases = as_phases %}
+{%- elif as_warmup_time_periods is defined %}
+{%- set p_as_phases = as_warmup_time_periods|length %}
+{%- else %}
+{%- set p_as_phases = 5 %}
+{%- endif %}
 {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600]))%}
 {%- set p_as_time_periods = (as_time_periods | default([1800]))%}
 {%- set p_as_search_clients = (as_search_clients | default([1,2,4,8,16]))%}

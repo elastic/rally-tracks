@@ -24,49 +24,50 @@
   }
 }
 {%- set p_vector_index_type = (vector_index_type | default("bbq_hnsw"))%}
-{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600,600,600,600,600]))%}
-{%- set p_as_ingest_target_throughputs = (as_ingest_target_throughputs | default([-1,-1,-1,-1,-1]))%}
-{%- set p_as_time_periods = (as_time_periods | default([1800,1800,1800,1800,1800]))%}
-{%- set p_as_ingest_clients = (as_ingest_clients | default([1,1,1,1,1]))%}
+{%- set p_as_phases = (as_phases | default(5))%}
+{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600]))%}
+{%- set p_as_ingest_target_throughputs = (as_ingest_target_throughputs | default([-1]))%}
+{%- set p_as_time_periods = (as_time_periods | default([1800]))%}
+{%- set p_as_ingest_clients = (as_ingest_clients | default([1]))%}
 {%- set p_ingest_bulk_size = (ingest_bulk_size | default(100))%}
 {%- set p_as_search_clients = (as_search_clients | default([1,2,4,8,16]))%}
-{%- set p_as_search_target_throughputs = (as_search_target_throughputs | default([-1,-1,-1,-1,-1]))%}
-{%- for i in range(p_as_warmup_time_periods|length) %},
+{%- set p_as_search_target_throughputs = (as_search_target_throughputs | default([-1]))%}
+{%- for i in range(p_as_phases) %},
 {
   "parallel": {
-    "warmup-time-period": {{p_as_time_periods[i]}},
-    "time-period": {{p_as_warmup_time_periods[i]}},
+    "warmup-time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},
+    "time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
     "tasks": [
-  {%- if p_as_ingest_target_throughputs[i] < 0 %}
+  {%- if p_as_ingest_target_throughputs[i % (p_as_ingest_target_throughputs|length)] < 0 %}
       {
-        "name": "parallel-ingest-{{loop.index}}-c{{p_as_ingest_clients[i]}}-b{{p_ingest_bulk_size}}",
-        "clients": {{p_as_ingest_clients[i]}},
+        "name": "parallel-ingest-{{loop.index}}-c{{p_as_ingest_clients[i % (p_as_ingest_clients|length)]}}-b{{p_ingest_bulk_size}}",
+        "clients": {{p_as_ingest_clients[i % (p_as_ingest_clients|length)]}},
         "operation": {
           "operation-type": "bulk",
           "bulk-size": {{p_ingest_bulk_size}},
           "looped": true
         },
-        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-        "time-period": {{p_as_time_periods[i]}}
+        "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+        "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}}
       },
   {%- else %}
   {
-    "name": "parallel-ingest-{{loop.index}}-c{{p_as_ingest_clients[i]}}-b{{p_ingest_bulk_size}}",
-    "clients": {{p_as_ingest_clients[i]}},
+    "name": "parallel-ingest-{{loop.index}}-c{{p_as_ingest_clients[i % (p_as_ingest_clients|length)]}}-b{{p_ingest_bulk_size}}",
+    "clients": {{p_as_ingest_clients[i % (p_as_ingest_clients|length)]}},
     "operation": {
       "operation-type": "bulk",
       "bulk-size": {{p_ingest_bulk_size}},
       "looped": true
     },
-    "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-    "time-period": {{p_as_time_periods[i]}},
-    "target-throughput": {{p_as_ingest_target_throughputs[i]}}
+    "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+    "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},
+    "target-throughput": {{p_as_ingest_target_throughputs[i % (p_as_ingest_target_throughputs|length)]}}
   },
   {%- endif %}
-  {%- if p_as_search_target_throughputs[i] < 0 %}
+  {%- if p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)] < 0 %}
       {
-        "name": "parallel-search-{{loop.index}}-c{{p_as_search_clients[i]}}-s10",
-        "clients": {{p_as_search_clients[i]}},
+        "name": "parallel-search-{{loop.index}}-c{{p_as_search_clients[i % (p_as_search_clients|length)]}}-s10",
+        "clients": {{p_as_search_clients[i % (p_as_search_clients|length)]}},
         "operation": {
           "operation-type": "search",
           "param-source": "knn-param-source",
@@ -79,13 +80,13 @@
           {%- endif %}
           "looped": true
         },
-        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-        "time-period": {{p_as_time_periods[i]}}
+        "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+        "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}}
       }
   {%- else %}
       {
-        "name": "parallel-search-{{loop.index}}-c{{p_as_search_clients[i]}}-s10-t{{p_as_search_target_throughputs[i]}}",
-        "clients": {{p_as_search_clients[i]}},
+        "name": "parallel-search-{{loop.index}}-c{{p_as_search_clients[i % (p_as_search_clients|length)]}}-s10-t{{p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)]}}",
+        "clients": {{p_as_search_clients[i % (p_as_search_clients|length)]}},
         "operation": {
           "operation-type": "search",
           "param-source": "knn-param-source",
@@ -98,9 +99,9 @@
           {%- endif %}
           "looped": true
         },
-        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-        "time-period": {{p_as_time_periods[i]}},
-        "target-throughput": {{p_as_search_target_throughputs[i]}}
+        "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+        "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},
+        "target-throughput": {{p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)]}}
       }
   {%- endif %}
     ]

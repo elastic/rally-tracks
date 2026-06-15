@@ -175,9 +175,7 @@ class KnnRecallRunner:
             "effective_k": effective_k,
             "num_candidates": num_candidates,
             "avg_nodes_visited": statistics.mean(nodes_visited) if any(x > 0 for x in nodes_visited) else None,
-            "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99)
-            if any(x > 0 for x in nodes_visited)
-            else None,
+            "99th_percentile_nodes_visited": compute_percentile(nodes_visited, 99) if any(x > 0 for x in nodes_visited) else None,
         }
         if k is not None:
             result["k"] = k

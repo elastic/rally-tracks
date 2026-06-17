@@ -15,12 +15,63 @@
 # specific language governing permissions and limitations
 # under the License.
 
+import importlib.util
 import json
 import pathlib
+import types
 
 import jinja2
+import pytest
 
 COMMON_DIR = pathlib.Path(__file__).parents[1] / "challenges" / "common"
+
+# Import the track module under a unique name to avoid colliding with other
+# tracks' track.py modules when the whole repo's tests are collected together.
+_TRACK_PY = pathlib.Path(__file__).parents[1] / "track.py"
+_spec = importlib.util.spec_from_file_location("msmarco_v2_vector_track", _TRACK_PY)
+track_module = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(track_module)
+
+
+def fake_track(index_name="msmarco-v2"):
+    return types.SimpleNamespace(indices=[types.SimpleNamespace(name=index_name)])
+
+
+class FakeEs:
+    def __init__(self):
+        self.requests = []
+
+    async def perform_request(self, method, path, body=None, **kwargs):
+        self.requests.append({"method": method, "path": path, "body": body})
+        return {"acknowledged": True}
+
+
+class FlakyEs:
+    # Raises the queued exceptions on successive calls (None = succeed), so tests
+    # can drive the Retry wrapper's retry/no-retry behavior.
+    def __init__(self, outcomes):
+        self._outcomes = list(outcomes)
+        self.requests = []
+
+    async def perform_request(self, method, path, body=None, **kwargs):
+        if self._outcomes:
+            outcome = self._outcomes.pop(0)
+            if outcome is not None:
+                raise outcome
+        self.requests.append({"method": method, "path": path, "body": body})
+        return {"acknowledged": True}
+
+
+class FakeRegistry:
+    def __init__(self):
+        self.param_sources = {}
+        self.runners = {}
+
+    def register_param_source(self, name, cls):
+        self.param_sources[name] = cls
+
+    def register_runner(self, name, instance, **kwargs):
+        self.runners[name] = instance
 
 
 def render(template_name, params):
@@ -283,3 +334,307 @@ class TestIngestAutoscaleSchedule:
         assert all("target-throughput" in s for s in steps)
         assert steps[0]["target-throughput"] == 200
         assert steps[1]["target-throughput"] == 400
+
+
+# --- per-phase ES settings: SettingsParamSource (key routing / validation) ---
+
+
+class TestSettingsParamSource:
+    def test_routes_index_settings(self):
+        ps = track_module.SettingsParamSource(fake_track(), {"settings": {"index.number_of_replicas": 1, "index.refresh_interval": "5s"}})
+        p = ps.params()
+        assert p["index"] == "msmarco-v2"
+        assert p["index_settings"] == {"number_of_replicas": 1, "refresh_interval": "5s"}
+        assert p["cluster_body"] == {}
+
+    def test_routes_cluster_settings_as_persistent(self):
+        # non-index keys go to the cluster settings API, always wrapped in persistent
+        ps = track_module.SettingsParamSource(
+            fake_track(),
+            {
+                "settings": {
+                    "indices.recovery.max_bytes_per_sec": "200mb",
+                    "cluster.routing.allocation.enable": "all",
+                }
+            },
+        )
+        p = ps.params()
+        assert p["index_settings"] == {}
+        assert p["cluster_body"] == {
+            "persistent": {
+                "indices.recovery.max_bytes_per_sec": "200mb",
+                "cluster.routing.allocation.enable": "all",
+            }
+        }
+
+    def test_mixed_index_and_cluster_keys(self):
+        ps = track_module.SettingsParamSource(
+            fake_track(), {"settings": {"index.number_of_replicas": 2, "indices.recovery.max_bytes_per_sec": "200mb"}}
+        )
+        p = ps.params()
+        assert p["index_settings"] == {"number_of_replicas": 2}
+        assert p["cluster_body"] == {"persistent": {"indices.recovery.max_bytes_per_sec": "200mb"}}
+
+    def test_non_dict_settings_raises(self):
+        # a non-object as_settings entry fails fast with a clear message, not AttributeError
+        with pytest.raises(ValueError, match="must be an object"):
+            track_module.SettingsParamSource(fake_track(), {"settings": "refresh_interval=5s"})
+
+    def test_indices_prefix_routed_to_cluster_not_index(self):
+        # `indices.*` is a cluster namespace and must NOT collide with the `index.` index
+        # prefix; it routes to the cluster settings API, not the index one
+        ps = track_module.SettingsParamSource(fake_track(), {"settings": {"indices.recovery.max_bytes_per_sec": "200mb"}})
+        p = ps.params()
+        assert p["index_settings"] == {}
+        assert p["cluster_body"] == {"persistent": {"indices.recovery.max_bytes_per_sec": "200mb"}}
+
+    def test_bare_index_setting_routed_to_cluster(self):
+        # documented footgun: an index setting written WITHOUT the canonical `index.` prefix
+        # is treated as a cluster setting (and would then be rejected by Elasticsearch)
+        ps = track_module.SettingsParamSource(fake_track(), {"settings": {"number_of_replicas": 1}})
+        p = ps.params()
+        assert p["index_settings"] == {}
+        assert p["cluster_body"] == {"persistent": {"number_of_replicas": 1}}
+
+    def test_index_override(self):
+        ps = track_module.SettingsParamSource(fake_track(), {"index": "other-index", "settings": {"index.x": 1}})
+        assert ps.params()["index"] == "other-index"
+
+    def test_empty_settings(self):
+        ps = track_module.SettingsParamSource(fake_track(), {})
+        p = ps.params()
+        assert p["index_settings"] == {}
+        assert p["cluster_body"] == {}
+
+
+# --- per-phase ES settings: ConfigureSettingsRunner (request issuing) ---
+
+
+class TestConfigureSettingsRunner:
+    @pytest.mark.asyncio
+    async def test_issues_index_and_cluster_requests(self):
+        es = FakeEs()
+        await track_module.ConfigureSettingsRunner()(
+            es,
+            {
+                "index": "msmarco-v2",
+                "index_settings": {"number_of_replicas": 1},
+                "cluster_body": {"persistent": {"foo": "bar"}},
+            },
+        )
+        assert es.requests == [
+            {"method": "PUT", "path": "/msmarco-v2/_settings", "body": {"index": {"number_of_replicas": 1}}},
+            {"method": "PUT", "path": "/_cluster/settings", "body": {"persistent": {"foo": "bar"}}},
+        ]
+
+    @pytest.mark.asyncio
+    async def test_no_requests_when_empty(self):
+        es = FakeEs()
+        await track_module.ConfigureSettingsRunner()(es, {"index": "msmarco-v2", "index_settings": {}, "cluster_body": {}})
+        assert es.requests == []
+
+    @pytest.mark.asyncio
+    async def test_only_index_request(self):
+        es = FakeEs()
+        await track_module.ConfigureSettingsRunner()(es, {"index": "i", "index_settings": {"refresh_interval": "-1"}, "cluster_body": {}})
+        assert len(es.requests) == 1
+        assert es.requests[0]["path"] == "/i/_settings"
+
+    @pytest.mark.asyncio
+    async def test_only_cluster_request(self):
+        es = FakeEs()
+        await track_module.ConfigureSettingsRunner()(
+            es, {"index": "i", "index_settings": {}, "cluster_body": {"persistent": {"foo": "bar"}}}
+        )
+        assert es.requests == [{"method": "PUT", "path": "/_cluster/settings", "body": {"persistent": {"foo": "bar"}}}]
+
+
+# --- per-phase ES settings: SettingsParamSource -> ConfigureSettingsRunner end to end ---
+
+
+class TestSettingsParamSourceToRunner:
+    @pytest.mark.asyncio
+    async def test_param_source_output_feeds_runner(self):
+        # guards against key-name drift between the two halves of the contract
+        ps = track_module.SettingsParamSource(
+            fake_track(),
+            {
+                "settings": {
+                    "index.number_of_replicas": 1,
+                    "indices.recovery.max_bytes_per_sec": "200mb",
+                }
+            },
+        )
+        es = FakeEs()
+        await track_module.ConfigureSettingsRunner()(es, ps.params())
+        assert es.requests == [
+            {"method": "PUT", "path": "/msmarco-v2/_settings", "body": {"index": {"number_of_replicas": 1}}},
+            {
+                "method": "PUT",
+                "path": "/_cluster/settings",
+                "body": {"persistent": {"indices.recovery.max_bytes_per_sec": "200mb"}},
+            },
+        ]
+
+    @pytest.mark.asyncio
+    async def test_empty_param_source_issues_no_requests(self):
+        ps = track_module.SettingsParamSource(fake_track(), {})
+        es = FakeEs()
+        await track_module.ConfigureSettingsRunner()(es, ps.params())
+        assert es.requests == []
+
+
+# --- per-phase ES settings: template rendering across all three challenges ---
+
+
+def configure_settings_steps(items):
+    return [s for s in items if isinstance(s.get("name"), str) and s["name"].startswith("configure-settings")]
+
+
+class TestPerPhaseSettings:
+    def test_search_no_settings_step_by_default(self):
+        assert configure_settings_steps(render_search()) == []
+
+    def test_ingest_no_settings_step_by_default(self):
+        assert configure_settings_steps(render_ingest()) == []
+
+    def test_ingest_search_no_settings_step_by_default(self):
+        assert configure_settings_steps(render_ingest_search()) == []
+
+    def test_search_emits_settings_step(self):
+        steps = render_search({"as_phases": 1, "as_search_clients": [1], "as_settings": [{"index.number_of_replicas": 1}]})
+        cs = configure_settings_steps(steps)
+        assert len(cs) == 1
+        op = cs[0]["operation"]
+        assert op["operation-type"] == "configure-settings"
+        assert op["param-source"] == "settings-param-source"
+        assert op["settings"] == {"index.number_of_replicas": 1}
+        assert op["retries"] == 3  # default transient-retry count
+
+    def test_search_settings_retries_override(self):
+        steps = render_search(
+            {"as_phases": 1, "as_search_clients": [1], "as_settings": [{"index.number_of_replicas": 1}], "as_settings_retries": 5}
+        )
+        assert configure_settings_steps(steps)[0]["operation"]["retries"] == 5
+
+    def test_search_negative_retries_clamped_to_zero(self):
+        # negative retries would make Retry skip the runner entirely (range(0)); clamp to 0
+        steps = render_search(
+            {"as_phases": 1, "as_search_clients": [1], "as_settings": [{"index.number_of_replicas": 1}], "as_settings_retries": -1}
+        )
+        assert configure_settings_steps(steps)[0]["operation"]["retries"] == 0
+
+    def test_search_settings_step_precedes_search(self):
+        steps = render_search({"as_phases": 1, "as_search_clients": [1], "as_settings": [{"index.number_of_replicas": 1}]})
+        assert steps[0]["name"].startswith("configure-settings")
+        assert steps[1]["name"].startswith("search-")
+
+    def test_search_settings_only_on_nonempty_phase(self):
+        # phase 0 has settings, phase 1 is empty -> only one settings step
+        steps = render_search({"as_phases": 2, "as_search_clients": [1], "as_settings": [{"index.number_of_replicas": 1}, {}]})
+        assert len(configure_settings_steps(steps)) == 1
+
+    def test_search_null_phase_skips_settings(self):
+        # null is equivalent to {} for opting a phase out of settings
+        steps = render_search({"as_phases": 2, "as_search_clients": [1], "as_settings": [{"index.number_of_replicas": 1}, None]})
+        assert len(configure_settings_steps(steps)) == 1
+
+    def test_search_all_null_settings_emits_nothing(self):
+        steps = render_search({"as_phases": 2, "as_search_clients": [1], "as_settings": [None]})
+        assert configure_settings_steps(steps) == []
+
+    def test_search_single_element_settings_repeats(self):
+        steps = render_search({"as_phases": 3, "as_search_clients": [1], "as_settings": [{"index.refresh_interval": "5s"}]})
+        assert len(configure_settings_steps(steps)) == 3
+
+    def test_search_multi_element_settings_assigned_per_phase(self):
+        # as_phases (4) > len(as_settings) (2): objects are assigned per phase via modulo (A,B,A,B)
+        a = {"index.number_of_replicas": 0}
+        b = {"index.number_of_replicas": 1}
+        steps = render_search({"as_phases": 4, "as_search_clients": [1], "as_settings": [a, b]})
+        payloads = [s["operation"]["settings"] for s in configure_settings_steps(steps)]
+        assert payloads == [a, b, a, b]
+
+    def test_search_more_settings_than_phases_ignores_extra(self):
+        # as_phases (2) < len(as_settings) (3): only the first two objects are used
+        a = {"index.number_of_replicas": 0}
+        b = {"index.number_of_replicas": 1}
+        c = {"index.number_of_replicas": 2}
+        steps = render_search({"as_phases": 2, "as_search_clients": [1], "as_settings": [a, b, c]})
+        payloads = [s["operation"]["settings"] for s in configure_settings_steps(steps)]
+        assert payloads == [a, b]
+
+    def test_ingest_emits_settings_step(self):
+        items = render_ingest({"as_phases": 1, "as_ingest_clients": [1], "as_settings": [{"index.refresh_interval": "-1"}]})
+        cs = configure_settings_steps(items)
+        assert len(cs) == 1
+        assert cs[0]["operation"]["settings"] == {"index.refresh_interval": "-1"}
+
+    def test_ingest_settings_step_precedes_bulk(self):
+        items = render_ingest({"as_phases": 1, "as_ingest_clients": [1], "as_settings": [{"index.refresh_interval": "-1"}]})
+        cs_idx = next(i for i, s in enumerate(items) if isinstance(s.get("name"), str) and s["name"].startswith("configure-settings"))
+        bulk_idx = next(
+            i
+            for i, s in enumerate(items)
+            if isinstance(s.get("operation"), dict) and s["operation"].get("operation-type") == "bulk" and "warmup-time-period" in s
+        )
+        assert cs_idx < bulk_idx
+
+    def test_ingest_search_emits_settings_step_before_parallel(self):
+        items = render_ingest_search({"as_phases": 1, "as_search_clients": [1], "as_settings": [{"index.number_of_replicas": 2}]})
+        cs = configure_settings_steps(items)
+        assert len(cs) == 1
+        cs_idx = next(i for i, s in enumerate(items) if isinstance(s.get("name"), str) and s["name"].startswith("configure-settings"))
+        par_idx = next(i for i, s in enumerate(items) if "parallel" in s)
+        assert cs_idx < par_idx
+
+
+# --- per-phase ES settings: registration ---
+
+
+class TestRegistration:
+    def test_configure_settings_runner_wrapped_in_retry(self):
+        reg = FakeRegistry()
+        track_module.register(reg)
+        r = reg.runners["configure-settings"]
+        # wrapping in Retry is what enables transient-failure retries on the settings request
+        assert isinstance(r, track_module.runner.Retry)
+        assert isinstance(r.delegate, track_module.ConfigureSettingsRunner)
+
+    def test_settings_param_source_registered(self):
+        reg = FakeRegistry()
+        track_module.register(reg)
+        assert reg.param_sources["settings-param-source"] is track_module.SettingsParamSource
+
+    @pytest.mark.asyncio
+    async def test_retry_wrapped_runner_executes_via_async_with(self):
+        # Rally's driver enters every runner via `async with`; Retry delegates __aenter__
+        # to the wrapped runner. A delegate lacking the context-manager protocol raises
+        # AttributeError here, so this guards the wiring the unit-level runner tests miss.
+        es = FakeEs()
+        wrapped = track_module.runner.Retry(track_module.ConfigureSettingsRunner())
+        async with wrapped as r:
+            await r(es, {"index": "i", "index_settings": {"number_of_replicas": 1}, "cluster_body": {}, "retries": 3})
+        assert es.requests == [{"method": "PUT", "path": "/i/_settings", "body": {"index": {"number_of_replicas": 1}}}]
+
+    def test_param_source_echoes_retries(self):
+        # the param-source must pass operation-level retry knobs through, otherwise
+        # the Retry wrapper never sees them and silently never retries
+        ps = track_module.SettingsParamSource(fake_track(), {"settings": {"index.x": 1}, "retries": 7})
+        assert ps.params()["retries"] == 7
+
+    @pytest.mark.asyncio
+    async def test_retry_retries_transient_connection_error(self):
+        import elasticsearch
+
+        # build params via the param-source so this exercises the REAL flow: `retries`
+        # must survive the param-source for Retry to act on it. Fail once with a
+        # transient connection error, then succeed -> Retry re-runs the op.
+        ps = track_module.SettingsParamSource(
+            fake_track(), {"settings": {"index.number_of_replicas": 1}, "retries": 3, "retry-wait-period": 0}
+        )
+        es = FlakyEs([elasticsearch.ConnectionError("boom"), None])
+        wrapped = track_module.runner.Retry(track_module.ConfigureSettingsRunner())
+        async with wrapped as r:
+            await r(es, ps.params())
+        assert len(es.requests) == 1

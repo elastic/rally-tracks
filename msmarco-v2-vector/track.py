@@ -461,10 +461,89 @@ class _DocIdRewritingPartition:
         return b"\n".join(out)
 
 
+class SettingsParamSource:
+    # Resolves the target index and splits a flat per-phase settings dict into an
+    # index-level and a cluster-level request, routing each key by whether it is an
+    # index setting:
+    #   index.* keys   -> PUT /<index>/_settings   (body: {"index": {<key without "index.">: ...}})
+    #   all other keys -> PUT /_cluster/settings    (body: {"persistent": {<key>: ...}})
+    # Cluster settings are always applied as persistent; transient is not exposed
+    # because it is deprecated in Elasticsearch. The user just provides the settings
+    # under their natural Elasticsearch names (index settings carry the canonical
+    # "index." prefix); they never specify persistent/transient.
+
+    def __init__(self, track, params, **kwargs):
+        if len(track.indices) == 1:
+            default_index = track.indices[0].name
+        else:
+            default_index = "_all"
+        self._index_name = params.get("index", default_index)
+        self._params = params
+
+        settings = params.get("settings") or {}
+        if not isinstance(settings, dict):
+            raise ValueError(f"Each as_settings entry must be an object, got [{type(settings).__name__}]: {settings!r}")
+        index_settings = {}
+        cluster_settings = {}
+        for key, value in settings.items():
+            if key.startswith("index."):
+                index_settings[key[len("index.") :]] = value
+            else:
+                cluster_settings[key] = value
+
+        self._index_settings = index_settings
+        self._cluster_body = {"persistent": cluster_settings} if cluster_settings else {}
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        return self
+
+    def params(self):
+        # Echo the operation's static params (like Rally's built-in param sources do
+        # via `p.update(self._params)`) so operation-level knobs — notably `retries`
+        # and the other `retry-*` settings read by the Retry wrapper — reach the
+        # runner. Then add the split settings the runner consumes. Without this echo
+        # the runner would only ever see these three keys and Retry would silently
+        # never retry (retries defaults to 0).
+        p = dict(self._params)
+        p["index"] = self._index_name
+        p["index_settings"] = self._index_settings
+        p["cluster_body"] = self._cluster_body
+        return p
+
+
+class ConfigureSettingsRunner(runner.Runner):
+    # Subclasses runner.Runner so it inherits the async context-manager protocol
+    # (__aenter__/__aexit__). This is required because it is registered wrapped in
+    # runner.Retry(...): Rally enters every runner via `async with`, and Retry
+    # delegates __aenter__ to the wrapped runner — a plain class without those
+    # methods would raise AttributeError on entry.
+    async def __call__(self, es, params):
+        index = params["index"]
+        index_settings = params.get("index_settings") or {}
+        cluster_body = params.get("cluster_body") or {}
+
+        if index_settings:
+            self.logger.info("Applying index settings to [%s]: %s", index, index_settings)
+            await es.perform_request(method="PUT", path=f"/{index}/_settings", body={"index": index_settings})
+        if cluster_body:
+            self.logger.info("Applying cluster settings: %s", cluster_body)
+            await es.perform_request(method="PUT", path="/_cluster/settings", body=cluster_body)
+
+    def __repr__(self, *args, **kwargs):
+        return "configure-settings"
+
+
 def register(registry):
     registry.register_param_source("knn-param-source", KnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_param_source("hybrid-bm25-knn-param-source", HybridParamSource)
     registry.register_param_source("esql-hybrid-bm25-knn-param-source", EsqlHybridParamSource)
     registry.register_param_source("bulk-copy-docid-param-source", BulkCopyDocIdParamSource)
+    registry.register_param_source("settings-param-source", SettingsParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)
+    # Wrap in Retry (like Rally's other admin/setup runners) so transient connection
+    # or timeout failures on the settings request are retried. The number of retries
+    # is controlled by the "retries" operation parameter in the schedule templates;
+    # a 400 (bad setting) is never retried, so an invalid value still fails fast.
+    registry.register_runner("configure-settings", runner.Retry(ConfigureSettingsRunner()), async_runner=True)

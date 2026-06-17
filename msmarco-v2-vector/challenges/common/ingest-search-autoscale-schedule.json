@@ -38,7 +38,21 @@
 {%- set p_ingest_bulk_size = (ingest_bulk_size | default(100))%}
 {%- set p_as_search_clients = (as_search_clients | default([1,2,4,8,16]))%}
 {%- set p_as_search_target_throughputs = (as_search_target_throughputs | default([-1]))%}
+{%- set p_as_settings = (as_settings | default([{}]))%}
+{%- set p_as_settings_retries = ([as_settings_retries | default(3) | int, 0] | max)%}
 {%- for i in range(p_as_phases) %},
+  {%- set phase_settings = p_as_settings[i % (p_as_settings|length)] %}
+  {%- if phase_settings %}
+{
+  "name": "configure-settings-{{loop.index}}",
+  "operation": {
+    "operation-type": "configure-settings",
+    "param-source": "settings-param-source",
+    "settings": {{phase_settings | tojson}},
+    "retries": {{p_as_settings_retries}}
+  }
+},
+  {%- endif %}
 {
   "parallel": {
     "warmup-time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},

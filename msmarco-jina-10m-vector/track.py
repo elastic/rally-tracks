@@ -69,7 +69,7 @@ class KnnParamSource:
         random.Random(self._seed).shuffle(self._queries)
 
         self._iters = 0
-        self._maxIters = len(self._queries)
+        self._max_iters = len(self._queries)
         self.infinite = True
 
     def partition(self, partition_index, total_partitions):
@@ -92,7 +92,7 @@ class KnnParamSource:
             result["size"] = k
 
         self._iters += 1
-        if self._iters >= self._maxIters:
+        if self._iters >= self._max_iters:
             self._iters = 0
         return result
 

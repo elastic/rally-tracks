@@ -17,7 +17,7 @@
 
 SHELL := /bin/bash
 
-PY_VERSION ?= 3.13
+PY_VERSION ?= 3.13.7
 VIRTUAL_ENV ?= .venv-$(PY_VERSION)
 VENV_ACTIVATE_FILE := $(VIRTUAL_ENV)/bin/activate
 VENV_ACTIVATE := source $(VENV_ACTIVATE_FILE)

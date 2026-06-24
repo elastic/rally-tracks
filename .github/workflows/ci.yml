@@ -175,7 +175,7 @@ jobs:
       - name: Check disk space before
         run: df -h
       - name: "Run tests${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-es-build.outputs.revision }}${{ needs.determine-es-build.outputs.release_build }}"
-        run: make it ARGS="${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-es-build.outputs.revision }}${{ needs.determine-es-build.outputs.release_build }}"
+        run: make it PY_VERSION=${{ matrix.python-version }} ARGS="${{ needs.filter-pr-changes.outputs.track_filter }}${{ needs.determine-es-build.outputs.revision }}${{ needs.determine-es-build.outputs.release_build }}"
         timeout-minutes: 160
         env:
           # elastic/endpoint fetches assets from GitHub, authenticate to avoid

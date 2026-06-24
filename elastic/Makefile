@@ -18,7 +18,7 @@
 SHELL := /bin/bash
 ROOT_DIR := $(abspath ..)
 PY_VERSION ?= 3.13.7
-VIRTUAL_ENV ?= $(ROOT_DIR)/.venv-$(PY_VERSION)
+VIRTUAL_ENV := $(or $(VIRTUAL_ENV),$(ROOT_DIR)/.venv$(if $(PY_VERSION),-$(PY_VERSION)))
 VENV_ACTIVATE_FILE := $(VIRTUAL_ENV)/bin/activate
 VENV_ACTIVATE := source $(VENV_ACTIVATE_FILE)
 

@@ -49,7 +49,7 @@ class TestTrackRepository:
     ]
 
     skip_challenges = {
-        "github_archive": ["scaling-search"],  # (flaky)
+        "github_archive": ["scaling-search"],  # (flaky due to shard recovery)
         "nyc_taxis": ["esql-views"],
         "tsdb": ["downsample"],
         "tsdb_k8s_queries": ["esql"],

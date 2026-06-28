@@ -18,14 +18,14 @@
       "name": "index-unmapped-dense",
       "operation-type": "bulk",
       "indices": ["unmapped_bench_full_mapped_dense", "unmapped_bench_no_mapping_dense"],
-      "bulk-size": {{bulk_size | default(10000)}},
+      "bulk-size": {{bulk_size | default(500)}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
       "name": "index-unmapped-sparse",
       "operation-type": "bulk",
       "indices": ["unmapped_bench_full_mapped_sparse", "unmapped_bench_no_mapping_sparse"],
-      "bulk-size": {{bulk_size | default(10000)}},
+      "bulk-size": {{bulk_size | default(500)}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
 

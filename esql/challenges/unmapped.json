@@ -68,7 +68,7 @@
         },
 
 {# ------------------------------------------------------------------ #}
-{# Query schedule — 5 scenarios × 4 field counts × 2 densities = 40.  #}
+{# Query schedule — 6 scenarios × 4 field counts × 2 densities = 48.  #}
 {# warmup-iterations: 100 for 1/10 fields, 10 for 100/allfields.      #}
 {# Trailing-comma rule: comma after every entry EXCEPT the last one   #}
 {# (mix_load × allfields × sparse). Uses the d_last + loop.last trick.#}

@@ -11,7 +11,7 @@
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
   },
   "mappings": {
-    "dynamic": "false",
+    "dynamic": false,
     "_source": {
       "mode": {{ source_mode | default("stored") | tojson }}
     },

@@ -30,10 +30,11 @@
     },
 
 {# ------------------------------------------------------------------ #}
-{# Query operations — 5 scenarios × 4 field counts × 2 densities = 40 #}
+{# Query operations — 6 scenarios × 4 field counts × 2 densities = 48 #}
 {#                                                                      #}
 {# Scenarios:                                                           #}
 {#   mapped      — all fields in mapping, no SET needed                 #}
+{#   mapped_load — all fields in mapping, SET unmapped_fields=load      #}
 {#   nullify     — fully unmapped index, SET unmapped_fields=nullify    #}
 {#   load        — fully unmapped index, SET unmapped_fields=load       #}
 {#   mix_nullify — one mapped + one unmapped index, nullify             #}

@@ -32,7 +32,11 @@
   {
     "name": "{{idx_name}}",
     "body": "idx_mapping0.json"
-  }
+  },
+  { "name": "unmapped_bench_full_mapped_dense",  "body": "unmapped_full_mapping.json" },
+  { "name": "unmapped_bench_full_mapped_sparse", "body": "unmapped_full_mapping.json" },
+  { "name": "unmapped_bench_no_mapping_dense",   "body": "unmapped_no_mapping.json"   },
+  { "name": "unmapped_bench_no_mapping_sparse",  "body": "unmapped_no_mapping.json"   }
 ],
 "corpora": [
 {% for i in range(1, n_indices) %}
@@ -65,7 +69,59 @@
         "uncompressed-bytes": 41277790
       }
     ]
-  }
+  },
+{
+  "name": "unmapped_bench_full_mapped_dense",
+  "base-url": "https://rally-tracks.elastic.co/esql_unmapped",
+  "documents": [
+    {
+      "target-index": "unmapped_bench_full_mapped_dense",
+      "source-file": "unmapped_bench_dense.json.bz2",
+      "document-count": 1000000,
+      "compressed-bytes": 3614855830,
+      "uncompressed-bytes": 18902890000
+    }
+  ]
+},
+{
+  "name": "unmapped_bench_full_mapped_sparse",
+  "base-url": "https://rally-tracks.elastic.co/esql_unmapped",
+  "documents": [
+    {
+      "target-index": "unmapped_bench_full_mapped_sparse",
+      "source-file": "unmapped_bench_sparse.json.bz2",
+      "document-count": 1000000,
+      "compressed-bytes": 44737502,
+      "uncompressed-bytes": 239778000
+    }
+  ]
+},
+{
+  "name": "unmapped_bench_no_mapping_dense",
+  "base-url": "https://rally-tracks.elastic.co/esql_unmapped",
+  "documents": [
+    {
+      "target-index": "unmapped_bench_no_mapping_dense",
+      "source-file": "unmapped_bench_dense.json.bz2",
+      "document-count": 1000000,
+      "compressed-bytes": 3614855830,
+      "uncompressed-bytes": 18902890000
+    }
+  ]
+},
+{
+  "name": "unmapped_bench_no_mapping_sparse",
+  "base-url": "https://rally-tracks.elastic.co/esql_unmapped",
+  "documents": [
+    {
+      "target-index": "unmapped_bench_no_mapping_sparse",
+      "source-file": "unmapped_bench_sparse.json.bz2",
+      "document-count": 1000000,
+      "compressed-bytes": 44737502,
+      "uncompressed-bytes": 239778000
+    }
+  ]
+}
 ],
 "operations": [
 {{ rally.collect(parts="operations/*.json") }}

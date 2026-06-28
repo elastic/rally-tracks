@@ -86,6 +86,13 @@
           "iterations": {{query_iterations | default(100)}}
         },
         {
+          "operation": "unmapped_mapped_load_{{ label }}_{{ density }}",
+          "tags": ["esql_unmapped", "mapped_load", "{{ density }}", "{{ label }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": {{ warmup }},
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
           "operation": "unmapped_nullify_{{ label }}_{{ density }}",
           "tags": ["esql_unmapped", "nullify", "{{ density }}", "{{ label }}"],
           "clients": {{query_clients | default(1)}},

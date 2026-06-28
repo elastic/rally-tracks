@@ -56,6 +56,11 @@
       "query": "FROM unmapped_bench_full_mapped_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
     },
     {
+      "name": "unmapped_mapped_load_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
+    },
+    {
       "name": "unmapped_nullify_{{ label }}_{{ density }}",
       "operation-type": "esql",
       "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_no_mapping_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"

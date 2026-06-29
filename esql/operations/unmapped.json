@@ -31,7 +31,7 @@
 
 {# ------------------------------------------------------------------ #}
 {# Query operations — 8 scenarios × 4 field counts × 2 densities = 64 #}
-{# plus 4 focused cast probes for partially mapped fields.             #}
+{# plus 4 focused cast probes and 8 targeted follow-up probes.         #}
 {#                                                                      #}
 {# Scenarios:                                                           #}
 {#   mapped      — all fields in mapping, no SET needed                 #}
@@ -44,6 +44,9 @@
 {#   mix_load    — one mapped + one unmapped index, load                #}
 {# Extra probes (outside field-count loop):                             #}
 {#   mix_*_cast_field0_{dense,sparse} to validate cast-path behavior.   #}
+{#   load_1field_2fe_* vs load_manyfields_2fe_* to test scaling with    #}
+{#   two independent field extractions.                                  #}
+{#   two realistic-ish mix/load query patterns (filter + sort).         #}
 {#                                                                      #}
 {# Trailing-comma rule: every operation gets a comma EXCEPT the very   #}
 {# last one (sparse × allfields × mix_load).  We detect this with the  #}
@@ -120,4 +123,44 @@
       "name": "unmapped_mix_load_cast_field0_sparse",
       "operation-type": "esql",
       "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | EVAL field_0_cast = TO_STRING(field_0) | KEEP field_0_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_load_1field_2fe_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_no_mapping_dense | EVAL field_0_a = TO_STRING(field_0), field_0_b = CONCAT(field_0, \"\") | KEEP field_0_a, field_0_b | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_load_manyfields_2fe_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_no_mapping_dense | EVAL field_0_cast = TO_STRING(field_0), field_1_cast = TO_STRING(field_1) | KEEP {{ keep(100) }}, field_0_cast, field_1_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_load_1field_2fe_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_no_mapping_sparse | EVAL field_0_a = TO_STRING(field_0), field_0_b = CONCAT(field_0, \"\") | KEEP field_0_a, field_0_b | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_load_manyfields_2fe_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_no_mapping_sparse | EVAL field_0_cast = TO_STRING(field_0), field_1_cast = TO_STRING(field_1) | KEEP {{ keep(100) }}, field_0_cast, field_1_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_filter_keep_10fields_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | WHERE field_0 IS NOT NULL | KEEP {{ keep(10) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_sort_keep_10fields_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | KEEP {{ keep(10) }} | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_filter_keep_10fields_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | WHERE field_0 IS NOT NULL | KEEP {{ keep(10) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_sort_keep_10fields_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | KEEP {{ keep(10) }} | SORT field_0 | LIMIT 1000"
     }

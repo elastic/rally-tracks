@@ -24,7 +24,7 @@ from datetime import datetime, timedelta, timezone
 # Constants
 # ---------------------------------------------------------------------------
 
-N_FIELDS = 998          # field_0 … field_997; fits within ES default mapping limit (1000)
+N_FIELDS = 998  # field_0 … field_997; fits within ES default mapping limit (1000)
 N_DOCS_FULL = 1_000_000
 N_DOCS_TEST = 1_000
 SPARSE_FIELDS_PER_DOC = 10  # ~1 % of N_FIELDS
@@ -51,6 +51,7 @@ _FIELD_FRAGS = [f',"field_{i}":"' for i in range(N_FIELDS)]
 # ---------------------------------------------------------------------------
 # Document generators
 # ---------------------------------------------------------------------------
+
 
 def _ts(rng: random.Random) -> str:
     offset = rng.randint(0, TS_RANGE_SECONDS)
@@ -90,6 +91,7 @@ def sparse_line(doc_id: int, rng: random.Random) -> str:
 # Writer
 # ---------------------------------------------------------------------------
 
+
 def write_corpus(path: str, n_docs: int, line_fn, rng: random.Random, label: str) -> None:
     print(f"  [{label}] writing {n_docs:,} docs → {path}", flush=True)
     with bz2.open(path, "wt", encoding="utf-8") as fh:
@@ -107,16 +109,17 @@ def write_corpus(path: str, n_docs: int, line_fn, rng: random.Random, label: str
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--output-dir", default=os.path.join(os.path.dirname(__file__), "_data"),
-                    help="Directory to write corpus files into (default: esql/_data/)")
-    ap.add_argument("--n-docs", type=int, default=N_DOCS_FULL,
-                    help=f"Documents in full corpus files (default {N_DOCS_FULL:,})")
-    ap.add_argument("--n-test-docs", type=int, default=N_DOCS_TEST,
-                    help=f"Documents in test-mode (-1k) files (default {N_DOCS_TEST:,})")
-    ap.add_argument("--seed", type=int, default=DEFAULT_SEED,
-                    help=f"Random seed for reproducibility (default {DEFAULT_SEED})")
+    ap.add_argument(
+        "--output-dir",
+        default=os.path.join(os.path.dirname(__file__), "_data"),
+        help="Directory to write corpus files into (default: esql/_data/)",
+    )
+    ap.add_argument("--n-docs", type=int, default=N_DOCS_FULL, help=f"Documents in full corpus files (default {N_DOCS_FULL:,})")
+    ap.add_argument("--n-test-docs", type=int, default=N_DOCS_TEST, help=f"Documents in test-mode (-1k) files (default {N_DOCS_TEST:,})")
+    ap.add_argument("--seed", type=int, default=DEFAULT_SEED, help=f"Random seed for reproducibility (default {DEFAULT_SEED})")
     args = ap.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -125,17 +128,13 @@ def main() -> None:
     # ---- Dense --------------------------------------------------------
     print("\n=== Dense corpus (all fields) ===")
     # Test-mode file first; full file uses the same seed so docs 0…N_TEST-1 match.
-    write_corpus(f"{d}/unmapped_bench_dense-1k.json.bz2",
-                 args.n_test_docs, dense_line, random.Random(args.seed), "dense-1k")
-    write_corpus(f"{d}/unmapped_bench_dense.json.bz2",
-                 args.n_docs,      dense_line, random.Random(args.seed), "dense-full")
+    write_corpus(f"{d}/unmapped_bench_dense-1k.json.bz2", args.n_test_docs, dense_line, random.Random(args.seed), "dense-1k")
+    write_corpus(f"{d}/unmapped_bench_dense.json.bz2", args.n_docs, dense_line, random.Random(args.seed), "dense-full")
 
     # ---- Sparse -------------------------------------------------------
     print("\n=== Sparse corpus (~10 fields/doc) ===")
-    write_corpus(f"{d}/unmapped_bench_sparse-1k.json.bz2",
-                 args.n_test_docs, sparse_line, random.Random(args.seed), "sparse-1k")
-    write_corpus(f"{d}/unmapped_bench_sparse.json.bz2",
-                 args.n_docs,      sparse_line, random.Random(args.seed), "sparse-full")
+    write_corpus(f"{d}/unmapped_bench_sparse-1k.json.bz2", args.n_test_docs, sparse_line, random.Random(args.seed), "sparse-1k")
+    write_corpus(f"{d}/unmapped_bench_sparse.json.bz2", args.n_docs, sparse_line, random.Random(args.seed), "sparse-full")
 
     # ---- Summary ------------------------------------------------------
     print("\n=== Summary ===")

@@ -1810,6 +1810,69 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "where_in_subquery_top_payment_types",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["subqueries"]
+        },
+        {
+          "operation": "top_payment_types",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["subqueries"]
+        },
+        {
+          "operation": "where_not_in_subquery_top_payment_types",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["subqueries"]
+        },
+        {
+          "operation": "where_in_subquery_and",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["subqueries"]
+        },
+        {
+          "operation": "where_in_subquery_or",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["subqueries"]
+        },
+        {
+          "operation": "where_in_subquery_nested",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["subqueries"]
+        },
+        {
+          "operation": "top_n_histogram",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["subqueries"]
+        },
+        {
+          "operation": "top_n_histogram_group_others",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["subqueries"]
+        },
+        {
+          "operation": "nested_top_n",
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 20,
+          "tags": ["subqueries"]
         }
       ]
     },

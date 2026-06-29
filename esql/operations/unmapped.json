@@ -30,15 +30,20 @@
     },
 
 {# ------------------------------------------------------------------ #}
-{# Query operations — 6 scenarios × 4 field counts × 2 densities = 48 #}
+{# Query operations — 8 scenarios × 4 field counts × 2 densities = 64 #}
+{# plus 4 focused cast probes for partially mapped fields.             #}
 {#                                                                      #}
 {# Scenarios:                                                           #}
 {#   mapped      — all fields in mapping, no SET needed                 #}
 {#   mapped_load — all fields in mapping, SET unmapped_fields=load      #}
+{#   mapped_source      — mapped baseline, project fields + _source      #}
+{#   mapped_load_source — mapped + SET load, project fields + _source    #}
 {#   nullify     — fully unmapped index, SET unmapped_fields=nullify    #}
 {#   load        — fully unmapped index, SET unmapped_fields=load       #}
 {#   mix_nullify — one mapped + one unmapped index, nullify             #}
 {#   mix_load    — one mapped + one unmapped index, load                #}
+{# Extra probes (outside field-count loop):                             #}
+{#   mix_*_cast_field0_{dense,sparse} to validate cast-path behavior.   #}
 {#                                                                      #}
 {# Trailing-comma rule: every operation gets a comma EXCEPT the very   #}
 {# last one (sparse × allfields × mix_load).  We detect this with the  #}
@@ -60,6 +65,16 @@
       "name": "unmapped_mapped_load_{{ label }}_{{ density }}",
       "operation-type": "esql",
       "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mapped_source_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_{{ density }} METADATA _source | KEEP {{ keep(n) }}, _source | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mapped_load_source_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_{{ density }} METADATA _source | KEEP {{ keep(n) }}, _source | LIMIT 1000"
     },
     {
       "name": "unmapped_nullify_{{ label }}_{{ density }}",
@@ -84,3 +99,25 @@
 
 {% endfor %}
 {% endfor %}
+
+    ,
+    {
+      "name": "unmapped_mix_nullify_cast_field0_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | EVAL field_0_cast = TO_STRING(field_0) | KEEP field_0_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_cast_field0_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | EVAL field_0_cast = TO_STRING(field_0) | KEEP field_0_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_nullify_cast_field0_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | EVAL field_0_cast = TO_STRING(field_0) | KEEP field_0_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_cast_field0_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | EVAL field_0_cast = TO_STRING(field_0) | KEEP field_0_cast | LIMIT 1000"
+    }

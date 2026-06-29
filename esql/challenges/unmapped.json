@@ -68,7 +68,8 @@
         },
 
 {# ------------------------------------------------------------------ #}
-{# Query schedule — 6 scenarios × 4 field counts × 2 densities = 48.  #}
+{# Query schedule — 8 scenarios × 4 field counts × 2 densities = 64.  #}
+{# plus 4 focused cast probes for partially mapped fields.             #}
 {# warmup-iterations: 100 for 1/10 fields, 10 for 100/allfields.      #}
 {# Trailing-comma rule: comma after every entry EXCEPT the last one   #}
 {# (mix_load × allfields × sparse). Uses the d_last + loop.last trick.#}
@@ -88,6 +89,20 @@
         {
           "operation": "unmapped_mapped_load_{{ label }}_{{ density }}",
           "tags": ["esql_unmapped", "mapped_load", "{{ density }}", "{{ label }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": {{ warmup }},
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mapped_source_{{ label }}_{{ density }}",
+          "tags": ["esql_unmapped", "mapped_source", "{{ density }}", "{{ label }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": {{ warmup }},
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mapped_load_source_{{ label }}_{{ density }}",
+          "tags": ["esql_unmapped", "mapped_load_source", "{{ density }}", "{{ label }}"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": {{ warmup }},
           "iterations": {{query_iterations | default(100)}}
@@ -123,6 +138,36 @@
 
 {% endfor %}
 {% endfor %}
+
+        ,
+        {
+          "operation": "unmapped_mix_nullify_cast_field0_dense",
+          "tags": ["esql_unmapped", "mix", "nullify", "dense", "cast", "field0"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_load_cast_field0_dense",
+          "tags": ["esql_unmapped", "mix", "load", "dense", "cast", "field0"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_nullify_cast_field0_sparse",
+          "tags": ["esql_unmapped", "mix", "nullify", "sparse", "cast", "field0"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_load_cast_field0_sparse",
+          "tags": ["esql_unmapped", "mix", "load", "sparse", "cast", "field0"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        }
 
       ]
     }

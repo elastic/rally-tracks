@@ -1,24 +1,4 @@
 {%- set p_set_ingest_timestamp = set_ingest_timestamp | default(true) %}
-{%- set _reroute_processors = [] %}
-{%- if multi_target %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-push", "tag": "gharchive", "if": "ctx?.type == \'PushEvent\'"}}') %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-create", "tag": "gharchive", "if": "ctx?.type == \'CreateEvent\'"}}') %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-pr", "tag": "gharchive", "if": "ctx?.type == \'PullRequestEvent\'"}}') %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-comment", "tag": "gharchive", "if": "ctx?.type == \'IssueCommentEvent\'"}}') %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-watch", "tag": "gharchive", "if": "ctx?.type == \'WatchEvent\'"}}') %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-delete", "tag": "gharchive", "if": "ctx?.type == \'DeleteEvent\'"}}') %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-prreview", "tag": "gharchive", "if": "ctx?.type == \'PullRequestReviewEvent\'"}}') %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-issues", "tag": "gharchive", "if": "ctx?.type == \'IssuesEvent\'"}}') %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-fork", "tag": "gharchive", "if": "ctx?.type == \'ForkEvent\'"}}') %}
-{%- do _reroute_processors.append('{"reroute": {"destination": "gharchive-event-prreviewcomment", "tag": "gharchive", "if": "ctx?.type == \'PullRequestReviewCommentEvent\'"}}') %}
-{%- endif %}
-{%- set _all_processors = [] %}
-{%- if p_set_ingest_timestamp %}
-{%- do _all_processors.append('{"set": {"field": "@timestamp", "value": "{{{_ingest.timestamp}}}"}}') %}
-{%- endif %}
-{%- for rp in _reroute_processors %}
-{%- do _all_processors.append(rp) %}
-{%- endfor %}
 {
   "name": "create-ingest-pipeline-pipeline",
   "operation": {
@@ -28,7 +8,86 @@
     "body": {
       "description": "Ingest pipeline for the github_archive Rally track",
       "processors": [
-        {{ _all_processors | join(",\n        ") }}
+        {%- if p_set_ingest_timestamp %}
+        {
+          "set": {
+            "field": "@timestamp",
+            "value": {{ '"{{{_ingest.timestamp}}}"' }}
+          }
+        }{% if multi_target %},{%- endif %}
+        {%- endif %}
+        {%- if multi_target %}
+        {
+          "reroute": {
+            "destination": "gharchive-event-push",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'PushEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-create",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'CreateEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-pr",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'PullRequestEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-comment",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'IssueCommentEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-watch",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'WatchEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-delete",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'DeleteEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-prreview",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'PullRequestReviewEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-issues",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'IssuesEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-fork",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'ForkEvent'"
+          }
+        },
+        {
+          "reroute": {
+            "destination": "gharchive-event-prreviewcomment",
+            "tag": "gharchive",
+            "if": "ctx?.type == 'PullRequestReviewCommentEvent'"
+          }
+        }
+        {%- endif %}
       ]
     }
   },

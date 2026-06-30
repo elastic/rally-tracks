@@ -69,7 +69,7 @@
 
 {# ------------------------------------------------------------------ #}
 {# Query schedule — 8 scenarios × 4 field counts × 2 densities = 64.  #}
-{# plus 4 cast probes and 8 targeted follow-up probes = 76 total.      #}
+{# plus 4 cast probes and 16 targeted follow-up probes = 84 total.     #}
 {# warmup-iterations: 100 for 1/10 fields, 10 for 100/allfields.      #}
 {# Trailing-comma rule: comma after every entry EXCEPT the last one   #}
 {# (mix_load × allfields × sparse). Uses the d_last + loop.last trick.#}
@@ -169,10 +169,24 @@
           "iterations": {{query_iterations | default(100)}}
         },
         {
+          "operation": "unmapped_nullify_1field_2fe_dense",
+          "tags": ["esql_unmapped", "nullify", "dense", "1field", "2fe", "scaling"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
           "operation": "unmapped_load_1field_2fe_dense",
           "tags": ["esql_unmapped", "load", "dense", "1field", "2fe", "scaling"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_nullify_manyfields_2fe_dense",
+          "tags": ["esql_unmapped", "nullify", "dense", "manyfields", "2fe", "scaling"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
         },
         {
@@ -183,10 +197,24 @@
           "iterations": {{query_iterations | default(100)}}
         },
         {
+          "operation": "unmapped_nullify_1field_2fe_sparse",
+          "tags": ["esql_unmapped", "nullify", "sparse", "1field", "2fe", "scaling"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
           "operation": "unmapped_load_1field_2fe_sparse",
           "tags": ["esql_unmapped", "load", "sparse", "1field", "2fe", "scaling"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_nullify_manyfields_2fe_sparse",
+          "tags": ["esql_unmapped", "nullify", "sparse", "manyfields", "2fe", "scaling"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
         },
         {
@@ -197,8 +225,22 @@
           "iterations": {{query_iterations | default(100)}}
         },
         {
+          "operation": "unmapped_mix_nullify_filter_keep_10fields_dense",
+          "tags": ["esql_unmapped", "mix", "nullify", "dense", "realistic", "filter", "10fields"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
           "operation": "unmapped_mix_load_filter_keep_10fields_dense",
           "tags": ["esql_unmapped", "mix", "load", "dense", "realistic", "filter", "10fields"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_nullify_sort_keep_10fields_dense",
+          "tags": ["esql_unmapped", "mix", "nullify", "dense", "realistic", "sort", "10fields"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}
@@ -211,8 +253,22 @@
           "iterations": {{query_iterations | default(100)}}
         },
         {
+          "operation": "unmapped_mix_nullify_filter_keep_10fields_sparse",
+          "tags": ["esql_unmapped", "mix", "nullify", "sparse", "realistic", "filter", "10fields"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
           "operation": "unmapped_mix_load_filter_keep_10fields_sparse",
           "tags": ["esql_unmapped", "mix", "load", "sparse", "realistic", "filter", "10fields"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_nullify_sort_keep_10fields_sparse",
+          "tags": ["esql_unmapped", "mix", "nullify", "sparse", "realistic", "sort", "10fields"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}

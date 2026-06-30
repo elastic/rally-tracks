@@ -1,60 +1,28 @@
 {% set n_unmapped_fields = (n_unmapped_fields | default(998)) %}
+{% set unmapped_bulk_size = (bulk_size | default(500)) %}
+{% set densities = ["dense", "sparse"] %}
+{% set field_configs = [(1, "1field"), (10, "10fields"), (100, "100fields"), (n_unmapped_fields, "allfields")] %}
 
-{#
-  keep(n) — emit a comma-separated KEEP field list: field_0, field_1, …, field_{n-1}
-  Uses whitespace-trimming dashes so the macro output is a clean inline string.
-#}
 {%- macro keep(n) -%}
 {%- for i in range(n) -%}
 {%- if not loop.first %}, {% endif -%}field_{{ i }}
 {%- endfor -%}
 {%- endmacro -%}
 
-{# ------------------------------------------------------------------ #}
-{# Bulk-indexing operations (referenced only from the unmapped challenge) #}
-{# ------------------------------------------------------------------ #}
-
     {
       "name": "index-unmapped-dense",
       "operation-type": "bulk",
       "indices": ["unmapped_bench_full_mapped_dense", "unmapped_bench_no_mapping_dense"],
-      "bulk-size": {{bulk_size | default(500)}},
+      "bulk-size": {{unmapped_bulk_size}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
     {
       "name": "index-unmapped-sparse",
       "operation-type": "bulk",
       "indices": ["unmapped_bench_full_mapped_sparse", "unmapped_bench_no_mapping_sparse"],
-      "bulk-size": {{bulk_size | default(500)}},
+      "bulk-size": {{unmapped_bulk_size}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
-
-{# ------------------------------------------------------------------ #}
-{# Query operations — 8 scenarios × 4 field counts × 2 densities = 64 #}
-{# plus 4 focused cast probes and 16 targeted follow-up probes.        #}
-{#                                                                      #}
-{# Scenarios:                                                           #}
-{#   mapped      — all fields in mapping, no SET needed                 #}
-{#   mapped_load — all fields in mapping, SET unmapped_fields=load      #}
-{#   mapped_source      — mapped baseline, project fields + _source      #}
-{#   mapped_load_source — mapped + SET load, project fields + _source    #}
-{#   nullify     — fully unmapped index, SET unmapped_fields=nullify    #}
-{#   load        — fully unmapped index, SET unmapped_fields=load       #}
-{#   mix_nullify — one mapped + one unmapped index, nullify             #}
-{#   mix_load    — one mapped + one unmapped index, load                #}
-{# Extra probes (outside field-count loop):                             #}
-{#   mix_*_cast_field0_{dense,sparse} to validate cast-path behavior.   #}
-{#   load_1field_2fe_* vs load_manyfields_2fe_* to test scaling with    #}
-{#   two independent field extractions.                                  #}
-{#   two realistic-ish mix/load query patterns (filter + sort).         #}
-{#                                                                      #}
-{# Trailing-comma rule: every operation gets a comma EXCEPT the very   #}
-{# last one (sparse × allfields × mix_load).  We detect this with the  #}
-{# captured d_last (outer-loop) + loop.last (inner-loop) pattern.      #}
-{# ------------------------------------------------------------------ #}
-
-{% set densities     = ["dense", "sparse"] %}
-{% set field_configs = [(1, "1field"), (10, "10fields"), (100, "100fields"), (n_unmapped_fields, "allfields")] %}
 
 {% for density in densities %}
 {% set d_last = loop.last %}

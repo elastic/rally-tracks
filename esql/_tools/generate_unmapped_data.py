@@ -25,7 +25,6 @@ N_DOCS_TEST = 1_000
 SPARSE_FIELDS_PER_DOC = 10  # ~1 % of N_FIELDS
 
 DEFAULT_SEED = 42
-DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[1] / "_data"
 
 # Timestamps spread over one calendar year starting 2024-01-01
 BASE_TS = datetime(2024, 1, 1, tzinfo=timezone.utc)
@@ -93,8 +92,8 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument(
         "--output-dir",
-        default=DEFAULT_OUTPUT_DIR,
-        help="Directory to write corpus files into (default: esql/_data/)",
+        required=True,
+        help="Directory to write corpus files into.",
     )
     ap.add_argument("--n-docs", type=int, default=N_DOCS_FULL, help=f"Documents in full corpus files (default {N_DOCS_FULL:,})")
     ap.add_argument("--n-test-docs", type=int, default=N_DOCS_TEST, help=f"Documents in test-mode (-1k) files (default {N_DOCS_TEST:,})")

@@ -4,7 +4,7 @@
 
 This track allows to overwrite the following parameters using `--track-params`:
 
-* `bulk_size` (default: 10000; `esql_unmapped_fields` uses 500 unless overridden)
+* `bulk_size` (default: 10000)
 * `bulk_indexing_clients` (default: 8): Number of clients that issue bulk indexing requests.
 * `ingest_percentage` (default: 100): A number between 0 and 100 that defines how much of the document corpus should be ingested. It will be applied to the main index and to the large join indexes (ie. not to join indexes with up to 500K documents)
 * `max_concurrent_shards_per_node` (default 10): A number between 1 and 100 that defines how many concurrent threads will run per query in a node
@@ -29,6 +29,8 @@ This challenge benchmarks `SET unmapped_fields="load"` against `nullify` and map
 * mixed mapped+unmapped queries (`mix_load` and `mix_nullify`)
 * `_source` variants on mapped-only queries
 * cast probes, two-field-extraction probes (`*_2fe_*`), and targeted filter/sort probes (`*_keep_10fields_*`)
+
+The unmapped-fields challenge defaults bulk indexing to `bulk_size: 500` because dense documents are very wide. Passing `bulk_size` overrides it.
 
 #### Data generation
 

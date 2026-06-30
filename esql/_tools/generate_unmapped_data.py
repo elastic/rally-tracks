@@ -25,6 +25,8 @@ N_DOCS_TEST = 1_000
 SPARSE_FIELDS_PER_DOC = 10  # ~1 % of N_FIELDS
 
 DEFAULT_SEED = 42
+GCP_CORPUS_URI = "gs://rally-tracks/esql_unmapped"
+PUBLIC_CORPUS_URL = "https://rally-tracks.elastic.co/esql_unmapped"
 
 # Timestamps spread over one calendar year starting 2024-01-01
 BASE_TS = datetime(2024, 1, 1, tzinfo=timezone.utc)
@@ -124,7 +126,9 @@ def main() -> None:
         size = path.stat().st_size
         print(f"  {fname:<45}  {size:>15,} bytes  ({size / 1024**2:7.1f} MB)")
 
-    print(f"\nUpload the files in {d}/ to rally-tracks.elastic.co/esql_unmapped/")
+    print(f"\nUpload the files in {d}/ with the GCP track data upload process:")
+    print(f"  {GCP_CORPUS_URI}/")
+    print(f"Rally downloads them from {PUBLIC_CORPUS_URL}/")
 
 
 if __name__ == "__main__":

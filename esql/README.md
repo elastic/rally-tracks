@@ -28,7 +28,7 @@ This challenge benchmarks `SET unmapped_fields="load"` against `nullify` and map
 * single-index unmapped queries (`load` and `nullify`)
 * mixed mapped+unmapped queries (`mix_load` and `mix_nullify`)
 * `_source` variants on mapped-only queries
-* cast probes, two-field-extraction probes (`*_2fe_*`), and filter/sort follow-up probes (`*_keep_10fields_*`)
+* cast probes, two-field-extraction probes (`*_2fe_*`), and targeted filter/sort probes (`*_keep_10fields_*`)
 
 #### Data generation
 
@@ -50,7 +50,7 @@ For direct comparisons, use matched query shapes and densities:
 * `unmapped_mapped_<count>_<density>` vs `unmapped_mapped_load_<count>_<density>` for mapped-only controls
 * `unmapped_mapped_source_<count>_<density>` vs `unmapped_mapped_load_source_<count>_<density>` for `_source`-inclusive mapped controls
 
-The `*_filter_keep_10fields_*` and `*_sort_keep_10fields_*` probes are targeted follow-ups. Their filters and sorts can change row populations between `nullify` and `load`, so keep them separate from the primary cost comparisons.
+The `*_filter_keep_10fields_*` and `*_sort_keep_10fields_*` probes are targeted checks. Their filters and sorts can change row populations between `nullify` and `load`, so keep them separate from the primary cost comparisons.
 
 ### Snapshot parameters
 * `snapshot_counts` (default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).

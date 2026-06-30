@@ -1,5 +1,5 @@
 {%- set p_indexing_target_docs_per_sec = indexing_target_docs_per_sec | default(2671) %}
-{%- set p_indexing_clients = indexing_clients | default(8) %}
+{%- set p_bulk_indexing_clients = bulk_indexing_clients | default(8) %}
 {%- set p_indexing_ramp_up_time_period = indexing_ramp_up_time_period | default(2700) %}
 {%- set p_indexing_warmup_time_period = indexing_warmup_time_period | default(2700) %}
 {
@@ -10,12 +10,12 @@
     {
       "parallel": {
         "completed-by": "index_full_corpus",
+        "warmup-time-period": {{p_indexing_warmup_time_period}},
+        "ramp-up-time-period": {{p_indexing_ramp_up_time_period}},
         "tasks": [
           {
             "operation": "index_full_corpus",
-            "warmup-time-period": {{p_indexing_warmup_time_period}},
-            "ramp-up-time-period": {{p_indexing_ramp_up_time_period}},
-            "clients": {{p_indexing_clients}},
+            "clients": {{p_bulk_indexing_clients}},
             "target-throughput": "{{p_indexing_target_docs_per_sec}} docs/s"
           },
           {

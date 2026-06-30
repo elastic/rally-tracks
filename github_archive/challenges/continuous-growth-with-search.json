@@ -1,0 +1,63 @@
+{%- set p_indexing_target_docs_per_sec = indexing_target_docs_per_sec | default(2671) %}
+{%- set p_indexing_clients = indexing_clients | default(8) %}
+{%- set p_indexing_ramp_up_time_period = indexing_ramp_up_time_period | default(2700) %}
+{%- set p_indexing_warmup_time_period = indexing_warmup_time_period | default(2700) %}
+{
+  "name": "continuous-growth-with-search",
+  "description": "Index the full document corpus (all 15 corpora, ~6.6TB raw / ~1.5B documents) at a sustained, controllable rate while running a steady concurrent background search load throughout.",
+  "schedule": [
+    {{ rally.collect(parts="../common/schedule_setup.json") }},
+    {
+      "parallel": {
+        "completed-by": "index_full_corpus",
+        "tasks": [
+          {
+            "operation": "index_full_corpus",
+            "warmup-time-period": {{p_indexing_warmup_time_period}},
+            "ramp-up-time-period": {{p_indexing_ramp_up_time_period}},
+            "clients": {{p_indexing_clients}},
+            "target-throughput": "{{p_indexing_target_docs_per_sec}} docs/s"
+          },
+          {
+            "name": "background_default_search",
+            "operation": "default",
+            "warmup-time-period": {{search_warmup_time_period | default(600)}},
+            "clients": {{search_clients_default | default(2)}}
+          },
+          {
+            "name": "background_range_search",
+            "operation": "range",
+            "warmup-time-period": {{search_warmup_time_period | default(600)}},
+            "clients": {{search_clients_range | default(2)}}
+          },
+          {
+            "name": "background_filter_query",
+            "operation": "filter_query",
+            "warmup-time-period": {{search_warmup_time_period | default(600)}},
+            "clients": {{search_clients_filter | default(2)}}
+          },
+          {
+            "name": "background_autohisto_agg",
+            "operation": "autohisto_agg",
+            "warmup-time-period": {{search_warmup_time_period | default(600)}},
+            "clients": {{search_clients_agg | default(2)}}
+          },
+          {
+            "name": "background_top_contributors_weekly",
+            "operation": "top-es-contributors-weekly",
+            "warmup-time-period": {{search_warmup_time_period | default(600)}},
+            "clients": {{search_clients_terms_agg | default(1)}},
+            "target-interval": 4
+          },
+          {
+            "name": "background_top10_esql",
+            "operation": "top-10-repos-esql",
+            "warmup-time-period": {{search_warmup_time_period | default(600)}},
+            "clients": {{search_clients_esql | default(1)}},
+            "target-interval": 4
+          }
+        ]
+      }
+    }
+  ]
+}

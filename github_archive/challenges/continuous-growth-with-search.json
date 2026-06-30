@@ -21,38 +21,32 @@
           {
             "name": "background_default_search",
             "operation": "default",
-            "warmup-time-period": {{search_warmup_time_period | default(600)}},
             "clients": {{search_clients_default | default(2)}}
           },
           {
             "name": "background_range_search",
             "operation": "range",
-            "warmup-time-period": {{search_warmup_time_period | default(600)}},
             "clients": {{search_clients_range | default(2)}}
           },
           {
             "name": "background_filter_query",
             "operation": "filter_query",
-            "warmup-time-period": {{search_warmup_time_period | default(600)}},
             "clients": {{search_clients_filter | default(2)}}
           },
           {
             "name": "background_autohisto_agg",
             "operation": "autohisto_agg",
-            "warmup-time-period": {{search_warmup_time_period | default(600)}},
             "clients": {{search_clients_agg | default(2)}}
           },
           {
             "name": "background_top_contributors_weekly",
             "operation": "top-es-contributors-weekly",
-            "warmup-time-period": {{search_warmup_time_period | default(600)}},
             "clients": {{search_clients_terms_agg | default(1)}},
             "target-interval": 4
           },
           {
             "name": "background_top10_esql",
             "operation": "top-10-repos-esql",
-            "warmup-time-period": {{search_warmup_time_period | default(600)}},
             "clients": {{search_clients_esql | default(1)}},
             "target-interval": 4
           }

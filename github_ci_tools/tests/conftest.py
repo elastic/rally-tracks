@@ -3,20 +3,20 @@
 Provides:
   - Dynamic loading of the `backport.py` module (so no package __init__ files required).
   - An injectable GitHub API mock (`gh_mock`) that records calls and returns
-	predefined responses or raises exceptions.
+        predefined responses or raises exceptions.
   - Helper fixtures for creating synthetic PR payloads and reminder comments.
   - A convenience fixture to run `configure()` with a minimal argparse.Namespace.
 
 Usage examples in tests:
 
   def test_needs_pending_label(backport_mod, pr_no_labels):
-	  assert backport_mod.needs_pending_label(pr_no_labels)
+          assert backport_mod.needs_pending_label(pr_no_labels)
 
   def test_label_api_called(backport_mod, gh_mock, pr_versioned):
-	  gh_mock.add(f'repos/{TEST_REPO}/labels/backport%20pending', method='GET', response={})  # label exists
-	  gh_mock.add(f'repos/{TEST_REPO}/issues/42/labels', method='POST', response={'ok': True})
-	  backport_mod.add_pull_request_label(42, backport_mod.PENDING_LABEL)
-	  assert any(f'repos/{TEST_REPO}/issues/42/labels' in c['path'] for c in gh_mock.calls)
+          gh_mock.add(f'repos/{TEST_REPO}/labels/backport%20pending', method='GET', response={})  # label exists
+          gh_mock.add(f'repos/{TEST_REPO}/issues/42/labels', method='POST', response={'ok': True})
+          backport_mod.add_pull_request_label(42, backport_mod.PENDING_LABEL)
+          assert any(f'repos/{TEST_REPO}/issues/42/labels' in c['path'] for c in gh_mock.calls)
 
 Note: We treat paths exactly as provided to `gh_request` after query param expansion.
 If you register a route with query parameters, include the full `path?query=..` string.

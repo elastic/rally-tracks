@@ -11,9 +11,9 @@ To rebuild the dataset run the following commands, **warning** this takes at lea
 
 ```console
 $ cd msmarco-v2-vector
-$ python3 -m venv .venv
+$ uv venv
 $ source .venv/bin/activate
-$ pip install -r _tools/requirements.txt
+$ uv pip install -r _tools/requirements.txt
 $ python _tools/parse_documents.py
 
 # Create a test file for each page of documents

@@ -17,10 +17,10 @@ Usage:
   download.py TRACK [--track-params STR] [--no-cache]
 
 Examples:
-  download.py geonames
-  download.py elastic/logs
-  download.py elastic/security
-  download.py elastic/logs --track-params="max_total_download_gb:36"
+  ./download.py geonames
+  ./download.py elastic/logs
+  ./download.py elastic/security
+  ./download.py elastic/logs --track-params="max_total_download_gb:36"
 """
 
 import argparse

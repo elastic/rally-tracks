@@ -49,7 +49,7 @@ def _require_esrally():
         return opts
     except ImportError:
         print("error: esrally is required to run download.py.", file=sys.stderr)
-        print("       Install with: make install", file=sys.stderr)
+        print("       Install with: pip install esrally", file=sys.stderr)
         sys.exit(1)
 
 

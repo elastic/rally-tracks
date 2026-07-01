@@ -18,6 +18,23 @@ If you want to contribute a track, please ensure that it works against the main 
 > [!NOTE]
 > See all details in the [contributor guidelines](https://github.com/elastic/rally/blob/master/CONTRIBUTING.md).
 
+## Development setup
+
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then create the development environment:
+
+```
+make install
+```
+
+Common development commands are:
+
+```
+make lint
+make format
+make test
+make it
+```
+
 # Backporting changes
 
 Backporting ensures that tracks do not work only for the latest `main` version of Elasticsearch but also for older versions, so it is important. As part of contributing to this repository, a reminder will periodically notify you that backport is pending.

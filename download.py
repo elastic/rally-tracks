@@ -14,7 +14,7 @@ downloads every referenced corpus file. Local paths match Rally's layout:
 elastic/security which use ~/.rally/benchmarks/data/<track>/<corpus_name>/<source-file>.
 
 Usage:
-  download.py TRACK [--track-params STR] [--no-cache]
+  ./download.py TRACK [--track-params STR] [--no-cache]
 
 Examples:
   ./download.py geonames

@@ -12,23 +12,25 @@ export DEBIAN_FRONTEND=noninteractive
 sudo mkdir -p /etc/needrestart
 echo "\$nrconf{restart} = 'a';" | sudo tee -a /etc/needrestart/needrestart.conf > /dev/null
 
-PYTHON_VERSION="$1"
+PY_VERSION="$1"
 TEST_NAME="$2"
 IFS=',' read -ra RUN_FULL_CI_WHEN_CHANGED <<< "$3"
 
 echo "--- System dependencies"
 
-retry 5 sudo add-apt-repository --yes ppa:deadsnakes/ppa
 retry 5 sudo apt-get update
 retry 5 sudo apt-get install -y \
-    "python${PYTHON_VERSION}" "python${PYTHON_VERSION}-dev" "python${PYTHON_VERSION}-venv" \
+    make \
     dnsutils  # provides nslookup
 
-echo "--- Python modules"
+echo "--- Install uv"
 
-"python${PYTHON_VERSION}" -m venv .venv
-source .venv/bin/activate
-python -m pip install .[develop]
+curl -LsSf https://astral.sh/uv/0.11.19/install.sh | env UV_UNMANAGED_INSTALL="${HOME}/.local/bin" sh
+export PATH="${HOME}/.local/bin:${PATH}"
+
+echo "--- Create virtual environment"
+
+make venv PY_VERSION="$PY_VERSION"
 
 echo "--- Track filter modification"
 
@@ -53,6 +55,19 @@ for static_path in "${RUN_FULL_CI_WHEN_CHANGED[@]}"; do
         fi
     done
 done
-echo "--- Run IT serverless test \"$TEST_NAME\" $TRACK_FILTER_ARG :pytest:"
 
-hatch -v -e it_serverless run $TEST_NAME $TRACK_FILTER_ARG
+
+echo "--- Run IT serverless test \"$TEST_NAME\"$TRACK_FILTER_ARG :pytest:"
+
+case "$TEST_NAME" in
+    "test_user"|"user")
+        make -s it-serverless PY_VERSION="$PY_VERSION" "ARGS=$TRACK_FILTER_ARG"
+        ;;
+    "test_operator"|"operator")
+        make -s it-serverless PY_VERSION="$PY_VERSION" "ARGS=--operator$TRACK_FILTER_ARG"
+        ;;
+    *)
+        echo "Unknown test type: $TEST_NAME"
+        exit 1
+        ;;
+esac

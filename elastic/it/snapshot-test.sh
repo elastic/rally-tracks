@@ -28,7 +28,7 @@ set -u
 set -o pipefail
 
 readonly RACE_ID=$(uuidgen | tr "[:upper:]" "[:lower:]")
-readonly ES_VERSION=${ES_VERSION:-7.17.1}
+readonly ES_VERSION=${ES_VERSION:-9.4.2}
 SNAPSHOT_BUCKET=$1
 
 INSTALL_ID=-1

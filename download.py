@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#   "esrally",
+# ]
+# ///
 """
 Pre-download Rally track data for offline use.
 
@@ -8,13 +14,13 @@ downloads every referenced corpus file. Local paths match Rally's layout:
 elastic/security which use ~/.rally/benchmarks/data/<track>/<corpus_name>/<source-file>.
 
 Usage:
-  ./download.py TRACK [--track-params STR] [--no-cache]
+  uv run download.py TRACK [--track-params STR] [--no-cache]
 
 Examples:
-  ./download.py geonames
-  ./download.py elastic/logs
-  ./download.py elastic/security
-  ./download.py elastic/logs --track-params="max_total_download_gb:36"
+  uv run download.py geonames
+  uv run download.py elastic/logs
+  uv run download.py elastic/security
+  uv run download.py elastic/logs --track-params="max_total_download_gb:36"
 """
 
 import argparse
@@ -25,6 +31,8 @@ import subprocess
 import sys
 import tarfile
 from pathlib import Path
+
+import esrally.utils.opts
 
 REPO_URL = "https://github.com/elastic/rally-tracks.git"
 
@@ -40,17 +48,6 @@ class TemplateRenderError(Exception):
 
 class DownloadError(Exception):
     """Raised when a corpus file download fails."""
-
-
-def _require_esrally():
-    try:
-        from esrally.utils import opts
-
-        return opts
-    except ImportError:
-        print("error: esrally is required to run download.py.", file=sys.stderr)
-        print("       Install with: pip install esrally", file=sys.stderr)
-        sys.exit(1)
 
 
 # ---------------------------------------------------------------------------
@@ -183,7 +180,6 @@ def main() -> None:
         help="Same as esrally race --track-params: comma-separated key:value pairs or a JSON file.",
     )
     args = ap.parse_args()
-    rally_opts = _require_esrally()
 
     track = args.track
     rally_home = Path(rally_confdir())
@@ -209,7 +205,7 @@ def main() -> None:
         sys.exit(1)
 
     # ── 2. Collect files to download ─────────────────────────────────────
-    track_params = rally_opts.to_dict(args.track_params)
+    track_params = esrally.utils.opts.to_dict(args.track_params)
     if track_params:
         print(f"Track parameters: {', '.join(f'{k}={v!r}' for k, v in sorted(track_params.items()))}")
 

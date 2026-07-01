@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.10"
 # dependencies = [
@@ -14,13 +14,13 @@ downloads every referenced corpus file. Local paths match Rally's layout:
 elastic/security which use ~/.rally/benchmarks/data/<track>/<corpus_name>/<source-file>.
 
 Usage:
-  uv run download.py TRACK [--track-params STR] [--no-cache]
+  download.py TRACK [--track-params STR] [--no-cache]
 
 Examples:
-  uv run download.py geonames
-  uv run download.py elastic/logs
-  uv run download.py elastic/security
-  uv run download.py elastic/logs --track-params="max_total_download_gb:36"
+  download.py geonames
+  download.py elastic/logs
+  download.py elastic/security
+  download.py elastic/logs --track-params="max_total_download_gb:36"
 """
 
 import argparse

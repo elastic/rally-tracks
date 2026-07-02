@@ -123,7 +123,6 @@ class GHInteractionCase:
     repo: RepoCase = field(default_factory=RepoCase)
     routes: list[GHRoute] = field(default_factory=list)
     lookback_days: int = 7
-    pending_reminder_age_days: int = 7
     expected_prefetch_prs: list[dict[str, Any]] | None = field(default_factory=list)
     expected_order: list[tuple[str, str]] = field(default_factory=list)
     strict: bool = True

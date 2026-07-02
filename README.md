@@ -18,6 +18,23 @@ Contributions of new tracks should be compatible with the main version of Elasti
 > [!NOTE]
 > For comprehensive instructions, refer to the [contributor guidelines](https://github.com/elastic/rally/blob/master/CONTRIBUTING.md).
 
+## Development setup
+
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then create the development environment:
+
+```
+make install
+```
+
+Common development commands are:
+
+```
+make lint
+make format
+make test
+make it
+```
+
 # Backporting changes
 
 Backporting ensures that tracks are compatible not only with the latest `main` version of Elasticsearch, but also with previous versions. For this reason, backporting is an important part of the contribution process. Periodic reminders will be issued when a backport is pending.

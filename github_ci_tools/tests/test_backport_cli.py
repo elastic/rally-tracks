@@ -7,6 +7,7 @@ import pytest
 from github_ci_tools.tests.resources.case_registry import (
     GHInteractAction,
     build_gh_routes_labels,
+    build_gh_routes_repo,
     case_by_number,
     expected_actions_for_prs,
     expected_actions_for_repo,
@@ -26,7 +27,7 @@ from github_ci_tools.tests.utils import TEST_REPO, GHRoute
     label_basic=BackportCliCase(
         argv=["backport.py", "--dry-run", "-vv", "label", "--lookback-days", "30"],
         env={"BACKPORT_TOKEN": "tok"},
-        expected_args={"command": "label", "lookback_days": 30, "dry_run": True, "verbose": 2},
+        expected_args={"command": "label", "lookback_days": 30, "lookback_mode": "updated", "dry_run": True, "verbose": 2},
         expected_config={"repo": TEST_REPO, "dry_run": True, "command": "label", "verbose": 2, "quiet": 0},
         expected_log_level=logging.NOTSET,
     ),
@@ -45,23 +46,16 @@ from github_ci_tools.tests.utils import TEST_REPO, GHRoute
         expected_log_level=logging.INFO,
     ),
     remind_basic=BackportCliCase(
-        argv=["backport.py", "remind", "--lookback-days", "10", "--pending-reminder-age-days", "5"],
+        argv=["backport.py", "remind", "--lookback-days", "10"],
         env={"BACKPORT_TOKEN": "tok", "GITHUB_REPOSITORY": TEST_REPO},
-        expected_args={"command": "remind", "lookback_days": 10, "pending_reminder_age_days": 5},
+        expected_args={"command": "remind", "lookback_days": 10, "lookback_mode": "updated"},
         expected_config={"repo": TEST_REPO, "command": "remind", "verbose": 0, "quiet": 0},
         expected_log_level=logging.INFO,
     ),
     remind_default_pending_age=BackportCliCase(
         argv=["backport.py", "remind"],
         env={"BACKPORT_TOKEN": "tok"},
-        expected_args={"command": "remind", "lookback_days": 7, "pending_reminder_age_days": 14},
-        expected_config={"repo": TEST_REPO, "command": "remind", "verbose": 0, "quiet": 0},
-        expected_log_level=logging.INFO,
-    ),
-    remind_override_pending_age=BackportCliCase(
-        argv=["backport.py", "remind", "--lookback-days", "3", "--pending-reminder-age-days", "14"],
-        env={"BACKPORT_TOKEN": "tok"},
-        expected_args={"command": "remind", "lookback_days": 3, "pending_reminder_age_days": 14},
+        expected_args={"command": "remind", "lookback_days": 7},
         expected_config={"repo": TEST_REPO, "command": "remind", "verbose": 0, "quiet": 0},
         expected_log_level=logging.INFO,
     ),
@@ -151,9 +145,11 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, gh_mock, case: GHInteracti
     # Prefetched PRs must be one, None or raise error
     if case.raises_error:
         with pytest.raises(case.raises_error):
-            prefetched_prs = backport_mod.prefetch_prs(pr_number=case.repo.prs[0].number, lookback_days=case.lookback_days)
+            prefetched_prs = backport_mod.prefetch_prs(
+                pr_number=case.repo.prs[0].number, lookback_days=case.lookback_days, lookback_mode="updated"
+            )
         return
-    prefetched_prs = backport_mod.prefetch_prs(pr_number=case.repo.prs[0].number, lookback_days=case.lookback_days)
+    prefetched_prs = backport_mod.prefetch_prs(pr_number=case.repo.prs[0].number, lookback_days=case.lookback_days, lookback_mode="updated")
     if prefetched_prs:
         assert len(prefetched_prs) == 1
     prefetched_pr = prefetched_prs if prefetched_prs else None
@@ -176,9 +172,10 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, gh_mock, case: GHInteracti
                 ),
                 *build_gh_routes_labels("GET", select_pull_requests_by_lookback(7)),
                 *build_gh_routes_labels("POST", select_pull_requests_by_lookback(7)),
+                *build_gh_routes_repo(),
             ],
             expected_order=[
-                *expected_actions_for_prs(GHInteractAction.LIST_PRS, select_pull_requests_by_lookback(7)),
+                *expected_actions_for_prs(GHInteractAction.ITER_PRS, select_pull_requests_by_lookback(7)),
                 *expected_actions_for_repo(GHInteractAction.REPO_GET_LABELS),
                 *expected_actions_for_repo(GHInteractAction.REPO_ADD_LABEL),
                 *expected_actions_for_prs(GHInteractAction.PR_ADD_PENDING_LABEL, select_pull_requests_by_lookback(7)),
@@ -186,12 +183,11 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, gh_mock, case: GHInteracti
         ),
     ),
     reminds_those_within_pending=BackportCliCase(
-        argv=["backport.py", "remind", "--lookback-days", "7", "--pending-reminder-age-days", "30"],
+        argv=["backport.py", "remind", "--lookback-days", "7"],
         gh_interaction=GHInteractionCase(
             # Has all the PRs
             repo=RepoCase(prs=select_pull_requests()),
             lookback_days=7,
-            pending_reminder_age_days=30,
             expected_prefetch_prs=[asdict(pr) for pr in select_pull_requests_by_lookback(7)],
             routes=[
                 GHRoute(
@@ -204,7 +200,31 @@ def test_prefetch_prs_in_single_pr_mode(backport_mod, gh_mock, case: GHInteracti
             ],
             expected_order=[
                 # Actions are dynamically created based on the needs_pending and needs_reminder flags
-                *expected_actions_for_prs(GHInteractAction.LIST_PRS, select_pull_requests_by_lookback(7)),
+                *expected_actions_for_prs(GHInteractAction.ITER_PRS, select_pull_requests_by_lookback(7)),
+            ],
+        ),
+    ),
+    label_lookback_mode_merged=BackportCliCase(
+        argv=["backport.py", "label", "--lookback-days", "7", "--lookback-mode", "merged"],
+        gh_interaction=GHInteractionCase(
+            repo=RepoCase(repo_labels=[], prs=select_pull_requests()),
+            lookback_days=7,
+            expected_prefetch_prs=[asdict(pr) for pr in select_pull_requests_by_lookback(7)],
+            routes=[
+                GHRoute(
+                    path=f"/search/issues...merged...merged...",
+                    method="GET",
+                    response={"items": [asdict(pr) for pr in select_pull_requests_by_lookback(7)]},
+                ),
+                *build_gh_routes_labels("GET", select_pull_requests_by_lookback(7)),
+                *build_gh_routes_labels("POST", select_pull_requests_by_lookback(7)),
+                *build_gh_routes_repo(),
+            ],
+            expected_order=[
+                *expected_actions_for_prs(GHInteractAction.ITER_PRS, select_pull_requests_by_lookback(7), lookback_mode="merged"),
+                *expected_actions_for_repo(GHInteractAction.REPO_GET_LABELS),
+                *expected_actions_for_repo(GHInteractAction.REPO_ADD_LABEL),
+                *expected_actions_for_prs(GHInteractAction.PR_ADD_PENDING_LABEL, select_pull_requests_by_lookback(7)),
             ],
         ),
     ),
@@ -223,17 +243,14 @@ def test_backport_run(backport_mod, gh_mock, monkeypatch, case: BackportCliCase)
     args = backport_mod.parse_args()
     backport_mod.configure(args)
 
-    prefetched = backport_mod.prefetch_prs(args.pr_number, args.lookback_days)
+    prefetched = backport_mod.prefetch_prs(args.pr_number, args.lookback_days, lookback_mode=args.lookback_mode)
+    result = None
     try:
         match args.command:
             case "label":
                 result = backport_mod.run_label(prefetched, args.remove)
             case "remind":
-                result = backport_mod.run_remind(
-                    prefetched,
-                    args.pending_reminder_age_days,
-                    args.remove,
-                )
+                result = backport_mod.run_remind(prefetched, args.lookback_days, args.remove)
                 for pr in prefetched:
                     if pr.get("needs_pending", False) is False:
                         case.gh_interaction.expected_order += expected_actions_for_prs(
@@ -248,5 +265,6 @@ def test_backport_run(backport_mod, gh_mock, monkeypatch, case: BackportCliCase)
     except Exception as e:
         pytest.fail(f"backport_run raised unexpected exception: {e}")
 
+    assert result is not None
     assert result == 0
     gh_mock.assert_calls_in_order(*case.gh_interaction.expected_order)

@@ -29,9 +29,9 @@ from pathlib import Path
 REPO_URL = "https://github.com/elastic/rally-tracks.git"
 
 
-def rally_confdir():
-    default_home = os.path.expanduser("~")
-    return os.path.join(os.getenv("RALLY_HOME", default_home), ".rally")
+def rally_confdir() -> Path:
+    rally_home = Path(os.environ.get("RALLY_HOME") or Path.home())
+    return rally_home / ".rally"
 
 
 class TemplateRenderError(Exception):

@@ -73,7 +73,7 @@ def parse_arguments():
 
 
 if __name__ == "__main__":
-    (max_documents, start_page, end_page) = parse_arguments()
+    max_documents, start_page, end_page = parse_arguments()
     if max_documents == DEFAULT_MAX_DOCS:
         output_pages(start_page, end_page)
     else:

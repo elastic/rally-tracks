@@ -2,17 +2,6 @@
 requires = ["hatchling<=1.18.0", "hatch-vcs"]
 build-backend = "hatchling.build"
 
-[project.optional-dependencies]
-develop = [
-    "hatch==1.7.0",
-    "hatchling==1.18.0",
-    "click<8.3.0", # fix to a pre 8.3.0 version until https://github.com/pypa/hatch/issues/2050 resolved
-    "black==24.10.0",
-    "isort==5.12.0",
-    "pre-commit==3.3.3",
-    "pip==25.2",
-]
-
 [tool.hatch.metadata]
 allow-direct-references = true
 
@@ -23,7 +12,7 @@ source = "vcs"
 name = "rally-tracks"
 readme = "README.md"
 dynamic = ["version"]
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.14"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -32,36 +21,27 @@ exclude = [
   "/.ci",
 ]
 
-[tool.hatch.envs.default]
-dependencies = [
-    "esrally[develop] @ git+https://github.com/elastic/rally.git@master"
+[dependency-groups]
+develop = [
+    "black==24.10.0",
+    "isort==5.12.0",
+    "pre-commit==3.3.3",
 ]
-
-[tool.hatch.envs.it]
-extra-dependencies = [
-    "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main"
-]
-
-[tool.hatch.envs.it_serverless]
-extra-dependencies = [
-    "pytest-rally @ git+https://github.com/elastic/pytest-rally.git@main"
-]
-
-[tool.hatch.envs.unit]
-extra-dependencies = [
+unit = [
+    "esrally",
+    "pytest==8.4.2",
+    "pytest-asyncio==1.2.0",
     "geneve==0.3.0",
-    "elastic-package-assets @ git+https://github.com/elastic/package-assets.git@main"
+    "elastic-package-assets",
 ]
-
-[tool.hatch.envs.unit.scripts]
-test = "pytest {args}"
-
-[tool.hatch.envs.it.scripts]
-test = "pytest it_tracks --log-cli-level=INFO {args}"
-
-[tool.hatch.envs.it_serverless.scripts]
-test_user = "pytest -s it_tracks_serverless --log-cli-level=INFO {args}"
-test_operator = "pytest -s it_tracks_serverless --log-cli-level=INFO --operator {args}"
+it = [
+    "esrally",
+    "pytest-rally",
+]
+it-serverless = [
+    "esrally",
+    "pytest-rally",
+]
 
 [tool.pytest.ini_options]
 # set to true for more verbose output of tests
@@ -80,3 +60,11 @@ target-version = ['py310', 'py311', 'py312', 'py313']
 
 [tool.isort]
 profile = 'black'
+
+[tool.uv]
+python-preference = "only-managed"
+
+[tool.uv.sources]
+elastic-package-assets = { git = "https://github.com/elastic/package-assets.git", branch = "main" }
+esrally = { git = "https://github.com/elastic/rally.git", branch = "master" }
+pytest-rally = { git = "https://github.com/elastic/pytest-rally.git", branch = "main" }

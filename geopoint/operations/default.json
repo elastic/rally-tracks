@@ -792,7 +792,7 @@
     {
       "name": "geoGrid_aggs_geohash-esql",
       "operation-type": "esql",
-      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | EVAL geohash = ST_GEOHASH(location, 5, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | STATS count = COUNT(*) BY geohash"
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL geohash = ST_GEOHASH(location, 5, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY geohash"
     },
     {
       "name": "geoGrid_aggs_geotile",
@@ -824,7 +824,7 @@
     {
       "name": "geoGrid_aggs_geotile-esql",
       "operation-type": "esql",
-      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | EVAL geotile = ST_GEOTILE(location, 13, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | STATS count = COUNT(*) BY geotile"
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL geotile = ST_GEOTILE(location, 13, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY geotile"
     },
     {
       "name": "geoGrid_aggs_geohex",
@@ -856,5 +856,5 @@
     {
       "name": "geoGrid_aggs_geohex-esql",
       "operation-type": "esql",
-      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | EVAL geohex = ST_GEOHEX(location, 6, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.75, 48.95)\")) | STATS count = COUNT(*) BY geohex"
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL geohex = ST_GEOHEX(location, 6, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY geohex"
     }

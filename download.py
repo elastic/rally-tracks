@@ -1,4 +1,10 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#   "esrally",
+# ]
+# ///
 """
 Pre-download Rally track data for offline use.
 
@@ -26,6 +32,14 @@ import sys
 import tarfile
 from pathlib import Path
 
+try:
+    import esrally.utils.opts
+except ImportError as exc:
+    print("Error: Rally is required to run this script.", file=sys.stderr)
+    print("Run it as an executable script so dependencies are installed automatically by uv:")
+    print("  ./download.py TRACK [--track-params STR] [--no-cache]", file=sys.stderr)
+    raise SystemExit(1) from exc
+
 REPO_URL = "https://github.com/elastic/rally-tracks.git"
 
 
@@ -40,17 +54,6 @@ class TemplateRenderError(Exception):
 
 class DownloadError(Exception):
     """Raised when a corpus file download fails."""
-
-
-def _require_esrally():
-    try:
-        from esrally.utils import opts
-
-        return opts
-    except ImportError:
-        print("error: esrally is required to run download.py.", file=sys.stderr)
-        print("       Install with: pip install esrally", file=sys.stderr)
-        sys.exit(1)
 
 
 # ---------------------------------------------------------------------------
@@ -183,7 +186,6 @@ def main() -> None:
         help="Same as esrally race --track-params: comma-separated key:value pairs or a JSON file.",
     )
     args = ap.parse_args()
-    rally_opts = _require_esrally()
 
     track = args.track
     rally_home = Path(rally_confdir())
@@ -209,7 +211,7 @@ def main() -> None:
         sys.exit(1)
 
     # ── 2. Collect files to download ─────────────────────────────────────
-    track_params = rally_opts.to_dict(args.track_params)
+    track_params = esrally.utils.opts.to_dict(args.track_params)
     if track_params:
         print(f"Track parameters: {', '.join(f'{k}={v!r}' for k, v in sorted(track_params.items()))}")
 

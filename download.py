@@ -36,7 +36,7 @@ try:
     import esrally.utils.opts
 except ImportError as exc:
     print("Error: Rally is required to run this script.", file=sys.stderr)
-    print("Run it with uv so dependencies are installed automatically:", file=sys.stderr)
+    print("Run it as an executable script so dependencies are installed automatically by uv:")
     print("  ./download.py TRACK [--track-params STR] [--no-cache]", file=sys.stderr)
     raise SystemExit(1) from exc
 

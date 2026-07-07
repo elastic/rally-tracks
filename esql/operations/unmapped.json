@@ -1,0 +1,174 @@
+{% set n_unmapped_fields = (n_unmapped_fields | default(998)) %}
+{% set unmapped_bulk_size = (bulk_size | default(500)) %}
+{% set densities = ["dense", "sparse"] %}
+{% set field_configs = [(1, "1field"), (10, "10fields"), (100, "100fields"), (n_unmapped_fields, "allfields")] %}
+
+{%- macro keep(n) -%}
+{%- for i in range(n) -%}
+{%- if not loop.first %}, {% endif -%}field_{{ i }}
+{%- endfor -%}
+{%- endmacro -%}
+
+    {
+      "name": "index-unmapped-dense",
+      "operation-type": "bulk",
+      "indices": ["unmapped_bench_full_mapped_dense", "unmapped_bench_no_mapping_dense"],
+      "bulk-size": {{unmapped_bulk_size}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+    {
+      "name": "index-unmapped-sparse",
+      "operation-type": "bulk",
+      "indices": ["unmapped_bench_full_mapped_sparse", "unmapped_bench_no_mapping_sparse"],
+      "bulk-size": {{unmapped_bulk_size}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+
+{% for density in densities %}
+{% set d_last = loop.last %}
+{% for n, label in field_configs %}
+    {
+      "name": "unmapped_mapped_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mapped_load_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mapped_source_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_{{ density }} METADATA _source | KEEP {{ keep(n) }}, _source | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mapped_load_source_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_{{ density }} METADATA _source | KEEP {{ keep(n) }}, _source | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_nullify_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_no_mapping_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_load_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_no_mapping_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_nullify_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_full_mapped_{{ density }}, unmapped_bench_no_mapping_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_{{ label }}_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_{{ density }}, unmapped_bench_no_mapping_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
+    }{% if not (d_last and loop.last) %},{% endif %}
+
+{% endfor %}
+{% endfor %}
+
+    ,
+    {
+      "name": "unmapped_mix_nullify_cast_field0_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | EVAL field_0_cast = TO_STRING(field_0) | KEEP field_0_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_cast_field0_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | EVAL field_0_cast = TO_STRING(field_0) | KEEP field_0_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_nullify_cast_field0_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | EVAL field_0_cast = TO_STRING(field_0) | KEEP field_0_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_cast_field0_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | EVAL field_0_cast = TO_STRING(field_0) | KEEP field_0_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_nullify_1field_2fe_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_no_mapping_dense | EVAL field_0_a = TO_STRING(field_0), field_0_b = CONCAT(field_0, \"\") | KEEP field_0_a, field_0_b | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_load_1field_2fe_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_no_mapping_dense | EVAL field_0_a = TO_STRING(field_0), field_0_b = CONCAT(field_0, \"\") | KEEP field_0_a, field_0_b | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_nullify_manyfields_2fe_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_no_mapping_dense | EVAL field_0_cast = TO_STRING(field_0), field_1_cast = TO_STRING(field_1) | KEEP {{ keep(100) }}, field_0_cast, field_1_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_load_manyfields_2fe_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_no_mapping_dense | EVAL field_0_cast = TO_STRING(field_0), field_1_cast = TO_STRING(field_1) | KEEP {{ keep(100) }}, field_0_cast, field_1_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_nullify_1field_2fe_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_no_mapping_sparse | EVAL field_0_a = TO_STRING(field_0), field_0_b = CONCAT(field_0, \"\") | KEEP field_0_a, field_0_b | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_load_1field_2fe_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_no_mapping_sparse | EVAL field_0_a = TO_STRING(field_0), field_0_b = CONCAT(field_0, \"\") | KEEP field_0_a, field_0_b | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_nullify_manyfields_2fe_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_no_mapping_sparse | EVAL field_0_cast = TO_STRING(field_0), field_1_cast = TO_STRING(field_1) | KEEP {{ keep(100) }}, field_0_cast, field_1_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_load_manyfields_2fe_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_no_mapping_sparse | EVAL field_0_cast = TO_STRING(field_0), field_1_cast = TO_STRING(field_1) | KEEP {{ keep(100) }}, field_0_cast, field_1_cast | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_nullify_filter_keep_10fields_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | WHERE field_0 IS NOT NULL | KEEP {{ keep(10) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_filter_keep_10fields_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | WHERE field_0 IS NOT NULL | KEEP {{ keep(10) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_nullify_sort_keep_10fields_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | KEEP {{ keep(10) }} | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_sort_keep_10fields_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | KEEP {{ keep(10) }} | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_nullify_filter_keep_10fields_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | WHERE field_0 IS NOT NULL | KEEP {{ keep(10) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_filter_keep_10fields_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | WHERE field_0 IS NOT NULL | KEEP {{ keep(10) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_nullify_sort_keep_10fields_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | KEEP {{ keep(10) }} | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_sort_keep_10fields_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | KEEP {{ keep(10) }} | SORT field_0 | LIMIT 1000"
+    }

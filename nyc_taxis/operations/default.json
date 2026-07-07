@@ -1915,7 +1915,7 @@
     {
       "name": "where_in_subquery_top_payment_types",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS c = count(*) BY payment_type | SORT c DESC | LIMIT 3 | KEEP payment_type) | STATS count(*) BY payment_type"
+      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS c = count(*) BY payment_type | SORT c DESC | LIMIT 3 | KEEP payment_type) | STATS c = count(*) BY payment_type | SORT c DESC | LIMIT 3 | KEEP payment_type"
     },
     {
       "name": "top_payment_types",

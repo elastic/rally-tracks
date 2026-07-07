@@ -52,6 +52,11 @@
           "clients": {{bulk_indexing_clients | default(8)}},
           "tags": ["setup"]
         },
+        {
+          "operation": "index-unmapped-typed",
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "tags": ["setup"]
+        },
 
         {
           "name": "check-cluster-health-post-index",
@@ -273,7 +278,55 @@
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}
-        }
+        },
 
+{# PUNK single-type probes: long, double, boolean, ip, datetime. #}
+{% set typed_labels = ["long", "double", "boolean", "ip", "datetime"] %}
+{% set typed_where_labels = ["boolean", "ip", "datetime"] %}
+{% for label in typed_labels %}
+        {
+          "operation": "unmapped_typed_nullify_{{ label }}",
+          "tags": ["esql_unmapped", "typed", "nullify", "{{ label }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_typed_load_{{ label }}",
+          "tags": ["esql_unmapped", "typed", "load", "{{ label }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_typed_mix_nullify_{{ label }}",
+          "tags": ["esql_unmapped", "typed", "mix", "nullify", "{{ label }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_typed_mix_load_{{ label }}",
+          "tags": ["esql_unmapped", "typed", "mix", "load", "{{ label }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_typed_mix_load_cast_{{ label }}",
+          "tags": ["esql_unmapped", "typed", "mix", "load", "cast", "{{ label }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        }{% if label in typed_where_labels %},
+        {
+          "operation": "unmapped_typed_mix_load_where_{{ label }}",
+          "tags": ["esql_unmapped", "typed", "mix", "load", "where", "{{ label }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        }{% endif %}{% if not loop.last %},{% endif %}
+
+{% endfor %}
       ]
     }

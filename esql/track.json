@@ -36,7 +36,9 @@
   { "name": "unmapped_bench_full_mapped_dense",  "body": "unmapped_full_mapping.json" },
   { "name": "unmapped_bench_full_mapped_sparse", "body": "unmapped_full_mapping.json" },
   { "name": "unmapped_bench_no_mapping_dense",   "body": "unmapped_no_mapping.json"   },
-  { "name": "unmapped_bench_no_mapping_sparse",  "body": "unmapped_no_mapping.json"   }
+  { "name": "unmapped_bench_no_mapping_sparse",  "body": "unmapped_no_mapping.json"   },
+  { "name": "unmapped_bench_typed_mapped",       "body": "unmapped_typed_mapping.json" },
+  { "name": "unmapped_bench_typed_no_mapping",   "body": "unmapped_no_mapping.json"    }
 ],
 "corpora": [
 {% for i in range(1, n_indices) %}
@@ -119,6 +121,32 @@
       "document-count": 1000000,
       "compressed-bytes": 44737502,
       "uncompressed-bytes": 242785445
+    }
+  ]
+},
+{
+  "name": "unmapped_bench_typed_mapped",
+  "base-url": "https://rally-tracks.elastic.co/esql_unmapped",
+  "documents": [
+    {
+      "target-index": "unmapped_bench_typed_mapped",
+      "source-file": "unmapped_bench_typed.json.bz2",
+      "document-count": 100000,
+      "compressed-bytes": 2429056,
+      "uncompressed-bytes": 19733606
+    }
+  ]
+},
+{
+  "name": "unmapped_bench_typed_no_mapping",
+  "base-url": "https://rally-tracks.elastic.co/esql_unmapped",
+  "documents": [
+    {
+      "target-index": "unmapped_bench_typed_no_mapping",
+      "source-file": "unmapped_bench_typed.json.bz2",
+      "document-count": 100000,
+      "compressed-bytes": 2429056,
+      "uncompressed-bytes": 19733606
     }
   ]
 }

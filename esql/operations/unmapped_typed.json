@@ -1,0 +1,78 @@
+{% set typed_bulk_size = (typed_bulk_size | default(2000)) %}
+
+{#
+  PUNK single-type probes — exercise PotentiallyUnmappedSingleTypeEsField:
+  a field mapped to exactly one non-keyword type in one index, unmapped in
+  another. Covers two distinct ES|QL casting mechanisms:
+    - auto-cast-on-load: a bare KEEP triggers PUNK resolution, which auto-casts
+      via the matching TO_X() converter for any type that has one (long, double,
+      boolean, ip, datetime all qualify).
+    - implicit-cast-in-expression: a narrower mechanism that only applies to
+      datetime, ip, version, boolean — where a string literal compared against
+      the field is implicitly cast to match. Exercised by the *_where_* probes.
+
+  Types probed: long, double, boolean, ip, datetime.
+  For each type: nullify / load (single unmapped index), mix_nullify / mix_load
+  (mixed mapped+unmapped — the actual PUNK scenario), an explicit-cast probe,
+  and (boolean/ip/datetime only) a WHERE comparison probe.
+#}
+
+    {
+      "name": "index-unmapped-typed",
+      "operation-type": "bulk",
+      "indices": ["unmapped_bench_typed_mapped", "unmapped_bench_typed_no_mapping"],
+      "bulk-size": {{typed_bulk_size}},
+      "ingest-percentage": {{ingest_percentage | default(100)}}
+    },
+
+{% set ns = namespace(first=true) %}
+{% macro sep() %}{% if not ns.first %},{% endif %}{% set ns.first = false %}{% endmacro %}
+
+{% set typed_probes = [
+  ("long",     "typed_long",     "TO_LONG",     none),
+  ("double",   "typed_double",   "TO_DOUBLE",   none),
+  ("boolean",  "typed_boolean",  "TO_BOOLEAN",  "typed_boolean == \\\"true\\\""),
+  ("ip",       "typed_ip",       "TO_IP",       "typed_ip == \\\"192.168.4.21\\\""),
+  ("datetime", "typed_datetime", "TO_DATETIME", "typed_datetime > \\\"2024-06-01T00:00:00.000Z\\\"")
+] %}
+
+{% for label, field, to_fn, where_expr in typed_probes %}
+{{ sep() }}
+    {
+      "name": "unmapped_typed_nullify_{{ label }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_typed_no_mapping | KEEP {{ field }} | LIMIT 1000"
+    }
+{{ sep() }}
+    {
+      "name": "unmapped_typed_load_{{ label }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_typed_no_mapping | KEEP {{ field }} | LIMIT 1000"
+    }
+{{ sep() }}
+    {
+      "name": "unmapped_typed_mix_nullify_{{ label }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"nullify\"; FROM unmapped_bench_typed_mapped, unmapped_bench_typed_no_mapping | KEEP {{ field }} | LIMIT 1000"
+    }
+{{ sep() }}
+    {
+      "name": "unmapped_typed_mix_load_{{ label }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_typed_mapped, unmapped_bench_typed_no_mapping | KEEP {{ field }} | LIMIT 1000"
+    }
+{{ sep() }}
+    {
+      "name": "unmapped_typed_mix_load_cast_{{ label }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_typed_mapped, unmapped_bench_typed_no_mapping | EVAL {{ field }}_cast = {{ to_fn }}({{ field }}) | KEEP {{ field }}_cast | LIMIT 1000"
+    }
+{% if where_expr %}
+{{ sep() }}
+    {
+      "name": "unmapped_typed_mix_load_where_{{ label }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_typed_mapped, unmapped_bench_typed_no_mapping | WHERE {{ where_expr }} | KEEP {{ field }} | LIMIT 1000"
+    }
+{% endif %}
+{% endfor %}

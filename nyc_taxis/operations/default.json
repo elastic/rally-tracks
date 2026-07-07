@@ -1955,5 +1955,35 @@
     {
       "name": "nested_top_n",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | FORK (WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type)) (WHERE payment_type NOT IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | EVAL payment_type = \"Other\"::keyword) | STATS a = AVG(fare_amount) BY payment_type, vendor_id | SORT payment_type, vendor_id, a DESC | LIMIT 3 BY payment_type"
+      "query": "FROM nyc_taxis | FORK (WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type)) (WHERE payment_type NOT IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | EVAL payment_type = \"Other\"::keyword) | STATS a = AVG(fare_amount) BY payment_type, vendor_id | SORT payment_type, a DESC, vendor_id | LIMIT 3 BY payment_type"
+    },
+    {
+      "name": "where_in_subquery_scale_10",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL d = DATE_TRUNC(1 day, dropoff_datetime) | WHERE d IN (FROM nyc_taxis | STATS c = COUNT(*) BY day = DATE_TRUNC(1 day, dropoff_datetime) | SORT c DESC | LIMIT 10 | KEEP day)"
+    },
+    {
+      "name": "where_in_subquery_scale_100",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL d = DATE_TRUNC(1 day, dropoff_datetime) | WHERE d IN (FROM nyc_taxis | STATS c = COUNT(*) BY day = DATE_TRUNC(1 day, dropoff_datetime) | SORT c DESC | LIMIT 100 | KEEP day)"
+    },
+    {
+      "name": "where_in_subquery_scale_200",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL d = DATE_TRUNC(1 day, dropoff_datetime) | WHERE d IN (FROM nyc_taxis | STATS c = COUNT(*) BY day = DATE_TRUNC(1 day, dropoff_datetime) | SORT c DESC | LIMIT 200 | KEEP day)"
+    },
+    {
+      "name": "where_in_subquery_scale_100k",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL m = DATE_TRUNC(1 minute, dropoff_datetime) | WHERE m IN (FROM nyc_taxis | STATS c = COUNT(*) BY minute = DATE_TRUNC(1 minute, dropoff_datetime) | SORT c DESC | LIMIT 100000 | KEEP minute)"
+    },
+    {
+      "name": "where_in_subquery_scale_200k",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL m = DATE_TRUNC(1 minute, dropoff_datetime) | WHERE m IN (FROM nyc_taxis | STATS c = COUNT(*) BY minute = DATE_TRUNC(1 minute, dropoff_datetime) | SORT c DESC | LIMIT 200000 | KEEP minute)"
+    },
+    {
+      "name": "where_in_subquery_scale_500k",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL m = DATE_TRUNC(1 minute, dropoff_datetime) | WHERE m IN (FROM nyc_taxis | STATS c = COUNT(*) BY minute = DATE_TRUNC(1 minute, dropoff_datetime) | SORT c DESC | LIMIT 500000 | KEEP minute)"
     }

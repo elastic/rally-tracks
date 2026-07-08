@@ -1,14 +1,14 @@
 {
-  "repoOwner": "elastic",
-  "repoName": "rally-tracks",
-  "targetBranchChoices" : [ "master", "9.4", "9.3", "9.2", "9.1", "8.19", "8.15" ],
+  "repoOwner" : "elastic",
+  "repoName" : "rally-tracks",
+  "targetBranchChoices" : [ "master", "9.5", "9.4", "9.3", "9.2", "9.1", "8.19", "8.15" ],
   "targetPRLabels" : [ "backport" ],
   "branchLabelMapping" : {
-    "^v9.5$" : "master",
-    "^vServerless$": "master",
+    "^v9.6$" : "master",
+    "^vServerless$" : "master",
     "^v(\\d{1,2}).(\\d{1,2})$" : "$1.$2"
   },
-  "autoMerge": true,
-  "autoMergeMethod": "squash",
-  "prDescription": "{defaultPrDescription}\n\n<!--BACKPORT {commits} BACKPORT-->"
+  "autoMerge" : true,
+  "autoMergeMethod" : "squash",
+  "prDescription" : "{defaultPrDescription}\n\n<!--BACKPORT {commits} BACKPORT-->"
 }

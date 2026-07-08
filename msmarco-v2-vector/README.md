@@ -3,7 +3,7 @@
 This track benchmarks the dataset from [Cohere/msmarco-v2-embed-english-v3](https://huggingface.co/datasets/Cohere/msmarco-v2-embed-english-v3).
 The corpus contains the original 138M passages of the [MSMARCO (passage, version 2)](https://ir-datasets.com/msmarco-passage-v2.html) corpus embedded
 into 1024 dimensional vectors with the [Cohere `embed-english-v3.0` model](https://cohere.com/blog/introducing-embed-v3). They are two versions
-of the corpus, one with float arrays and one with Base64 encoded strings, use the later for better performance.
+of the corpus, one with float arrays and one with Base64 encoded strings, use the latter for better performance.
 
 ### Generating the document dataset
 
@@ -21,13 +21,13 @@ $ for file in cohere-documents-*; do
   head -n 1000 $file > "${file%.*}-1k.json"
 done
 
-# Zip each document file for uploading
+# Compress each document file for uploading
 $ for file in cohere-documents-*; do
-  bzip2 -k $file
+  zstd -k $file
 done
 ```
 
-This will build 47 `cohere-documents_float-XX.json` file for the entire dataset of 138.3M documents and then bzip them. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
+This will build 47 `cohere-documents_float-XX.json` file for the entire dataset of 138.3M documents and then compress them with zstd. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
 ### Example Document
 
 ```json

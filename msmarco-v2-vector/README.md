@@ -27,7 +27,7 @@ $ for file in cohere-documents-*; do
 done
 ```
 
-This will build 47 `cohere-documents_float-XX.json` file for the entire dataset of 138.3M documents and then compress them with zstd. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
+This will build 47 `cohere-documents_float-XX.json` files for the entire dataset of 138.3M documents and then compress them with zstd. Before uploading, ensure the compressed artifacts are named to match what the track references (e.g. `cohere-documents-01.json.zst`; see `track.json`). Note that this script depends on the libraries listed in `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
 ### Example Document
 
 ```json

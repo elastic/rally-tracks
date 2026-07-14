@@ -1,0 +1,37 @@
+{
+  "challenge": "index-and-search",
+  "track-params": {
+    "vector_index_type": "hnsw",
+    "hnsw_m": 24,
+    "hnsw_ef_construction": 200,
+    "enable_experimental_features": true,
+    "initial_indexing_ingest_doc_count": 18000000,
+    "initial_indexing_bulk_indexing_clients": 8,
+    "initial_indexing_bulk_size": 2000,
+    "parallel_indexing_bulk_target_throughput": 1000,
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "include_parallel_indexing": false,
+    "include_recall": true,
+    "index_merge_scheduler_auto_throttle": false,
+    "index_refresh_interval": -1,
+    "force_merge_max_num_segments": 4,
+    "mapping_type": "vectors-only",
+    "corpora": [
+      "msmarco-v2_base64-initial-indexing-1"
+    ],
+    "parallel_corpora": [
+      "msmarco-v2_base64-parallel-indexing"
+    ],
+    "standalone_search_iterations": 1000,
+    "search_ops": [
+      [100, 150, 0],
+      [100, 400, 0],
+      [100, 800, 0],
+      [100, 1000, 0],
+      [100, 1500, 0],
+      [100, 2000, 0],
+      [100, 3000, 0]
+    ]
+  }
+}

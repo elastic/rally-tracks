@@ -92,7 +92,7 @@ class KnnParamSource:
 
         if self._random_query:
             if self._dims is None:
-                raise ValueError("'dims' parameter is required when 'random-vector-query' is enabled")
+                raise ValueError("'dims' parameter is required when 'random-query' is enabled")
             if not isinstance(self._dims, int) or self._dims <= 0:
                 raise ValueError(f"'dims' must be a positive integer, got [{self._dims}]")
             self._maxIters = 1
@@ -288,7 +288,7 @@ class HybridParamSource:
 
     def params(self):
         top_k = self._params.get("k", 10)
-        num_candidates = self._params.get("num-candidates", top_k * 1.5)
+        num_candidates = self._params.get("num-candidates", int(top_k * 1.5))
 
         query = self._queries[self._iters]
         self._iters += 1

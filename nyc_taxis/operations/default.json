@@ -1911,4 +1911,79 @@
       "name": "esql_stats_enrich_payments_fares_limit_0",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name | LIMIT 0"
+    },
+    {
+      "name": "where_in_subquery_top_payment_types",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS c = count(*) BY payment_type | SORT c DESC | LIMIT 3 | KEEP payment_type) | STATS c = count(*) BY payment_type | SORT c DESC | LIMIT 3 | KEEP payment_type"
+    },
+    {
+      "name": "top_payment_types",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | STATS cnt = count(*) BY payment_type | SORT cnt DESC | LIMIT 3"
+    },
+    {
+      "name": "where_not_in_subquery_top_payment_types",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type NOT IN (FROM nyc_taxis | STATS c = count(*) BY payment_type | SORT c DESC | LIMIT 3 | KEEP payment_type) | STATS count(*) BY payment_type"
+    },
+    {
+      "name": "where_in_subquery_and",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE vendor_id IN (FROM nyc_taxis | STATS c = count(*) BY vendor_id | SORT c DESC | LIMIT 1 | KEEP vendor_id) AND payment_type IN (FROM nyc_taxis | STATS c = count(*) BY payment_type | SORT c DESC | LIMIT 3 | KEEP payment_type) | STATS AVG(fare_amount) BY vendor_id, payment_type"
+    },
+    {
+      "name": "where_in_subquery_or",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE vendor_id IN (FROM nyc_taxis | STATS c = count(*) BY vendor_id | SORT c DESC | LIMIT 1 | KEEP vendor_id) OR payment_type IN (FROM nyc_taxis | STATS c = count(*) BY payment_type | SORT c DESC | LIMIT 3 | KEEP payment_type) | STATS AVG(fare_amount) BY vendor_id, payment_type"
+    },
+    {
+      "name": "where_in_subquery_nested",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | WHERE vendor_id IN (FROM nyc_taxis | STATS c = count(*) BY vendor_id | SORT c DESC | LIMIT 1 | KEEP vendor_id) | STATS c = AVG(fare_amount) BY payment_type | SORT c DESC | LIMIT 3 | KEEP payment_type) | STATS MIN(fare_amount)"
+    },
+    {
+      "name": "top_n_histogram",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | STATS COUNT(*) BY BUCKET(pickup_datetime, \"1 day\"), payment_type"
+    },
+    {
+      "name": "top_n_histogram_group_others",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | FORK (WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type)) (WHERE payment_type NOT IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | EVAL payment_type = \"Other\"::keyword) | STATS COUNT(*) BY BUCKET(pickup_datetime, \"1 day\"), payment_type"
+    },
+    {
+      "name": "nested_top_n",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | FORK (WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type)) (WHERE payment_type NOT IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | EVAL payment_type = \"Other\"::keyword) | STATS a = AVG(fare_amount) BY payment_type, vendor_id | SORT payment_type, a DESC, vendor_id | LIMIT 3 BY payment_type"
+    },
+    {
+      "name": "where_in_subquery_scale_10",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL d = DATE_TRUNC(1 day, dropoff_datetime) | WHERE d IN (FROM nyc_taxis | STATS c = COUNT(*) BY day = DATE_TRUNC(1 day, dropoff_datetime) | SORT c DESC | LIMIT 10 | KEEP day)"
+    },
+    {
+      "name": "where_in_subquery_scale_100",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL d = DATE_TRUNC(1 day, dropoff_datetime) | WHERE d IN (FROM nyc_taxis | STATS c = COUNT(*) BY day = DATE_TRUNC(1 day, dropoff_datetime) | SORT c DESC | LIMIT 100 | KEEP day)"
+    },
+    {
+      "name": "where_in_subquery_scale_200",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL d = DATE_TRUNC(1 day, dropoff_datetime) | WHERE d IN (FROM nyc_taxis | STATS c = COUNT(*) BY day = DATE_TRUNC(1 day, dropoff_datetime) | SORT c DESC | LIMIT 200 | KEEP day)"
+    },
+    {
+      "name": "where_in_subquery_scale_100k",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL m = DATE_TRUNC(1 minute, dropoff_datetime) | WHERE m IN (FROM nyc_taxis | STATS c = COUNT(*) BY minute = DATE_TRUNC(1 minute, dropoff_datetime) | SORT c DESC | LIMIT 100000 | KEEP minute)"
+    },
+    {
+      "name": "where_in_subquery_scale_200k",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL m = DATE_TRUNC(1 minute, dropoff_datetime) | WHERE m IN (FROM nyc_taxis | STATS c = COUNT(*) BY minute = DATE_TRUNC(1 minute, dropoff_datetime) | SORT c DESC | LIMIT 200000 | KEEP minute)"
+    },
+    {
+      "name": "where_in_subquery_scale_500k",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL m = DATE_TRUNC(1 minute, dropoff_datetime) | WHERE m IN (FROM nyc_taxis | STATS c = COUNT(*) BY minute = DATE_TRUNC(1 minute, dropoff_datetime) | SORT c DESC | LIMIT 500000 | KEEP minute)"
     }

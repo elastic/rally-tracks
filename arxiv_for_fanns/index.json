@@ -1,0 +1,66 @@
+{
+{%- set comma = joiner(",") -%}
+  "settings": {
+    "index": {
+      {%- if index_mode is defined -%}
+      {{comma()}}
+      "mode": {{ index_mode | tojson }}
+      {%- endif -%}
+      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+      {{comma()}}
+      "number_of_shards": {{ number_of_shards | default(2) }},
+      "number_of_replicas": {{ number_of_replicas | default(0) }}
+      {%- endif -%}{# non-serverless-index-settings-marker-end #}
+    }
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "emb": {
+        "type": "dense_vector",
+        "dims": 4096,
+        "index": true,
+        "similarity": {{ vector_similarity | default("cosine") | tojson }},
+        "index_options": {
+          "type": {{ vector_index_type | default("bbq_disk") | tojson }},
+          "m": {{ vector_m | default(16) }},
+          "ef_construction": {{ vector_ef_construction | default(100) }}
+        }
+      },
+      "docid": {
+        "type": "keyword"
+      },
+      "submitter": {
+        "type": "keyword"
+      },
+      "has_comments": {
+        "type": "boolean"
+      },
+      "main_categories": {
+        "type": "keyword"
+      },
+      "sub_categories": {
+        "type": "keyword"
+      },
+      "number_of_main_categories": {
+        "type": "integer"
+      },
+      "number_of_sub_categories": {
+        "type": "integer"
+      },
+      "number_of_versions": {
+        "type": "integer"
+      },
+      "update_date": {
+        "type": "integer"
+      },
+      "authors": {
+        "type": "keyword"
+      },
+      "number_of_authors": {
+        "type": "integer"
+      }
+
+    }
+  }
+}

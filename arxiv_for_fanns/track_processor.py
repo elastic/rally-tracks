@@ -4,7 +4,7 @@ import os
 
 import aiohttp
 
-QUERIES_FILENAME = "queries-emis.json.zst"
+QUERIES_FILENAME = "queries_emis.json.zst"
 
 class ArxivQueriesDownloader:
     def __init__(self):

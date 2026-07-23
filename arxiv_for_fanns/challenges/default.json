@@ -4,7 +4,7 @@
   "default": true,
   "parameters": {
     "base_url": "{{ base_url | default('https://rally-tracks.elastic.co/arxiv_for_fanns') }}",
-    "queries_file": "{{ queries_file | default('queries-emis.json.zst') }}"
+    "queries_file": "{{ queries_file | default('queries_emis.json.zst') }}"
   },
   "schedule": [
     {

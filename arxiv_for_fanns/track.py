@@ -9,7 +9,7 @@ from .track_processor import ArxivQueriesDownloader
 
 logger = logging.getLogger(__name__)
 
-QUERIES_FILENAME = "queries-emis.json.zst"
+QUERIES_FILENAME = "queries_emis.json.zst"
 VECTOR_FIELD = "emb"
 
 

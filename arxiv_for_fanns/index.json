@@ -22,9 +22,16 @@
         "index": true,
         "similarity": {{ vector_similarity | default("cosine") | tojson }},
         "index_options": {
-          "type": {{ vector_index_type | default("bbq_disk") | tojson }},
-          "m": {{ vector_m | default(16) }},
-          "ef_construction": {{ vector_ef_construction | default(100) }}
+          "type": {{ vector_index_type | default("bbq_disk") | tojson }}
+          {%- if hnsw_m is defined %},
+          "m": {{ hnsw_m }}
+          {%- endif %}
+          {%- if hnsw_ef_construction is defined %},
+          "ef_construction": {{ hnsw_ef_construction }}
+          {%- endif %}
+          {%- if bits is defined %},
+          "bits": {{ bits }}
+          {%- endif %}
         }
       },
       "docid": {

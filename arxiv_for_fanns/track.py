@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 
 import zstandard
 
+from esrally.track import loader
 from .track_processor import ArxivQueriesDownloader
 
 logger = logging.getLogger(__name__)
@@ -109,5 +110,6 @@ class KnnRecallRunner:
 
 def register(registry):
     registry.register_track_processor(ArxivQueriesDownloader())
+    registry.register_track_processor(loader.DefaultTrackPreparator())
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

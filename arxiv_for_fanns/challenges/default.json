@@ -104,14 +104,29 @@
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {
-      "name": "knn-recall-100-1000",
+      "name": "knn-search",
       "operation": {
-        "name": "knn-recall-100-1000",
+        "name": "knn-search",
+        "operation-type": "search",
+        "param-source": "knn-search-param-source",
+        "k": {{ knn_k | default(10) }},
+        "num-candidates": {{ knn_num_candidates | default(100) }},
+        "request-timeout": {{ search_request_timeout | default(600) }}
+      },
+      "warmup-iterations": {{ search_warmup_iterations | default(0) | int }},
+      "iterations": {{ search_iterations | default(1000) | int }},
+      "clients": {{ search_clients | default(1) | int }}
+    },
+    {
+      "name": "knn-recall",
+      "operation": {
+        "name": "knn-recall",
         "operation-type": "knn-recall",
         "param-source": "knn-recall-param-source",
-        "k": 10,
-        "num-candidates": 100,
-        "include-in-reporting": true
+        "k": {{ knn_k | default(10) }},
+        "num-candidates": {{ knn_num_candidates | default(100) }},
+        "request-timeout": {{ recall_request_timeout | default(600) }},
+        "include-in-reporting": false
       }
     }
   ]

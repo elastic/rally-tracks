@@ -1,11 +1,10 @@
 import json
 import logging
 import os
-from typing import Any, Dict, List
 
 import zstandard
-
 from esrally.track import loader
+
 from .track_processor import ArxivQueriesDownloader
 
 logger = logging.getLogger(__name__)
@@ -14,22 +13,71 @@ QUERIES_FILENAME = "queries_emis.json.zst"
 VECTOR_FIELD = "emb"
 
 
-def _load_queries() -> List[Dict[str, Any]]:
-    path = os.path.join(os.path.dirname(__file__), QUERIES_FILENAME)
-    if not os.path.isfile(path):
-        raise FileNotFoundError(
-            f"Queries file not found at '{path}'. "
-            "The track processor should have downloaded it during track preparation."
-        )
+def _load_queries_bounded(queries_path, max_queries):
+    """Read up to max_queries records from a zstd-compressed NDJSON file.
+
+    If max_queries <= 0, all records are loaded.
+    """
     queries = []
-    with zstandard.open(path, "rt") as f:
-        logger.debug("Reading queries from '%s'", path)
+    with zstandard.open(queries_path, "rt") as f:
         for line in f:
             line = line.strip()
-            if line:
-                queries.append(json.loads(line))
-    logger.debug("Loaded %d queries from '%s'", len(queries), path)
+            if not line:
+                continue
+            queries.append(json.loads(line))
+            if 0 < max_queries <= len(queries):
+                break
     return queries
+
+
+class KnnSearchParamSource:
+    """Param source for the per-query standalone kNN search op.
+
+    Cycles through a query list one entry per params() call so Rally measures
+    one search per iteration and records real per-query service_time.
+    """
+
+    def __init__(self, track, params, **kwargs):
+        if len(track.indices) == 1:
+            default_index = track.indices[0].name
+        else:
+            default_index = "_all"
+
+        self._index_name = params.get("index", default_index)
+        self._params = params
+
+        queries_file = params.get("queries-file", QUERIES_FILENAME)
+        queries_path = os.path.join(os.path.dirname(__file__), queries_file)
+        max_queries = params.get("search-query-count", 1000)
+        self._queries = _load_queries_bounded(queries_path, max_queries)
+        if not self._queries:
+            raise ValueError(
+                f"No queries loaded from '{queries_path}'. "
+                "Ensure the track processor downloaded the queries file."
+            )
+        self._iters = 0
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        return self
+
+    def params(self):
+        query = self._queries[self._iters]
+        self._iters = (self._iters + 1) % len(self._queries)
+
+        knn = {
+            "field": VECTOR_FIELD,
+            "query_vector": query["emb"],
+            "k": self._params.get("k", 10),
+            "num_candidates": self._params.get("num-candidates", 100),
+            "filter": {"term": query["filter"]},
+        }
+        return {
+            "index": self._index_name,
+            "cache": self._params.get("cache", False),
+            "body": {"knn": knn, "_source": False},
+        }
+
 
 class KnnRecallParamSource:
     def __init__(self, track, params, **kwargs):
@@ -40,69 +88,96 @@ class KnnRecallParamSource:
 
         self._index_name = params.get("index", default_index)
         self._params = params
-        self._queries = _load_queries()
         self.infinite = True
 
     def partition(self, partition_index, total_partitions):
         return self
 
     def params(self):
+        queries_file = self._params.get("queries-file", QUERIES_FILENAME)
+        queries_path = os.path.join(os.path.dirname(__file__), queries_file)
         return {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
             "k": self._params.get("k", 10),
             "num_candidates": self._params.get("num-candidates", 100),
-            "queries": self._queries,
+            "request_timeout": self._params.get("request-timeout", 600),
+            "queries_path": queries_path,
         }
 
 
 class KnnRecallRunner:
-    """Run a filtered kNN query for each entry in queries.json and compute recall.
-    """
+    """Run a filtered kNN query for each entry in the queries file and compute recall."""
 
     async def __call__(self, es, params):
         k = params["k"]
         num_candidates = params["num_candidates"]
         index = params["index"]
         request_cache = params["cache"]
-        queries = params["queries"]
+        request_timeout = params.get("request_timeout")
+        queries_path = params["queries_path"]
+
+        if not os.path.isfile(queries_path):
+            raise FileNotFoundError(
+                f"Queries file not found at '{queries_path}'. "
+                "The track processor should have downloaded it during track preparation."
+            )
+
+        client = es.options(request_timeout=request_timeout) if request_timeout else es
 
         recall_total = 0
         ground_truth_total = 0
         min_recall = k
+        failed_queries = 0
 
-        for query in queries:
-            knn_clause = {
-                "field": VECTOR_FIELD,
-                "query_vector": query["emb"],
-                "k": k,
-                "num_candidates": num_candidates,
-                "filter":  {"term": query.get("filter")},
-            }
+        with zstandard.open(queries_path, "rt") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                query = json.loads(line)
 
-            result = await es.search(
-                body={"knn": knn_clause, "fields": ["docid"], "_source": False, "profile": True},
-                index=index,
-                request_cache=request_cache,
-                size=k,
-            )
+                knn_clause = {
+                    "field": VECTOR_FIELD,
+                    "query_vector": query["emb"],
+                    "k": k,
+                    "num_candidates": num_candidates,
+                    "filter": {"term": query.get("filter")},
+                }
 
-            knn_ids = {str(hit["fields"]["docid"][0]) for hit in result["hits"]["hits"]}
-            ground_truth = {str(doc_id) for doc_id in query["ids"][:k]}
+                try:
+                    result = await client.search(
+                        body={"knn": knn_clause, "fields": ["docid"], "_source": False},
+                        index=index,
+                        request_cache=request_cache,
+                        size=k,
+                    )
+                except Exception:
+                    logger.warning(
+                        "Search failed for query with filter %s (k=%d, num_candidates=%d); skipping",
+                        query.get("filter"),
+                        k,
+                        num_candidates,
+                        exc_info=True,
+                    )
+                    failed_queries += 1
+                    continue
 
-            current_recall = len(knn_ids & ground_truth)
-            recall_total += current_recall
-            ground_truth_total += len(ground_truth)
-            min_recall = min(min_recall, current_recall)
+                knn_ids = {str(hit["fields"]["docid"][0]) for hit in result["hits"]["hits"]}
+                ground_truth = {str(doc_id) for doc_id in query["ids"][:k]}
 
-        return (
-            {
-                "avg_recall": recall_total / ground_truth_total,
-                "min_recall": min_recall,
-                "k": k,
-                "num_candidates": num_candidates,
-            }
-        )
+                current_recall = len(knn_ids & ground_truth)
+                recall_total += current_recall
+                ground_truth_total += len(ground_truth)
+                min_recall = min(min_recall, current_recall)
+
+        return {
+            "avg_recall": recall_total / ground_truth_total if ground_truth_total > 0 else None,
+            "min_recall": min_recall,
+            "k": k,
+            "num_candidates": num_candidates,
+            "failed_queries": failed_queries,
+        }
 
     def __repr__(self, *args, **kwargs):
         return "knn-recall"

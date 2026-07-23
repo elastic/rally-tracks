@@ -81,7 +81,7 @@ class KnnRecallRunner:
             }
 
             result = await es.search(
-                body={"knn": knn_clause, "fields": ["docid"], "_source": False},
+                body={"knn": knn_clause, "fields": ["docid"], "_source": False, "profile": True},
                 index=index,
                 request_cache=request_cache,
                 size=k,

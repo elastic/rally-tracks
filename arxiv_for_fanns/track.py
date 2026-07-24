@@ -48,7 +48,7 @@ class KnnSearchParamSource:
 
         queries_file = params.get("queries-file", QUERIES_FILENAME)
         queries_path = os.path.join(os.path.dirname(__file__), queries_file)
-        max_queries = params.get("search-query-count", 1000)
+        max_queries = params.get("search-query-count", 10000)
         self._queries = _load_queries_bounded(queries_path, max_queries)
         if not self._queries:
             raise ValueError(
@@ -187,5 +187,5 @@ def register(registry):
     registry.register_track_processor(ArxivQueriesDownloader())
     registry.register_track_processor(loader.DefaultTrackPreparator())
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
-    registry.register_param_source("knn-recall-search-param-source", KnnSearchParamSource)
+    registry.register_param_source("knn-search-param-source", KnnSearchParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

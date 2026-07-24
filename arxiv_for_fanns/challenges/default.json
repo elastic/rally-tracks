@@ -126,6 +126,7 @@
         "k": {{ knn_k | default(10) }},
         "num-candidates": {{ knn_num_candidates | default(100) }},
         "request-timeout": {{ recall_request_timeout | default(600) }},
+        "debug-sample-size": {{ recall_debug_samples | default(5) }},
         "include-in-reporting": false
       }
     }

@@ -74,6 +74,26 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
   - `parallel_indexing_search_warmup_time_period` (default: `10`)
   - `parallel_indexing_target_throughput`: (default: `100`)
 
+### Autoscale parameter conventions
+
+The three autoscale challenges (`ingest-autoscale`, `search-autoscale`, `ingest-search-autoscale`) share these conventions:
+
+- Phase count is driven by array length:
+  - `search-autoscale` and `ingest-search-autoscale`: `len(as_warmup_time_periods)`
+  - `ingest-autoscale`: `len(as_ingest_clients)`
+- Non-settings `as_*` arrays (`as_warmup_time_periods`, `as_time_periods`, `as_search_clients`, `as_ingest_clients`, target throughputs, …) are indexed directly (`array[i]`). Every co-indexed array must be the same length as the phase driver; a shorter list fails track rendering with an index error.
+- Target throughput arrays (`as_search_target_throughputs`, `as_ingest_target_throughputs`) use `-1` to mean unlimited throughput. Any positive value caps throughput in operations per second.
+- `as_settings` (default: `[{}]`) applies Elasticsearch settings before each phase. Unlike the other arrays, `as_settings` is selected via modulo (`i % len(as_settings)`), so a 1-element array repeats for every phase and extra entries beyond the phase count are ignored. Each element is a flat object of settings under their natural Elasticsearch names; you do not specify persistent or transient. Keys starting with `index.` are applied to the index via `PUT /<index>/_settings`; all other keys are applied as cluster settings via `PUT /_cluster/settings` as persistent settings (transient is not used because it is deprecated in Elasticsearch). Index settings must keep the canonical `index.` prefix — a bare index setting name would be treated as a cluster setting and rejected by Elasticsearch. An empty object (`{}`) or `null` emits no step, so a phase can opt out. Settings are sticky in Elasticsearch — a value set in one phase persists into later phases until explicitly changed, so a phase that needs a different value must set it itself. The settings step retries transient connection/timeout failures (`as_settings_retries`, default: 3; a `400` for an invalid setting is never retried and fails immediately). Under Rally's default `--on-error=continue`, a failed settings step from an API error (such as an invalid setting value) is recorded as an error but the run proceeds with the setting unapplied (a connection error still aborts the run); pass `--on-error=abort` when settings correctness is essential to the measurement so the run halts on any settings failure. Example:
+
+```json
+{
+  "as_settings": [
+    { "index.number_of_replicas": 0, "index.refresh_interval": "-1" },
+    { "index.number_of_replicas": 1, "index.refresh_interval": "5s", "indices.recovery.max_bytes_per_sec": "200mb" }
+  ]
+}
+```
+
 ### Parameters for ingest-autoscale challenge
 
 - Initial indexing:
@@ -85,6 +105,8 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
   - `as_time_periods` (default: [1800,1800,1800,1800,1800])
   - `as_ingest_clients` (default: [1,2,4,8,16])
   - `as_ingest_target_throughputs` (default: [-1,-1,-1,-1,-1])
+  - `as_settings` (default: [{}])
+  - `as_settings_retries` (default: 3)
 
 When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 
@@ -99,6 +121,8 @@ When `as_ingest_target_throughputs` is a positive number, the ingest throughput 
   - `as_time_periods` (default: [1800,1800,1800,1800,1800])
   - `as_search_clients` (default: [1,2,4,8,16])
   - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
+  - `as_settings` (default: [{}])
+  - `as_settings_retries` (default: 3)
 
 When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
 
@@ -110,6 +134,8 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
 - Operations:
   - `as_warmup_time_periods` (default: [600,600,600,600,600])
   - `as_time_periods` (default: [1800,1800,1800,1800,1800])
+  - `as_settings` (default: [{}])
+  - `as_settings_retries` (default: 3)
 - Ingest Operations:
   - `ingest_bulk_size` (default: 100)
   - `as_ingest_clients` (default: [1,2,4,8,16])

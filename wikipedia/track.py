@@ -286,6 +286,62 @@ class QueryParamSource(QueryIteratorParamSource):
         }
 
 
+class SettingsParamSource:
+    # Splits flat as_settings into index.* -> PUT /<index>/_settings and
+    # everything else -> PUT /_cluster/settings (persistent only).
+
+    def __init__(self, track, params, **kwargs):
+        if len(track.indices) == 1:
+            default_index = track.indices[0].name
+        else:
+            default_index = "_all"
+        self._index_name = params.get("index", default_index)
+        self._params = params
+
+        settings = params.get("settings") or {}
+        if not isinstance(settings, dict):
+            raise ValueError(f"Each as_settings entry must be an object, got [{type(settings).__name__}]: {settings!r}")
+        index_settings = {}
+        cluster_settings = {}
+        for key, value in settings.items():
+            if key.startswith("index."):
+                index_settings[key[len("index.") :]] = value
+            else:
+                cluster_settings[key] = value
+
+        self._index_settings = index_settings
+        self._cluster_body = {"persistent": cluster_settings} if cluster_settings else {}
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        return self
+
+    def params(self):
+        # Pass through operation params (e.g. retries) so Retry can see them.
+        p = dict(self._params)
+        p["index"] = self._index_name
+        p["index_settings"] = self._index_settings
+        p["cluster_body"] = self._cluster_body
+        return p
+
+
+class ConfigureSettingsRunner(runner.Runner):
+    async def __call__(self, es, params):
+        index = params["index"]
+        index_settings = params.get("index_settings") or {}
+        cluster_body = params.get("cluster_body") or {}
+
+        if index_settings:
+            self.logger.info("Applying index settings to [%s]: %s", index, index_settings)
+            await es.perform_request(method="PUT", path=f"/{index}/_settings", body={"index": index_settings})
+        if cluster_body:
+            self.logger.info("Applying cluster settings: %s", cluster_body)
+            await es.perform_request(method="PUT", path="/_cluster/settings", body=cluster_body)
+
+    def __repr__(self, *args, **kwargs):
+        return "configure-settings"
+
+
 def register(registry):
     registry.register_param_source("query-search", QueryParamSource)
     registry.register_param_source("create-search-application-param-source", CreateSearchApplicationParamSource)
@@ -295,3 +351,6 @@ def register(registry):
     registry.register_param_source("pinned-search-param-source", PinnedSearchParamSource)
     registry.register_param_source("retriever-search", RetrieverParamSource)
     registry.register_param_source("esql-search", EsqlSearchParamSource)
+    registry.register_param_source("settings-param-source", SettingsParamSource)
+    # Retry transient connection/timeout failures; retries come from the schedule.
+    registry.register_runner("configure-settings", runner.Retry(ConfigureSettingsRunner()), async_runner=True)

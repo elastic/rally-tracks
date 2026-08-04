@@ -133,6 +133,14 @@ class KnnRecallRunner:
 
         client = es.options(request_timeout=request_timeout) if request_timeout else es
 
+        try:
+            count_result = await client.count(index=index)
+            doc_count = count_result.get("count", "unknown")
+        except Exception:
+            doc_count = "error"
+            logger.warning("knn-recall: could not fetch document count for index %s", index, exc_info=True)
+        logger.info("knn-recall: document count for index %s = %s", index, doc_count)
+
         recall_total = 0
         ground_truth_total = 0
         min_recall = k

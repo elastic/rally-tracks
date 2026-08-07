@@ -114,7 +114,7 @@
         "request-timeout": {{ search_request_timeout | default(600) }}
       },
       "warmup-iterations": {{ search_warmup_iterations | default(0) | int }},
-      "iterations": {{ search_iterations | default(1000) | int }},
+      "iterations": {{ search_iterations | default(10000) | int }},
       "clients": {{ search_clients | default(1) | int }}
     },
     {

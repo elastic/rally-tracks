@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "description": "Track querying index with random text with search templates",
+  "operations": [
+    {
+      "name": "template-search",
+      "operation-type": "raw-request",
+      "cache": false,
+      "param-source": "random_query_text",
+      "index": "{{index}}",
+      "search_template": "{{search_template}}"
+    }
+  ],
+  "challenges": [
+    {
+      "name": "dryrun",
+      "default": true,
+      "schedule": [
+        {
+          "operation": "template-search",
+          "clients": 1,
+          "warmup-iterations": 0,
+          "iterations": 1
+        }
+      ]
+    },
+    {
+      "name": "real",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "template-search",
+          "clients": 100,
+          "warmup-iterations": 100,
+          "iterations": 1000
+        }
+      ]
+    }
+  ]
+}

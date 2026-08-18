@@ -1,45 +1,59 @@
 # ESRally Track: Search Template Benchmark
 
-This track allows benchmarking Elasticsearch search templates with randomized query inputs from a CSV file.
-It uses raw-request with a custom param-source to select random query strings and supports an optional JSON params file for custom template parameters.
+This track is used for Elasticsearch search benchmarking based on your own data and your own search template. It is commonly used to test different index options such as index size, sharding, mappings, and settings. It can also be used to test different search templates, such as loose or tight fuzziness, and to compare search performance across Elasticsearch versions.
 
-## File Structure
+The Kibana sample data can be used as an example of how to construct the required files, but the track itself is designed for your own benchmark setup.
+
+## File structure
 
 ```
 .rally/benchmarks/tracks/search_template/
 ├── track.json            # Track definition
 ├── track.py              # ParamSource: RandomParamSource
 ├── queries.csv           # CSV file with one query per line
-├── params.json           # Optional JSON params file with default template params
-└── README.md             # This file
+├── params.json           # Optional JSON params file with template defaults
+├── README.md             # This file
+└── _tests/               # Validation tests
 ```
- - track.json: Defines the track, operations, and challenges.
- - track.py: Custom Python param source to supply randomized query strings.
- - queries.csv: Input dataset for random queries. Each row should contain a realistic query string, which can include multiple terms. Providing realistic queries helps simulate actual search workloads and produces more accurate benchmarking results.
- - params.json: Optional template parameter defaults for your search template, such as `from` and `size`, when you want to keep those values out of the Python code.
 
+- `track.json`: Defines the track, operations, and challenges.
+- `track.py`: Custom Python param source to supply randomized query strings.
+- `queries.csv`: Input dataset for random queries. Each row should contain a realistic query string.
+- `params.json`: Query parameters used in the search template.
 
 ## Requirements
--	Elasticsearch Rally￼installed on a load driver. This machine needs to have sufficient CPU to generate the load for large number of clients. 
--	The load driver needs to have access to the target Elasticsearch cluster and the monitoring cluster.
--	The search template must exist in your cluster (defined with `PUT _scripts/<name>`)
 
+- Elasticsearch Rally is installed on a load driver.
+- The load driver has access to the target Elasticsearch cluster.
+- A index or alias to be queried already exists in the target Elasticsearch cluster.
+- The search template already exists in the target Elasticsearch cluster (for example via `PUT _scripts/<name>`).
+- A `queries.csv` queries_file contains random query strings.
+- A `params.json` params_file contains all necessary params used for the search template.
 
-## Explanation of Options
--	`--track-path`: Path to the track folder
--	`--pipeline=benchmark-only`: Only runs the track operations, no system setup
-- `--target-hosts`: Elasticsearch hosts contains the target index and search template
--	`--client-options`: Connection options, authenticate with either `api_key` or `basic_auth_user` with `basic_auth_password`. Set `use_ssl` as required.
--	`--telemetry`: Collect node-level telemetry, defined in `.rally/rally.ini`
--	`--kill-running-processes`: Stop any previous Rally processes
--	`--user-tags`: Add custom tags to the run
--	`--track-params`: Specify runtime parameters (`index`, `search_template` and `queries_file`)
--	`--challenge`: Specify challenge schedule (e.g., `dryrun` (for one client and one iteration) or `real`)
+## Common Rally options
 
-## Running the Track
+- `--track-path`: Path to the track folder
+- `--pipeline=benchmark-only`: Runs only the benchmark operations and skips system setup
+- `--target-hosts`: Elasticsearch hosts containing the target index and search template
+- `--client-options`: Connection settings such as `api_key` or both `basic_auth_user` and `basic_auth_password`; set `use_ssl` as required
+- `--telemetry`: Collect node-level telemetry, defined in `.rally/rally.ini`
+- `--kill-running-processes`: Stop any previous Rally processes
+- `--user-tags`: Add custom tags to the run
+- `--track-params`: Supply runtime parameters such as `index`, `search_template`, `queries_file`, and optionally `params_file`
+- `--challenge`: Select the challenge schedule, such as `dryrun` or `real`
 
-Bring your own `index`, `search_template` and `queries_file` example Command:
-```
+## Benchmarking with your own data
+
+Use this track when you already have:
+
+- an index with searchable documents
+- a search template deployed in Elasticsearch
+- a CSV file of query terms for `queries_file`
+- optionally a JSON file for `params_file` when your template needs more than `query_string`
+
+### Example command
+
+```bash
 esrally race \
   --track-path=<path_to>/.rally/benchmarks/tracks/bring-your-own \
   --pipeline=benchmark-only \
@@ -48,27 +62,23 @@ esrally race \
   --telemetry="node-stats" \
   --kill-running-processes \
   --user-tags="model:changeme" \
-  --track-params="index:my_index,search_template:my_search_template,queries_file:/tmp/my_queries.csv" \
+  --track-params="index:my_index,search_template:my_search_template,queries_file:/tmp/my_queries.csv,params_file:/tmp/my_params.json" \
   --challenge="dryrun"
 ```
 
-Running with the built-in `kibana_sample_flight` data command:
-```
-esrally race \
-  --track-path=<path_to>/.rally/benchmarks/tracks/bring-your-own \
-  --pipeline=benchmark-only \
-  --target-hosts=<es_cluster_endpoint>:443 \
-  --client-options="api_key:'a0V...2dw==',use_ssl:True" \
-  --telemetry="node-stats" \
-  --kill-running-processes \
-  --user-tags="model:changeme" \
-  --track-params="index:kibana_sample_data_flight,search_template:kibana_sample_flight_search_template,queries_file:/tmp/kibana_sample_flight_queries.csv,params_file:/tmp/kibana_sample_flight_params.json" \
-  --challenge="dryrun"
-```
+This file is optional and is useful when your template needs more than just `query_string`.
 
-- `search_template`:
-The following `kibana_sample_flight_search_template` will work with the [kibana_sample_data_flight](https://www.elastic.co/docs/manage-data/ingest/sample-data) index:
-```
+---
+
+## Kibana sample data as an example
+
+The Kibana sample data is useful as an example of how to structure the inputs for this track, but it is not a separate benchmark mode. It can help you understand the expected file layout and parameter shapes when building your own benchmark.
+
+### Example template
+
+This example uses the Kibana sample index [kibana_sample_data_flight](https://www.elastic.co/docs/manage-data/ingest/sample-data):
+
+```json
 PUT _scripts/kibana_sample_flight_search_template
 {
   "script": {
@@ -76,39 +86,55 @@ PUT _scripts/kibana_sample_flight_search_template
     "source": {
       "query": {
         "match": {
-          "DestCityName": "{{query_string}}"
-        },
-        "from": "{{from}}{{^from}}0{{/from}}",
-        "size": "{{size}}{{^size}}10{{/size}}"
+          "DestCityName": "{{query_string}}",
+          "from": "{{from}}{{^from}}0{{/from}}",
+          "size": "{{size}}{{^size}}10{{/size}}"
+        }
       }
     }
   }
 }
 ```
 
-- Example `params_file`:
-Once the sample index `kibana_sample_data_flight` is ingested, and the `kibana_sample_flight_search_template` search template is implemented, you can test the execution with the following:
-```
-POST kibana_sample_data_flights/_search/template
-{
-  "id": "kibana_sample_flight_search_template",
-  "params": {
-    "query_string": "Paris"
-  }
-}
-```
+### Example `params_file`, see params.json
 
-This is also the shape used in `params.json` for the track. Example:
 ```json
 {
-  "query_string": "Paris"
+  "query_string": "Paris",
+  "from": 0,
+  "size": 5
 }
 ```
 
-- Example `queries_file`:
-```
+### Example `queries_file`, see queries.csv
+
+```text
 Paris
 New York
 Tokyo
 Sydney
 ```
+
+### Example request
+
+```json
+POST kibana_sample_data_flights/_search/template
+{
+  "id": "kibana_sample_flight_search_template",
+  "params": {
+    "query_string": "Paris",
+    "from": 0,
+    "size": 5
+  }
+}
+```
+
+---
+
+## Notes
+
+- Use your own index, search template, and query set for the real benchmark.
+- Adjust the `clients`, `warmup-iterations`, `iterations` in the `real` challenges as required.
+- Keep `queries_file` aligned with the actual query terms your template expects.
+- If you use custom template parameters, prefer `params_file` so defaults stay out of the Python code.
+- The sample file [bring-your-own/params.json](params.json) is just an example and can be replaced with your own values.

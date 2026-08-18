@@ -93,10 +93,10 @@ PUT _scripts/kibana_sample_flight_search_template
       "query": {
         "match": {
           "DestCityName": "{{query_string}}"
-        },
-        "from": "{{from}}{{^from}}0{{/from}}",
-        "size": "{{size}}{{^size}}10{{/size}}"
-      }
+        }
+      },
+      "from": "{{from}}{{^from}}0{{/from}}",
+      "size": "{{size}}{{^size}}10{{/size}}"
     }
   }
 }

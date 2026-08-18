@@ -13,11 +13,8 @@ QUERIES_FILENAME = "queries_emis.json.zst"
 VECTOR_FIELD = "emb"
 
 
-def _load_queries_bounded(queries_path, max_queries):
-    """Read up to max_queries records from a zstd-compressed NDJSON file.
-
-    If max_queries <= 0, all records are loaded.
-    """
+def _load_queries(queries_path):
+    """Read all records from a zstd-compressed NDJSON file."""
     queries = []
     with zstandard.open(queries_path, "rt") as f:
         for line in f:
@@ -25,9 +22,15 @@ def _load_queries_bounded(queries_path, max_queries):
             if not line:
                 continue
             queries.append(json.loads(line))
-            if 0 < max_queries <= len(queries):
-                break
     return queries
+
+
+def _term_filter_to_esql(filter_dict):
+    """Convert a single-field dict like {"main_categories": "gr-qc"} to an ESQL predicate."""
+    if len(filter_dict) != 1:
+        raise ValueError(f"Expected a single-field filter dict, got {filter_dict!r}")
+    field, value = next(iter(filter_dict.items()))
+    return f'{field} == "{value}"'
 
 
 class KnnSearchParamSource:
@@ -48,8 +51,7 @@ class KnnSearchParamSource:
 
         queries_file = params.get("queries-file", QUERIES_FILENAME)
         queries_path = os.path.join(os.path.dirname(__file__), queries_file)
-        max_queries = params.get("search-query-count", 10000)
-        self._queries = _load_queries_bounded(queries_path, max_queries)
+        self._queries = _load_queries(queries_path)
         if not self._queries:
             raise ValueError(
                 f"No queries loaded from '{queries_path}'. "
@@ -65,17 +67,75 @@ class KnnSearchParamSource:
         query = self._queries[self._iters]
         self._iters = (self._iters + 1) % len(self._queries)
 
+        oversample = self._params.get("oversample")
         knn = {
             "field": VECTOR_FIELD,
             "query_vector": query["emb"],
-            "k": self._params.get("k", 10),
-            "num_candidates": self._params.get("num-candidates", 100),
+            "k": self._params.get("k", 100),
+            "num_candidates": self._params.get("num-candidates", 256),
             "filter": {"term": query["filter"]},
         }
+        if oversample is not None:
+            knn["rescore_vector"] = {"oversample": oversample}
         return {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
             "body": {"knn": knn, "_source": False},
+        }
+
+
+class ESQLKnnParamSource:
+    """Param source for ESQL KNN search, using the same per-query filter as KnnSearchParamSource."""
+
+    def __init__(self, track, params, **kwargs):
+        if len(track.indices) == 1:
+            default_index = track.indices[0].name
+        else:
+            default_index = "_all"
+
+        self._index_name = params.get("index", default_index)
+        self._params = params
+
+        queries_file = params.get("queries-file", QUERIES_FILENAME)
+        queries_path = os.path.join(os.path.dirname(__file__), queries_file)
+        self._queries = _load_queries(queries_path)
+        if not self._queries:
+            raise ValueError(
+                f"No queries loaded from '{queries_path}'. "
+                "Ensure the track processor downloaded the queries file."
+            )
+        self._iters = 0
+        self.infinite = True
+
+    def partition(self, partition_index, total_partitions):
+        return self
+
+    def params(self):
+        query = self._queries[self._iters]
+        self._iters = (self._iters + 1) % len(self._queries)
+
+        k = self._params.get("k", 100)
+        num_candidates = self._params.get("num-candidates", 256)
+        oversample = self._params.get("oversample")
+
+        options = []
+        if num_candidates:
+            options.append(f'"min_candidates":{num_candidates}')
+        if oversample is not None:
+            options.append(f'"rescore_oversample":{oversample}')
+        options_str = "{" + ", ".join(options) + "}"
+
+        esql_filter = _term_filter_to_esql(query["filter"])
+        esql_query = (
+            f"FROM {self._index_name} METADATA _id, _score"
+            f" | WHERE KNN({VECTOR_FIELD}, ?query, {options_str})"
+            f" and ({esql_filter})"
+            f" | KEEP _id, _score | SORT _score desc | LIMIT {k}"
+        )
+        return {
+            "cache": self._params.get("cache", False),
+            "query": esql_query,
+            "body": {"params": [{"query": query["emb"]}]},
         }
 
 
@@ -99,8 +159,9 @@ class KnnRecallParamSource:
         return {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
-            "k": self._params.get("k", 10),
-            "num_candidates": self._params.get("num-candidates", 100),
+            "k": self._params.get("k", 100),
+            "num_candidates": self._params.get("num-candidates", 256),
+            "oversample": self._params.get("oversample"),
             "request_timeout": self._params.get("request-timeout", 600),
             "queries_path": queries_path,
         }
@@ -124,6 +185,7 @@ class KnnRecallRunner:
             )
 
         client = es.options(request_timeout=request_timeout) if request_timeout else es
+        oversample = params.get("oversample")
 
         recall_total = 0
         ground_truth_total = 0
@@ -145,6 +207,8 @@ class KnnRecallRunner:
                     "num_candidates": num_candidates,
                     "filter": {"term": query.get("filter")},
                 }
+                if oversample is not None:
+                    knn_clause["rescore_vector"] = {"oversample": oversample}
 
                 try:
                     result = await client.search(
@@ -203,6 +267,7 @@ class KnnRecallRunner:
 def register(registry):
     registry.register_track_processor(ArxivQueriesDownloader())
     registry.register_track_processor(loader.DefaultTrackPreparator())
-    registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_param_source("knn-search-param-source", KnnSearchParamSource)
+    registry.register_param_source("esql-knn-param-source", ESQLKnnParamSource)
+    registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

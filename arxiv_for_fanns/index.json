@@ -8,8 +8,12 @@
       {%- endif -%}
       {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
       {{comma()}}
-      "number_of_shards": {{ number_of_shards | default(2) }},
+      "number_of_shards": {{ number_of_shards | default(1) }},
       "number_of_replicas": {{ number_of_replicas | default(0) }}
+      {%- if enable_experimental_features | default(false) -%}
+      {{comma()}}
+      "dense_vector.experimental_features": true
+      {%- endif -%}
       {%- endif -%}{# non-serverless-index-settings-marker-end #}
     }
   },
@@ -18,11 +22,17 @@
     "properties": {
       "emb": {
         "type": "dense_vector",
+        {%- if vector_index_element_type is defined %}
+        "element_type": {{ vector_index_element_type | tojson }},
+        {%- endif %}
         "dims": 4096,
         "index": true,
         "similarity": {{ vector_similarity | default("cosine") | tojson }},
         "index_options": {
           "type": {{ vector_index_type | default("bbq_disk") | tojson }}
+          {%- if vector_index_on_disk_rescore is defined %},
+          "on_disk_rescore": {{ vector_index_on_disk_rescore | tojson }}
+          {%- endif -%}
           {%- if hnsw_m is defined %},
           "m": {{ hnsw_m }}
           {%- endif %}

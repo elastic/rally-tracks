@@ -1,3 +1,5 @@
+{% set p_include_force_merge = (include_force_merge | default(build_flavor != "serverless")) %}
+{% set is_esql_enabled = (esql_enabled | default(false)) %}
 {
   "name": "index-and-search",
   "description": "Indexes vectors, then executes filtered searches and recall measurements",
@@ -8,17 +10,20 @@
   },
   "schedule": [
     {
+      "tags": ["setup"],
       "operation": {
         "operation-type": "delete-index"
       }
     },
     {
+      "tags": ["setup"],
       "operation": {
         "operation-type": "create-index",
         "settings": {{index_settings | default({}) | tojson}}
       }
     },
     {
+      "tags": ["setup"],
       "operation": {
         "operation-type": "cluster-health",
         "request-params": {
@@ -29,6 +34,7 @@
     },
     {
       "name": "index-append",
+      "tags": ["index"],
       "operation": {
         "operation-type": "bulk",
         "corpora": {{corpora | default("arxiv-for-fanns-large") | tojson}},
@@ -40,6 +46,7 @@
     },
     {
       "name": "refresh-after-index",
+      "tags": ["index"],
       "operation": {
         "operation-type": "refresh",
         "request-timeout": 1000,
@@ -48,6 +55,7 @@
     },
     {
       "name": "wait-until-merges-finish-after-index",
+      "tags": ["index"],
       "operation": {
         "operation-type": "index-stats",
         "index": "_all",
@@ -62,6 +70,7 @@
     {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
     {
       "name": "post-ingest-sleep-after-index",
+      "tags": ["index"],
       "operation": {
         "operation-type": "sleep",
         "duration": {{ post_ingest_sleep_duration|default(30) }}
@@ -69,20 +78,58 @@
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {
+      "name": "knn-search",
+      "tags": ["search"],
+      "operation": "knn-search",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": 1
+    },
+    {
+      "name": "knn-search-multi-client",
+      "tags": ["search"],
+      "operation": "knn-search",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {% if is_esql_enabled %}
+    {
+      "name": "esql-knn-search",
+      "tags": ["search", "esql"],
+      "operation": "esql-knn-search",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-multi-client",
+      "tags": ["search", "esql"],
+      "operation": "esql-knn-search",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {% endif %}
+    {# non-serverless-after-force-merge-marker-start #}{%- if p_include_force_merge -%}
+    {
+      "tags": ["force-merge"],
       "operation": {
         "operation-type": "force-merge",
         "mode": "polling",
         "max-num-segments": {{ max_num_segments | default(1) }},
-        "request-timeout": 7200,
+        "request-timeout": {{ force_merge_timeout | default(7200) }},
         "include-in-reporting": true
       }
     },
     {
       "name": "refresh-after-force-merge",
+      "tags": ["force-merge"],
       "operation": "refresh"
     },
     {
       "name": "wait-until-merges-finish",
+      "tags": ["force-merge"],
       "operation": {
         "operation-type": "index-stats",
         "index": "_all",
@@ -97,6 +144,7 @@
     {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
     {
       "name": "post-ingest-sleep",
+      "tags": ["force-merge"],
       "operation": {
         "operation-type": "sleep",
         "duration": {{ post_ingest_sleep_duration|default(30) }}
@@ -104,27 +152,50 @@
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
     {
-      "name": "knn-search",
-      "operation": {
-        "name": "knn-search",
-        "operation-type": "search",
-        "param-source": "knn-search-param-source",
-        "k": {{ knn_k | default(10) }},
-        "num-candidates": {{ knn_num_candidates | default(100) }},
-        "request-timeout": {{ search_request_timeout | default(600) }}
-      },
-      "warmup-iterations": {{ search_warmup_iterations | default(0) | int }},
-      "iterations": {{ search_iterations | default(10000) | int }},
-      "clients": {{ search_clients | default(1) | int }}
+      "name": "knn-search-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "knn-search",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": 1
     },
     {
+      "name": "knn-search-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "knn-search",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {% if is_esql_enabled %}
+    {
+      "name": "esql-knn-search-force-merge",
+      "tags": ["search-after-force-merge", "esql"],
+      "operation": "esql-knn-search",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": 1
+    },
+    {
+      "name": "esql-knn-search-multi-client-force-merge",
+      "tags": ["search-after-force-merge", "esql"],
+      "operation": "esql-knn-search",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {% endif %}
+    {%- endif -%}{# non-serverless-after-force-merge-marker-end #}
+    {
       "name": "knn-recall",
+      "tags": ["search-after-force-merge"],
       "operation": {
         "name": "knn-recall",
         "operation-type": "knn-recall",
         "param-source": "knn-recall-param-source",
-        "k": {{ knn_k | default(10) }},
-        "num-candidates": {{ knn_num_candidates | default(100) }},
+        "k": {{ knn_k | default(100) }},
+        "num-candidates": {{ knn_num_candidates | default(256) }},
+        "oversample": {{ oversample | default(none) | tojson }},
         "request-timeout": {{ recall_request_timeout | default(600) }},
         "include-in-reporting": false
       }

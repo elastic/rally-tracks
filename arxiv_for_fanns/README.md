@@ -6,7 +6,7 @@ For more information on the dataset see [the associated ArXiv paper][dataset_pap
 
 The `arxiv_for_fanns_large` dataset includes over 2.7M vectors of 4096 dimensions, as well as data fields to filter on.
 The `queries_emis` file includes 10 000 queries for the exact match in set filter alongside the computed expected
-results.
+results. This file is downloaded at prepare time.
 
 ### Example corpus document
 
@@ -41,24 +41,67 @@ results.
 
 ```
 
+### Challenge structure
+
+The `index-and-search` challenge (default) includes these phases:
+
+- **`setup`** - recreate the index and wait for green health
+- **`index`** - bulk ingest, refresh, and wait for merges
+- **`search`** - kNN search (1-client and multi-client) before force-merge
+- **`force-merge`** - force-merge, refresh, wait for merges; skipped with `include_force_merge=false`
+- **`search-after-force-merge`** - same search operations repeated after force-merge
+
+Example: re-run searches only against an existing index:
+```bash
+esrally race --track-path=. --include-filter-tags=search-after-force-merge ...
+```
+
 ### Parameters
 
 This track accepts the following parameters with `--track-params`:
 
+**Indexing**
 - `bulk_size` (default: 500): Documents per bulk request.
 - `bulk_indexing_clients` (default: 1): Number of bulk indexing clients.
 - `bulk_warmup` (default: 40): Warmup time in seconds for the initial bulk phase.
 - `corpora` (default: `"arxiv-for-fanns-large"`): Override the corpus name.
-- `index_settings`: Extra index settings merged at create-index time.
-- `index_mode`: If set, passed as `index.mode` (e.g. `"vectordb_document"`).
-- `max_num_segments` (default: 1): Target segment count for force-merge.
+- `index_settings` (default: `{}`): Extra index settings.
+- `index_mode`: If set, passed as `index.mode`.
 - `number_of_replicas` (default: 0)
-- `number_of_shards` (default: 2)
+- `number_of_shards` (default: 1)
 - `post_ingest_sleep` (default: false): Whether to pause after each ingest phase.
 - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
-- `vector_ef_construction` (default: 100): HNSW `ef_construction`.
-- `vector_m` (default: 16): HNSW `m`.
-- `vector_index_type` (default: `"bbq_disk"`):
-- `vector_similarity` (default: `"cosine"`):
+
+**Index mapping**
+- `vector_index_element_type` (default: not set): Element type for the dense vector field.
+- `vector_index_type` (default: `"bbq_disk"`): Index type for the dense vector field.
+- `vector_index_on_disk_rescore` (default: true): Whether to rescore on disk.
+- `vector_similarity` (default: `"cosine"`): Similarity metric.
+- `hnsw_m` (default: not set): HNSW `m` parameter.
+- `hnsw_ef_construction` (default: not set): HNSW `ef_construction` parameter.
+- `bits` (default: not set): Quantization bits (for BBQ variants).
+- `enable_experimental_features` (default: false): Enables `index.dense_vector.experimental_features`.
+
+**Force-merge**
+- `include_force_merge` (default: false): Whether to run the force-merge phase.
+- `force_merge_timeout` (default: 7200): Maximum seconds for force-merge.
+- `max_num_segments` (default: 1): Target segment count for force-merge.
+
+**Search**
+- `knn_k` (default: 100): `k` for kNN search.
+- `knn_num_candidates` (default: 256): `num_candidates` for kNN search.
+- `oversample` (default: not set): Oversampling factor for `rescore_vector`.
+- `search_request_timeout` (default: 600): Request timeout in seconds for kNN search.
+- `recall_request_timeout` (default: 600): Request timeout in seconds for the recall operation.
+- `warmup_iterations` (default: 1000): Warmup iterations per search client.
+- `iterations` (default: 10000): Measurement iterations per search client.
+- `search_clients` (default: 8): Number of clients for the multi-client search steps.
+
+**ESQL**
+- `esql_enabled` (default: false): Whether to run the ESQL kNN search steps.
+
+**Queries**
+- `queries_file` (default: `"queries_emis.json.zst"`): Name of the queries file to download and use.
+- `base_url` (default: `"https://rally-tracks.elastic.co/arxiv_for_fanns"`): Base URL for downloading the queries file.
 
 [dataset_paper]: https://arxiv.org/html/2507.21989v1

@@ -86,11 +86,12 @@ class RandomParamSource(QueryParamSource):
         index = self._params["index"]
 
         result = {
+            "method": "POST",
+            "path": f"/{index.lstrip('/')}\/_search\/template",
             "body": {
                 "id": self._params["search_template"],
-                "params": self._template_params(random_query)
+                "params": self._template_params(random_query),
             },
-            "path": "/" + index + "/_search/template"
         }
 
         if "cache" in self._params:

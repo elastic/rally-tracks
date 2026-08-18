@@ -9,7 +9,7 @@ This track can also be used offline when you already have a fixed dataset, a sea
 ## File structure
 
 ```
-.rally/benchmarks/tracks/search_template/
+.rally/benchmarks/tracks/bring-your-own/
 ├── track.json            # Track definition
 ├── track.py              # ParamSource: RandomParamSource
 ├── queries.csv           # CSV file with one query per line
@@ -27,10 +27,10 @@ This track can also be used offline when you already have a fixed dataset, a sea
 
 - Elasticsearch Rally is installed on a load driver.
 - The load driver has access to the target Elasticsearch cluster.
-- A index or alias to be queried already exists in the target Elasticsearch cluster.
+- An index or alias to be queried already exists in the target Elasticsearch cluster.
 - The search template already exists in the target Elasticsearch cluster (for example via `PUT _scripts/<name>`).
-- A `queries.csv` queries_file contains random query strings.
-- A `params.json` params_file contains all necessary params used for the search template.
+- A `queries.csv` file (provided via `queries_file`) contains random query strings.
+- An optional `params.json` file (provided via `params_file`) contains any additional params used by the search template.
 
 ## Common Rally options
 
@@ -106,7 +106,6 @@ PUT _scripts/kibana_sample_flight_search_template
 
 ```json
 {
-  "query_string": "Paris",
   "from": 0,
   "size": 5
 }

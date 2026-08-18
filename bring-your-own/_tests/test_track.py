@@ -18,6 +18,8 @@ def test_random_query_source_has_query_string_only_when_no_params_file_is_used()
     source = TRACK.RandomParamSource(None, params)
     result = source.params()
 
+    assert result["method"] == "POST"
+    assert result["path"] == "/my_index/_search/template"
     assert "query_string" in result["body"]["params"]
     assert "from" not in result["body"]["params"]
     assert "size" not in result["body"]["params"]

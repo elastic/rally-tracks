@@ -158,3 +158,4 @@ esrally race \
 - Keep `queries_file` aligned with the actual query terms your template expects.
 - If you use custom template parameters, prefer `params_file` so defaults stay out of the Python code.
 - The sample file [bring-your-own/params.json](params.json) is just an example and can be replaced with your own values.
+- On `--pipeline=benchmark-only` runs, Rally may print `[WARNING] ... indicating that the cluster is not in a defined clean state` for `merges_total_time`, `indexing_total_time`, `refresh_total_time`, and `flush_total_time`; since this track performs no indexing or merge operations, these warnings can be safely ignored.

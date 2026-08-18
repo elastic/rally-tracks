@@ -9,7 +9,7 @@ This track can also be used offline when you already have a fixed dataset, a sea
 ## File structure
 
 ```
-.rally/benchmarks/tracks/bring-your-own/
+.rally/benchmarks/tracks/default/bring-your-own/
 ├── track.json            # Track definition
 ├── track.py              # ParamSource: RandomParamSource
 ├── queries.csv           # CSV file with one query per line
@@ -135,7 +135,7 @@ POST kibana_sample_data_flights/_search/template
 ```
 ### Example command when using kibana sample flight files
 
-Important: when `params_file` and `queries_files` are not specified in `--track-params`, the default files in this folder will be used instead.
+Important: when `params_file` and `queries_file` are not specified in `--track-params`, the default files in this folder will be used instead.
 
 ```bash
 esrally race \

@@ -37,7 +37,7 @@ class QueryParamSource:
                     raise ValueError("Each entry in params_file must be a JSON object")
                 self._param_variants.append(entry)
 
-        queries_file = self._params.get("queries_file") or self._params.get("query_file", "queries.csv")
+        queries_file = self._params.get("queries_file")
         query_path = queries_file if os.path.isabs(queries_file) else os.path.join(cwd, queries_file)
 
         with open(query_path, "r") as ins:

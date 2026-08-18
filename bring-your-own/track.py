@@ -72,10 +72,7 @@ class RandomParamSource(QueryParamSource):
             "search_template",
             "cache",
             "queries_file",
-            "query_file",
             "params_file",
-            "from",
-            "size",
         }
 
         for key, value in self._params.items():

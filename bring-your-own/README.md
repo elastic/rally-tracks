@@ -55,18 +55,22 @@ Use this track when you already have:
 
 ### Example command
 
+> Important: when using an inline `--track-params` string, the final key/value pair should not end with a `.json` file path. Rally will try to open the whole argument as a file if it detects a trailing `.json`, so the order of entries matters.
+
 ```bash
 esrally race \
-  --track-path=<path_to>/.rally/benchmarks/tracks/bring-your-own \
+  --track-path=bring-your-own \
   --pipeline=benchmark-only \
   --target-hosts=<es_cluster_endpoint>:443 \
-  --client-options="api_key:'a0V...2dw==',use_ssl:True" \
+  --client-options="basic_auth_user:my_user,basic_auth_password:my_password,use_ssl:True" \
   --telemetry="node-stats" \
   --kill-running-processes \
-  --user-tags="model:changeme" \
-  --track-params="index:my_index,search_template:my_search_template,queries_file:/tmp/my_queries.csv,params_file:/tmp/my_params.json" \
+  --user-tags="model:my_tag" \
+  --track-params="index:my_index,search_template:my_search_template,params_file:/tmp/my_params.json,queries_file:/tmp/my_queries.csv" \
   --challenge="dryrun"
 ```
+
+If Rally raises a `FileNotFoundError`, move the `params_file` entry before the trailing value or use a dedicated JSON file for `--track-params`.
 
 This file is optional and is useful when your template needs more than just `query_string`.
 
@@ -88,17 +92,17 @@ PUT _scripts/kibana_sample_flight_search_template
     "source": {
       "query": {
         "match": {
-          "DestCityName": "{{query_string}}",
-          "from": "{{from}}{{^from}}0{{/from}}",
-          "size": "{{size}}{{^size}}10{{/size}}"
-        }
+          "DestCityName": "{{query_string}}"
+        },
+        "from": "{{from}}{{^from}}0{{/from}}",
+        "size": "{{size}}{{^size}}10{{/size}}"
       }
     }
   }
 }
 ```
 
-### Example `params_file`, see params.json
+### Example `params_file`, see `./params.json`
 
 ```json
 {
@@ -108,7 +112,7 @@ PUT _scripts/kibana_sample_flight_search_template
 }
 ```
 
-### Example `queries_file`, see queries.csv
+### Example `queries_file`, see `./queries.csv`
 
 ```text
 Paris
@@ -130,7 +134,22 @@ POST kibana_sample_data_flights/_search/template
   }
 }
 ```
+### Example command when using kibana sample flight files
 
+Important: when `params_file` and `queries_files` are not specified in `--track-params`, the default files in this folder will be used instead.
+
+```bash
+esrally race \
+  --track=bring-your-own \
+  --pipeline=benchmark-only \
+  --target-hosts=<es_cluster_endpoint>:443 \
+  --client-options="basic_auth_user:my_user,basic_auth_password:my_password,use_ssl:True" \
+  --telemetry="node-stats" \
+  --kill-running-processes \
+  --user-tags="model:my_tag" \
+  --track-params="index:kibana_sample_data_flights,search_template:kibana_sample_flight_search_template" \
+  --challenge="dryrun"
+```
 ---
 
 ## Notes

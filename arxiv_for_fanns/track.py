@@ -125,16 +125,17 @@ class ESQLKnnParamSource:
             options.append(f'"rescore_oversample":{oversample}')
         options_str = "{" + ", ".join(options) + "}"
 
+        vector_str = json.dumps(query["emb"])
         esql_filter = _term_filter_to_esql(query["filter"])
         esql_query = (
             f"FROM `{self._index_name}` METADATA _id, _score"
-            f" | WHERE KNN({VECTOR_FIELD}, ?query, {options_str})"
+            f" | WHERE KNN({VECTOR_FIELD}, {vector_str}, {options_str})"
             f" and ({esql_filter})"
             f" | KEEP _id, _score | SORT _score desc | LIMIT {k}"
         )
         return {
             "query": esql_query,
-            "body": {"params": [{"query": query["emb"]}]},
+            "body": {},
         }
 
 

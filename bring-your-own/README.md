@@ -27,31 +27,77 @@ It uses raw-request with a custom param-source to select random query strings.
 -	`--track-path`: Path to the track folder
 -	`--pipeline=benchmark-only`: Only runs the track operations, no system setup
 - `--target-hosts`: Elasticsearch hosts contains the target index and search template
--	`--client-options`: Connection options, including api_key and use_ssl
+-	`--client-options`: Connection options, authenticate with either `api_key` or `basic_auth_user` with `basic_auth_password`. Set `use_ssl` as required.
 -	`--telemetry`: Collect node-level telemetry, defined in `.rally/rally.ini`
 -	`--kill-running-processes`: Stop any previous Rally processes
 -	`--user-tags`: Add custom tags to the run
--	`--track-params`: Override runtime parameters (`index` and `search_template`)
--	`--challenge`: Specify challenge schedule (e.g., `dryrun` or `real`)
+-	`--track-params`: Specify runtime parameters (`index`, `search_template` and `query_file`)
+-	`--challenge`: Specify challenge schedule (e.g., `dryrun` (for one client and one iteration) or `real`)
 
 ## Running the Track
 
-Example Command:
+Bring your own `index`, `search_template` and `query_file` example Command:
 ```
 esrally race \
-  --track-path=<path_to>/.rally/benchmarks/tracks/search_template \
+  --track-path=<path_to>/.rally/benchmarks/tracks/bring-your-own \
   --pipeline=benchmark-only \
-  --target-hosts=<preprod_es_cluster_endpoint>:443 \
+  --target-hosts=<es_cluster_endpoint>:443 \
   --client-options="api_key:'a0V...2dw==',use_ssl:True" \
   --telemetry="node-stats" \
   --kill-running-processes \
   --user-tags="model:changeme" \
-  --track-params="index:my_index,search_template:my_search_template" \
+  --track-params="index:my_index,search_template:my_search_template,query_file:/tmp/my_queries.csv" \
   --challenge="dryrun"
 ```
 
-## Example queries.csv
+Running with the built-in `kibana_sample_flight` data command:
 ```
-common wealth bank
-apple banana orange
+esrally race \
+  --track-path=<path_to>/.rally/benchmarks/tracks/bring-your-own \
+  --pipeline=benchmark-only \
+  --target-hosts=<es_cluster_endpoint>:443 \
+  --client-options="api_key:'a0V...2dw==',use_ssl:True" \
+  --telemetry="node-stats" \
+  --kill-running-processes \
+  --user-tags="model:changeme" \
+  --track-params="index:kibana_sample_data_flight,search_template:kibana_sample_flight_search_template,query_file:/tmp/kibana_sample_flight_queries.csv" \
+  --challenge="dryrun"
+```
+
+- `search_template`:
+The following `kibana_sample_flight_search_template` will work with the [kibana_sample_data_flight](https://www.elastic.co/docs/manage-data/ingest/sample-data) index:
+```
+PUT _scripts/kibana_sample_flight_search_template
+{
+  "script": {
+    "lang": "mustache",
+    "source": {
+      "query": {
+        "match": {
+          "DestCityName": "{{query_string}}"
+        }
+      }
+    }
+  }
+}
+```
+
+- Example `params_file`:
+Once the sample index `kibana_sample_data_flight` is ingested, and the `kibana_sample_flight_search_template` search template is implemented, you can test the execution with the following:
+```
+POST kibana_sample_data_flights/_search/template
+{
+  "id": "kibana_sample_flight_search_template",
+  "params": {
+    "query_string": "Paris"
+  }
+}
+```
+
+- Example `query_file`:
+```
+Paris
+New York
+Tokyo
+Sydney
 ```

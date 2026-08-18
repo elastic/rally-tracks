@@ -50,6 +50,20 @@ def test_bundled_sample_files_are_used_when_track_params_are_omitted():
     assert result["body"]["params"]["size"] == 5
 
 
+def test_inline_source_template_is_used_when_search_template_is_blank():
+    params = {
+        "index": "my_index",
+        "search_template": "",
+    }
+
+    source = TRACK.RandomParamSource(None, params)
+    result = source.params()
+
+    assert result["body"]["source"]["query"]["query_string"]["query"] == "{{query_string}}"
+    assert result["body"]["params"]["query_string"]
+    assert "id" not in result["body"]
+
+
 def test_params_file_overrides_template_values(tmp_path):
     params_path = tmp_path / "params.json"
     params_path.write_text(

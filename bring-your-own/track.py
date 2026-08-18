@@ -89,14 +89,26 @@ class RandomParamSource(QueryParamSource):
     def params(self):
         random_query = random.choice(self.query_text)
         index = self._params["index"]
+        search_template = self._params.get("search_template")
+        body = {
+            "params": self._template_params(random_query),
+        }
+
+        if search_template:
+            body["id"] = search_template
+        else:
+            body["source"] = {
+                "query": {
+                    "query_string": {
+                        "query": "{{query_string}}",
+                    }
+                }
+            }
 
         result = {
             "method": "POST",
             "path": f"/{index.lstrip('/')}/_search/template",
-            "body": {
-                "id": self._params["search_template"],
-                "params": self._template_params(random_query),
-            },
+            "body": body,
         }
 
         if "cache" in self._params:

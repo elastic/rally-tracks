@@ -28,7 +28,7 @@ This track can also be used offline when you already have a fixed dataset, a sea
 - Elasticsearch Rally is installed on a load driver.
 - The load driver has access to the target Elasticsearch cluster.
 - An index or alias to be queried already exists in the target Elasticsearch cluster.
-- The search template already exists in the target Elasticsearch cluster (for example via `PUT _scripts/<name>`).
+- If you set `search_template`, that stored search template must already exist in the target Elasticsearch cluster (for example via `PUT _scripts/<name>`).
 - A `queries.csv` file (provided via `queries_file`) contains random query strings.
 - An optional `params.json` file (provided via `params_file`) contains any additional params used by the search template.
 

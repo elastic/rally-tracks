@@ -4,6 +4,8 @@ This track is used for Elasticsearch search benchmarking based on your own data 
 
 The Kibana sample data can be used as an example of how to construct the required files, but the track itself is designed for your own benchmark setup.
 
+This track can also be used offline when you already have a fixed dataset, a search template, and the query inputs available locally as it does not require any external data sources or live sample data.
+
 ## File structure
 
 ```

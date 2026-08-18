@@ -53,12 +53,14 @@ def test_bundled_sample_files_are_used_when_track_params_are_omitted():
 def test_params_file_overrides_template_values(tmp_path):
     params_path = tmp_path / "params.json"
     params_path.write_text(
-        json.dumps({
-            "query_string": "Paris",
-            "from": 2,
-            "size": 5,
-            "tenant": "acme",
-        })
+        json.dumps(
+            {
+                "query_string": "Paris",
+                "from": 2,
+                "size": 5,
+                "tenant": "acme",
+            }
+        )
     )
 
     params = {

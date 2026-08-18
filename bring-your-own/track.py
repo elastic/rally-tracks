@@ -1,7 +1,7 @@
 import csv
+import json
 import os
 import random
-import json
 
 
 class QueryParamSource:
@@ -16,8 +16,13 @@ class QueryParamSource:
         # be predictably random. The seed has been chosen by a fair dice roll. ;)
         random.seed(4)
         cwd = os.path.dirname(__file__)
+        default_params_path = os.path.join(cwd, "params.json")
+        default_queries_path = os.path.join(cwd, "queries.csv")
 
         params_file = self._params.get("params_file")
+        if not params_file and os.path.isfile(default_params_path):
+            params_file = default_params_path
+
         if params_file:
             params_path = params_file if os.path.isabs(params_file) else os.path.join(cwd, params_file)
             with open(params_path, "r") as ins:
@@ -37,7 +42,7 @@ class QueryParamSource:
                     raise ValueError("Each entry in params_file must be a JSON object")
                 self._param_variants.append(entry)
 
-        queries_file = self._params.get("queries_file")
+        queries_file = self._params.get("queries_file") or default_queries_path
         query_path = queries_file if os.path.isabs(queries_file) else os.path.join(cwd, queries_file)
 
         with open(query_path, "r") as ins:
@@ -87,7 +92,7 @@ class RandomParamSource(QueryParamSource):
 
         result = {
             "method": "POST",
-            "path": f"/{index.lstrip('/')}\/_search\/template",
+            "path": f"/{index.lstrip('/')}/_search/template",
             "body": {
                 "id": self._params["search_template"],
                 "params": self._template_params(random_query),

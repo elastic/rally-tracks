@@ -127,13 +127,12 @@ class ESQLKnnParamSource:
 
         esql_filter = _term_filter_to_esql(query["filter"])
         esql_query = (
-            f"FROM {self._index_name} METADATA _id, _score"
+            f"FROM `{self._index_name}` METADATA _id, _score"
             f" | WHERE KNN({VECTOR_FIELD}, ?query, {options_str})"
             f" and ({esql_filter})"
             f" | KEEP _id, _score | SORT _score desc | LIMIT {k}"
         )
         return {
-            "cache": self._params.get("cache", False),
             "query": esql_query,
             "body": {"params": [{"query": query["emb"]}]},
         }

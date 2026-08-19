@@ -67,6 +67,7 @@ This track accepts the following parameters with `--track-params`:
 - `corpora` (default: `"arxiv-for-fanns-large"`): Override the corpus name.
 - `index_settings` (default: `{}`): Extra index settings.
 - `index_mode`: If set, passed as `index.mode`.
+- `ingest_percentage` (default: 100): Percentage of the corpus to ingest. When set below 100, the recall operation computes ground truth dynamically via exact search against the indexed subset rather than using the pre-computed `ids` from the queries file.
 - `number_of_replicas` (default: 0)
 - `number_of_shards` (default: 1)
 - `post_ingest_sleep` (default: false): Whether to pause after each ingest phase.
@@ -77,10 +78,10 @@ This track accepts the following parameters with `--track-params`:
 - `vector_index_type` (default: `"bbq_disk"`): Index type for the dense vector field.
 - `vector_index_on_disk_rescore` (default: true): Whether to rescore on disk.
 - `vector_similarity` (default: `"cosine"`): Similarity metric.
+- `enable_experimental_features` (default: true): Enables `index.dense_vector.experimental_features`, required for ESQL KNN on dense_vector fields.
 - `hnsw_m` (default: not set): HNSW `m` parameter.
 - `hnsw_ef_construction` (default: not set): HNSW `ef_construction` parameter.
 - `bits` (default: not set): Quantization bits (for BBQ variants).
-- `enable_experimental_features` (default: false): Enables `index.dense_vector.experimental_features`.
 
 **Force-merge**
 - `include_force_merge` (default: false): Whether to run the force-merge phase.

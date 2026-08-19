@@ -128,7 +128,7 @@ class ESQLKnnParamSource:
         vector_str = json.dumps(query["emb"])
         esql_filter = _term_filter_to_esql(query["filter"])
         esql_query = (
-            f"FROM `{self._index_name}` METADATA _id, _score"
+            f"FROM {self._index_name} METADATA _id, _score"
             f" | WHERE KNN({VECTOR_FIELD}, {vector_str}, {options_str})"
             f" and ({esql_filter})"
             f" | KEEP _id, _score | SORT _score desc | LIMIT {k}"
@@ -164,6 +164,7 @@ class KnnRecallParamSource:
             "oversample": self._params.get("oversample"),
             "request_timeout": self._params.get("request-timeout", 600),
             "queries_path": queries_path,
+            "ingest_percentage": self._params.get("ingest-percentage", 100),
         }
 
 
@@ -177,6 +178,7 @@ class KnnRecallRunner:
         request_cache = params["cache"]
         request_timeout = params.get("request_timeout")
         queries_path = params["queries_path"]
+        ingest_percentage = params.get("ingest_percentage", 100)
 
         if not os.path.isfile(queries_path):
             raise FileNotFoundError(
@@ -228,7 +230,6 @@ class KnnRecallRunner:
                     failed_queries += 1
                     continue
 
-                # Extract docid from each hit; skip hits where the field is absent.
                 knn_ids = set()
                 for hit in result["hits"]["hits"]:
                     docid_values = hit.get("fields", {}).get("docid")
@@ -236,7 +237,13 @@ class KnnRecallRunner:
                         continue
                     knn_ids.add(str(docid_values[0]))
 
-                ground_truth = {str(doc_id) for doc_id in query["ids"][:k]}
+                if ingest_percentage < 100:
+                    ground_truth = await self._exact_ground_truth(
+                        client, index, query, k, request_cache
+                    )
+                else:
+                    ground_truth = {str(doc_id) for doc_id in query["ids"][:k]}
+
                 ground_truth_count = len(ground_truth)
                 matched_count = len(knn_ids & ground_truth)
                 current_recall = matched_count / ground_truth_count if ground_truth_count > 0 else None
@@ -259,6 +266,33 @@ class KnnRecallRunner:
         }
         logger.info("knn-recall results: %r", result_dict)
         return result_dict
+
+    async def _exact_ground_truth(self, client, index, query, k, request_cache):
+        """Compute exact top-k ground truth via cosine similarity over the indexed subset."""
+        result = await client.search(
+            index=index,
+            body={
+                "query": {
+                    "script_score": {
+                        "query": {"term": query["filter"]},
+                        "script": {
+                            "source": "cosineSimilarity(params.query, 'emb') + 1.0",
+                            "params": {"query": query["emb"]},
+                        },
+                    }
+                },
+                "size": k,
+                "fields": ["docid"],
+                "_source": False,
+            },
+            request_cache=request_cache,
+        )
+        ids = set()
+        for hit in result["hits"]["hits"]:
+            docid_values = hit.get("fields", {}).get("docid")
+            if docid_values is not None:
+                ids.add(str(docid_values[0]))
+        return ids
 
     def __repr__(self, *args, **kwargs):
         return "knn-recall"

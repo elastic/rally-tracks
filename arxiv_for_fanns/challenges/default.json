@@ -6,7 +6,8 @@
   "default": true,
   "parameters": {
     "base_url": "{{ base_url | default('https://rally-tracks.elastic.co/arxiv_for_fanns') }}",
-    "queries_file": "{{ queries_file | default('queries_emis.json.zst') }}"
+    "queries_file": "{{ queries_file | default('queries_emis.json.zst') }}",
+    "ingest_percentage": {{ ingest_percentage | default(100) }}
   },
   "schedule": [
     {
@@ -39,7 +40,7 @@
         "operation-type": "bulk",
         "corpora": {{corpora | default("arxiv-for-fanns-large") | tojson}},
         "bulk-size": {{bulk_size | default(500)}},
-        "ingest-percentage": 100
+        "ingest-percentage": {{ingest_percentage | default(100)}}
       },
       "warmup-time-period": {{ bulk_warmup | default(40) | int }},
       "clients": {{bulk_indexing_clients | default(1)}}
@@ -197,6 +198,7 @@
         "num-candidates": {{ knn_num_candidates | default(256) }},
         "oversample": {{ oversample | default(none) | tojson }},
         "request-timeout": {{ recall_request_timeout | default(600) }},
+        "ingest-percentage": {{ ingest_percentage | default(100) }},
         "include-in-reporting": false
       }
     }

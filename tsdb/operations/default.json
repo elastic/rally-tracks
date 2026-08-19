@@ -431,6 +431,66 @@
   {% endif %}
 },
 {
+  "name": "esql-memory-usage-window-90m-hour",
+  "description": "Total memory usage per hour over a 90 minute sliding window. The window is not a multiple of the hour bucket, so it exercises per-aggregate partial-window merging on the coordinator.",
+  "operation-type": "esql",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 90 minutes)) BY bucket(@timestamp, 1 hour)"
+  {%- else %}
+  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 90 minutes)) BY bucket(@timestamp, 1 hour)"
+  {% endif %}
+},
+{
+  "name": "esql-memory-usage-window-90m-by-container-hour",
+  "description": "Total memory usage per container and hour over a 90 minute non-multiple window. Adds a second grouping dimension on top of the partial-window merge.",
+  "operation-type": "esql",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 90 minutes)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"
+  {%- else %}
+  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 90 minutes)) BY bucket(@timestamp, 1 hour), kubernetes.container.name"
+  {% endif %}
+},
+{
+  "name": "esql-memory-pagefault-rate-window-90m-hour",
+  "description": "Pagefault rate per hour over a 90 minute non-multiple window. Exercises the partial-window merge for rate rather than a plain over_time aggregate.",
+  "operation-type": "esql",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "query": "TS k8s | STATS sum(rate(kubernetes.container.memory.pagefaults, 90 minutes)) BY bucket(@timestamp, 1 hour)"
+  {%- else %}
+  "query": "TS tsdb | STATS sum(rate(kubernetes.container.memory.pagefaults, 90 minutes)) BY bucket(@timestamp, 1 hour)"
+  {% endif %}
+},
+{
+  "name": "esql-memory-usage-window-shared-remainder-hour",
+  "description": "Two non-multiple windows (90 and 150 minutes) over an hour bucket in one STATS. Both leave a 30 minute remainder, so they share a single partial-window sibling instead of planting two.",
+  "operation-type": "esql",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 90 minutes)), sum(sum_over_time(kubernetes.container.memory.usage.bytes, 150 minutes)) BY bucket(@timestamp, 1 hour)"
+  {%- else %}
+  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 90 minutes)), sum(sum_over_time(kubernetes.container.memory.usage.bytes, 150 minutes)) BY bucket(@timestamp, 1 hour)"
+  {% endif %}
+},
+{
+  "name": "esql-memory-usage-window-non-multiple-5m",
+  "description": "Total memory usage per 5 minute bucket over a 301 second window. The 1 second remainder is the small-gcd case the previous sub-bucketing design rejected via MAX_SUB_BUCKETS.",
+  "operation-type": "esql",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 301 seconds)) BY bucket(@timestamp, 5 minutes)"
+  {%- else %}
+  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 301 seconds)) BY bucket(@timestamp, 5 minutes)"
+  {% endif %}
+},
+{
+  "name": "esql-memory-usage-window-mixed-sizes-hour",
+  "description": "Two windows of different sizes in one STATS over an hour bucket: a 30 minute window smaller than the bucket and a 90 minute non-multiple window. Supported since 9.6 because each aggregate applies its window independently. The 30 minute aggregate matches the 90 minute aggregate's partial sibling shape, so the sibling is reused rather than duplicated.",
+  "operation-type": "esql",
+  {%- if ingest_mode is defined and ingest_mode == "data_stream" %}
+  "query": "TS k8s | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 30 minutes)), sum(sum_over_time(kubernetes.container.memory.usage.bytes, 90 minutes)) BY bucket(@timestamp, 1 hour)"
+  {%- else %}
+  "query": "TS tsdb | STATS sum(sum_over_time(kubernetes.container.memory.usage.bytes, 30 minutes)), sum(sum_over_time(kubernetes.container.memory.usage.bytes, 90 minutes)) BY bucket(@timestamp, 1 hour)"
+  {% endif %}
+},
+{
   "name": "esql-memory-usage-day-downsample-1m",
   "description": "Calculate total memory usage per hour using 1m downsampled data",
   "operation-type": "esql",

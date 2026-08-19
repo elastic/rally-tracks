@@ -211,6 +211,42 @@
           "warmup-iterations": 50,
           "clients": {{ search_clients | default(1) | int }},
           "iterations": 100
+        },
+        {
+          "operation": "esql-memory-usage-window-90m-hour",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-usage-window-90m-by-container-hour",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-pagefault-rate-window-90m-hour",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-usage-window-shared-remainder-hour",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-usage-window-non-multiple-5m",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
+        },
+        {
+          "operation": "esql-memory-usage-window-mixed-sizes-hour",
+          "warmup-iterations": 50,
+          "clients": {{ search_clients | default(1) | int }},
+          "iterations": 100
         }
         {% endif %}
         ,{

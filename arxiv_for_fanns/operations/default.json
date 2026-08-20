@@ -13,5 +13,6 @@
   "param-source": "esql-knn-param-source",
   "k": {{ knn_k | default(100) }},
   "num-candidates": {{ knn_num_candidates | default(256) }},
-  "oversample": {{ oversample | default(none) | tojson }}
+  "oversample": {{ oversample | default(none) | tojson }},
+  "request-timeout": {{ search_request_timeout | default(600) }}
 }

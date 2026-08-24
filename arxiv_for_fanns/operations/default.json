@@ -1,18 +1,12 @@
+{%- set p_search_ops = search_ops | default([(knn_k | default(100), knn_num_candidates | default(256))]) -%}
+{%- for k, nc in p_search_ops -%}
 {
-  "name": "knn-search",
+  "name": "knn-search-{{ k }}-{{ nc }}",
   "operation-type": "search",
   "param-source": "knn-search-param-source",
-  "k": {{ knn_k | default(100) }},
-  "num-candidates": {{ knn_num_candidates | default(256) }},
+  "k": {{ k }},
+  "num-candidates": {{ nc }},
   "oversample": {{ oversample | default(none) | tojson }},
   "request-timeout": {{ search_request_timeout | default(600) }}
-},
-{
-  "name": "esql-knn-search",
-  "operation-type": "esql",
-  "param-source": "esql-knn-param-source",
-  "k": {{ knn_k | default(100) }},
-  "num-candidates": {{ knn_num_candidates | default(256) }},
-  "oversample": {{ oversample | default(none) | tojson }},
-  "request-timeout": {{ search_request_timeout | default(600) }}
-}
+}{{ "," if not loop.last }}
+{% endfor -%}

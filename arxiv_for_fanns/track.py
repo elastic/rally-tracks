@@ -25,14 +25,6 @@ def _load_queries(queries_path):
     return queries
 
 
-def _term_filter_to_esql(filter_dict):
-    """Convert a single-field dict like {"main_categories": "gr-qc"} to an ESQL predicate."""
-    if len(filter_dict) != 1:
-        raise ValueError(f"Expected a single-field filter dict, got {filter_dict!r}")
-    field, value = next(iter(filter_dict.items()))
-    return f'{field} == "{value}"'
-
-
 class KnnSearchParamSource:
     """Param source for the per-query standalone kNN search op.
 
@@ -84,61 +76,6 @@ class KnnSearchParamSource:
         }
 
 
-class ESQLKnnParamSource:
-    """Param source for ESQL KNN search, using the same per-query filter as KnnSearchParamSource."""
-
-    def __init__(self, track, params, **kwargs):
-        if len(track.indices) == 1:
-            default_index = track.indices[0].name
-        else:
-            default_index = "_all"
-
-        self._index_name = params.get("index", default_index)
-        self._params = params
-
-        queries_file = params.get("queries-file", QUERIES_FILENAME)
-        queries_path = os.path.join(os.path.dirname(__file__), queries_file)
-        self._queries = _load_queries(queries_path)
-        if not self._queries:
-            raise ValueError(
-                f"No queries loaded from '{queries_path}'. "
-                "Ensure the track processor downloaded the queries file."
-            )
-        self._iters = 0
-        self.infinite = True
-
-    def partition(self, partition_index, total_partitions):
-        return self
-
-    def params(self):
-        query = self._queries[self._iters]
-        self._iters = (self._iters + 1) % len(self._queries)
-
-        k = self._params.get("k", 100)
-        num_candidates = self._params.get("num-candidates", 256)
-        oversample = self._params.get("oversample")
-
-        options = []
-        if num_candidates:
-            options.append(f'"min_candidates":{num_candidates}')
-        if oversample is not None:
-            options.append(f'"rescore_oversample":{oversample}')
-        options_str = "{" + ", ".join(options) + "}"
-
-        vector_str = json.dumps(query["emb"])
-        esql_filter = _term_filter_to_esql(query["filter"])
-        esql_query = (
-            f"FROM {self._index_name} METADATA _id, _score"
-            f" | WHERE KNN({VECTOR_FIELD}, {vector_str}, {options_str})"
-            f" and ({esql_filter})"
-            f" | KEEP _id, _score | SORT _score desc | LIMIT {k}"
-        )
-        return {
-            "query": esql_query,
-            "body": {},
-        }
-
-
 class KnnRecallParamSource:
     def __init__(self, track, params, **kwargs):
         if len(track.indices) == 1:
@@ -148,22 +85,22 @@ class KnnRecallParamSource:
 
         self._index_name = params.get("index", default_index)
         self._params = params
+        queries_file = params.get("queries-file", QUERIES_FILENAME)
+        self._queries_path = os.path.join(os.path.dirname(__file__), queries_file)
         self.infinite = True
 
     def partition(self, partition_index, total_partitions):
         return self
 
     def params(self):
-        queries_file = self._params.get("queries-file", QUERIES_FILENAME)
-        queries_path = os.path.join(os.path.dirname(__file__), queries_file)
         return {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
             "k": self._params.get("k", 100),
             "num_candidates": self._params.get("num-candidates", 256),
             "oversample": self._params.get("oversample"),
-            "request_timeout": self._params.get("request-timeout", 600),
-            "queries_path": queries_path,
+            "request-timeout": self._params.get("request-timeout", 600),
+            "queries_path": self._queries_path,
             "ingest_percentage": self._params.get("ingest-percentage", 100),
         }
 
@@ -176,7 +113,7 @@ class KnnRecallRunner:
         num_candidates = params["num_candidates"]
         index = params["index"]
         request_cache = params["cache"]
-        request_timeout = params.get("request_timeout")
+        request_timeout = params.get("request-timeout")
         queries_path = params["queries_path"]
         ingest_percentage = params.get("ingest_percentage", 100)
 
@@ -302,6 +239,5 @@ def register(registry):
     registry.register_track_processor(ArxivQueriesDownloader())
     registry.register_track_processor(loader.DefaultTrackPreparator())
     registry.register_param_source("knn-search-param-source", KnnSearchParamSource)
-    registry.register_param_source("esql-knn-param-source", ESQLKnnParamSource)
     registry.register_param_source("knn-recall-param-source", KnnRecallParamSource)
     registry.register_runner("knn-recall", KnnRecallRunner(), async_runner=True)

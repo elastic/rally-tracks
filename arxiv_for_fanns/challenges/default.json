@@ -1,13 +1,12 @@
 {% set p_include_force_merge = (include_force_merge | default(build_flavor != "serverless")) %}
-{% set is_esql_enabled = (esql_enabled | default(false)) %}
+{% set p_search_ops = search_ops | default([(knn_k | default(100), knn_num_candidates | default(256))]) %}
 {
   "name": "index-and-search",
   "description": "Indexes vectors, then executes filtered searches and recall measurements",
   "default": true,
   "parameters": {
     "base_url": "{{ base_url | default('https://rally-tracks.elastic.co/arxiv_for_fanns') }}",
-    "queries_file": "{{ queries_file | default('queries_emis.json.zst') }}",
-    "ingest_percentage": {{ ingest_percentage | default(100) }}
+    "queries_file": "{{ queries_file | default('queries_emis.json.zst') }}"
   },
   "schedule": [
     {
@@ -65,6 +64,9 @@
           "expected-value": 0
         },
         "retry-until-success": true,
+        "retries": 1440,
+        "retry-on-error": true,
+        "retry-wait-period": 30,
         "include-in-reporting": false
       }
     },
@@ -78,40 +80,41 @@
       }
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    {%- for k, nc in p_search_ops %}
     {
-      "name": "knn-search",
+      "name": "knn-search-{{ k }}-{{ nc }}",
       "tags": ["search"],
-      "operation": "knn-search",
+      "operation": "knn-search-{{ k }}-{{ nc }}",
       "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
       "iterations": {{ iterations | default(10000) | int }},
       "clients": 1
     },
     {
-      "name": "knn-search-multi-client",
+      "name": "knn-search-{{ k }}-{{ nc }}-multi-client",
       "tags": ["search"],
-      "operation": "knn-search",
+      "operation": "knn-search-{{ k }}-{{ nc }}",
       "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
       "iterations": {{ iterations | default(10000) | int }},
       "clients": {{ search_clients | default(8) | int }}
     },
-    {% if is_esql_enabled %}
+    {%- endfor %}
+    {%- for k, nc in p_search_ops %}
     {
-      "name": "esql-knn-search",
-      "tags": ["search", "esql"],
-      "operation": "esql-knn-search",
-      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
-      "iterations": {{ iterations | default(10000) | int }},
-      "clients": 1
-    },
-    {
-      "name": "esql-knn-search-multi-client",
-      "tags": ["search", "esql"],
-      "operation": "esql-knn-search",
-      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
-      "iterations": {{ iterations | default(10000) | int }},
-      "clients": {{ search_clients | default(8) | int }}
-    },
-    {% endif %}
+      "name": "knn-recall-{{ k }}-{{ nc }}",
+      "tags": ["search"],
+      "operation": {
+        "name": "knn-recall-{{ k }}-{{ nc }}",
+        "operation-type": "knn-recall",
+        "param-source": "knn-recall-param-source",
+        "k": {{ k }},
+        "num-candidates": {{ nc }},
+        "oversample": {{ oversample | default(none) | tojson }},
+        "request-timeout": {{ recall_request_timeout | default(600) }},
+        "ingest-percentage": {{ ingest_percentage | default(100) }},
+        "include-in-reporting": false
+      }
+    }{{ "," if not loop.last or p_include_force_merge }}
+    {%- endfor %}
     {# non-serverless-after-force-merge-marker-start #}{%- if p_include_force_merge -%}
     {
       "tags": ["force-merge"],
@@ -139,7 +142,10 @@
           "expected-value": 0
         },
         "retry-until-success": true,
-        "include-in-reporting": false
+        "retries": 1440,
+        "retry-on-error": true,
+        "retry-wait-period": 30,
+        "include-in-reporting": true
       }
     },
     {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
@@ -152,55 +158,41 @@
       }
     },
     {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    {%- for k, nc in p_search_ops %}
     {
-      "name": "knn-search-force-merge",
+      "name": "knn-search-{{ k }}-{{ nc }}-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "knn-search",
+      "operation": "knn-search-{{ k }}-{{ nc }}",
       "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
       "iterations": {{ iterations | default(10000) | int }},
       "clients": 1
     },
     {
-      "name": "knn-search-multi-client-force-merge",
+      "name": "knn-search-{{ k }}-{{ nc }}-multi-client-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": "knn-search",
+      "operation": "knn-search-{{ k }}-{{ nc }}",
       "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
       "iterations": {{ iterations | default(10000) | int }},
       "clients": {{ search_clients | default(8) | int }}
     },
-    {% if is_esql_enabled %}
+    {%- endfor %}
+    {%- for k, nc in p_search_ops %}
     {
-      "name": "esql-knn-search-force-merge",
-      "tags": ["search-after-force-merge", "esql"],
-      "operation": "esql-knn-search",
-      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
-      "iterations": {{ iterations | default(10000) | int }},
-      "clients": 1
-    },
-    {
-      "name": "esql-knn-search-multi-client-force-merge",
-      "tags": ["search-after-force-merge", "esql"],
-      "operation": "esql-knn-search",
-      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
-      "iterations": {{ iterations | default(10000) | int }},
-      "clients": {{ search_clients | default(8) | int }}
-    },
-    {% endif %}
-    {%- endif -%}{# non-serverless-after-force-merge-marker-end #}
-    {
-      "name": "knn-recall",
+      "name": "knn-recall-{{ k }}-{{ nc }}-force-merge",
       "tags": ["search-after-force-merge"],
       "operation": {
-        "name": "knn-recall",
+        "name": "knn-recall-{{ k }}-{{ nc }}-force-merge",
         "operation-type": "knn-recall",
         "param-source": "knn-recall-param-source",
-        "k": {{ knn_k | default(100) }},
-        "num-candidates": {{ knn_num_candidates | default(256) }},
+        "k": {{ k }},
+        "num-candidates": {{ nc }},
         "oversample": {{ oversample | default(none) | tojson }},
         "request-timeout": {{ recall_request_timeout | default(600) }},
         "ingest-percentage": {{ ingest_percentage | default(100) }},
         "include-in-reporting": false
       }
-    }
+    }{{ "," if not loop.last }}
+    {%- endfor %}
+    {%- endif -%}{# non-serverless-after-force-merge-marker-end #}
   ]
 }

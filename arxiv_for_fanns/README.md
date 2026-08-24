@@ -78,7 +78,7 @@ This track accepts the following parameters with `--track-params`:
 - `vector_index_type` (default: `"bbq_disk"`): Index type for the dense vector field.
 - `vector_index_on_disk_rescore` (default: true): Whether to rescore on disk.
 - `vector_similarity` (default: `"cosine"`): Similarity metric.
-- `enable_experimental_features` (default: true): Enables `index.dense_vector.experimental_features`, required for ESQL KNN on dense_vector fields.
+- `enable_experimental_features` (default: true): Enables `index.dense_vector.experimental_features`.
 - `hnsw_m` (default: not set): HNSW `m` parameter.
 - `hnsw_ef_construction` (default: not set): HNSW `ef_construction` parameter.
 - `bits` (default: not set): Quantization bits (for BBQ variants).
@@ -97,9 +97,6 @@ This track accepts the following parameters with `--track-params`:
 - `warmup_iterations` (default: 1000): Warmup iterations per search client.
 - `iterations` (default: 10000): Measurement iterations per search client.
 - `search_clients` (default: 8): Number of clients for the multi-client search steps.
-
-**ESQL**
-- `esql_enabled` (default: false): Whether to run the ESQL kNN search steps.
 
 **Queries**
 - `queries_file` (default: `"queries_emis.json.zst"`): Name of the queries file to download and use.

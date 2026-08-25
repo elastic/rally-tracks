@@ -45,10 +45,7 @@ class KnnSearchParamSource:
         queries_path = os.path.join(os.path.dirname(__file__), queries_file)
         self._queries = _load_queries(queries_path)
         if not self._queries:
-            raise ValueError(
-                f"No queries loaded from '{queries_path}'. "
-                "Ensure the track processor downloaded the queries file."
-            )
+            raise ValueError(f"No queries loaded from '{queries_path}'. " "Ensure the track processor downloaded the queries file.")
         self._iters = 0
         self.infinite = True
 
@@ -119,8 +116,7 @@ class KnnRecallRunner:
 
         if not os.path.isfile(queries_path):
             raise FileNotFoundError(
-                f"Queries file not found at '{queries_path}'. "
-                "The track processor should have downloaded it during track preparation."
+                f"Queries file not found at '{queries_path}'. " "The track processor should have downloaded it during track preparation."
             )
 
         client = es.options(request_timeout=request_timeout) if request_timeout else es
@@ -175,9 +171,7 @@ class KnnRecallRunner:
                     knn_ids.add(str(docid_values[0]))
 
                 if ingest_percentage < 100:
-                    ground_truth = await self._exact_ground_truth(
-                        client, index, query, k, request_cache
-                    )
+                    ground_truth = await self._exact_ground_truth(client, index, query, k, request_cache)
                 else:
                     ground_truth = {str(doc_id) for doc_id in query["ids"][:k]}
 

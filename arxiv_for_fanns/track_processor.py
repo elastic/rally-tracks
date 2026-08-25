@@ -6,6 +6,7 @@ import aiohttp
 
 QUERIES_FILENAME = "queries_emis.json.zst"
 
+
 class ArxivQueriesDownloader:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -35,9 +36,7 @@ class ArxivQueriesDownloader:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, ssl=False) as response:
                 if response.status != 200:
-                    raise RuntimeError(
-                        f"Failed to download queries file from '{url}': HTTP {response.status}"
-                    )
+                    raise RuntimeError(f"Failed to download queries file from '{url}': HTTP {response.status}")
                 with open(dest, "wb") as f:
                     async for chunk in response.content.iter_chunked(1024 * 1024):
                         f.write(chunk)

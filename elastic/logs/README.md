@@ -262,6 +262,7 @@ The following parameters are available:
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 * `codec` (default: unset): Configured the `index.codec` index setting, which controls how stored fields get stored / compressed.
+* `enable_columnar_codec` (default: `false`): When `true`, opts the index into the ColumNAR keyword doc-values codec via `index.columnar_codec.enabled`. Requires a strict-columnar index mode (`logsdb_columnar`) and a snapshot build with the `columnar_codec` feature flag.
 
 ### Querying parameters
 

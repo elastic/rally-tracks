@@ -6,7 +6,9 @@ For more information on the dataset see [the associated ArXiv paper][dataset_pap
 
 The `arxiv_for_fanns_large` dataset includes over 2.7M vectors of 4096 dimensions, as well as data fields to filter on.
 The `queries_emis` file includes 10 000 queries for the exact match in set filter alongside the computed expected
-results. This file is downloaded at prepare time.
+results. This file is downloaded at prepare time. When `ingest_percentage` is not 100 the pre-computed expected results
+are not used, falling back to a brute-force computation of the closest matches that were ingested for the same query
+vectors.
 
 ### Example corpus document
 

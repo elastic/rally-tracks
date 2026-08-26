@@ -1,5 +1,5 @@
-{%- set p_search_ops = search_ops | default([(knn_k | default(100), knn_num_candidates | default(256))]) -%}
-{%- for k, nc in p_search_ops -%}
+{%- set p_search_ops = [(100, 128), (100, 256), (100, 512), (10, 64), (10, 128), (10, 256), (10, 512)] -%}
+{%- for k, nc in p_search_ops %}
 {
   "name": "knn-search-{{ k }}-{{ nc }}",
   "operation-type": "search",
@@ -8,5 +8,17 @@
   "num-candidates": {{ nc }},
   "oversample": {{ oversample | default(none) | tojson }},
   "request-timeout": {{ search_request_timeout | default(600) }}
+},
+{
+  "name": "knn-recall-{{ k }}-{{ nc }}",
+  "operation-type": "knn-recall",
+  "param-source": "knn-recall-param-source",
+  "k": {{ k }},
+  "num-candidates": {{ nc }},
+  "ground-truth-k": {{ p_search_ops | map(attribute=0) | max }},
+  "oversample": {{ oversample | default(none) | tojson }},
+  "request-timeout": {{ recall_request_timeout | default(600) }},
+  "ingest-percentage": {{ ingest_percentage | default(100) }},
+  "include-in-reporting": false
 }{{ "," if not loop.last }}
-{% endfor -%}
+{%- endfor -%}

@@ -91,8 +91,6 @@ This track accepts the following parameters with `--track-params`:
 - `max_num_segments` (default: 1): Target segment count for force-merge.
 
 **Search**
-- `knn_k` (default: 100): `k` for kNN search.
-- `knn_num_candidates` (default: 256): `num_candidates` for kNN search.
 - `oversample` (default: not set): Oversampling factor for `rescore_vector`.
 - `search_request_timeout` (default: 600): Request timeout in seconds for kNN search.
 - `recall_request_timeout` (default: 600): Request timeout in seconds for the recall operation.

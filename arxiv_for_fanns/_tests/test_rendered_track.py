@@ -22,6 +22,8 @@ import jinja2
 
 TRACK_DIR = pathlib.Path(__file__).parents[1]
 
+SEARCH_OPS = [(100, 128), (100, 256), (100, 512), (10, 64), (10, 128), (10, 256), (10, 512)]
+
 
 def render_operations(**params):
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(str(TRACK_DIR / "operations")))
@@ -42,62 +44,90 @@ def render_mapping(**params):
 
 
 class TestRenderedOperations:
-    def test_defaults(self):
+    def _op(self, ops, name):
+        return next(o for o in ops if o["name"] == name)
+
+    def test_generates_one_search_and_one_recall_per_pair(self):
         ops = render_operations()
-        assert len(ops) == 1
-        op = ops[0]
-        assert op["name"] == "knn-search-100-256"
+        assert len(ops) == len(SEARCH_OPS) * 2
+
+    def test_all_search_operations_present(self):
+        ops = render_operations()
+        names = {o["name"] for o in ops}
+        for k, nc in SEARCH_OPS:
+            assert f"knn-search-{k}-{nc}" in names
+
+    def test_all_recall_operations_present(self):
+        ops = render_operations()
+        names = {o["name"] for o in ops}
+        for k, nc in SEARCH_OPS:
+            assert f"knn-recall-{k}-{nc}" in names
+
+    def test_search_operation_fields(self):
+        ops = render_operations()
+        op = self._op(ops, "knn-search-100-256")
         assert op["operation-type"] == "search"
         assert op["k"] == 100
         assert op["num-candidates"] == 256
         assert op["oversample"] is None
         assert op["request-timeout"] == 600
 
-    def test_custom_k_and_num_candidates_via_knn_params(self):
-        ops = render_operations(knn_k=50, knn_num_candidates=512)
-        op = ops[0]
-        assert op["name"] == "knn-search-50-512"
-        assert op["k"] == 50
-        assert op["num-candidates"] == 512
-
-    def test_search_ops_single_pair(self):
-        ops = render_operations(search_ops=[(10, 50)])
-        assert len(ops) == 1
-        op = ops[0]
-        assert op["name"] == "knn-search-10-50"
+    def test_recall_operation_fields(self):
+        ops = render_operations()
+        op = self._op(ops, "knn-recall-10-64")
+        assert op["operation-type"] == "knn-recall"
         assert op["k"] == 10
-        assert op["num-candidates"] == 50
+        assert op["num-candidates"] == 64
+        assert op["oversample"] is None
+        assert op["request-timeout"] == 600
+        assert op["include-in-reporting"] is False
 
-    def test_search_ops_multiple_pairs(self):
-        ops = render_operations(search_ops=[(100, 256), (10, 50)])
-        assert len(ops) == 2
-        names = [o["name"] for o in ops]
-        assert "knn-search-100-256" in names
-        assert "knn-search-10-50" in names
+    def test_ground_truth_k_is_max_k_for_all_recall_ops(self):
+        ops = render_operations()
+        max_k = max(k for k, _ in SEARCH_OPS)
+        for k, nc in SEARCH_OPS:
+            op = self._op(ops, f"knn-recall-{k}-{nc}")
+            assert op["ground-truth-k"] == max_k, f"knn-recall-{k}-{nc} has wrong ground-truth-k"
 
-    def test_oversample(self):
+    def test_oversample_propagates_to_both_types(self):
         ops = render_operations(oversample=1.5)
-        assert ops[0]["oversample"] == 1.5
+        search_op = self._op(ops, "knn-search-100-256")
+        recall_op = self._op(ops, "knn-recall-100-256")
+        assert search_op["oversample"] == 1.5
+        assert recall_op["oversample"] == 1.5
 
-    def test_custom_request_timeout(self):
+    def test_custom_search_request_timeout(self):
         ops = render_operations(search_request_timeout=300)
-        assert ops[0]["request-timeout"] == 300
+        op = self._op(ops, "knn-search-100-256")
+        assert op["request-timeout"] == 300
+
+    def test_custom_recall_request_timeout(self):
+        ops = render_operations(recall_request_timeout=120)
+        op = self._op(ops, "knn-recall-100-256")
+        assert op["request-timeout"] == 120
+
+    def test_ingest_percentage_in_recall(self):
+        ops = render_operations(ingest_percentage=50)
+        op = self._op(ops, "knn-recall-100-256")
+        assert op["ingest-percentage"] == 50
 
 
 class TestRenderedChallenge:
     def _schedule_names(self, challenge):
         return [step.get("name") for step in challenge["schedule"]]
 
-    def test_search_tasks_always_present(self):
+    def test_all_search_steps_present(self):
         challenge = render_challenge()
         names = self._schedule_names(challenge)
-        assert "knn-search-100-256" in names
-        assert "knn-search-100-256-multi-client" in names
+        for k, nc in SEARCH_OPS:
+            assert f"knn-search-{k}-{nc}" in names
+            assert f"knn-search-{k}-{nc}-multi-client" in names
 
-    def test_pre_merge_recall_always_present(self):
+    def test_all_pre_merge_recall_steps_present(self):
         challenge = render_challenge()
         names = self._schedule_names(challenge)
-        assert "knn-recall-100-256" in names
+        for k, nc in SEARCH_OPS:
+            assert f"knn-recall-{k}-{nc}" in names
 
     def test_pre_merge_recall_tagged_search(self):
         challenge = render_challenge()
@@ -105,21 +135,38 @@ class TestRenderedChallenge:
         assert "search" in recall_step["tags"]
         assert "search-after-force-merge" not in recall_step["tags"]
 
-    def test_default_includes_force_merge_and_post_merge_search(self):
+    def test_recall_steps_reference_named_operation(self):
         challenge = render_challenge()
-        names = self._schedule_names(challenge)
-        assert "knn-search-100-256-force-merge" in names
-        assert "knn-search-100-256-multi-client-force-merge" in names
+        recall_step = next(s for s in challenge["schedule"] if s.get("name") == "knn-recall-100-256")
+        assert recall_step["operation"] == "knn-recall-100-256"
 
-    def test_post_merge_recall_present_with_force_merge(self):
+    def test_search_steps_reference_named_operation(self):
+        challenge = render_challenge()
+        step = next(s for s in challenge["schedule"] if s.get("name") == "knn-search-100-256")
+        assert step["operation"] == "knn-search-100-256"
+
+    def test_multi_client_step_reuses_search_operation(self):
+        challenge = render_challenge()
+        step = next(s for s in challenge["schedule"] if s.get("name") == "knn-search-100-256-multi-client")
+        assert step["operation"] == "knn-search-100-256"
+
+    def test_default_includes_force_merge_and_post_merge_steps(self):
         challenge = render_challenge()
         names = self._schedule_names(challenge)
-        assert "knn-recall-100-256-force-merge" in names
+        for k, nc in SEARCH_OPS:
+            assert f"knn-search-{k}-{nc}-force-merge" in names
+            assert f"knn-search-{k}-{nc}-multi-client-force-merge" in names
+            assert f"knn-recall-{k}-{nc}-force-merge" in names
 
     def test_post_merge_recall_tagged_search_after_force_merge(self):
         challenge = render_challenge()
-        recall_step = next(s for s in challenge["schedule"] if s.get("name") == "knn-recall-100-256-force-merge")
-        assert "search-after-force-merge" in recall_step["tags"]
+        step = next(s for s in challenge["schedule"] if s.get("name") == "knn-recall-100-256-force-merge")
+        assert "search-after-force-merge" in step["tags"]
+
+    def test_post_merge_recall_reuses_named_operation(self):
+        challenge = render_challenge()
+        step = next(s for s in challenge["schedule"] if s.get("name") == "knn-recall-100-256-force-merge")
+        assert step["operation"] == "knn-recall-100-256"
 
     def test_serverless_skips_force_merge_phase(self):
         challenge = render_challenge(build_flavor="serverless")
@@ -127,7 +174,6 @@ class TestRenderedChallenge:
         assert "knn-search-100-256" in names
         assert "knn-recall-100-256" in names
         assert "knn-search-100-256-force-merge" not in names
-        assert "knn-search-100-256-multi-client-force-merge" not in names
         assert "knn-recall-100-256-force-merge" not in names
 
     def test_explicit_include_force_merge_overrides_serverless(self):
@@ -135,31 +181,6 @@ class TestRenderedChallenge:
         names = self._schedule_names(challenge)
         assert "knn-search-100-256-force-merge" in names
         assert "knn-recall-100-256-force-merge" in names
-
-    def test_recall_params(self):
-        challenge = render_challenge()
-        recall_step = next(s for s in challenge["schedule"] if s.get("name") == "knn-recall-100-256")
-        op = recall_step["operation"]
-        assert op["k"] == 100
-        assert op["num-candidates"] == 256
-        assert op["oversample"] is None
-        assert op["request-timeout"] == 600
-
-    def test_custom_recall_params(self):
-        challenge = render_challenge(knn_k=50, knn_num_candidates=512, recall_request_timeout=300)
-        recall_step = next(s for s in challenge["schedule"] if s.get("name") == "knn-recall-50-512")
-        op = recall_step["operation"]
-        assert op["k"] == 50
-        assert op["num-candidates"] == 512
-        assert op["request-timeout"] == 300
-
-    def test_search_ops_generates_named_steps(self):
-        challenge = render_challenge(search_ops=[(10, 50), (100, 256)])
-        names = self._schedule_names(challenge)
-        assert "knn-search-10-50" in names
-        assert "knn-search-100-256" in names
-        assert "knn-recall-10-50" in names
-        assert "knn-recall-100-256" in names
 
     def test_post_ingest_sleep_absent_by_default(self):
         challenge = render_challenge()

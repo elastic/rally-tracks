@@ -1,6 +1,8 @@
+import functools
 import json
 import logging
 import os
+from collections import defaultdict
 
 import zstandard
 from esrally.track import loader
@@ -23,6 +25,61 @@ def _load_queries(queries_path):
                 continue
             queries.append(json.loads(line))
     return queries
+
+
+class GroundTruthStore:
+    """Cache for brute-force exact ground truth, keyed by (index, ingest_percentage, query_number).
+
+    Uses an lru_cache singleton so the cache survives across sequential task steps in the same
+    worker process. Do not cache anything loop-bound (async clients, locks) - only plain data.
+    """
+
+    def __init__(self):
+        # (index, ingest_percentage) -> {query_number: [ordered docid strings]}
+        self._store = defaultdict(dict)
+
+    async def get(self, client, index, ingest_percentage, query_number, query, size, request_cache):
+        cached = self._store[(index, ingest_percentage)].get(query_number)
+        if cached is None or len(cached) < size:
+            cached = await _exact_ground_truth(client, index, query, size, request_cache)
+            self._store[(index, ingest_percentage)][query_number] = cached
+        return cached[:size]
+
+    @classmethod
+    @functools.lru_cache(maxsize=1)
+    def get_instance(cls):
+        return cls()
+
+
+async def _exact_ground_truth(client, index, query, k, request_cache):
+    """Compute exact top-k ground truth via cosine similarity over the indexed subset.
+
+    Returns an ordered list of docid strings (highest similarity first).
+    """
+    result = await client.search(
+        index=index,
+        body={
+            "query": {
+                "script_score": {
+                    "query": {"term": query["filter"]},
+                    "script": {
+                        "source": "cosineSimilarity(params.query, 'emb') + 1.0",
+                        "params": {"query": query["emb"]},
+                    },
+                }
+            },
+            "size": k,
+            "fields": ["docid"],
+            "_source": False,
+        },
+        request_cache=request_cache,
+    )
+    ids = []
+    for hit in result["hits"]["hits"]:
+        docid_values = hit.get("fields", {}).get("docid")
+        if docid_values is not None:
+            ids.append(str(docid_values[0]))
+    return ids
 
 
 class KnnSearchParamSource:
@@ -90,15 +147,17 @@ class KnnRecallParamSource:
         return self
 
     def params(self):
+        k = self._params.get("k", 100)
         return {
             "index": self._index_name,
             "cache": self._params.get("cache", False),
-            "k": self._params.get("k", 100),
+            "k": k,
             "num_candidates": self._params.get("num-candidates", 256),
             "oversample": self._params.get("oversample"),
             "request-timeout": self._params.get("request-timeout", 600),
             "queries_path": self._queries_path,
             "ingest_percentage": self._params.get("ingest-percentage", 100),
+            "ground_truth_k": self._params.get("ground-truth-k", k),
         }
 
 
@@ -107,6 +166,7 @@ class KnnRecallRunner:
 
     async def __call__(self, es, params):
         k = params["k"]
+        ground_truth_k = max(params.get("ground_truth_k", k), k)
         num_candidates = params["num_candidates"]
         index = params["index"]
         request_cache = params["cache"]
@@ -121,18 +181,21 @@ class KnnRecallRunner:
 
         client = es.options(request_timeout=request_timeout) if request_timeout else es
         oversample = params.get("oversample")
+        store = GroundTruthStore.get_instance()
 
         recall_total = 0
         ground_truth_total = 0
         min_recall = None
         max_recall = None
         failed_queries = 0
+        query_number = 0
 
         with zstandard.open(queries_path, "rt") as f:
             for line in f:
                 line = line.strip()
                 if not line:
                     continue
+
                 query = json.loads(line)
 
                 knn_clause = {
@@ -161,6 +224,7 @@ class KnnRecallRunner:
                         exc_info=True,
                     )
                     failed_queries += 1
+                    query_number += 1
                     continue
 
                 knn_ids = set()
@@ -171,7 +235,8 @@ class KnnRecallRunner:
                     knn_ids.add(str(docid_values[0]))
 
                 if ingest_percentage < 100:
-                    ground_truth = await self._exact_ground_truth(client, index, query, k, request_cache)
+                    ordered = await store.get(client, index, ingest_percentage, query_number, query, ground_truth_k, request_cache)
+                    ground_truth = set(ordered[:k])
                 else:
                     ground_truth = {str(doc_id) for doc_id in query["ids"][:k]}
 
@@ -185,6 +250,8 @@ class KnnRecallRunner:
                     min_recall = current_recall if min_recall is None else min(min_recall, current_recall)
                     max_recall = current_recall if max_recall is None else max(max_recall, current_recall)
 
+                query_number += 1
+
         avg_recall = recall_total / ground_truth_total if ground_truth_total > 0 else None
 
         result_dict = {
@@ -197,33 +264,6 @@ class KnnRecallRunner:
         }
         logger.info("knn-recall results: %r", result_dict)
         return result_dict
-
-    async def _exact_ground_truth(self, client, index, query, k, request_cache):
-        """Compute exact top-k ground truth via cosine similarity over the indexed subset."""
-        result = await client.search(
-            index=index,
-            body={
-                "query": {
-                    "script_score": {
-                        "query": {"term": query["filter"]},
-                        "script": {
-                            "source": "cosineSimilarity(params.query, 'emb') + 1.0",
-                            "params": {"query": query["emb"]},
-                        },
-                    }
-                },
-                "size": k,
-                "fields": ["docid"],
-                "_source": False,
-            },
-            request_cache=request_cache,
-        )
-        ids = set()
-        for hit in result["hits"]["hits"]:
-            docid_values = hit.get("fields", {}).get("docid")
-            if docid_values is not None:
-                ids.add(str(docid_values[0]))
-        return ids
 
     def __repr__(self, *args, **kwargs):
         return "knn-recall"

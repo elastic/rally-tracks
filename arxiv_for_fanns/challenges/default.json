@@ -1,5 +1,5 @@
 {% set p_include_force_merge = (include_force_merge | default(build_flavor != "serverless")) %}
-{% set p_search_ops = search_ops | default([(knn_k | default(100), knn_num_candidates | default(256))]) %}
+{% set p_search_ops = [(100, 128), (100, 256), (100, 512), (10, 64), (10, 128), (10, 256), (10, 512)] %}
 {
   "name": "index-and-search",
   "description": "Indexes vectors, then executes filtered searches and recall measurements",
@@ -102,17 +102,7 @@
     {
       "name": "knn-recall-{{ k }}-{{ nc }}",
       "tags": ["search"],
-      "operation": {
-        "name": "knn-recall-{{ k }}-{{ nc }}",
-        "operation-type": "knn-recall",
-        "param-source": "knn-recall-param-source",
-        "k": {{ k }},
-        "num-candidates": {{ nc }},
-        "oversample": {{ oversample | default(none) | tojson }},
-        "request-timeout": {{ recall_request_timeout | default(600) }},
-        "ingest-percentage": {{ ingest_percentage | default(100) }},
-        "include-in-reporting": false
-      }
+      "operation": "knn-recall-{{ k }}-{{ nc }}"
     }{{ "," if not loop.last or p_include_force_merge }}
     {%- endfor %}
     {# non-serverless-after-force-merge-marker-start #}{%- if p_include_force_merge -%}
@@ -180,17 +170,7 @@
     {
       "name": "knn-recall-{{ k }}-{{ nc }}-force-merge",
       "tags": ["search-after-force-merge"],
-      "operation": {
-        "name": "knn-recall-{{ k }}-{{ nc }}-force-merge",
-        "operation-type": "knn-recall",
-        "param-source": "knn-recall-param-source",
-        "k": {{ k }},
-        "num-candidates": {{ nc }},
-        "oversample": {{ oversample | default(none) | tojson }},
-        "request-timeout": {{ recall_request_timeout | default(600) }},
-        "ingest-percentage": {{ ingest_percentage | default(100) }},
-        "include-in-reporting": false
-      }
+      "operation": "knn-recall-{{ k }}-{{ nc }}"
     }{{ "," if not loop.last }}
     {%- endfor %}
     {%- endif -%}{# non-serverless-after-force-merge-marker-end #}

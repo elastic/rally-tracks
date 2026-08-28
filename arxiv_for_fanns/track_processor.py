@@ -4,7 +4,7 @@ import os
 
 import aiohttp
 
-QUERIES_FILENAME = "queries_emis.json.zst"
+DEFAULT_QUERIES_FILENAME = "queries_emis.json.zst"
 
 
 class ArxivQueriesDownloader:
@@ -18,7 +18,7 @@ class ArxivQueriesDownloader:
         params = track.selected_challenge_or_default.parameters
 
         base_url = params.get("base_url", "https://rally-tracks.elastic.co/arxiv_for_fanns")
-        queries_file = params.get("queries_file", QUERIES_FILENAME)
+        queries_file = params.get("queries_file", DEFAULT_QUERIES_FILENAME)
 
         track_dir = os.path.dirname(__file__)
         dest = os.path.join(track_dir, queries_file)

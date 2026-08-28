@@ -11,7 +11,7 @@ from .track_processor import ArxivQueriesDownloader
 
 logger = logging.getLogger(__name__)
 
-QUERIES_FILENAME = "queries_emis.json.zst"
+DEFAULT_QUERIES_FILENAME = "queries_emis.json.zst"
 VECTOR_FIELD = "emb"
 
 
@@ -98,7 +98,7 @@ class KnnSearchParamSource:
         self._index_name = params.get("index", default_index)
         self._params = params
 
-        queries_file = params.get("queries-file", QUERIES_FILENAME)
+        queries_file = params.get("queries-file", DEFAULT_QUERIES_FILENAME)
         queries_path = os.path.join(os.path.dirname(__file__), queries_file)
         self._queries = _load_queries(queries_path)
         if not self._queries:
@@ -139,7 +139,7 @@ class KnnRecallParamSource:
 
         self._index_name = params.get("index", default_index)
         self._params = params
-        queries_file = params.get("queries-file", QUERIES_FILENAME)
+        queries_file = params.get("queries-file", DEFAULT_QUERIES_FILENAME)
         self._queries_path = os.path.join(os.path.dirname(__file__), queries_file)
         self.infinite = True
 

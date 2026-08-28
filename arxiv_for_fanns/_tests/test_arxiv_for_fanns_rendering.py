@@ -89,6 +89,24 @@ class TestRenderedOperations:
             op = self._op(ops, f"knn-recall-{k}-{nc}")
             assert op["ground-truth-k"] == max_k, f"knn-recall-{k}-{nc} has wrong ground-truth-k"
 
+    def test_queries_file_default_in_all_ops(self):
+        ops = render_operations()
+        for op in ops:
+            assert op["queries-file"] == "queries_emis.json.zst", f"{op['name']} missing default queries-file"
+
+    def test_queries_file_custom_propagates_to_all_ops(self):
+        ops = render_operations(queries_file="custom.json.zst")
+        for op in ops:
+            assert op["queries-file"] == "custom.json.zst", f"{op['name']} did not pick up custom queries-file"
+
+    def test_queries_file_matches_challenge_parameters(self):
+        """The operation param and the challenge parameters block must agree."""
+        custom = "custom.json.zst"
+        ops = render_operations(queries_file=custom)
+        challenge = render_challenge(queries_file=custom)
+        for op in ops:
+            assert op["queries-file"] == challenge["parameters"]["queries_file"]
+
     def test_oversample_propagates_to_both_types(self):
         ops = render_operations(oversample=1.5)
         search_op = self._op(ops, "knn-search-100-256")

@@ -1,0 +1,178 @@
+{% set p_include_force_merge = (include_force_merge | default(build_flavor != "serverless")) %}
+{% set p_search_ops = [(100, 128), (100, 256), (100, 512), (10, 64), (10, 128), (10, 256), (10, 512)] %}
+{
+  "name": "index-and-search",
+  "description": "Indexes vectors, then executes filtered searches and recall measurements",
+  "default": true,
+  "parameters": {
+    "base_url": "{{ base_url | default('https://rally-tracks.elastic.co/arxiv_for_fanns') }}",
+    "queries_file": "{{ queries_file | default('queries_emis.json.zst') }}"
+  },
+  "schedule": [
+    {
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "delete-index"
+      }
+    },
+    {
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "create-index",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "green"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "name": "index-append",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "bulk",
+        "corpora": {{corpora | default("arxiv-for-fanns-large") | tojson}},
+        "bulk-size": {{bulk_size | default(500)}},
+        "ingest-percentage": {{ingest_percentage | default(100)}}
+      },
+      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+      "clients": {{bulk_indexing_clients | default(1)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "wait-until-merges-finish-after-index",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "retries": 1440,
+        "retry-on-error": true,
+        "retry-wait-period": 30,
+        "include-in-reporting": false
+      }
+    },
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+    {
+      "name": "post-ingest-sleep-after-index",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ post_ingest_sleep_duration|default(30) }}
+      }
+    },
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    {%- for k, nc in p_search_ops %}
+    {
+      "name": "knn-search-{{ k }}-{{ nc }}",
+      "tags": ["search"],
+      "operation": "knn-search-{{ k }}-{{ nc }}",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": 1
+    },
+    {
+      "name": "knn-search-{{ k }}-{{ nc }}-multi-client",
+      "tags": ["search"],
+      "operation": "knn-search-{{ k }}-{{ nc }}",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {%- endfor %}
+    {%- for k, nc in p_search_ops %}
+    {
+      "name": "knn-recall-{{ k }}-{{ nc }}",
+      "tags": ["search"],
+      "operation": "knn-recall-{{ k }}-{{ nc }}"
+    }{{ "," if not loop.last or p_include_force_merge }}
+    {%- endfor %}
+    {# non-serverless-after-force-merge-marker-start #}{%- if p_include_force_merge -%}
+    {
+      "tags": ["force-merge"],
+      "operation": {
+        "operation-type": "force-merge",
+        "mode": "polling",
+        "max-num-segments": {{ max_num_segments | default(1) }},
+        "request-timeout": {{ force_merge_timeout | default(7200) }},
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "tags": ["force-merge"],
+      "operation": "refresh"
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "tags": ["force-merge"],
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "retries": 1440,
+        "retry-on-error": true,
+        "retry-wait-period": 30,
+        "include-in-reporting": true
+      }
+    },
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+    {
+      "name": "post-ingest-sleep",
+      "tags": ["force-merge"],
+      "operation": {
+        "operation-type": "sleep",
+        "duration": {{ post_ingest_sleep_duration|default(30) }}
+      }
+    },
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    {%- for k, nc in p_search_ops %}
+    {
+      "name": "knn-search-{{ k }}-{{ nc }}-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "knn-search-{{ k }}-{{ nc }}",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": 1
+    },
+    {
+      "name": "knn-search-{{ k }}-{{ nc }}-multi-client-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "knn-search-{{ k }}-{{ nc }}",
+      "warmup-iterations": {{ warmup_iterations | default(1000) | int }},
+      "iterations": {{ iterations | default(10000) | int }},
+      "clients": {{ search_clients | default(8) | int }}
+    },
+    {%- endfor %}
+    {%- for k, nc in p_search_ops %}
+    {
+      "name": "knn-recall-{{ k }}-{{ nc }}-force-merge",
+      "tags": ["search-after-force-merge"],
+      "operation": "knn-recall-{{ k }}-{{ nc }}"
+    }{{ "," if not loop.last }}
+    {%- endfor %}
+    {%- endif -%}{# non-serverless-after-force-merge-marker-end #}
+  ]
+}

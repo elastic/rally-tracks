@@ -203,7 +203,7 @@ class KnnRecallRunner:
                     "query_vector": query["emb"],
                     "k": k,
                     "num_candidates": num_candidates,
-                    "filter": {"term": query.get("filter")},
+                    "filter": query.get("filter"),
                 }
                 if oversample is not None:
                     knn_clause["rescore_vector"] = {"oversample": oversample}

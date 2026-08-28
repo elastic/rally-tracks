@@ -61,7 +61,7 @@ async def _exact_ground_truth(client, index, query, k, request_cache):
         body={
             "query": {
                 "script_score": {
-                    "query": {"term": query["filter"]},
+                    "query": query["filter"],
                     "script": {
                         "source": "cosineSimilarity(params.query, 'emb') + 1.0",
                         "params": {"query": query["emb"]},
@@ -119,7 +119,7 @@ class KnnSearchParamSource:
             "query_vector": query["emb"],
             "k": self._params.get("k", 100),
             "num_candidates": self._params.get("num-candidates", 256),
-            "filter": {"term": query["filter"]},
+            "filter": query["filter"],
         }
         if oversample is not None:
             knn["rescore_vector"] = {"oversample": oversample}

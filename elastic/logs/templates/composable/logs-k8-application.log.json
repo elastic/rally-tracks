@@ -781,9 +781,6 @@
             }
           }
         },
-        "@timestamp": {
-          "type": "date"
-        },
         "kubernetes": {
           "properties": {
             "container": {
@@ -2015,7 +2012,8 @@
     "track-custom-shared-settings",
     "track-custom-mappings",
     "track-data-stream-lifecycle",
-    "track-shared-logsdb-mode"
+    "track-shared-logsdb-mode",
+    "logs-timestamp-mapping"
   ],
   "priority": 200,
   "_meta": {

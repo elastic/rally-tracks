@@ -1,0 +1,48 @@
+{% set _model = model | default("bm25") %}
+{
+  "name": "index-and-search",
+  "description": "Index Wikipedia docs then run semantic or BM25 searches. Parameterize with model=(elser|jina|bm25).",
+  "default": true,
+  "schedule": [
+    { "operation": "delete-index" },
+    {% if _model != "bm25" %}
+    { "operation": "delete-inference-endpoint" },
+    { "operation": "create-inference-endpoint" },
+    {% endif %}
+    { "operation": "create-index" },
+    { "operation": "check-cluster-health" },
+    {
+      "operation": "index-documents",
+      "clients": {{ bulk_indexing_clients | default(1) | int }}
+    },
+    { "operation": "refresh-after-index" },
+    { "operation": "force-merge" },
+    { "operation": "refresh-after-merge" },
+    {
+      "operation": "search",
+      "clients": {{ search_clients | default(1) | int }},
+      "warmup-iterations": {{ search_warmup_iterations | default(50) | int }},
+      "iterations": {{ search_iterations | default(500) | int }}
+    }
+  ]
+},
+{
+  "name": "index-only",
+  "description": "Index all Wikipedia docs (EN+ES+DV merged) — use to measure ingest throughput and final index size.",
+  "schedule": [
+    { "operation": "delete-index" },
+    {% if _model != "bm25" %}
+    { "operation": "delete-inference-endpoint" },
+    { "operation": "create-inference-endpoint" },
+    {% endif %}
+    { "operation": "create-index" },
+    { "operation": "check-cluster-health" },
+    {
+      "operation": "index-documents",
+      "clients": {{ bulk_indexing_clients | default(1) | int }}
+    },
+    { "operation": "refresh-after-index" },
+    { "operation": "force-merge" },
+    { "operation": "refresh-after-merge" }
+  ]
+}

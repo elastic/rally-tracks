@@ -1,0 +1,103 @@
+{% import "rally.helpers" as rally with context %}
+{% set _base_url = (base_url | default( "https://rally-tracks.elastic.co/semantic_text")) %}
+{
+  "version": 2,
+  "description": "Benchmark for tuning semantic_text bbq_disk options using Wikipedia data",
+  "dependencies": [
+    "pytrec_eval==0.5",
+    "numpy"
+  ],
+  "indices": [
+    {
+      "name": "semantic-text-index",
+      "body": "index-mapping.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "beir-dbpedia",
+      "base-url": "{{_base_url}}/beir/dbpedia/embeddings-jina-v5-small",
+      "documents": [
+        {
+          "source-file": "corpus_with_embeddings_part001.jsonl.bz2",
+          "document-count": 1000000,
+          "compressed-bytes": 2014584982
+        },
+        {
+          "source-file": "corpus_with_embeddings_part002.jsonl.bz2",
+          "document-count": 1000000,
+          "compressed-bytes": 1997458690
+        },
+        {
+          "source-file": "corpus_with_embeddings_part003.jsonl.bz2",
+          "document-count": 1000000,
+          "compressed-bytes": 1987837797
+        },
+        {
+          "source-file": "corpus_with_embeddings_part004.jsonl.bz2",
+          "document-count": 1000000,
+          "compressed-bytes": 1988720106
+        },
+        {
+          "source-file": "corpus_with_embeddings_part005.jsonl.bz2",
+          "document-count": 637432,
+          "compressed-bytes": 1264316504
+        }
+      ]
+    },
+    {
+      "name": "mteb-wikipedia-en",
+      "base-url": "{{_base_url}}/mteb/WikipediaRetrievalMultilingual/en/embeddings-jina-v5-small",
+      "documents": [
+        {
+          "source-file": "corpus_embeddings.jsonl.bz2",
+          "document-count": 15384,
+          "compressed-bytes": 31220278,
+          "uncompressed-bytes": 275114593
+        }
+      ]
+    },
+    {
+      "name": "mteb-stackoverflow-qa",
+      "base-url": "{{_base_url}}/mteb/stackoverflow-QA/embeddings-jina-v5-small",
+      "documents": [
+        {
+        "source-file": "corpus_embeddings.jsonl.bz2",
+        "document-count": 25613,
+        "compressed-bytes": 56713429,
+        "uncompressed-bytes": 472285285
+        }
+      ]
+    },
+    {
+      "name": "mteb-wikipedia-fr",
+      "base-url": "{{_base_url}}/mteb/WikipediaRetrievalMultilingual/fr/embeddings-jina-v5-small",
+      "documents": [
+        {
+          "source-file": "corpus_embeddings.jsonl.bz2",
+          "document-count": 1000,
+          "compressed-bytes": 17813350,
+          "uncompressed-bytes": 17813350
+        }
+      ]
+    },
+    {
+      "name": "mteb-trec-covid",
+      "base-url": "{{_base_url}}/mteb/trec-covid/embeddings-jina-v5-small",
+      "documents": [
+        {
+          "source-file": "corpus_embeddings.jsonl.bz2",
+          "document-count": 212315,
+          "compressed-bytes": 419610775,
+          "uncompressed-bytes": 3894583488
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

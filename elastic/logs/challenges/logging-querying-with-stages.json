@@ -1,0 +1,111 @@
+{% import "rally.helpers" as rally %}
+{
+  "name": "logging-querying-with-stages",
+  "description": "Applies a query workload. Ensures data streams exist so queries can be run, but does not remove existing data.",
+  "parameters": {
+    "generate-data": {{ true | tojson if bulk_start_date and bulk_end_date else false | tojson }}
+  },
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {% if bulk_start_date and bulk_end_date %}
+      {
+        "name": "bulk-index",
+        "operation": {
+          "operation-type": "raw-bulk",
+          "param-source": "processed-source",
+          "time-format": "milliseconds",
+          "profile": "fixed_interval",
+          "init-load": true,
+          "bulk-size": {{ p_bulk_size }},
+          "detailed-results": true
+        },
+        "clients": {{ p_bulk_indexing_clients }},
+        "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+      }
+      {%- if force_merge_max_num_segments is defined %},
+      {
+        "name": "refresh-after-index",
+        "index": "logs-*",
+        "operation": "refresh"
+      },
+      {
+        "name": "wait-until-index-merges-fininshes",
+        "operation": {
+          "operation-type": "index-stats",
+          "index": "logs-*",
+          "condition": {
+            "path": "_all.total.merges.current",
+            "expected-value": 0
+          },
+          "retry-until-success": true,
+          "include-in-reporting": false
+        }
+      },
+      {
+        "operation": {
+          "operation-type": "force-merge",
+          "index": "logs-*",
+          "request-timeout": 36000,
+          "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+        }
+      },
+      {
+        "name": "wait-until-merges-finish",
+        "operation": {
+          "operation-type": "index-stats",
+          "index": "logs-*",
+          "condition": {
+            "path": "_all.total.merges.current",
+            "expected-value": 0
+          },
+          "retry-until-success": true,
+          "include-in-reporting": false
+        }
+      },
+      {
+        "name": "refresh-after-force-merge",
+        "index": "logs-*",
+        "operation": "refresh"
+      }
+      {%- endif %}
+      ,
+    {% endif %}
+    {%- set p_as_search_clients = (as_search_clients | default([16,32,64,96,2]))%}
+    {%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([60,60,60,60,60]))%}
+    {%- set p_as_time_periods = (as_time_periods | default([150,300,300,600,900]))%}
+    {%- set p_as_user_think_time_periods = (as_user_think_time_periods | default([1,1,1,1,1]))%}
+    {%- set p_as_user_workflow_time_periods = (as_user_workflow_time_periods | default([1,1,1,1,1]))%}
+    {% set p_query_workflows = (query_workflows | default(["discover/search", "discover/visualize", "kafka", "nginx",
+"apache", "system/auth", "system/syslog/dashboard", "system/syslog/lens", "mysql/dashboard", "redis", "mysql/lens",
+"postgresql/overview", "postgresql/duration"])) %}
+    {% set p_query_request_params = (query_request_params | default({}))%}
+    {%- for i in range(p_as_search_clients|length) %}
+    {% set outer_loop = loop %}
+    {
+      "name": "logging-queries-{{loop.index}}-c{{p_as_search_clients[i]}}",
+      "parallel": {
+        "time-period": {{ p_as_time_periods[i] }},
+        "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+        "tasks": [
+          {% for workflow in p_query_workflows %}
+            {
+	      "name": "{{workflow}}-{{ outer_loop.index }}-{{loop.index }}",
+              "operation": {
+                "operation-type": "composite",
+                "param-source": "workflow-selector",
+                "workflow": {{workflow | tojson }},
+                "task-offset": {{ loop.index }},
+                "request-params": {{ p_query_request_params | tojson(indent=2) }}
+              },
+              "think-time-interval": {{ p_as_user_think_time_periods[i] }},
+              "workflow-interval": {{ p_as_user_workflow_time_periods[i] }},
+              "clients": {{ p_as_search_clients[i] }},
+              "schedule": "workflow-scheduler"
+            }{{ ", " if not loop.last else "" }}
+          {% endfor %}
+        ]
+      }
+    }{{ ", " if not loop.last else "" }}
+    {%- endfor %}
+  ]
+}

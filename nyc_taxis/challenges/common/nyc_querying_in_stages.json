@@ -1,0 +1,132 @@
+{
+  "operation": "delete-index"
+},
+{
+  "operation": {
+    "operation-type": "create-index",
+    "index": "nyc_taxis",
+    "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+      {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+        {% if p_include_non_serverless_index_settings %}
+      "index.translog.flush_threshold_size": "4g",
+        {% endif %}
+      {%- endif -%}{# non-serverless-index-settings-marker-end #}
+      "index.codec": "best_compression",
+      "index.refresh_interval": "30s"
+    }{%- endif %}
+  }
+},
+{
+  "name": "check-cluster-health",
+  "operation": {
+    "operation-type": "cluster-health",
+    "index": "nyc_taxis",
+    "request-params": {
+      "wait_for_status": "{{cluster_health | default('green')}}",
+      "wait_for_no_relocating_shards": "true"
+    },
+    "retry-until-success": true
+  }
+}
+{%- set p_as_write_clients = (as_write_clients | default([8,16,32]))%}
+{%- set p_as_write_warmup_time_periods = (as_write_warmup_time_periods | default([60,60,60]))%}
+{%- set p_as_write_time_periods = (as_write_time_periods | default([300,300,600]))%}
+{%- set p_as_write_target_throughputs = (as_write_target_throughputs | default([8,16,48]))%}
+{%- set p_bulk_size = (bulk_size | default(5000))%}
+{%- for i in range(p_as_write_clients|length) %},
+{
+  "name": "bulk-{{loop.index}}-c{{p_as_write_clients[i]}}-b{{p_bulk_size}}-t{{p_as_write_target_throughputs[i]}}",
+  "clients": {{p_as_write_clients[i]}},
+  "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+  "operation": {
+    "operation-type": "bulk",
+    "bulk-size": {{p_bulk_size}},
+    "looped": true
+  },
+  "warmup-time-period": {{p_as_write_warmup_time_periods[i]}},
+  "time-period": {{p_as_write_time_periods[i]}},
+  "target-throughput": {{p_as_write_target_throughputs[i]}}
+}
+{%- endfor %},
+{
+  "name": "refresh-after-index",
+  "operation": "refresh"
+},
+{% if p_include_force_merge %}
+{
+  "operation": {
+    "operation-type": "force-merge",
+    "index": "nyc_taxis",
+    "request-timeout": 7200{%- if force_merge_max_num_segments is defined %},
+    "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+    {%- endif %}
+  }
+},
+{
+  "name": "refresh-after-force-merge",
+  "operation": "refresh"
+},
+{
+  "operation": "wait-until-merges-finish"
+},
+{% endif %}
+{# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+{
+  "name": "post-ingest-sleep",
+  "operation": {
+    "operation-type": "sleep",
+    "duration": {{ post_ingest_sleep_duration|default(30) }}
+  }
+},
+{%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+{%- set p_as_search_clients = (as_search_clients | default([1,2,4,8,1]))%}
+{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([60,60,60,60,60]))%}
+{%- set p_as_time_periods = (as_time_periods | default([150,300,300,600,900]))%}
+{%- set p_as_search_target_throughput = (as_search_target_throughput | default([2,6,12,24,1]))%}
+{%- for i in range(p_as_search_clients|length) %}
+{
+  "name": "queries-{{loop.index}}-c{{p_as_search_clients[i]}}",
+  "parallel": {
+    "time-period": {{ p_as_time_periods[i] }},
+    "warmup-time-period": {{p_as_warmup_time_periods[i]}},
+    "tasks": [
+      {
+        "name": "default_no_target-{{loop.index}}",
+        "operation": "default",
+	"clients": {{p_as_search_clients[i]}},
+        "target-throughput": {{p_as_search_target_throughput[i]}}
+      },
+      {
+        "name": "default_1k-{{loop.index}}",
+	"operation": "default_1k",
+	"clients": {{p_as_search_clients[i]}},
+        "target-throughput": {{p_as_search_target_throughput[i]}}
+      },
+      {
+        "name": "range-{{loop.index}}",
+        "operation": "range",
+	"clients": {{p_as_search_clients[i]}},
+        "target-throughput": {{p_as_search_target_throughput[i]}}
+      },
+      {
+        "name": "distance_amount_agg-{{loop.index}}",
+        "operation": "distance_amount_agg",
+	"clients": {{p_as_search_clients[i]}},
+        "target-throughput": {{p_as_search_target_throughput[i]}}
+      },
+      {
+        "name": "autohisto_agg-{{loop.index}}",
+        "operation": "autohisto_agg",
+	"clients": {{p_as_search_clients[i]}},
+        "target-throughput": {{p_as_search_target_throughput[i]}}
+      },
+      {
+        "name": "date_histogram_agg-{{loop.index}}",
+        "operation": "date_histogram_agg",
+	"clients": {{p_as_search_clients[i]}},
+        "target-throughput": {{p_as_search_target_throughput[i]}}
+      }
+    ]
+  }
+}{{ ", " if not loop.last else "" }}
+{%- endfor %}

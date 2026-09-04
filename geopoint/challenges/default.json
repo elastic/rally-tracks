@@ -339,8 +339,8 @@
         },
         {
           "operation": "distanceSort-esql-partial",
-          "warmup-iterations": 50,
-          "iterations": 50,
+          "warmup-iterations": 2,
+          "iterations": 2,
           "tags": ["distance", "esql", "sort"]
         },
         {
@@ -357,8 +357,8 @@
         },
         {
           "operation": "distanceFilterSort-esql-partial",
-          "warmup-iterations": 50,
-          "iterations": 50,
+          "warmup-iterations": 2,
+          "iterations": 2,
           "tags": ["distance", "esql", "sort"]
         },
         {

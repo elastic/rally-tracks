@@ -51,10 +51,10 @@
                 "time-format": "milliseconds",
                 "profile": "fixed_interval",
                 "bulk-size": {{ p_runtime_bulk_size }},
+                "ingest-percentage": {{ ingest_percentage | default(100) }},
                 "detailed-results": true
               },
-              "clients": {{ p_runtime_indexing_clients }},
-              "ingest-percentage": {{ ingest_percentage | default(100) }}
+              "clients": {{ p_runtime_indexing_clients }}
               {% if p_throttle_indexing %},
                 "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
                 "schedule": "timestamp-throttler",

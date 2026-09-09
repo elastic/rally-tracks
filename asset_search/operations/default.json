@@ -1,0 +1,436 @@
+{%- set p_number_of_shards = (number_of_shards | default(1)) %}
+{%- set p_number_of_replicas = (number_of_replicas | default(0)) %}
+{%- set p_index_name = (index_name | default("rally-asset-search")) %}
+    {
+      "name": "create-index-template",
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/_index_template/asset-search-template",
+      "body": {% include "request_body/index_template/elasticsearch.json" %}
+    },
+    {
+      "name": "create-index",
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/{{ p_index_name }}"
+    },
+    {
+      "name": "delete-versioned-index",
+      "operation-type": "delete-index",
+      "index": "{{ p_index_name }}-v1",
+      "only-if-exists": true
+    },
+    {
+      "name": "create-versioned-index",
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/{{ p_index_name }}-v1"
+    },
+    {
+      "name": "create-alias",
+      "operation-type": "raw-request",
+      "method": "POST",
+      "path": "/_aliases",
+      "body": {
+        "actions": [
+          {
+            "add": {
+              "index": "{{ p_index_name }}-v1",
+              "alias": "{{ p_index_name }}"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "apply-reload-index-settings",
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/{{ p_index_name }}-v1/_settings",
+      "body": {% include "request_body/index_settings/reload.json" %}
+    },
+    {
+      "name": "update-index-settings-for-steady-state",
+      "operation-type": "raw-request",
+      "method": "PUT",
+      "path": "/{{ p_index_name }}-v1/_settings",
+      "body": {% include "request_body/index_settings/steady_state.json" %}
+    },
+    {
+      "name": "bulk-index",
+      "operation-type": "bulk",
+      "param-source": "asset-search-source",
+      "bulk-size": {{ bulk_size | default(500) }},
+      "retries_on_429": {{ retries_on_429 | default(10) }},
+      "number-of-docs": {{ number_of_docs | default(1000000) }},
+      "seed": {{ seed | default(42) }},
+      "index-name": "{{ p_index_name }}",
+      "date-range-days": {{ date_range_days | default(730) }},
+      "num-workspaces": {{ num_workspaces | default(10000) }},
+      "num-teams": {{ num_teams | default(50000) }},
+      "num-owners": {{ num_owners | default(200000) }},
+      "num-folders": {{ num_folders | default(500000) }}
+    },
+    {
+      "name": "bulk-index-reload",
+      "operation-type": "bulk",
+      "param-source": "asset-search-source",
+      "bulk-size": {{ reload_bulk_size | default(1000) }},
+      "retries_on_429": {{ retries_on_429 | default(10) }},
+      "number-of-docs": {{ reload_number_of_docs | default(10000000) }},
+      "seed": {{ reload_seed | default(100) }},
+      "index-name": "{{ p_index_name }}-v1",
+      "date-range-days": 730,
+      "num-workspaces": {{ num_workspaces | default(10000) }},
+      "num-teams": {{ num_teams | default(50000) }},
+      "num-owners": {{ num_owners | default(200000) }},
+      "num-folders": {{ num_folders | default(500000) }}
+    },
+    {
+      "name": "bulk-index-new",
+      "operation-type": "bulk",
+      "param-source": "asset-search-source",
+      "bulk-size": {{ bulk_size | default(500) }},
+      "retries_on_429": {{ retries_on_429 | default(10) }},
+      "number-of-docs": {{ ingest_number_of_docs | default(10000000) }},
+      "seed": {{ ingest_seed | default(42) }},
+      "index-name": "{{ p_index_name }}",
+      "date-range-days": 1,
+      "num-workspaces": {{ num_workspaces | default(10000) }},
+      "num-teams": {{ num_teams | default(50000) }},
+      "num-owners": {{ num_owners | default(200000) }},
+      "num-folders": {{ num_folders | default(500000) }}
+    },
+    {
+      "name": "match-all",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        }
+      }
+    },
+    {
+      "name": "term-asset-type",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "term": {
+            "asset_type": "design"
+          }
+        }
+      }
+    },
+    {
+      "name": "term-status",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "term": {
+            "status": "published"
+          }
+        }
+      }
+    },
+    {
+      "name": "range-created-at",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "range": {
+            "created_at": {
+              "gte": "now-30d/d",
+              "lt": "now/d"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range-view-count",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "range": {
+            "view_count": {
+              "gte": 100,
+              "lte": 10000
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "range-file-size",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "range": {
+            "file_size_bytes": {
+              "gte": 102400,
+              "lte": 10485760
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "match-title",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match": {
+            "title": "design presentation template"
+          }
+        }
+      }
+    },
+    {
+      "name": "match-content",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match": {
+            "content": "color font layout style"
+          }
+        }
+      }
+    },
+    {
+      "name": "phrase-title",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_phrase": {
+            "title": "social media"
+          }
+        }
+      }
+    },
+    {
+      "name": "bool-filter",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "asset_type": "design"
+                }
+              },
+              {
+                "term": {
+                  "status": "published"
+                }
+              }
+            ],
+            "filter": [
+              {
+                "range": {
+                  "created_at": {
+                    "gte": "now-90d/d",
+                    "lt": "now/d"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "bool-text-filter",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "must": [
+              {
+                "match": {
+                  "title": "template"
+                }
+              }
+            ],
+            "filter": [
+              {
+                "term": {
+                  "status": "published"
+                }
+              },
+              {
+                "range": {
+                  "created_at": {
+                    "gte": "now-30d/d",
+                    "lt": "now/d"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "desc-sort-created-at",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort": [
+          {"created_at": "desc"}
+        ]
+      }
+    },
+    {
+      "name": "desc-sort-view-count",
+      "operation-type": "search",
+      "body": {
+        "track_total_hits": false,
+        "query": {
+          "term": {
+            "status": "published"
+          }
+        },
+        "sort": [
+          {"view_count": "desc"}
+        ]
+      }
+    },
+    {
+      "name": "asc-sort-created-at",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "match_all": {}
+        },
+        "sort": [
+          {"created_at": "asc"}
+        ]
+      }
+    },
+    {
+      "name": "keyword-terms-asset-type",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "by_asset_type": {
+            "terms": {
+              "field": "asset_type",
+              "size": 10
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "keyword-terms-status",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "by_status": {
+            "terms": {
+              "field": "status",
+              "size": 10
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histogram-created-at",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "by_day": {
+            "date_histogram": {
+              "field": "created_at",
+              "calendar_interval": "day"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "date-histogram-with-filter",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "query": {
+          "range": {
+            "created_at": {
+              "gte": "now-30d/d",
+              "lt": "now/d"
+            }
+          }
+        },
+        "aggs": {
+          "by_day": {
+            "date_histogram": {
+              "field": "created_at",
+              "calendar_interval": "day"
+            },
+            "aggs": {
+              "avg_views": {
+                "avg": {
+                  "field": "view_count"
+                }
+              },
+              "total_size": {
+                "sum": {
+                  "field": "file_size_bytes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "multi-terms-type-status",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "by_type_and_status": {
+            "multi_terms": {
+              "terms": [
+                {"field": "asset_type"},
+                {"field": "status"}
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "tags-terms",
+      "operation-type": "search",
+      "body": {
+        "size": 0,
+        "aggs": {
+          "popular_tags": {
+            "terms": {
+              "field": "tags",
+              "size": 20
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "query-string-content",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "query_string": {
+            "query": "design template layout color",
+            "fields": ["title", "description", "content"]
+          }
+        }
+      }
+    }

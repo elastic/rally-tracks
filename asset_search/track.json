@@ -1,0 +1,18 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Large-scale asset search benchmark — ingest and search workload for design asset platforms",
+  "indices": [
+    {
+      "name": "{{ index_name | default('rally-asset-search') }}",
+      "auto-managed": false
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

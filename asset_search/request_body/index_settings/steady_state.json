@@ -1,0 +1,11 @@
+{
+  "index": {
+    "refresh_interval": "{{ steady_state_refresh_interval | default('1s') }}"
+    {%- if steady_state_translog_durability is defined %}
+    , "translog.durability": "{{ steady_state_translog_durability }}"
+    {%- endif %}
+    {%- if steady_state_number_of_replicas is defined %}
+    , "number_of_replicas": {{ steady_state_number_of_replicas }}
+    {%- endif %}
+  }
+}

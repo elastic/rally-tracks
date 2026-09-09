@@ -1,0 +1,59 @@
+{
+  "index_patterns": ["{{ p_index_name }}*"],
+  "template": {
+    "settings": {
+      "number_of_shards": {{ p_number_of_shards }},
+      "number_of_replicas": {{ p_number_of_replicas }}
+    },
+    "mappings": {
+      "dynamic": "strict",
+      "properties": {
+        "asset_id": {
+          "type": "keyword"
+        },
+        "title": {
+          "type": "text"
+        },
+        "description": {
+          "type": "text"
+        },
+        "content": {
+          "type": "text"
+        },
+        "asset_type": {
+          "type": "keyword"
+        },
+        "owner_id": {
+          "type": "keyword"
+        },
+        "team_id": {
+          "type": "keyword"
+        },
+        "workspace_id": {
+          "type": "keyword"
+        },
+        "folder_id": {
+          "type": "keyword"
+        },
+        "tags": {
+          "type": "keyword"
+        },
+        "status": {
+          "type": "keyword"
+        },
+        "created_at": {
+          "type": "date"
+        },
+        "updated_at": {
+          "type": "date"
+        },
+        "view_count": {
+          "type": "integer"
+        },
+        "file_size_bytes": {
+          "type": "long"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "name": "index-and-search",
+  "description": "Index asset documents then run search operations",
+  "default": true,
+  "schedule": [
+    {
+      "operation": "create-index-template"
+    },
+    {
+      "operation": "delete-versioned-index"
+    },
+    {
+      "operation": "create-versioned-index"
+    },
+    {
+      "operation": "create-alias"
+    },
+    {
+      "operation": "bulk-index",
+      "clients": {{ bulk_indexing_clients | default(8) }},
+      {% if ingest_target_throughput is defined %}"target-throughput": "{{ ingest_target_throughput }} docs/s",{% endif %}
+      "warmup-time-period": 0,
+      "ignore-response-error-level": "{{ error_level | default('non-fatal') }}"
+    },
+    {
+      "name": "search",
+      "parallel": {
+        "clients": {{ search_clients | default(8) }},
+        "warmup-iterations": {{ warmup_iterations | default(500) }},
+        "iterations": {{ search_iterations | default(1000) }},
+        "tasks": [
+          {"operation": "match-all", "weight": 1},
+          {"operation": "term-asset-type", "weight": 5},
+          {"operation": "term-status", "weight": 5},
+          {"operation": "range-created-at", "weight": 5},
+          {"operation": "range-view-count", "weight": 3},
+          {"operation": "range-file-size", "weight": 2},
+          {"operation": "match-title", "weight": 8},
+          {"operation": "match-content", "weight": 8},
+          {"operation": "phrase-title", "weight": 5},
+          {"operation": "bool-filter", "weight": 8},
+          {"operation": "bool-text-filter", "weight": 8},
+          {"operation": "desc-sort-created-at", "weight": 5},
+          {"operation": "desc-sort-view-count", "weight": 5},
+          {"operation": "asc-sort-created-at", "weight": 3},
+          {"operation": "keyword-terms-asset-type", "weight": 4},
+          {"operation": "keyword-terms-status", "weight": 4},
+          {"operation": "date-histogram-created-at", "weight": 4},
+          {"operation": "date-histogram-with-filter", "weight": 4},
+          {"operation": "multi-terms-type-status", "weight": 3},
+          {"operation": "tags-terms", "weight": 4},
+          {"operation": "query-string-content", "weight": 6}
+        ]
+      }
+    }
+  ]
+}

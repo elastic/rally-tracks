@@ -15,7 +15,7 @@
       "operation": "create-alias"
     },
     {
-      "operation": "update-index-settings-for-reload"
+      "operation": "apply-reload-index-settings"
     },
     {
       "operation": "bulk-index-reload",
@@ -38,32 +38,32 @@
             {% if ingest_target_throughput is defined %}"target-throughput": "{{ ingest_target_throughput }} docs/s",{% endif %}
             "ignore-response-error-level": "{{ error_level | default('non-fatal') }}"
           },
-          {"operation": "match-all", "clients": 1, "weight": 1},
-          {"operation": "term-asset-type", "clients": 1, "weight": 5},
-          {"operation": "term-status", "clients": 1, "weight": 5},
-          {"operation": "range-created-at", "clients": 1, "weight": 5},
-          {"operation": "range-view-count", "clients": 1, "weight": 3},
-          {"operation": "range-file-size", "clients": 1, "weight": 2},
-          {"operation": "match-title", "clients": 1, "weight": 8},
-          {"operation": "match-content", "clients": 1, "weight": 8},
-          {"operation": "phrase-title", "clients": 1, "weight": 5},
-          {"operation": "bool-filter", "clients": 1, "weight": 8},
-          {"operation": "bool-text-filter", "clients": 1, "weight": 8},
-          {"operation": "desc-sort-created-at", "clients": 1, "weight": 5},
-          {"operation": "desc-sort-view-count", "clients": 1, "weight": 5},
-          {"operation": "asc-sort-created-at", "clients": 1, "weight": 3},
-          {"operation": "keyword-terms-asset-type", "clients": 1, "weight": 4},
-          {"operation": "keyword-terms-status", "clients": 1, "weight": 4},
-          {"operation": "date-histogram-created-at", "clients": 1, "weight": 4},
-          {"operation": "date-histogram-with-filter", "clients": 1, "weight": 4},
-          {"operation": "multi-terms-type-status", "clients": 1, "weight": 3},
-          {"operation": "tags-terms", "clients": 1, "weight": 4},
-          {"operation": "query-string-content", "clients": 1, "weight": 6},
-          {"operation": "term-workspace-id", "clients": 1, "weight": 4},
-          {"operation": "term-owner-id", "clients": 1, "weight": 4},
-          {"operation": "bool-workspace-asset-type", "clients": 1, "weight": 5},
-          {"operation": "bool-owner-text", "clients": 1, "weight": 6},
-          {"operation": "bool-folder-status", "clients": 1, "weight": 3}
+          {"operation": "match-all", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "term-asset-type", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "term-status", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "range-created-at", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "range-view-count", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "range-file-size", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "match-title", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "match-content", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "phrase-title", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "bool-filter", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "bool-text-filter", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "desc-sort-created-at", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "desc-sort-view-count", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "asc-sort-created-at", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "keyword-terms-asset-type", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "keyword-terms-status", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "date-histogram-created-at", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "date-histogram-with-filter", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "multi-terms-type-status", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "tags-terms", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "query-string-content", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "term-workspace-id", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "term-owner-id", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "bool-workspace-asset-type", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "bool-owner-text", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "bool-folder-status", "clients": 1, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"}
         ]
       }
     }

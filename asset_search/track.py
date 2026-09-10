@@ -180,5 +180,114 @@ class AssetSearchParamSource:
         }
 
 
+_SEARCH_TERMS = [
+    "design template",
+    "presentation layout",
+    "social media",
+    "marketing banner",
+    "logo icon",
+    "photo background",
+    "business infographic",
+    "creative poster",
+]
+
+
+class AssetSearchQueryParamSource:
+    """
+    Parameter source for entity-scoped search queries. Reconstructs the same
+    UUID pools used during indexing (same seed + offsets) so every UUID in a
+    generated query is guaranteed to exist in the index.
+
+    Each partition is seeded with (base_seed + partition_index) so concurrent
+    search clients issue different query sequences.
+
+    Parameters (all optional, with defaults):
+      query-type    One of: workspace-term, owner-term, bool-workspace-asset-type,
+                    bool-owner-text, bool-folder-status
+      seed          Must match the seed used during indexing (default: 42)
+      index-name    Target index/alias (default: rally-asset-search)
+      num-workspaces, num-teams, num-owners, num-folders: must match indexing params
+    """
+
+    infinite = True
+
+    def __init__(self, track, params, **kwargs):
+        self.track = track
+        self._params = params
+        self._base_seed = params.get("seed", 42)
+        self._index_name = params.get("index-name", "rally-asset-search")
+        self._query_type = params.get("query-type", "workspace-term")
+        self._partition_index = params.get("client-index", 0)
+        self._workspace_pool = _make_uuid_pool(
+            self._base_seed + _WORKSPACE_POOL_SEED_OFFSET,
+            params.get("num-workspaces", 10_000),
+        )
+        self._team_pool = _make_uuid_pool(
+            self._base_seed + _TEAM_POOL_SEED_OFFSET,
+            params.get("num-teams", 50_000),
+        )
+        self._owner_pool = _make_uuid_pool(
+            self._base_seed + _OWNER_POOL_SEED_OFFSET,
+            params.get("num-owners", 200_000),
+        )
+        self._folder_pool = _make_uuid_pool(
+            self._base_seed + _FOLDER_POOL_SEED_OFFSET,
+            params.get("num-folders", 500_000),
+        )
+        self._rng = random.Random(self._base_seed + self._partition_index)
+
+    def partition(self, partition_index, total_partitions):
+        return AssetSearchQueryParamSource(
+            self.track,
+            {**self._params, "client-index": partition_index},
+        )
+
+    def params(self):
+        qt = self._query_type
+        if qt == "workspace-term":
+            body = {
+                "query": {"term": {"workspace_id": self._rng.choice(self._workspace_pool)}}
+            }
+        elif qt == "owner-term":
+            body = {
+                "query": {"term": {"owner_id": self._rng.choice(self._owner_pool)}}
+            }
+        elif qt == "bool-workspace-asset-type":
+            body = {
+                "query": {
+                    "bool": {
+                        "filter": [
+                            {"term": {"workspace_id": self._rng.choice(self._workspace_pool)}},
+                            {"term": {"asset_type": self._rng.choice(ASSET_TYPES)}},
+                        ]
+                    }
+                }
+            }
+        elif qt == "bool-owner-text":
+            body = {
+                "query": {
+                    "bool": {
+                        "must": [{"match": {"title": self._rng.choice(_SEARCH_TERMS)}}],
+                        "filter": [{"term": {"owner_id": self._rng.choice(self._owner_pool)}}],
+                    }
+                }
+            }
+        elif qt == "bool-folder-status":
+            body = {
+                "query": {
+                    "bool": {
+                        "filter": [
+                            {"term": {"folder_id": self._rng.choice(self._folder_pool)}},
+                            {"term": {"status": "published"}},
+                        ]
+                    }
+                }
+            }
+        else:
+            raise ValueError(f"Unknown query-type: {qt!r}")
+        return {"index": self._index_name, "body": body}
+
+
 def register(registry):
     registry.register_param_source("asset-search-source", AssetSearchParamSource)
+    registry.register_param_source("asset-search-query-source", AssetSearchQueryParamSource)

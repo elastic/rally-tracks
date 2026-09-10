@@ -29,7 +29,12 @@
           {"operation": "date-histogram-with-filter", "weight": 4},
           {"operation": "multi-terms-type-status", "weight": 3},
           {"operation": "tags-terms", "weight": 4},
-          {"operation": "query-string-content", "weight": 6}
+          {"operation": "query-string-content", "weight": 6},
+          {"operation": "term-workspace-id", "weight": 4},
+          {"operation": "term-owner-id", "weight": 4},
+          {"operation": "bool-workspace-asset-type", "weight": 5},
+          {"operation": "bool-owner-text", "weight": 6},
+          {"operation": "bool-folder-status", "weight": 3}
         ]
       }
     }

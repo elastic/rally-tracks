@@ -40,6 +40,10 @@ Creates a fresh versioned index with `refresh_interval: -1` for maximum ingest t
 
 Phase 1: high-throughput reload with `refresh_interval: -1`. Phase 2: transitions to steady-state index settings, then runs concurrent steady-state ingest (`bulk-index-new`, `date-range-days: 1`) and the full search mix in parallel. Terminates when the ingest operation exhausts its document count.
 
+### `ingest-and-search`
+
+Concurrent ingest and search from a cold start. Creates the index and immediately runs `bulk-index` and the full search mix in parallel. Terminates when ingest exhausts `number_of_docs`. Use this to observe search latency during active index growth — for example, when testing search behavior across shard expansion events on Serverless.
+
 ### `search-only`
 
 Runs the search mix against an already-indexed dataset. No indexing.
@@ -69,6 +73,13 @@ Runs the search mix against an already-indexed dataset. No indexing.
 | `multi-terms-type-status` | Multi-terms aggregation on `asset_type` + `status` | 3 |
 | `range-file-size` | Range on `file_size_bytes` (100 KB–10 MB) | 2 |
 | `match-all` | `match_all` | 1 |
+| `term-workspace-id` | `term` on `workspace_id`; UUID drawn from the indexed pool | 4 |
+| `term-owner-id` | `term` on `owner_id`; UUID drawn from the indexed pool | 4 |
+| `bool-workspace-asset-type` | `bool` filter: `workspace_id` + `asset_type` | 5 |
+| `bool-owner-text` | `bool` must: `match` title; filter: `owner_id` | 6 |
+| `bool-folder-status` | `bool` filter: `folder_id` + `status: published` | 3 |
+
+Entity-scoped operations (`term-workspace-id`, `term-owner-id`, `bool-workspace-asset-type`, `bool-owner-text`, `bool-folder-status`) use `asset-search-query-source`, which reconstructs the same UUID pools as the indexing param source from the same seed. This guarantees every queried UUID exists in the index and that filter selectivity reflects the configured pool sizes.
 
 ## Track parameters
 
@@ -79,18 +90,17 @@ All parameters are optional. Pass via `--track-params="key:value,..."`.
 | Parameter | Default | Description |
 |---|---|---|
 | `index_name` | `rally-asset-search` | Alias name; versioned index is `<name>-v1` |
-| `number_of_shards` | `1` | Primary shard count. Omitted from the index template when `build_flavor=serverless` and `serverless_operator=false` — leave unset to use the Serverless default. |
-| `number_of_replicas` | `0` | Replica count. Always omitted when `build_flavor=serverless` — setting replicas on Serverless requires operator privileges and is managed by the platform. |
-| `build_flavor` | `stateful` | Set to `serverless` when targeting an Elasticsearch Serverless endpoint. Guards shard/replica settings that are restricted or unsupported on Serverless. |
-| `serverless_operator` | `false` | Set to `true` when running as a Serverless operator user (internal Elastic). Allows `number_of_shards` to be set in the index template. Has no effect when `build_flavor` is not `serverless`. |
+| `number_of_shards` | `1` | Primary shard count. Omitted from the index template on Serverless unless running as an operator user — leave unset to accept the Serverless default. |
+| `number_of_replicas` | `0` | Replica count. Always omitted on Serverless — replica management is handled by the platform. |
+
+`build_flavor` and `serverless_operator` are Rally context variables auto-detected from the connected cluster. They are not track parameters. When connected to a Serverless project, `build_flavor` is `"serverless"` and the track's index template and settings files suppress replica configuration and conditionally suppress shard configuration for non-operator users.
 
 ### Document generation
 
 | Parameter | Default | Description |
 |---|---|---|
-| `number_of_docs` | `1_000_000` | Total docs for `bulk-index` (across all clients) |
+| `number_of_docs` | `1_000_000` | Total docs for `bulk-index` and `bulk-index-new` (across all clients) |
 | `reload_number_of_docs` | `10_000_000` | Total docs for `bulk-index-reload` |
-| `ingest_number_of_docs` | `10_000_000` | Total docs for `bulk-index-new` (steady-state) |
 | `bulk_size` | `500` | Docs per bulk request for standard ingest |
 | `reload_bulk_size` | `1_000` | Docs per bulk request for reload |
 | `seed` | `42` | Base RNG seed for standard ingest |

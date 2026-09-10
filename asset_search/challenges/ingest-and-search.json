@@ -1,6 +1,6 @@
 {
-  "name": "reload-and-steady-state",
-  "description": "Reload historical data at high throughput, then run concurrent steady-state indexing and search. Phase 1 simulates a full data reload; Phase 2 simulates production steady-state load.",
+  "name": "ingest-and-search",
+  "description": "Concurrent ingest and search from a cold start. Ingest runs at configurable throughput while the full search mix runs in parallel. Suitable for observing search latency during index growth and shard expansion events.",
   "schedule": [
     {
       "operation": "create-index-template"
@@ -15,27 +15,15 @@
       "operation": "create-alias"
     },
     {
-      "operation": "update-index-settings-for-reload"
-    },
-    {
-      "operation": "bulk-index-reload",
-      "clients": {{ reload_clients | default(16) }},
-      {% if reload_target_throughput is defined %}"target-throughput": "{{ reload_target_throughput }} docs/s",{% endif %}
-      "warmup-time-period": 0,
-      "ignore-response-error-level": "{{ error_level | default('non-fatal') }}"
-    },
-    {
-      "operation": "update-index-settings-for-steady-state"
-    },
-    {
-      "name": "steady-state",
+      "name": "ingest-and-search",
       "parallel": {
-        "completed-by": "bulk-index-new",
+        "completed-by": "bulk-index",
         "tasks": [
           {
-            "operation": "bulk-index-new",
+            "operation": "bulk-index",
             "clients": {{ bulk_indexing_clients | default(8) }},
             {% if ingest_target_throughput is defined %}"target-throughput": "{{ ingest_target_throughput }} docs/s",{% endif %}
+            "warmup-time-period": 0,
             "ignore-response-error-level": "{{ error_level | default('non-fatal') }}"
           },
           {"operation": "match-all", "clients": 1, "weight": 1},

@@ -3,6 +3,7 @@
 {
   "version": 2,
   "description": "Large-scale asset search benchmark — ingest and search workload for design asset platforms",
+  "dependencies": ["faker"],
   "indices": [
     {
       "name": "{{ index_name | default('rally-asset-search') }}",

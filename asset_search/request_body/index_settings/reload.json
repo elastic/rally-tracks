@@ -4,7 +4,7 @@
     {%- if reload_translog_durability is defined %}
     , "translog.durability": "{{ reload_translog_durability }}"
     {%- endif %}
-    {%- if reload_number_of_replicas is defined %}
+    {%- if reload_number_of_replicas is defined and (build_flavor | default("stateful")) != "serverless" %}
     , "number_of_replicas": {{ reload_number_of_replicas }}
     {%- endif %}
   }

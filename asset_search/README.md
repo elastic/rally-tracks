@@ -79,8 +79,10 @@ All parameters are optional. Pass via `--track-params="key:value,..."`.
 | Parameter | Default | Description |
 |---|---|---|
 | `index_name` | `rally-asset-search` | Alias name; versioned index is `<name>-v1` |
-| `number_of_shards` | `1` | Primary shard count |
-| `number_of_replicas` | `0` | Replica count |
+| `number_of_shards` | `1` | Primary shard count. Omitted from the index template when `build_flavor=serverless` and `serverless_operator=false` — leave unset to use the Serverless default. |
+| `number_of_replicas` | `0` | Replica count. Always omitted when `build_flavor=serverless` — setting replicas on Serverless requires operator privileges and is managed by the platform. |
+| `build_flavor` | `stateful` | Set to `serverless` when targeting an Elasticsearch Serverless endpoint. Guards shard/replica settings that are restricted or unsupported on Serverless. |
+| `serverless_operator` | `false` | Set to `true` when running as a Serverless operator user (internal Elastic). Allows `number_of_shards` to be set in the index template. Has no effect when `build_flavor` is not `serverless`. |
 
 ### Document generation
 
@@ -122,12 +124,12 @@ Controls how many distinct UUIDs exist in each bounded pool. Higher values reduc
 
 | Parameter | Default | Description |
 |---|---|---|
-| `reload_refresh_interval` | `-1` | Refresh interval applied before reload ingest |
+| `reload_refresh_interval` | `-1` | Refresh interval applied before reload ingest. `-1` (disabled) is valid on both stateful and Serverless. If setting a positive value on Serverless, minimum is `5s`. |
 | `reload_translog_durability` | _(unset)_ | Optional translog durability override for reload |
-| `reload_number_of_replicas` | _(unset)_ | Optional replica count override during reload |
-| `steady_state_refresh_interval` | `1s` | Refresh interval applied after reload completes |
+| `reload_number_of_replicas` | _(unset)_ | Optional replica count override during reload. Ignored when `build_flavor=serverless`. |
+| `steady_state_refresh_interval` | _(unset)_ | Refresh interval applied after reload completes. If unset, no refresh interval change is made and the index retains whatever value is in effect. Serverless enforces a minimum of `5s` for positive values; `-1` is valid on both. |
 | `steady_state_translog_durability` | _(unset)_ | Optional translog durability for steady-state |
-| `steady_state_number_of_replicas` | _(unset)_ | Optional replica count for steady-state |
+| `steady_state_number_of_replicas` | _(unset)_ | Optional replica count for steady-state. Ignored when `build_flavor=serverless`. |
 
 ### Search
 

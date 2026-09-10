@@ -1,9 +1,15 @@
+{%- set _has_shards = (build_flavor | default("stateful")) != "serverless" or (serverless_operator | default(false)) == true %}
+{%- set _has_replicas = (build_flavor | default("stateful")) != "serverless" %}
 {
   "index_patterns": ["{{ p_index_name }}*"],
   "template": {
     "settings": {
-      "number_of_shards": {{ p_number_of_shards }},
+      {%- if _has_shards %}
+      "number_of_shards": {{ p_number_of_shards }}{% if _has_replicas %},{% endif %}
+      {%- endif %}
+      {%- if _has_replicas %}
       "number_of_replicas": {{ p_number_of_replicas }}
+      {%- endif %}
     },
     "mappings": {
       "dynamic": "strict",

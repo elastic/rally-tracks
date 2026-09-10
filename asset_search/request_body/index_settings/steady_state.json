@@ -1,11 +1,18 @@
+{%- set ns = namespace(has_fields=false) %}
 {
   "index": {
-    "refresh_interval": "{{ steady_state_refresh_interval | default('1s') }}"
-    {%- if steady_state_translog_durability is defined %}
-    , "translog.durability": "{{ steady_state_translog_durability }}"
+    {%- if steady_state_refresh_interval is defined %}
+    "refresh_interval": "{{ steady_state_refresh_interval }}"
+    {%- set ns.has_fields = true %}
     {%- endif %}
-    {%- if steady_state_number_of_replicas is defined %}
-    , "number_of_replicas": {{ steady_state_number_of_replicas }}
+    {%- if steady_state_translog_durability is defined %}
+    {%- if ns.has_fields %},{% endif %}
+    "translog.durability": "{{ steady_state_translog_durability }}"
+    {%- set ns.has_fields = true %}
+    {%- endif %}
+    {%- if steady_state_number_of_replicas is defined and (build_flavor | default("stateful")) != "serverless" %}
+    {%- if ns.has_fields %},{% endif %}
+    "number_of_replicas": {{ steady_state_number_of_replicas }}
     {%- endif %}
   }
 }

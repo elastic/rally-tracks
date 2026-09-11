@@ -148,7 +148,7 @@ Controls how many distinct UUIDs exist in each bounded pool. Higher values reduc
 | `search_clients` | `8` | Parallel search clients (used by `index-and-search` and `search-only`) |
 | `warmup_iterations` | `500` | Warmup iterations before measurement (used by `index-and-search` and `search-only`) |
 | `search_iterations` | `1_000` | Measured iterations (used by `index-and-search` and `search-only`) |
-| `search_target_throughput` | `5` | Ops/s per search client in `ingest-and-search` and `reload-and-steady-state`. Each of the 26 search operations gets one dedicated client at this rate, giving 26 × `search_target_throughput` total search ops/s. |
+| `search_target_throughput` | `2` | Ops/s per search client in `ingest-and-search` and `reload-and-steady-state`. Each of the 26 search operations gets one dedicated client at this rate, giving 26 × `search_target_throughput` total search ops/s. |
 
 ## Dependencies
 

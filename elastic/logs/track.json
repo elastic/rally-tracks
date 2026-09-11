@@ -20,6 +20,9 @@
 {% set p_query_warmup_time_period = (query_warmup_time_period | default(120)) %}
 {% set p_query_time_period = (query_time_period | default(900)) %}
 {% set p_query_request_params = (query_request_params | default({}))%}
+{# NOTE: defaults derived from the elastic/logs corpus (23567 unique hosts). #}
+{# NOTE: host is the median by lexicographic order; timestamp is the midpoint #}
+{# NOTE: of the bulk_start_date/bulk_end_date window (2020-01-01T12:00:00Z). #}
 {% set p_host_search_after = (host_search_after | default('elasticsearch-ci-immutable-debian-10-1599145396373086378')) %}
 {% set p_search_after_timestamp = (search_after_timestamp | default(1577880000000)) %}
 {% set p_include_esql_queries = (include_esql_queries | default(build_flavor != "serverless")) %}

@@ -42,7 +42,11 @@ Phase 1: high-throughput reload with `refresh_interval: -1`. Phase 2: transition
 
 ### `ingest-and-search`
 
-Concurrent ingest and search from a cold start. Creates the index and immediately runs `bulk-index` and the full search mix in parallel. Terminates when ingest exhausts `number_of_docs`. Use this to observe search latency during active index growth — for example, when testing search behavior across shard expansion events on Serverless.
+Concurrent ingest and search from a cold start. Creates the index and immediately runs `bulk-index-new` and the full 26-operation search mix in parallel. Terminates when ingest exhausts `number_of_docs`. Use this when full query coverage is needed alongside active indexing.
+
+### `ingest-and-search-diagnostic`
+
+Like `ingest-and-search` but with a focused 5-query mix designed for clean signal during shard split or autosharding events: `term-status` (cheap keyword baseline), `bool-filter` (mid-cost bool + range), `match-title` (full-text), `date-histogram-with-filter` (heavy aggregation), `term-workspace-id` (entity-scoped). Fewer time series make it straightforward to correlate latency spikes with index growth events.
 
 ### `search-only`
 

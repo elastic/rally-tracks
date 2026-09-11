@@ -1,0 +1,38 @@
+{
+  "name": "ingest-and-search-diagnostic",
+  "description": "Concurrent ingest and a focused search mix for diagnosing search behavior during index growth events such as autosharding shard splits. Five queries cover the cost spectrum — cheap keyword filter, mid-cost bool, full-text, heavy aggregation, and entity-scoped — providing a clean latency signal without metric clutter.",
+  "schedule": [
+    {
+      "operation": "create-index-template"
+    },
+    {
+      "operation": "delete-versioned-index"
+    },
+    {
+      "operation": "create-versioned-index"
+    },
+    {
+      "operation": "create-alias"
+    },
+    {
+      "name": "ingest-and-search-diagnostic",
+      "parallel": {
+        "completed-by": "bulk-index-new",
+        "tasks": [
+          {
+            "operation": "bulk-index-new",
+            "clients": {{ bulk_indexing_clients | default(8) }},
+            {% if ingest_target_throughput is defined %}"target-throughput": "{{ ingest_target_throughput }} docs/s",{% endif %}
+            "warmup-time-period": 0,
+            "ignore-response-error-level": "{{ error_level | default('non-fatal') }}"
+          },
+          {"operation": "term-status", "clients": 1, "warmup-time-period": 0, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "bool-filter", "clients": 1, "warmup-time-period": 0, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "match-title", "clients": 1, "warmup-time-period": 0, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "date-histogram-with-filter", "clients": 1, "warmup-time-period": 0, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"},
+          {"operation": "term-workspace-id", "clients": 1, "warmup-time-period": 0, "target-throughput": "{{ search_target_throughput | default(5) }} ops/s"}
+        ]
+      }
+    }
+  ]
+}

@@ -313,6 +313,14 @@
       {%- endif %}
     },
     {
+      "name": "esql_sort_by_host",
+      "operation-type": "esql",
+      "query": "FROM {{p_esql_target_prefix}}logs-* | SORT host.name ASC | KEEP host.name, @timestamp | LIMIT 10"
+      {%- if p_esql_ccs_extra_body %},
+      "body": {{ p_esql_ccs_extra_body | tojson }}
+      {%- endif %}
+    },
+    {
       "name": "esql_date_histogram_fixed_interval",
       "operation-type": "esql",
       "query": "FROM {{p_esql_target_prefix}}logs-* | STATS COUNT(*) BY b=BUCKET(@timestamp, 1 WEEK) | SORT b"

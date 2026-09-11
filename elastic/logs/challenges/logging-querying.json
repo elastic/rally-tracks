@@ -105,6 +105,36 @@
       "iterations": 100
     },
     {
+      "operation": "discovery-search-sorted-by-host-top10",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50
+    },
+    {
+      "operation": "discovery-search-sorted-by-host-ts-top50",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50
+    },
+    {
+      "operation": "discovery-search-errors-sorted-by-host-top20",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50
+    },
+    {
+      "operation": "discovery-search-sorted-by-host-search-after",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50
+    },
+    {
+      "operation": "discovery-search-sorted-by-host-ts-search-after",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50
+    },
+    {
       "name": "logging-queries",
       "parallel": {
         "time-period": {{ p_query_time_period }},
@@ -240,6 +270,13 @@
       "warmup-iterations": 5,
       "iterations": 20,
       "tags": ["esql", "dissect"]
+    },
+    {
+      "operation": "esql_sort_by_host",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["esql"]
     },
     {
       "operation": "term_query_with_matches",

@@ -54,7 +54,8 @@
                 "param-source": "workflow-selector",
                 "workflow": {{workflow | tojson }},
                 "task-offset": {{ loop.index }},
-                "request-params": {{ p_query_request_params | tojson(indent=2) }}
+                "request-params": {{ p_query_request_params | tojson(indent=2) }},
+                "clear-blob-cache": {{ p_clear_blob_cache | tojson }}
               },
               "think-time-interval": {{ p_user_think_time }},
               "workflow-interval": {{ p_user_workflow_time }},

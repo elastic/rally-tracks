@@ -277,6 +277,7 @@ The following parameters are available:
 * `query_max_date_start` (optional) - Maximum datetime to execute queries over, at the beginning of a query workflow task. Increments with the time elapsed as the benchmark executes. Cannot be configured when `query_max_date` is also defined.
 * `query_average_interval` (optional) - Average time interval for queries to use. If unset, we use the durations and intervals set in the original action definitions.
 * `query_request_params` (optional) - A map of query parameters that will be used with any querying.
+* `clear_blob_cache` (default: `false`) - When benchmarking Serverless, clears the blob cache before every search, aggregation and ESQL query so each request is a cold run. The clear request is excluded from the measured time. Ignored on non-serverless clusters.
 * `query_workflows` (optional) - A list of workflows to execute. By default, all workflows are used.
 * `include_esql_queries` (default: true for non-serverless clusters, false for serverless clusters): Whether to include ESQL and ESQL-related queries.
 * `use_doc_values_skipper` (default: true) - Enable doc_values_skippers, and remove indexes on host.name and @timestamp

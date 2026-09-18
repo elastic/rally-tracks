@@ -410,6 +410,78 @@
           "tags": ["geo_grid", "esql"]
         },
         {
+          "operation": "geoGrid_sort_geohash",
+          "warmup-iterations": 2,
+          "iterations": 2,
+          "tags": ["geo_grid", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geohash-esql",
+          "warmup-iterations": 10,
+          "iterations": 10,
+          "tags": ["geo_grid", "esql", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geohash-nolocation",
+          "warmup-iterations": 2,
+          "iterations": 2,
+          "tags": ["geo_grid", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geohash-esql-nolocation",
+          "warmup-iterations": 10,
+          "iterations": 10,
+          "tags": ["geo_grid", "esql", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geotile",
+          "warmup-iterations": 2,
+          "iterations": 2,
+          "tags": ["geo_grid", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geotile-esql",
+          "warmup-iterations": 10,
+          "iterations": 10,
+          "tags": ["geo_grid", "esql", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geotile-nolocation",
+          "warmup-iterations": 2,
+          "iterations": 2,
+          "tags": ["geo_grid", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geotile-esql-nolocation",
+          "warmup-iterations": 10,
+          "iterations": 10,
+          "tags": ["geo_grid", "esql", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geohex",
+          "warmup-iterations": 2,
+          "iterations": 2,
+          "tags": ["geo_grid", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geohex-esql",
+          "warmup-iterations": 2,
+          "iterations": 2,
+          "tags": ["geo_grid", "esql", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geohex-nolocation",
+          "warmup-iterations": 2,
+          "iterations": 2,
+          "tags": ["geo_grid", "sort"]
+        },
+        {
+          "operation": "geoGrid_sort_geohex-esql-nolocation",
+          "warmup-iterations": 2,
+          "iterations": 2,
+          "tags": ["geo_grid", "esql", "sort"]
+        },
+        {
           "operation": "geoGrid_aggs_geohash",
           "warmup-iterations": 200,
           "iterations": 100,

@@ -223,6 +223,7 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
         self._search_fields = self._params["search-fields"]
         self._size = params.get("size", 20)
         self._query_type = self._params["query-type"]
+        self._detailed_results = params.get("detailed-results", False)
 
     def params(self):
         try:
@@ -232,7 +233,12 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
             elif self._query_type == "match":
                 query_body = f'MATCH(title, "{ query }") OR MATCH(content, "{ query }")'
             elif self._query_type == "kql":
-                query_body = f'KQL("{ self._search_fields }:{ query }")'
+                # Pass the field as an option rather than embedding it as "<field>:<query>".
+                # The "*:..." form takes KQL's explicit-field path, which builds a
+                # BooleanQuery of per-field matches (scores summed) and resolves the
+                # wildcard to date fields too; the DSL counterpart takes the default-field
+                # path, which builds a dis_max (scores maxed) and skips date fields.
+                query_body = f'KQL("{ query }", {{"default_field": "{ self._search_fields }" }})'
             elif self._query_type == "match_phrase":
                 query_body = f'MATCH_PHRASE(title, "{ query }") OR MATCH_PHRASE(content, "{ query }")'
             else:
@@ -240,6 +246,9 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
 
             return {
                 "query": f"FROM {self._index_name} METADATA _id, _score, _source | WHERE { query_body } | KEEP _id, _score, _source | SORT _score DESC | LIMIT { self._size }",
+                # the runner reads this off the params dict, so it has to be passed
+                # through explicitly - an operation-level property alone never reaches it
+                "detailed-results": self._detailed_results,
             }
 
         except StopIteration:

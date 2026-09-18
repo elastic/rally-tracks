@@ -131,7 +131,7 @@
       "name": "script-score-query-match-all",
       "tags": ["search"],
       "operation": "script-score-query-match-all",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "warmup-iterations": {{ exact_search_warmup_iterations | default(100) }},
       "iterations": {{ exact_search_iterations | default(100) }},
       "clients": 1
     },
@@ -155,7 +155,7 @@
       "name": "script-score-query-acceptedAnswerId",
       "tags": ["search"],
       "operation": "script-score-query-acceptedAnswerId",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "warmup-iterations": {{ exact_search_warmup_iterations | default(100) }},
       "iterations": {{ exact_search_iterations | default(100) }},
       "clients": 1
     },
@@ -203,7 +203,7 @@
       "name": "script-score-query-concurrency",
       "tags": ["search"],
       "operation": "script-score-query-concurrency",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "warmup-iterations": {{ exact_search_warmup_iterations | default(100) }},
       "iterations": {{ exact_search_iterations | default(100) }},
       "clients": 1
     },
@@ -235,7 +235,7 @@
       "name": "script-score-query-10-50-random-10-percent",
       "tags": ["search"],
       "operation": "script-score-query-10-50-random-10-percent",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "warmup-iterations": {{ exact_search_warmup_iterations | default(100) }},
       "iterations": {{ exact_search_iterations | default(100) }},
       "clients": 1
     },
@@ -324,7 +324,7 @@
       "name": "esql-script-score-query-match-all",
       "tags": ["search"],
       "operation": "esql-script-score-query-match-all",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "warmup-iterations": {{ exact_search_warmup_iterations | default(100) }},
       "iterations": {{ exact_search_iterations | default(100) }},
       "clients": 1
     },
@@ -340,7 +340,7 @@
       "name": "esql-script-score-query-acceptedAnswerId",
       "tags": ["search"],
       "operation": "esql-script-score-query-acceptedAnswerId",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "warmup-iterations": {{ exact_search_warmup_iterations | default(100) }},
       "iterations": {{ exact_search_iterations | default(100) }},
       "clients": 1
     },
@@ -380,7 +380,7 @@
       "name": "esql-script-score-query-concurrency",
       "tags": ["search"],
       "operation": "esql-script-score-query-concurrency",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "warmup-iterations": {{ exact_search_warmup_iterations | default(100) }},
       "iterations": {{ exact_search_iterations | default(100) }},
       "clients": 1
     },

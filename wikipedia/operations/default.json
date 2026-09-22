@@ -167,6 +167,64 @@
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
+  "name": "query-ids-qstr-search",
+  "operation-type": "search",
+  "param-source": "query-search",
+  "query-type": "query-string",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-ids-qstr-search",
+  "operation-type": "esql",
+  "param-source": "esql-search",
+  "query-type": "query-string",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-profile-ids-qstr-search",
+  "operation-type": "esql-profile",
+  "param-source": "esql-search",
+  "query-type": "query-string",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-source-qstr-search",
+  "operation-type": "search",
+  "param-source": "query-search",
+  "query-type": "query-string",
+  "fetch-mode": "source",
+  "size" : {{ source_search_page_size | default(100) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-source-qstr-search",
+  "operation-type": "esql",
+  "param-source": "esql-search",
+  "query-type": "query-string",
+  "fetch-mode": "source",
+  "size" : {{ source_search_page_size | default(100) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-profile-source-qstr-search",
+  "operation-type": "esql-profile",
+  "param-source": "esql-search",
+  "query-type": "query-string",
+  "fetch-mode": "source",
+  "size" : {{ source_search_page_size | default(100) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
   "name": "query-match-search",
   "operation-type": "search",
   "param-source": "query-search",
@@ -190,6 +248,64 @@
   "param-source": "esql-search",
   "query-type": "match",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-ids-match-search",
+  "operation-type": "search",
+  "param-source": "query-search",
+  "query-type": "multi_match",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-ids-match-search",
+  "operation-type": "esql",
+  "param-source": "esql-search",
+  "query-type": "match",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-profile-ids-match-search",
+  "operation-type": "esql-profile",
+  "param-source": "esql-search",
+  "query-type": "match",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-source-match-search",
+  "operation-type": "search",
+  "param-source": "query-search",
+  "query-type": "multi_match",
+  "fetch-mode": "source",
+  "size" : {{ source_search_page_size | default(100) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-source-match-search",
+  "operation-type": "esql",
+  "param-source": "esql-search",
+  "query-type": "match",
+  "fetch-mode": "source",
+  "size" : {{ source_search_page_size | default(100) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-profile-source-match-search",
+  "operation-type": "esql-profile",
+  "param-source": "esql-search",
+  "query-type": "match",
+  "fetch-mode": "source",
+  "size" : {{ source_search_page_size | default(100) | int }},
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {

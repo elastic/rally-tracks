@@ -224,6 +224,9 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
         self._size = params.get("size", 20)
         self._query_type = self._params["query-type"]
         self._detailed_results = params.get("detailed-results", False)
+        # "source" returns the whole _source blob; "ids-only" returns just the
+        # identifiers, so the fetch phase carries no field materialisation.
+        self._fetch_mode = params.get("fetch-mode", "source")
 
     def params(self):
         try:
@@ -244,8 +247,15 @@ class EsqlSearchParamSource(QueryIteratorParamSource):
             else:
                 raise ValueError("Unknown query type: " + self._query_type)
 
+            if self._fetch_mode == "ids-only":
+                metadata, projection = "_id, _score", " | KEEP _id, _score"
+            elif self._fetch_mode == "source":
+                metadata, projection = "_id, _score, _source", " | KEEP _id, _score, _source"
+            else:
+                raise ValueError("Unknown fetch mode: " + self._fetch_mode)
+
             return {
-                "query": f"FROM {self._index_name} METADATA _id, _score, _source | WHERE { query_body } | KEEP _id, _score, _source | SORT _score DESC | LIMIT { self._size }",
+                "query": f"FROM {self._index_name} METADATA { metadata } | WHERE { query_body }{ projection } | SORT _score DESC | LIMIT { self._size }",
                 # the runner reads this off the params dict, so it has to be passed
                 # through explicitly - an operation-level property alone never reaches it
                 "detailed-results": self._detailed_results,
@@ -263,6 +273,9 @@ class QueryParamSource(QueryIteratorParamSource):
         self._cache = params.get("cache", False)
         self._query_type = self._params["query-type"]
         self._detailed_results = params.get("detailed-results", False)
+        # Mirrors EsqlSearchParamSource: "ids-only" turns _source off so the DSL
+        # response carries the same payload as ESQL's KEEP _id, _score.
+        self._fetch_mode = params.get("fetch-mode", "source")
 
     def params(self):
         try:
@@ -284,11 +297,17 @@ class QueryParamSource(QueryIteratorParamSource):
             self._queries_iterator = iter(self._sample_queries)
             return self.params()
 
+        body = {
+            "query": query_body,
+            "size": self._params["size"],
+        }
+        if self._fetch_mode == "ids-only":
+            body["_source"] = False
+        elif self._fetch_mode != "source":
+            raise ValueError("Unknown fetch mode: " + self._fetch_mode)
+
         return {
-            "body": {
-                "query": query_body,
-                "size": self._params["size"],
-            },
+            "body": body,
             "index": self._index_name,
             "cache": self._cache,
             "detailed-results": self._detailed_results,

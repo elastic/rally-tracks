@@ -12,9 +12,9 @@
         "time-format": "milliseconds",
         "profile": "fixed_interval",
         "detailed-results": true,
-        "bulk-size": {{ (bulk_size | default(50)) }}
+        "bulk-size": {{ (bulk_size | default(50)) }},
+        "ingest-percentage": {{ ingest_percentage | default(100) }}
       },
-      "ingest-percentage": {{ ingest_percentage | default(100) }},
       "clients": {{ p_bulk_indexing_clients }},
       "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
     },

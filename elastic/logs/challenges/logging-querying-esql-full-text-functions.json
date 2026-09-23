@@ -20,13 +20,15 @@
           "detailed-results": true
         },
         "clients": {{ p_bulk_indexing_clients }},
-        "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+        "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+        "tags": ["index"]
       }
       {%- if force_merge_max_num_segments is defined %},
       {
         "name": "refresh-after-index",
         "index": "logs-*",
-        "operation": "refresh"
+        "operation": "refresh",
+        "tags": ["index"]
       },
       {
         "name": "wait-until-index-merges-fininshes",
@@ -40,7 +42,7 @@
           "retry-until-success": true,
           "include-in-reporting": false
         },
-        "tags": ["wait"]
+        "tags": ["index", "wait"]
       },
       {
         "operation": {
@@ -48,7 +50,8 @@
           "index": "logs-*",
           "request-timeout": 36000,
           "max-num-segments": {{ force_merge_max_num_segments | tojson }}
-        }
+        },
+        "tags": ["index"]
       },
       {
         "name": "wait-until-merges-finish",
@@ -61,12 +64,14 @@
           },
           "retry-until-success": true,
           "include-in-reporting": false
-        }
+        },
+        "tags": ["index"]
       },
       {
         "name": "refresh-after-force-merge",
         "index": "logs-*",
-        "operation": "refresh"
+        "operation": "refresh",
+        "tags": ["index"]
       }
       {%- endif %}
       ,

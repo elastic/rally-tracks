@@ -1,15 +1,32 @@
 import random
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
+
 from faker import Faker
 
 ASSET_TYPES = ["design", "image", "video", "presentation", "document"]
 STATUSES = ["published", "draft", "archived"]
 TAGS = [
-    "template", "social-media", "marketing", "branding", "infographic",
-    "presentation", "poster", "flyer", "banner", "logo", "icon",
-    "illustration", "photo", "background", "layout", "typography",
-    "minimal", "colorful", "business", "creative",
+    "template",
+    "social-media",
+    "marketing",
+    "branding",
+    "infographic",
+    "presentation",
+    "poster",
+    "flyer",
+    "banner",
+    "logo",
+    "icon",
+    "illustration",
+    "photo",
+    "background",
+    "layout",
+    "typography",
+    "minimal",
+    "colorful",
+    "business",
+    "creative",
 ]
 
 # Captured once at startup so all param source instances share the same reference point
@@ -19,9 +36,9 @@ _NOW = datetime.now(timezone.utc)
 # per-batch document seeds (which are base_seed + global_batch_num, typically
 # in the range 0..num_batches). Offsets are spaced 1M apart for safety.
 _WORKSPACE_POOL_SEED_OFFSET = 10_000_000
-_TEAM_POOL_SEED_OFFSET      = 11_000_000
-_OWNER_POOL_SEED_OFFSET     = 12_000_000
-_FOLDER_POOL_SEED_OFFSET    = 13_000_000
+_TEAM_POOL_SEED_OFFSET = 11_000_000
+_OWNER_POOL_SEED_OFFSET = 12_000_000
+_FOLDER_POOL_SEED_OFFSET = 13_000_000
 
 
 def _make_uuid_pool(seed: int, size: int) -> list:
@@ -49,20 +66,20 @@ def _make_doc(
         updated = _NOW
 
     return {
-        "asset_id":     fake.uuid4(),                    # unique per document
-        "title":        fake.sentence(nb_words=rand.randint(4, 8)).rstrip("."),
-        "description":  fake.text(max_nb_chars=280),
-        "content":      fake.text(max_nb_chars=250),
-        "asset_type":   rand.choice(ASSET_TYPES),
-        "owner_id":     rand.choice(owner_pool),         # bounded cardinality
-        "team_id":      rand.choice(team_pool),          # bounded cardinality
-        "workspace_id": rand.choice(workspace_pool),     # bounded cardinality
-        "folder_id":    rand.choice(folder_pool),        # bounded cardinality
-        "tags":         rand.sample(TAGS, k=rand.randint(2, 5)),
-        "status":       rand.choices(STATUSES, weights=[70, 20, 10])[0],
-        "created_at":   created.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
-        "updated_at":   updated.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
-        "view_count":   rand.randint(0, 1_000_000),
+        "asset_id": fake.uuid4(),  # unique per document
+        "title": fake.sentence(nb_words=rand.randint(4, 8)).rstrip("."),
+        "description": fake.text(max_nb_chars=280),
+        "content": fake.text(max_nb_chars=250),
+        "asset_type": rand.choice(ASSET_TYPES),
+        "owner_id": rand.choice(owner_pool),  # bounded cardinality
+        "team_id": rand.choice(team_pool),  # bounded cardinality
+        "workspace_id": rand.choice(workspace_pool),  # bounded cardinality
+        "folder_id": rand.choice(folder_pool),  # bounded cardinality
+        "tags": rand.sample(TAGS, k=rand.randint(2, 5)),
+        "status": rand.choices(STATUSES, weights=[70, 20, 10])[0],
+        "created_at": created.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+        "updated_at": updated.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+        "view_count": rand.randint(0, 1_000_000),
         "file_size_bytes": rand.randint(10_240, 104_857_600),
     }
 
@@ -163,16 +180,23 @@ class AssetSearchParamSource:
         body = []
         for _ in range(batch_size):
             body.append({"index": {"_index": self._index_name}})
-            body.append(_make_doc(
-                fake, rand, self._date_range_days,
-                self._workspace_pool, self._team_pool,
-                self._owner_pool, self._folder_pool,
-            ))
+            body.append(
+                _make_doc(
+                    fake,
+                    rand,
+                    self._date_range_days,
+                    self._workspace_pool,
+                    self._team_pool,
+                    self._owner_pool,
+                    self._folder_pool,
+                )
+            )
 
         self._docs_sent += batch_size
         self._local_batch += 1
 
         return {
+            **self._params,
             "body": body,
             "bulk-size": batch_size,
             "unit": "docs",
@@ -245,13 +269,9 @@ class AssetSearchQueryParamSource:
     def params(self):
         qt = self._query_type
         if qt == "workspace-term":
-            body = {
-                "query": {"term": {"workspace_id": self._rng.choice(self._workspace_pool)}}
-            }
+            body = {"query": {"term": {"workspace_id": self._rng.choice(self._workspace_pool)}}}
         elif qt == "owner-term":
-            body = {
-                "query": {"term": {"owner_id": self._rng.choice(self._owner_pool)}}
-            }
+            body = {"query": {"term": {"owner_id": self._rng.choice(self._owner_pool)}}}
         elif qt == "bool-workspace-asset-type":
             body = {
                 "query": {

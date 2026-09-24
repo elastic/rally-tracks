@@ -44,24 +44,22 @@ def load_query_vectors(queries_file) -> Dict[int, List[float]]:
 async def extract_exact_neighbors(
     query_vector: List[float], index: str, max_size: int, vector_field: str, request_cache: bool, client
 ) -> List[str]:
-    script_query = {
+    exact_query = {
         "query": {
-            "script_score": {
-                "query": {"match_all": {}},
-                "script": {
-                    "source": f"cosineSimilarity(params.query, '{vector_field}') + 1.0",
-                    "params": {"query": query_vector},
-                },
+            "dense_vector": {
+                "field": vector_field,
+                "query_vector": query_vector,
+                "similarity_function": "cosine",
             }
         }
     }
-    script_result = await client.search(
-        body=script_query,
+    result = await client.search(
+        body=exact_query,
         index=index,
         request_cache=request_cache,
         size=max_size,
     )
-    return [hit["_id"] for hit in script_result["hits"]["hits"]]
+    return [hit["_id"] for hit in result["hits"]["hits"]]
 
 
 class KnnVectorStore:
@@ -141,12 +139,10 @@ class KnnParamSource:
         if self._exact_scan:
             result["body"] = {
                 "query": {
-                    "script_score": {
-                        "query": {"match_all": {}},
-                        "script": {
-                            "source": f"cosineSimilarity(params.query, '{self._vector_field}') + 1.0",
-                            "params": {"query": self._queries[self._iters]},
-                        },
+                    "dense_vector": {
+                        "field": self._vector_field,
+                        "query_vector": self._queries[self._iters],
+                        "similarity_function": "cosine",
                     }
                 }
             }

@@ -21,7 +21,7 @@
 
 - Apply 'backport pending' label to merged PRs that require backport.
 - Post reminder comments on such PRs that have a 'backport pending' label
-but a version label (e.g. vX.Y) has not been added yet. 
+but a version label (e.g. vX.Y) has not been added yet.
 - Omits PRs labeled 'backport'.
 
 Usage: backport.py [options] <command> [flags]

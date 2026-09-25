@@ -137,6 +137,12 @@ class ProcessedCorpusParamSource:
             raise exceptions.InvalidSyntax('Mandatory parameter "bulk-size" is missing')
         except ValueError:
             raise exceptions.InvalidSyntax('"bulk-size" must be numeric')
+        try:
+            self.ingest_percentage = float(params.get("ingest-percentage", 100))
+        except ValueError:
+            raise exceptions.InvalidSyntax('"ingest-percentage" must be numeric')
+        if self.ingest_percentage <= 0 or self.ingest_percentage > 100:
+            raise exceptions.InvalidSyntax(f'"ingest-percentage" must be in the range (0, 100] but was {self.ingest_percentage}')
         self.corpus = next(
             (c for c in track.corpora if c.meta_data.get("generated", False)),
             None,
@@ -353,6 +359,11 @@ class ProcessedCorpusParamSource:
         self.total_docs_per_day = math.ceil(
             self.total_corpus_docs * ((self._volume_per_day_gb * 1024 * 1024 * 1024) / self.total_corpus_bytes)
         )
+        if self.ingest_percentage < 100:
+            # NOTE: scale the daily document count instead of truncating the doc stream so
+            # generated timestamps still cover the full date range and query workflows find
+            # data in every window; this must happen before the timestamp generator is built
+            self.total_docs_per_day = math.ceil(self.total_docs_per_day * self.ingest_percentage / 100)
         self.total_docs = self.total_docs_per_day * self._number_of_days
         if self._client_index == 0:
             self.logger.info(f"Total Docs: [{self.total_docs}]")

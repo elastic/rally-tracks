@@ -257,7 +257,7 @@ The following parameters are available:
 * `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 
 * `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
 * `initial_indices_count` (default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
-* `ingest_percentage` (default: 100) - The percentage of data to be ingested.
+* `ingest_percentage` (default: 100) - A number in (0, 100] that scales the number of documents derived from `raw_data_volume_per_day`. Generated timestamps still cover the whole date range, so the same period is indexed with proportionally fewer documents. Supported by the `logging-indexing` and `logging-indexing-querying` challenges.
 * `index_mode` (default: unset): What index mode to use. Accepted values: `standard`, `logs` or `logsdb_columnar`. 
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.

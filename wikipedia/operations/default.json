@@ -155,6 +155,7 @@
   "param-source": "esql-search",
   "query-type": "query-string",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
@@ -163,6 +164,64 @@
   "param-source": "esql-search",
   "query-type": "query-string",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-qstr-search-ids",
+  "operation-type": "search",
+  "param-source": "query-search",
+  "query-type": "query-string",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-qstr-search-ids",
+  "operation-type": "esql",
+  "param-source": "esql-search",
+  "query-type": "query-string",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-profile-qstr-search-ids",
+  "operation-type": "esql-profile",
+  "param-source": "esql-search",
+  "query-type": "query-string",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-qstr-search-top100",
+  "operation-type": "search",
+  "param-source": "query-search",
+  "query-type": "query-string",
+  "fetch-mode": "source",
+  "size" : {{ top_search_page_size | default(100) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-qstr-search-top100",
+  "operation-type": "esql",
+  "param-source": "esql-search",
+  "query-type": "query-string",
+  "fetch-mode": "source",
+  "size" : {{ top_search_page_size | default(100) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-profile-qstr-search-top100",
+  "operation-type": "esql-profile",
+  "param-source": "esql-search",
+  "query-type": "query-string",
+  "fetch-mode": "source",
+  "size" : {{ top_search_page_size | default(100) | int }},
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
@@ -180,6 +239,7 @@
   "param-source": "esql-search",
   "query-type": "match",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
@@ -188,6 +248,64 @@
   "param-source": "esql-search",
   "query-type": "match",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-match-search-ids",
+  "operation-type": "search",
+  "param-source": "query-search",
+  "query-type": "multi_match",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-match-search-ids",
+  "operation-type": "esql",
+  "param-source": "esql-search",
+  "query-type": "match",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-profile-match-search-ids",
+  "operation-type": "esql-profile",
+  "param-source": "esql-search",
+  "query-type": "match",
+  "fetch-mode": "ids-only",
+  "size" : {{ query_string_search_page_size | default(20) | int }},
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-match-search-top100",
+  "operation-type": "search",
+  "param-source": "query-search",
+  "query-type": "multi_match",
+  "fetch-mode": "source",
+  "size" : {{ top_search_page_size | default(100) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-match-search-top100",
+  "operation-type": "esql",
+  "param-source": "esql-search",
+  "query-type": "match",
+  "fetch-mode": "source",
+  "size" : {{ top_search_page_size | default(100) | int }},
+  "detailed-results": true,
+  "search-fields" : "{{ query_string_search_fields | default("*") }}"
+},
+{
+  "name": "query-esql-profile-match-search-top100",
+  "operation-type": "esql-profile",
+  "param-source": "esql-search",
+  "query-type": "match",
+  "fetch-mode": "source",
+  "size" : {{ top_search_page_size | default(100) | int }},
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
@@ -205,6 +323,7 @@
   "param-source": "esql-search",
   "query-type": "match_phrase",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {
@@ -230,6 +349,7 @@
   "param-source": "esql-search",
   "query-type": "kql",
   "size" : {{ query_string_search_page_size | default(20) | int }},
+  "detailed-results": true,
   "search-fields" : "{{ query_string_search_fields | default("*") }}"
 },
 {

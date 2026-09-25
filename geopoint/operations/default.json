@@ -763,6 +763,186 @@
       "query": "FROM osmgeopoints | WHERE ST_GEOHEX(location, 1) == TO_GEOHEX(\"811fbffffffffff\") | LIMIT 10"
     },
     {
+      "name": "geoGrid_sort_geohash",
+      "operation-type": "search",
+      "body": {
+        "size": 10,
+        "_source": false,
+        "runtime_mappings": {
+          "grid": {
+            "type": "keyword",
+            "script": {
+              "lang": "painless",
+              "source": "String base32 = '0123456789bcdefghjkmnpqrstuvwxyz'; double lat = doc['location'].lat; double lon = doc['location'].lon; double minLat = -90; double maxLat = 90; double minLon = -180; double maxLon = 180; boolean even = true; int bit = 0; int ch = 0; String hash = ''; while (hash.length() < 5) { double mid; if (even) { mid = (minLon + maxLon) / 2; if (lon >= mid) { ch |= (16 >> bit); minLon = mid; } else { maxLon = mid; } } else { mid = (minLat + maxLat) / 2; if (lat >= mid) { ch |= (16 >> bit); minLat = mid; } else { maxLat = mid; } } even = !even; if (bit < 4) { bit++; } else { hash += base32.substring(ch, ch + 1); bit = 0; ch = 0; } } emit(hash);"
+            }
+          }
+        },
+        "sort": [
+          {
+            "grid": {
+              "order": "asc"
+            }
+          }
+        ],
+        "fields": ["grid", "location"]
+      }
+    },
+    {
+      "name": "geoGrid_sort_geohash-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL grid = ST_GEOHASH(location, 5)::long | SORT grid ASC | KEEP grid, location | LIMIT 10"
+    },
+    {
+      "name": "geoGrid_sort_geohash-nolocation",
+      "operation-type": "search",
+      "body": {
+        "size": 10,
+        "_source": false,
+        "runtime_mappings": {
+          "grid": {
+            "type": "keyword",
+            "script": {
+              "lang": "painless",
+              "source": "String base32 = '0123456789bcdefghjkmnpqrstuvwxyz'; double lat = doc['location'].lat; double lon = doc['location'].lon; double minLat = -90; double maxLat = 90; double minLon = -180; double maxLon = 180; boolean even = true; int bit = 0; int ch = 0; String hash = ''; while (hash.length() < 5) { double mid; if (even) { mid = (minLon + maxLon) / 2; if (lon >= mid) { ch |= (16 >> bit); minLon = mid; } else { maxLon = mid; } } else { mid = (minLat + maxLat) / 2; if (lat >= mid) { ch |= (16 >> bit); minLat = mid; } else { maxLat = mid; } } even = !even; if (bit < 4) { bit++; } else { hash += base32.substring(ch, ch + 1); bit = 0; ch = 0; } } emit(hash);"
+            }
+          }
+        },
+        "sort": [
+          {
+            "grid": {
+              "order": "asc"
+            }
+          }
+        ],
+        "fields": ["grid"]
+      }
+    },
+    {
+      "name": "geoGrid_sort_geohash-esql-nolocation",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL grid = ST_GEOHASH(location, 5)::long | SORT grid ASC | KEEP grid | LIMIT 10"
+    },
+    {
+      "name": "geoGrid_sort_geotile",
+      "operation-type": "search",
+      "body": {
+        "size": 10,
+        "_source": false,
+        "runtime_mappings": {
+          "grid": {
+            "type": "keyword",
+            "script": {
+              "lang": "painless",
+              "source": "int zoom = 5; double lon = doc['location'].lon; double lat = doc['location'].lat; if (lat > 85.0511287798066) { lat = 85.0511287798066; } if (lat < -85.0511287798066) { lat = -85.0511287798066; } int tiles = 1 << zoom; int x = (int) Math.floor((lon + 180.0) / 360.0 * tiles); if (x < 0) { x = 0; } else if (x >= tiles) { x = tiles - 1; } double latSin = Math.sin(Math.toRadians(lat)); double yTile = (0.5 - (Math.log((1.0 + latSin) / (1.0 - latSin)) / (4.0 * Math.PI))) * tiles; int y = (int) Math.floor(yTile); if (y < 0) { y = 0; } else if (y >= tiles) { y = tiles - 1; } emit(zoom + '/' + x + '/' + y);"
+            }
+          }
+        },
+        "sort": [
+          {
+            "grid": {
+              "order": "asc"
+            }
+          }
+        ],
+        "fields": ["grid", "location"]
+      }
+    },
+    {
+      "name": "geoGrid_sort_geotile-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL grid = ST_GEOTILE(location, 5)::long | SORT grid ASC | KEEP grid, location | LIMIT 10"
+    },
+    {
+      "name": "geoGrid_sort_geotile-nolocation",
+      "operation-type": "search",
+      "body": {
+        "size": 10,
+        "_source": false,
+        "runtime_mappings": {
+          "grid": {
+            "type": "keyword",
+            "script": {
+              "lang": "painless",
+              "source": "int zoom = 5; double lon = doc['location'].lon; double lat = doc['location'].lat; if (lat > 85.0511287798066) { lat = 85.0511287798066; } if (lat < -85.0511287798066) { lat = -85.0511287798066; } int tiles = 1 << zoom; int x = (int) Math.floor((lon + 180.0) / 360.0 * tiles); if (x < 0) { x = 0; } else if (x >= tiles) { x = tiles - 1; } double latSin = Math.sin(Math.toRadians(lat)); double yTile = (0.5 - (Math.log((1.0 + latSin) / (1.0 - latSin)) / (4.0 * Math.PI))) * tiles; int y = (int) Math.floor(yTile); if (y < 0) { y = 0; } else if (y >= tiles) { y = tiles - 1; } emit(zoom + '/' + x + '/' + y);"
+            }
+          }
+        },
+        "sort": [
+          {
+            "grid": {
+              "order": "asc"
+            }
+          }
+        ],
+        "fields": ["grid"]
+      }
+    },
+    {
+      "name": "geoGrid_sort_geotile-esql-nolocation",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL grid = ST_GEOTILE(location, 5)::long | SORT grid ASC | KEEP grid | LIMIT 10"
+    },
+    {
+      "name": "geoGrid_sort_geohex",
+      "operation-type": "search",
+      "body": {
+        "size": 10,
+        "_source": false,
+        "runtime_mappings": {
+          "grid": {
+            "type": "keyword",
+            "script": {
+              "lang": "painless",
+              "source": "double lon = doc['location'].lon; double lat = doc['location'].lat; int res = 5; double size = 180.0 / Math.pow(Math.sqrt(7), res); double q = (2.0 / 3.0 * lon) / size; double r = (-1.0 / 3.0 * lon + Math.sqrt(3.0) / 3.0 * lat) / size; double x = q; double zc = r; double y = -x - zc; int rx = (int) Math.round(x); int ry = (int) Math.round(y); int rz = (int) Math.round(zc); double xd = Math.abs(rx - x); double yd = Math.abs(ry - y); double zd = Math.abs(rz - zc); if (xd > yd && xd > zd) { rx = -ry - rz; } else if (yd > zd) { ry = -rx - rz; } else { rz = -rx - ry; } emit(rx + '/' + rz);"
+            }
+          }
+        },
+        "sort": [
+          {
+            "grid": {
+              "order": "asc"
+            }
+          }
+        ],
+        "fields": ["grid", "location"]
+      }
+    },
+    {
+      "name": "geoGrid_sort_geohex-esql",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL grid = ST_GEOHEX(location, 5)::long | SORT grid ASC | KEEP grid, location | LIMIT 10"
+    },
+    {
+      "name": "geoGrid_sort_geohex-nolocation",
+      "operation-type": "search",
+      "body": {
+        "size": 10,
+        "_source": false,
+        "runtime_mappings": {
+          "grid": {
+            "type": "keyword",
+            "script": {
+              "lang": "painless",
+              "source": "double lon = doc['location'].lon; double lat = doc['location'].lat; int res = 5; double size = 180.0 / Math.pow(Math.sqrt(7), res); double q = (2.0 / 3.0 * lon) / size; double r = (-1.0 / 3.0 * lon + Math.sqrt(3.0) / 3.0 * lat) / size; double x = q; double zc = r; double y = -x - zc; int rx = (int) Math.round(x); int ry = (int) Math.round(y); int rz = (int) Math.round(zc); double xd = Math.abs(rx - x); double yd = Math.abs(ry - y); double zd = Math.abs(rz - zc); if (xd > yd && xd > zd) { rx = -ry - rz; } else if (yd > zd) { ry = -rx - rz; } else { rz = -rx - ry; } emit(rx + '/' + rz);"
+            }
+          }
+        },
+        "sort": [
+          {
+            "grid": {
+              "order": "asc"
+            }
+          }
+        ],
+        "fields": ["grid"]
+      }
+    },
+    {
+      "name": "geoGrid_sort_geohex-esql-nolocation",
+      "operation-type": "esql",
+      "query": "FROM osmgeopoints | EVAL grid = ST_GEOHEX(location, 5)::long | SORT grid ASC | KEEP grid | LIMIT 10"
+    },
+    {
       "name": "geoGrid_aggs_geohash",
       "operation-type": "search",
       "body": {

@@ -776,6 +776,11 @@
       }
     },
     {
+      "name": "geoGrid_geohash-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_GEOHASH(shape, 2) == TO_GEOHASH(\"u0\") | LIMIT 10"
+    },
+    {
       "name": "geoGrid_geotile",
       "operation-type": "search",
       "index": "osm*",
@@ -790,6 +795,11 @@
       }
     },
     {
+      "name": "geoGrid_geotile-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_GEOTILE(shape, 6) == TO_GEOTILE(\"6/32/22\") | LIMIT 10"
+    },
+    {
       "name": "geoGrid_geohex",
       "operation-type": "search",
       "index": "osm*",
@@ -802,6 +812,11 @@
           }
         }
       }
+    },
+    {
+      "name": "geoGrid_geohex-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_GEOHEX(shape, 1) == TO_GEOHEX(\"811fbffffffffff\") | LIMIT 10"
     },
     {
       "name": "geoGrid_aggs_geohash",
@@ -832,6 +847,11 @@
       }
     },
     {
+      "name": "geoGrid_aggs_geohash-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL geohash = ST_GEOHASH(shape, 5, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY geohash"
+    },
+    {
       "name": "geoGrid_aggs_geotile",
       "operation-type": "search",
       "index": "osm*",
@@ -860,6 +880,11 @@
       }
     },
     {
+      "name": "geoGrid_aggs_geotile-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL geotile = ST_GEOTILE(shape, 13, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY geotile"
+    },
+    {
       "name": "geoGrid_aggs_geohex",
       "operation-type": "search",
       "index": "osm*",
@@ -886,4 +911,9 @@
           }
         }
       }
+    },
+    {
+      "name": "geoGrid_aggs_geohex-esql",
+      "operation-type": "esql",
+      "query": "FROM osm* | WHERE ST_Intersects(shape, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL geohex = ST_GEOHEX(shape, 6, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY geohex"
     }

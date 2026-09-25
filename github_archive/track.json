@@ -1,5 +1,6 @@
 {% import "rally.helpers" as rally with context %}
 {%- set p_data_stream = data_stream | default(false) %}
+{%- set p_conflicts = conflicts | default(none) %}
 {%- set p_conflict_probability = conflict_probability | default(25) %}
 {%- set p_on_conflict = on_conflict | default('index') %}
 {%- set p_cluster_health = cluster_health | default('green') %}

@@ -18,26 +18,29 @@ DEFAULT_K: Final[int] = 10
 async def extract_exact_neighbors(query_vector: List[float], index: str, max_size: int, vector_field: str, filter, client) -> List[str]:
     if filter is None:
         raise ValueError("Filter must be provided for exact neighbors extraction.")
-    script_query = {
+    exact_query = {
         "query": {
-            "script_score": {
-                "query": filter,
-                "script": {
-                    "source": f"dotProduct(params.query, '{vector_field}') + 1.0",
-                    "params": {"query": query_vector},
+            "bool": {
+                "must": {
+                    "dense_vector": {
+                        "field": vector_field,
+                        "query_vector": query_vector,
+                        "similarity_function": "dot_product",
+                    }
                 },
+                "filter": filter,
             }
         },
         "_source": False,
         "docvalue_fields": ["questionId"],
     }
-    script_result = await client.search(
-        body=script_query,
+    result = await client.search(
+        body=exact_query,
         index=index,
         request_cache=True,
         size=max_size,
     )
-    return [hit["fields"]["questionId"][0] for hit in script_result["hits"]["hits"]]
+    return [hit["fields"]["questionId"][0] for hit in result["hits"]["hits"]]
 
 
 def compute_percentile(data: List[Any], percentile):
@@ -94,19 +97,24 @@ class KnnParamSource:
             self._iters = 0
 
         if self._exact_scan:
-            result["body"] = {
-                "query": {
-                    "script_score": {
-                        "query": {"match_all": {}},
-                        "script": {
-                            "source": "dotProduct(params.query, 'titleVector') + 1.0",
-                            "params": {"query": query_vec},
-                        },
-                    }
+            dense_vector_clause = {
+                "dense_vector": {
+                    "field": "titleVector",
+                    "query_vector": query_vec,
+                    "similarity_function": "dot_product",
                 }
             }
             if "filter" in self._params:
-                result["body"]["query"]["script_score"]["query"] = self._params["filter"]
+                result["body"] = {
+                    "query": {
+                        "bool": {
+                            "must": dense_vector_clause,
+                            "filter": self._params["filter"],
+                        }
+                    }
+                }
+            else:
+                result["body"] = {"query": dense_vector_clause}
         else:
             result["body"] = {
                 "knn": {

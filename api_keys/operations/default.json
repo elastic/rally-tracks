@@ -1,0 +1,18 @@
+    {
+      "name": "create-roles-and-users",
+      "operation-type": "create-roles-and-users",
+      "num_roles": 100,
+      "num_users": 100,
+      "roles_per_user": 2
+    },
+    {
+      "name": "create-api-keys",
+      "operation-type": "create-api-keys",
+      "num_keys": 100000,
+      "batch_size": 100,
+      "num_users": 100
+    },
+    {
+      "name": "authenticate-with-api-key",
+      "operation-type": "authenticate-with-api-key"
+    }

@@ -623,6 +623,39 @@ async def test_detailed_results():
 
 
 @pytest.mark.asyncio
+async def test_clear_blob_cache():
+    param_source = WorkflowSelectorParamSource(
+        track=StaticTrack(parameters={}),
+        params={
+            "workflow": "a",
+            "workflows-folder": "tests/parameter_sources/resources/workflows",
+            "task-offset": 0,
+            "clear-blob-cache": True,
+        },
+    )
+    assert param_source.workflows[0][0] == "5"
+    assert "clear-blob-cache" in param_source.workflows[0][1]["requests"][0]["stream"][0]
+    # all workflows in workflows/a are identical
+    for i in range(5):
+        assert param_source.workflows[i][1]["requests"][0]["stream"][0]["clear-blob-cache"] is True
+        assert param_source.workflows[i][1]["requests"][1]["stream"][0]["clear-blob-cache"] is True
+        assert param_source.workflows[i][1]["requests"][2]["clear-blob-cache"] is True
+
+
+@pytest.mark.asyncio
+async def test_clear_blob_cache_not_set_by_default():
+    param_source = WorkflowSelectorParamSource(
+        track=StaticTrack(parameters={}),
+        params={
+            "workflow": "a",
+            "workflows-folder": "tests/parameter_sources/resources/workflows",
+            "task-offset": 0,
+        },
+    )
+    assert "clear-blob-cache" not in param_source.workflows[0][1]["requests"][0]["stream"][0]
+
+
+@pytest.mark.asyncio
 async def test_request_cache():
     param_source = WorkflowSelectorParamSource(
         track=StaticTrack(parameters={"workflow-request-cache": True}),

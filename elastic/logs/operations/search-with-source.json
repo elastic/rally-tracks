@@ -1,5 +1,6 @@
 {% macro discovery_search_props(size) %}
     "operation-type": "search",
+    "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
     "index": "logs-*",
     "request-params": {
       "batched_reduce_size": "64",
@@ -98,37 +99,15 @@
     }
 {% endmacro %}
 {% for size in [100, 500, 1000] %}
-  {% if build_flavor == "serverless" %}
-  {
-    "name": "discovery-search-request-size-{{ size }}",
-    "operation-type": "composite",
-    "requests": [
-      {
-        "stream": [
-          {
-            "operation-type": "raw-request",
-            "method": "POST",
-            "path": "/_internal/blob_caches/clear",
-            "body": null
-          },
-          {
-            {{ discovery_search_props(size) }}
-          }
-        ]
-      }
-    ]
-  }
-  {% else %}
   {
     "name": "discovery-search-request-size-{{ size }}",
     {{ discovery_search_props(size) }}
-  }
-  {% endif %}
-  ,
+  },
 {% endfor %}
 {
   "name": "discovery-search-sorted-by-host-top10",
   "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
   "index": "logs-*",
   "request-params": {
     "ignore_unavailable": "true",
@@ -143,6 +122,7 @@
 {
   "name": "discovery-search-sorted-by-host-ts-top50",
   "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
   "index": "logs-*",
   "request-params": {
     "ignore_unavailable": "true",
@@ -160,6 +140,7 @@
 {
   "name": "discovery-search-errors-sorted-by-host-top20",
   "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
   "index": "logs-*",
   "request-params": {
     "ignore_unavailable": "true",
@@ -175,6 +156,7 @@
 {
   "name": "discovery-search-sorted-by-host-search-after",
   "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
   "index": "logs-*",
   "request-params": {
     "ignore_unavailable": "true",
@@ -190,6 +172,7 @@
 {
   "name": "discovery-search-sorted-by-host-ts-search-after",
   "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
   "index": "logs-*",
   "request-params": {
     "ignore_unavailable": "true",

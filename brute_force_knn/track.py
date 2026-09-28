@@ -54,7 +54,9 @@ class BruteForceSearchParamSource:
                         "query_vector": query_vec,
                         "similarity_function": "dot_product"
                     }
-                }
+                },
+                "_source": False,
+                "fields": ["questionId"]
             },
         }
 
@@ -86,7 +88,7 @@ class BruteForceESQLParamSource:
         query = (
             f"FROM {self._index_name} METADATA _score "
             '| WHERE KNN(titleVector, ?query, {"similarity_function": "dot_product"}) '
-            f"| SORT _score DESC | LIMIT {k} "
+            f"| SORT _score DESC | LIMIT {k} | KEEP questionId"
         )
 
         return {

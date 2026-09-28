@@ -55,6 +55,39 @@ def test_corpus_read():
     assert total_batches == 1748
 
 
+def test_corpus_read_with_ingest_percentage():
+    cwd = os.path.dirname(__file__)
+    test_track = StaticTrack(
+        parameters={
+            "track-id": "test_file_write",
+            "end-date": "2020-09-01:00:00:00",
+            "start-date": "2020-08-31:00:00:00",
+            "raw-data-volume-per-day": "0.1MB",
+        },
+        generated_document_paths=[os.path.join(cwd, "resources", "processed_test", "test_corpus_read", "0.json")],
+    )
+
+    param_source = ProcessedCorpusParamSource(
+        track=test_track,
+        params={
+            "time-format": "milliseconds",
+            "profile": "fixed_interval",
+            "bulk-size": 10,
+            "ingest-percentage": 50,
+        },
+    )
+    client_param_source = param_source.partition(partition_index=0, total_partitions=1)
+    total_batches = 0
+    while True:
+        try:
+            client_param_source.params()
+            total_batches += 1
+        except StopIteration:
+            break
+    # half of the 1748 batches that test_corpus_read gets at 100 percent
+    assert total_batches == 874
+
+
 def test_corpus_read_changing_bulk_size():
     cwd = os.path.dirname(__file__)
     test_track = StaticTrack(
@@ -411,6 +444,31 @@ def test_negative_bulk_size():
             params={"bulk-size": -1},
         )
     assert invalid_syntax.value.message == '"bulk-size" must be positive but was -1'
+
+
+def test_invalid_ingest_percentage():
+    def create_with_ingest_percentage(ingest_percentage):
+        return ProcessedCorpusParamSource(
+            track=StaticTrack(
+                parameters={
+                    "track-id": "test_file_write",
+                    "raw-data-volume-per-day": "0.001MB",
+                }
+            ),
+            params={"bulk-size": 10, "ingest-percentage": ingest_percentage},
+        )
+
+    with pytest.raises(InvalidSyntax) as invalid_syntax:
+        create_with_ingest_percentage(0)
+    assert invalid_syntax.value.message == '"ingest-percentage" must be in the range (0, 100] but was 0.0'
+
+    with pytest.raises(InvalidSyntax) as invalid_syntax:
+        create_with_ingest_percentage(100.1)
+    assert invalid_syntax.value.message == '"ingest-percentage" must be in the range (0, 100] but was 100.1'
+
+    with pytest.raises(InvalidSyntax) as invalid_syntax:
+        create_with_ingest_percentage("half")
+    assert invalid_syntax.value.message == '"ingest-percentage" must be numeric'
 
 
 def test_no_data_volume():

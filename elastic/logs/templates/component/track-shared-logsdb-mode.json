@@ -25,9 +25,13 @@
             ,"use_time_series_doc_values_format": {{use_time_series_doc_values_format | tojson}}
             {% endif %}
             ,"use_time_series_doc_values_format_large_binary_block_size": true
-            {#- ColumNAR keyword doc-values opt-in: emitted only for the strict-columnar `logsdb_columnar` mode, since the codec is never selected in other index modes, so the flag stays a no-op elsewhere -#}
-            {%- if enable_columnar_codec | default(false) and index_mode == "logsdb_columnar" %}
+            {#- ColumNAR keyword doc-values codec: always emitted explicitly for `logsdb_columnar` mode so the parameter controls the codec in both directions now that `columnar_codec.enabled` defaults to true in ES -#}
+            {%- if index_mode == "logsdb_columnar" %}
+            {%- if enable_columnar_codec | default(true) %}
             ,"columnar_codec.enabled": true
+            {%- else %}
+            ,"columnar_codec.enabled": false
+            {%- endif %}
             {%- endif %}
             {% if index_mode == "logsdb_columnar" or index_mode == "logsdb" or index_mode == "time_series" %}
             ,"disable_sequence_numbers": true

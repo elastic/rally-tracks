@@ -1923,46 +1923,6 @@
       "query": "FROM nyc_taxis | FORK (WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type)) (WHERE payment_type NOT IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | EVAL payment_type = \"Other\"::keyword) | STATS cnt = COUNT(*) BY payment_type, rate_code_id | SORT cnt DESC | LIMIT 2 BY payment_type"
     },
     {
-      "name": "nested_topn_histograms_with_other_bucket_search",
-      "operation-type": "search",
-      "index": "nyc_taxis",
-      "body": {
-        "size": 0,
-        "query": {
-          "bool": {
-            "must": [],
-            "filter": [],
-            "should": [],
-            "must_not": []
-          }
-        },
-        "aggs": {
-          "top_payment_types": {
-            "terms": {
-              "field": "payment_type",
-              "order": {
-                "_count": "desc"
-              },
-              "size": 3,
-              "shard_size": 25
-            },
-            "aggs": {
-              "top_rate_codes": {
-                "terms": {
-                  "field": "rate_code_id",
-                  "order": {
-                    "_count": "desc"
-                  },
-                  "size": 2,
-                  "shard_size": 25
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
       "name": "nested_topn_histograms_esql",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
@@ -2023,55 +1983,6 @@
       "query": "FROM nyc_taxis | WHERE dropoff_datetime >= \"2015-12-04T22:00:00.000Z\" AND dropoff_datetime < \"2015-12-05T00:00:00.000Z\" | FORK (WHERE payment_type IN (FROM nyc_taxis | WHERE dropoff_datetime >= \"2015-12-04T22:00:00.000Z\" AND dropoff_datetime < \"2015-12-05T00:00:00.000Z\" | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type)) (WHERE payment_type NOT IN (FROM nyc_taxis | WHERE dropoff_datetime >= \"2015-12-04T22:00:00.000Z\" AND dropoff_datetime < \"2015-12-05T00:00:00.000Z\" | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | EVAL payment_type = \"Other\"::keyword) | STATS cnt = COUNT(*) BY payment_type, rate_code_id | SORT cnt DESC | LIMIT 2 BY payment_type"
     },
     {
-      "name": "nested_topn_histograms_with_other_bucket_search_with_timefilter",
-      "operation-type": "search",
-      "index": "nyc_taxis",
-      "body": {
-        "size": 0,
-        "query": {
-          "bool": {
-            "must": [],
-            "filter": [
-              {
-                "range": {
-                  "dropoff_datetime": {
-                    "gte": "2015-12-04 22:00:00",
-                    "lt": "2015-12-05 00:00:00"
-                  }
-                }
-              }
-            ],
-            "should": [],
-            "must_not": []
-          }
-        },
-        "aggs": {
-          "top_payment_types": {
-            "terms": {
-              "field": "payment_type",
-              "order": {
-                "_count": "desc"
-              },
-              "size": 3,
-              "shard_size": 25
-            },
-            "aggs": {
-              "top_rate_codes": {
-                "terms": {
-                  "field": "rate_code_id",
-                  "order": {
-                    "_count": "desc"
-                  },
-                  "size": 2,
-                  "shard_size": 25
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
       "name": "nested_topn_histograms_esql_with_timefilter",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | WHERE dropoff_datetime >= \"2015-12-04T22:00:00.000Z\" AND dropoff_datetime < \"2015-12-05T00:00:00.000Z\" AND payment_type IN (FROM nyc_taxis | WHERE dropoff_datetime >= \"2015-12-04T22:00:00.000Z\" AND dropoff_datetime < \"2015-12-05T00:00:00.000Z\" | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
@@ -2123,6 +2034,147 @@
                   },
                   "size": 2,
                   "shard_size": 25
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "nested_topn_histograms_other_bucket_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "other-filter": {
+            "aggs": {
+              "top_rate_codes": {
+                "terms": {
+                  "field": "rate_code_id",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 2,
+                  "shard_size": 25
+                }
+              }
+            },
+            "filters": {
+              "filters": {
+                "": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "exists": {
+                          "field": "payment_type"
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": [
+                      {
+                        "match_phrase": {
+                          "payment_type": "1"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "payment_type": "2"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "payment_type": "3"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "nested_topn_histograms_other_bucket_search_with_timefilter",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [
+              {
+                "range": {
+                  "dropoff_datetime": {
+                    "gte": "2015-12-04 22:00:00",
+                    "lt": "2015-12-05 00:00:00"
+                  }
+                }
+              }
+            ],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "other-filter": {
+            "aggs": {
+              "top_rate_codes": {
+                "terms": {
+                  "field": "rate_code_id",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 2,
+                  "shard_size": 25
+                }
+              }
+            },
+            "filters": {
+              "filters": {
+                "": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "exists": {
+                          "field": "payment_type"
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": [
+                      {
+                        "match_phrase": {
+                          "payment_type": "1"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "payment_type": "2"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "payment_type": "3"
+                        }
+                      }
+                    ]
+                  }
                 }
               }
             }

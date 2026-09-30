@@ -1852,6 +1852,48 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_with_other_bucket_search_with_timefilter",
+          "tags": ["agg", "fork-dsl-comparison", "with-timefilter"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_with_other_bucket_esql_with_timefilter",
+          "tags": ["fork", "inline-stats", "fork-dsl-comparison", "with-timefilter"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_with_other_bucket_no_inlinestats_esql_with_timefilter",
+          "tags": ["fork", "fork-dsl-comparison", "with-timefilter"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_search_with_timefilter",
+          "tags": ["agg", "fork-dsl-comparison", "with-timefilter"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_esql_with_timefilter",
+          "tags": ["inline-stats", "fork-dsl-comparison", "with-timefilter"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_no_inlinestats_esql_with_timefilter",
+          "tags": ["fork-dsl-comparison", "with-timefilter"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
         }
       ]
     },

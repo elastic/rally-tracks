@@ -2129,4 +2129,52 @@
           }
         }
       }
+    },
+    {
+      "name": "timeseries_with_other_bucket_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | FORK (WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 2 | KEEP payment_type)) (WHERE payment_type NOT IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 2 | KEEP payment_type) | EVAL payment_type = \"Other\"::keyword) | STATS avg = AVG(fare_amount) BY payment_type, t = BUCKET(pickup_datetime, 1 d)"
+    },
+    {
+      "name": "timeseries_with_other_bucket_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "top_payment_types": {
+            "terms": {
+              "field": "payment_type",
+              "order": {
+                "_count": "desc"
+              },
+              "size": 2,
+              "shard_size": 25
+            },
+            "aggs": {
+              "over_time": {
+                "date_histogram": {
+                  "field": "pickup_datetime",
+                  "calendar_interval": "1d"
+                },
+                "aggs": {
+                  "avg_fare": {
+                    "avg": {
+                      "field": "fare_amount"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }

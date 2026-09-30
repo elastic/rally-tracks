@@ -1894,6 +1894,20 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "timeseries_with_other_bucket_search",
+          "tags": ["agg", "fork-dsl-comparison", "timeseries"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "timeseries_with_other_bucket_esql",
+          "tags": ["fork", "fork-dsl-comparison", "timeseries"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
         }
       ]
     },

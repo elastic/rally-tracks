@@ -1908,6 +1908,20 @@
           "clients": 1,
           "warmup-iterations": 5,
           "iterations": 10
+        },
+        {
+          "operation": "nested_topn_table_search",
+          "tags": ["kibana-dashboards-comparisons"],
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 10
+        },
+        {
+          "operation": "nested_topn_table_esql",
+          "tags": ["kibana-dashboards-comparisons"],
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 10
         }
       ]
     },

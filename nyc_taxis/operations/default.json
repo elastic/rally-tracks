@@ -2177,4 +2177,61 @@
           }
         }
       }
+    },
+    {
+      "name": "nested_topn_table_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE rate_code_id IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY rate_code_id | SORT cnt DESC | KEEP rate_code_id | LIMIT 3) | WHERE (rate_code_id, payment_type) IN (FROM nyc_taxis | STATS max = MAX(tip_amount) BY rate_code_id, payment_type | SORT max DESC | LIMIT 2 BY rate_code_id | KEEP rate_code_id, payment_type) | STATS avg = AVG(fare_amount) BY rate_code_id, payment_type"
+    },
+    {
+      "name": "nested_topn_table_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "top_rate_codes": {
+            "terms": {
+              "field": "rate_code_id",
+              "order": {
+                "_count": "desc"
+              },
+              "size": 3,
+              "shard_size": 25
+            },
+            "aggs": {
+              "top_payment_types": {
+                "terms": {
+                  "field": "payment_type",
+                  "order": {
+                    "max_tip": "desc"
+                  },
+                  "size": 2,
+                  "shard_size": 25
+                },
+                "aggs": {
+                  "avg_fare": {
+                    "avg": {
+                      "field": "fare_amount"
+                    }
+                  },
+                  "max_tip": {
+                    "max": {
+                      "field": "tip_amount"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }

@@ -1911,4 +1911,104 @@
       "name": "esql_stats_enrich_payments_fares_limit_0",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name | LIMIT 0"
+    },
+    {
+      "name": "nested_topn_histograms_with_other_bucket_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | FORK (WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type)) (WHERE payment_type NOT IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | EVAL payment_type = \"Other\"::keyword) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+    },
+    {
+      "name": "nested_topn_histograms_with_other_bucket_no_inlinestats_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | FORK (WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type)) (WHERE payment_type NOT IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | EVAL payment_type = \"Other\"::keyword) | STATS cnt = COUNT(*) BY payment_type, rate_code_id | SORT cnt DESC | LIMIT 2 BY payment_type"
+    },
+    {
+      "name": "nested_topn_histograms_with_other_bucket_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "top_payment_types": {
+            "terms": {
+              "field": "payment_type",
+              "order": {
+                "_count": "desc"
+              },
+              "size": 3,
+              "shard_size": 25
+            },
+            "aggs": {
+              "top_rate_codes": {
+                "terms": {
+                  "field": "rate_code_id",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 2,
+                  "shard_size": 25
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "nested_topn_histograms_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+    },
+    {
+      "name": "nested_topn_histograms_no_inlinestats_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | STATS cnt = COUNT(*) BY payment_type, rate_code_id | SORT cnt DESC | LIMIT 2 BY payment_type"
+    },
+    {
+      "name": "nested_topn_histograms_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "top_payment_types": {
+            "terms": {
+              "field": "payment_type",
+              "order": {
+                "_count": "desc"
+              },
+              "size": 3,
+              "shard_size": 25
+            },
+            "aggs": {
+              "top_rate_codes": {
+                "terms": {
+                  "field": "rate_code_id",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 2,
+                  "shard_size": 25
+                }
+              }
+            }
+          }
+        }
+      }
     }

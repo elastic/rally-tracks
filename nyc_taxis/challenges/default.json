@@ -1810,6 +1810,48 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_with_other_bucket_search",
+          "tags": ["agg", "fork-dsl-comparison"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_with_other_bucket_esql",
+          "tags": ["fork", "inline-stats", "fork-dsl-comparison"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_with_other_bucket_no_inlinestats_esql",
+          "tags": ["fork", "fork-dsl-comparison"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_search",
+          "tags": ["agg", "fork-dsl-comparison"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_esql",
+          "tags": ["inline-stats", "fork-dsl-comparison"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
+        },
+        {
+          "operation": "nested_topn_histograms_no_inlinestats_esql",
+          "tags": ["fork-dsl-comparison"],
+          "clients": 1,
+          "warmup-iterations": 10,
+          "iterations": 50
         }
       ]
     },

@@ -83,7 +83,7 @@ The following parameters are available:
 
 * `wait_for_status` (default: `green`) - The track creates Data Streams prior to indexing. All created Data Streams must at least reach this status before indexing commences. Reduce to `yellow` for clusters where green isn't possible e.g. single node.
 * `corpora_uri_base` (default: `https://rally-tracks.elastic.co`) - Specify the base location of the datasets used by this track.
-* `index_mode` (default: unset) - A parameter meant to be used internally which defines one of the available indexing modes, "standard", "logsdb" or "time_series". If not set, "standard" is used.
+* `index_mode` (default: unset) - A parameter meant to be used internally which defines one of the available indexing modes, "standard", "logsdb", "logsdb_columnar" or "time_series". If not set, "standard" is used. With "logsdb_columnar", nested fields deeper than one level in the `logs-endpoint.events.file` mappings are mapped as `object`, since columnar index modes support only a single level of nesting.
 * `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
 * `source_mode` (default: unset) - Specifies the source mode to be used.
 * `use_synthetic_source_recovery` (default: unset): Whether synthetic recovery source will be used.

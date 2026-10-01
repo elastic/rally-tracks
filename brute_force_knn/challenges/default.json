@@ -63,128 +63,37 @@
         "retry-until-success": true,
         "include-in-reporting": false
       }
-    },
-    {
-      "name": "validate-knn-consistency-10",
+    }
+    {%- for k in k_values | default([10, 50, 100]) %}
+    ,{
+      "name": "validate-knn-consistency-{{ k }}",
       "tags": ["validate"],
-      "operation": "validate-knn-consistency-10",
+      "operation": "validate-knn-consistency-{{ k }}",
       "iterations": 1,
       "clients": 1
-    },
-    {
-      "name": "brute-force-esql-knn-10",
+    }
+    {%- endfor %}
+    {%- for k in k_values | default([10, 50, 100]) %}
+    {%- for kind in ["esql", "dense-vector"] %}
+    ,{
+      "name": "brute-force-{{ kind }}-knn-{{ k }}",
       "tags": ["search"],
-      "operation": "brute-force-esql-knn-10",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": 1
-    },
-    {%- if include_multi_client | default(false) %}
-    {
-      "name": "brute-force-esql-knn-10-multi-client",
-      "tags": ["search"],
-      "operation": "brute-force-esql-knn-10",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": {{ search_clients | default(8) | int }}
-    },
-    {%- endif %}
-    {
-      "name": "brute-force-esql-knn-50",
-      "tags": ["search"],
-      "operation": "brute-force-esql-knn-50",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": 1
-    },
-    {%- if include_multi_client | default(false) %}
-    {
-      "name": "brute-force-esql-knn-50-multi-client",
-      "tags": ["search"],
-      "operation": "brute-force-esql-knn-50",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": {{ search_clients | default(8) | int }}
-    },
-    {%- endif %}
-    {
-      "name": "validate-knn-consistency-100",
-      "tags": ["validate"],
-      "operation": "validate-knn-consistency-100",
-      "iterations": 1,
-      "clients": 1
-    },
-    {
-      "name": "brute-force-esql-knn-100",
-      "tags": ["search"],
-      "operation": "brute-force-esql-knn-100",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": 1
-    },
-    {%- if include_multi_client | default(false) %}
-    {
-      "name": "brute-force-esql-knn-100-multi-client",
-      "tags": ["search"],
-      "operation": "brute-force-esql-knn-100",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": {{ search_clients | default(8) | int }}
-    },
-    {%- endif %}
-    {
-      "name": "brute-force-dense-vector-knn-10",
-      "tags": ["search"],
-      "operation": "brute-force-dense-vector-knn-10",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": 1
-    },
-    {%- if include_multi_client | default(false) %}
-    {
-      "name": "brute-force-dense-vector-knn-10-multi-client",
-      "tags": ["search"],
-      "operation": "brute-force-dense-vector-knn-10",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": {{ search_clients | default(8) | int }}
-    },
-    {%- endif %}
-    {
-      "name": "brute-force-dense-vector-knn-50",
-      "tags": ["search"],
-      "operation": "brute-force-dense-vector-knn-50",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": 1
-    },
-    {%- if include_multi_client | default(false) %}
-    {
-      "name": "brute-force-dense-vector-knn-50-multi-client",
-      "tags": ["search"],
-      "operation": "brute-force-dense-vector-knn-50",
-      "warmup-iterations": {{ warmup_iterations | default(100) }},
-      "iterations": {{ iterations | default(100) }},
-      "clients": {{ search_clients | default(8) | int }}
-    },
-    {%- endif %}
-    {
-      "name": "brute-force-dense-vector-knn-100",
-      "tags": ["search"],
-      "operation": "brute-force-dense-vector-knn-100",
+      "operation": "brute-force-{{ kind }}-knn-{{ k }}",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     }
-    {%- if include_multi_client | default(false) %},
-    {
-      "name": "brute-force-dense-vector-knn-100-multi-client",
+    {%- if include_multi_client | default(false) %}
+    ,{
+      "name": "brute-force-{{ kind }}-knn-{{ k }}-multi-client",
       "tags": ["search"],
-      "operation": "brute-force-dense-vector-knn-100",
+      "operation": "brute-force-{{ kind }}-knn-{{ k }}",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": {{ search_clients | default(8) | int }}
     }
     {%- endif %}
+    {%- endfor %}
+    {%- endfor %}
   ]
 }

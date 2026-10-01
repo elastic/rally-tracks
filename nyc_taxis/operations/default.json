@@ -1925,7 +1925,7 @@
     {
       "name": "nested_topn_histograms_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | INLINE STATS cnt_payment = COUNT(*) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
     },
     {
       "name": "nested_topn_histograms_no_inlinestats_esql",
@@ -1985,7 +1985,7 @@
     {
       "name": "nested_topn_histograms_esql_with_timefilter",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | WHERE dropoff_datetime >= \"2015-12-04T22:00:00.000Z\" AND dropoff_datetime < \"2015-12-05T00:00:00.000Z\" AND payment_type IN (FROM nyc_taxis | WHERE dropoff_datetime >= \"2015-12-04T22:00:00.000Z\" AND dropoff_datetime < \"2015-12-05T00:00:00.000Z\" | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+      "query": "FROM nyc_taxis | WHERE dropoff_datetime >= \"2015-12-04T22:00:00.000Z\" AND dropoff_datetime < \"2015-12-05T00:00:00.000Z\" AND payment_type IN (FROM nyc_taxis | WHERE dropoff_datetime >= \"2015-12-04T22:00:00.000Z\" AND dropoff_datetime < \"2015-12-05T00:00:00.000Z\" | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | INLINE STATS cnt_payment = COUNT(*) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
     },
     {
       "name": "nested_topn_histograms_no_inlinestats_esql_with_timefilter",

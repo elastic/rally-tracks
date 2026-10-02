@@ -74,20 +74,20 @@
     }
     {%- endfor %}
     {%- for k in k_values | default([10, 50, 100]) %}
-    {%- for kind in ["esql", "dense-vector"] %}
+    {%- for kind_value in kind | default(["esql", "dense-vector"]) %}
     ,{
-      "name": "brute-force-{{ kind }}-knn-{{ k }}",
+      "name": "brute-force-{{ kind_value }}-knn-{{ k }}",
       "tags": ["search"],
-      "operation": "brute-force-{{ kind }}-knn-{{ k }}",
+      "operation": "brute-force-{{ kind_value }}-knn-{{ k }}",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": 1
     }
     {%- if include_multi_client | default(false) %}
     ,{
-      "name": "brute-force-{{ kind }}-knn-{{ k }}-multi-client",
+      "name": "brute-force-{{ kind_value }}-knn-{{ k }}-multi-client",
       "tags": ["search"],
-      "operation": "brute-force-{{ kind }}-knn-{{ k }}",
+      "operation": "brute-force-{{ kind_value }}-knn-{{ k }}",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(100) }},
       "clients": {{ search_clients | default(8) | int }}

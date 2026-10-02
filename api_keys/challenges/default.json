@@ -1,0 +1,47 @@
+    {% set p_num_api_keys = num_api_keys | default(10000) %}
+    {% set p_create_clients = create_clients | default(8) %}
+    {% set p_create_batch_size = create_batch_size | default(100) %}
+    {% set p_clients = clients | default(8) %}
+    {% set p_keys_per_create_iteration = p_create_clients * p_create_batch_size %}
+    {
+      "name": "api-key-authentication",
+      "description": "Creates roles, users and API keys, primes the API key caches and then measures API key authentication with GET /_security/_authenticate.",
+      "default": true,
+      "schedule": [
+        {
+          "operation": "create-roles-and-users",
+          "clients": 1
+        },
+        {
+          "operation": "create-api-keys",
+          "clients": {{ p_create_clients }},
+          "iterations": {{ (p_num_api_keys + p_keys_per_create_iteration - 1) // p_keys_per_create_iteration }}
+        },
+        {
+          "operation": "prime-api-key-caches",
+          "clients": {{ p_clients }},
+          "iterations": {{ (p_num_api_keys + p_clients - 1) // p_clients }}
+        },
+        {
+          "operation": "collect-security-stats-before",
+          "clients": 1
+        },
+        {
+          "operation": "authenticate-api-key",
+          "clients": {{ p_clients }},
+          "warmup-time-period": {{ warmup_time_period | default(60) }},
+          "time-period": {{ time_period | default(300) }}{%- if target_throughput is defined %},
+          "target-throughput": {{ target_throughput }}
+          {%- endif %}
+        },
+        {
+          "operation": "collect-security-stats-after",
+          "clients": 1
+        }{%- if cleanup | default(false) %},
+        {
+          "operation": "cleanup",
+          "clients": 1
+        }
+        {%- endif %}
+      ]
+    }

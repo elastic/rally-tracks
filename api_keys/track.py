@@ -6,7 +6,7 @@ The track creates a population of native roles, native users (the API key owners
 races against different Elasticsearch revisions see exactly the same population and request mix.
 
 Rally runs one worker process per CPU core and spreads clients across them, so in-memory state cannot be shared between
-tasks or clients. API keys are therefore persisted to disk by the ``create-api-keys`` task (one JSONL shard per creation
+tasks or clients. API keys are therefore persisted to disk by the ``create-api-keys`` task (one JSONL key file per creation
 client) and lazily loaded by the parameter source that feeds the authentication tasks.
 """
 
@@ -28,7 +28,7 @@ LOGGER = logging.getLogger(__name__)
 DEFAULT_API_KEYS_DIR = "~/.rally/benchmarks/data/api_keys"
 USER_PASSWORD = "api-keys-benchmark-password"
 INVALID_API_KEY_SECRET = "invalid-api-key-secret"
-KEY_SHARD_FILE_TEMPLATE = "api-keys.{partition}.jsonl"
+KEY_FILE_TEMPLATE = "api-keys.{client}.jsonl"
 STATS_SNAPSHOT_FILE = "security-stats-before.json"
 AUTHENTICATE_PATH = "/_security/_authenticate"
 SECURITY_CRYPTO_THREAD_POOL = "security-crypto"
@@ -145,29 +145,29 @@ def api_keys_dir(params):
     return os.path.expanduser(params.get("api_keys_dir", DEFAULT_API_KEYS_DIR))
 
 
-def shard_file(directory, partition_index):
-    return os.path.join(directory, KEY_SHARD_FILE_TEMPLATE.format(partition=partition_index))
+def key_file(directory, client_index):
+    return os.path.join(directory, KEY_FILE_TEMPLATE.format(client=client_index))
 
 
 _KEY_CACHE = {}
 _KEY_CACHE_LOCK = threading.Lock()
 
 
-def load_api_keys(directory, shard_count):
+def load_api_keys(directory, create_clients):
     """
-    Loads all API keys written by the ``create-api-keys`` task. Only the shards written by the current configuration
-    (``create_clients``) are read so that stale shards from earlier races with more creation clients are ignored. The
+    Loads all API keys written by the ``create-api-keys`` task. Only the key files written by the current configuration
+    (``create_clients``) are read so that stale files from earlier races with more creation clients are ignored. The
     result is cached per process as every client in a worker process needs the same list.
     """
-    cache_key = (directory, shard_count)
+    cache_key = (directory, create_clients)
     with _KEY_CACHE_LOCK:
         if cache_key in _KEY_CACHE:
             return _KEY_CACHE[cache_key]
         records = []
-        for partition_index in range(shard_count):
-            path = shard_file(directory, partition_index)
+        for client_index in range(create_clients):
+            path = key_file(directory, client_index)
             if not os.path.exists(path):
-                raise FileNotFoundError(f"API key shard [{path}] does not exist. Ensure that the create-api-keys task ran before.")
+                raise FileNotFoundError(f"API key file [{path}] does not exist. Ensure that the create-api-keys task ran before.")
             with open(path, "r", encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
@@ -175,10 +175,10 @@ def load_api_keys(directory, shard_count):
                         records.append(json.loads(line))
         if not records:
             raise ValueError(f"No API keys found in [{directory}]. Ensure that the create-api-keys task ran before.")
-        # creation clients write in interleaved order; order by key index so that key selection is independent of sharding
+        # creation clients write in interleaved order; order by key index so that key selection is independent of the file layout
         records.sort(key=lambda record: record["index"])
         keys = [(record["id"], record["encoded"]) for record in records]
-        LOGGER.info("Loaded [%d] API keys from [%d] shard(s) in [%s].", len(keys), shard_count, directory)
+        LOGGER.info("Loaded [%d] API keys from [%d] key file(s) in [%s].", len(keys), create_clients, directory)
         _KEY_CACHE[cache_key] = keys
         return keys
 
@@ -191,7 +191,7 @@ def load_api_keys(directory, shard_count):
 class ApiKeyCreateParamSource(ParamSource):
     """
     Partitions the API key indices among the creation clients. Every invocation of ``params()`` yields a batch of API
-    key indices that the ``create-api-keys`` runner creates concurrently and appends to the shard file of the client.
+    key indices that the ``create-api-keys`` runner creates concurrently and appends to the key file of the client.
     """
 
     def __init__(self, track, params, **kwargs):
@@ -210,8 +210,8 @@ class ApiKeyCreateParamSource(ParamSource):
         self.total_partitions = None
         self._batches = None
         self._next_batch = 0
-        self._shard_file = None
-        self._shard_reset = False
+        self._key_file = None
+        self._key_file_reset = False
 
     def partition(self, partition_index, total_partitions):
         partitioned = ApiKeyCreateParamSource(self.track, self._params)
@@ -219,7 +219,7 @@ class ApiKeyCreateParamSource(ParamSource):
         partitioned.total_partitions = total_partitions
         indices = list(range(partition_index, self.num_api_keys, total_partitions))
         partitioned._batches = [indices[i : i + self.batch_size] for i in range(0, len(indices), self.batch_size)]
-        partitioned._shard_file = shard_file(self.directory, partition_index)
+        partitioned._key_file = key_file(self.directory, partition_index)
         return partitioned
 
     def size(self):
@@ -228,19 +228,20 @@ class ApiKeyCreateParamSource(ParamSource):
     def params(self):
         if self._batches is None:
             raise ValueError("ApiKeyCreateParamSource must be partitioned before use")
-        if not self._shard_reset:
-            # drop keys from earlier races; every client owns exactly one shard and truncates it before writing to it
+        if not self._key_file_reset:
+            # drop keys from earlier races; every client owns exactly one key file and truncates it before writing to it.
+            # The files contain usable API key credentials, so keep them readable by the current user only.
             os.makedirs(self.directory, exist_ok=True)
-            with open(self._shard_file, "w", encoding="utf-8"):
-                pass
-            self._shard_reset = True
+            os.close(os.open(self._key_file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600))
+            os.chmod(self._key_file, 0o600)
+            self._key_file_reset = True
         if self._next_batch >= len(self._batches):
             raise StopIteration()
         batch = self._batches[self._next_batch]
         self._next_batch += 1
         return {
             "key_indices": batch,
-            "shard_file": self._shard_file,
+            "key_file": self._key_file,
             "seed": self._params.get("seed", 42),
             "num_users": int(self._params.get("num_users", 100)),
             "num_rd_templates": int(self._params.get("num_rd_templates", 50)),
@@ -269,7 +270,7 @@ class ApiKeyAuthenticateParamSource(ParamSource):
         if self.mode not in self.ACCESS_PATTERNS:
             raise ValueError(f"Unknown access pattern [{self.mode}]. Supported access patterns are {self.ACCESS_PATTERNS}.")
         self.directory = api_keys_dir(params)
-        self.shard_count = int(params.get("create_clients", 8))
+        self.create_clients = int(params.get("create_clients", 8))
         self.seed = params.get("seed", 42)
         self.hot_fraction = float(params.get("hot_fraction", 0.01))
         self.hot_ratio = float(params.get("hot_ratio", 0.9))
@@ -298,7 +299,7 @@ class ApiKeyAuthenticateParamSource(ParamSource):
     def _ensure_loaded(self):
         if self._keys is not None:
             return
-        all_keys = load_api_keys(self.directory, self.shard_count)
+        all_keys = load_api_keys(self.directory, self.create_clients)
         if self.mode == "sweep":
             self._keys = all_keys[self.partition_index :: self.total_partitions]
         else:
@@ -419,7 +420,7 @@ async def create_roles_and_users(es, params):
 
 
 async def create_api_keys(es, params):
-    """Creates a batch of API keys (via the grant API, on behalf of their owners) and appends them to the client's shard file."""
+    """Creates a batch of API keys (via the grant API, on behalf of their owners) and appends them to the client's key file."""
     key_indices = params["key_indices"]
     seed = params["seed"]
     num_users = params["num_users"]
@@ -447,7 +448,7 @@ async def create_api_keys(es, params):
         }
 
     records = await asyncio.gather(*(create_one(index) for index in key_indices))
-    with open(params["shard_file"], "a", encoding="utf-8") as f:
+    with open(params["key_file"], "a", encoding="utf-8") as f:
         for record in records:
             f.write(json.dumps(record) + "\n")
     return {"weight": len(records), "unit": "keys"}

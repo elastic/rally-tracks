@@ -56,7 +56,7 @@ All parameters can be set via `--track-params`.
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `create_clients` | `8` | Clients creating API keys. Each client writes its own `api-keys.<client>.jsonl` shard. |
+| `create_clients` | `8` | Clients creating API keys. Each client writes its own `api-keys.<client>.jsonl` file. |
 | `create_batch_size` | `100` | API keys created concurrently per client and iteration. Creation uses the grant API with `refresh=wait_until`, so the creation throughput is roughly `create_clients * create_batch_size` keys per refresh interval. |
 | `clients` | `8` | Clients for `prime-api-key-caches` and `authenticate-api-key`. |
 | `warmup_time_period` | `60` | Warmup period of `authenticate-api-key` in seconds. |

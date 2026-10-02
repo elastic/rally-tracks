@@ -21,6 +21,7 @@ import time
 from dataclasses import dataclass
 
 import elasticsearch
+from esrally.track.params import ParamSource
 
 LOGGER = logging.getLogger(__name__)
 
@@ -76,11 +77,12 @@ def role_definition(rng):
 
 
 def role_name(index):
-    return f"role_{index}"
+    # namespaced to this track so that it can share a persistent cluster with other security tracks (e.g. has_privileges)
+    return f"api_keys_role_{index}"
 
 
 def user_name(index):
-    return f"user_{index}"
+    return f"api_keys_user_{index}"
 
 
 def role_descriptor_template(seed, template_index):
@@ -186,21 +188,23 @@ def load_api_keys(directory, shard_count):
 # ---------------------------------------------------------------------------------------------------------------------
 
 
-class ApiKeyCreateParamSource:
+class ApiKeyCreateParamSource(ParamSource):
     """
     Partitions the API key indices among the creation clients. Every invocation of ``params()`` yields a batch of API
     key indices that the ``create-api-keys`` runner creates concurrently and appends to the shard file of the client.
     """
 
     def __init__(self, track, params, **kwargs):
-        self.track = track
-        self._params = params
+        super().__init__(track, params, **kwargs)
         self.num_api_keys = int(params.get("num_api_keys", 10000))
         self.batch_size = int(params.get("create_batch_size", 100))
+        self.assigned_rd_ratio = float(params.get("assigned_rd_ratio", 0.5))
         if self.num_api_keys <= 0:
             raise ValueError("num_api_keys must be positive")
         if self.batch_size <= 0:
             raise ValueError("create_batch_size must be positive")
+        if not 0 <= self.assigned_rd_ratio <= 1:
+            raise ValueError("assigned_rd_ratio must be in [0, 1]")
         self.directory = api_keys_dir(params)
         self.partition_index = None
         self.total_partitions = None
@@ -240,12 +244,12 @@ class ApiKeyCreateParamSource:
             "seed": self._params.get("seed", 42),
             "num_users": int(self._params.get("num_users", 100)),
             "num_rd_templates": int(self._params.get("num_rd_templates", 50)),
-            "assigned_rd_ratio": float(self._params.get("assigned_rd_ratio", 0.5)),
+            "assigned_rd_ratio": self.assigned_rd_ratio,
             "api_key_expiration": self._params.get("api_key_expiration"),
         }
 
 
-class ApiKeyAuthenticateParamSource:
+class ApiKeyAuthenticateParamSource(ParamSource):
     """
     Provides the encoded API key to authenticate with. Supported access patterns:
 
@@ -260,8 +264,7 @@ class ApiKeyAuthenticateParamSource:
     ACCESS_PATTERNS = ("sweep", "uniform", "hotset")
 
     def __init__(self, track, params, **kwargs):
-        self.track = track
-        self._params = params
+        super().__init__(track, params, **kwargs)
         self.mode = params.get("access_pattern", "uniform")
         if self.mode not in self.ACCESS_PATTERNS:
             raise ValueError(f"Unknown access pattern [{self.mode}]. Supported access patterns are {self.ACCESS_PATTERNS}.")
@@ -350,8 +353,13 @@ async def _gather_in_chunks(coroutine_factories, chunk_size):
     return results
 
 
-async def _with_retries(operation, description, max_attempts=5, initial_backoff=0.2):
-    """Retries an operation on transient errors (request rejections, unavailable shards, timeouts) with exponential backoff."""
+async def _with_retries(operation, description, max_attempts=5, initial_backoff=0.2, retry_on_timeout=True):
+    """
+    Retries an operation with exponential backoff when Elasticsearch rejected it (HTTP 429) or had no shard available
+    (HTTP 503); in both cases the request was not executed. Timeouts are only retried if ``retry_on_timeout`` is set:
+    a timed out request may have been executed, so this must stay disabled for non-idempotent operations such as creating
+    API keys, where a retry could create an unrecorded duplicate.
+    """
     attempt = 0
     while True:
         attempt += 1
@@ -362,7 +370,7 @@ async def _with_retries(operation, description, max_attempts=5, initial_backoff=
                 raise
             LOGGER.warning("[%s] failed with HTTP %s (attempt %d/%d), retrying.", description, e.status_code, attempt, max_attempts)
         except elasticsearch.ConnectionTimeout:
-            if attempt >= max_attempts:
+            if not retry_on_timeout or attempt >= max_attempts:
                 raise
             LOGGER.warning("[%s] timed out (attempt %d/%d), retrying.", description, attempt, max_attempts)
         await asyncio.sleep(initial_backoff * (2 ** (attempt - 1)) * (1 + random.random()))
@@ -424,9 +432,11 @@ async def create_api_keys(es, params):
         api_key = {"name": spec.name, "role_descriptors": spec.role_descriptors(seed), "metadata": spec.metadata}
         if expiration:
             api_key["expiration"] = expiration
+        # creating an API key is not idempotent: never retry after a timeout (see _with_retries)
         response = await _with_retries(
             lambda: es.security.grant_api_key(grant_type="password", username=spec.owner, password=USER_PASSWORD, api_key=api_key),
             f"grant API key {spec.name}",
+            retry_on_timeout=False,
         )
         return {
             "index": index,

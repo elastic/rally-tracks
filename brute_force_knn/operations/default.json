@@ -23,35 +23,41 @@
   "name": "brute-force-dense-vector-knn-10",
   "operation-type": "search",
   "param-source": "brute-force-dense-vector-param-source",
-  "k": 10
+  "k": 10,
+  "request-timeout": {{ query_timeout | default(60) }}
 },
 {
   "name": "brute-force-dense-vector-knn-50",
   "operation-type": "search",
   "param-source": "brute-force-dense-vector-param-source",
-  "k": 50
+  "k": 50,
+  "request-timeout": {{ query_timeout | default(60) }}
 },
 {
   "name": "brute-force-dense-vector-knn-100",
   "operation-type": "search",
   "param-source": "brute-force-dense-vector-param-source",
-  "k": 100
+  "k": 100,
+  "request-timeout": {{ query_timeout | default(60) }}
 },
 {
   "name": "brute-force-esql-knn-10",
   "operation-type": "esql",
   "param-source": "brute-force-esql-knn-param-source",
-  "k": 10
+  "k": 10,
+  "request-timeout": {{ query_timeout | default(60) }}
 },
 {
   "name": "brute-force-esql-knn-50",
   "operation-type": "esql",
   "param-source": "brute-force-esql-knn-param-source",
-  "k": 50
+  "k": 50,
+  "request-timeout": {{ query_timeout | default(60) }}
 },
 {
   "name": "brute-force-esql-knn-100",
   "operation-type": "esql",
   "param-source": "brute-force-esql-knn-param-source",
-  "k": 100
+  "k": 100,
+  "request-timeout": {{ query_timeout | default(60) }}
 }

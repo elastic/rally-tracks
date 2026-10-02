@@ -64,6 +64,7 @@
         "include-in-reporting": false
       }
     }
+    {%- if validate_knn_consistency | default(false) %}
     {%- for k in k_values | default([10, 50, 100]) %}
     ,{
       "name": "validate-knn-consistency-{{ k }}",
@@ -73,6 +74,7 @@
       "clients": 1
     }
     {%- endfor %}
+    {%- endif %}
     {%- for k in k_values | default([10, 50, 100]) %}
     {%- for kind_value in kind | default(["esql", "dense-vector"]) %}
     ,{

@@ -32,6 +32,15 @@ KEY_FILE_TEMPLATE = "api-keys.{client}.jsonl"
 STATS_SNAPSHOT_FILE = "security-stats-before.json"
 AUTHENTICATE_PATH = "/_security/_authenticate"
 SECURITY_CRYPTO_THREAD_POOL = "security-crypto"
+# values of the stats snapshot that only grow; the others (a high-water mark, the node count) have no meaningful delta
+SECURITY_STATS_COUNTERS = (
+    "security_crypto_completed",
+    "security_crypto_rejected",
+    "process_cpu_millis",
+    "authenticate_requests",
+    "security_index_get_total",
+    "security_index_get_missing",
+)
 
 CLUSTER_PRIVILEGES = [
     "monitor",
@@ -128,7 +137,8 @@ def api_key_spec(index, seed, num_users, num_rd_templates, assigned_rd_ratio):
     """Derives the owner and role descriptor template of the API key with the given index. Deterministic per (seed, index)."""
     rng = random.Random(f"{seed}:api-key:{index}")
     owner = user_name(index % num_users)
-    rd_template = index % num_rd_templates if num_rd_templates > 0 and rng.random() < assigned_rd_ratio else None
+    # drawn rather than derived from the index, which would tie every owner to a single template
+    rd_template = rng.randrange(num_rd_templates) if num_rd_templates > 0 and rng.random() < assigned_rd_ratio else None
     return ApiKeySpec(index=index, owner=owner, rd_template=rd_template)
 
 
@@ -359,7 +369,8 @@ async def _with_retries(operation, description, max_attempts=5, initial_backoff=
     Retries an operation with exponential backoff when Elasticsearch rejected it (HTTP 429) or had no shard available
     (HTTP 503); in both cases the request was not executed. Timeouts are only retried if ``retry_on_timeout`` is set:
     a timed out request may have been executed, so this must stay disabled for non-idempotent operations such as creating
-    API keys, where a retry could create an unrecorded duplicate.
+    API keys, where a retry could create an unrecorded duplicate. Such operations must also disable the retries of the
+    client itself (``es.options(max_retries=0)``), which retries connection errors and HTTP 502/504 responses as well.
     """
     attempt = 0
     while True:
@@ -433,9 +444,11 @@ async def create_api_keys(es, params):
         api_key = {"name": spec.name, "role_descriptors": spec.role_descriptors(seed), "metadata": spec.metadata}
         if expiration:
             api_key["expiration"] = expiration
-        # creating an API key is not idempotent: never retry after a timeout (see _with_retries)
+        # creating an API key is not idempotent: never retry a request that may have been executed (see _with_retries)
         response = await _with_retries(
-            lambda: es.security.grant_api_key(grant_type="password", username=spec.owner, password=USER_PASSWORD, api_key=api_key),
+            lambda: es.options(max_retries=0).security.grant_api_key(
+                grant_type="password", username=spec.owner, password=USER_PASSWORD, api_key=api_key, refresh="wait_for"
+            ),
             f"grant API key {spec.name}",
             retry_on_timeout=False,
         )
@@ -447,10 +460,15 @@ async def create_api_keys(es, params):
             "rd_template": spec.rd_template,
         }
 
-    records = await asyncio.gather(*(create_one(index) for index in key_indices))
+    results = await asyncio.gather(*(create_one(index) for index in key_indices), return_exceptions=True)
+    records = [result for result in results if not isinstance(result, BaseException)]
+    # the keys created by the rest of the batch exist regardless, so record them before reporting the failure
     with open(params["key_file"], "a", encoding="utf-8") as f:
         for record in records:
             f.write(json.dumps(record) + "\n")
+    failures = [result for result in results if isinstance(result, BaseException)]
+    if failures:
+        raise failures[0]
     return {"weight": len(records), "unit": "keys"}
 
 
@@ -497,6 +515,7 @@ async def _security_stats_snapshot(es):
         routes = node.get("http", {}).get("routes", {})
         snapshot["authenticate_requests"] += routes.get(AUTHENTICATE_PATH, {}).get("requests", {}).get("count", 0)
     try:
+        # direct access to system indices is deprecated and will be prevented by default in a future major version
         index_stats = await es.indices.stats(index=".security", metric="get")
         get_stats = index_stats["_all"]["total"]["get"]
         snapshot["security_index_get_total"] = get_stats.get("total", 0)
@@ -509,7 +528,8 @@ async def _security_stats_snapshot(es):
 async def collect_security_stats(es, params):
     """
     Snapshots security-related server-side counters. With ``phase: before`` the snapshot is persisted; with ``phase: after``
-    the deltas to the persisted snapshot are reported in addition (as request meta-data in the metrics store).
+    the deltas of the counters since the persisted snapshot and the length of that window are reported in addition (as
+    request meta-data in the metrics store).
     """
     phase = params.get("phase", "after")
     directory = api_keys_dir(params)
@@ -524,9 +544,12 @@ async def collect_security_stats(es, params):
     elif os.path.exists(snapshot_file):
         with open(snapshot_file, "r", encoding="utf-8") as f:
             before = json.load(f)
-        for name, value in snapshot.items():
-            if isinstance(value, (int, float)) and name in before:
-                result[f"{name}_delta"] = value - before[name]
+        # never reuse a snapshot, e.g. in a later race that skips the before phase
+        os.remove(snapshot_file)
+        result["window_seconds"] = snapshot["timestamp"] - before["timestamp"]
+        for name in SECURITY_STATS_COUNTERS:
+            if name in before:
+                result[f"{name}_delta"] = snapshot[name] - before[name]
         if result.get("authenticate_requests_delta", 0) > 0:
             result["cpu_micros_per_authenticate"] = result["process_cpu_millis_delta"] * 1000.0 / result["authenticate_requests_delta"]
             result["security_crypto_tasks_per_authenticate"] = (

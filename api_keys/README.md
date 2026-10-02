@@ -46,7 +46,7 @@ All parameters can be set via `--track-params`.
 | `roles_per_user` | `2` | Roles assigned to each user (must not exceed `num_roles`). |
 | `kibana_app_privileges` | `false` | Add a `kibana-.kibana` application privilege to every role. Building such roles requires application privilege lookups in the `.security` index on role cache misses. |
 | `num_kibana_spaces` | `100` | Number of Kibana spaces used as application privilege resources (only with `kibana_app_privileges`). |
-| `num_api_keys` | `10000` | API keys to create. `10000` fits into the default API key caches (`cache.max_keys: 25000`); `100000` exceeds them 4x and causes continuous cache evictions. |
+| `num_api_keys` | `10000` | API keys to create. `10000` fits into the default API key caches (`cache.max_keys: 25000`); `100000` is 4x their capacity and causes continuous cache evictions. |
 | `num_rd_templates` | `50` | Number of distinct role descriptor sets assigned to API keys. Keys sharing a template have byte-identical role descriptors and share the role descriptor and role cache entries. |
 | `assigned_rd_ratio` | `0.5` | Fraction of API keys with assigned role descriptors. The other keys have empty role descriptors and inherit the privileges of their owner. |
 | `api_key_expiration` | unset | Optional expiration of the created API keys, e.g. `30d`. |
@@ -57,7 +57,7 @@ All parameters can be set via `--track-params`.
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `create_clients` | `8` | Clients creating API keys. Each client writes its own `api-keys.<client>.jsonl` file. |
-| `create_batch_size` | `100` | API keys created concurrently per client and iteration. Creation uses the grant API with `refresh=wait_until`, so the creation throughput is roughly `create_clients * create_batch_size` keys per refresh interval. |
+| `create_batch_size` | `100` | API keys created concurrently per client and iteration. Creation uses the grant API with `refresh=wait_for`, so the creation throughput is roughly `create_clients * create_batch_size` keys per refresh interval. |
 | `clients` | `8` | Clients for `prime-api-key-caches` and `authenticate-api-key`. |
 | `warmup_time_period` | `60` | Warmup period of `authenticate-api-key` in seconds. |
 | `time_period` | `300` | Measurement period of `authenticate-api-key` in seconds. |
@@ -66,7 +66,7 @@ All parameters can be set via `--track-params`.
 | `hot_fraction` | `0.01` | Fraction of keys in the hot set (`access_pattern: hotset`). |
 | `hot_ratio` | `0.9` | Fraction of requests targeting the hot set (`access_pattern: hotset`). |
 | `invalid_credentials_ratio` | `0.0` | Fraction of requests using an existing API key id with a wrong secret (expects HTTP 401). Note that Elasticsearch logs a warning for every failed authentication, which adds logging overhead on the server. |
-| `cleanup` | `false` | Invalidate all created API keys and delete the users and roles at the end. Useful for persistent clusters. |
+| `cleanup` | `false` | Invalidate all created API keys and delete the users and roles at the end. Useful for persistent clusters. Elasticsearch deletes invalidated API keys only after `xpack.security.authc.api_key.delete.retention_period` (7 days by default). |
 
 ## Challenge `api-key-authentication` (default)
 
@@ -83,9 +83,11 @@ All parameters can be set via `--track-params`.
 ### Server-side counters
 
 The `collect-security-stats-*` tasks store the following values as request meta-data of their samples in the Rally metrics
-store (`rally-metrics-*`, fields `meta.*`) and log them to `rally.log`. The `*-after` task additionally reports `*_delta`
-values for the measurement window and the derived `cpu_micros_per_authenticate`, `security_crypto_tasks_per_authenticate`
-and `security_index_gets_per_authenticate`.
+store (`rally-metrics-*`, fields `meta.*`) and log them to `rally.log`. The `*-after` task additionally reports the
+`*_delta` of every counter since the `*-before` snapshot, the length of that window (`window_seconds`) and the derived
+`cpu_micros_per_authenticate`, `security_crypto_tasks_per_authenticate` and `security_index_gets_per_authenticate`. The
+window spans the whole `authenticate-api-key` task including its warmup, so these values also cover the requests of
+`warmup_time_period`, which Rally excludes from its own throughput and latency results.
 
 | Value | Source | Meaning |
 |-------|--------|---------|
@@ -94,7 +96,8 @@ and `security_index_gets_per_authenticate`.
 | `authenticate_requests` | `GET _nodes/stats/http` (`http.routes`) | HTTP requests on `/_security/_authenticate`. |
 | `process_cpu_millis` | `GET _nodes/stats/process` | CPU time consumed by the Elasticsearch process(es). |
 
-Enable `--telemetry=node-stats` to additionally record these counters as time series.
+Enable `--telemetry=node-stats` to additionally record the thread pool (including `security-crypto`) and process CPU stats
+as time series. It does not record the `.security` index and `http.routes` counters.
 
 ## Scenarios
 
@@ -138,6 +141,9 @@ esrally race --track-path=api_keys --distribution-version=9.5.4 \
 
 ### Existing cluster
 
+Set `cleanup:true` on clusters that outlive the benchmark. Otherwise the users created by the track, which share a
+well-known password, remain on the cluster together with their API keys.
+
 ```bash
 esrally race --track-path=api_keys --pipeline=benchmark-only --target-hosts=localhost:9200 \
   --client-options="use_ssl:true,verify_certs:false,basic_auth_user:'elastic',basic_auth_password:'changeme'" \
@@ -156,9 +162,11 @@ to `security-crypto`, in the number of `.security` document fetches and in CPU p
   because the number of distinct role descriptor sets (`num_rd_templates` plus one per user) is far below the role cache size.
 * The API key document cache expires entries 5 minutes after they were written, so even with a population that fits into
   the caches a wave of `.security` document fetches is expected every 5 minutes (the first one about 5 minutes after
-  `prime-api-key-caches`).
+  `prime-api-key-caches`). To keep it out of the measurement, keep `warmup_time_period + time_period` below 5 minutes or
+  raise `xpack.security.authc.api_key.doc_cache.ttl` (up to its maximum of `15m`).
 * Sanity check for the "caches fit" scenario: `security_crypto_tasks_per_authenticate` and
   `security_index_gets_per_authenticate` reported by `collect-security-stats-after` should be (close to) zero. In the
   "caches exceeded" scenario with uniform access they approach `1 - cache.max_keys / num_api_keys`.
-* With Rally's `--test-mode`, `create-api-keys` and `prime-api-key-caches` run one iteration per client and
-  `authenticate-api-key` runs for 10 seconds.
+* With Rally's `--test-mode`, every client of `create-api-keys` and `prime-api-key-caches` runs at most as many iterations
+  as the task has clients (with the defaults, up to 6,400 API keys are created and 64 are primed), and
+  `authenticate-api-key` runs for at most 10 seconds without warmup.

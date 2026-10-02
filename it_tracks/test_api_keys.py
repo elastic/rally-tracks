@@ -39,6 +39,8 @@ class TestApiKeys:
                 "warmup_time_period": 1,
                 "time_period": 5,
                 "invalid_credentials_ratio": 0.1,
+                "api_key_expiration": "1d",
+                "kibana_app_privileges": True,
                 "cleanup": True,
             },
             enable_assertions=False,

@@ -24,6 +24,9 @@
           },
           "query": {
             "default_field": [
+              {% if index_mode | default('') == 'logsdb_columnar' %}
+              "message"
+              {% else %}
               "cloud.account.id",
               "cloud.availability_zone",
               "cloud.instance.id",
@@ -64,6 +67,7 @@
               "message",
               "process.name",
               "tags"
+              {% endif %}
             ]
           }
         }

@@ -1,0 +1,49 @@
+{% import "rally.helpers" as rally with context %}
+{
+  "version": 2,
+  "description": "Benchmark for vector search with 10M MSMARCO passages embedded using Jina v5-small (1024-dim, L2-normalized)",
+  "indices": [
+    {
+      "name": "msmarco-jina-10m",
+      "body": "index-vectors-only-mapping.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "msmarco-jina-10m",
+      "base-url": "https://rally-tracks.elastic.co/msmarco-jina-10m-vector",
+      "documents": [
+        {
+          "source-file": "jina-documents-01.json.zst",
+          "document-count": 2500000,
+          "compressed-bytes": 17370657342,
+          "uncompressed-bytes": 56848735081
+        },
+        {
+          "source-file": "jina-documents-02.json.zst",
+          "document-count": 2500000,
+          "compressed-bytes": 17367289186,
+          "uncompressed-bytes": 56847911588
+        },
+        {
+          "source-file": "jina-documents-03.json.zst",
+          "document-count": 2500000,
+          "compressed-bytes": 17363184143,
+          "uncompressed-bytes": 56848961650
+        },
+        {
+          "source-file": "jina-documents-04.json.zst",
+          "document-count": 2500000,
+          "compressed-bytes": 17342114821,
+          "uncompressed-bytes": 56848563275
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

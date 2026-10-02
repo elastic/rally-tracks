@@ -3,7 +3,7 @@
 This track benchmarks the dataset from [Cohere/msmarco-v2-embed-english-v3](https://huggingface.co/datasets/Cohere/msmarco-v2-embed-english-v3).
 The corpus contains the original 138M passages of the [MSMARCO (passage, version 2)](https://ir-datasets.com/msmarco-passage-v2.html) corpus embedded
 into 1024 dimensional vectors with the [Cohere `embed-english-v3.0` model](https://cohere.com/blog/introducing-embed-v3). They are two versions
-of the corpus, one with float arrays and one with Base64 encoded strings, use the later for better performance.
+of the corpus, one with float arrays and one with Base64 encoded strings, use the latter for better performance.
 
 ### Generating the document dataset
 
@@ -11,9 +11,9 @@ To rebuild the dataset run the following commands, **warning** this takes at lea
 
 ```console
 $ cd msmarco-v2-vector
-$ python3 -m venv .venv
+$ uv venv
 $ source .venv/bin/activate
-$ pip install -r _tools/requirements.txt
+$ uv pip install -r _tools/requirements.txt
 $ python _tools/parse_documents.py
 
 # Create a test file for each page of documents
@@ -21,14 +21,13 @@ $ for file in cohere-documents-*; do
   head -n 1000 $file > "${file%.*}-1k.json"
 done
 
-# Zip each document file for uploading
+# Compress each document file for uploading
 $ for file in cohere-documents-*; do
-  bzip2 -k $file
+  zstd -k $file
 done
-$ ls -1 cohere-documents-* > files.txt
 ```
 
-This will build 47 `cohere-documents_float-XX.json` file for the entire dataset of 138.3M documents and then bzip them. Note that this script depends on the libraries listed `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
+This will build 47 `cohere-documents_float-XX.json` files for the entire dataset of 138.3M documents and then compress them with zstd. Before uploading, ensure the compressed artifacts are named to match what the track references (e.g. `cohere-documents-01.json.zst`; see `track.json`). Note that this script depends on the libraries listed in `_tools/requirements.txt` to run and it takes a few hours to download and parse all the documents.
 ### Example Document
 
 ```json
@@ -67,13 +66,20 @@ $ python _tools/parse_queries.py -r
 This track accepts the following parameters with Rally 0.8.0+ using `--track-params`:
  - `base_url` (default: `https://rally-tracks.elastic.co/cohere-msmarco-v2-embed-english-v3`): Specifies the bucket path from where to download the data set.
  - `vector_index_type` (default: bbq_hnsw)
+ - `hnsw_m` (default: unset): The number of neighbors each node will be connected to in the HNSW graph.
+ - `hnsw_ef_construction` (default: unset): The number of candidates to track while assembling the HNSW graph.
  - `aggressive_merge_policy` (default: false): Whether to apply a more aggressive merge strategy.
+ - `index_merge_scheduler_auto_throttle` (default: true): Whether to enable auto-throttling for the merge scheduler. Matches the Elasticsearch default; set to `false` to disable.
  - `index_refresh_interval` (default: unset): The index refresh interval.
  - `corpora` (default: ["msmarco-v2_float-initial-indexing-1", ..., "msmarco-v2_float-initial-indexing-8"])
  - `initial_indexing_bulk_indexing_clients` (default: 5)
- - `initial_indexing_ingest_percentage` (default: 100)
  - `initial_indexing_bulk_size` (default: 500)
  - `initial_indexing_bulk_warmup` (default: 40)
+ - `initial_indexing_ingest_doc_count` (default: unset) The absolute number of docs to ingest. Incompatible with `initial_indexing_ingest_percentage`  
+ - `initial_indexing_ingest_percentage` (default: 100)
+ - `include_initial_indexing` (default: true) If `true` run the initial indexing and post index sleep steps. If `false` the data should have been pre-ingested
+ - `include_parallel_indexing` (default: true) Include the parallel indexing benchmark
+ - `include_recall` (default: true) Include the recall benchmark
  - `number_of_shards` (default: 1)
  - `number_of_replicas` (default: 0)
  - `parallel_corpora` (default:"msmarco-v2_float-parallel-indexing")
@@ -81,12 +87,16 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - `parallel_indexing_bulk_target_throughput` (default: 1)
  - `parallel_indexing_search_clients` (default: 3)
  - `parallel_indexing_search_target_throughput` (default: 100)
+ - `force_merge_max_num_segments` (default: unset)
  - `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
  - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
  - `search_ops` (default: [(10, 20, 0), (10, 20, 20), (10, 50, 0), (10, 50, 20), (10, 100, 0), (10, 100, 20), (10, 200, 0), (10, 200, 20), (10, 500, 0), (10, 500, 20), (10, 1000, 0), (10, 1000, 20), (100, 120, 0), (100, 120, 120), (100, 200, 0), (100, 200, 120), (100, 500, 0), (100, 500, 120), (100, 1000, 0), (100, 1000, 120)]): The search and recall operations to run (k, ef_search, num_rescore).
  - `standalone_search_iterations` (default: 10000)
  - `vector_index_type` (default: "int8_hnsw"): The index kind for storing the vectors.
  - `vector_index_element_type` (default: "float"): Sets the dense_vector element type.
+ - `enable_experimental_features` (default: false): Enables experimental dense vector features that may break backward compatibility.
+ - `index_mode` (default: not set, uses "standard"): If defined, sets the index mode (e.g., "vectordb_document").
+ - `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 
 For running with Base64 encoded strings, use a parameter file like:
 
@@ -109,6 +119,32 @@ For running with Base64 encoded strings, use a parameter file like:
 }
 ```
 
+For a 10 million document dataset use:
+
+```json
+  "corpora": [
+    "msmarco-v2_base64-10-million"
+  ],
+```
+
+### Autoscale parameter conventions
+
+The three autoscale challenges (`ingest-autoscale`, `search-autoscale`, `ingest-search-autoscale`) share the same array parameter conventions:
+
+- `as_phases` defines the number of measurement phases (default: 5 when neither `as_phases` nor `as_warmup_time_periods` is set; falls back to `len(as_warmup_time_periods)` when only `as_warmup_time_periods` is provided, preserving backward compatibility with existing configurations). All `as_*` arrays are indexed via modulo (`i % len(array)`), so a 1-element array repeats that value for every phase and an `as_phases`-element array assigns one value per phase. Per-track parameter validation is not yet supported natively by Rally; until then, mismatched array lengths wrap silently. **Note for `search-autoscale`:** each phase runs two search tasks back-to-back — k=10 (num-candidates=100) followed by k=100 (num-candidates=500) — each lasting `as_time_periods` seconds. Total search measured time is therefore `as_phases × 2 × as_time_periods[i]`, not `as_phases × as_time_periods[i]`.
+- `as_warmup_time_periods` values of `0` are valid and mean "no warmup". They are clamped to `1` internally to satisfy Rally's schema requirement.
+- Target throughput arrays (`as_search_target_throughputs`, `as_ingest_target_throughputs`) use `-1` to mean unlimited throughput. Any positive value caps throughput in operations per second.
+- `as_settings` (default: `[{}]`) applies Elasticsearch settings before each phase, following the same 1-or-N modulo convention (a 1-element array repeats for every phase). Each element is a flat object of settings under their natural Elasticsearch names; you do not specify persistent or transient. Keys starting with `index.` are applied to the index via `PUT /<index>/_settings`; all other keys are applied as cluster settings via `PUT /_cluster/settings` as persistent settings (transient is not used because it is deprecated in Elasticsearch). Index settings must keep the canonical `index.` prefix — a bare index setting name would be treated as a cluster setting and rejected by Elasticsearch. An empty object (`{}`) or `null` emits no step, so a phase can opt out. Settings are sticky in Elasticsearch — a value set in one phase persists into later phases until explicitly changed, so a phase that needs a different value must set it itself. The settings step retries transient connection/timeout failures (`as_settings_retries`, default: 3; a `400` for an invalid setting is never retried and fails immediately). Note that under Rally's default `--on-error=continue`, a failed settings step from an API error (such as an invalid setting value) is recorded as an error but the run proceeds with the setting unapplied (a connection error still aborts the run); pass `--on-error=abort` when settings correctness is essential to the measurement so the run halts on any settings failure. Example:
+
+```json
+{
+  "as_settings": [
+    { "index.number_of_replicas": 0, "index.refresh_interval": "-1" },
+    { "index.number_of_replicas": 1, "index.refresh_interval": "5s", "indices.recovery.max_bytes_per_sec": "200mb" }
+  ]
+}
+```
+
 ### Parameters for ingest-autoscale challenge
 
 - Mapping:
@@ -118,10 +154,13 @@ For running with Base64 encoded strings, use a parameter file like:
     - `initial_ingest_bulk_size` (default: 100)
 - Ingest Operations:
     - `ingest_bulk_size` (default: 100)
-    - `as_warmup_time_periods` (default: [600,600,600,600,600])
-    - `as_time_periods` (default: [1800,1800,1800,1800,1800])
+    - `as_phases` (default: 5, or `len(as_warmup_time_periods)` if provided without `as_phases`)
+    - `as_warmup_time_periods` (default: [600])
+    - `as_time_periods` (default: [1800])
     - `as_ingest_clients` (default: [1,2,4,8,16])
-    - `as_ingest_target_throughputs` (default: [-1,-1,-1,-1,-1])
+    - `as_ingest_target_throughputs` (default: [-1])
+    - `as_settings` (default: [{}])
+    - `as_settings_retries` (default: 3)
 
 When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 
@@ -130,14 +169,18 @@ When `as_ingest_target_throughputs` is a positive number, the ingest throughput 
 - Mapping:
   - `vector_index_type` (default: bbq_hnsw)
 - Initial indexing:
+    - `include_initial_indexing` (default: true) If `true` run the initial indexing and post index sleep steps. If `false` the data should have been pre-ingested and just the queries are run
     - `initial_ingest_clients` (default: 4)
     - `initial_ingest_bulk_size` (default: 100)
 - Search Operations:
     - `search_size` (default: 10)
-    - `as_warmup_time_periods` (default: [600,600,600,600,600])
-    - `as_time_periods` (default: [1800,1800,1800,1800,1800])
+    - `as_phases` (default: 5, or `len(as_warmup_time_periods)` if provided without `as_phases`)
+    - `as_warmup_time_periods` (default: [600])
+    - `as_time_periods` (default: [1800])
     - `as_search_clients` (default: [1,2,4,8,16])
-    - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
+    - `as_search_target_throughputs` (default: [-1])
+    - `as_settings` (default: [{}])
+    - `as_settings_retries` (default: 3)
 
 When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
 
@@ -149,16 +192,77 @@ When `as_search_target_throughputs` is a positive number, the search throughput 
     - `initial_ingest_clients` (default: 4)
     - `initial_ingest_bulk_size` (default: 100)
 - Operations:
-    - `as_warmup_time_periods` (default: [600,600,600,600,600])
-    - `as_time_periods` (default: [1800,1800,1800,1800,1800])
+    - `as_phases` (default: 5, or `len(as_warmup_time_periods)` if provided without `as_phases`)
+    - `as_warmup_time_periods` (default: [600])
+    - `as_time_periods` (default: [1800])
+    - `as_settings` (default: [{}])
+    - `as_settings_retries` (default: 3)
 - Ingest Operations:
     - `ingest_bulk_size` (default: 100)
-    - `as_ingest_clients` (default: [1,2,4,8,16])
-    - `as_ingest_target_throughputs` (default: [-1,-1,-1,-1,-1])
+    - `as_ingest_clients` (default: [1])
+    - `as_ingest_target_throughputs` (default: [-1])
 - Search Operations:
     - `search_size` (default: 10)
     - `as_search_clients` (default: [1,2,4,8,16])
-    - `as_search_target_throughputs` (default: [-1,-1,-1,-1,-1])
+    - `as_search_target_throughputs` (default: [-1])
+
+### Parameters for parallel-update-search challenge
+
+Initial ingest, wait for merges to settle, then run a single parallel phase that updates a percentage of the corpus (by re-indexing documents with the same `_id` from the same corpus) at a target docs/s while running queries. The search task runs until the update task completes (via `completed-by`).
+
+Both bulk tasks use the `bulk-copy-docid-param-source` from `track.py`, which copies each document's `docid` field into the bulk action line as `_id`. The corpus is not rewritten — the `docid` value is left in place as a field and also used as the document `_id`, so re-ingestion overwrites existing documents instead of appending new ones with fresh auto-generated `_id`s.
+
+- Mapping:
+    - `vector_index_type` (default: bbq_hnsw)
+- Initial indexing (always ingests the full configured corpora):
+    - `corpora` (default: `["msmarco-v2_base64-initial-indexing-1"]`): The corpora to ingest and later target with updates. The update task re-indexes documents from this same set so they remain true updates rather than new docs.
+    - `initial_ingest_clients` (default: 4)
+    - `initial_ingest_bulk_size` (default: 100)
+- Update operation (X% of the corpus at Y docs/s):
+    - `update_percentage` (default: 10): Percentage of the corpus to update.
+    - `update_clients` (default: 1)
+    - `update_bulk_size` (default: 100)
+    - `update_target_throughput_docs_per_sec` (default: 1000): Update throughput in documents per second. The schedule converts this to the bulks/s value Rally expects via `update_target_throughput_docs_per_sec / update_bulk_size`, so the effective docs/s rate is the value you set, spread across `update_clients`.
+- Search operation:
+    - `search_clients` (default: 4)
+    - `search_target_throughput` (default: -1): Target throughput for the search task in operations per second (one operation = one query). If negative, search runs unthrottled.
+    - `search_warmup_time_period` (default: 60)
+
+### Parameters for hybrid-search-queries-dsl-and-esql challenge
+
+Use mapping_type = `vectors-with-text` for this track since we perform lexical search on the title and text fields
+
+- Mapping:
+  - `vector_index_type` (default: int8_hnsw)
+- Initial indexing:
+  - `initial_indexing_bulk_indexing_clients` (default: 5)
+  - `initial_indexing_ingest_percentage` (default: 100)
+  - `initial_indexing_bulk_size` (default: 500)
+  - `initial_indexing_bulk_warmup` (default: 40)
+  - `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
+  - `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
+- Search Operations:
+  - `standalone_search_iterations` (default: 10000)
+  - `standalone_search_clients` (default: 8)
+  - `hybrid_knn_ops` ((k, num_candidates) pairs, default([(10, 0), (10, 50), (100, 200), (100, 300)]))
 
 When `as_ingest_target_throughputs` is a positive number, the ingest throughput formula in documents per second is `ingest_bulk_size * as_ingest_target_throughputs`.
 When `as_search_target_throughputs` is a positive number, the search throughput formula in documents per second is `search_size * as_search_target_throughputs`.
+
+### Force merge (optional)
+
+The `force_merge_max_num_segments` parameter enables an optional force merge step in the
+default `index-and-search` challenge. When set, a force merge is triggered after initial
+indexing and natural merge completion, but before any search or recall operations run.
+The step reduces each shard to at most the specified number of segments, then waits for
+all merges to finish before proceeding.
+
+This is disabled by default. To enable it, set the parameter to the desired maximum
+number of segments per shard:
+
+```json
+{
+  "force_merge_max_num_segments": 16
+}
+```
+

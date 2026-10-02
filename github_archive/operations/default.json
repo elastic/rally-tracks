@@ -66,8 +66,8 @@
                 {
                   "range": {
                     "created_at": {
-                      "lte": {{query_end_timestamp | default('2021-10-01T12:00:00Z') | tojson}},
-                      "gte": {{query_start_timestamp | default('2021-10-01T10:00:00Z') | tojson}}
+                      "lte": {{p_query_end_timestamp | tojson}},
+                      "gte": {{p_query_start_timestamp | tojson}}
                     }
                   }
                 },
@@ -182,8 +182,8 @@
                 {
                   "range": {
                     "created_at": {
-                      "lte": {{query_end_timestamp | default('2021-10-01T12:00:00Z') | tojson}},
-                      "gte": {{query_start_timestamp | default('2021-10-01T10:00:00Z') | tojson}}
+                      "lte": {{p_query_end_timestamp | tojson}},
+                      "gte": {{p_query_start_timestamp | tojson}}
                     }
                   }
                 },
@@ -408,6 +408,148 @@
             }
           }
         ]
+      }
+    }
+  }
+},
+{
+  "name": "range",
+  "operation-type": "search",
+  "index": "gharchive*",
+  {% if p_search_cache -%}
+  "cache": true,
+  {% endif -%}
+  {% if p_use_custom_parameters -%}
+  "param-source": "number-range-source",
+  {% endif -%}
+  "body": {
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "range": {
+              "payload.size": {
+                "gte": 3,
+                "lt": 6
+              }
+            }
+          },
+          {"range": {
+            "created_at": {
+              "gte": {{p_query_start_date| tojson}},
+              "lte": {{p_query_end_date | tojson}}
+            }
+          }
+        }
+        ]
+      }
+    }
+  }
+  {{ rally.exists_set_param("detailed-results", p_detailed_results, default_value=False) }}
+},
+{
+  "name": "autohisto_agg",
+  "operation-type": "search",
+  "index": "gharchive*",
+  {% if p_search_cache -%}
+  "cache": true,
+  {% endif -%}
+  {% if p_use_custom_parameters -%}
+  "param-source": "date-param-source",
+  {% endif -%}
+  "body": {
+    "size": 0,
+    "query": {
+      "range": {
+        "created_at": {
+          "gte": {{p_query_start_date| tojson}},
+          "lte": {{p_query_end_date | tojson}},
+          "format": "yyyy-MM-dd"
+        }
+      }
+    },
+    "aggs": {
+      "created_at_histogram_time": {
+        "auto_date_histogram": {
+          "field": "created_at",
+          "buckets": 20
+        }
+      }
+    }
+  }
+  {{ rally.exists_set_param("detailed-results", p_detailed_results, default_value=False) }}
+},
+{
+  "name": "top-es-contributors-weekly",
+  "operation-type": "search",
+  "index": "gharchive*",
+  {% if p_use_custom_parameters -%}
+  "param-source": "gh-repo-param-source",
+  {% endif -%}
+  {% if p_search_cache -%}
+  "cache": true,
+  {% endif -%}
+  "body": {
+    "size": 0,
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "term": {
+              "repo.name": "elastic/elasticsearch"
+            }
+          },
+          {
+            "term": {
+              "type": "PullRequestEvent"
+            }
+          },
+          {
+            "term": {
+              "payload.action": "opened"
+            }
+          }
+        ]
+      }
+    },
+    "aggs": {
+      "elasticsearch_top_10_contributors_weekly": {
+        "date_histogram": {
+          "field": "created_at",
+          "calendar_interval": "week"
+        },
+        "aggs": {
+          "author": {
+            "terms": {
+              "field": "actor.login",
+              "size": 10
+            },
+            "aggs": {
+              "pr_count": {
+                "cardinality": {
+                  "field": "id"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  {{ rally.exists_set_param("detailed-results", p_detailed_results, default_value=False) }}
+},
+{
+  "name": "top-10-repos-esql",
+  "operation-type": "esql",
+  {% if p_use_custom_parameters -%}
+  "param-source": "datetime-param-source",
+  {% endif -%}
+  "query": "FROM gharchive* | WHERE type== \"PushEvent\" | STATS push_count = COUNT(payload.push_id) BY repo.name | SORT push_count DESC | LIMIT 10",
+  "filter": {
+    "range": {
+      "created_at": {
+        "lte": "2021-10-02T00:00:00Z",
+        "gte": "2021-10-01T00:00:00Z"
       }
     }
   }

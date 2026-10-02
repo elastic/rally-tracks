@@ -1,3 +1,4 @@
+{# include-initial-indexing-marker-start #}{%- if include_initial_indexing|default(true) -%}
 {
   "name": "delete-index",
   "operation": {
@@ -14,88 +15,141 @@
   "name": "check-cluster-health",
   "operation": "check-cluster-health"
 },
+{% set p_corpora = (corpora | default(["msmarco-v2_float-initial-indexing-1", "msmarco-v2_float-initial-indexing-2", "msmarco-v2_float-initial-indexing-3", "msmarco-v2_float-initial-indexing-4", "msmarco-v2_float-initial-indexing-5", "msmarco-v2_float-initial-indexing-6", "msmarco-v2_float-initial-indexing-7", "msmarco-v2_float-initial-indexing-8"])) %}
 {
   "name": "initial-ingest",
   "clients": {{ initial_ingest_clients | default(4) | int}},
   "operation": {
     "operation-type": "bulk",
-    "bulk-size": {{ initial_ingest_bulk_size | default(100) | int}},
-    "ingest-percentage": {{initial_ingest_percentage | default(100) | int}}
+    "bulk-size": {{ initial_ingest_bulk_size | default(500) | int}},
+    "corpora":  [
+      {% for doc_id in p_corpora %}
+        {{doc_id | tojson}}
+        {{ ", " if not loop.last else "" }}
+      {% endfor %}],
+    {%- if initial_indexing_ingest_doc_count is defined %}
+    "ingest-doc-count": {{ initial_indexing_ingest_doc_count }}
+    {%- else %}
+    "ingest-percentage": {{initial_indexing_ingest_percentage | default(100)}}
+    {%- endif %}
   }
-}
+},
+{%- endif -%}{# include-initial-indexing-marker-end #}
 {%- set p_vector_index_type = (vector_index_type | default("bbq_hnsw"))%}
-{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600,600,600,600,600]))%}
-{%- set p_as_time_periods = (as_time_periods | default([1800,1800,1800,1800,1800]))%}
+{%- if as_phases is defined %}
+{%- set p_as_phases = as_phases %}
+{%- elif as_warmup_time_periods is defined %}
+{%- set p_as_phases = as_warmup_time_periods|length %}
+{%- else %}
+{%- set p_as_phases = 5 %}
+{%- endif %}
+{%- set p_as_warmup_time_periods = (as_warmup_time_periods | default([600]))%}
+{%- set p_as_time_periods = (as_time_periods | default([1800]))%}
 {%- set p_as_search_clients = (as_search_clients | default([1,2,4,8,16]))%}
-{%- set p_as_search_target_throughputs = (as_search_target_throughputs | default([-1,-1,-1,-1,-1]))%}
-{%- for i in range(p_as_warmup_time_periods|length) %},
-  {%- if p_as_search_target_throughputs[i] < 0 %}
+{%- set p_as_search_target_throughputs = (as_search_target_throughputs | default([-1]))%}
+{%- set p_as_settings = (as_settings | default([{}]))%}
+{%- set p_as_settings_retries = ([as_settings_retries | default(3) | int, 0] | max)%}
+{%- for i in range(p_as_phases) %}
+  {%- set phase_settings = p_as_settings[i % (p_as_settings|length)] %}
+  {%- if phase_settings %}
 {
-  "name": "search-{{loop.index}}-c{{p_as_search_clients[i]}}-s10",
-  "clients": {{p_as_search_clients[i]}},
+  "name": "configure-settings-{{loop.index}}",
+  "operation": {
+    "operation-type": "configure-settings",
+    "param-source": "settings-param-source",
+    "settings": {{phase_settings | tojson}},
+    "retries": {{p_as_settings_retries}}
+  }
+},
+  {%- endif %}
+  {%- if p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)] < 0 %}
+{
+  "name": "search-{{loop.index}}-c{{p_as_search_clients[i % (p_as_search_clients|length)]}}-s10",
+  "clients": {{p_as_search_clients[i % (p_as_search_clients|length)]}},
   "operation": {
     "operation-type": "search",
     "param-source": "knn-param-source",
+    "random-query": true,
+    "dims": 1024,
     "k": 10,
     "num-candidates": 100,
     {%- if p_vector_index_type == "bbq_hnsw" %}
     "oversample-rescore": 3,
+    {%- elif p_vector_index_type == "bbq_disk" %}
+    "oversample-rescore": 5,
+    "visit-percentage": 2,
     {%- endif %}
     "looped": true
   },
-  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-  "time-period": {{p_as_time_periods[i]}}
+  "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+  "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}}
 },
 {
-  "name": "search-{{loop.index}}-c{{p_as_search_clients[i]}}-s100",
-  "clients": {{p_as_search_clients[i]}},
+  "name": "search-{{loop.index}}-c{{p_as_search_clients[i % (p_as_search_clients|length)]}}-s100",
+  "clients": {{p_as_search_clients[i % (p_as_search_clients|length)]}},
   "operation": {
     "operation-type": "search",
     "param-source": "knn-param-source",
+    "random-query": true,
+    "dims": 1024,
     "k": 100,
     "num-candidates": 500,
     {%- if p_vector_index_type == "bbq_hnsw" %}
     "oversample-rescore": 3,
+    {%- elif p_vector_index_type == "bbq_disk" %}
+    "oversample-rescore": 5,
+    "visit-percentage": 3,
     {%- endif %}
     "looped": true
   },
-  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-  "time-period": {{p_as_time_periods[i]}}
+  "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+  "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}}
 }
   {%- else %}
 {
-  "name": "search-{{loop.index}}-c{{p_as_search_clients[i]}}-s10-t{{p_as_search_target_throughputs[i]}}",
-  "clients": {{p_as_search_clients[i]}},
+  "name": "search-{{loop.index}}-c{{p_as_search_clients[i % (p_as_search_clients|length)]}}-s10-t{{p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)]}}",
+  "clients": {{p_as_search_clients[i % (p_as_search_clients|length)]}},
   "operation": {
     "operation-type": "search",
     "param-source": "knn-param-source",
+    "random-query": true,
+    "dims": 1024,
     "k": 10,
     "num-candidates": 100,
     {%- if p_vector_index_type == "bbq_hnsw" %}
     "oversample-rescore": 3,
+    {%- elif p_vector_index_type == "bbq_disk" %}
+    "oversample-rescore": 5,
+    "visit-percentage": 2,
     {%- endif %}
     "looped": true
   },
-  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-  "time-period": {{p_as_time_periods[i]}},
-  "target-throughput": {{p_as_search_target_throughputs[i]}}
+  "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+  "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},
+  "target-throughput": {{p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)]}}
 },
 {
-  "name": "search-{{loop.index}}-c{{p_as_search_clients[i]}}-s100-t{{p_as_search_target_throughputs[i]}}",
-  "clients": {{p_as_search_clients[i]}},
+  "name": "search-{{loop.index}}-c{{p_as_search_clients[i % (p_as_search_clients|length)]}}-s100-t{{p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)]}}",
+  "clients": {{p_as_search_clients[i % (p_as_search_clients|length)]}},
   "operation": {
     "operation-type": "search",
     "param-source": "knn-param-source",
+    "random-query": true,
+    "dims": 1024,
     "k": 100,
     "num-candidates": 500,
     {%- if p_vector_index_type == "bbq_hnsw" %}
     "oversample-rescore": 3,
+    {%- elif p_vector_index_type == "bbq_disk" %}
+    "oversample-rescore": 5,
+    "visit-percentage": 3,
     {%- endif %}
     "looped": true
   },
-  "warmup-time-period": {{p_as_warmup_time_periods[i]}},
-  "time-period": {{p_as_time_periods[i]}},
-  "target-throughput": {{p_as_search_target_throughputs[i]}}
+  "warmup-time-period": {{[p_as_warmup_time_periods[i % (p_as_warmup_time_periods|length)], 1]|max}},
+  "time-period": {{p_as_time_periods[i % (p_as_time_periods|length)]}},
+  "target-throughput": {{p_as_search_target_throughputs[i % (p_as_search_target_throughputs|length)]}}
 }
   {%- endif %}
+  {%- if not loop.last %},{%- endif %}
 {%- endfor %}

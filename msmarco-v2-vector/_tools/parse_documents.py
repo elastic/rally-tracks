@@ -31,7 +31,7 @@ def output_pages(start_page, end_page):
         if end_index > TOTAL_DOCS:
             end_index = TOTAL_DOCS
         output_filename = f"{OUTPUT_FILENAME}-{page:02d}.json"
-        print(f"Outputing page {page} documents to {output_filename}")
+        print(f"Outputting page {page} documents to {output_filename}")
         with open(output_filename, "w") as documents_file:
             output_documents(documents_file, start_index, end_index)
 
@@ -73,7 +73,7 @@ def parse_arguments():
 
 
 if __name__ == "__main__":
-    (max_documents, start_page, end_page) = parse_arguments()
+    max_documents, start_page, end_page = parse_arguments()
     if max_documents == DEFAULT_MAX_DOCS:
         output_pages(start_page, end_page)
     else:

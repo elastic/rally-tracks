@@ -1,6 +1,8 @@
     {%- set p_target_opensearch = (target_opensearch | default(false))%}
     {%- set p_number_of_shards = (number_of_shards | default(1))%}
     {%- set p_number_of_replicas = (number_of_replicas | default(0))%}
+    {%- set p_index_mode = (index_mode | default(null))%}
+    {%- set p_mapping_source_mode = (mapping_source_mode | default(null))%}
     {
       "name": "create-ilm-policy",
       "operation-type": "raw-request",

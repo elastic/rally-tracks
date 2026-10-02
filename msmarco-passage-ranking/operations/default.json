@@ -93,8 +93,10 @@
    "operation-type": "search",
    "param-source": "query_param_source",
    "query_source": "queries.json",
-   "query_strategy": "hybrid",
+   "query_strategy": "{{query_strategy | default('rrf')}}",
    "text_expansion_field": "text_expansion_elser",
+   "rank_window_size": {{rank_window_size | default(10)}},
+   "rank_constant": {{rank_constant | default(60)}},
    "track_total_hits": true
 },
 {
@@ -102,8 +104,10 @@
    "operation-type": "search",
    "param-source": "query_param_source",
    "query_source": "queries.json",
-   "query_strategy": "hybrid",
+   "query_strategy": "{{query_strategy | default('rrf')}}",
    "text_expansion_field": "text_expansion_elser",
+   "rank_window_size": {{rank_window_size | default(10)}},
+   "rank_constant": {{rank_constant | default(60)}},
    "track_total_hits": false
 },
 {

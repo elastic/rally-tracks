@@ -25,7 +25,7 @@ from dataclasses import dataclass
 
 import pytest
 import requests
-from elasticsearch import Elasticsearch
+from esrally.client.synchronous import RallySyncElasticsearch
 
 BASE_URL = os.environ["RALLY_IT_SERVERLESS_BASE_URL"]
 API_KEY = os.environ["RALLY_IT_SERVERLESS_API_KEY"]
@@ -131,54 +131,55 @@ def project_config(project, tmpdir_factory):
     else:
         raise ValueError("Timed out waiting for DNS propagation")
 
-    print("Waiting for Elasticsearch")
-    for _ in range(60):  # 60 * 15 = 900 seconds = 15 minutes
-        try:
-            es = Elasticsearch(
-                f"https://{rally_target_host}",
-                basic_auth=(
-                    credentials["username"],
-                    credentials["password"],
-                ),
-                request_timeout=10,
-            )
-            info = es.info()
-            print("GET /")
-            print(json.dumps(info.body, indent=2))
+    with contextlib.closing(
+        RallySyncElasticsearch(
+            f"https://{rally_target_host}",
+            basic_auth=(credentials["username"], credentials["password"]),
+            request_timeout=10,
+        )
+    ) as es:
+        print("Waiting for Elasticsearch")
+        for _ in range(60):  # 60 * 15 = 900 seconds = 15 minutes
+            try:
+                info = es.info()
+                print("GET /")
+                print(json.dumps(info.body, indent=2))
 
-            authenticate = es.perform_request(method="GET", path="/_security/_authenticate")
-            print("GET /_security/_authenticate")
-            print(json.dumps(authenticate.body, indent=2))
+                authenticate = es.perform_request(method="GET", path="/_security/_authenticate")
+                print("GET /_security/_authenticate")
+                print(json.dumps(authenticate.body, indent=2))
 
-            break
-        except Exception as e:
-            print(f"GET / Failed with {str(e)}")
-            time.sleep(15)
-    else:
-        raise ValueError("Timed out waiting for Elasticsearch")
+                break
+            except Exception as e:
+                print(f"GET / Failed with {str(e)}")
+                time.sleep(15)
+        else:
+            raise ValueError("Timed out waiting for Elasticsearch")
 
-    # Create API key to test Rally with a public user privileges
-    print("Waiting for API key")
-    for _ in range(18):
-        try:
-            api_key = es.security.create_api_key(name="public-api-key")
-            break
-        except Exception as e:
-            print(f"API create failed with {str(e)}")
-            time.sleep(10)
-    else:
-        raise ValueError("Timed out waiting for API key")
+        # Create API key to test Rally with a public user privileges
+        print("Waiting for API key")
+        for _ in range(18):
+            try:
+                api_key = es.security.create_api_key(name="public-api-key")
+                break
+            except Exception as e:
+                print(f"API create failed with {str(e)}")
+                time.sleep(10)
+        else:
+            raise ValueError("Timed out waiting for API key")
 
     # Confirm API key is working fine
     print("Testing API key")
     for _ in range(18):  # 18 * 10 = 180 seconds = 3 minutes
         try:
-            es = Elasticsearch(
-                f"https://{rally_target_host}",
-                api_key=api_key.body["encoded"],
-                request_timeout=10,
-            )
-            info = es.info()
+            with contextlib.closing(
+                RallySyncElasticsearch(
+                    f"https://{rally_target_host}",
+                    api_key=api_key.body["encoded"],
+                    request_timeout=10,
+                )
+            ) as es:
+                info = es.info()
             break
         except Exception as e:
             print(f"API verification failed with {str(e)}")

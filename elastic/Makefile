@@ -15,67 +15,35 @@
 # specific language governing permissions and limitations
 # under the License.
 
-SHELL = /bin/bash
-RALLY_VARS_URL = "https://raw.githubusercontent.com/elastic/rally/master/.ci/variables.json"
-PYENV_REGEX = .pyenv/shims
-PY38 = $(shell curl -L -s $(RALLY_VARS_URL) | jq -r '.python_versions.PY38')
-VIRTUAL_ENV ?= .venv
-VENV_ACTIVATE_FILE = $(VIRTUAL_ENV)/bin/activate
-VENV_ACTIVATE = . $(VENV_ACTIVATE_FILE)
-VEPYTHON = $(VIRTUAL_ENV)/bin/python3
-PYENV_ERROR = "\033[0;31mIMPORTANT\033[0m: Please install pyenv.\n"
-PYENV_PATH_ERROR = "\033[0;31mIMPORTANT\033[0m: Please add $(HOME)/$(PYENV_REGEX) to your PATH env.\n"
-PYENV_PREREQ_HELP = "\033[0;31mIMPORTANT\033[0m: please add \033[0;31meval \"\$$(pyenv init -)\"\033[0m to your bash profile and restart your terminal before proceeding any further.\n"
-VE_MISSING_HELP = "\033[0;31mIMPORTANT\033[0m: Couldn't find $(PWD)/$(VIRTUAL_ENV); have you executed make venv-create?\033[0m\n"
+SHELL := /bin/bash
+ROOT_DIR := $(abspath ..)
+VIRTUAL_ENV := $(or $(VIRTUAL_ENV),$(ROOT_DIR)/.venv$(if $(PY_VERSION),-$(PY_VERSION)))
+VENV_ACTIVATE_FILE := $(VIRTUAL_ENV)/bin/activate
+VENV_ACTIVATE := source $(VENV_ACTIVATE_FILE)
 
-prereq:
-	pyenv install --skip-existing $(PY38)
-	pyenv local $(PY38)
-	@# Ensure all Python versions are registered for this project
-	echo "$(PY38)" > .python-version
-	-@ printf $(PYENV_PREREQ_HELP)
+PY_VERSION ?= 3.13.7
 
-venv-create:
-	@if [[ ! -x $$(command -v pyenv) ]]; then \
-		printf $(PYENV_ERROR); \
-		exit 1; \
-	fi;
-	@if [[ ! "$(PATH)" =~ $(PYENV_REGEX) ]]; then \
-		printf $(PYENV_PATH_ERROR); \
-		exit 1; \
-	fi;
-	@if [[ ! -f $(VENV_ACTIVATE_FILE) ]]; then \
-		eval "$$(pyenv init -)" && python3 -mvenv $(VIRTUAL_ENV); \
-		printf "Created python3 venv under $(PWD)/$(VIRTUAL_ENV).\n"; \
-	fi;
-
-check-venv:
-	@if [[ ! -f $(VENV_ACTIVATE_FILE) ]]; then \
-	printf $(VE_MISSING_HELP); \
-	fi
-
-install: venv-create
-	. $(VENV_ACTIVATE_FILE); pip install --upgrade pip
-	# install pytest for tests
-	. $(VENV_ACTIVATE_FILE); pip3 install pytest==6.2.5 pytest-benchmark==3.2.2
-	# install dependencies for tests
-	. $(VENV_ACTIVATE_FILE); pip3 install geneve==0.3.0 pytest-asyncio==0.18.1 git+https://github.com/elastic/package-assets.git
-	# install (latest) Rally for smoke tests
-	. $(VENV_ACTIVATE_FILE); pip3 install git+ssh://git@github.com/elastic/rally.git --use-feature=2020-resolver
+venv install:
+	$(MAKE) -C $(ROOT_DIR) install PY_VERSION=$(PY_VERSION) VIRTUAL_ENV=$(VIRTUAL_ENV)
 
 clean:
 	rm -rf .pytest_cache
+	$(MAKE) -C $(ROOT_DIR) clean
 
-test: check-venv
-	# PYTHONDONTWRITEBYTECODE=1 ensures that we always see warnings (not just the first time)
-	. $(VENV_ACTIVATE_FILE); PYTHONDONTWRITEBYTECODE=1; pytest
+lint:
+	$(MAKE) -C $(ROOT_DIR) lint PY_VERSION=$(PY_VERSION) VIRTUAL_ENV=$(VIRTUAL_ENV)
 
-it: check-venv
-	. $(VENV_ACTIVATE_FILE); cd it; ./smoke-test.sh
-	. $(VENV_ACTIVATE_FILE); cd it; ./query-test.sh
+format:
+	$(MAKE) -C $(ROOT_DIR) format PY_VERSION=$(PY_VERSION) VIRTUAL_ENV=$(VIRTUAL_ENV)
 
-snapshot-it: check-venv
-	. $(VENV_ACTIVATE_FILE); cd it; ./snapshot-test.sh $(snapshot_bucket)
+test: venv
+	$(MAKE) -C $(ROOT_DIR) test PY_VERSION=$(PY_VERSION) VIRTUAL_ENV=$(VIRTUAL_ENV) ARGS=elastic/tests
 
+it: venv
+	$(VENV_ACTIVATE); cd it; ./smoke-test.sh
+	$(VENV_ACTIVATE); cd it; ./query-test.sh
 
-.PHONY: clean test it prereq venv-create check-env snapshot-it
+snapshot-it: venv
+	$(VENV_ACTIVATE); cd it; ./snapshot-test.sh $(snapshot_bucket)
+
+.PHONY: clean format install it lint snapshot-it test venv

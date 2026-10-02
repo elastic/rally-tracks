@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 DEFAULT_START_DATE = "now-1d"
 DEFAULT_END_DATE = "now"
-DEFAULT_MAX_DATE = "2020-01-01"
+DEFAULT_MAX_DATE = "2020-01-02"
 
 # this provides a universal start date for `now` if we are using it as the current time
 now = datetime.now(tz=timezone.utc)

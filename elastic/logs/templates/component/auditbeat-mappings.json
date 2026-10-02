@@ -23,6 +23,10 @@
         {%- endif -%}{# non-serverless-index-settings-marker-end #}
         "query": {
           "default_field": [
+            {% if index_mode | default('') == 'logsdb_columnar' %}
+            "message",
+            "error.message"
+            {% else %}
             "message",
             "tags",
             "agent.ephemeral_id",
@@ -351,6 +355,7 @@
             "jolokia.url",
             "file.pe.import_hash",
             "fields.*"
+            {% endif %}
           ]
         }
       }
@@ -616,7 +621,7 @@
               "type": "boolean"
             },
             "trigger": {
-              "type": "nested",
+              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
               "properties": {
                 "type": {
                   "ignore_above": 1024,
@@ -1562,7 +1567,7 @@
               "type": "keyword"
             },
             "sections": {
-              "type": "nested",
+              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
               "properties": {
                 "chi2": {
                   "type": "long"
@@ -1602,7 +1607,7 @@
               "type": "keyword"
             },
             "segments": {
-              "type": "nested",
+              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
               "properties": {
                 "type": {
                   "ignore_above": 1024,
@@ -1845,8 +1850,7 @@
             },
             "public_key_exponent": {
               "index": false,
-              "type": "long",
-              "doc_values": false
+              "type": "long"
             },
             "not_before": {
               "type": "date"
@@ -4063,7 +4067,7 @@
                   "type": "keyword"
                 },
                 "sections": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "var_entropy": {
                       "type": "long"
@@ -4102,7 +4106,7 @@
                   }
                 },
                 "segments": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "type": {
                       "ignore_above": 1024,
@@ -4216,8 +4220,7 @@
                 },
                 "public_key_exponent": {
                   "index": false,
-                  "type": "long",
-                  "doc_values": false
+                  "type": "long"
                 },
                 "not_before": {
                   "type": "date"
@@ -4350,7 +4353,7 @@
                   "type": "keyword"
                 },
                 "sections": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "var_entropy": {
                       "type": "long"
@@ -4448,7 +4451,7 @@
                   "type": "long"
                 },
                 "sections": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "var_entropy": {
                       "type": "long"
@@ -4767,8 +4770,7 @@
             "original": {
               "ignore_above": 1024,
               "index": false,
-              "type": "keyword",
-              "doc_values": false
+              "type": "keyword"
             },
             "risk_score": {
               "type": "float"
@@ -5189,7 +5191,7 @@
                       "type": "date"
                     },
                     "sections": {
-                      "type": "nested",
+                      "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                       "properties": {
                         "chi2": {
                           "type": "long"
@@ -5229,7 +5231,7 @@
                       "type": "keyword"
                     },
                     "segments": {
-                      "type": "nested",
+                      "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                       "properties": {
                         "type": {
                           "ignore_above": 1024,
@@ -5492,7 +5494,7 @@
                   "type": "keyword"
                 },
                 "sections": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "chi2": {
                       "type": "long"
@@ -5532,7 +5534,7 @@
                   "type": "keyword"
                 },
                 "segments": {
-                  "type": "nested",
+                  "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                   "properties": {
                     "type": {
                       "ignore_above": 1024,
@@ -6089,8 +6091,7 @@
                     },
                     "public_key_exponent": {
                       "index": false,
-                      "type": "long",
-                      "doc_values": false
+                      "type": "long"
                     },
                     "subject": {
                       "properties": {
@@ -6249,8 +6250,7 @@
                     },
                     "public_key_exponent": {
                       "index": false,
-                      "type": "long",
-                      "doc_values": false
+                      "type": "long"
                     },
                     "not_before": {
                       "type": "date"
@@ -6600,8 +6600,7 @@
                     },
                     "public_key_exponent": {
                       "index": false,
-                      "type": "long",
-                      "doc_values": false
+                      "type": "long"
                     },
                     "not_before": {
                       "type": "date"
@@ -6870,7 +6869,7 @@
                           "type": "date"
                         },
                         "sections": {
-                          "type": "nested",
+                          "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                           "properties": {
                             "chi2": {
                               "type": "long"
@@ -6914,7 +6913,7 @@
                           "type": "keyword"
                         },
                         "segments": {
-                          "type": "nested",
+                          "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                           "properties": {
                             "type": {
                               "ignore_above": 1024,
@@ -6955,8 +6954,7 @@
                         },
                         "public_key_exponent": {
                           "index": false,
-                          "type": "long",
-                          "doc_values": false
+                          "type": "long"
                         },
                         "subject": {
                           "properties": {
@@ -7234,7 +7232,7 @@
               }
             },
             "enrichments": {
-              "type": "nested",
+              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
               "properties": {
                 "indicator": {
                   "type": "object",
@@ -7425,8 +7423,7 @@
                         },
                         "public_key_exponent": {
                           "index": false,
-                          "type": "long",
-                          "doc_values": false
+                          "type": "long"
                         },
                         "not_before": {
                           "type": "date"
@@ -7699,7 +7696,7 @@
                               "type": "keyword"
                             },
                             "sections": {
-                              "type": "nested",
+                              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                               "properties": {
                                 "chi2": {
                                   "type": "long"
@@ -7735,7 +7732,7 @@
                               }
                             },
                             "segments": {
-                              "type": "nested",
+                              "type": "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                               "properties": {
                                 "type": {
                                   "ignore_above": 1024,
@@ -7780,8 +7777,7 @@
                             },
                             "public_key_exponent": {
                               "index": false,
-                              "type": "long",
-                              "doc_values": false
+                              "type": "long"
                             },
                             "subject": {
                               "properties": {

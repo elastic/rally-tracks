@@ -351,6 +351,36 @@
       ]
     },
     {
+      "name": "msmarco-v2_base64-10-million",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "cohere-documents-01_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12374163247,
+          "uncompressed-bytes": 17578585938
+        },
+        {
+          "source-file": "cohere-documents-02_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12370580598,
+          "uncompressed-bytes": 17578145869
+        },
+        {
+          "source-file": "cohere-documents-03_base64.json.zst",
+          "document-count": 3000000,
+          "compressed-bytes": 12363471153,
+          "uncompressed-bytes": 17566069533
+        },
+        {
+          "source-file": "cohere-documents-04_base64_1M.json.zst",
+          "document-count": 1000000,
+          "compressed-bytes": 4113839373,
+          "uncompressed-bytes": 5855702760
+        }
+      ]
+    },
+    {
       "name": "msmarco-v2_base64-initial-indexing-1",
       "base-url": "{{_base_url}}",
       "documents": [
@@ -378,7 +408,7 @@
           "compressed-bytes": 12332991252,
           "uncompressed-bytes": 17594684516
         },
-        {
+      {
           "source-file": "cohere-documents-05_base64.json.zst",
           "document-count": 3000000,
           "compressed-bytes": 12316661004,

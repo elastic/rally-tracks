@@ -58,3 +58,5 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
  - standalone_search_iterations (default: 10000)
  - vector_index_type (default: "hnsw"): The index kind for storing the vectors.
  - vector_index_element_type (default: "float"): Sets the dense_vector element type.
+ - enable_experimental_features (default: false): Enables experimental dense vector features that may break backward compatibility.
+ - index_mode (default: not set, uses "standard"): If defined, sets the index mode (e.g., "vectordb_document").

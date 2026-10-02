@@ -64,6 +64,7 @@ class WorkflowSelectorParamSource:
         self._detailed_results = params.get(
             "detailed-results", track.selected_challenge_or_default.parameters.get("detailed-results", False)
         )
+        self._clear_blob_cache = params.get("clear-blob-cache", False)
         self._workflow_target = params.get(
             "workflow-target",
             track.selected_challenge_or_default.parameters.get("workflow-target"),
@@ -96,6 +97,8 @@ class WorkflowSelectorParamSource:
                 if self._detailed_results:
                     # enable detailed results on every query
                     self.set_detailed_results(action)
+                if self._clear_blob_cache:
+                    self.set_clear_blob_cache(action)
                 if self._workflow_target:
                     # override captured query targets with enabled integrations
                     self.set_target_index(action)
@@ -188,6 +191,17 @@ class WorkflowSelectorParamSource:
         elif isinstance(action, list):
             for value in action:
                 self.set_detailed_results(value)
+
+    def set_clear_blob_cache(self, action):
+        if isinstance(action, dict):
+            if "operation-type" in action and action["operation-type"] == "search":
+                action["clear-blob-cache"] = True
+            else:
+                for _, value in action.items():
+                    self.set_clear_blob_cache(value)
+        elif isinstance(action, list):
+            for value in action:
+                self.set_clear_blob_cache(value)
 
     def set_request_cache(self, action):
         if isinstance(action, dict):

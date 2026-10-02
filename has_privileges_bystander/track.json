@@ -1,0 +1,71 @@
+{
+  "version": 2,
+  "description": "Benchmarks expensive _has_privileges requests alongside lightweight bystander requests.",
+  "schedule": [
+    {
+      "operation": {
+        "operation-type": "create_roles_and_users",
+        "num_roles": {{num_roles | default(100)}},
+        "num_users": {{num_users | default(1)}},
+        "num_roles_per_user": {{num_roles_per_user | default(100)}},
+        "wildcard_mode": "{{wildcard_mode | default('both')}}",
+        "index_privileges_per_role": {{index_privileges_per_role | default(10)}},
+        "cached_bystander_clients": {{cached_bystander_clients | default(0)}}
+      }
+    },
+    {
+      "name": "warmup_has_privileges",
+      "operation": {
+        "operation-type": "has_privileges",
+        "num_users": {{num_users | default(1)}}
+      },
+      "iterations": {{warmup_iterations | default(3)}},
+      "clients": 1
+    },
+{% if cached_bystander_clients | default(0) > 0 %}
+    {
+      "name": "warmup_has_privileges_cached",
+      "operation": {
+        "operation-type": "has_privileges_cached"
+      },
+      "iterations": 5,
+      "clients": 1
+    },
+{% endif %}
+    {
+      "parallel": {
+        "completed-by": "has_privileges",
+        "tasks": [
+          {
+            "name": "has_privileges",
+            "operation": {
+              "operation-type": "has_privileges",
+              "num_users": {{num_users | default(1)}}
+            },
+            "iterations": {{iterations | default(100)}},
+            "clients": {{has_privileges_clients | default(1)}}
+          },
+{% if cached_bystander_clients | default(0) > 0 %}
+          {
+            "name": "has_privileges_cached",
+            "operation": {
+              "operation-type": "has_privileges_cached"
+            },
+            "iterations": 10000000,
+            "clients": {{cached_bystander_clients}}
+          }
+{% else %}
+          {
+            "name": "cluster_info",
+            "operation": {
+              "operation-type": "cluster_info"
+            },
+            "iterations": 10000000,
+            "clients": {{bystander_clients | default(1)}}
+          }
+{% endif %}
+        ]
+      }
+    }
+  ]
+}

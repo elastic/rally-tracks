@@ -257,11 +257,12 @@ The following parameters are available:
 * `throttle_indexing` (default: `false`) - Whether indexing should be throttled to the rate determined by `raw_data_volume_per_day`, assuming a uniform distribution of data, or whether indexing should go as fast as possible. 
 * `disable_pipelines` (default: `false`) - Prevent installing ingest node pipelines. This parameter is experimental and is to be used with indexing-only challenges.
 * `initial_indices_count` (default: 0) - Number of initial indices to create, each containing `100` auditbeat style documents. Parameter is applicable in [many-shards-quantitative challenge](#many-shards-quantitative-many-shards-quantitative) and in [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
-* `ingest_percentage` (default: 100) - The percentage of data to be ingested.
-* `index_mode` (default: unset): What index mode to use. Accepted values: `standard` and `logs`. 
+* `ingest_percentage` (default: 100) - A number in (0, 100] that scales the number of documents derived from `raw_data_volume_per_day`. Generated timestamps still cover the whole date range, so the same period is indexed with proportionally fewer documents. Supported by the `logging-indexing` and `logging-indexing-querying` challenges.
+* `index_mode` (default: unset): What index mode to use. Accepted values: `standard`, `logs` or `logsdb_columnar`. 
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `logging-querying` track.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 * `codec` (default: unset): Configured the `index.codec` index setting, which controls how stored fields get stored / compressed.
+* `enable_columnar_codec` (default: `true`): When `true`, enables the ColumNAR keyword doc-values codec via `index.columnar_codec.enabled`; set to `false` to explicitly disable it. Only applies when `index_mode` is `logsdb_columnar`; has no effect in other index modes.
 
 ### Querying parameters
 
@@ -276,6 +277,7 @@ The following parameters are available:
 * `query_max_date_start` (optional) - Maximum datetime to execute queries over, at the beginning of a query workflow task. Increments with the time elapsed as the benchmark executes. Cannot be configured when `query_max_date` is also defined.
 * `query_average_interval` (optional) - Average time interval for queries to use. If unset, we use the durations and intervals set in the original action definitions.
 * `query_request_params` (optional) - A map of query parameters that will be used with any querying.
+* `clear_blob_cache` (default: `false`) - When benchmarking Serverless, clears the blob cache before every search, aggregation and ESQL query so each request is a cold run. The clear request is excluded from the measured time. Ignored on non-serverless clusters.
 * `query_workflows` (optional) - A list of workflows to execute. By default, all workflows are used.
 * `include_esql_queries` (default: true for non-serverless clusters, false for serverless clusters): Whether to include ESQL and ESQL-related queries.
 * `use_doc_values_skipper` (default: true) - Enable doc_values_skippers, and remove indexes on host.name and @timestamp
@@ -332,6 +334,25 @@ Advanced users may wish to modify the dataset composition as detailed [Changing 
 This challenge aims to establish the indexing throughput that can be supported by an Elasticsearch cluster. This challenge indexes the specified volume. No queries are issued. Index throttling can be enabled via the parameter `bulk_indexing_clients`.
 
 In order to optimise indexing throughput, users may wish to consider modifying the `bulk_indexing_clients` and `bulk_size`.
+
+### DLM Benchmark (dlm-benchmark)
+
+This challenge benchmarks Elasticsearch's Data Stream Lifecycle (DLM) feature. It automatically configures data streams to use DLM and allows you to test and measure:
+
+- Rollover behavior with different poll intervals
+- Impact of different rollover conditions  
+- Overall lifecycle coordinator overhead
+
+The challenge indexes data and waits for lifecycle operations to complete before collecting statistics. Key parameters include:
+
+- `dsl_poll_interval` (default: `5s`) - How often lifecycle coordinator checks for actions
+- `dsl_default_rollover` (default: `max_age=1h,max_primary_shard_size=50gb`) - Rollover conditions
+- `dlm_wait_time` (default: `60`) - Seconds to wait for lifecycle operations
+- `dlm_datastream_count` (default: `10000`) - Number of data streams to create
+- `dlm_retention` (default: `90d`) - Retention period before deletion
+- `lifecycle` - Set to `dlm` to enable Data Lifecycle Management
+
+**Note:** This challenge automatically sets `lifecycle:dlm` - you do not need to pass it as a parameter.
 
 ### Logging Querying (logging-querying)
 
@@ -416,6 +437,18 @@ This challenge also uses the following task specific parameters:
 * `reindex_max_concurrent_indices` (default: 1) The maximum number of data stream backing indices that will be reindexed at the same time.
 * `reindex_max_requests_per_second` (default: 1000) The average maximum number of documents that will be reindexed per second, per backing index.
 
+### Logging Streams (logging-streams)
+
+Indexes logs into a stream without dynamic mappings, either throttled or un-throttled, for a specified time period and volume per day.
+
+The target stream can be configured via the `stream_name` parameter (default: `logs.ecs`).
+
+Note that this challenge requires an additional step of configuring the target stream using Kibana. To do this:
+
+1. Install and run [Kibana](https://www.elastic.co/docs/deploy-manage/deploy/self-managed/install-kibana)
+2. Set up the desired target [stream](https://www.elastic.co/docs/solutions/observability/streams/streams)
+3. When running the challenge, [specify the target ES cluster](https://esrally.readthedocs.io/en/latest/recipes.html#benchmarking-an-existing-cluster) that Kibana is connected to
+
 ## Changing the Datasets
 
 The generated dataset is influenced by 2 key configurations:
@@ -485,8 +518,7 @@ See all details in the [contributor guidelines](https://github.com/elastic/rally
 This track contains associated unit tests. In order to run them, please issue the following commands:
 
 ```
-# only required once for the initial setup
-make prereq
+# only required once after installing uv
 make install
 # to run the tests
 make test

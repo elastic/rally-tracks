@@ -504,7 +504,7 @@ async def test_invalid_min_max():
     param_source = WorkflowSelectorParamSource(
         track=StaticTrack(
             parameters={
-                "query-min-date": "2020-01-02",
+                "query-min-date": "2020-01-03",
                 "query_max-date-start": "2020-01-01",
                 "query-average-interval": "1d",
                 "number-of-workflows": 1,
@@ -522,8 +522,8 @@ async def test_invalid_min_max():
     with pytest.raises(TrackConfigError) as err:
         param_source.params()
     assert (
-        err.value.message == "query-min-date 2020-01-02 00:00:00+00:00 cannot be larger than effective "
-        "query-max-date 2020-01-01 00:00:00+00:00"
+        err.value.message == "query-min-date 2020-01-03 00:00:00+00:00 cannot be larger than effective "
+        "query-max-date 2020-01-02 00:00:00+00:00"
     )
 
 
@@ -620,6 +620,39 @@ async def test_detailed_results():
         assert param_source.workflows[i][1]["requests"][0]["stream"][0]["detailed-results"]
         assert param_source.workflows[i][1]["requests"][1]["stream"][0]["detailed-results"]
         assert param_source.workflows[i][1]["requests"][2]["detailed-results"]
+
+
+@pytest.mark.asyncio
+async def test_clear_blob_cache():
+    param_source = WorkflowSelectorParamSource(
+        track=StaticTrack(parameters={}),
+        params={
+            "workflow": "a",
+            "workflows-folder": "tests/parameter_sources/resources/workflows",
+            "task-offset": 0,
+            "clear-blob-cache": True,
+        },
+    )
+    assert param_source.workflows[0][0] == "5"
+    assert "clear-blob-cache" in param_source.workflows[0][1]["requests"][0]["stream"][0]
+    # all workflows in workflows/a are identical
+    for i in range(5):
+        assert param_source.workflows[i][1]["requests"][0]["stream"][0]["clear-blob-cache"] is True
+        assert param_source.workflows[i][1]["requests"][1]["stream"][0]["clear-blob-cache"] is True
+        assert param_source.workflows[i][1]["requests"][2]["clear-blob-cache"] is True
+
+
+@pytest.mark.asyncio
+async def test_clear_blob_cache_not_set_by_default():
+    param_source = WorkflowSelectorParamSource(
+        track=StaticTrack(parameters={}),
+        params={
+            "workflow": "a",
+            "workflows-folder": "tests/parameter_sources/resources/workflows",
+            "task-offset": 0,
+        },
+    )
+    assert "clear-blob-cache" not in param_source.workflows[0][1]["requests"][0]["stream"][0]
 
 
 @pytest.mark.asyncio

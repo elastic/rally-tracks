@@ -51,7 +51,7 @@ async def output_queries(queries_file):
             if len(co_queries) in (100, output_left):
                 cos = (retrieve_embed_for_query(co, q) for q in co_queries)
                 co_queries = []
-                output += [v for v in await asyncio.gather(*cos) if not isinstance(v, Exception)]
+                output += [v for v in await asyncio.gather(*cos, return_exceptions=True) if not isinstance(v, Exception)]
 
             if len(output) == MAX_DOCS:
                 break

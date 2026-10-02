@@ -52,6 +52,7 @@
       "operation": {
         "name": "categorize_text_shard_size_{{ shard_size }}",
         "operation-type": "search",
+        "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
         "index": "categorize-text-index-alias",
         "body": {
           "query": {
@@ -78,6 +79,7 @@
       "operation": {
         "name": "categorize_text_sampler_shard_size_{{ shard_size }}",
         "operation-type": "search",
+        "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
         "index": "categorize-text-index-alias",
         "body": {
           "query": {
@@ -111,6 +113,7 @@
       "operation": {
         "name": "categorize_text_esql",
         "operation-type": "esql",
+        "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
         "query": "FROM categorize-text-index-alias | STATS COUNT() BY CATEGORIZE(message)"
       },
       "clients": 8,

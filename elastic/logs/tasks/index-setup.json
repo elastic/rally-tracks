@@ -87,14 +87,16 @@
           }
         },
         "mappings" : {
-          "runtime": {
-            "rally.doc_size": {
-              "type": "long"
+          {% if index_mode | default('standard') != 'logsdb_columnar' %}
+            "runtime": {
+              "rally.doc_size": {
+                "type": "long"
+              },
+              "rally.message_size": {
+                "type": "long"
+              }
             },
-            "rally.message_size": {
-              "type": "long"
-            }
-          },
+          {% endif %}
           "properties" : {
             "event": {
               "properties": {

@@ -22,7 +22,7 @@
             {% if use_time_series_doc_values_format %}
             ,"use_time_series_doc_values_format": {{use_time_series_doc_values_format | tojson}}
             {% endif %}
-            {% if index_mode == "logsdb" or index_mode == "time_series" %}
+            {% if index_mode == "logsdb_columnar" or index_mode == "logsdb" or index_mode == "time_series" %}
             ,"disable_sequence_numbers": true
             {% endif %}
             {%- endif -%}{# non-serverless-index-settings-marker-end #}

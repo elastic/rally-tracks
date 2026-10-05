@@ -1,0 +1,285 @@
+{
+  "name": "fetch-esql-q1-match-content-top10",
+  "#COMMENT": "Full-text article search, return complete articles, top 10",
+  "operation-type": "esql",
+  "query": "FROM wikipedia METADATA _score, _id | WHERE MATCH(content, \"artificial intelligence\") | SORT _score DESC | LIMIT 10"
+},
+{
+  "name": "fetch-dsl-q1-match-content-top10",
+  "#COMMENT": "Full-text article search, return complete articles, top 10",
+  "operation-type": "search",
+  "index": "wikipedia",
+  "cache": false,
+  "body": {
+    "size": 10,
+    "query": {
+      "match": {
+        "content": "artificial intelligence"
+      }
+    }
+  }
+},
+{
+  "name": "fetch-esql-q2-match-content-top100",
+  "#COMMENT": "Full-text article search, return complete articles, top 100",
+  "operation-type": "esql",
+  "query": "FROM wikipedia METADATA _score, _id | WHERE MATCH(content, \"artificial intelligence\") | SORT _score DESC | LIMIT 100"
+},
+{
+  "name": "fetch-dsl-q2-match-content-top100",
+  "#COMMENT": "Full-text article search, return complete articles, top 100",
+  "operation-type": "search",
+  "index": "wikipedia",
+  "cache": false,
+  "body": {
+    "size": 100,
+    "query": {
+      "match": {
+        "content": "artificial intelligence"
+      }
+    }
+  }
+},
+{
+  "name": "fetch-esql-q3-match-content-top1000",
+  "#COMMENT": "Full-text article search, return complete articles, top 1000",
+  "operation-type": "esql",
+  "query": "FROM wikipedia METADATA _score, _id | WHERE MATCH(content, \"artificial intelligence\") | SORT _score DESC | LIMIT 1000"
+},
+{
+  "name": "fetch-dsl-q3-match-content-top1000",
+  "#COMMENT": "Full-text article search, return complete articles, top 1000",
+  "operation-type": "search",
+  "index": "wikipedia",
+  "cache": false,
+  "body": {
+    "size": 1000,
+    "query": {
+      "match": {
+        "content": "artificial intelligence"
+      }
+    }
+  }
+},
+{
+  "name": "fetch-esql-q4-match-title-top10",
+  "#COMMENT": "Title search returning large Wikipedia bodies",
+  "operation-type": "esql",
+  "query": "FROM wikipedia METADATA _score, _id | WHERE MATCH(title, \"United States\") | SORT _score DESC | LIMIT 10"
+},
+{
+  "name": "fetch-dsl-q4-match-title-top10",
+  "#COMMENT": "Title search returning large Wikipedia bodies",
+  "operation-type": "search",
+  "index": "wikipedia",
+  "cache": false,
+  "body": {
+    "size": 10,
+    "query": {
+      "match": {
+        "title": "United States"
+      }
+    }
+  }
+},
+{
+  "name": "fetch-esql-q5-title-length-ranking",
+  "#COMMENT": "Relevance + title-length ranking",
+  "operation-type": "esql",
+  "query": "FROM wikipedia METADATA _score, _id | WHERE MATCH(content, \"California\") | EVAL adjusted_score = _score + LENGTH(title) * 0.01 | SORT adjusted_score DESC | LIMIT 10"
+},
+{
+  "name": "fetch-dsl-q5-title-length-ranking",
+  "#COMMENT": "Relevance + title-length ranking",
+  "operation-type": "search",
+  "index": "wikipedia",
+  "cache": false,
+  "body": {
+    "size": 10,
+    "query": {
+      "script_score": {
+        "query": {
+          "match": {
+            "content": "California"
+          }
+        },
+        "script": {
+          "source": "_score + doc['title.enum'].value.length() * 0.01"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "fetch-esql-q6-rrf-100",
+  "#COMMENT": "RRF, 100 candidates per retriever",
+  "operation-type": "esql",
+  "query": "FROM wikipedia METADATA _score, _id, _index | FORK (WHERE MATCH(title, \"artificial intelligence\") | SORT _score DESC | LIMIT 100) (WHERE MATCH(content, \"artificial intelligence\") | SORT _score DESC | LIMIT 100) | FUSE | SORT _score DESC | LIMIT 10"
+},
+{
+  "name": "fetch-dsl-q6-rrf-100",
+  "#COMMENT": "RRF, 100 candidates per retriever",
+  "operation-type": "search",
+  "index": "wikipedia",
+  "cache": false,
+  "body": {
+    "size": 10,
+    "retriever": {
+      "rrf": {
+        "retrievers": [
+          {
+            "standard": {
+              "query": {
+                "match": {
+                  "title": "artificial intelligence"
+                }
+              }
+            }
+          },
+          {
+            "standard": {
+              "query": {
+                "match": {
+                  "content": "artificial intelligence"
+                }
+              }
+            }
+          }
+        ],
+        "rank_window_size": 100
+      }
+    }
+  }
+},
+{
+  "name": "fetch-esql-q7-rrf-1000",
+  "#COMMENT": "RRF, 1000 candidates per retriever",
+  "operation-type": "esql",
+  "query": "FROM wikipedia METADATA _score, _id, _index | FORK (WHERE MATCH(title, \"artificial intelligence\") | SORT _score DESC | LIMIT 1000) (WHERE MATCH(content, \"artificial intelligence\") | SORT _score DESC | LIMIT 1000) | FUSE | SORT _score DESC | LIMIT 10"
+},
+{
+  "name": "fetch-dsl-q7-rrf-1000",
+  "#COMMENT": "RRF, 1000 candidates per retriever",
+  "operation-type": "search",
+  "index": "wikipedia",
+  "cache": false,
+  "body": {
+    "size": 10,
+    "retriever": {
+      "rrf": {
+        "retrievers": [
+          {
+            "standard": {
+              "query": {
+                "match": {
+                  "title": "artificial intelligence"
+                }
+              }
+            }
+          },
+          {
+            "standard": {
+              "query": {
+                "match": {
+                  "content": "artificial intelligence"
+                }
+              }
+            }
+          }
+        ],
+        "rank_window_size": 1000
+      }
+    }
+  }
+},
+{
+  "name": "fetch-esql-q8-rrf-10000",
+  "#COMMENT": "RRF, 10000 candidates per retriever",
+  "operation-type": "esql",
+  "query": "FROM wikipedia METADATA _score, _id, _index | FORK (WHERE MATCH(title, \"artificial intelligence\") | SORT _score DESC | LIMIT 10000) (WHERE MATCH(content, \"artificial intelligence\") | SORT _score DESC | LIMIT 10000) | FUSE | SORT _score DESC | LIMIT 10"
+},
+{
+  "name": "fetch-dsl-q8-rrf-10000",
+  "#COMMENT": "RRF, 10000 candidates per retriever",
+  "operation-type": "search",
+  "index": "wikipedia",
+  "cache": false,
+  "body": {
+    "size": 10,
+    "retriever": {
+      "rrf": {
+        "retrievers": [
+          {
+            "standard": {
+              "query": {
+                "match": {
+                  "title": "artificial intelligence"
+                }
+              }
+            }
+          },
+          {
+            "standard": {
+              "query": {
+                "match": {
+                  "content": "artificial intelligence"
+                }
+              }
+            }
+          }
+        ],
+        "rank_window_size": 10000
+      }
+    }
+  }
+},
+{
+  "name": "fetch-esql-q9-hybrid-3way",
+  "#COMMENT": "Three-way real-world hybrid retrieval",
+  "operation-type": "esql",
+  "query": "FROM wikipedia METADATA _score, _id, _index | FORK (WHERE MATCH(title, \"artificial intelligence\") | SORT _score DESC | LIMIT 1000) (WHERE MATCH(title.stem, \"artificial intelligence\") | SORT _score DESC | LIMIT 1000) (WHERE MATCH(content, \"artificial intelligence\") | SORT _score DESC | LIMIT 1000) | FUSE | SORT _score DESC | LIMIT 10"
+},
+{
+  "name": "fetch-dsl-q9-hybrid-3way",
+  "#COMMENT": "Three-way real-world hybrid retrieval",
+  "operation-type": "search",
+  "index": "wikipedia",
+  "cache": false,
+  "body": {
+    "size": 10,
+    "retriever": {
+      "rrf": {
+        "retrievers": [
+          {
+            "standard": {
+              "query": {
+                "match": {
+                  "title": "artificial intelligence"
+                }
+              }
+            }
+          },
+          {
+            "standard": {
+              "query": {
+                "match": {
+                  "title.stem": "artificial intelligence"
+                }
+              }
+            }
+          },
+          {
+            "standard": {
+              "query": {
+                "match": {
+                  "content": "artificial intelligence"
+                }
+              }
+            }
+          }
+        ],
+        "rank_window_size": 1000
+      }
+    }
+  }
+}

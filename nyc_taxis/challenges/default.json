@@ -1810,7 +1810,9 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
-        },
+        }
+      {# non-serverless-kibana-dashboards-marker-start #}{%- if build_flavor != "serverless" -%}
+        ,
         {
           "operation": "nested_topn_histograms_with_other_bucket_esql",
           "tags": ["kibana-dashboards-comparisons"],
@@ -1937,6 +1939,7 @@
           "warmup-iterations": 5,
           "iterations": 10
         }
+      {%- endif -%}{# non-serverless-kibana-dashboards-marker-end #}
       ]
     },
     {

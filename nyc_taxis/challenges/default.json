@@ -1840,6 +1840,13 @@
           "iterations": 10
         },
         {
+          "operation": "nested_topn_histograms_esql_alt_inlinestats",
+          "tags": ["kibana-dashboards-comparisons"],
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 10
+        },
+        {
           "operation": "nested_topn_histograms_no_inlinestats_esql",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,

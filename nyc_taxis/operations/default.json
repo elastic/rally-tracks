@@ -1925,11 +1925,6 @@
     {
       "name": "nested_topn_histograms_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | INLINE STATS cnt_payment = COUNT(*) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
-    },
-    {
-      "name": "nested_topn_histograms_esql_alt_inlinestats",
-      "operation-type": "esql",
       "query": "FROM nyc_taxis | INLINE STATS cnt_payment = COUNT(*) BY payment_type | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
     },
     {

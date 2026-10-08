@@ -1905,6 +1905,13 @@
           "iterations": 25
         },
         {
+          "operation": "timeseries_search",
+          "tags": ["kibana-dashboards-comparisons"],
+          "clients": 1,
+          "warmup-iterations": 5,
+          "iterations": 10
+        },
+        {
           "operation": "timeseries_other_bucket_search",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,

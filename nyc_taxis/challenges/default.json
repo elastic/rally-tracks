@@ -1849,53 +1849,11 @@
           "iterations": 10
         },
         {
-          "operation": "nested_topn_histograms_with_other_bucket_esql_with_timefilter",
-          "tags": ["kibana-dashboards-comparisons"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 25
-        },
-        {
-          "operation": "nested_topn_histograms_with_other_bucket_no_inlinestats_esql_with_timefilter",
-          "tags": ["kibana-dashboards-comparisons"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 25
-        },
-        {
-          "operation": "nested_topn_histograms_search_with_timefilter",
-          "tags": ["kibana-dashboards-comparisons"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 25
-        },
-        {
-          "operation": "nested_topn_histograms_esql_with_timefilter",
-          "tags": ["kibana-dashboards-comparisons"],
-          "clients": 1,
-           "warmup-iterations": 5,
-          "iterations": 25
-        },
-        {
-          "operation": "nested_topn_histograms_no_inlinestats_esql_with_timefilter",
-          "tags": ["kibana-dashboards-comparisons"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 25
-        },
-        {
           "operation": "nested_topn_histograms_other_bucket_search",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,
           "warmup-iterations": 5,
           "iterations": 10
-        },
-        {
-          "operation": "nested_topn_histograms_other_bucket_search_with_timefilter",
-          "tags": ["kibana-dashboards-comparisons"],
-          "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 25
         },
         {
           "operation": "timeseries_search",

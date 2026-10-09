@@ -47,6 +47,7 @@ Note: By default, downloaded and generated data is re-used on subsequent runs if
 - end_date
 - integration_ratios
 - exclude_properties
+- expand_dotted_fields
 
 Should any of the above be changed between runs, data will be re-generated.
 
@@ -244,6 +245,7 @@ The following parameters are available:
 * `random_seed` (default: 13) - Files are generated through random sampling of the source corpora. This pseudo random selection process is seeded to ensure multiple runs of the track generate the same data - thus ensuring tests are repeatable. Changing this value or `data_generation_clients` will cause the generation of a different dataset. Must be an integer.
 * `integration_ratios` - A dictionary containing a key per integration. Each integration in turn has a configuration object. This object includes a `corpora` dictionary, containing the ratios of the source corpora to use for this integration in the generated corpus. The keys represent the corpus names and the values the ratios. See [Ratios](#ratios) for further details.
 * `exclude_properties` - The list of fields to remove from the source corpora when generating a corpus. The keys represent the corpus names and the values a list of fields to remove per corpus. Only root fields can currently be removed from the JSON.
+* `expand_dotted_fields` (default: `[]`) - A list of corpus names whose top-level dotted keys (e.g. `"log.level"`) are expanded into nested objects (e.g. `{"log": {"level": ...}}`) during generation. When a dotted key conflicts with an existing nested value at the same path, both values are merged into a list (existing first), matching the behaviour of Elasticsearch's `dot_expander` processor. This is useful when a corpus mixes dotted and nested spellings of the same field across documents: batch indexing can still be used, but it falls back to row-based batch execution instead of the faster path. Example: `["application-logs-1"]`.
 
 ### Indexing Parameters
 

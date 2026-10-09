@@ -43,6 +43,86 @@ from shared.utils.time import parse_date_time
 from shared.utils.track import mandatory
 
 
+def expand_dotted_keys(doc):
+    """Expand top-level dotted keys in *doc* into nested dicts, recursing into all dict/list values.
+
+    Merging follows the same semantics as Elasticsearch's ``dot_expander`` processor: if the target
+    path already holds a value, both values are collected into a list (existing value first).  The
+    expansion is skipped when a path segment is blank or when an intermediate segment is occupied by
+    a non-dict value (e.g. ``"log": "x"`` alongside ``"log.level": "INFO"``).
+    """
+    if not isinstance(doc, dict):
+        return doc
+
+    result = {}
+    for key, value in doc.items():
+        # Recurse first so nested dicts and list-of-dicts are always normalised.
+        value = _expand_value(value)
+
+        if "." not in key:
+            _merge_into(result, key, value)
+            continue
+
+        segments = key.split(".")
+        if any(s == "" for s in segments):
+            # Blank segment — leave unexpanded to avoid silent data loss.
+            _merge_into(result, key, value)
+            continue
+
+        # Walk down, creating intermediate dicts as needed.
+        node = result
+        expanded = True
+        for seg in segments[:-1]:
+            existing = node.get(seg)
+            if existing is None:
+                node[seg] = {}
+                node = node[seg]
+            elif isinstance(existing, dict):
+                node = existing
+            else:
+                # Intermediate segment is a scalar — cannot expand without overwriting it.
+                expanded = False
+                break
+
+        if expanded:
+            _merge_into(node, segments[-1], value)
+        else:
+            _merge_into(result, key, value)
+
+    return result
+
+
+def _expand_value(value):
+    if isinstance(value, dict):
+        return expand_dotted_keys(value)
+    if isinstance(value, list):
+        return [_expand_value(v) for v in value]
+    return value
+
+
+def _merge_into(node, key, value):
+    """Set node[key] = value, recursively merging dicts and collecting scalars into a list on collision."""
+    if key not in node:
+        node[key] = value
+        return
+    existing = node[key]
+    # Two dicts: merge recursively so that sub-keys stay nested.
+    if isinstance(existing, dict) and isinstance(value, dict):
+        for k, v in value.items():
+            _merge_into(existing, k, v)
+        return
+    if isinstance(existing, list):
+        if isinstance(value, list):
+            existing.extend(value)
+        else:
+            existing.append(value)
+    else:
+        if isinstance(value, list):
+            node[key] = [existing] + value
+        else:
+            node[key] = [existing, value]
+
+
 class LazyMetadataDocuments(Documents):
     def __init__(self, document_file):
         super().__init__(
@@ -173,6 +253,14 @@ class CorpusGenerator:
             "generate-data",
         )
         self._exclude_properties = track.selected_challenge_or_default.parameters.get("exclude-properties", {})
+        expand_dotted_param = track.selected_challenge_or_default.parameters.get("expand-dotted-fields", [])
+        if isinstance(expand_dotted_param, bool):
+            # True  → expand every corpus; False → expand none.
+            self._expand_dotted_fields = None if expand_dotted_param else set()
+        elif isinstance(expand_dotted_param, str):
+            self._expand_dotted_fields = {expand_dotted_param}
+        else:
+            self._expand_dotted_fields = set(expand_dotted_param)
 
         end_date = parse_date_time(
             track.selected_challenge_or_default.parameters.get("end-date", DEFAULT_END_DATE),
@@ -261,6 +349,8 @@ class CorpusGenerator:
         # add any additional doc work here
         doc = json.loads(doc_bytes.decode("utf-8"))
         message_size = int(doc.pop("msglen", 0))
+        if self._expand_dotted_fields is None or corpus_name in self._expand_dotted_fields:
+            doc = expand_dotted_keys(doc)
         remove_fields = self._exclude_properties.get(corpus_name, [])
         if len(remove_fields) > 0:
             for field in remove_fields:

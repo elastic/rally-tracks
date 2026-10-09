@@ -1911,4 +1911,299 @@
       "name": "esql_stats_enrich_payments_fares_limit_0",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | KEEP rate_code_id, payment_type, trip_type, vendor_id, fare_amount | LIMIT 100000 | ENRICH nyc_payment_types_fares ON payment_type WITH payment_type_name=name, payment_type_fare=fare | STATS count=count(*), avg_fare=avg(fare_amount), avg_fare=avg(fare_amount) BY payment_type_name | LIMIT 0"
+    },
+    {
+      "name": "nested_topn_histograms_with_other_bucket_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL payment_type = CASE(payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type), payment_type, \"Other\"::keyword) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+    },
+    {
+      "name": "nested_topn_histograms_with_other_bucket_no_inlinestats_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL payment_type = CASE(payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type), payment_type, \"Other\"::keyword) | STATS cnt = COUNT(*) BY payment_type, rate_code_id | SORT cnt DESC | LIMIT 2 BY payment_type"
+    },
+    {
+      "name": "nested_topn_histograms_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | INLINE STATS cnt_payment = COUNT(*) BY payment_type | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+    },
+    {
+      "name": "nested_topn_histograms_no_inlinestats_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | STATS cnt = COUNT(*) BY payment_type, rate_code_id | SORT cnt DESC | LIMIT 2 BY payment_type"
+    },
+    {
+      "name": "nested_topn_histograms_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "top_payment_types": {
+            "terms": {
+              "field": "payment_type",
+              "order": {
+                "_count": "desc"
+              },
+              "size": 3,
+              "shard_size": 25
+            },
+            "aggs": {
+              "top_rate_codes": {
+                "terms": {
+                  "field": "rate_code_id",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 2,
+                  "shard_size": 25
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "nested_topn_histograms_other_bucket_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "other-filter": {
+            "aggs": {
+              "top_rate_codes": {
+                "terms": {
+                  "field": "rate_code_id",
+                  "order": {
+                    "_count": "desc"
+                  },
+                  "size": 2,
+                  "shard_size": 25
+                }
+              }
+            },
+            "filters": {
+              "filters": {
+                "": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "exists": {
+                          "field": "payment_type"
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": [
+                      {
+                        "match_phrase": {
+                          "payment_type": "1"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "payment_type": "2"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "payment_type": "3"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "timeseries_with_other_bucket_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | EVAL payment_type = CASE (payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 2 | KEEP payment_type), payment_type, \"Other\"::keyword) | STATS avg = AVG(fare_amount) BY payment_type, t = BUCKET(pickup_datetime, 1 d)"
+    },
+    {
+      "name": "timeseries_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "top_payment_types": {
+            "terms": {
+              "field": "payment_type",
+              "order": {
+                "_count": "desc"
+              },
+              "size": 2,
+              "shard_size": 25
+            },
+            "aggs": {
+              "over_time": {
+                "date_histogram": {
+                  "field": "pickup_datetime",
+                  "calendar_interval": "1d"
+                },
+                "aggs": {
+                  "avg_fare": {
+                    "avg": {
+                      "field": "fare_amount"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "timeseries_other_bucket_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "other-filter": {
+            "aggs": {
+              "over_time": {
+                "date_histogram": {
+                  "field": "pickup_datetime",
+                  "calendar_interval": "1d"
+                },
+                "aggs": {
+                  "avg_fare": {
+                    "avg": {
+                      "field": "fare_amount"
+                    }
+                  }
+                }
+              }
+            },
+            "filters": {
+              "filters": {
+                "": {
+                  "bool": {
+                    "must": [],
+                    "filter": [
+                      {
+                        "exists": {
+                          "field": "payment_type"
+                        }
+                      }
+                    ],
+                    "should": [],
+                    "must_not": [
+                      {
+                        "match_phrase": {
+                          "payment_type": "1"
+                        }
+                      },
+                      {
+                        "match_phrase": {
+                          "payment_type": "2"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "nested_topn_table_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE rate_code_id IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY rate_code_id | SORT cnt DESC | KEEP rate_code_id | LIMIT 3) | WHERE (rate_code_id, payment_type) IN (FROM nyc_taxis | STATS max = MAX(tip_amount) BY rate_code_id, payment_type | SORT max DESC | LIMIT 2 BY rate_code_id | KEEP rate_code_id, payment_type) | STATS avg = AVG(fare_amount) BY rate_code_id, payment_type"
+    },
+    {
+      "name": "nested_topn_table_search",
+      "operation-type": "search",
+      "index": "nyc_taxis",
+      "body": {
+        "size": 0,
+        "query": {
+          "bool": {
+            "must": [],
+            "filter": [],
+            "should": [],
+            "must_not": []
+          }
+        },
+        "aggs": {
+          "top_rate_codes": {
+            "terms": {
+              "field": "rate_code_id",
+              "order": {
+                "_count": "desc"
+              },
+              "size": 3,
+              "shard_size": 25
+            },
+            "aggs": {
+              "top_payment_types": {
+                "terms": {
+                  "field": "payment_type",
+                  "order": {
+                    "max_tip": "desc"
+                  },
+                  "size": 2,
+                  "shard_size": 25
+                },
+                "aggs": {
+                  "avg_fare": {
+                    "avg": {
+                      "field": "fare_amount"
+                    }
+                  },
+                  "max_tip": {
+                    "max": {
+                      "field": "tip_amount"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }

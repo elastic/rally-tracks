@@ -378,6 +378,20 @@
           "iterations": 10
         },
         {
+          "operation": "twenty_subqueries_avg_with_sort",
+          "tags": ["subquery", "stats", "sort"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 10
+        },
+        {
+          "operation": "twenty_nested_subqueries_avg_with_sort",
+          "tags": ["subquery", "stats", "sort"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 10
+        },
+        {
           "operation": "two_subqueries_date_histogram_with_sort",
           "tags": ["subquery", "stats", "sort"],
           "clients": 1,
@@ -393,6 +407,20 @@
         },
         {
           "operation": "eight_subqueries_date_histogram_with_sort",
+          "tags": ["subquery", "stats", "sort"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 10
+        },
+        {
+          "operation": "twenty_subqueries_date_histogram_with_sort",
+          "tags": ["subquery", "stats", "sort"],
+          "clients": 1,
+          "warmup-iterations": 2,
+          "iterations": 10
+        },
+        {
+          "operation": "twenty_nested_subqueries_date_histogram_with_sort",
           "tags": ["subquery", "stats", "sort"],
           "clients": 1,
           "warmup-iterations": 2,

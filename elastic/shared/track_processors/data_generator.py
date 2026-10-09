@@ -253,14 +253,7 @@ class CorpusGenerator:
             "generate-data",
         )
         self._exclude_properties = track.selected_challenge_or_default.parameters.get("exclude-properties", {})
-        expand_dotted_param = track.selected_challenge_or_default.parameters.get("expand-dotted-fields", [])
-        if isinstance(expand_dotted_param, bool):
-            # True  → expand every corpus; False → expand none.
-            self._expand_dotted_fields = None if expand_dotted_param else set()
-        elif isinstance(expand_dotted_param, str):
-            self._expand_dotted_fields = {expand_dotted_param}
-        else:
-            self._expand_dotted_fields = set(expand_dotted_param)
+        self._expand_dotted_fields = bool(track.selected_challenge_or_default.parameters.get("expand-dotted-fields", False))
 
         end_date = parse_date_time(
             track.selected_challenge_or_default.parameters.get("end-date", DEFAULT_END_DATE),
@@ -349,7 +342,7 @@ class CorpusGenerator:
         # add any additional doc work here
         doc = json.loads(doc_bytes.decode("utf-8"))
         message_size = int(doc.pop("msglen", 0))
-        if self._expand_dotted_fields is None or corpus_name in self._expand_dotted_fields:
+        if self._expand_dotted_fields:
             doc = expand_dotted_keys(doc)
         remove_fields = self._exclude_properties.get(corpus_name, [])
         if len(remove_fields) > 0:

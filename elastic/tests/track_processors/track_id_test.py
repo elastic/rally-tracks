@@ -65,7 +65,7 @@ def test_expand_dotted_fields_changes_track_id():
     track_generator.on_after_load_track(static_track_no_expand)
     id_without = static_track_no_expand.selected_challenge.parameters["track-id"]
 
-    parameters["expand-dotted-fields"] = ["application-logs-1"]
+    parameters["expand-dotted-fields"] = True
     static_track_with_expand = StaticTrack(parameters=copy.deepcopy(parameters))
     track_generator.on_after_load_track(static_track_with_expand)
     id_with = static_track_with_expand.selected_challenge.parameters["track-id"]

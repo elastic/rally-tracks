@@ -870,83 +870,76 @@ def test_expand_dotted_keys_no_dots_unchanged():
 # ---------------------------------------------------------------------------
 
 
-def _make_generator_with_expand(tmp_path, expand_corpora):
+def _make_generator_with_expand(tmp_path, expand_dotted_fields, exclude_properties=None):
     # StaticTrack ships system-logs and agent-logs fixture corpora.
-    test_track = StaticTrack(
-        parameters={
-            "raw-data-volume-per-day": "0.1MB",
-            "max-generated-corpus-size": "0.1MB",
-            "track-id": "123",
-            "integration-ratios": {
-                "system": {"corpora": {"system-logs": 0.5}},
-                "agent": {"corpora": {"agent-logs": 0.5}},
-            },
-            "sample-size": 10,
-            "generator-batch-size": 10000,
-            "data-generation-clients": 1,
-            "expand-dotted-fields": expand_corpora,
+    parameters = {
+        "raw-data-volume-per-day": "0.1MB",
+        "max-generated-corpus-size": "0.1MB",
+        "track-id": "123",
+        "integration-ratios": {
+            "system": {"corpora": {"system-logs": 0.5}},
+            "agent": {"corpora": {"agent-logs": 0.5}},
         },
+        "sample-size": 10,
+        "generator-batch-size": 10000,
+        "data-generation-clients": 1,
+        "expand-dotted-fields": expand_dotted_fields,
+    }
+    if exclude_properties is not None:
+        parameters["exclude-properties"] = exclude_properties
+    test_track = StaticTrack(
+        parameters=parameters,
         challenge_parameters={"output-folder": tmp_path},
     )
     return CorpusGenerator(test_track, tmp_path)
 
 
-def test_json_processor_expands_for_matching_corpus(tmp_path):
-    generator = _make_generator_with_expand(tmp_path, ["system-logs"])
+def test_json_processor_expands_when_true(tmp_path):
+    # expand-dotted-fields=true expands every corpus.
+    generator = _make_generator_with_expand(tmp_path, True)
     raw = json.dumps({"log.logger": "app", "log": {"offset": 5}}).encode()
-    doc, _ = generator._json_processor(raw, 0, "system-logs")
-    assert doc["log"] == {"logger": "app", "offset": 5}
-    assert "log.logger" not in doc
+    doc_system, _ = generator._json_processor(raw, 0, "system-logs")
+    doc_agent, _ = generator._json_processor(raw, 0, "agent-logs")
+    assert doc_system["log"] == {"logger": "app", "offset": 5}
+    assert "log.logger" not in doc_system
+    assert doc_agent["log"] == {"logger": "app", "offset": 5}
+    assert "log.logger" not in doc_agent
 
 
-def test_json_processor_skips_expansion_for_other_corpus(tmp_path):
-    generator = _make_generator_with_expand(tmp_path, ["system-logs"])
+def test_json_processor_skips_expansion_when_false(tmp_path):
+    # expand-dotted-fields=false (the default) expands nothing.
+    generator = _make_generator_with_expand(tmp_path, False)
     raw = json.dumps({"log.logger": "app"}).encode()
-    doc, _ = generator._json_processor(raw, 0, "agent-logs")
+    doc, _ = generator._json_processor(raw, 0, "system-logs")
+    assert "log.logger" in doc
+    assert "log" not in doc
+
+
+def test_json_processor_default_does_not_expand(tmp_path):
+    # Omitting the parameter entirely leaves documents untouched.
+    test_track = StaticTrack(
+        parameters={
+            "raw-data-volume-per-day": "0.1MB",
+            "max-generated-corpus-size": "0.1MB",
+            "track-id": "123",
+            "integration-ratios": {"system": {"corpora": {"system-logs": 1.0}}},
+            "sample-size": 10,
+            "generator-batch-size": 10000,
+            "data-generation-clients": 1,
+        },
+        challenge_parameters={"output-folder": tmp_path},
+    )
+    generator = CorpusGenerator(test_track, tmp_path)
+    raw = json.dumps({"log.logger": "app"}).encode()
+    doc, _ = generator._json_processor(raw, 0, "system-logs")
     assert "log.logger" in doc
     assert "log" not in doc
 
 
 def test_json_processor_exclude_after_expand(tmp_path):
     # Excluding a root field after expansion removes its expanded children too.
-    test_track = StaticTrack(
-        parameters={
-            "raw-data-volume-per-day": "0.1MB",
-            "max-generated-corpus-size": "0.1MB",
-            "track-id": "123",
-            "integration-ratios": {
-                "system": {"corpora": {"system-logs": 0.5}},
-                "agent": {"corpora": {"agent-logs": 0.5}},
-            },
-            "sample-size": 10,
-            "generator-batch-size": 10000,
-            "data-generation-clients": 1,
-            "expand-dotted-fields": ["system-logs"],
-            "exclude-properties": {"system-logs": ["log"]},
-        },
-        challenge_parameters={"output-folder": tmp_path},
-    )
-    generator = CorpusGenerator(test_track, tmp_path)
+    generator = _make_generator_with_expand(tmp_path, True, exclude_properties={"system-logs": ["log"]})
     raw = json.dumps({"log.logger": "app", "other": "x"}).encode()
     doc, _ = generator._json_processor(raw, 0, "system-logs")
     assert "log" not in doc
     assert doc["other"] == "x"
-
-
-def test_json_processor_expand_true_expands_all_corpora(tmp_path):
-    # Passing expand-dotted-fields=true (a bool) expands every corpus.
-    generator = _make_generator_with_expand(tmp_path, True)
-    raw = json.dumps({"log.logger": "app"}).encode()
-    doc_system, _ = generator._json_processor(raw, 0, "system-logs")
-    doc_agent, _ = generator._json_processor(raw, 0, "agent-logs")
-    assert doc_system["log"] == {"logger": "app"}
-    assert doc_agent["log"] == {"logger": "app"}
-
-
-def test_json_processor_expand_false_expands_no_corpora(tmp_path):
-    # Passing expand-dotted-fields=false (a bool) expands nothing.
-    generator = _make_generator_with_expand(tmp_path, False)
-    raw = json.dumps({"log.logger": "app"}).encode()
-    doc, _ = generator._json_processor(raw, 0, "system-logs")
-    assert "log.logger" in doc
-    assert "log" not in doc

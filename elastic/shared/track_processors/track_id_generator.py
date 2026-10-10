@@ -33,6 +33,7 @@ class TrackIdGenerator:
         "bulk-end-date",
         "integration-ratios",
         "exclude-properties",
+        "expand-dotted-fields",
     ]
 
     def __init__(self):

@@ -22,7 +22,7 @@ import random
 import pytest
 from esrally.exceptions import DataError, RallyAssertionError, TrackConfigError
 from shared.parameter_sources.processed import MagicNumbers, ProcessedCorpusParamSource
-from shared.track_processors.data_generator import CorpusGenerator, DataGenerator
+from shared.track_processors.data_generator import CorpusGenerator, DataGenerator, expand_dotted_keys
 from shared.utils.time import TimeParsingError
 from tests.parameter_sources import StaticTrack
 
@@ -783,3 +783,163 @@ def test_serialized_doc_markers():
 
             timestamp = new_raw_doc[ts_value_start_pos:ts_value_end_pos]
             assert timestamp == data["@timestamp"]
+
+
+# ---------------------------------------------------------------------------
+# expand_dotted_keys tests
+# ---------------------------------------------------------------------------
+
+
+def test_expand_dotted_keys_plain():
+    assert expand_dotted_keys({"a.b": 1}) == {"a": {"b": 1}}
+
+
+def test_expand_dotted_keys_multi_level():
+    assert expand_dotted_keys({"process.thread.id": 42}) == {"process": {"thread": {"id": 42}}}
+
+
+def test_expand_dotted_keys_collision_produces_list():
+    # Nested value comes first in the output list.
+    doc = {"ecs": {"version": "1.4.0"}, "ecs.version": "1.2.0"}
+    result = expand_dotted_keys(doc)
+    assert result == {"ecs": {"version": ["1.4.0", "1.2.0"]}}
+
+
+def test_expand_dotted_keys_collision_existing_list():
+    doc = {"a": {"b": [1, 2]}, "a.b": 3}
+    result = expand_dotted_keys(doc)
+    assert result == {"a": {"b": [1, 2, 3]}}
+
+
+def test_expand_dotted_keys_new_value_is_list():
+    # "a.b" is processed first so [3, 4] becomes the existing value; the later
+    # "a": {"b": 1} is merged in, appending 1 after the existing elements.
+    doc = {"a.b": [3, 4], "a": {"b": 1}}
+    result = expand_dotted_keys(doc)
+    assert result == {"a": {"b": [3, 4, 1]}}
+
+
+def test_expand_dotted_keys_sibling_subtree_merged():
+    # log.logger alongside an existing log: {offset, file} subtree.
+    doc = {"log": {"offset": 100, "file": {"path": "/x"}}, "log.logger": "app"}
+    result = expand_dotted_keys(doc)
+    assert result == {"log": {"offset": 100, "file": {"path": "/x"}, "logger": "app"}}
+
+
+def test_expand_dotted_keys_nested_dict_recursed():
+    doc = {"outer": {"a.b": 1}}
+    result = expand_dotted_keys(doc)
+    assert result == {"outer": {"a": {"b": 1}}}
+
+
+def test_expand_dotted_keys_list_of_dicts_recursed():
+    doc = {"items": [{"a.b": 1}, {"a.b": 2}]}
+    result = expand_dotted_keys(doc)
+    assert result == {"items": [{"a": {"b": 1}}, {"a": {"b": 2}}]}
+
+
+def test_expand_dotted_keys_blank_segment_left_unexpanded():
+    # A blank segment (trailing, leading, or double dot) is never expanded.
+    assert expand_dotted_keys({"a.": 1}) == {"a.": 1}
+    assert expand_dotted_keys({".a": 1}) == {".a": 1}
+    assert expand_dotted_keys({"a..b": 1}) == {"a..b": 1}
+
+
+def test_expand_dotted_keys_scalar_parent_left_unexpanded():
+    # "log" is a scalar string; "log.level" cannot be nested under it.
+    doc = {"log": "x", "log.level": "INFO"}
+    result = expand_dotted_keys(doc)
+    assert result == {"log": "x", "log.level": "INFO"}
+
+
+def test_expand_dotted_keys_key_order_preserved():
+    # Keys without dots must come out in insertion order; dotted keys land at their
+    # first-path-segment position (dict insertion order is preserved in Python ≥ 3.7).
+    doc = {"z": 1, "a.b": 2, "c": 3}
+    result = expand_dotted_keys(doc)
+    assert list(result.keys()) == ["z", "a", "c"]
+
+
+def test_expand_dotted_keys_no_dots_unchanged():
+    doc = {"a": 1, "b": {"c": 2}}
+    assert expand_dotted_keys(doc) == doc
+
+
+# ---------------------------------------------------------------------------
+# _json_processor with expand-dotted-fields
+# ---------------------------------------------------------------------------
+
+
+def _make_generator_with_expand(tmp_path, expand_dotted_fields, exclude_properties=None):
+    # StaticTrack ships system-logs and agent-logs fixture corpora.
+    parameters = {
+        "raw-data-volume-per-day": "0.1MB",
+        "max-generated-corpus-size": "0.1MB",
+        "track-id": "123",
+        "integration-ratios": {
+            "system": {"corpora": {"system-logs": 0.5}},
+            "agent": {"corpora": {"agent-logs": 0.5}},
+        },
+        "sample-size": 10,
+        "generator-batch-size": 10000,
+        "data-generation-clients": 1,
+        "expand-dotted-fields": expand_dotted_fields,
+    }
+    if exclude_properties is not None:
+        parameters["exclude-properties"] = exclude_properties
+    test_track = StaticTrack(
+        parameters=parameters,
+        challenge_parameters={"output-folder": tmp_path},
+    )
+    return CorpusGenerator(test_track, tmp_path)
+
+
+def test_json_processor_expands_when_true(tmp_path):
+    # expand-dotted-fields=true expands every corpus.
+    generator = _make_generator_with_expand(tmp_path, True)
+    raw = json.dumps({"log.logger": "app", "log": {"offset": 5}}).encode()
+    doc_system, _ = generator._json_processor(raw, 0, "system-logs")
+    doc_agent, _ = generator._json_processor(raw, 0, "agent-logs")
+    assert doc_system["log"] == {"logger": "app", "offset": 5}
+    assert "log.logger" not in doc_system
+    assert doc_agent["log"] == {"logger": "app", "offset": 5}
+    assert "log.logger" not in doc_agent
+
+
+def test_json_processor_skips_expansion_when_false(tmp_path):
+    # expand-dotted-fields=false (the default) expands nothing.
+    generator = _make_generator_with_expand(tmp_path, False)
+    raw = json.dumps({"log.logger": "app"}).encode()
+    doc, _ = generator._json_processor(raw, 0, "system-logs")
+    assert "log.logger" in doc
+    assert "log" not in doc
+
+
+def test_json_processor_default_does_not_expand(tmp_path):
+    # Omitting the parameter entirely leaves documents untouched.
+    test_track = StaticTrack(
+        parameters={
+            "raw-data-volume-per-day": "0.1MB",
+            "max-generated-corpus-size": "0.1MB",
+            "track-id": "123",
+            "integration-ratios": {"system": {"corpora": {"system-logs": 1.0}}},
+            "sample-size": 10,
+            "generator-batch-size": 10000,
+            "data-generation-clients": 1,
+        },
+        challenge_parameters={"output-folder": tmp_path},
+    )
+    generator = CorpusGenerator(test_track, tmp_path)
+    raw = json.dumps({"log.logger": "app"}).encode()
+    doc, _ = generator._json_processor(raw, 0, "system-logs")
+    assert "log.logger" in doc
+    assert "log" not in doc
+
+
+def test_json_processor_exclude_after_expand(tmp_path):
+    # Excluding a root field after expansion removes its expanded children too.
+    generator = _make_generator_with_expand(tmp_path, True, exclude_properties={"system-logs": ["log"]})
+    raw = json.dumps({"log.logger": "app", "other": "x"}).encode()
+    doc, _ = generator._json_processor(raw, 0, "system-logs")
+    assert "log" not in doc
+    assert doc["other"] == "x"

@@ -51,3 +51,23 @@ def test_generate_id():
     static_track_3 = StaticTrack(parameters=copy.deepcopy(parameters))
     track_generator.on_after_load_track(static_track_3)
     assert static_track.selected_challenge.parameters["track-id"] != static_track_3.selected_challenge.parameters["track-id"]
+
+
+def test_expand_dotted_fields_changes_track_id():
+    track_generator = TrackIdGenerator()
+    parameters = {
+        "raw-data-volume-per-day": "1GB",
+        "random-seed": 13,
+        "max-generated-corpus-size": "1GB",
+        "integration-ratios": {"system": {"system-logs": 1.0}},
+    }
+    static_track_no_expand = StaticTrack(parameters=copy.deepcopy(parameters))
+    track_generator.on_after_load_track(static_track_no_expand)
+    id_without = static_track_no_expand.selected_challenge.parameters["track-id"]
+
+    parameters["expand-dotted-fields"] = True
+    static_track_with_expand = StaticTrack(parameters=copy.deepcopy(parameters))
+    track_generator.on_after_load_track(static_track_with_expand)
+    id_with = static_track_with_expand.selected_challenge.parameters["track-id"]
+
+    assert id_without != id_with

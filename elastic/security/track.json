@@ -57,7 +57,7 @@
     "wait-for-status": "{{ wait_for_status | default('green') }}",
     "force-data-generation": {{ force_data_generation | default(false) | tojson }},
     "detailed-results": {{ detailed_results | default(false) | tojson }},
-    "workflow-target": "{{ p_integration_ratios.keys() | list | join('-*,') ~ '-*' }}",
+    "workflow-target": "{% for i in p_integration_ratios.keys() %}{{ 'logs-endpoint.events.*' if i == 'logs-endpoint' else i ~ '-*' }}{{ ',' if not loop.last }}{% endfor %}",
     "number-of-workflows": {{ p_num_query_workflows }},
     "raw-data-volume-per-day": "{{ raw_data_volume_per_day | default('0.1GB') }}",
     "generator-batch-size": 10000,

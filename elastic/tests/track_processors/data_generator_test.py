@@ -22,7 +22,11 @@ import random
 import pytest
 from esrally.exceptions import DataError, RallyAssertionError, TrackConfigError
 from shared.parameter_sources.processed import MagicNumbers, ProcessedCorpusParamSource
-from shared.track_processors.data_generator import CorpusGenerator, DataGenerator, expand_dotted_keys
+from shared.track_processors.data_generator import (
+    CorpusGenerator,
+    DataGenerator,
+    expand_dotted_keys,
+)
 from shared.utils.time import TimeParsingError
 from tests.parameter_sources import StaticTrack
 

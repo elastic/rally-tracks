@@ -10,7 +10,7 @@ path = sys.argv[1]
 # This is the number of documents in the default corpus
 TOTAL_DOCS = 116633698
 n_splits = int(sys.argv[2])
-q, r = divmod(total_docs, n_splits)
+q, r = divmod(TOTAL_DOCS, n_splits)
 wanted_docs = q * n_splits
 
 

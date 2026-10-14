@@ -1,0 +1,68 @@
+    {
+      "name": "create-roles-and-users",
+      "operation-type": "create-roles-and-users",
+      "include-in-reporting": false,
+      "seed": {{ seed | default(42) }},
+      "num_roles": {{ num_roles | default(100) }},
+      "num_users": {{ num_users | default(100) }},
+      "roles_per_user": {{ roles_per_user | default(2) }},
+      "kibana_app_privileges": {{ (kibana_app_privileges | default(false)) | tojson }},
+      "num_kibana_spaces": {{ num_kibana_spaces | default(100) }}
+    },
+    {
+      "name": "create-api-keys",
+      "operation-type": "create-api-keys",
+      "param-source": "api-key-create-param-source",
+      "seed": {{ seed | default(42) }},
+      "num_api_keys": {{ num_api_keys | default(10000) }},
+      "num_users": {{ num_users | default(100) }},
+      "num_rd_templates": {{ num_rd_templates | default(50) }},
+      "assigned_rd_ratio": {{ assigned_rd_ratio | default(0.5) }},
+      {%- if api_key_expiration is defined %}
+      "api_key_expiration": "{{ api_key_expiration }}",
+      {%- endif %}
+      "create_batch_size": {{ create_batch_size | default(100) }},
+      "api_keys_dir": "{{ api_keys_dir | default('~/.rally/benchmarks/data/api_keys') }}"
+    },
+    {
+      "name": "prime-api-key-caches",
+      "operation-type": "authenticate-api-key",
+      "param-source": "api-key-authenticate-param-source",
+      "access_pattern": "sweep",
+      "seed": {{ seed | default(42) }},
+      "create_clients": {{ create_clients | default(8) }},
+      "api_keys_dir": "{{ api_keys_dir | default('~/.rally/benchmarks/data/api_keys') }}"
+    },
+    {
+      "name": "authenticate-api-key",
+      "operation-type": "authenticate-api-key",
+      "param-source": "api-key-authenticate-param-source",
+      "access_pattern": "{{ access_pattern | default('uniform') }}",
+      "seed": {{ seed | default(42) }},
+      "hot_fraction": {{ hot_fraction | default(0.01) }},
+      "hot_ratio": {{ hot_ratio | default(0.9) }},
+      "invalid_credentials_ratio": {{ invalid_credentials_ratio | default(0.0) }},
+      "create_clients": {{ create_clients | default(8) }},
+      "api_keys_dir": "{{ api_keys_dir | default('~/.rally/benchmarks/data/api_keys') }}"
+    },
+    {
+      "name": "collect-security-stats-before",
+      "operation-type": "collect-security-stats",
+      "include-in-reporting": false,
+      "phase": "before",
+      "api_keys_dir": "{{ api_keys_dir | default('~/.rally/benchmarks/data/api_keys') }}"
+    },
+    {
+      "name": "collect-security-stats-after",
+      "operation-type": "collect-security-stats",
+      "include-in-reporting": false,
+      "phase": "after",
+      "api_keys_dir": "{{ api_keys_dir | default('~/.rally/benchmarks/data/api_keys') }}"
+    },
+    {
+      "name": "cleanup",
+      "operation-type": "cleanup",
+      "include-in-reporting": false,
+      "num_roles": {{ num_roles | default(100) }},
+      "num_users": {{ num_users | default(100) }}
+    }

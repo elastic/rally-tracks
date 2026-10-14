@@ -177,6 +177,9 @@
     "max-total-download-per-corpus-gb": "{{ p_max_download_per_corpus_gb }}",
     "integration-ratios": {{ p_integration_ratios | tojson }},
     "exclude-properties": {{ exclude_properties | default(default_exclude_properties) | tojson }},
+{% if expand_dotted_fields %}
+    "expand-dotted-fields": {{ expand_dotted_fields | tojson }},
+{% endif %}
     "wait-for-status": "{{ wait_for_status | default('green') }}",
     "force-data-generation": {{ force_data_generation | default(false) | tojson }},
     "detailed-results": {{ detailed_results | default(false) | tojson }},

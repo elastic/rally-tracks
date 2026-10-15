@@ -1,0 +1,109 @@
+{#
+  Not scheduled below, but still defined in operations/kibana-queries.json: to restore one, add its name back to p_kibana_queries.
+  On the logs-endpoint-only corpora that the nightlies index, each of these matches no documents or only aggregates fields without values,
+  so none of them runs a code path that a scheduled op does not already run (checked per shard with "profile": true):
+  - event.kind:alert never occurs: hosts-external-alerts-histogram, hosts-external-alerts-table, overview-external-alerts-histogram,
+    network-external-alerts-histogram, network-external-alerts-table
+  - event.type:indicator never occurs (Filebeat threat intel): overview-threat-indicators-histogram
+  - ML anomaly record fields (result_type, record_score, job_id, timestamp) are unmapped: network-ip-anomalies, network-anomalies-histogram
+  - tls.* is unmapped: network-kpi-tls-handshakes, network-ip-tls
+  - http.request.method and url.* are unmapped: network-http-table, network-ip-http
+  - source.geo.* is never populated, as all source IPs are private: network-top-source-countries, network-ip-top-source-countries,
+    network-map-source-grid (requires both source.geo.location and destination.geo.location, so it matches no documents)
+  - dns.question.registered_domain is never populated: network-dns-histogram, network-dns-table
+  - network.community_id is never populated: network-kpi-unique-flows
+  - Beats-only fields and values (type, service.type, agent.type filebeat/packetbeat): overview-network-event-counts
+  Most of them need the packetbeat, auditbeat or filebeat corpora (see integration_ratios in track.json); network-map-source-grid needs
+  source IPs with geo data, which only the newer 9.x endpoint corpora have; the alert and ML ones need data that no corpus provides.
+  Once their data exists, these would add code paths that no scheduled op covers:
+  - network-map-source-grid: a painless-scripted terms agg on destination.geo.location, with geotile_grid and geo_centroid sub-aggs
+  - network-dns-table: a terms agg with size 1,000,000 followed by a bucket_sort pipeline agg
+  - overview-threat-indicators-histogram: a 30d date_histogram, which ES runs as a range-backed date histogram
+  - network-http-table, network-ip-http: a numeric terms agg on http.response.status_code
+  - hosts-external-alerts-table, network-external-alerts-table: sorted hits plus an aggregation, with exact total hits
+#}
+{% set p_kibana_queries = [
+    "hosts-latest-event",
+    "hosts-kpi-hosts",
+    "hosts-kpi-authentications",
+    "hosts-kpi-unique-ips",
+    "hosts-all-hosts",
+    "hosts-authentications-histogram",
+    "hosts-authentications-table",
+    "hosts-uncommon-processes",
+    "hosts-events-histogram",
+    "overview-events-histogram",
+    "overview-host-event-counts",
+    "network-kpi-network-events",
+    "network-kpi-dns-queries",
+    "network-kpi-unique-private-ips",
+    "network-top-source-ips",
+    "network-top-destination-ips",
+    "network-top-destination-countries",
+    "network-map-source-points",
+    "network-map-destination-points",
+    "network-ip-latest-event",
+    "network-ip-top-source-ips",
+    "network-ip-top-destination-ips",
+    "network-ip-top-destination-countries",
+    "network-ip-users",
+    "network-ip-overview"
+] %}
+{
+  "name": "security-indexing-querying-split",
+  "description": "Indexes security data then executes each distinct Kibana query from the query workflows as its own task, to measure per-query latency.",
+  "schedule": [
+    {% include "tasks/index-setup.json" %},
+    {
+      "name": "bulk-index-initial-load",
+      "operation": {
+        "operation-type": "raw-bulk",
+        "param-source": "processed-source",
+        "time-format": "milliseconds",
+        "profile": "fixed_interval",
+        "detailed-results": true,
+        "bulk-size": {{ (bulk_size | default(50)) }}
+      },
+      "ingest-percentage": {{ ingest_percentage | default(100) }},
+      "clients": {{ p_bulk_indexing_clients }},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    {
+      "name": "refresh-after-index",
+      "operation": "refresh"
+    },
+    {%- if force_merge_max_num_segments is defined %}
+    {
+      "operation": {
+        "operation-type": "force-merge",
+        "request-timeout": 36000,
+        "max-num-segments": {{ force_merge_max_num_segments | tojson }}
+      }
+    },
+    {
+      "name": "wait-until-merge-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    {
+      "name": "refresh-after-force-merge",
+      "operation": "refresh"
+    },
+    {%- endif %}
+    {% for query in p_kibana_queries %}
+    {
+      "operation": {{ query | tojson }},
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 100
+    }{{ ", " if not loop.last else "" }}
+    {% endfor %}
+  ]
+}

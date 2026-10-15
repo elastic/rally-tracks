@@ -108,7 +108,7 @@ The following parameters are available:
 * `number_of_replicas` (default: 1) - The number of replicas to set per Data Stream. The same value is used for all Data Streams.
 * `bulk_indexing_clients` (default: 8) - The number of clients issuing indexing requests.
 * `bulk_size` (default: 50) - The number of documents to send per indexing request.
-* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in `security-indexing-querying` track. 
+* `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use. Only supported in the `security-indexing-querying` and `security-indexing-querying-split` challenges. 
 * `logs_endpoint_from_kibana` (default: false): Skip creation of endpoint templates. Used when templates are expected from kibana. 
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
 
@@ -145,6 +145,10 @@ Users of this track may use this challenge to execute queries on an existing ind
 ### Security Indexing and Querying (security-indexing-querying)
 
 This challenge executes indexing and querying sequentially. Queries will be issued concurrently until `query_time_period` has elapsed.
+
+### Security Indexing and Split Querying (security-indexing-querying-split)
+
+This challenge indexes like `security-indexing-querying`, then runs distinct Kibana queries from the `hosts`, `overview` and `network` workflows, each as its own task, one after another, with a single client, 10 warmup iterations and 100 iterations. Unlike the composite workflows, each task measures the latency of one search request, without think time. The queries are defined in `operations/kibana-queries.json` (one operation per distinct query), with time ranges fixed to end at `2020-01-02` and the shard request cache disabled. The challenge schedules 25 of the 44 operations: the other 19 match no documents, or only aggregate fields without values, on the `logs-endpoint` corpora, and are covered by the scheduled operations. The challenge file explains why each one is skipped and how to restore it. `query_min_date`, `query_max_date`, `query_max_date_start`, `query_average_interval`, `think_time_interval` and the other time-period parameters have no effect on them; `query_request_params` does apply.
 
 ### Generate source events for detection rules (generate-alerts-source-events)
 

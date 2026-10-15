@@ -1,0 +1,8631 @@
+{#
+  Individual Kibana Security queries, extracted from workflows/{hosts,overview,network}: one op per distinct query, using the first
+  (Today/24h) variant of each. Each op description names the source workflow file and request step.
+  - index: the workflow-target the composite workflows rewrite to (see track.json).
+  - request-params: the recorded Kibana params merged with query_request_params, as the workflow-selector param source does.
+  - time ranges: baked in as the workflow-selector renders them with default query parameters (recorded span, ending at 2020-01-02).
+    query_max_date, query_max_date_start and query_average_interval do not affect these ops.
+  - cache: the shard request cache is disabled, otherwise all but the first iteration of each size: 0 aggregation is a cache hit.
+#}
+{% macro kibana_search(recorded_request_params) -%}
+  "operation-type": "search",
+  "index": "{{ p_workflow_target }}",
+  "cache": false,
+  "request-params": {{ dict(recorded_request_params, **(query_request_params | default({}))) | tojson }}
+{%- endmacro %}
+{
+  "name": "hosts-latest-event",
+  "description": "hosts/1.json 1.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "false", "allow_no_indices": "true"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@metadata.beat"
+      },
+      {
+        "field": "@metadata.type"
+      },
+      {
+        "field": "@metadata.version"
+      },
+      {
+        "field": "@timestamp"
+      },
+      {
+        "field": "agent.agent_id"
+      },
+      {
+        "field": "agent.build.original"
+      },
+      {
+        "field": "agent.ephemeral_id"
+      },
+      {
+        "field": "agent.hostname"
+      },
+      {
+        "field": "agent.id"
+      },
+      {
+        "field": "agent.name"
+      },
+      {
+        "field": "agent.type"
+      },
+      {
+        "field": "agent.version"
+      },
+      {
+        "field": "as.number"
+      },
+      {
+        "field": "as.organization.name"
+      },
+      {
+        "field": "auditd.data.a0"
+      },
+      {
+        "field": "auditd.data.a1"
+      },
+      {
+        "field": "auditd.data.a2"
+      },
+      {
+        "field": "auditd.data.a3"
+      },
+      {
+        "field": "auditd.data.a[0-3]"
+      },
+      {
+        "field": "auditd.data.acct"
+      },
+      {
+        "field": "auditd.data.acl"
+      },
+      {
+        "field": "auditd.data.action"
+      },
+      {
+        "field": "auditd.data.added"
+      },
+      {
+        "field": "auditd.data.addr"
+      },
+      {
+        "field": "auditd.data.apparmor"
+      },
+      {
+        "field": "auditd.data.arch"
+      },
+      {
+        "field": "auditd.data.arg"
+      },
+      {
+        "field": "auditd.data.argc"
+      },
+      {
+        "field": "auditd.data.audit_backlog_limit"
+      },
+      {
+        "field": "auditd.data.audit_backlog_wait_time"
+      },
+      {
+        "field": "auditd.data.audit_enabled"
+      },
+      {
+        "field": "auditd.data.audit_failure"
+      },
+      {
+        "field": "auditd.data.auid"
+      },
+      {
+        "field": "auditd.data.banners"
+      },
+      {
+        "field": "auditd.data.bool"
+      },
+      {
+        "field": "auditd.data.bus"
+      },
+      {
+        "field": "auditd.data.cap_fe"
+      },
+      {
+        "field": "auditd.data.cap_fi"
+      },
+      {
+        "field": "auditd.data.cap_fp"
+      },
+      {
+        "field": "auditd.data.cap_fver"
+      },
+      {
+        "field": "auditd.data.cap_pe"
+      },
+      {
+        "field": "auditd.data.cap_pi"
+      },
+      {
+        "field": "auditd.data.cap_pp"
+      },
+      {
+        "field": "auditd.data.capability"
+      },
+      {
+        "field": "auditd.data.capname"
+      },
+      {
+        "field": "auditd.data.cgroup"
+      },
+      {
+        "field": "auditd.data.changed"
+      },
+      {
+        "field": "auditd.data.cipher"
+      },
+      {
+        "field": "auditd.data.class"
+      },
+      {
+        "field": "auditd.data.cmd"
+      },
+      {
+        "field": "auditd.data.code"
+      },
+      {
+        "field": "auditd.data.compat"
+      },
+      {
+        "field": "auditd.data.daddr"
+      },
+      {
+        "field": "auditd.data.data"
+      },
+      {
+        "field": "auditd.data.default-context"
+      },
+      {
+        "field": "auditd.data.device"
+      },
+      {
+        "field": "auditd.data.dir"
+      },
+      {
+        "field": "auditd.data.direction"
+      },
+      {
+        "field": "auditd.data.dmac"
+      },
+      {
+        "field": "auditd.data.dport"
+      },
+      {
+        "field": "auditd.data.enforcing"
+      },
+      {
+        "field": "auditd.data.entries"
+      },
+      {
+        "field": "auditd.data.exit"
+      },
+      {
+        "field": "auditd.data.fam"
+      },
+      {
+        "field": "auditd.data.family"
+      },
+      {
+        "field": "auditd.data.fd"
+      },
+      {
+        "field": "auditd.data.fe"
+      },
+      {
+        "field": "auditd.data.feature"
+      },
+      {
+        "field": "auditd.data.fi"
+      },
+      {
+        "field": "auditd.data.file"
+      },
+      {
+        "field": "auditd.data.flags"
+      },
+      {
+        "field": "auditd.data.format"
+      },
+      {
+        "field": "auditd.data.fp"
+      },
+      {
+        "field": "auditd.data.fver"
+      },
+      {
+        "field": "auditd.data.grantors"
+      },
+      {
+        "field": "auditd.data.grp"
+      },
+      {
+        "field": "auditd.data.hook"
+      },
+      {
+        "field": "auditd.data.hostname"
+      },
+      {
+        "field": "auditd.data.icmp_type"
+      },
+      {
+        "field": "auditd.data.id"
+      },
+      {
+        "field": "auditd.data.igid"
+      },
+      {
+        "field": "auditd.data.img-ctx"
+      },
+      {
+        "field": "auditd.data.inif"
+      },
+      {
+        "field": "auditd.data.ino"
+      },
+      {
+        "field": "auditd.data.inode_gid"
+      },
+      {
+        "field": "auditd.data.inode_uid"
+      },
+      {
+        "field": "auditd.data.invalid_context"
+      },
+      {
+        "field": "auditd.data.ioctlcmd"
+      },
+      {
+        "field": "auditd.data.ip"
+      },
+      {
+        "field": "auditd.data.ipid"
+      },
+      {
+        "field": "auditd.data.ipx-net"
+      },
+      {
+        "field": "auditd.data.items"
+      },
+      {
+        "field": "auditd.data.iuid"
+      },
+      {
+        "field": "auditd.data.kernel"
+      },
+      {
+        "field": "auditd.data.kind"
+      },
+      {
+        "field": "auditd.data.ksize"
+      },
+      {
+        "field": "auditd.data.laddr"
+      },
+      {
+        "field": "auditd.data.len"
+      },
+      {
+        "field": "auditd.data.list"
+      },
+      {
+        "field": "auditd.data.lport"
+      }
+    ],
+    "query": {
+      "match_all": {}
+    },
+    "_source": [
+      "@timestamp"
+    ],
+    "size": 1,
+    "sort": [
+      {
+        "@timestamp": {
+          "order": "desc"
+        }
+      }
+    ]
+  }
+},
+{
+  "name": "hosts-kpi-hosts",
+  "description": "hosts/1.json 1.2",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "hosts": {
+        "cardinality": {
+          "field": "host.name"
+        }
+      },
+      "hosts_histogram": {
+        "auto_date_histogram": {
+          "field": "@timestamp",
+          "buckets": 6
+        },
+        "aggs": {
+          "count": {
+            "cardinality": {
+              "field": "host.name"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "hosts-kpi-authentications",
+  "description": "hosts/1.json 1.3",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggs": {
+      "authentication_success": {
+        "filter": {
+          "term": {
+            "event.outcome": "success"
+          }
+        }
+      },
+      "authentication_success_histogram": {
+        "auto_date_histogram": {
+          "field": "@timestamp",
+          "buckets": 6
+        },
+        "aggs": {
+          "count": {
+            "filter": {
+              "term": {
+                "event.outcome": "success"
+              }
+            }
+          }
+        }
+      },
+      "authentication_failure": {
+        "filter": {
+          "term": {
+            "event.outcome": "failure"
+          }
+        }
+      },
+      "authentication_failure_histogram": {
+        "auto_date_histogram": {
+          "field": "@timestamp",
+          "buckets": 6
+        },
+        "aggs": {
+          "count": {
+            "filter": {
+              "term": {
+                "event.outcome": "failure"
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "bool": {
+              "filter": [
+                {
+                  "term": {
+                    "event.category": "authentication"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "hosts-kpi-unique-ips",
+  "description": "hosts/1.json 1.4",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "unique_source_ips": {
+        "cardinality": {
+          "field": "source.ip"
+        }
+      },
+      "unique_source_ips_histogram": {
+        "auto_date_histogram": {
+          "field": "@timestamp",
+          "buckets": 6
+        },
+        "aggs": {
+          "count": {
+            "cardinality": {
+              "field": "source.ip"
+            }
+          }
+        }
+      },
+      "unique_destination_ips": {
+        "cardinality": {
+          "field": "destination.ip"
+        }
+      },
+      "unique_destination_ips_histogram": {
+        "auto_date_histogram": {
+          "field": "@timestamp",
+          "buckets": 6
+        },
+        "aggs": {
+          "count": {
+            "cardinality": {
+              "field": "destination.ip"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "hosts-all-hosts",
+  "description": "hosts/1.json 1.5",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@metadata.beat"
+      },
+      {
+        "field": "@metadata.type"
+      },
+      {
+        "field": "@metadata.version"
+      },
+      {
+        "field": "@timestamp"
+      },
+      {
+        "field": "agent.agent_id"
+      },
+      {
+        "field": "agent.build.original"
+      },
+      {
+        "field": "agent.ephemeral_id"
+      },
+      {
+        "field": "agent.hostname"
+      },
+      {
+        "field": "agent.id"
+      },
+      {
+        "field": "agent.name"
+      },
+      {
+        "field": "agent.type"
+      },
+      {
+        "field": "agent.version"
+      },
+      {
+        "field": "as.number"
+      },
+      {
+        "field": "as.organization.name"
+      },
+      {
+        "field": "auditd.data.a0"
+      },
+      {
+        "field": "auditd.data.a1"
+      },
+      {
+        "field": "auditd.data.a2"
+      },
+      {
+        "field": "auditd.data.a3"
+      },
+      {
+        "field": "auditd.data.a[0-3]"
+      },
+      {
+        "field": "auditd.data.acct"
+      },
+      {
+        "field": "auditd.data.acl"
+      },
+      {
+        "field": "auditd.data.action"
+      },
+      {
+        "field": "auditd.data.added"
+      },
+      {
+        "field": "auditd.data.addr"
+      },
+      {
+        "field": "auditd.data.apparmor"
+      },
+      {
+        "field": "auditd.data.arch"
+      },
+      {
+        "field": "auditd.data.arg"
+      },
+      {
+        "field": "auditd.data.argc"
+      },
+      {
+        "field": "auditd.data.audit_backlog_limit"
+      },
+      {
+        "field": "auditd.data.audit_backlog_wait_time"
+      },
+      {
+        "field": "auditd.data.audit_enabled"
+      },
+      {
+        "field": "auditd.data.audit_failure"
+      },
+      {
+        "field": "auditd.data.auid"
+      },
+      {
+        "field": "auditd.data.banners"
+      },
+      {
+        "field": "auditd.data.bool"
+      },
+      {
+        "field": "auditd.data.bus"
+      },
+      {
+        "field": "auditd.data.cap_fe"
+      },
+      {
+        "field": "auditd.data.cap_fi"
+      },
+      {
+        "field": "auditd.data.cap_fp"
+      },
+      {
+        "field": "auditd.data.cap_fver"
+      },
+      {
+        "field": "auditd.data.cap_pe"
+      },
+      {
+        "field": "auditd.data.cap_pi"
+      },
+      {
+        "field": "auditd.data.cap_pp"
+      },
+      {
+        "field": "auditd.data.capability"
+      },
+      {
+        "field": "auditd.data.capname"
+      },
+      {
+        "field": "auditd.data.cgroup"
+      },
+      {
+        "field": "auditd.data.changed"
+      },
+      {
+        "field": "auditd.data.cipher"
+      },
+      {
+        "field": "auditd.data.class"
+      },
+      {
+        "field": "auditd.data.cmd"
+      },
+      {
+        "field": "auditd.data.code"
+      },
+      {
+        "field": "auditd.data.compat"
+      },
+      {
+        "field": "auditd.data.daddr"
+      },
+      {
+        "field": "auditd.data.data"
+      },
+      {
+        "field": "auditd.data.default-context"
+      },
+      {
+        "field": "auditd.data.device"
+      },
+      {
+        "field": "auditd.data.dir"
+      },
+      {
+        "field": "auditd.data.direction"
+      },
+      {
+        "field": "auditd.data.dmac"
+      },
+      {
+        "field": "auditd.data.dport"
+      },
+      {
+        "field": "auditd.data.enforcing"
+      },
+      {
+        "field": "auditd.data.entries"
+      },
+      {
+        "field": "auditd.data.exit"
+      },
+      {
+        "field": "auditd.data.fam"
+      },
+      {
+        "field": "auditd.data.family"
+      },
+      {
+        "field": "auditd.data.fd"
+      },
+      {
+        "field": "auditd.data.fe"
+      },
+      {
+        "field": "auditd.data.feature"
+      },
+      {
+        "field": "auditd.data.fi"
+      },
+      {
+        "field": "auditd.data.file"
+      },
+      {
+        "field": "auditd.data.flags"
+      },
+      {
+        "field": "auditd.data.format"
+      },
+      {
+        "field": "auditd.data.fp"
+      },
+      {
+        "field": "auditd.data.fver"
+      },
+      {
+        "field": "auditd.data.grantors"
+      },
+      {
+        "field": "auditd.data.grp"
+      },
+      {
+        "field": "auditd.data.hook"
+      },
+      {
+        "field": "auditd.data.hostname"
+      },
+      {
+        "field": "auditd.data.icmp_type"
+      },
+      {
+        "field": "auditd.data.id"
+      },
+      {
+        "field": "auditd.data.igid"
+      },
+      {
+        "field": "auditd.data.img-ctx"
+      },
+      {
+        "field": "auditd.data.inif"
+      },
+      {
+        "field": "auditd.data.ino"
+      },
+      {
+        "field": "auditd.data.inode_gid"
+      },
+      {
+        "field": "auditd.data.inode_uid"
+      },
+      {
+        "field": "auditd.data.invalid_context"
+      },
+      {
+        "field": "auditd.data.ioctlcmd"
+      },
+      {
+        "field": "auditd.data.ip"
+      },
+      {
+        "field": "auditd.data.ipid"
+      },
+      {
+        "field": "auditd.data.ipx-net"
+      },
+      {
+        "field": "auditd.data.items"
+      },
+      {
+        "field": "auditd.data.iuid"
+      },
+      {
+        "field": "auditd.data.kernel"
+      },
+      {
+        "field": "auditd.data.kind"
+      },
+      {
+        "field": "auditd.data.ksize"
+      },
+      {
+        "field": "auditd.data.laddr"
+      },
+      {
+        "field": "auditd.data.len"
+      },
+      {
+        "field": "auditd.data.list"
+      },
+      {
+        "field": "auditd.data.lport"
+      }
+    ],
+    "aggregations": {
+      "host_count": {
+        "cardinality": {
+          "field": "host.name"
+        }
+      },
+      "host_data": {
+        "terms": {
+          "size": 10,
+          "field": "host.name",
+          "order": {
+            "lastSeen": "desc"
+          }
+        },
+        "aggs": {
+          "lastSeen": {
+            "max": {
+              "field": "@timestamp"
+            }
+          },
+          "os": {
+            "top_hits": {
+              "size": 1,
+              "sort": [
+                {
+                  "@timestamp": {
+                    "order": "desc"
+                  }
+                }
+              ],
+              "_source": {
+                "includes": [
+                  "host.os.*"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "hosts-authentications-histogram",
+  "description": "hosts/5.json 5.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "eventActionGroup": {
+        "terms": {
+          "field": "event.outcome",
+          "include": [
+            "success",
+            "failure"
+          ],
+          "order": {
+            "_count": "desc"
+          },
+          "size": 2
+        },
+        "aggs": {
+          "events": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "30s",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577919600000,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "bool": {
+              "must": [
+                {
+                  "term": {
+                    "event.category": "authentication"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "hosts-authentications-table",
+  "description": "hosts/5.json 5.2",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@metadata.beat"
+      },
+      {
+        "field": "@metadata.type"
+      },
+      {
+        "field": "@metadata.version"
+      },
+      {
+        "field": "@timestamp"
+      },
+      {
+        "field": "agent.agent_id"
+      },
+      {
+        "field": "agent.build.original"
+      },
+      {
+        "field": "agent.ephemeral_id"
+      },
+      {
+        "field": "agent.hostname"
+      },
+      {
+        "field": "agent.id"
+      },
+      {
+        "field": "agent.name"
+      },
+      {
+        "field": "agent.type"
+      },
+      {
+        "field": "agent.version"
+      },
+      {
+        "field": "as.number"
+      },
+      {
+        "field": "as.organization.name"
+      },
+      {
+        "field": "auditd.data.a0"
+      },
+      {
+        "field": "auditd.data.a1"
+      },
+      {
+        "field": "auditd.data.a2"
+      },
+      {
+        "field": "auditd.data.a3"
+      },
+      {
+        "field": "auditd.data.a[0-3]"
+      },
+      {
+        "field": "auditd.data.acct"
+      },
+      {
+        "field": "auditd.data.acl"
+      },
+      {
+        "field": "auditd.data.action"
+      },
+      {
+        "field": "auditd.data.added"
+      },
+      {
+        "field": "auditd.data.addr"
+      },
+      {
+        "field": "auditd.data.apparmor"
+      },
+      {
+        "field": "auditd.data.arch"
+      },
+      {
+        "field": "auditd.data.arg"
+      },
+      {
+        "field": "auditd.data.argc"
+      },
+      {
+        "field": "auditd.data.audit_backlog_limit"
+      },
+      {
+        "field": "auditd.data.audit_backlog_wait_time"
+      },
+      {
+        "field": "auditd.data.audit_enabled"
+      },
+      {
+        "field": "auditd.data.audit_failure"
+      },
+      {
+        "field": "auditd.data.auid"
+      },
+      {
+        "field": "auditd.data.banners"
+      },
+      {
+        "field": "auditd.data.bool"
+      },
+      {
+        "field": "auditd.data.bus"
+      },
+      {
+        "field": "auditd.data.cap_fe"
+      },
+      {
+        "field": "auditd.data.cap_fi"
+      },
+      {
+        "field": "auditd.data.cap_fp"
+      },
+      {
+        "field": "auditd.data.cap_fver"
+      },
+      {
+        "field": "auditd.data.cap_pe"
+      },
+      {
+        "field": "auditd.data.cap_pi"
+      },
+      {
+        "field": "auditd.data.cap_pp"
+      },
+      {
+        "field": "auditd.data.capability"
+      },
+      {
+        "field": "auditd.data.capname"
+      },
+      {
+        "field": "auditd.data.cgroup"
+      },
+      {
+        "field": "auditd.data.changed"
+      },
+      {
+        "field": "auditd.data.cipher"
+      },
+      {
+        "field": "auditd.data.class"
+      },
+      {
+        "field": "auditd.data.cmd"
+      },
+      {
+        "field": "auditd.data.code"
+      },
+      {
+        "field": "auditd.data.compat"
+      },
+      {
+        "field": "auditd.data.daddr"
+      },
+      {
+        "field": "auditd.data.data"
+      },
+      {
+        "field": "auditd.data.default-context"
+      },
+      {
+        "field": "auditd.data.device"
+      },
+      {
+        "field": "auditd.data.dir"
+      },
+      {
+        "field": "auditd.data.direction"
+      },
+      {
+        "field": "auditd.data.dmac"
+      },
+      {
+        "field": "auditd.data.dport"
+      },
+      {
+        "field": "auditd.data.enforcing"
+      },
+      {
+        "field": "auditd.data.entries"
+      },
+      {
+        "field": "auditd.data.exit"
+      },
+      {
+        "field": "auditd.data.fam"
+      },
+      {
+        "field": "auditd.data.family"
+      },
+      {
+        "field": "auditd.data.fd"
+      },
+      {
+        "field": "auditd.data.fe"
+      },
+      {
+        "field": "auditd.data.feature"
+      },
+      {
+        "field": "auditd.data.fi"
+      },
+      {
+        "field": "auditd.data.file"
+      },
+      {
+        "field": "auditd.data.flags"
+      },
+      {
+        "field": "auditd.data.format"
+      },
+      {
+        "field": "auditd.data.fp"
+      },
+      {
+        "field": "auditd.data.fver"
+      },
+      {
+        "field": "auditd.data.grantors"
+      },
+      {
+        "field": "auditd.data.grp"
+      },
+      {
+        "field": "auditd.data.hook"
+      },
+      {
+        "field": "auditd.data.hostname"
+      },
+      {
+        "field": "auditd.data.icmp_type"
+      },
+      {
+        "field": "auditd.data.id"
+      },
+      {
+        "field": "auditd.data.igid"
+      },
+      {
+        "field": "auditd.data.img-ctx"
+      },
+      {
+        "field": "auditd.data.inif"
+      },
+      {
+        "field": "auditd.data.ino"
+      },
+      {
+        "field": "auditd.data.inode_gid"
+      },
+      {
+        "field": "auditd.data.inode_uid"
+      },
+      {
+        "field": "auditd.data.invalid_context"
+      },
+      {
+        "field": "auditd.data.ioctlcmd"
+      },
+      {
+        "field": "auditd.data.ip"
+      },
+      {
+        "field": "auditd.data.ipid"
+      },
+      {
+        "field": "auditd.data.ipx-net"
+      },
+      {
+        "field": "auditd.data.items"
+      },
+      {
+        "field": "auditd.data.iuid"
+      },
+      {
+        "field": "auditd.data.kernel"
+      },
+      {
+        "field": "auditd.data.kind"
+      },
+      {
+        "field": "auditd.data.ksize"
+      },
+      {
+        "field": "auditd.data.laddr"
+      },
+      {
+        "field": "auditd.data.len"
+      },
+      {
+        "field": "auditd.data.list"
+      },
+      {
+        "field": "auditd.data.lport"
+      }
+    ],
+    "aggregations": {
+      "user_count": {
+        "cardinality": {
+          "field": "user.name"
+        }
+      },
+      "group_by_users": {
+        "terms": {
+          "size": 10,
+          "field": "user.name",
+          "order": [
+            {
+              "successes.doc_count": "desc"
+            },
+            {
+              "failures.doc_count": "desc"
+            }
+          ]
+        },
+        "aggs": {
+          "failures": {
+            "filter": {
+              "term": {
+                "event.outcome": "failure"
+              }
+            },
+            "aggs": {
+              "lastFailure": {
+                "top_hits": {
+                  "size": 1,
+                  "_source": [],
+                  "sort": [
+                    {
+                      "@timestamp": {
+                        "order": "desc"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "successes": {
+            "filter": {
+              "term": {
+                "event.outcome": "success"
+              }
+            },
+            "aggs": {
+              "lastSuccess": {
+                "top_hits": {
+                  "size": 1,
+                  "_source": [],
+                  "sort": [
+                    {
+                      "@timestamp": {
+                        "order": "desc"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "term": {
+              "event.category": "authentication"
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "hosts-uncommon-processes",
+  "description": "hosts/6.json 6.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "process_count": {
+        "cardinality": {
+          "field": "process.name"
+        }
+      },
+      "group_by_process": {
+        "terms": {
+          "size": 10,
+          "field": "process.name",
+          "order": [
+            {
+              "host_count": "asc"
+            },
+            {
+              "_count": "asc"
+            },
+            {
+              "_key": "asc"
+            }
+          ]
+        },
+        "aggregations": {
+          "process": {
+            "top_hits": {
+              "size": 1,
+              "sort": [
+                {
+                  "@timestamp": {
+                    "order": "desc"
+                  }
+                }
+              ],
+              "_source": [
+                "process.args",
+                "process.name",
+                "user.id",
+                "user.name"
+              ]
+            }
+          },
+          "host_count": {
+            "cardinality": {
+              "field": "host.name"
+            }
+          },
+          "hosts": {
+            "terms": {
+              "field": "host.name"
+            },
+            "aggregations": {
+              "host": {
+                "top_hits": {
+                  "size": 1,
+                  "_source": []
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "should": [
+          {
+            "bool": {
+              "filter": [
+                {
+                  "term": {
+                    "agent.type": "auditbeat"
+                  }
+                },
+                {
+                  "term": {
+                    "event.module": "auditd"
+                  }
+                },
+                {
+                  "term": {
+                    "event.action": "executed"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "bool": {
+              "filter": [
+                {
+                  "term": {
+                    "agent.type": "auditbeat"
+                  }
+                },
+                {
+                  "term": {
+                    "event.module": "system"
+                  }
+                },
+                {
+                  "term": {
+                    "event.dataset": "process"
+                  }
+                },
+                {
+                  "term": {
+                    "event.action": "process_started"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "bool": {
+              "filter": [
+                {
+                  "term": {
+                    "agent.type": "winlogbeat"
+                  }
+                },
+                {
+                  "term": {
+                    "event.code": "4688"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "bool": {
+              "filter": [
+                {
+                  "term": {
+                    "winlog.event_id": 1
+                  }
+                },
+                {
+                  "term": {
+                    "winlog.channel": "Microsoft-Windows-Sysmon/Operational"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "bool": {
+              "filter": [
+                {
+                  "term": {
+                    "event.type": "process_start"
+                  }
+                },
+                {
+                  "term": {
+                    "event.category": "process"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "bool": {
+              "filter": [
+                {
+                  "term": {
+                    "event.category": "process"
+                  }
+                },
+                {
+                  "term": {
+                    "event.type": "start"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "minimum_should_match": 1,
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "hosts-events-histogram",
+  "description": "hosts/8.json 8.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "eventActionGroup": {
+        "terms": {
+          "field": "event.action",
+          "missing": "All others",
+          "order": {
+            "_count": "desc"
+          },
+          "size": 10
+        },
+        "aggs": {
+          "events": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "30s",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577919600000,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "hosts-external-alerts-histogram",
+  "description": "hosts/10.json 10.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "alertsGroup": {
+        "terms": {
+          "field": "event.module",
+          "missing": "All others",
+          "order": {
+            "_count": "desc"
+          },
+          "size": 10
+        },
+        "aggs": {
+          "alerts": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "30s",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577919600000,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [
+                {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "host.name"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "match": {
+                          "event.kind": "alert"
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "hosts-external-alerts-table",
+  "description": "hosts/10.json 10.2",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@metadata.beat"
+      },
+      {
+        "field": "@metadata.type"
+      },
+      {
+        "field": "@metadata.version"
+      },
+      {
+        "field": "@timestamp"
+      },
+      {
+        "field": "agent.agent_id"
+      },
+      {
+        "field": "agent.build.original"
+      },
+      {
+        "field": "agent.ephemeral_id"
+      },
+      {
+        "field": "agent.hostname"
+      },
+      {
+        "field": "agent.id"
+      },
+      {
+        "field": "agent.name"
+      },
+      {
+        "field": "agent.type"
+      },
+      {
+        "field": "agent.version"
+      },
+      {
+        "field": "as.number"
+      },
+      {
+        "field": "as.organization.name"
+      },
+      {
+        "field": "auditd.data.a0"
+      },
+      {
+        "field": "auditd.data.a1"
+      },
+      {
+        "field": "auditd.data.a2"
+      },
+      {
+        "field": "auditd.data.a3"
+      },
+      {
+        "field": "auditd.data.a[0-3]"
+      },
+      {
+        "field": "auditd.data.acct"
+      },
+      {
+        "field": "auditd.data.acl"
+      },
+      {
+        "field": "auditd.data.action"
+      },
+      {
+        "field": "auditd.data.added"
+      },
+      {
+        "field": "auditd.data.addr"
+      },
+      {
+        "field": "auditd.data.apparmor"
+      },
+      {
+        "field": "auditd.data.arch"
+      },
+      {
+        "field": "auditd.data.arg"
+      },
+      {
+        "field": "auditd.data.argc"
+      },
+      {
+        "field": "auditd.data.audit_backlog_limit"
+      },
+      {
+        "field": "auditd.data.audit_backlog_wait_time"
+      },
+      {
+        "field": "auditd.data.audit_enabled"
+      },
+      {
+        "field": "auditd.data.audit_failure"
+      },
+      {
+        "field": "auditd.data.auid"
+      },
+      {
+        "field": "auditd.data.banners"
+      },
+      {
+        "field": "auditd.data.bool"
+      },
+      {
+        "field": "auditd.data.bus"
+      },
+      {
+        "field": "auditd.data.cap_fe"
+      },
+      {
+        "field": "auditd.data.cap_fi"
+      },
+      {
+        "field": "auditd.data.cap_fp"
+      },
+      {
+        "field": "auditd.data.cap_fver"
+      },
+      {
+        "field": "auditd.data.cap_pe"
+      },
+      {
+        "field": "auditd.data.cap_pi"
+      },
+      {
+        "field": "auditd.data.cap_pp"
+      },
+      {
+        "field": "auditd.data.capability"
+      },
+      {
+        "field": "auditd.data.capname"
+      },
+      {
+        "field": "auditd.data.cgroup"
+      },
+      {
+        "field": "auditd.data.changed"
+      },
+      {
+        "field": "auditd.data.cipher"
+      },
+      {
+        "field": "auditd.data.class"
+      },
+      {
+        "field": "auditd.data.cmd"
+      },
+      {
+        "field": "auditd.data.code"
+      },
+      {
+        "field": "auditd.data.compat"
+      },
+      {
+        "field": "auditd.data.daddr"
+      },
+      {
+        "field": "auditd.data.data"
+      },
+      {
+        "field": "auditd.data.default-context"
+      },
+      {
+        "field": "auditd.data.device"
+      },
+      {
+        "field": "auditd.data.dir"
+      },
+      {
+        "field": "auditd.data.direction"
+      },
+      {
+        "field": "auditd.data.dmac"
+      },
+      {
+        "field": "auditd.data.dport"
+      },
+      {
+        "field": "auditd.data.enforcing"
+      },
+      {
+        "field": "auditd.data.entries"
+      },
+      {
+        "field": "auditd.data.exit"
+      },
+      {
+        "field": "auditd.data.fam"
+      },
+      {
+        "field": "auditd.data.family"
+      },
+      {
+        "field": "auditd.data.fd"
+      },
+      {
+        "field": "auditd.data.fe"
+      },
+      {
+        "field": "auditd.data.feature"
+      },
+      {
+        "field": "auditd.data.fi"
+      },
+      {
+        "field": "auditd.data.file"
+      },
+      {
+        "field": "auditd.data.flags"
+      },
+      {
+        "field": "auditd.data.format"
+      },
+      {
+        "field": "auditd.data.fp"
+      },
+      {
+        "field": "auditd.data.fver"
+      },
+      {
+        "field": "auditd.data.grantors"
+      },
+      {
+        "field": "auditd.data.grp"
+      },
+      {
+        "field": "auditd.data.hook"
+      },
+      {
+        "field": "auditd.data.hostname"
+      },
+      {
+        "field": "auditd.data.icmp_type"
+      },
+      {
+        "field": "auditd.data.id"
+      },
+      {
+        "field": "auditd.data.igid"
+      },
+      {
+        "field": "auditd.data.img-ctx"
+      },
+      {
+        "field": "auditd.data.inif"
+      },
+      {
+        "field": "auditd.data.ino"
+      },
+      {
+        "field": "auditd.data.inode_gid"
+      },
+      {
+        "field": "auditd.data.inode_uid"
+      },
+      {
+        "field": "auditd.data.invalid_context"
+      },
+      {
+        "field": "auditd.data.ioctlcmd"
+      },
+      {
+        "field": "auditd.data.ip"
+      },
+      {
+        "field": "auditd.data.ipid"
+      },
+      {
+        "field": "auditd.data.ipx-net"
+      },
+      {
+        "field": "auditd.data.items"
+      },
+      {
+        "field": "auditd.data.iuid"
+      },
+      {
+        "field": "auditd.data.kernel"
+      },
+      {
+        "field": "auditd.data.kind"
+      },
+      {
+        "field": "auditd.data.ksize"
+      },
+      {
+        "field": "auditd.data.laddr"
+      },
+      {
+        "field": "auditd.data.len"
+      },
+      {
+        "field": "auditd.data.list"
+      },
+      {
+        "field": "auditd.data.lport"
+      }
+    ],
+    "aggregations": {
+      "producers": {
+        "terms": {
+          "field": "kibana.alert.rule.producer",
+          "exclude": [
+            "alerts"
+          ]
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [
+                {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "match": {
+                                "event.kind": "alert"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "host.name"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          },
+          {
+            "match_all": {}
+          }
+        ]
+      }
+    },
+    "from": 0,
+    "size": 25,
+    "track_total_hits": true,
+    "sort": [
+      {
+        "@timestamp": {
+          "order": "desc",
+          "unmapped_type": "date"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "field": "@timestamp",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.module",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.dataset",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.category",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.severity",
+        "include_unmapped": true
+      },
+      {
+        "field": "observer.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "host.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "message",
+        "include_unmapped": true
+      },
+      {
+        "field": "agent.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "agent.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "kibana.alert.rule.consumer",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.status",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.group.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.original_time",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.reason",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.filters",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.from",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.language",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.query",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.to",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.index",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.original_event.kind",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.original_event.module",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.version",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.severity",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.risk_score",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.threshold_result",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.code",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.action",
+        "include_unmapped": true
+      },
+      {
+        "field": "user.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.ip",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.ip",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.auth.ssh.signature",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.auth.ssh.method",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.arch",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.entity_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.size",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.summary",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.version",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.created",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.duration",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.end",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.hash",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.kind",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.original",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.outcome",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.risk_score",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.risk_score_norm",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.start",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.timezone",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.result",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.session",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.data.acct",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.data.terminal",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.data.op",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.actor.primary",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.actor.secondary",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.object.primary",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.object.secondary",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.object.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.how",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.message_type",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.sequence",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.Ext.original.path",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.target_path",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.extension",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.device",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.inode",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.uid",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.owner",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.gid",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.group",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.mode",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.size",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.mtime",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.ctime",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.path",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.Ext.code_signature",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.Ext.code_signature.subject_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.Ext.code_signature.trusted",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.hash.sha256",
+        "include_unmapped": true
+      },
+      {
+        "field": "host.os.family",
+        "include_unmapped": true
+      },
+      {
+        "field": "host.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "host.ip",
+        "include_unmapped": true
+      },
+      {
+        "field": "registry.key",
+        "include_unmapped": true
+      },
+      {
+        "field": "registry.path",
+        "include_unmapped": true
+      },
+      {
+        "field": "rule.reference",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.packets",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.port",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.continent_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.country_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.country_iso_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.city_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.region_iso_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.region_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.packets",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.port",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.continent_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.country_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.country_iso_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.city_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.region_iso_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.region_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "dns.question.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "dns.question.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "dns.resolved_ip",
+        "include_unmapped": true
+      },
+      {
+        "field": "dns.response_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.exit_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.file_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.file_path",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.logon_type",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.parent_process_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.pid",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.process_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.subject_domain_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.subject_logon_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.subject_user_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.target_domain_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.target_logon_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.target_user_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.saved_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.timeline_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.timeline_title",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.output_index",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.note",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.threshold",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.exceptions_list",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.building_block_type",
+        "include_unmapped": true
+      },
+      {
+        "field": "suricata.eve.proto",
+        "include_unmapped": true
+      },
+      {
+        "field": "suricata.eve.flow_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "suricata.eve.alert.signature",
+        "include_unmapped": true
+      },
+      {
+        "field": "suricata.eve.alert.signature_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.community_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.direction",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.packets",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.protocol",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.transport",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.version",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.request.method",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.request.body.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.request.body.content",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.request.referrer",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.response.status_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.response.body.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.response.body.content",
+        "include_unmapped": true
+      },
+      {
+        "field": "tls.client_certificate.fingerprint.sha1",
+        "include_unmapped": true
+      },
+      {
+        "field": "tls.fingerprints.ja3.hash",
+        "include_unmapped": true
+      },
+      {
+        "field": "tls.server_certificate.fingerprint.sha1",
+        "include_unmapped": true
+      },
+      {
+        "field": "user.domain",
+        "include_unmapped": true
+      },
+      {
+        "field": "winlog.event_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.exit_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.hash.md5",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.hash.sha1",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.hash.sha256",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.parent.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.parent.pid",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.pid",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.ppid",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.args",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.entity_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.executable",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.title",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.working_directory",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.session_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.local_resp",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.local_orig",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.missed_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.state",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.history",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.suppress_for",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.msg",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.note",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.sub",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.dst",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.dropped",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.peer_descr",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.AA",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.qclass_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.RD",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.qtype_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.qtype",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.query",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.trans_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.qclass",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.RA",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.TC",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.resp_mime_types",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.trans_depth",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.status_msg",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.resp_fuids",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.tags",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.session_ids",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.timedout",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.local_orig",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.tx_host",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.source",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.is_orig",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.overflow_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.sha1",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.duration",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.depth",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.analyzers",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.mime_type",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.rx_host",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.total_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.fuid",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.seen_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.missing_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.md5",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.ssl.cipher",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.ssl.established",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.ssl.resumed",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.ssl.version",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.matched.atomic",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.matched.field",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.matched.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.indicator.reference",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.indicator.provider",
+        "include_unmapped": true
+      }
+    ],
+    "_source": [
+      "signal.*"
+    ]
+  }
+},
+{
+  "name": "overview-events-histogram",
+  "description": "overview/1.json 1a.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "eventActionGroup": {
+        "terms": {
+          "field": "event.dataset",
+          "missing": "All others",
+          "order": {
+            "_count": "desc"
+          },
+          "size": 10
+        },
+        "aggs": {
+          "events": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "10m",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577836800001,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "overview-threat-indicators-histogram",
+  "description": "overview/1.json 1a.2",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "eventActionGroup": {
+        "terms": {
+          "field": "event.dataset",
+          "missing": "All others",
+          "order": {
+            "_count": "desc"
+          },
+          "size": 10
+        },
+        "aggs": {
+          "events": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "30d",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577836800000,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "match": {
+                          "event.type": "indicator"
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              ],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "overview-external-alerts-histogram",
+  "description": "overview/1.json 1a.3",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "alertsGroup": {
+        "terms": {
+          "field": "event.module",
+          "missing": "All others",
+          "order": {
+            "_count": "desc"
+          },
+          "size": 10
+        },
+        "aggs": {
+          "alerts": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "10m",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577836800001,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "match": {
+                          "event.kind": "alert"
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "overview-host-event-counts",
+  "description": "overview/1.json 1a.4",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "auditd_count": {
+        "filter": {
+          "term": {
+            "event.module": "auditd"
+          }
+        }
+      },
+      "endgame_module": {
+        "filter": {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "event.module": "endpoint"
+                }
+              },
+              {
+                "term": {
+                  "event.module": "endgame"
+                }
+              }
+            ]
+          }
+        },
+        "aggs": {
+          "dns_event_count": {
+            "filter": {
+              "bool": {
+                "should": [
+                  {
+                    "bool": {
+                      "filter": [
+                        {
+                          "term": {
+                            "network.protocol": "dns"
+                          }
+                        },
+                        {
+                          "term": {
+                            "event.category": "network"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "term": {
+                      "endgame.event_type_full": "dns_event"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "file_event_count": {
+            "filter": {
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "event.category": "file"
+                    }
+                  },
+                  {
+                    "term": {
+                      "endgame.event_type_full": "file_event"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "image_load_event_count": {
+            "filter": {
+              "bool": {
+                "should": [
+                  {
+                    "bool": {
+                      "should": [
+                        {
+                          "term": {
+                            "event.category": "library"
+                          }
+                        },
+                        {
+                          "term": {
+                            "event.category": "driver"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "term": {
+                      "endgame.event_type_full": "image_load_event"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "network_event_count": {
+            "filter": {
+              "bool": {
+                "should": [
+                  {
+                    "bool": {
+                      "filter": [
+                        {
+                          "bool": {
+                            "must_not": {
+                              "term": {
+                                "network.protocol": "dns"
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "term": {
+                            "event.category": "network"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "term": {
+                      "endgame.event_type_full": "network_event"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "process_event_count": {
+            "filter": {
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "event.category": "process"
+                    }
+                  },
+                  {
+                    "term": {
+                      "endgame.event_type_full": "process_event"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "registry_event": {
+            "filter": {
+              "bool": {
+                "should": [
+                  {
+                    "term": {
+                      "event.category": "registry"
+                    }
+                  },
+                  {
+                    "term": {
+                      "endgame.event_type_full": "registry_event"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "security_event_count": {
+            "filter": {
+              "bool": {
+                "should": [
+                  {
+                    "bool": {
+                      "filter": [
+                        {
+                          "term": {
+                            "event.category": "session"
+                          }
+                        },
+                        {
+                          "term": {
+                            "event.category": "authentication"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "term": {
+                      "endgame.event_type_full": "security_event"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "fim_count": {
+        "filter": {
+          "term": {
+            "event.module": "file_integrity"
+          }
+        }
+      },
+      "winlog_module": {
+        "filter": {
+          "term": {
+            "agent.type": "winlogbeat"
+          }
+        },
+        "aggs": {
+          "mwsysmon_operational_event_count": {
+            "filter": {
+              "term": {
+                "winlog.channel": "Microsoft-Windows-Sysmon/Operational"
+              }
+            }
+          },
+          "security_event_count": {
+            "filter": {
+              "term": {
+                "winlog.channel": "Security"
+              }
+            }
+          }
+        }
+      },
+      "system_module": {
+        "filter": {
+          "term": {
+            "event.module": "system"
+          }
+        },
+        "aggs": {
+          "login_count": {
+            "filter": {
+              "term": {
+                "event.dataset": "login"
+              }
+            }
+          },
+          "package_count": {
+            "filter": {
+              "term": {
+                "event.dataset": "package"
+              }
+            }
+          },
+          "process_count": {
+            "filter": {
+              "term": {
+                "event.dataset": "process"
+              }
+            }
+          },
+          "user_count": {
+            "filter": {
+              "term": {
+                "event.dataset": "user"
+              }
+            }
+          },
+          "filebeat_count": {
+            "filter": {
+              "term": {
+                "agent.type": "filebeat"
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [
+                {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "exists": {
+                                "field": "host.name"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "overview-network-event-counts",
+  "description": "overview/1.json 1a.5",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "unique_flow_count": {
+        "filter": {
+          "term": {
+            "type": "flow"
+          }
+        }
+      },
+      "unique_dns_count": {
+        "filter": {
+          "term": {
+            "type": "dns"
+          }
+        }
+      },
+      "unique_suricata_count": {
+        "filter": {
+          "term": {
+            "service.type": "suricata"
+          }
+        }
+      },
+      "unique_zeek_count": {
+        "filter": {
+          "term": {
+            "service.type": "zeek"
+          }
+        }
+      },
+      "unique_socket_count": {
+        "filter": {
+          "term": {
+            "event.dataset": "socket"
+          }
+        }
+      },
+      "unique_filebeat_count": {
+        "filter": {
+          "term": {
+            "agent.type": "filebeat"
+          }
+        },
+        "aggs": {
+          "unique_netflow_count": {
+            "filter": {
+              "term": {
+                "input.type": "netflow"
+              }
+            }
+          },
+          "unique_panw_count": {
+            "filter": {
+              "term": {
+                "event.module": "panw"
+              }
+            }
+          },
+          "unique_cisco_count": {
+            "filter": {
+              "term": {
+                "event.module": "cisco"
+              }
+            }
+          }
+        }
+      },
+      "unique_packetbeat_count": {
+        "filter": {
+          "term": {
+            "agent.type": "packetbeat"
+          }
+        },
+        "aggs": {
+          "unique_tls_count": {
+            "filter": {
+              "term": {
+                "network.protocol": "tls"
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [
+                {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "source.ip"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "destination.ip"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-kpi-network-events",
+  "description": "network/1.json 1a.2",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "exists": {
+                    "field": "source.ip"
+                  }
+                },
+                {
+                  "exists": {
+                    "field": "destination.ip"
+                  }
+                }
+              ],
+              "minimum_should_match": 1
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-kpi-dns-queries",
+  "description": "network/1.json 1a.3",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "exists": {
+                    "field": "dns.question.name"
+                  }
+                },
+                {
+                  "term": {
+                    "suricata.eve.dns.type": {
+                      "value": "query"
+                    }
+                  }
+                },
+                {
+                  "exists": {
+                    "field": "zeek.dns.query"
+                  }
+                }
+              ],
+              "minimum_should_match": 1
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-kpi-unique-flows",
+  "description": "network/1.json 1a.4",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "unique_flow_id": {
+        "cardinality": {
+          "field": "network.community_id"
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "exists": {
+                    "field": "source.ip"
+                  }
+                },
+                {
+                  "exists": {
+                    "field": "destination.ip"
+                  }
+                }
+              ],
+              "minimum_should_match": 1
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-kpi-tls-handshakes",
+  "description": "network/1.json 1a.5",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "should": [
+                {
+                  "exists": {
+                    "field": "source.ip"
+                  }
+                },
+                {
+                  "exists": {
+                    "field": "destination.ip"
+                  }
+                }
+              ],
+              "minimum_should_match": 1
+            }
+          },
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "bool": {
+              "should": [
+                {
+                  "exists": {
+                    "field": "tls.version"
+                  }
+                },
+                {
+                  "exists": {
+                    "field": "suricata.eve.tls.version"
+                  }
+                },
+                {
+                  "exists": {
+                    "field": "zeek.ssl.version"
+                  }
+                }
+              ],
+              "minimum_should_match": 1
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-kpi-unique-private-ips",
+  "description": "network/1.json 1a.6",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "source": {
+        "filter": {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "source.ip": "10.0.0.0/8"
+                }
+              },
+              {
+                "term": {
+                  "source.ip": "192.168.0.0/16"
+                }
+              },
+              {
+                "term": {
+                  "source.ip": "172.16.0.0/12"
+                }
+              },
+              {
+                "term": {
+                  "source.ip": "fd00::/8"
+                }
+              }
+            ],
+            "minimum_should_match": 1
+          }
+        },
+        "aggs": {
+          "unique_private_ips": {
+            "cardinality": {
+              "field": "source.ip"
+            }
+          },
+          "histogram": {
+            "auto_date_histogram": {
+              "field": "@timestamp",
+              "buckets": "6"
+            },
+            "aggs": {
+              "count": {
+                "cardinality": {
+                  "field": "source.ip"
+                }
+              }
+            }
+          }
+        }
+      },
+      "destination": {
+        "filter": {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "destination.ip": "10.0.0.0/8"
+                }
+              },
+              {
+                "term": {
+                  "destination.ip": "192.168.0.0/16"
+                }
+              },
+              {
+                "term": {
+                  "destination.ip": "172.16.0.0/12"
+                }
+              },
+              {
+                "term": {
+                  "destination.ip": "fd00::/8"
+                }
+              }
+            ],
+            "minimum_should_match": 1
+          }
+        },
+        "aggs": {
+          "unique_private_ips": {
+            "cardinality": {
+              "field": "destination.ip"
+            }
+          },
+          "histogram": {
+            "auto_date_histogram": {
+              "field": "@timestamp",
+              "buckets": "6"
+            },
+            "aggs": {
+              "count": {
+                "cardinality": {
+                  "field": "destination.ip"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-top-source-ips",
+  "description": "network/1.json 1a.7",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "top_n_flow_count": {
+        "cardinality": {
+          "field": "source.ip"
+        }
+      },
+      "source": {
+        "terms": {
+          "field": "source.ip",
+          "size": 10,
+          "order": {
+            "bytes_out": "desc"
+          }
+        },
+        "aggs": {
+          "bytes_in": {
+            "sum": {
+              "field": "destination.bytes"
+            }
+          },
+          "bytes_out": {
+            "sum": {
+              "field": "source.bytes"
+            }
+          },
+          "domain": {
+            "terms": {
+              "field": "source.domain",
+              "order": {
+                "timestamp": "desc"
+              }
+            },
+            "aggs": {
+              "timestamp": {
+                "max": {
+                  "field": "@timestamp"
+                }
+              }
+            }
+          },
+          "location": {
+            "filter": {
+              "exists": {
+                "field": "source.geo"
+              }
+            },
+            "aggs": {
+              "top_geo": {
+                "top_hits": {
+                  "_source": "source.geo.*",
+                  "size": 1
+                }
+              }
+            }
+          },
+          "autonomous_system": {
+            "filter": {
+              "exists": {
+                "field": "source.as"
+              }
+            },
+            "aggs": {
+              "top_as": {
+                "top_hits": {
+                  "_source": "source.as.*",
+                  "size": 1
+                }
+              }
+            }
+          },
+          "flows": {
+            "cardinality": {
+              "field": "network.community_id"
+            }
+          },
+          "destination_ips": {
+            "cardinality": {
+              "field": "destination.ip"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "network-top-destination-ips",
+  "description": "network/1.json 1a.8",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "top_n_flow_count": {
+        "cardinality": {
+          "field": "destination.ip"
+        }
+      },
+      "destination": {
+        "terms": {
+          "field": "destination.ip",
+          "size": 10,
+          "order": {
+            "bytes_in": "desc"
+          }
+        },
+        "aggs": {
+          "bytes_in": {
+            "sum": {
+              "field": "source.bytes"
+            }
+          },
+          "bytes_out": {
+            "sum": {
+              "field": "destination.bytes"
+            }
+          },
+          "domain": {
+            "terms": {
+              "field": "destination.domain",
+              "order": {
+                "timestamp": "desc"
+              }
+            },
+            "aggs": {
+              "timestamp": {
+                "max": {
+                  "field": "@timestamp"
+                }
+              }
+            }
+          },
+          "location": {
+            "filter": {
+              "exists": {
+                "field": "destination.geo"
+              }
+            },
+            "aggs": {
+              "top_geo": {
+                "top_hits": {
+                  "_source": "destination.geo.*",
+                  "size": 1
+                }
+              }
+            }
+          },
+          "autonomous_system": {
+            "filter": {
+              "exists": {
+                "field": "destination.as"
+              }
+            },
+            "aggs": {
+              "top_as": {
+                "top_hits": {
+                  "_source": "destination.as.*",
+                  "size": 1
+                }
+              }
+            }
+          },
+          "flows": {
+            "cardinality": {
+              "field": "network.community_id"
+            }
+          },
+          "source_ips": {
+            "cardinality": {
+              "field": "source.ip"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "network-top-source-countries",
+  "description": "network/1.json 1a.9",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "top_countries_count": {
+        "cardinality": {
+          "field": "source.geo.country_iso_code"
+        }
+      },
+      "source": {
+        "terms": {
+          "field": "source.geo.country_iso_code",
+          "size": 10,
+          "order": {
+            "bytes_out": "desc"
+          }
+        },
+        "aggs": {
+          "bytes_in": {
+            "sum": {
+              "field": "destination.bytes"
+            }
+          },
+          "bytes_out": {
+            "sum": {
+              "field": "source.bytes"
+            }
+          },
+          "flows": {
+            "cardinality": {
+              "field": "network.community_id"
+            }
+          },
+          "source_ips": {
+            "cardinality": {
+              "field": "source.ip"
+            }
+          },
+          "destination_ips": {
+            "cardinality": {
+              "field": "destination.ip"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "network-top-destination-countries",
+  "description": "network/1.json 1a.10",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "top_countries_count": {
+        "cardinality": {
+          "field": "destination.geo.country_iso_code"
+        }
+      },
+      "destination": {
+        "terms": {
+          "field": "destination.geo.country_iso_code",
+          "size": 10,
+          "order": {
+            "bytes_in": "desc"
+          }
+        },
+        "aggs": {
+          "bytes_in": {
+            "sum": {
+              "field": "source.bytes"
+            }
+          },
+          "bytes_out": {
+            "sum": {
+              "field": "destination.bytes"
+            }
+          },
+          "flows": {
+            "cardinality": {
+              "field": "network.community_id"
+            }
+          },
+          "source_ips": {
+            "cardinality": {
+              "field": "source.ip"
+            }
+          },
+          "destination_ips": {
+            "cardinality": {
+              "field": "destination.ip"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "network-map-source-grid",
+  "description": "network/1.json 1b.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "preference": "1649684439115"}) }},
+  "body": {
+    "size": 0,
+    "aggs": {
+      "destSplit": {
+        "terms": {
+          "script": {
+            "source": "doc['destination.geo.location'].value.toString()",
+            "lang": "painless"
+          },
+          "order": {
+            "_count": "desc"
+          },
+          "size": 100
+        },
+        "aggs": {
+          "sourceGrid": {
+            "geotile_grid": {
+              "field": "source.geo.location",
+              "precision": 3,
+              "size": 500
+            },
+            "aggs": {
+              "sourceCentroid": {
+                "geo_centroid": {
+                  "field": "source.geo.location"
+                }
+              },
+              "sum_of_source.bytes": {
+                "sum": {
+                  "field": "source.bytes"
+                }
+              },
+              "sum_of_destination.bytes": {
+                "sum": {
+                  "field": "destination.bytes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "fields": [
+      {
+        "field": "@timestamp",
+        "format": "date_time"
+      },
+      {
+        "field": "event.created",
+        "format": "date_time"
+      },
+      {
+        "field": "event.ingested",
+        "format": "date_time"
+      },
+      {
+        "field": "file.accessed",
+        "format": "date_time"
+      },
+      {
+        "field": "file.created",
+        "format": "date_time"
+      },
+      {
+        "field": "file.ctime",
+        "format": "date_time"
+      },
+      {
+        "field": "file.mtime",
+        "format": "date_time"
+      }
+    ],
+    "script_fields": {},
+    "stored_fields": [
+      "*"
+    ],
+    "runtime_mappings": {},
+    "_source": {
+      "excludes": []
+    },
+    "query": {
+      "bool": {
+        "must": [],
+        "filter": [
+          {
+            "bool": {
+              "must": [
+                {
+                  "exists": {
+                    "field": "destination.geo.location"
+                  }
+                },
+                {
+                  "geo_bounding_box": {
+                    "destination.geo.location": {
+                      "top_left": [
+                        -180,
+                        87.74251
+                      ],
+                      "bottom_right": [
+                        180,
+                        -87.74251
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "exists": {
+              "field": "source.geo.location"
+            }
+          }
+        ],
+        "should": [],
+        "must_not": []
+      }
+    }
+  }
+},
+{
+  "name": "network-map-source-points",
+  "description": "network/1.json 1b.2",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "10001", "preference": "1649684439115"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@timestamp",
+        "format": "epoch_millis"
+      },
+      "source.geo.location"
+    ],
+    "size": 10000,
+    "_source": false,
+    "script_fields": {},
+    "stored_fields": [
+      "@timestamp",
+      "source.geo.location"
+    ],
+    "runtime_mappings": {},
+    "query": {
+      "bool": {
+        "must": [],
+        "filter": [
+          {
+            "range": {
+              "@timestamp": {
+                "format": "strict_date_optional_time",
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z"
+              }
+            }
+          }
+        ],
+        "should": [],
+        "must_not": []
+      }
+    }
+  }
+},
+{
+  "name": "network-map-destination-points",
+  "description": "network/1.json 1b.3",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "10001", "preference": "1649684439115"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@timestamp",
+        "format": "epoch_millis"
+      },
+      "destination.geo.location"
+    ],
+    "size": 10000,
+    "_source": false,
+    "script_fields": {},
+    "stored_fields": [
+      "@timestamp",
+      "destination.geo.location"
+    ],
+    "runtime_mappings": {},
+    "query": {
+      "bool": {
+        "must": [],
+        "filter": [
+          {
+            "bool": {
+              "must": [
+                {
+                  "exists": {
+                    "field": "destination.geo.location"
+                  }
+                },
+                {
+                  "geo_bounding_box": {
+                    "destination.geo.location": {
+                      "top_left": [
+                        -180,
+                        85.05113
+                      ],
+                      "bottom_right": [
+                        180,
+                        -85.05113
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "format": "strict_date_optional_time",
+                "gte": "2020-01-01T00:00:01.000Z",
+                "lte": "2020-01-02T00:00:00.000Z"
+              }
+            }
+          }
+        ],
+        "should": [],
+        "must_not": []
+      }
+    }
+  }
+},
+{
+  "name": "network-ip-latest-event",
+  "description": "network/5.json 5.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "false", "allow_no_indices": "true"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@metadata.beat"
+      },
+      {
+        "field": "@metadata.type"
+      },
+      {
+        "field": "@metadata.version"
+      },
+      {
+        "field": "@timestamp"
+      },
+      {
+        "field": "agent.agent_id"
+      },
+      {
+        "field": "agent.build.original"
+      },
+      {
+        "field": "agent.ephemeral_id"
+      },
+      {
+        "field": "agent.hostname"
+      },
+      {
+        "field": "agent.id"
+      },
+      {
+        "field": "agent.name"
+      },
+      {
+        "field": "agent.type"
+      },
+      {
+        "field": "agent.version"
+      },
+      {
+        "field": "as.number"
+      },
+      {
+        "field": "as.organization.name"
+      },
+      {
+        "field": "auditd.data.a0"
+      },
+      {
+        "field": "auditd.data.a1"
+      },
+      {
+        "field": "auditd.data.a2"
+      },
+      {
+        "field": "auditd.data.a3"
+      },
+      {
+        "field": "auditd.data.a[0-3]"
+      },
+      {
+        "field": "auditd.data.acct"
+      },
+      {
+        "field": "auditd.data.acl"
+      },
+      {
+        "field": "auditd.data.action"
+      },
+      {
+        "field": "auditd.data.added"
+      },
+      {
+        "field": "auditd.data.addr"
+      },
+      {
+        "field": "auditd.data.apparmor"
+      },
+      {
+        "field": "auditd.data.arch"
+      },
+      {
+        "field": "auditd.data.arg"
+      },
+      {
+        "field": "auditd.data.argc"
+      },
+      {
+        "field": "auditd.data.audit_backlog_limit"
+      },
+      {
+        "field": "auditd.data.audit_backlog_wait_time"
+      },
+      {
+        "field": "auditd.data.audit_enabled"
+      },
+      {
+        "field": "auditd.data.audit_failure"
+      },
+      {
+        "field": "auditd.data.auid"
+      },
+      {
+        "field": "auditd.data.banners"
+      },
+      {
+        "field": "auditd.data.bool"
+      },
+      {
+        "field": "auditd.data.bus"
+      },
+      {
+        "field": "auditd.data.cap_fe"
+      },
+      {
+        "field": "auditd.data.cap_fi"
+      },
+      {
+        "field": "auditd.data.cap_fp"
+      },
+      {
+        "field": "auditd.data.cap_fver"
+      },
+      {
+        "field": "auditd.data.cap_pe"
+      },
+      {
+        "field": "auditd.data.cap_pi"
+      },
+      {
+        "field": "auditd.data.cap_pp"
+      },
+      {
+        "field": "auditd.data.capability"
+      },
+      {
+        "field": "auditd.data.capname"
+      },
+      {
+        "field": "auditd.data.cgroup"
+      },
+      {
+        "field": "auditd.data.changed"
+      },
+      {
+        "field": "auditd.data.cipher"
+      },
+      {
+        "field": "auditd.data.class"
+      },
+      {
+        "field": "auditd.data.cmd"
+      },
+      {
+        "field": "auditd.data.code"
+      },
+      {
+        "field": "auditd.data.compat"
+      },
+      {
+        "field": "auditd.data.daddr"
+      },
+      {
+        "field": "auditd.data.data"
+      },
+      {
+        "field": "auditd.data.default-context"
+      },
+      {
+        "field": "auditd.data.device"
+      },
+      {
+        "field": "auditd.data.dir"
+      },
+      {
+        "field": "auditd.data.direction"
+      },
+      {
+        "field": "auditd.data.dmac"
+      },
+      {
+        "field": "auditd.data.dport"
+      },
+      {
+        "field": "auditd.data.enforcing"
+      },
+      {
+        "field": "auditd.data.entries"
+      },
+      {
+        "field": "auditd.data.exit"
+      },
+      {
+        "field": "auditd.data.fam"
+      },
+      {
+        "field": "auditd.data.family"
+      },
+      {
+        "field": "auditd.data.fd"
+      },
+      {
+        "field": "auditd.data.fe"
+      },
+      {
+        "field": "auditd.data.feature"
+      },
+      {
+        "field": "auditd.data.fi"
+      },
+      {
+        "field": "auditd.data.file"
+      },
+      {
+        "field": "auditd.data.flags"
+      },
+      {
+        "field": "auditd.data.format"
+      },
+      {
+        "field": "auditd.data.fp"
+      },
+      {
+        "field": "auditd.data.fver"
+      },
+      {
+        "field": "auditd.data.grantors"
+      },
+      {
+        "field": "auditd.data.grp"
+      },
+      {
+        "field": "auditd.data.hook"
+      },
+      {
+        "field": "auditd.data.hostname"
+      },
+      {
+        "field": "auditd.data.icmp_type"
+      },
+      {
+        "field": "auditd.data.id"
+      },
+      {
+        "field": "auditd.data.igid"
+      },
+      {
+        "field": "auditd.data.img-ctx"
+      },
+      {
+        "field": "auditd.data.inif"
+      },
+      {
+        "field": "auditd.data.ino"
+      },
+      {
+        "field": "auditd.data.inode_gid"
+      },
+      {
+        "field": "auditd.data.inode_uid"
+      },
+      {
+        "field": "auditd.data.invalid_context"
+      },
+      {
+        "field": "auditd.data.ioctlcmd"
+      },
+      {
+        "field": "auditd.data.ip"
+      },
+      {
+        "field": "auditd.data.ipid"
+      },
+      {
+        "field": "auditd.data.ipx-net"
+      },
+      {
+        "field": "auditd.data.items"
+      },
+      {
+        "field": "auditd.data.iuid"
+      },
+      {
+        "field": "auditd.data.kernel"
+      },
+      {
+        "field": "auditd.data.kind"
+      },
+      {
+        "field": "auditd.data.ksize"
+      },
+      {
+        "field": "auditd.data.laddr"
+      },
+      {
+        "field": "auditd.data.len"
+      },
+      {
+        "field": "auditd.data.list"
+      },
+      {
+        "field": "auditd.data.lport"
+      }
+    ],
+    "query": {
+      "bool": {
+        "filter": {
+          "bool": {
+            "should": [
+              {
+                "term": {
+                  "source.ip": "63.33.254.192"
+                }
+              },
+              {
+                "term": {
+                  "destination.ip": "63.33.254.192"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "_source": [
+      "@timestamp"
+    ],
+    "size": 1,
+    "sort": [
+      {
+        "@timestamp": {
+          "order": "desc"
+        }
+      }
+    ]
+  }
+},
+{
+  "name": "network-ip-anomalies",
+  "description": "network/5.json 5.2",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggs": {
+      "anomalyActionGroup": {
+        "terms": {
+          "field": "job_id",
+          "order": {
+            "_count": "desc"
+          },
+          "size": 10
+        },
+        "aggs": {
+          "anomalies": {
+            "date_histogram": {
+              "field": "timestamp",
+              "fixed_interval": "30s",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577919600000,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [
+                {
+                  "bool": {
+                    "should": [],
+                    "minimum_should_match": 1
+                  }
+                },
+                {
+                  "match_phrase": {
+                    "result_type": "record"
+                  }
+                },
+                {
+                  "match_phrase": {
+                    "destination.ip": "63.33.254.192"
+                  }
+                },
+                {
+                  "range": {
+                    "record_score": {
+                      "gte": 50
+                    }
+                  }
+                }
+              ],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-ip-top-source-ips",
+  "description": "network/5.json 5.3",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "top_n_flow_count": {
+        "cardinality": {
+          "field": "source.ip"
+        }
+      },
+      "source": {
+        "terms": {
+          "field": "source.ip",
+          "size": 10,
+          "order": {
+            "bytes_out": "desc"
+          }
+        },
+        "aggs": {
+          "bytes_in": {
+            "sum": {
+              "field": "destination.bytes"
+            }
+          },
+          "bytes_out": {
+            "sum": {
+              "field": "source.bytes"
+            }
+          },
+          "domain": {
+            "terms": {
+              "field": "source.domain",
+              "order": {
+                "timestamp": "desc"
+              }
+            },
+            "aggs": {
+              "timestamp": {
+                "max": {
+                  "field": "@timestamp"
+                }
+              }
+            }
+          },
+          "location": {
+            "filter": {
+              "exists": {
+                "field": "source.geo"
+              }
+            },
+            "aggs": {
+              "top_geo": {
+                "top_hits": {
+                  "_source": "source.geo.*",
+                  "size": 1
+                }
+              }
+            }
+          },
+          "autonomous_system": {
+            "filter": {
+              "exists": {
+                "field": "source.as"
+              }
+            },
+            "aggs": {
+              "top_as": {
+                "top_hits": {
+                  "_source": "source.as.*",
+                  "size": 1
+                }
+              }
+            }
+          },
+          "flows": {
+            "cardinality": {
+              "field": "network.community_id"
+            }
+          },
+          "destination_ips": {
+            "cardinality": {
+              "field": "destination.ip"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ],
+        "should": [
+          {
+            "term": {
+              "destination.ip": "63.33.254.192"
+            }
+          }
+        ],
+        "minimum_should_match": 1
+      }
+    }
+  }
+},
+{
+  "name": "network-ip-top-destination-ips",
+  "description": "network/5.json 5.4",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "top_n_flow_count": {
+        "cardinality": {
+          "field": "destination.ip"
+        }
+      },
+      "destination": {
+        "terms": {
+          "field": "destination.ip",
+          "size": 10,
+          "order": {
+            "bytes_in": "desc"
+          }
+        },
+        "aggs": {
+          "bytes_in": {
+            "sum": {
+              "field": "source.bytes"
+            }
+          },
+          "bytes_out": {
+            "sum": {
+              "field": "destination.bytes"
+            }
+          },
+          "domain": {
+            "terms": {
+              "field": "destination.domain",
+              "order": {
+                "timestamp": "desc"
+              }
+            },
+            "aggs": {
+              "timestamp": {
+                "max": {
+                  "field": "@timestamp"
+                }
+              }
+            }
+          },
+          "location": {
+            "filter": {
+              "exists": {
+                "field": "destination.geo"
+              }
+            },
+            "aggs": {
+              "top_geo": {
+                "top_hits": {
+                  "_source": "destination.geo.*",
+                  "size": 1
+                }
+              }
+            }
+          },
+          "autonomous_system": {
+            "filter": {
+              "exists": {
+                "field": "destination.as"
+              }
+            },
+            "aggs": {
+              "top_as": {
+                "top_hits": {
+                  "_source": "destination.as.*",
+                  "size": 1
+                }
+              }
+            }
+          },
+          "flows": {
+            "cardinality": {
+              "field": "network.community_id"
+            }
+          },
+          "source_ips": {
+            "cardinality": {
+              "field": "source.ip"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ],
+        "should": [
+          {
+            "term": {
+              "source.ip": "10.0.5.153"
+            }
+          }
+        ],
+        "minimum_should_match": 1
+      }
+    }
+  }
+},
+{
+  "name": "network-ip-top-source-countries",
+  "description": "network/5.json 5.5",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "top_countries_count": {
+        "cardinality": {
+          "field": "source.geo.country_iso_code"
+        }
+      },
+      "source": {
+        "terms": {
+          "field": "source.geo.country_iso_code",
+          "size": 10,
+          "order": {
+            "bytes_out": "desc"
+          }
+        },
+        "aggs": {
+          "bytes_in": {
+            "sum": {
+              "field": "destination.bytes"
+            }
+          },
+          "bytes_out": {
+            "sum": {
+              "field": "source.bytes"
+            }
+          },
+          "flows": {
+            "cardinality": {
+              "field": "network.community_id"
+            }
+          },
+          "source_ips": {
+            "cardinality": {
+              "field": "source.ip"
+            }
+          },
+          "destination_ips": {
+            "cardinality": {
+              "field": "destination.ip"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ],
+        "should": [
+          {
+            "term": {
+              "destination.ip": "63.33.254.192"
+            }
+          }
+        ],
+        "minimum_should_match": 1
+      }
+    }
+  }
+},
+{
+  "name": "network-ip-top-destination-countries",
+  "description": "network/5.json 5.6",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "top_countries_count": {
+        "cardinality": {
+          "field": "destination.geo.country_iso_code"
+        }
+      },
+      "destination": {
+        "terms": {
+          "field": "destination.geo.country_iso_code",
+          "size": 10,
+          "order": {
+            "bytes_in": "desc"
+          }
+        },
+        "aggs": {
+          "bytes_in": {
+            "sum": {
+              "field": "source.bytes"
+            }
+          },
+          "bytes_out": {
+            "sum": {
+              "field": "destination.bytes"
+            }
+          },
+          "flows": {
+            "cardinality": {
+              "field": "network.community_id"
+            }
+          },
+          "source_ips": {
+            "cardinality": {
+              "field": "source.ip"
+            }
+          },
+          "destination_ips": {
+            "cardinality": {
+              "field": "destination.ip"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ],
+        "should": [
+          {
+            "term": {
+              "source.ip": "10.0.5.153"
+            }
+          }
+        ],
+        "minimum_should_match": 1
+      }
+    }
+  }
+},
+{
+  "name": "network-ip-users",
+  "description": "network/5.json 5.7",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggs": {
+      "user_count": {
+        "cardinality": {
+          "field": "user.name"
+        }
+      },
+      "users": {
+        "terms": {
+          "field": "user.name",
+          "size": 10,
+          "order": {
+            "_key": "asc"
+          }
+        },
+        "aggs": {
+          "id": {
+            "terms": {
+              "field": "user.id"
+            }
+          },
+          "groupId": {
+            "terms": {
+              "field": "user.group.id"
+            }
+          },
+          "groupName": {
+            "terms": {
+              "field": "user.group.name"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          },
+          {
+            "term": {
+              "destination.ip": "63.33.254.192"
+            }
+          }
+        ],
+        "must_not": [
+          {
+            "term": {
+              "event.category": "authentication"
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-ip-http",
+  "description": "network/5.json 5.8",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "http_count": {
+        "cardinality": {
+          "field": "url.path"
+        }
+      },
+      "url": {
+        "terms": {
+          "field": "url.path",
+          "size": 10,
+          "order": {
+            "_count": "desc"
+          }
+        },
+        "aggs": {
+          "methods": {
+            "terms": {
+              "field": "http.request.method",
+              "size": 4
+            }
+          },
+          "domains": {
+            "terms": {
+              "field": "url.domain",
+              "size": 4
+            }
+          },
+          "status": {
+            "terms": {
+              "field": "http.response.status_code",
+              "size": 4
+            }
+          },
+          "source": {
+            "top_hits": {
+              "size": 1,
+              "_source": {
+                "includes": [
+                  "host.name",
+                  "source.ip"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          },
+          {
+            "exists": {
+              "field": "http.request.method"
+            }
+          }
+        ],
+        "should": [
+          {
+            "term": {
+              "source.ip": "63.33.254.192"
+            }
+          },
+          {
+            "term": {
+              "destination.ip": "63.33.254.192"
+            }
+          }
+        ],
+        "minimum_should_match": 1
+      }
+    }
+  }
+},
+{
+  "name": "network-ip-tls",
+  "description": "network/5.json 5.9",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggs": {
+      "count": {
+        "cardinality": {
+          "field": "tls.server.hash.sha1"
+        }
+      },
+      "sha1": {
+        "terms": {
+          "field": "tls.server.hash.sha1",
+          "size": 10,
+          "order": {
+            "_key": "desc"
+          }
+        },
+        "aggs": {
+          "issuers": {
+            "terms": {
+              "field": "tls.server.issuer"
+            }
+          },
+          "subjects": {
+            "terms": {
+              "field": "tls.server.subject"
+            }
+          },
+          "not_after": {
+            "terms": {
+              "field": "tls.server.not_after"
+            }
+          },
+          "ja3": {
+            "terms": {
+              "field": "tls.client.ja3"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          },
+          {
+            "term": {
+              "destination.ip": "63.33.254.192"
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-ip-overview",
+  "description": "network/5.json 5.10",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@metadata.beat"
+      },
+      {
+        "field": "@metadata.type"
+      },
+      {
+        "field": "@metadata.version"
+      },
+      {
+        "field": "@timestamp"
+      },
+      {
+        "field": "agent.agent_id"
+      },
+      {
+        "field": "agent.build.original"
+      },
+      {
+        "field": "agent.ephemeral_id"
+      },
+      {
+        "field": "agent.hostname"
+      },
+      {
+        "field": "agent.id"
+      },
+      {
+        "field": "agent.name"
+      },
+      {
+        "field": "agent.type"
+      },
+      {
+        "field": "agent.version"
+      },
+      {
+        "field": "as.number"
+      },
+      {
+        "field": "as.organization.name"
+      },
+      {
+        "field": "auditd.data.a0"
+      },
+      {
+        "field": "auditd.data.a1"
+      },
+      {
+        "field": "auditd.data.a2"
+      },
+      {
+        "field": "auditd.data.a3"
+      },
+      {
+        "field": "auditd.data.a[0-3]"
+      },
+      {
+        "field": "auditd.data.acct"
+      },
+      {
+        "field": "auditd.data.acl"
+      },
+      {
+        "field": "auditd.data.action"
+      },
+      {
+        "field": "auditd.data.added"
+      },
+      {
+        "field": "auditd.data.addr"
+      },
+      {
+        "field": "auditd.data.apparmor"
+      },
+      {
+        "field": "auditd.data.arch"
+      },
+      {
+        "field": "auditd.data.arg"
+      },
+      {
+        "field": "auditd.data.argc"
+      },
+      {
+        "field": "auditd.data.audit_backlog_limit"
+      },
+      {
+        "field": "auditd.data.audit_backlog_wait_time"
+      },
+      {
+        "field": "auditd.data.audit_enabled"
+      },
+      {
+        "field": "auditd.data.audit_failure"
+      },
+      {
+        "field": "auditd.data.auid"
+      },
+      {
+        "field": "auditd.data.banners"
+      },
+      {
+        "field": "auditd.data.bool"
+      },
+      {
+        "field": "auditd.data.bus"
+      },
+      {
+        "field": "auditd.data.cap_fe"
+      },
+      {
+        "field": "auditd.data.cap_fi"
+      },
+      {
+        "field": "auditd.data.cap_fp"
+      },
+      {
+        "field": "auditd.data.cap_fver"
+      },
+      {
+        "field": "auditd.data.cap_pe"
+      },
+      {
+        "field": "auditd.data.cap_pi"
+      },
+      {
+        "field": "auditd.data.cap_pp"
+      },
+      {
+        "field": "auditd.data.capability"
+      },
+      {
+        "field": "auditd.data.capname"
+      },
+      {
+        "field": "auditd.data.cgroup"
+      },
+      {
+        "field": "auditd.data.changed"
+      },
+      {
+        "field": "auditd.data.cipher"
+      },
+      {
+        "field": "auditd.data.class"
+      },
+      {
+        "field": "auditd.data.cmd"
+      },
+      {
+        "field": "auditd.data.code"
+      },
+      {
+        "field": "auditd.data.compat"
+      },
+      {
+        "field": "auditd.data.daddr"
+      },
+      {
+        "field": "auditd.data.data"
+      },
+      {
+        "field": "auditd.data.default-context"
+      },
+      {
+        "field": "auditd.data.device"
+      },
+      {
+        "field": "auditd.data.dir"
+      },
+      {
+        "field": "auditd.data.direction"
+      },
+      {
+        "field": "auditd.data.dmac"
+      },
+      {
+        "field": "auditd.data.dport"
+      },
+      {
+        "field": "auditd.data.enforcing"
+      },
+      {
+        "field": "auditd.data.entries"
+      },
+      {
+        "field": "auditd.data.exit"
+      },
+      {
+        "field": "auditd.data.fam"
+      },
+      {
+        "field": "auditd.data.family"
+      },
+      {
+        "field": "auditd.data.fd"
+      },
+      {
+        "field": "auditd.data.fe"
+      },
+      {
+        "field": "auditd.data.feature"
+      },
+      {
+        "field": "auditd.data.fi"
+      },
+      {
+        "field": "auditd.data.file"
+      },
+      {
+        "field": "auditd.data.flags"
+      },
+      {
+        "field": "auditd.data.format"
+      },
+      {
+        "field": "auditd.data.fp"
+      },
+      {
+        "field": "auditd.data.fver"
+      },
+      {
+        "field": "auditd.data.grantors"
+      },
+      {
+        "field": "auditd.data.grp"
+      },
+      {
+        "field": "auditd.data.hook"
+      },
+      {
+        "field": "auditd.data.hostname"
+      },
+      {
+        "field": "auditd.data.icmp_type"
+      },
+      {
+        "field": "auditd.data.id"
+      },
+      {
+        "field": "auditd.data.igid"
+      },
+      {
+        "field": "auditd.data.img-ctx"
+      },
+      {
+        "field": "auditd.data.inif"
+      },
+      {
+        "field": "auditd.data.ino"
+      },
+      {
+        "field": "auditd.data.inode_gid"
+      },
+      {
+        "field": "auditd.data.inode_uid"
+      },
+      {
+        "field": "auditd.data.invalid_context"
+      },
+      {
+        "field": "auditd.data.ioctlcmd"
+      },
+      {
+        "field": "auditd.data.ip"
+      },
+      {
+        "field": "auditd.data.ipid"
+      },
+      {
+        "field": "auditd.data.ipx-net"
+      },
+      {
+        "field": "auditd.data.items"
+      },
+      {
+        "field": "auditd.data.iuid"
+      },
+      {
+        "field": "auditd.data.kernel"
+      },
+      {
+        "field": "auditd.data.kind"
+      },
+      {
+        "field": "auditd.data.ksize"
+      },
+      {
+        "field": "auditd.data.laddr"
+      },
+      {
+        "field": "auditd.data.len"
+      },
+      {
+        "field": "auditd.data.list"
+      },
+      {
+        "field": "auditd.data.lport"
+      }
+    ],
+    "aggs": {
+      "source": {
+        "filter": {
+          "term": {
+            "source.ip": "63.33.254.192"
+          }
+        },
+        "aggs": {
+          "firstSeen": {
+            "min": {
+              "field": "@timestamp"
+            }
+          },
+          "lastSeen": {
+            "max": {
+              "field": "@timestamp"
+            }
+          },
+          "as": {
+            "filter": {
+              "exists": {
+                "field": "source.as"
+              }
+            },
+            "aggs": {
+              "results": {
+                "top_hits": {
+                  "size": 1,
+                  "_source": [
+                    "source.as"
+                  ],
+                  "sort": [
+                    {
+                      "@timestamp": "desc"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "geo": {
+            "filter": {
+              "exists": {
+                "field": "source.geo"
+              }
+            },
+            "aggs": {
+              "results": {
+                "top_hits": {
+                  "size": 1,
+                  "_source": [
+                    "source.geo"
+                  ],
+                  "sort": [
+                    {
+                      "@timestamp": "desc"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "destination": {
+        "filter": {
+          "term": {
+            "destination.ip": "63.33.254.192"
+          }
+        },
+        "aggs": {
+          "firstSeen": {
+            "min": {
+              "field": "@timestamp"
+            }
+          },
+          "lastSeen": {
+            "max": {
+              "field": "@timestamp"
+            }
+          },
+          "as": {
+            "filter": {
+              "exists": {
+                "field": "destination.as"
+              }
+            },
+            "aggs": {
+              "results": {
+                "top_hits": {
+                  "size": 1,
+                  "_source": [
+                    "destination.as"
+                  ],
+                  "sort": [
+                    {
+                      "@timestamp": "desc"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "geo": {
+            "filter": {
+              "exists": {
+                "field": "destination.geo"
+              }
+            },
+            "aggs": {
+              "results": {
+                "top_hits": {
+                  "size": 1,
+                  "_source": [
+                    "destination.geo"
+                  ],
+                  "sort": [
+                    {
+                      "@timestamp": "desc"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "host": {
+        "filter": {
+          "term": {
+            "host.ip": "63.33.254.192"
+          }
+        },
+        "aggs": {
+          "results": {
+            "top_hits": {
+              "size": 1,
+              "_source": [
+                "host"
+              ],
+              "sort": [
+                {
+                  "@timestamp": "desc"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "should": []
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-dns-histogram",
+  "description": "network/7.json 7.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@metadata.beat"
+      },
+      {
+        "field": "@metadata.type"
+      },
+      {
+        "field": "@metadata.version"
+      },
+      {
+        "field": "@timestamp"
+      },
+      {
+        "field": "agent.agent_id"
+      },
+      {
+        "field": "agent.build.original"
+      },
+      {
+        "field": "agent.ephemeral_id"
+      },
+      {
+        "field": "agent.hostname"
+      },
+      {
+        "field": "agent.id"
+      },
+      {
+        "field": "agent.name"
+      },
+      {
+        "field": "agent.type"
+      },
+      {
+        "field": "agent.version"
+      },
+      {
+        "field": "as.number"
+      },
+      {
+        "field": "as.organization.name"
+      },
+      {
+        "field": "auditd.data.a0"
+      },
+      {
+        "field": "auditd.data.a1"
+      },
+      {
+        "field": "auditd.data.a2"
+      },
+      {
+        "field": "auditd.data.a3"
+      },
+      {
+        "field": "auditd.data.a[0-3]"
+      },
+      {
+        "field": "auditd.data.acct"
+      },
+      {
+        "field": "auditd.data.acl"
+      },
+      {
+        "field": "auditd.data.action"
+      },
+      {
+        "field": "auditd.data.added"
+      },
+      {
+        "field": "auditd.data.addr"
+      },
+      {
+        "field": "auditd.data.apparmor"
+      },
+      {
+        "field": "auditd.data.arch"
+      },
+      {
+        "field": "auditd.data.arg"
+      },
+      {
+        "field": "auditd.data.argc"
+      },
+      {
+        "field": "auditd.data.audit_backlog_limit"
+      },
+      {
+        "field": "auditd.data.audit_backlog_wait_time"
+      },
+      {
+        "field": "auditd.data.audit_enabled"
+      },
+      {
+        "field": "auditd.data.audit_failure"
+      },
+      {
+        "field": "auditd.data.auid"
+      },
+      {
+        "field": "auditd.data.banners"
+      },
+      {
+        "field": "auditd.data.bool"
+      },
+      {
+        "field": "auditd.data.bus"
+      },
+      {
+        "field": "auditd.data.cap_fe"
+      },
+      {
+        "field": "auditd.data.cap_fi"
+      },
+      {
+        "field": "auditd.data.cap_fp"
+      },
+      {
+        "field": "auditd.data.cap_fver"
+      },
+      {
+        "field": "auditd.data.cap_pe"
+      },
+      {
+        "field": "auditd.data.cap_pi"
+      },
+      {
+        "field": "auditd.data.cap_pp"
+      },
+      {
+        "field": "auditd.data.capability"
+      },
+      {
+        "field": "auditd.data.capname"
+      },
+      {
+        "field": "auditd.data.cgroup"
+      },
+      {
+        "field": "auditd.data.changed"
+      },
+      {
+        "field": "auditd.data.cipher"
+      },
+      {
+        "field": "auditd.data.class"
+      },
+      {
+        "field": "auditd.data.cmd"
+      },
+      {
+        "field": "auditd.data.code"
+      },
+      {
+        "field": "auditd.data.compat"
+      },
+      {
+        "field": "auditd.data.daddr"
+      },
+      {
+        "field": "auditd.data.data"
+      },
+      {
+        "field": "auditd.data.default-context"
+      },
+      {
+        "field": "auditd.data.device"
+      },
+      {
+        "field": "auditd.data.dir"
+      },
+      {
+        "field": "auditd.data.direction"
+      },
+      {
+        "field": "auditd.data.dmac"
+      },
+      {
+        "field": "auditd.data.dport"
+      },
+      {
+        "field": "auditd.data.enforcing"
+      },
+      {
+        "field": "auditd.data.entries"
+      },
+      {
+        "field": "auditd.data.exit"
+      },
+      {
+        "field": "auditd.data.fam"
+      },
+      {
+        "field": "auditd.data.family"
+      },
+      {
+        "field": "auditd.data.fd"
+      },
+      {
+        "field": "auditd.data.fe"
+      },
+      {
+        "field": "auditd.data.feature"
+      },
+      {
+        "field": "auditd.data.fi"
+      },
+      {
+        "field": "auditd.data.file"
+      },
+      {
+        "field": "auditd.data.flags"
+      },
+      {
+        "field": "auditd.data.format"
+      },
+      {
+        "field": "auditd.data.fp"
+      },
+      {
+        "field": "auditd.data.fver"
+      },
+      {
+        "field": "auditd.data.grantors"
+      },
+      {
+        "field": "auditd.data.grp"
+      },
+      {
+        "field": "auditd.data.hook"
+      },
+      {
+        "field": "auditd.data.hostname"
+      },
+      {
+        "field": "auditd.data.icmp_type"
+      },
+      {
+        "field": "auditd.data.id"
+      },
+      {
+        "field": "auditd.data.igid"
+      },
+      {
+        "field": "auditd.data.img-ctx"
+      },
+      {
+        "field": "auditd.data.inif"
+      },
+      {
+        "field": "auditd.data.ino"
+      },
+      {
+        "field": "auditd.data.inode_gid"
+      },
+      {
+        "field": "auditd.data.inode_uid"
+      },
+      {
+        "field": "auditd.data.invalid_context"
+      },
+      {
+        "field": "auditd.data.ioctlcmd"
+      },
+      {
+        "field": "auditd.data.ip"
+      },
+      {
+        "field": "auditd.data.ipid"
+      },
+      {
+        "field": "auditd.data.ipx-net"
+      },
+      {
+        "field": "auditd.data.items"
+      },
+      {
+        "field": "auditd.data.iuid"
+      },
+      {
+        "field": "auditd.data.kernel"
+      },
+      {
+        "field": "auditd.data.kind"
+      },
+      {
+        "field": "auditd.data.ksize"
+      },
+      {
+        "field": "auditd.data.laddr"
+      },
+      {
+        "field": "auditd.data.len"
+      },
+      {
+        "field": "auditd.data.list"
+      },
+      {
+        "field": "auditd.data.lport"
+      }
+    ],
+    "aggregations": {
+      "dns_count": {
+        "cardinality": {
+          "field": "dns.question.registered_domain"
+        }
+      },
+      "dns_name_query_count": {
+        "terms": {
+          "field": "dns.question.registered_domain",
+          "order": {
+            "unique_domains": "desc"
+          },
+          "size": 10
+        },
+        "aggs": {
+          "unique_domains": {
+            "cardinality": {
+              "field": "dns.question.name"
+            }
+          },
+          "dns_question_name": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "30s",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577919600000,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ],
+        "must_not": [
+          {
+            "term": {
+              "dns.question.type": {
+                "value": "PTR"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "network-dns-table",
+  "description": "network/7.json 7.2",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@metadata.beat"
+      },
+      {
+        "field": "@metadata.type"
+      },
+      {
+        "field": "@metadata.version"
+      },
+      {
+        "field": "@timestamp"
+      },
+      {
+        "field": "agent.agent_id"
+      },
+      {
+        "field": "agent.build.original"
+      },
+      {
+        "field": "agent.ephemeral_id"
+      },
+      {
+        "field": "agent.hostname"
+      },
+      {
+        "field": "agent.id"
+      },
+      {
+        "field": "agent.name"
+      },
+      {
+        "field": "agent.type"
+      },
+      {
+        "field": "agent.version"
+      },
+      {
+        "field": "as.number"
+      },
+      {
+        "field": "as.organization.name"
+      },
+      {
+        "field": "auditd.data.a0"
+      },
+      {
+        "field": "auditd.data.a1"
+      },
+      {
+        "field": "auditd.data.a2"
+      },
+      {
+        "field": "auditd.data.a3"
+      },
+      {
+        "field": "auditd.data.a[0-3]"
+      },
+      {
+        "field": "auditd.data.acct"
+      },
+      {
+        "field": "auditd.data.acl"
+      },
+      {
+        "field": "auditd.data.action"
+      },
+      {
+        "field": "auditd.data.added"
+      },
+      {
+        "field": "auditd.data.addr"
+      },
+      {
+        "field": "auditd.data.apparmor"
+      },
+      {
+        "field": "auditd.data.arch"
+      },
+      {
+        "field": "auditd.data.arg"
+      },
+      {
+        "field": "auditd.data.argc"
+      },
+      {
+        "field": "auditd.data.audit_backlog_limit"
+      },
+      {
+        "field": "auditd.data.audit_backlog_wait_time"
+      },
+      {
+        "field": "auditd.data.audit_enabled"
+      },
+      {
+        "field": "auditd.data.audit_failure"
+      },
+      {
+        "field": "auditd.data.auid"
+      },
+      {
+        "field": "auditd.data.banners"
+      },
+      {
+        "field": "auditd.data.bool"
+      },
+      {
+        "field": "auditd.data.bus"
+      },
+      {
+        "field": "auditd.data.cap_fe"
+      },
+      {
+        "field": "auditd.data.cap_fi"
+      },
+      {
+        "field": "auditd.data.cap_fp"
+      },
+      {
+        "field": "auditd.data.cap_fver"
+      },
+      {
+        "field": "auditd.data.cap_pe"
+      },
+      {
+        "field": "auditd.data.cap_pi"
+      },
+      {
+        "field": "auditd.data.cap_pp"
+      },
+      {
+        "field": "auditd.data.capability"
+      },
+      {
+        "field": "auditd.data.capname"
+      },
+      {
+        "field": "auditd.data.cgroup"
+      },
+      {
+        "field": "auditd.data.changed"
+      },
+      {
+        "field": "auditd.data.cipher"
+      },
+      {
+        "field": "auditd.data.class"
+      },
+      {
+        "field": "auditd.data.cmd"
+      },
+      {
+        "field": "auditd.data.code"
+      },
+      {
+        "field": "auditd.data.compat"
+      },
+      {
+        "field": "auditd.data.daddr"
+      },
+      {
+        "field": "auditd.data.data"
+      },
+      {
+        "field": "auditd.data.default-context"
+      },
+      {
+        "field": "auditd.data.device"
+      },
+      {
+        "field": "auditd.data.dir"
+      },
+      {
+        "field": "auditd.data.direction"
+      },
+      {
+        "field": "auditd.data.dmac"
+      },
+      {
+        "field": "auditd.data.dport"
+      },
+      {
+        "field": "auditd.data.enforcing"
+      },
+      {
+        "field": "auditd.data.entries"
+      },
+      {
+        "field": "auditd.data.exit"
+      },
+      {
+        "field": "auditd.data.fam"
+      },
+      {
+        "field": "auditd.data.family"
+      },
+      {
+        "field": "auditd.data.fd"
+      },
+      {
+        "field": "auditd.data.fe"
+      },
+      {
+        "field": "auditd.data.feature"
+      },
+      {
+        "field": "auditd.data.fi"
+      },
+      {
+        "field": "auditd.data.file"
+      },
+      {
+        "field": "auditd.data.flags"
+      },
+      {
+        "field": "auditd.data.format"
+      },
+      {
+        "field": "auditd.data.fp"
+      },
+      {
+        "field": "auditd.data.fver"
+      },
+      {
+        "field": "auditd.data.grantors"
+      },
+      {
+        "field": "auditd.data.grp"
+      },
+      {
+        "field": "auditd.data.hook"
+      },
+      {
+        "field": "auditd.data.hostname"
+      },
+      {
+        "field": "auditd.data.icmp_type"
+      },
+      {
+        "field": "auditd.data.id"
+      },
+      {
+        "field": "auditd.data.igid"
+      },
+      {
+        "field": "auditd.data.img-ctx"
+      },
+      {
+        "field": "auditd.data.inif"
+      },
+      {
+        "field": "auditd.data.ino"
+      },
+      {
+        "field": "auditd.data.inode_gid"
+      },
+      {
+        "field": "auditd.data.inode_uid"
+      },
+      {
+        "field": "auditd.data.invalid_context"
+      },
+      {
+        "field": "auditd.data.ioctlcmd"
+      },
+      {
+        "field": "auditd.data.ip"
+      },
+      {
+        "field": "auditd.data.ipid"
+      },
+      {
+        "field": "auditd.data.ipx-net"
+      },
+      {
+        "field": "auditd.data.items"
+      },
+      {
+        "field": "auditd.data.iuid"
+      },
+      {
+        "field": "auditd.data.kernel"
+      },
+      {
+        "field": "auditd.data.kind"
+      },
+      {
+        "field": "auditd.data.ksize"
+      },
+      {
+        "field": "auditd.data.laddr"
+      },
+      {
+        "field": "auditd.data.len"
+      },
+      {
+        "field": "auditd.data.list"
+      },
+      {
+        "field": "auditd.data.lport"
+      }
+    ],
+    "aggregations": {
+      "dns_count": {
+        "cardinality": {
+          "field": "dns.question.registered_domain"
+        }
+      },
+      "dns_name_query_count": {
+        "terms": {
+          "field": "dns.question.registered_domain",
+          "size": 1000000
+        },
+        "aggs": {
+          "bucket_sort": {
+            "bucket_sort": {
+              "sort": [
+                {
+                  "unique_domains": {
+                    "order": "desc"
+                  }
+                },
+                {
+                  "_key": {
+                    "order": "asc"
+                  }
+                }
+              ],
+              "from": 0,
+              "size": 10
+            }
+          },
+          "unique_domains": {
+            "cardinality": {
+              "field": "dns.question.name"
+            }
+          },
+          "dns_bytes_in": {
+            "sum": {
+              "field": "source.bytes"
+            }
+          },
+          "dns_bytes_out": {
+            "sum": {
+              "field": "destination.bytes"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ],
+        "must_not": [
+          {
+            "term": {
+              "dns.question.type": {
+                "value": "PTR"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "network-http-table",
+  "description": "network/8.json 8.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true", "size": "0"}) }},
+  "body": {
+    "aggregations": {
+      "http_count": {
+        "cardinality": {
+          "field": "url.path"
+        }
+      },
+      "url": {
+        "terms": {
+          "field": "url.path",
+          "size": 10,
+          "order": {
+            "_count": "desc"
+          }
+        },
+        "aggs": {
+          "methods": {
+            "terms": {
+              "field": "http.request.method",
+              "size": 4
+            }
+          },
+          "domains": {
+            "terms": {
+              "field": "url.domain",
+              "size": 4
+            }
+          },
+          "status": {
+            "terms": {
+              "field": "http.response.status_code",
+              "size": 4
+            }
+          },
+          "source": {
+            "top_hits": {
+              "size": 1,
+              "_source": {
+                "includes": [
+                  "host.name",
+                  "source.ip"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          },
+          {
+            "exists": {
+              "field": "http.request.method"
+            }
+          }
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "network-anomalies-histogram",
+  "description": "network/10.json 10.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggs": {
+      "anomalyActionGroup": {
+        "terms": {
+          "field": "job_id",
+          "order": {
+            "_count": "desc"
+          },
+          "size": 10
+        },
+        "aggs": {
+          "anomalies": {
+            "date_histogram": {
+              "field": "timestamp",
+              "fixed_interval": "30s",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577919600000,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [
+                {
+                  "bool": {
+                    "should": [],
+                    "minimum_should_match": 1
+                  }
+                },
+                {
+                  "match_phrase": {
+                    "result_type": "record"
+                  }
+                },
+                null,
+                {
+                  "range": {
+                    "record_score": {
+                      "gte": 50
+                    }
+                  }
+                }
+              ],
+              "should": [
+                {
+                  "exists": {
+                    "field": "source.ip"
+                  }
+                },
+                {
+                  "exists": {
+                    "field": "destination.ip"
+                  }
+                }
+              ],
+              "must_not": [],
+              "minimum_should_match": 1
+            }
+          },
+          {
+            "range": {
+              "timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-external-alerts-histogram",
+  "description": "network/11.json 11.1",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "aggregations": {
+      "alertsGroup": {
+        "terms": {
+          "field": "event.module",
+          "missing": "All others",
+          "order": {
+            "_count": "desc"
+          },
+          "size": 10
+        },
+        "aggs": {
+          "alerts": {
+            "date_histogram": {
+              "field": "@timestamp",
+              "fixed_interval": "30s",
+              "min_doc_count": 0,
+              "extended_bounds": {
+                "min": 1577919600000,
+                "max": 1577923200000
+              },
+              "time_zone": "UTC"
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [
+                {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "source.ip"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "destination.ip"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "bool": {
+              "filter": [
+                {
+                  "bool": {
+                    "should": [
+                      {
+                        "match": {
+                          "event.kind": "alert"
+                        }
+                      }
+                    ],
+                    "minimum_should_match": 1
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "size": 0
+  }
+},
+{
+  "name": "network-external-alerts-table",
+  "description": "network/11.json 11.2",
+  {{ kibana_search({"batched_reduce_size": "64", "ignore_unavailable": "true", "track_total_hits": "true", "allow_no_indices": "true"}) }},
+  "body": {
+    "docvalue_fields": [
+      {
+        "field": "@metadata.beat"
+      },
+      {
+        "field": "@metadata.type"
+      },
+      {
+        "field": "@metadata.version"
+      },
+      {
+        "field": "@timestamp"
+      },
+      {
+        "field": "agent.agent_id"
+      },
+      {
+        "field": "agent.build.original"
+      },
+      {
+        "field": "agent.ephemeral_id"
+      },
+      {
+        "field": "agent.hostname"
+      },
+      {
+        "field": "agent.id"
+      },
+      {
+        "field": "agent.name"
+      },
+      {
+        "field": "agent.type"
+      },
+      {
+        "field": "agent.version"
+      },
+      {
+        "field": "as.number"
+      },
+      {
+        "field": "as.organization.name"
+      },
+      {
+        "field": "auditd.data.a0"
+      },
+      {
+        "field": "auditd.data.a1"
+      },
+      {
+        "field": "auditd.data.a2"
+      },
+      {
+        "field": "auditd.data.a3"
+      },
+      {
+        "field": "auditd.data.a[0-3]"
+      },
+      {
+        "field": "auditd.data.acct"
+      },
+      {
+        "field": "auditd.data.acl"
+      },
+      {
+        "field": "auditd.data.action"
+      },
+      {
+        "field": "auditd.data.added"
+      },
+      {
+        "field": "auditd.data.addr"
+      },
+      {
+        "field": "auditd.data.apparmor"
+      },
+      {
+        "field": "auditd.data.arch"
+      },
+      {
+        "field": "auditd.data.arg"
+      },
+      {
+        "field": "auditd.data.argc"
+      },
+      {
+        "field": "auditd.data.audit_backlog_limit"
+      },
+      {
+        "field": "auditd.data.audit_backlog_wait_time"
+      },
+      {
+        "field": "auditd.data.audit_enabled"
+      },
+      {
+        "field": "auditd.data.audit_failure"
+      },
+      {
+        "field": "auditd.data.auid"
+      },
+      {
+        "field": "auditd.data.banners"
+      },
+      {
+        "field": "auditd.data.bool"
+      },
+      {
+        "field": "auditd.data.bus"
+      },
+      {
+        "field": "auditd.data.cap_fe"
+      },
+      {
+        "field": "auditd.data.cap_fi"
+      },
+      {
+        "field": "auditd.data.cap_fp"
+      },
+      {
+        "field": "auditd.data.cap_fver"
+      },
+      {
+        "field": "auditd.data.cap_pe"
+      },
+      {
+        "field": "auditd.data.cap_pi"
+      },
+      {
+        "field": "auditd.data.cap_pp"
+      },
+      {
+        "field": "auditd.data.capability"
+      },
+      {
+        "field": "auditd.data.capname"
+      },
+      {
+        "field": "auditd.data.cgroup"
+      },
+      {
+        "field": "auditd.data.changed"
+      },
+      {
+        "field": "auditd.data.cipher"
+      },
+      {
+        "field": "auditd.data.class"
+      },
+      {
+        "field": "auditd.data.cmd"
+      },
+      {
+        "field": "auditd.data.code"
+      },
+      {
+        "field": "auditd.data.compat"
+      },
+      {
+        "field": "auditd.data.daddr"
+      },
+      {
+        "field": "auditd.data.data"
+      },
+      {
+        "field": "auditd.data.default-context"
+      },
+      {
+        "field": "auditd.data.device"
+      },
+      {
+        "field": "auditd.data.dir"
+      },
+      {
+        "field": "auditd.data.direction"
+      },
+      {
+        "field": "auditd.data.dmac"
+      },
+      {
+        "field": "auditd.data.dport"
+      },
+      {
+        "field": "auditd.data.enforcing"
+      },
+      {
+        "field": "auditd.data.entries"
+      },
+      {
+        "field": "auditd.data.exit"
+      },
+      {
+        "field": "auditd.data.fam"
+      },
+      {
+        "field": "auditd.data.family"
+      },
+      {
+        "field": "auditd.data.fd"
+      },
+      {
+        "field": "auditd.data.fe"
+      },
+      {
+        "field": "auditd.data.feature"
+      },
+      {
+        "field": "auditd.data.fi"
+      },
+      {
+        "field": "auditd.data.file"
+      },
+      {
+        "field": "auditd.data.flags"
+      },
+      {
+        "field": "auditd.data.format"
+      },
+      {
+        "field": "auditd.data.fp"
+      },
+      {
+        "field": "auditd.data.fver"
+      },
+      {
+        "field": "auditd.data.grantors"
+      },
+      {
+        "field": "auditd.data.grp"
+      },
+      {
+        "field": "auditd.data.hook"
+      },
+      {
+        "field": "auditd.data.hostname"
+      },
+      {
+        "field": "auditd.data.icmp_type"
+      },
+      {
+        "field": "auditd.data.id"
+      },
+      {
+        "field": "auditd.data.igid"
+      },
+      {
+        "field": "auditd.data.img-ctx"
+      },
+      {
+        "field": "auditd.data.inif"
+      },
+      {
+        "field": "auditd.data.ino"
+      },
+      {
+        "field": "auditd.data.inode_gid"
+      },
+      {
+        "field": "auditd.data.inode_uid"
+      },
+      {
+        "field": "auditd.data.invalid_context"
+      },
+      {
+        "field": "auditd.data.ioctlcmd"
+      },
+      {
+        "field": "auditd.data.ip"
+      },
+      {
+        "field": "auditd.data.ipid"
+      },
+      {
+        "field": "auditd.data.ipx-net"
+      },
+      {
+        "field": "auditd.data.items"
+      },
+      {
+        "field": "auditd.data.iuid"
+      },
+      {
+        "field": "auditd.data.kernel"
+      },
+      {
+        "field": "auditd.data.kind"
+      },
+      {
+        "field": "auditd.data.ksize"
+      },
+      {
+        "field": "auditd.data.laddr"
+      },
+      {
+        "field": "auditd.data.len"
+      },
+      {
+        "field": "auditd.data.list"
+      },
+      {
+        "field": "auditd.data.lport"
+      }
+    ],
+    "aggregations": {
+      "producers": {
+        "terms": {
+          "field": "kibana.alert.rule.producer",
+          "exclude": [
+            "alerts"
+          ]
+        }
+      }
+    },
+    "query": {
+      "bool": {
+        "filter": [
+          {
+            "bool": {
+              "must": [],
+              "filter": [
+                {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "match": {
+                                "event.kind": "alert"
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "bool": {
+                    "filter": [
+                      {
+                        "bool": {
+                          "should": [
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "source.ip"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            },
+                            {
+                              "bool": {
+                                "should": [
+                                  {
+                                    "exists": {
+                                      "field": "destination.ip"
+                                    }
+                                  }
+                                ],
+                                "minimum_should_match": 1
+                              }
+                            }
+                          ],
+                          "minimum_should_match": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "should": [],
+              "must_not": []
+            }
+          },
+          {
+            "range": {
+              "@timestamp": {
+                "gte": "2020-01-01T23:00:00.000Z",
+                "lte": "2020-01-02T00:00:00.000Z",
+                "format": "strict_date_optional_time"
+              }
+            }
+          },
+          {
+            "match_all": {}
+          }
+        ]
+      }
+    },
+    "from": 0,
+    "size": 25,
+    "track_total_hits": true,
+    "sort": [
+      {
+        "@timestamp": {
+          "order": "desc",
+          "unmapped_type": "date"
+        }
+      }
+    ],
+    "fields": [
+      {
+        "field": "@timestamp",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.module",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.dataset",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.category",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.severity",
+        "include_unmapped": true
+      },
+      {
+        "field": "observer.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "host.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "message",
+        "include_unmapped": true
+      },
+      {
+        "field": "agent.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "agent.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "kibana.alert.rule.consumer",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.status",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.group.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.original_time",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.reason",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.filters",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.from",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.language",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.query",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.to",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.index",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.original_event.kind",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.original_event.module",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.version",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.severity",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.risk_score",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.threshold_result",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.code",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.action",
+        "include_unmapped": true
+      },
+      {
+        "field": "user.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.ip",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.ip",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.auth.ssh.signature",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.auth.ssh.method",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.arch",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.entity_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.size",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.summary",
+        "include_unmapped": true
+      },
+      {
+        "field": "system.audit.package.version",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.created",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.duration",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.end",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.hash",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.kind",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.original",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.outcome",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.risk_score",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.risk_score_norm",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.start",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.timezone",
+        "include_unmapped": true
+      },
+      {
+        "field": "event.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.result",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.session",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.data.acct",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.data.terminal",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.data.op",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.actor.primary",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.actor.secondary",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.object.primary",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.object.secondary",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.object.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.how",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.message_type",
+        "include_unmapped": true
+      },
+      {
+        "field": "auditd.summary.sequence",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.Ext.original.path",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.target_path",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.extension",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.device",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.inode",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.uid",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.owner",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.gid",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.group",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.mode",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.size",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.mtime",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.ctime",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.path",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.Ext.code_signature",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.Ext.code_signature.subject_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.Ext.code_signature.trusted",
+        "include_unmapped": true
+      },
+      {
+        "field": "file.hash.sha256",
+        "include_unmapped": true
+      },
+      {
+        "field": "host.os.family",
+        "include_unmapped": true
+      },
+      {
+        "field": "host.id",
+        "include_unmapped": true
+      },
+      {
+        "field": "host.ip",
+        "include_unmapped": true
+      },
+      {
+        "field": "registry.key",
+        "include_unmapped": true
+      },
+      {
+        "field": "registry.path",
+        "include_unmapped": true
+      },
+      {
+        "field": "rule.reference",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.packets",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.port",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.continent_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.country_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.country_iso_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.city_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.region_iso_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "source.geo.region_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.packets",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.port",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.continent_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.country_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.country_iso_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.city_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.region_iso_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "destination.geo.region_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "dns.question.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "dns.question.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "dns.resolved_ip",
+        "include_unmapped": true
+      },
+      {
+        "field": "dns.response_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.exit_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.file_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.file_path",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.logon_type",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.parent_process_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.pid",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.process_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.subject_domain_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.subject_logon_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.subject_user_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.target_domain_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.target_logon_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "endgame.target_user_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.saved_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.timeline_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.timeline_title",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.output_index",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.note",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.threshold",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.exceptions_list",
+        "include_unmapped": true
+      },
+      {
+        "field": "signal.rule.building_block_type",
+        "include_unmapped": true
+      },
+      {
+        "field": "suricata.eve.proto",
+        "include_unmapped": true
+      },
+      {
+        "field": "suricata.eve.flow_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "suricata.eve.alert.signature",
+        "include_unmapped": true
+      },
+      {
+        "field": "suricata.eve.alert.signature_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.community_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.direction",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.packets",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.protocol",
+        "include_unmapped": true
+      },
+      {
+        "field": "network.transport",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.version",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.request.method",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.request.body.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.request.body.content",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.request.referrer",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.response.status_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.response.body.bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "http.response.body.content",
+        "include_unmapped": true
+      },
+      {
+        "field": "tls.client_certificate.fingerprint.sha1",
+        "include_unmapped": true
+      },
+      {
+        "field": "tls.fingerprints.ja3.hash",
+        "include_unmapped": true
+      },
+      {
+        "field": "tls.server_certificate.fingerprint.sha1",
+        "include_unmapped": true
+      },
+      {
+        "field": "user.domain",
+        "include_unmapped": true
+      },
+      {
+        "field": "winlog.event_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.exit_code",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.hash.md5",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.hash.sha1",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.hash.sha256",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.parent.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.parent.pid",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.pid",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.name",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.ppid",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.args",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.entity_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.executable",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.title",
+        "include_unmapped": true
+      },
+      {
+        "field": "process.working_directory",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.session_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.local_resp",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.local_orig",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.missed_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.state",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.connection.history",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.suppress_for",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.msg",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.note",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.sub",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.dst",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.dropped",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.notice.peer_descr",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.AA",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.qclass_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.RD",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.qtype_name",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.qtype",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.query",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.trans_id",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.qclass",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.RA",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.dns.TC",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.resp_mime_types",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.trans_depth",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.status_msg",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.resp_fuids",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.http.tags",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.session_ids",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.timedout",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.local_orig",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.tx_host",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.source",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.is_orig",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.overflow_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.sha1",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.duration",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.depth",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.analyzers",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.mime_type",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.rx_host",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.total_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.fuid",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.seen_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.missing_bytes",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.files.md5",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.ssl.cipher",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.ssl.established",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.ssl.resumed",
+        "include_unmapped": true
+      },
+      {
+        "field": "zeek.ssl.version",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.matched.atomic",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.matched.field",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.matched.type",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.indicator.reference",
+        "include_unmapped": true
+      },
+      {
+        "field": "threat.enrichments.indicator.provider",
+        "include_unmapped": true
+      }
+    ],
+    "_source": [
+      "signal.*"
+    ]
+  }
+}

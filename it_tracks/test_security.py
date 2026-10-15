@@ -41,6 +41,14 @@ class TestSecurity:
         )
         assert ret == 0
 
+    def test_security_indexing_querying_split(self, es_cluster, rally):
+        ret = rally.race(
+            track="elastic/security",
+            challenge="security-indexing-querying-split",
+            track_params={"number_of_replicas": "0"},
+        )
+        assert ret == 0
+
     def test_security_indexing_querying_logsdb(self, es_cluster, rally):
         ret = rally.race(
             track="elastic/security",

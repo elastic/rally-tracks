@@ -125,6 +125,7 @@ The following parameters are available:
 * `query_average_interval` (optional) - Average time interval for queries to use. If unset, we use the durations and intervals set in the original action definitions.
 * `query_request_params` (optional) - A map of query parameters that will be used with any querying.
 * `query_workflows` (optional) - A list of workflows to execute. By default, all workflows are used.
+* `clear_blob_cache` (default: `false`) - When benchmarking Serverless, clears the blob cache before every query so each request is a cold run. The clear request is excluded from the measured time. Only applies to the `security-indexing-querying-split` challenge. Ignored on non-serverless clusters.
 
 ## Available Challenges
 

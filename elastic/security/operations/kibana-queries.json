@@ -11,6 +11,7 @@
   "operation-type": "search",
   "index": "{{ p_workflow_target }}",
   "cache": false,
+  "clear-blob-cache": {{ (clear_blob_cache | default(false)) | tojson }},
   "request-params": {{ dict(recorded_request_params, **(query_request_params | default({}))) | tojson }}
 {%- endmacro %}
 {

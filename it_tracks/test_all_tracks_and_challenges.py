@@ -33,6 +33,7 @@ class TestTrackRepository:
         "random_vector",
         "has_privileges",
         "has_privileges_bystander",
+        "api_keys",
     ]
     disable_assertions = {
         "http_logs": ["append-no-conflicts", "runtime-fields"],

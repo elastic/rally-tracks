@@ -35,7 +35,9 @@
       },
       "titleVector": {
         "type": "dense_vector",
-        "element_type": {{ vector_index_element_type | default("float") | tojson }},
+        {% if vector_index_element_type is defined %}
+        "element_type": {{ vector_index_element_type | tojson }},
+        {% endif %}
         "dims" : 768,
         "index" : true,
         "similarity": "dot_product",

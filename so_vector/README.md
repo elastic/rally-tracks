@@ -79,7 +79,7 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `exact_search_iterations` (default: 50) - Number of measurement iterations for exact (brute-force) search operations.
 * `profile_iterations` (default: 100) - Number of profiling iterations that each client executes.
 * `search_clients` (default: 8) - Number of clients that issue search requests in the multi-client search challenges.
-* `vector_index_element_type` (default: "float"): Sets the dense_vector element type.
+* `vector_index_element_type` (default: not set, uses the Elasticsearch default: "float" for standard indices, "bfloat16" for vectordb index modes): Sets the dense_vector element type.
 * `enable_experimental_features` (default: false): Enables experimental dense vector features that may break backward compatibility.
 * `index_mode` (default: not set, uses "standard"): If defined, sets the index mode (e.g., "vectordb_document").
 

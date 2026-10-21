@@ -1810,22 +1810,20 @@
           "clients": 1,
           "warmup-iterations": 10,
           "iterations": 50
-        }
-      {# non-serverless-kibana-dashboards-marker-start #}{%- if build_flavor != "serverless" -%}
-        ,
+        },
         {
           "operation": "nested_topn_histograms_with_other_bucket_esql",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10
+          "warmup-iterations": 1,
+          "iterations": 3
         },
         {
           "operation": "nested_topn_histograms_with_other_bucket_no_inlinestats_esql",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "nested_topn_histograms_search",
@@ -1838,15 +1836,15 @@
           "operation": "nested_topn_histograms_esql",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10
+          "warmup-iterations": 1,
+          "iterations": 3
         },
         {
           "operation": "nested_topn_histograms_no_inlinestats_esql",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "nested_topn_histograms_other_bucket_search",
@@ -1859,7 +1857,7 @@
           "operation": "timeseries_search",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,
-          "warmup-iterations": 5,
+          "warmup-iterations": 3,
           "iterations": 10
         },
         {
@@ -1873,24 +1871,23 @@
           "operation": "timeseries_with_other_bucket_esql",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10
+          "warmup-iterations": 1,
+          "iterations": 3
         },
         {
           "operation": "nested_topn_table_search",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "nested_topn_table_esql",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10
+          "warmup-iterations": 1,
+          "iterations": 3
         }
-      {%- endif -%}{# non-serverless-kibana-dashboards-marker-end #}
       ]
     },
     {

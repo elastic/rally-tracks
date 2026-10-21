@@ -1875,6 +1875,13 @@
           "iterations": 3
         },
         {
+          "operation": "timeseries_esql",
+          "tags": ["kibana-dashboards-comparisons"],
+          "clients": 1,
+          "warmup-iterations": 1,
+          "iterations": 3
+        },
+        {
           "operation": "nested_topn_table_search",
           "tags": ["kibana-dashboards-comparisons"],
           "clients": 1,

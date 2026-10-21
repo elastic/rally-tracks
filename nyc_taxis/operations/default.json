@@ -2039,6 +2039,11 @@
       }
     },
     {
+      "name": "timeseries_esql",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 2 | KEEP payment_type) | STATS avg = AVG(fare_amount) BY payment_type, t = BUCKET(pickup_datetime, 1 d)"
+    },
+    {
       "name": "timeseries_with_other_bucket_esql",
       "operation-type": "esql",
       "query": "FROM nyc_taxis | EVAL payment_type = CASE (payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 2 | KEEP payment_type), payment_type, \"Other\"::keyword) | STATS avg = AVG(fare_amount) BY payment_type, t = BUCKET(pickup_datetime, 1 d)"

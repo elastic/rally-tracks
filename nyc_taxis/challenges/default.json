@@ -1009,14 +1009,14 @@
         {
           "operation": "avg_tip_percent_aggregation",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10
+          "warmup-iterations": 2,
+          "iterations": 5
         },
         {
           "operation": "avg_tip_percent_esql_segment_partitioning",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 20
+          "warmup-iterations": 3,
+          "iterations": 10
         },
       {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
         {
@@ -1029,8 +1029,8 @@
         {
           "operation": "avg_amount_group_by_integer_aggregation",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 20
+          "warmup-iterations": 3,
+          "iterations": 10
         },
         {
           "operation": "avg_amount_group_by_integer_esql_segment_partitioning",
@@ -1075,15 +1075,15 @@
         {
           "operation": "count_group_by_keyword_esql_segment_partitioning",
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
+          "warmup-iterations": 5,
+          "iterations": 20
         },
       {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
         {
           "operation": "count_group_by_keyword_esql_doc_partitioning",
           "clients": 1,
-          "warmup-iterations": 10,
-          "iterations": 50
+          "warmup-iterations": 5,
+          "iterations": 20
         },
       {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
@@ -1136,38 +1136,38 @@
           "operation": "topnby_by_payment_type_search",
           "clients": 1,
           "warmup-iterations": 5,
-          "iterations": 25,
+          "iterations": 20,
           "tags": ["limitby"]
         },
         {
           "operation": "topnby_by_payment_type_esql_segment_partitioning",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 25,
+          "warmup-iterations": 2,
+          "iterations": 5,
           "tags": ["limitby"]
         },
       {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
         {
           "operation": "topnby_by_payment_type_esql_doc_partitioning",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 25,
+          "warmup-iterations": 2,
+          "iterations": 5,
           "tags": ["limitby"]
         },
       {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
         {
           "operation": "topnby_by_payment_type_vendor_id_esql_segment_partitioning",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 25,
+          "warmup-iterations": 2,
+          "iterations": 5,
           "tags": ["limitby"]
         },
       {# non-serverless-doc-partitioning-marker-start #}{%- if build_flavor != "serverless" -%}
         {
           "operation": "topnby_by_payment_type_vendor_id_esql_doc_partitioning",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 25,
+          "warmup-iterations": 2,
+          "iterations": 5,
           "tags": ["limitby"]
         },
       {%- endif -%}{# non-serverless-doc-partitioning-marker-end #}
@@ -1265,8 +1265,8 @@
         {
           "operation": "inlinestats_median_esql_doc_partitioning",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10,
+          "warmup-iterations": 2,
+          "iterations": 5,
           "tags": ["inlinestats"]
         },
         {
@@ -1300,8 +1300,8 @@
         {
           "operation": "stats_median_esql_doc_partitioning",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10,
+          "warmup-iterations": 2,
+          "iterations": 5,
           "tags": ["inlinestats"]
         },
         {
@@ -1351,8 +1351,8 @@
         {
           "operation": "inlinestats_median_esql_segment_partitioning",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10,
+          "warmup-iterations": 2,
+          "iterations": 5,
           "tags": ["inlinestats"]
         },
         {
@@ -1386,8 +1386,8 @@
         {
           "operation": "stats_median_esql_segment_partitioning",
           "clients": 1,
-          "warmup-iterations": 5,
-          "iterations": 10,
+          "warmup-iterations": 2,
+          "iterations": 5,
           "tags": ["inlinestats"]
         },
         {

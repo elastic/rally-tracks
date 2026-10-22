@@ -1813,42 +1813,63 @@
         },
         {
           "operation": "nested_topn_histograms_with_other_bucket_esql",
-          "tags": ["kibana-dashboards-comparisons"],
+          "tags": ["kibana-dashboards-comparisons", "join-comparisons"],
+          "clients": 1,
+          "warmup-iterations": 1,
+          "iterations": 3
+        },
+        {
+          "operation": "nested_topn_histograms_with_other_bucket_esql_with_left_join",
+          "tags": ["kibana-dashboards-comparisons", "join-comparisons"],
           "clients": 1,
           "warmup-iterations": 1,
           "iterations": 3
         },
         {
           "operation": "nested_topn_histograms_with_other_bucket_no_inlinestats_esql",
-          "tags": ["kibana-dashboards-comparisons"],
+          "tags": ["kibana-dashboards-comparisons", "join-comparisons"],
           "clients": 1,
           "warmup-iterations": 2,
           "iterations": 5
         },
         {
           "operation": "nested_topn_histograms_search",
-          "tags": ["kibana-dashboards-comparisons"],
+          "tags": ["kibana-dashboards-comparisons", "join-comparisons"],
           "clients": 1,
           "warmup-iterations": 5,
           "iterations": 10
         },
         {
           "operation": "nested_topn_histograms_esql",
-          "tags": ["kibana-dashboards-comparisons"],
+          "tags": ["kibana-dashboards-comparisons", "join-comparisons"],
+          "clients": 1,
+          "warmup-iterations": 1,
+          "iterations": 3
+        },
+        {
+          "operation": "nested_topn_histograms_esql_with_inner_join",
+          "tags": ["kibana-dashboards-comparisons", "join-comparisons"],
+          "clients": 1,
+          "warmup-iterations": 1,
+          "iterations": 3
+        },
+        {
+          "operation": "nested_topn_histograms_esql_with_left_join",
+          "tags": ["kibana-dashboards-comparisons", "join-comparisons"],
           "clients": 1,
           "warmup-iterations": 1,
           "iterations": 3
         },
         {
           "operation": "nested_topn_histograms_no_inlinestats_esql",
-          "tags": ["kibana-dashboards-comparisons"],
+          "tags": ["kibana-dashboards-comparisons", "join-comparisons"],
           "clients": 1,
           "warmup-iterations": 2,
           "iterations": 5
         },
         {
           "operation": "nested_topn_histograms_other_bucket_search",
-          "tags": ["kibana-dashboards-comparisons"],
+          "tags": ["kibana-dashboards-comparisons", "join-comparisons"],
           "clients": 1,
           "warmup-iterations": 5,
           "iterations": 10

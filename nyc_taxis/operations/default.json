@@ -1915,22 +1915,37 @@
     {
       "name": "nested_topn_histograms_with_other_bucket_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | EVAL payment_type = CASE(payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type), payment_type, \"Other\"::keyword) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+      "query": "FROM nyc_taxis | WHERE payment_type IS NOT NULL AND rate_code_id IS NOT NULL | STATS cnt = COUNT(*) BY payment_type, rate_code_id | EVAL payment_type = CASE(payment_type IN (FROM nyc_taxis | WHERE payment_type IS NOT NULL | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type), payment_type, \"Other\"::keyword) | STATS cnt = SUM(cnt) BY payment_type, rate_code_id | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, SUM(cnt)) BY payment_type | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | KEEP cnt, payment_type, rate_code_id"
+    },
+    {
+      "name": "nested_topn_histograms_with_other_bucket_esql_with_left_join",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IS NOT NULL AND rate_code_id IS NOT NULL | STATS cnt = COUNT(*) BY payment_type, rate_code_id | LEFT OUTER JOIN (FROM nyc_taxis | WHERE payment_type IS NOT NULL | STATS cnt_payment = COUNT(*) BY payment_type | SORT cnt_payment DESC | LIMIT 3 | KEEP cnt_payment, payment_type) ON payment_type | EVAL cnt_payment = COALESCE(cnt_payment, 0::long), payment_type = CASE(cnt_payment == 0, \"Other\"::keyword, payment_type) | STATS cnt = SUM(cnt), cnt_payment = MAX(cnt_payment) BY payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
     },
     {
       "name": "nested_topn_histograms_with_other_bucket_no_inlinestats_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | EVAL payment_type = CASE(payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type), payment_type, \"Other\"::keyword) | STATS cnt = COUNT(*) BY payment_type, rate_code_id | SORT cnt DESC | LIMIT 2 BY payment_type"
+      "query": "FROM nyc_taxis | WHERE payment_type IS NOT NULL AND rate_code_id IS NOT NULL | STATS cnt = COUNT(*) BY payment_type, rate_code_id | EVAL payment_type = CASE(payment_type IN (FROM nyc_taxis | WHERE payment_type IS NOT NULL | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type), payment_type, \"Other\"::keyword) | STATS cnt = SUM(cnt) BY payment_type, rate_code_id | SORT cnt DESC | LIMIT 2 BY payment_type"
     },
     {
       "name": "nested_topn_histograms_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | INLINE STATS cnt_payment = COUNT(*) BY payment_type | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+      "query": "FROM nyc_taxis | WHERE payment_type IS NOT NULL AND rate_code_id IS NOT NULL | STATS cnt = COUNT(*) BY payment_type, rate_code_id | WHERE payment_type IN (FROM nyc_taxis | WHERE payment_type IS NOT NULL | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | INLINE STATS cnt_payment = SUM(cnt) BY payment_type | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | KEEP cnt, payment_type, rate_code_id"
+    },
+    {
+      "name": "nested_topn_histograms_esql_with_inner_join",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IS NOT NULL AND rate_code_id IS NOT NULL | STATS cnt = COUNT(*) BY payment_type, rate_code_id | INNER JOIN (FROM nyc_taxis | WHERE payment_type IS NOT NULL | STATS cnt_payment = COUNT(*) BY payment_type | SORT cnt_payment DESC | LIMIT 3 | KEEP cnt_payment, payment_type) ON payment_type | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+    },
+    {
+      "name": "nested_topn_histograms_esql_with_left_join",
+      "operation-type": "esql",
+      "query": "FROM nyc_taxis | WHERE payment_type IS NOT NULL AND rate_code_id IS NOT NULL | STATS cnt = COUNT(*) BY payment_type, rate_code_id | LEFT OUTER JOIN (FROM nyc_taxis | WHERE payment_type IS NOT NULL | STATS cnt_payment = COUNT(*) BY payment_type | SORT cnt_payment DESC | LIMIT 3 | KEEP cnt_payment, payment_type) ON payment_type | WHERE cnt_payment IS NOT NULL | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
     },
     {
       "name": "nested_topn_histograms_no_inlinestats_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | STATS cnt = COUNT(*) BY payment_type, rate_code_id | SORT cnt DESC | LIMIT 2 BY payment_type"
+      "query": "FROM nyc_taxis | WHERE payment_type IS NOT NULL AND rate_code_id IS NOT NULL | STATS cnt = COUNT(*) BY payment_type, rate_code_id | WHERE payment_type IN (FROM nyc_taxis | WHERE payment_type IS NOT NULL | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | SORT cnt DESC | LIMIT 2 BY payment_type"
     },
     {
       "name": "nested_topn_histograms_search",
@@ -2041,12 +2056,12 @@
     {
       "name": "timeseries_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 2 | KEEP payment_type) | STATS avg = AVG(fare_amount) BY payment_type, t = BUCKET(pickup_datetime, 1 d)"
+      "query": "FROM nyc_taxis | WHERE payment_type IS NOT NULL AND pickup_datetime IS NOT NULL | MV_EXPAND payment_type | MV_EXPAND pickup_datetime | WHERE payment_type IN (FROM nyc_taxis | WHERE payment_type IS NOT NULL | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 2 | KEEP payment_type) | STATS avg = AVG(fare_amount) BY payment_type, t = BUCKET(pickup_datetime, 1 d)"
     },
     {
       "name": "timeseries_with_other_bucket_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | EVAL payment_type = CASE (payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 2 | KEEP payment_type), payment_type, \"Other\"::keyword) | STATS avg = AVG(fare_amount) BY payment_type, t = BUCKET(pickup_datetime, 1 d)"
+      "query": "FROM nyc_taxis | WHERE payment_type IS NOT NULL AND pickup_datetime IS NOT NULL | MV_EXPAND payment_type | MV_EXPAND pickup_datetime | EVAL payment_type = CASE (payment_type IN (FROM nyc_taxis | WHERE payment_type IS NOT NULL | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 2 | KEEP payment_type), payment_type, \"Other\"::keyword) | STATS avg = AVG(fare_amount) BY payment_type, t = BUCKET(pickup_datetime, 1 d)"
     },
     {
       "name": "timeseries_search",
@@ -2158,7 +2173,7 @@
     {
       "name": "nested_topn_table_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | WHERE rate_code_id IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY rate_code_id | SORT cnt DESC | KEEP rate_code_id | LIMIT 3) | WHERE (rate_code_id, payment_type) IN (FROM nyc_taxis | STATS max = MAX(tip_amount) BY rate_code_id, payment_type | SORT max DESC | LIMIT 2 BY rate_code_id | KEEP rate_code_id, payment_type) | STATS avg = AVG(fare_amount) BY rate_code_id, payment_type"
+      "query": "FROM nyc_taxis | WHERE rate_code_id IS NOT NULL AND payment_type IS NOT NULL | MV_EXPAND rate_code_id | MV_EXPAND payment_type | WHERE rate_code_id IN (FROM nyc_taxis | WHERE rate_code_id IS NOT NULL | STATS cnt = COUNT(*) BY rate_code_id | SORT cnt DESC | KEEP rate_code_id | LIMIT 3) | WHERE (rate_code_id, payment_type) IN (FROM nyc_taxis | WHERE rate_code_id IS NOT NULL AND payment_type IS NOT NULL | STATS max = MAX(tip_amount) BY rate_code_id, payment_type | SORT max DESC NULLS LAST | LIMIT 2 BY rate_code_id | KEEP rate_code_id, payment_type) | STATS avg = AVG(fare_amount) BY rate_code_id, payment_type"
     },
     {
       "name": "nested_topn_table_search",

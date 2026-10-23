@@ -1,0 +1,186 @@
+{
+  "name": "delete-index",
+  "operation": "delete-index",
+  "tags": ["setup"]
+},
+{
+  "name": "create-index",
+  "operation": "create-index",
+  "tags": ["setup"]
+},
+{
+  "name": "check-cluster-health",
+  "operation": "check-cluster-health",
+  "tags": ["setup"]
+},
+{
+  "name": "initial-documents-indexing",
+  "operation": "initial-documents-indexing",
+  "tags": ["index"],
+  "warmup-time-period": {{ initial_indexing_bulk_warmup_time_period | default(40) | int }},
+  "clients": {{ initial_indexing_bulk_clients | default(5) | int }}
+},
+{
+  "name": "refresh-after-index",
+  "operation": "refresh-after-index",
+  "tags": ["index"]
+},
+{
+  "name": "force-merge",
+  "operation": "force-merge",
+  "tags": ["index"]
+},
+{
+  "name": "refresh-after-force-merge",
+  "operation": "refresh-after-force-merge",
+  "tags": ["index"]
+},
+{
+  "name": "wait-until-merges-finish-after-index",
+  "operation": "wait-until-merges-finish-after-index",
+  "tags": ["index"]
+},
+{
+  "name": "fetch-esql-q1-match-content-top10",
+  "operation": "fetch-esql-q1-match-content-top10",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "esql", "q1"]
+},
+{
+  "name": "fetch-dsl-q1-match-content-top10",
+  "operation": "fetch-dsl-q1-match-content-top10",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "dsl", "q1"]
+},
+{
+  "name": "fetch-esql-q2-match-content-top100",
+  "operation": "fetch-esql-q2-match-content-top100",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "esql", "q2"]
+},
+{
+  "name": "fetch-dsl-q2-match-content-top100",
+  "operation": "fetch-dsl-q2-match-content-top100",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "dsl", "q2"]
+},
+{
+  "name": "fetch-esql-q3-match-content-top1000",
+  "operation": "fetch-esql-q3-match-content-top1000",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "esql", "q3"]
+},
+{
+  "name": "fetch-dsl-q3-match-content-top1000",
+  "operation": "fetch-dsl-q3-match-content-top1000",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "dsl", "q3"]
+},
+{
+  "name": "fetch-esql-q4-match-title-top10",
+  "operation": "fetch-esql-q4-match-title-top10",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "esql", "q4"]
+},
+{
+  "name": "fetch-dsl-q4-match-title-top10",
+  "operation": "fetch-dsl-q4-match-title-top10",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "dsl", "q4"]
+},
+{
+  "name": "fetch-esql-q5-title-length-ranking",
+  "operation": "fetch-esql-q5-title-length-ranking",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "esql", "q5"]
+},
+{
+  "name": "fetch-dsl-q5-title-length-ranking",
+  "operation": "fetch-dsl-q5-title-length-ranking",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "dsl", "q5"]
+},
+{
+  "name": "fetch-esql-q6-rrf-100",
+  "operation": "fetch-esql-q6-rrf-100",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "esql", "q6"]
+},
+{
+  "name": "fetch-dsl-q6-rrf-100",
+  "operation": "fetch-dsl-q6-rrf-100",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "dsl", "q6"]
+},
+{
+  "name": "fetch-esql-q7-rrf-1000",
+  "operation": "fetch-esql-q7-rrf-1000",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "esql", "q7"]
+},
+{
+  "name": "fetch-dsl-q7-rrf-1000",
+  "operation": "fetch-dsl-q7-rrf-1000",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "dsl", "q7"]
+},
+{
+  "name": "fetch-esql-q8-rrf-10000",
+  "operation": "fetch-esql-q8-rrf-10000",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "esql", "q8"]
+},
+{
+  "name": "fetch-dsl-q8-rrf-10000",
+  "operation": "fetch-dsl-q8-rrf-10000",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "dsl", "q8"]
+},
+{
+  "name": "fetch-esql-q9-hybrid-3way",
+  "operation": "fetch-esql-q9-hybrid-3way",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "esql", "q9"]
+},
+{
+  "name": "fetch-dsl-q9-hybrid-3way",
+  "operation": "fetch-dsl-q9-hybrid-3way",
+  "clients": {{ fetch_phase_search_clients | default(1) | int }},
+  "warmup-iterations": {{ fetch_phase_warmup_iterations | default(20) | int }},
+  "iterations": {{ fetch_phase_iterations | default(50) | int }},
+  "tags": ["fetch-phase", "dsl", "q9"]
+}

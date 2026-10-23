@@ -1,0 +1,101 @@
+{
+  "name": "brute-force-knn",
+  "description": "Index vectors with index=false, then run brute force KNN searches via ESQL and dense_vector query",
+  "default": true,
+  "schedule": [
+    {
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "delete-index"
+      }
+    },
+    {
+      "tags": ["setup"],
+      "operation": {
+        "operation-type": "create-index"
+      }
+    },
+    {
+      "tags": ["health"],
+      "operation": {
+        "operation-type": "cluster-health",
+        "request-params": {
+          "wait_for_status": "green"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "name": "index-append",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "bulk",
+        "bulk-size": {{bulk_size | default(500)}},
+        {%- if ingest_doc_count is defined %}
+        "ingest-doc-count": {{ ingest_doc_count }}
+        {%- else %}
+        "ingest-percentage": {{ingest_percentage | default(100)}}
+        {%- endif %},
+        "corpora": "so_vector_float"
+      },
+      "warmup-time-period": {{ bulk_warmup | default(40) | int }},
+      "clients": {{bulk_indexing_clients | default(1)}}
+    },
+    {
+      "name": "refresh-after-index",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "refresh",
+        "request-timeout": 1000,
+        "include-in-reporting": true
+      }
+    },
+    {
+      "name": "wait-until-merges-finish",
+      "tags": ["index"],
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "_all",
+        "condition": {
+          "path": "_all.total.merges.current",
+          "expected-value": 0
+        },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    }
+    {%- if validate_knn_consistency | default(false) %}
+    {%- for k in k_values | default([10, 50, 100]) %}
+    ,{
+      "name": "validate-knn-consistency-{{ k }}",
+      "tags": ["validate"],
+      "operation": "validate-knn-consistency-{{ k }}",
+      "iterations": 1,
+      "clients": 1
+    }
+    {%- endfor %}
+    {%- endif %}
+    {%- for k in k_values | default([10, 50, 100]) %}
+    {%- for kind_value in kind | default(["esql", "dense-vector"]) %}
+    ,{
+      "name": "brute-force-{{ kind_value }}-knn-{{ k }}",
+      "tags": ["search"],
+      "operation": "brute-force-{{ kind_value }}-knn-{{ k }}",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": 1
+    }
+    {%- if include_multi_client | default(false) %}
+    ,{
+      "name": "brute-force-{{ kind_value }}-knn-{{ k }}-multi-client",
+      "tags": ["search"],
+      "operation": "brute-force-{{ kind_value }}-knn-{{ k }}",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(100) }},
+      "clients": {{ search_clients | default(8) | int }}
+    }
+    {%- endif %}
+    {%- endfor %}
+    {%- endfor %}
+  ]
+}

@@ -1,0 +1,44 @@
+{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
+
+{
+{%- set comma = joiner(",") -%}
+  "settings": {
+    {%- if build_flavor != "serverless" or serverless_operator == true -%}
+      {% if p_include_non_serverless_index_settings %}
+    {{comma()}}
+    "index.number_of_shards": {{number_of_shards | default(2)}},
+    "index.number_of_replicas": {{number_of_replicas | default(0)}}
+      {% endif %}
+    {%- endif -%}
+  },
+  "mappings": {
+    "properties": {
+      "userId": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "questionId": {
+        "type": "long"
+      },
+      "creationDate": {
+        "type": "date"
+      },
+      "title": {
+        "type": "text"
+      },
+      "titleVector": {
+        "type": "dense_vector",
+        "dims": 768,
+        "index": false
+      },
+      "acceptedAnswerId": {
+        "type": "keyword"
+      },
+      "body": {
+        "type": "text"
+      }
+    }
+  }
+}

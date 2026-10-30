@@ -11,9 +11,12 @@
         {% if p_dsl_default_rollover %}
         "cluster.lifecycle.default.rollover": "{{ dsl_default_rollover }}",
         {% endif %}
-        "cluster.max_shards_per_node":500000,
+        "cluster.max_shards_per_node":500000
+        {#- On serverless these are reserved file settings and cannot be set through the API, not even by an operator #}
+        {%- if build_flavor != "serverless" %},
         "cluster.routing.allocation.node_concurrent_recoveries":200,
         "cluster.routing.allocation.node_initial_primaries_recoveries":100
+        {%- endif %}
       }
     }
   }

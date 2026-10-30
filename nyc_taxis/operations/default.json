@@ -1915,7 +1915,7 @@
     {
       "name": "nested_topn_histograms_with_other_bucket_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | EVAL payment_type = CASE(payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type), payment_type, \"Other\"::keyword) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+      "query": "FROM nyc_taxis | EVAL payment_type = CASE(payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type), payment_type, \"Other\"::keyword) | INLINE STATS cnt_payment = CASE(payment_type == \"Other\"::keyword, 0::long, COUNT(*)) BY payment_type | STATS cnt = COUNT(*), cnt_payment = MAX(cnt_payment) BY payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
     },
     {
       "name": "nested_topn_histograms_with_other_bucket_no_inlinestats_esql",
@@ -1925,7 +1925,7 @@
     {
       "name": "nested_topn_histograms_esql",
       "operation-type": "esql",
-      "query": "FROM nyc_taxis | INLINE STATS cnt_payment = COUNT(*) BY payment_type | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | STATS cnt = COUNT(*) BY cnt_payment, payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
+      "query": "FROM nyc_taxis | INLINE STATS cnt_payment = COUNT(*) BY payment_type | WHERE payment_type IN (FROM nyc_taxis | STATS cnt = COUNT(*) BY payment_type | SORT cnt DESC | LIMIT 3 | KEEP payment_type) | STATS cnt = COUNT(*), cnt_payment = MAX(cnt_payment) BY payment_type, rate_code_id | SORT cnt_payment DESC, cnt DESC | LIMIT 2 BY payment_type | DROP cnt_payment"
     },
     {
       "name": "nested_topn_histograms_no_inlinestats_esql",

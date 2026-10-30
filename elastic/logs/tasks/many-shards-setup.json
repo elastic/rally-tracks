@@ -1,23 +1,23 @@
+{#- The cluster allocation settings are only tuned outside serverless: there they are reserved file settings that
+    cannot be changed through the API (not even by an operator) and the platform manages allocation anyway. Without
+    them and without the optional data stream lifecycle settings there is nothing to send, and Elasticsearch rejects
+    an empty settings update, so the whole task is skipped in that case. -#}
+{%- set p_update_settings = {} %}
+{%- if p_dsl_poll_interval %}{% set _ = p_update_settings.update({"data_streams.lifecycle.poll_interval": dsl_poll_interval | string}) %}{% endif %}
+{%- if p_dsl_default_rollover %}{% set _ = p_update_settings.update({"cluster.lifecycle.default.rollover": dsl_default_rollover | string}) %}{% endif %}
+{%- if build_flavor != "serverless" %}{% set _ = p_update_settings.update({"cluster.max_shards_per_node": 500000, "cluster.routing.allocation.node_concurrent_recoveries": 200, "cluster.routing.allocation.node_initial_primaries_recoveries": 100}) %}{% endif %}
+{%- if p_update_settings %}
 {
   "name":"update-settings",
   "tags": ["setup"],
   "operation": {
     "operation-type": "put-settings",
     "body": {
-      "persistent": {
-        {% if p_dsl_poll_interval %}
-        "data_streams.lifecycle.poll_interval": "{{ dsl_poll_interval }}",
-        {% endif %}
-        {% if p_dsl_default_rollover %}
-        "cluster.lifecycle.default.rollover": "{{ dsl_default_rollover }}",
-        {% endif %}
-        "cluster.max_shards_per_node":500000,
-        "cluster.routing.allocation.node_concurrent_recoveries":200,
-        "cluster.routing.allocation.node_initial_primaries_recoveries":100
-      }
+      "persistent": {{ p_update_settings | tojson }}
     }
   }
 },
+{%- endif %}
 {
   "name": "delete-all-auditbeat-datastreams",
   "tags": ["setup"],

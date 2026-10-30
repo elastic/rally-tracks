@@ -1,3 +1,4 @@
+{%- set p_set_ingest_timestamp = set_ingest_timestamp | default(true) %}
 {
   "name": "create-ingest-pipeline-pipeline",
   "operation": {
@@ -7,12 +8,15 @@
     "body": {
       "description": "Ingest pipeline for the github_archive Rally track",
       "processors": [
+        {%- if p_set_ingest_timestamp %}
         {
           "set": {
             "field": "@timestamp",
             "value": {{ '"{{{_ingest.timestamp}}}"' }}
           }
-        }{% if multi_target -%},
+        }{% if multi_target %},{%- endif %}
+        {%- endif %}
+        {%- if multi_target %}
         {
           "reroute": {
             "destination": "gharchive-event-push",
@@ -82,7 +86,8 @@
             "tag": "gharchive",
             "if": "ctx?.type == 'PullRequestReviewCommentEvent'"
           }
-        }{% endif %}
+        }
+        {%- endif %}
       ]
     }
   },

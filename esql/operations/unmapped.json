@@ -67,9 +67,9 @@
       "name": "unmapped_mix_load_{{ label }}_{{ density }}",
       "operation-type": "esql",
       "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_{{ density }}, unmapped_bench_no_mapping_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
-    }{% if n == 1 or not (d_last and loop.last) %},{% endif %}
+    }{% if loop.first or not (d_last and loop.last) %},{% endif %}
 {# LOAD_ALL returns every unmapped field whatever the query names, so its queries have no field count: one of each per density. #}
-{% if n == 1 %}
+{% if loop.first %}
     {
       "name": "unmapped_load_all_{{ density }}",
       "operation-type": "esql",

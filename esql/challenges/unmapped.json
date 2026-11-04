@@ -133,8 +133,8 @@
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": {{ warmup }},
           "iterations": {{query_iterations | default(100)}}
-        }{% if n == 1 or not (d_last and loop.last) %},{% endif %}
-{% if n == 1 %}
+        }{% if loop.first or not (d_last and loop.last) %},{% endif %}
+{% if loop.first %}
         {
           "operation": "unmapped_load_all_{{ density }}",
           "tags": ["esql_unmapped", "load_all", "{{ density }}"],

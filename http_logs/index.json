@@ -1,3 +1,5 @@
+{%- set p_index_mode = index_mode | default('logsdb' if enable_logsdb else none) %}
+{%- set p_logsdb_like = p_index_mode in ['logsdb', 'logsdb_columnar'] %}
 {
   "settings": {
     {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
@@ -5,8 +7,8 @@
     "index.number_of_replicas": {{ number_of_replicas | default(0) }},
     "index.requests.cache.enable": false
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
-    {%- if enable_logsdb %},
-    "index.mode": "logsdb",
+    {%- if p_logsdb_like %},
+    "index.mode": "{{ p_index_mode }}",
     {% if synthetic_source_keep %}
     "index.mapping.synthetic_source_keep": "{{synthetic_source_keep}}",
     {% endif %}
@@ -15,6 +17,8 @@
     {% endif %}
     "index.sort.field": ["@timestamp"],
     "index.sort.order":["desc"]
+    {%- elif p_index_mode %},
+    "index.mode": "{{ p_index_mode }}"
     {%- endif %}
     {% if source_mode %}
     ,"mapping.source.mode": {{ source_mode | tojson }}
@@ -22,7 +26,7 @@
   },
   "mappings": {
     "dynamic": "strict",
-    {%- if enable_logsdb %}
+    {%- if p_logsdb_like %}
     {%- else %}
     "_source": {
       "enabled": {{ source_enabled | default(true) | tojson }}
@@ -38,9 +42,14 @@
         "type": "date"
       },
       "message": {
+        {%- if p_index_mode == "logsdb_columnar" %}
+        {# columnar index modes require all fields to be reconstructable from doc values #}
+        "type": "keyword"
+        {%- else %}
         "type": "keyword",
         "index": false,
         "doc_values": false
+        {%- endif %}
       },
       "clientip": {
         "type": "ip"

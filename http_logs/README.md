@@ -49,7 +49,8 @@ node pipeline to run. Valid options are `'baseline'` (default), `'grok'`  and `'
 * `error_level` (default: "non-fatal"): Available for bulk operations only to specify ignore-response-error-level.
 * `post_ingest_sleep` (default: false): Whether to pause after ingest and prior to subsequent operations.
 * `post_ingest_sleep_duration` (default: 30): Sleep duration in seconds.
-* `enable_logsdb` (default: false) Determines whether the logsdb index mode gets used. If set then index sorting is configured to only use `@timestamp` field and the `source_enabled` parameter will have no effect.
+* `enable_logsdb` (default: false) Determines whether the logsdb index mode gets used. This is a shortcut for `index_mode:logsdb`. If set then index sorting is configured to only use `@timestamp` field and the `source_enabled` parameter will have no effect.
+* `index_mode` (default: unset) Index mode to use. Accepted values: `standard`, `logsdb` and `logsdb_columnar`. Takes precedence over `enable_logsdb`. With `logsdb` and `logsdb_columnar` index sorting is configured to only use the `@timestamp` field and the `source_enabled` parameter has no effect. With `logsdb_columnar` the `message` field keeps its doc values, because columnar index modes require all fields to be reconstructable from doc values. Can't be combined with `runtime_fields`.
 * `force_merge_max_num_segments` (default: unset): An integer specifying the max amount of segments the force-merge operation should use.
 * `synthetic_source_keep` (default: unset): If specified, configures the `index.mapping.synthetic_source_keep` index setting.
 * `use_doc_values_skipper` (default: true): Configures the `index.mapping.use_doc_values_skipper` index setting.

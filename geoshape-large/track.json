@@ -1,0 +1,118 @@
+{% import "rally.helpers" as rally with context %}
+
+{
+  "version": 2,
+  "description": "Large administrative boundaries and long road routes for geo_shape and cartesian shape",
+  "indices": [
+    {
+      "name": "boundaries",
+      "body": "index-boundaries.json"
+    },
+    {
+      "name": "routes",
+      "body": "index-routes.json"
+    },
+    {
+      "name": "boundary-scales",
+      "body": "index-scales.json"
+    },
+    {
+      "name": "boundaries-stress",
+      "body": "index-boundaries.json"
+    },
+    {
+      "name": "boundaries-xy",
+      "body": "index-boundaries-xy.json"
+    },
+    {
+      "name": "routes-xy",
+      "body": "index-routes-xy.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "geoshape-large-boundaries",
+      "base-url": "https://rally-tracks.elastic.co/geoshape-large",
+      "target-index": "boundaries",
+      "documents": [
+        {
+          "source-file": "boundaries.json.bz2",
+          "document-count": 224742,
+          "compressed-bytes": 977298564,
+          "uncompressed-bytes": 3338158487
+        }
+      ]
+    },
+    {
+      "name": "geoshape-large-routes",
+      "base-url": "https://rally-tracks.elastic.co/geoshape-large",
+      "target-index": "routes",
+      "documents": [
+        {
+          "source-file": "routes.json.bz2",
+          "document-count": 180000,
+          "compressed-bytes": 3251442219,
+          "uncompressed-bytes": 9800863503
+        }
+      ]
+    },
+    {
+      "name": "geoshape-large-boundary-scales",
+      "base-url": "https://rally-tracks.elastic.co/geoshape-large",
+      "target-index": "boundary-scales",
+      "documents": [
+        {
+          "source-file": "boundary-scales.json.bz2",
+          "document-count": 5594,
+          "compressed-bytes": 13275245,
+          "uncompressed-bytes": 38375977
+        }
+      ]
+    },
+    {
+      "name": "geoshape-large-boundaries-stress",
+      "base-url": "https://rally-tracks.elastic.co/geoshape-large",
+      "target-index": "boundaries-stress",
+      "documents": [
+        {
+          "source-file": "boundaries-stress.json.bz2",
+          "document-count": 40,
+          "compressed-bytes": 37982540,
+          "uncompressed-bytes": 131586590
+        }
+      ]
+    },
+    {
+      "name": "geoshape-large-boundaries-xy",
+      "base-url": "https://rally-tracks.elastic.co/geoshape-large",
+      "target-index": "boundaries-xy",
+      "documents": [
+        {
+          "source-file": "boundaries-xy.json.bz2",
+          "document-count": 224742,
+          "compressed-bytes": 1010765458,
+          "uncompressed-bytes": 3323871983
+        }
+      ]
+    },
+    {
+      "name": "geoshape-large-routes-xy",
+      "base-url": "https://rally-tracks.elastic.co/geoshape-large",
+      "target-index": "routes-xy",
+      "documents": [
+        {
+          "source-file": "routes-xy.json.bz2",
+          "document-count": 180000,
+          "compressed-bytes": 3379577518,
+          "uncompressed-bytes": 9767333752
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

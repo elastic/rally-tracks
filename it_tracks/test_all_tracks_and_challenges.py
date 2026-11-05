@@ -33,6 +33,9 @@ class TestTrackRepository:
         "random_vector",
         "has_privileges",
         "has_privileges_bystander",
+        # Corpus is built locally and published out of band. Test mode downloads
+        # boundaries-1k.json.bz2 from the base URL, which 404s until that upload.
+        "geoshape-large",
     ]
     disable_assertions = {
         "http_logs": ["append-no-conflicts", "runtime-fields"],

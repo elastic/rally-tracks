@@ -1,0 +1,358 @@
+{
+  "name": "append-no-conflicts",
+  "description": "Indexes capped administrative boundaries and synthetic road routes, force-merges each index to one segment, then runs deterministic geo_shape and ES|QL queries.",
+  "default": true,
+  "schedule": [
+    {
+      "operation": {
+        "operation-type": "delete-index",
+        "index": ["boundaries", "routes"]
+      },
+      "tags": ["setup"]
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "index": ["boundaries", "routes"],
+        "settings": {{index_settings | default({}) | tojson}}
+      },
+      "tags": ["setup"]
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "boundaries,routes",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      },
+      "tags": ["setup"]
+    },
+    {
+      "operation": "index-boundaries",
+      "warmup-time-period": 60,
+      "clients": {{bulk_indexing_clients | default(4)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "tags": ["setup", "boundaries"]
+    },
+    {
+      "name": "refresh-boundaries",
+      "operation": "refresh",
+      "index": "boundaries",
+      "tags": ["setup"]
+    },
+    {
+      "name": "force-merge-boundaries",
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": {{max_num_segments | default(1)}},
+        "index": "boundaries",
+        "request-timeout": 7200
+      },
+      "tags": ["setup"]
+    },
+    {
+      "name": "wait-until-boundaries-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "boundaries",
+        "condition": { "path": "_all.total.merges.current", "expected-value": 0 },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      },
+      "tags": ["setup"]
+    },
+    {
+      "operation": "index-routes",
+      "warmup-time-period": 60,
+      "clients": {{bulk_indexing_clients | default(4)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}",
+      "tags": ["setup", "routes"]
+    },
+    {
+      "name": "refresh-routes",
+      "operation": "refresh",
+      "index": "routes",
+      "tags": ["setup"]
+    },
+    {
+      "name": "force-merge-routes",
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": {{max_num_segments | default(1)}},
+        "index": "routes",
+        "request-timeout": 7200
+      },
+      "tags": ["setup"]
+    },
+    {
+      "name": "wait-until-routes-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "routes",
+        "condition": { "path": "_all.total.merges.current", "expected-value": 0 },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      },
+      "tags": ["setup"]
+    },
+    {# serverless-post-ingest-sleep-marker-start #}{%- if post_ingest_sleep|default(false) -%}
+    {
+      "name": "post-ingest-sleep",
+      "operation": { "operation-type": "sleep", "duration": {{ post_ingest_sleep_duration|default(30) }} },
+      "tags": ["setup"]
+    },
+    {%- endif -%}{# serverless-post-ingest-sleep-marker-end #}
+    { "operation": "boundaries-bounds", "warmup-iterations": 2, "iterations": 5, "tags": ["boundaries", "bounds"] },
+    { "operation": "boundaries-bounds-esql", "warmup-iterations": 2, "iterations": 5, "tags": ["boundaries", "bounds", "esql"] },
+    { "operation": "boundaries-centroid", "warmup-iterations": 2, "iterations": 5, "tags": ["boundaries", "centroid"] },
+    { "operation": "boundaries-centroid-esql", "warmup-iterations": 2, "iterations": 5, "tags": ["boundaries", "centroid", "esql"] },
+    { "operation": "boundaries-bounds-centroid", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "bounds", "centroid"] },
+    { "operation": "boundaries-bounds-centroid-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "bounds", "centroid", "esql"] },
+    { "operation": "boundaries-intersects-count", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries"] },
+    { "operation": "boundaries-intersects-count-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "esql"] },
+    { "operation": "boundaries-contains-count", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries"] },
+    { "operation": "boundaries-contains-count-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "esql"] },
+    { "operation": "boundaries-within-count", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries"] },
+    { "operation": "boundaries-within-count-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "esql"] },
+    { "operation": "boundaries-disjoint-count", "warmup-iterations": 1, "iterations": 2, "tags": ["boundaries"] },
+    { "operation": "boundaries-disjoint-count-esql", "warmup-iterations": 1, "iterations": 2, "tags": ["boundaries", "esql"] },
+    { "operation": "boundaries-envelope-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "esql"] },
+    { "operation": "boundaries-simplify-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "esql"] },
+    { "operation": "boundaries-simplify-preserve-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "esql"] },
+    { "operation": "boundaries-buffer-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "esql"] },
+    { "operation": "boundaries-geohash-grid", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "geo_grid"] },
+    { "operation": "boundaries-geohash-grid-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "geo_grid", "esql"] },
+    { "operation": "boundaries-geotile-grid", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "geo_grid"] },
+    { "operation": "boundaries-geotile-grid-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "geo_grid", "esql"] },
+    { "operation": "boundaries-geohex-grid", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "geo_grid"] },
+    { "operation": "boundaries-geohex-grid-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["boundaries", "geo_grid", "esql"] },
+    { "operation": "routes-bounds", "warmup-iterations": 2, "iterations": 5, "tags": ["routes", "bounds"] },
+    { "operation": "routes-bounds-esql", "warmup-iterations": 2, "iterations": 5, "tags": ["routes", "bounds", "esql"] },
+    { "operation": "routes-centroid", "warmup-iterations": 2, "iterations": 5, "tags": ["routes", "centroid"] },
+    { "operation": "routes-centroid-esql", "warmup-iterations": 2, "iterations": 5, "tags": ["routes", "centroid", "esql"] },
+    { "operation": "routes-intersects-count", "warmup-iterations": 1, "iterations": 3, "tags": ["routes"] },
+    { "operation": "routes-intersects-count-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "esql"] },
+    { "operation": "routes-within-count", "warmup-iterations": 1, "iterations": 3, "tags": ["routes"] },
+    { "operation": "routes-within-count-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "esql"] },
+    { "operation": "routes-disjoint-count", "warmup-iterations": 1, "iterations": 2, "tags": ["routes"] },
+    { "operation": "routes-disjoint-count-esql", "warmup-iterations": 1, "iterations": 2, "tags": ["routes", "esql"] },
+    { "operation": "routes-envelope-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "esql"] },
+    { "operation": "routes-simplify-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "esql"] },
+    { "operation": "routes-simplify-preserve-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "esql"] },
+    { "operation": "routes-simplify-long-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "esql"] },
+    { "operation": "routes-buffer-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "esql"] },
+    { "operation": "routes-geohash-grid", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "geo_grid"] },
+    { "operation": "routes-geohash-grid-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "geo_grid", "esql"] },
+    { "operation": "routes-geotile-grid", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "geo_grid"] },
+    { "operation": "routes-geotile-grid-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "geo_grid", "esql"] },
+    { "operation": "routes-geohex-grid", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "geo_grid"] },
+    { "operation": "routes-geohex-grid-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["routes", "geo_grid", "esql"] },
+    { "operation": "disk-usage-boundaries", "tags": ["boundaries", "disk"] },
+    { "operation": "disk-usage-routes", "tags": ["routes", "disk"] }
+  ]
+},
+{
+  "name": "scales",
+  "description": "Natural Earth admin-0 and admin-1 boundaries at 1:10m, 1:50m and 1:110m. Same features, three vertex counts.",
+  "default": false,
+  "schedule": [
+    {
+      "operation": { "operation-type": "delete-index", "index": "boundary-scales" }
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "index": "boundary-scales",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "boundary-scales",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": "index-scales",
+      "clients": {{bulk_indexing_clients | default(2)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    { "name": "refresh-scales", "operation": "refresh", "index": "boundary-scales" },
+    {
+      "name": "force-merge-scales",
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": {{max_num_segments | default(1)}},
+        "index": "boundary-scales",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "name": "wait-until-scales-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "boundary-scales",
+        "condition": { "path": "_all.total.merges.current", "expected-value": 0 },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    { "operation": "scales-by-scale-esql", "warmup-iterations": 5, "iterations": 15, "tags": ["scales", "esql"] },
+    { "operation": "scales-canada-esql", "warmup-iterations": 5, "iterations": 15, "tags": ["scales", "esql"] },
+    { "operation": "scales-simplify-10m-esql", "warmup-iterations": 2, "iterations": 10, "tags": ["scales", "esql"] },
+    { "operation": "scales-simplify-50m-esql", "warmup-iterations": 2, "iterations": 10, "tags": ["scales", "esql"] },
+    { "operation": "scales-simplify-110m-esql", "warmup-iterations": 2, "iterations": 10, "tags": ["scales", "esql"] },
+    { "operation": "disk-usage-scales", "tags": ["scales", "disk"] }
+  ]
+},
+{
+  "name": "stress",
+  "description": "The 40 largest administrative polygons, uncapped, that still fit in one bulk request. Doc-value size and simplification.",
+  "default": false,
+  "schedule": [
+    {
+      "operation": { "operation-type": "delete-index", "index": "boundaries-stress" }
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "index": "boundaries-stress",
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "boundaries-stress",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": "index-stress",
+      "clients": 1,
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    { "name": "refresh-stress", "operation": "refresh", "index": "boundaries-stress" },
+    {
+      "name": "force-merge-stress",
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": {{max_num_segments | default(1)}},
+        "index": "boundaries-stress",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "name": "wait-until-stress-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "boundaries-stress",
+        "condition": { "path": "_all.total.merges.current", "expected-value": 0 },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    { "operation": "stress-bounds", "warmup-iterations": 1, "iterations": 3, "tags": ["stress", "bounds"] },
+    { "operation": "stress-bounds-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["stress", "bounds", "esql"] },
+    { "operation": "stress-simplify-esql", "warmup-iterations": 0, "iterations": 1, "tags": ["stress", "esql"] },
+    { "operation": "disk-usage-stress", "tags": ["stress", "disk"] }
+  ]
+},
+{
+  "name": "cartesian",
+  "description": "Web Mercator copies of the capped boundaries and routes, indexed as cartesian shape.",
+  "default": false,
+  "schedule": [
+    {
+      "operation": { "operation-type": "delete-index", "index": ["boundaries-xy", "routes-xy"] }
+    },
+    {
+      "operation": {
+        "operation-type": "create-index",
+        "index": ["boundaries-xy", "routes-xy"],
+        "settings": {{index_settings | default({}) | tojson}}
+      }
+    },
+    {
+      "name": "check-cluster-health",
+      "operation": {
+        "operation-type": "cluster-health",
+        "index": "boundaries-xy,routes-xy",
+        "request-params": {
+          "wait_for_status": "{{cluster_health | default('green')}}",
+          "wait_for_no_relocating_shards": "true"
+        },
+        "retry-until-success": true
+      }
+    },
+    {
+      "operation": "index-boundaries-xy",
+      "warmup-time-period": 60,
+      "clients": {{bulk_indexing_clients | default(4)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    { "name": "refresh-boundaries-xy", "operation": "refresh", "index": "boundaries-xy" },
+    {
+      "name": "force-merge-boundaries-xy",
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": {{max_num_segments | default(1)}},
+        "index": "boundaries-xy",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "operation": "index-routes-xy",
+      "warmup-time-period": 60,
+      "clients": {{bulk_indexing_clients | default(4)}},
+      "ignore-response-error-level": "{{error_level | default('non-fatal')}}"
+    },
+    { "name": "refresh-routes-xy", "operation": "refresh", "index": "routes-xy" },
+    {
+      "name": "force-merge-routes-xy",
+      "operation": {
+        "operation-type": "force-merge",
+        "max-num-segments": {{max_num_segments | default(1)}},
+        "index": "routes-xy",
+        "request-timeout": 7200
+      }
+    },
+    {
+      "name": "wait-until-xy-merges-finish",
+      "operation": {
+        "operation-type": "index-stats",
+        "index": "boundaries-xy,routes-xy",
+        "condition": { "path": "_all.total.merges.current", "expected-value": 0 },
+        "retry-until-success": true,
+        "include-in-reporting": false
+      }
+    },
+    { "operation": "xy-boundaries-intersects-count", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "boundaries"] },
+    { "operation": "xy-boundaries-intersects-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "boundaries", "esql"] },
+    { "operation": "xy-boundaries-envelope-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "boundaries", "esql"] },
+    { "operation": "xy-boundaries-simplify-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "boundaries", "esql"] },
+    { "operation": "xy-boundaries-simplify-preserve-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "boundaries", "esql"] },
+    { "operation": "xy-boundaries-buffer-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "boundaries", "esql"] },
+    { "operation": "xy-routes-intersects-count", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "routes"] },
+    { "operation": "xy-routes-intersects-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "routes", "esql"] },
+    { "operation": "xy-routes-simplify-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "routes", "esql"] },
+    { "operation": "xy-routes-buffer-esql", "warmup-iterations": 1, "iterations": 3, "tags": ["cartesian", "routes", "esql"] },
+    { "operation": "disk-usage-boundaries-xy", "tags": ["cartesian", "disk"] },
+    { "operation": "disk-usage-routes-xy", "tags": ["cartesian", "disk"] }
+  ]
+}

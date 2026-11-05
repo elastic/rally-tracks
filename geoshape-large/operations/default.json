@@ -1,0 +1,772 @@
+{
+  "name": "index-boundaries",
+  "operation-type": "bulk",
+  "bulk-size": {{boundary_bulk_size | default(10)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}},
+  "corpora": "geoshape-large-boundaries",
+  "request-timeout": 300
+},
+{
+  "name": "index-routes",
+  "operation-type": "bulk",
+  "bulk-size": {{route_bulk_size | default(20)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}},
+  "corpora": "geoshape-large-routes",
+  "request-timeout": 300
+},
+{
+  "name": "index-scales",
+  "operation-type": "bulk",
+  "bulk-size": {{scale_bulk_size | default(50)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}},
+  "corpora": "geoshape-large-boundary-scales",
+  "request-timeout": 300
+},
+{
+  "name": "index-stress",
+  "operation-type": "bulk",
+  "bulk-size": {{stress_bulk_size | default(1)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}},
+  "corpora": "geoshape-large-boundaries-stress",
+  "request-timeout": 600
+},
+{
+  "name": "index-boundaries-xy",
+  "operation-type": "bulk",
+  "bulk-size": {{boundary_bulk_size | default(10)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}},
+  "corpora": "geoshape-large-boundaries-xy",
+  "request-timeout": 300
+},
+{
+  "name": "index-routes-xy",
+  "operation-type": "bulk",
+  "bulk-size": {{route_bulk_size | default(20)}},
+  "ingest-percentage": {{ingest_percentage | default(100)}},
+  "corpora": "geoshape-large-routes-xy",
+  "request-timeout": 300
+},
+{
+  "name": "disk-usage-boundaries",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/boundaries/_disk_usage?run_expensive_tasks=true&flush=true",
+  "request-timeout": 1800,
+  "body": {}
+},
+{
+  "name": "disk-usage-routes",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/routes/_disk_usage?run_expensive_tasks=true&flush=true",
+  "request-timeout": 1800,
+  "body": {}
+},
+{
+  "name": "disk-usage-scales",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/boundary-scales/_disk_usage?run_expensive_tasks=true&flush=true",
+  "request-timeout": 600,
+  "body": {}
+},
+{
+  "name": "disk-usage-stress",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/boundaries-stress/_disk_usage?run_expensive_tasks=true&flush=true",
+  "request-timeout": 1800,
+  "body": {}
+},
+{
+  "name": "disk-usage-boundaries-xy",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/boundaries-xy/_disk_usage?run_expensive_tasks=true&flush=true",
+  "request-timeout": 1800,
+  "body": {}
+},
+{
+  "name": "disk-usage-routes-xy",
+  "operation-type": "raw-request",
+  "method": "POST",
+  "path": "/routes-xy/_disk_usage?run_expensive_tasks=true&flush=true",
+  "request-timeout": 1800,
+  "body": {}
+},
+{
+  "name": "boundaries-bounds",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "envelope": {
+        "geo_bounds": {
+          "field": "shape",
+          "wrap_longitude": true
+        }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-bounds-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | STATS envelope = ST_EXTENT_AGG(shape)"
+},
+{
+  "name": "boundaries-centroid",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "centroid": {
+        "geo_centroid": {
+          "field": "shape"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-centroid-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | STATS centroid = ST_CENTROID_AGG(shape)"
+},
+{
+  "name": "boundaries-bounds-centroid",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "envelope": {
+        "geo_bounds": { "field": "shape", "wrap_longitude": true }
+      },
+      "centroid": {
+        "geo_centroid": { "field": "shape" }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-bounds-centroid-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | STATS envelope = ST_EXTENT_AGG(shape), centroid = ST_CENTROID_AGG(shape)"
+},
+{
+  "name": "boundaries-intersects-count",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_shape": {
+        "shape": {
+          "shape": {
+            "type": "polygon",
+            "coordinates": [[
+              [-0.1, 49.0],
+              [5.0, 48.0],
+              [15.0, 49.0],
+              [14.0, 60.0],
+              [-0.1, 61.0],
+              [-0.1, 49.0]
+            ]]
+          },
+          "relation": "intersects"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-intersects-count-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+},
+{
+  "name": "boundaries-contains-count",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_shape": {
+        "shape": {
+          "shape": {
+            "type": "polygon",
+            "coordinates": [[
+              [2.29, 48.85],
+              [2.31, 48.85],
+              [2.31, 48.87],
+              [2.29, 48.87],
+              [2.29, 48.85]
+            ]]
+          },
+          "relation": "contains"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-contains-count-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE ST_CONTAINS(shape, TO_GEOSHAPE(\"POLYGON((2.29 48.85, 2.31 48.85, 2.31 48.87, 2.29 48.87, 2.29 48.85))\")) | STATS count = COUNT(*)"
+},
+{
+  "name": "boundaries-within-count",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_shape": {
+        "shape": {
+          "shape": {
+            "type": "polygon",
+            "coordinates": [[
+              [-0.1, 49.0],
+              [5.0, 48.0],
+              [15.0, 49.0],
+              [14.0, 60.0],
+              [-0.1, 61.0],
+              [-0.1, 49.0]
+            ]]
+          },
+          "relation": "within"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-within-count-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE ST_WITHIN(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+},
+{
+  "name": "boundaries-disjoint-count",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_shape": {
+        "shape": {
+          "shape": {
+            "type": "polygon",
+            "coordinates": [[
+              [-0.1, 49.0],
+              [5.0, 48.0],
+              [15.0, 49.0],
+              [14.0, 60.0],
+              [-0.1, 61.0],
+              [-0.1, 49.0]
+            ]]
+          },
+          "relation": "disjoint"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-disjoint-count-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE ST_DISJOINT(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+},
+{
+  "name": "boundaries-envelope-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(*)"
+},
+{
+  "name": "boundaries-simplify-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "boundaries-simplify-preserve-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFYPRESERVETOPOLOGY(shape, 0.01) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "boundaries-buffer-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE vertex_count >= 200 AND vertex_count < 800 | EVAL buffered = ST_BUFFER(shape, 0.001) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))"
+},
+{
+  "name": "boundaries-geohash-grid",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_bounding_box": {
+        "shape": {
+          "top_left": "POINT (2.20 48.95)",
+          "bottom_right": "POINT (2.40 48.75)"
+        }
+      }
+    },
+    "aggs": {
+      "grid": {
+        "geohash_grid": {
+          "field": "shape",
+          "precision": 5,
+          "bounds": {
+            "top_left": "POINT (2.20 48.95)",
+            "bottom_right": "POINT (2.40 48.75)"
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-geohash-grid-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL cell = ST_GEOHASH(shape, 5, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY cell"
+},
+{
+  "name": "boundaries-geotile-grid",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_bounding_box": {
+        "shape": {
+          "top_left": "POINT (2.20 48.95)",
+          "bottom_right": "POINT (2.40 48.75)"
+        }
+      }
+    },
+    "aggs": {
+      "grid": {
+        "geotile_grid": {
+          "field": "shape",
+          "precision": 13,
+          "bounds": {
+            "top_left": "POINT (2.20 48.95)",
+            "bottom_right": "POINT (2.40 48.75)"
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-geotile-grid-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL cell = ST_GEOTILE(shape, 13, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY cell"
+},
+{
+  "name": "boundaries-geohex-grid",
+  "operation-type": "search",
+  "index": "boundaries",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_bounding_box": {
+        "shape": {
+          "top_left": "POINT (2.20 48.95)",
+          "bottom_right": "POINT (2.40 48.75)"
+        }
+      }
+    },
+    "aggs": {
+      "grid": {
+        "geohex_grid": {
+          "field": "shape",
+          "precision": 6,
+          "bounds": {
+            "top_left": "POINT (2.20 48.95)",
+            "bottom_right": "POINT (2.40 48.75)"
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "boundaries-geohex-grid-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL cell = ST_GEOHEX(shape, 6, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY cell"
+},
+{
+  "name": "routes-bounds",
+  "operation-type": "search",
+  "index": "routes",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "envelope": { "geo_bounds": { "field": "shape", "wrap_longitude": true } }
+    }
+  }
+},
+{
+  "name": "routes-bounds-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | STATS envelope = ST_EXTENT_AGG(shape)"
+},
+{
+  "name": "routes-centroid",
+  "operation-type": "search",
+  "index": "routes",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "centroid": { "geo_centroid": { "field": "shape" } }
+    }
+  }
+},
+{
+  "name": "routes-centroid-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | STATS centroid = ST_CENTROID_AGG(shape)"
+},
+{
+  "name": "routes-intersects-count",
+  "operation-type": "search",
+  "index": "routes",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_shape": {
+        "shape": {
+          "shape": {
+            "type": "polygon",
+            "coordinates": [[
+              [-0.1, 49.0], [5.0, 48.0], [15.0, 49.0], [14.0, 60.0], [-0.1, 61.0], [-0.1, 49.0]
+            ]]
+          },
+          "relation": "intersects"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "routes-intersects-count-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+},
+{
+  "name": "routes-within-count",
+  "operation-type": "search",
+  "index": "routes",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_shape": {
+        "shape": {
+          "shape": {
+            "type": "polygon",
+            "coordinates": [[
+              [-0.1, 49.0], [5.0, 48.0], [15.0, 49.0], [14.0, 60.0], [-0.1, 61.0], [-0.1, 49.0]
+            ]]
+          },
+          "relation": "within"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "routes-within-count-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE ST_WITHIN(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+},
+{
+  "name": "routes-disjoint-count",
+  "operation-type": "search",
+  "index": "routes",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_shape": {
+        "shape": {
+          "shape": {
+            "type": "polygon",
+            "coordinates": [[
+              [-0.1, 49.0], [5.0, 48.0], [15.0, 49.0], [14.0, 60.0], [-0.1, 61.0], [-0.1, 49.0]
+            ]]
+          },
+          "relation": "disjoint"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "routes-disjoint-count-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE ST_DISJOINT(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+},
+{
+  "name": "routes-envelope-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(*)"
+},
+{
+  "name": "routes-simplify-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "routes-simplify-preserve-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL simplified = ST_SIMPLIFYPRESERVETOPOLOGY(shape, 0.01) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "routes-simplify-long-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE vertex_count >= 5000 AND vertex_count < 30000 | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "routes-buffer-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE vertex_count >= 50 AND vertex_count < 400 | EVAL buffered = ST_BUFFER(shape, 0.001) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))"
+},
+{
+  "name": "routes-geohash-grid",
+  "operation-type": "search",
+  "index": "routes",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_bounding_box": {
+        "shape": {
+          "top_left": "POINT (2.20 48.95)",
+          "bottom_right": "POINT (2.40 48.75)"
+        }
+      }
+    },
+    "aggs": {
+      "grid": {
+        "geohash_grid": {
+          "field": "shape",
+          "precision": 5,
+          "bounds": {
+            "top_left": "POINT (2.20 48.95)",
+            "bottom_right": "POINT (2.40 48.75)"
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "routes-geohash-grid-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL cell = ST_GEOHASH(shape, 5, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY cell"
+},
+{
+  "name": "routes-geotile-grid",
+  "operation-type": "search",
+  "index": "routes",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_bounding_box": {
+        "shape": {
+          "top_left": "POINT (2.20 48.95)",
+          "bottom_right": "POINT (2.40 48.75)"
+        }
+      }
+    },
+    "aggs": {
+      "grid": {
+        "geotile_grid": {
+          "field": "shape",
+          "precision": 13,
+          "bounds": {
+            "top_left": "POINT (2.20 48.95)",
+            "bottom_right": "POINT (2.40 48.75)"
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "routes-geotile-grid-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL cell = ST_GEOTILE(shape, 13, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY cell"
+},
+{
+  "name": "routes-geohex-grid",
+  "operation-type": "search",
+  "index": "routes",
+  "body": {
+    "size": 0,
+    "query": {
+      "geo_bounding_box": {
+        "shape": {
+          "top_left": "POINT (2.20 48.95)",
+          "bottom_right": "POINT (2.40 48.75)"
+        }
+      }
+    },
+    "aggs": {
+      "grid": {
+        "geohex_grid": {
+          "field": "shape",
+          "precision": 6,
+          "bounds": {
+            "top_left": "POINT (2.20 48.95)",
+            "bottom_right": "POINT (2.40 48.75)"
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "name": "routes-geohex-grid-esql",
+  "operation-type": "esql",
+  "query": "FROM routes | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | EVAL cell = ST_GEOHEX(shape, 6, TO_GEOSHAPE(\"BBOX(2.20, 2.40, 48.95, 48.75)\")) | STATS count = COUNT(*) BY cell"
+},
+{
+  "name": "scales-by-scale-esql",
+  "operation-type": "esql",
+  "query": "FROM boundary-scales | WHERE admin_level == 0 | STATS docs = COUNT(*), verts = SUM(vertex_count), max_verts = MAX(vertex_count) BY scale"
+},
+{
+  "name": "scales-canada-esql",
+  "operation-type": "esql",
+  "query": "FROM boundary-scales | WHERE name == \"Canada\" AND admin_level == 0 | STATS verts = SUM(vertex_count) BY scale"
+},
+{
+  "name": "scales-simplify-10m-esql",
+  "operation-type": "esql",
+  "query": "FROM boundary-scales | WHERE scale == \"10m\" AND admin_level == 0 | EVAL simplified = ST_SIMPLIFY(shape, 0.1) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "scales-simplify-50m-esql",
+  "operation-type": "esql",
+  "query": "FROM boundary-scales | WHERE scale == \"50m\" AND admin_level == 0 | EVAL simplified = ST_SIMPLIFY(shape, 0.1) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "scales-simplify-110m-esql",
+  "operation-type": "esql",
+  "query": "FROM boundary-scales | WHERE scale == \"110m\" AND admin_level == 0 | EVAL simplified = ST_SIMPLIFY(shape, 0.1) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "stress-bounds",
+  "operation-type": "search",
+  "index": "boundaries-stress",
+  "body": {
+    "size": 0,
+    "aggs": {
+      "envelope": { "geo_bounds": { "field": "shape", "wrap_longitude": true } }
+    }
+  }
+},
+{
+  "name": "stress-bounds-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries-stress | STATS envelope = ST_EXTENT_AGG(shape)"
+},
+{
+  "name": "stress-simplify-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries-stress | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "xy-boundaries-intersects-count",
+  "operation-type": "search",
+  "index": "boundaries-xy",
+  "body": {
+    "size": 0,
+    "query": {
+      "shape": {
+        "shape": {
+          "shape": {
+            "type": "polygon",
+            "coordinates": [[
+              [-11131.9, 6274861.4],
+              [556597.5, 6106854.8],
+              [1669792.4, 6274861.4],
+              [1558472.9, 8399737.9],
+              [-11131.9, 8625823.2],
+              [-11131.9, 6274861.4]
+            ]]
+          },
+          "relation": "intersects"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "xy-boundaries-intersects-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries-xy | WHERE ST_INTERSECTS(shape, TO_CARTESIANSHAPE(\"POLYGON((-11131.9 6274861.4, 556597.5 6106854.8, 1669792.4 6274861.4, 1558472.9 8399737.9, -11131.9 8625823.2, -11131.9 6274861.4))\")) | STATS count = COUNT(*)"
+},
+{
+  "name": "xy-boundaries-envelope-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(*)"
+},
+{
+  "name": "xy-boundaries-simplify-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFY(shape, 1000) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "xy-boundaries-simplify-preserve-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFYPRESERVETOPOLOGY(shape, 1000) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "xy-boundaries-buffer-esql",
+  "operation-type": "esql",
+  "query": "FROM boundaries-xy | WHERE vertex_count >= 200 AND vertex_count < 800 | EVAL buffered = ST_BUFFER(shape, 100) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))"
+},
+{
+  "name": "xy-routes-intersects-count",
+  "operation-type": "search",
+  "index": "routes-xy",
+  "body": {
+    "size": 0,
+    "query": {
+      "shape": {
+        "shape": {
+          "shape": {
+            "type": "polygon",
+            "coordinates": [[
+              [-11131.9, 6274861.4],
+              [556597.5, 6106854.8],
+              [1669792.4, 6274861.4],
+              [1558472.9, 8399737.9],
+              [-11131.9, 8625823.2],
+              [-11131.9, 6274861.4]
+            ]]
+          },
+          "relation": "intersects"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "xy-routes-intersects-esql",
+  "operation-type": "esql",
+  "query": "FROM routes-xy | WHERE ST_INTERSECTS(shape, TO_CARTESIANSHAPE(\"POLYGON((-11131.9 6274861.4, 556597.5 6106854.8, 1669792.4 6274861.4, 1558472.9 8399737.9, -11131.9 8625823.2, -11131.9 6274861.4))\")) | STATS count = COUNT(*)"
+},
+{
+  "name": "xy-routes-simplify-esql",
+  "operation-type": "esql",
+  "query": "FROM routes-xy | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL simplified = ST_SIMPLIFY(shape, 1000) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+},
+{
+  "name": "xy-routes-buffer-esql",
+  "operation-type": "esql",
+  "query": "FROM routes-xy | WHERE vertex_count >= 50 AND vertex_count < 400 | EVAL buffered = ST_BUFFER(shape, 100) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))"
+}

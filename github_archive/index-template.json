@@ -1,6 +1,8 @@
 {% import "rally.helpers" as rally with context %}
 {%- set p_use_ingest_pipeline = use_ingest_pipeline | default(true) %}
 {%- set p_data_stream = data_stream | default(false) %}
+{%- set p_set_ingest_timestamp = set_ingest_timestamp | default(true) %}
+{%- set p_sort_timestamp_field = "@timestamp" if p_set_ingest_timestamp else "created_at" %}
 {% set p_number_of_replicas = number_of_replicas | default(0) -%}
 {
   "index_patterns": ["gharchive*"],
@@ -32,7 +34,7 @@
         {% endif -%}
         {%- if p_use_ingest_pipeline == true %}
         "default_pipeline": "gharchive-pipeline",
-        "sort.field": ["type", "repo.id", "@timestamp"],
+        "sort.field": ["type", "repo.id", "{{ p_sort_timestamp_field }}"],
         "sort.order": ["asc", "asc", "desc"],
         {%- endif %}
         "mapping.total_fields.limit": 10000

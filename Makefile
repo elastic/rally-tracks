@@ -38,9 +38,6 @@ export UV_PROJECT_ENVIRONMENT := $(VIRTUAL_ENV)
 	precommit \
 	pre-commit \
 	test \
-	test-3.10 \
-	test-3.11 \
-	test-3.12 \
 	test-3.13 \
 	it \
 	it-serverless \
@@ -90,15 +87,6 @@ precommit pre-commit: venv
 
 test: venv
 	uv run --locked --group unit -- pytest $(ARGS)
-
-test-3.10:
-	$(MAKE) test PY_VERSION=3.10
-
-test-3.11:
-	$(MAKE) test PY_VERSION=3.11
-
-test-3.12:
-	$(MAKE) test PY_VERSION=3.12
 
 test-3.13:
 	$(MAKE) test PY_VERSION=3.13

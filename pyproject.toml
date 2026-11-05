@@ -12,7 +12,7 @@ source = "vcs"
 name = "rally-tracks"
 readme = "README.md"
 dynamic = ["version"]
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.13,<3.14"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -23,7 +23,7 @@ exclude = [
 
 [dependency-groups]
 develop = [
-    "black==26.3.1",
+    "black==26.10.1",
     "isort==5.12.0",
     "pre-commit==3.3.3",
 ]

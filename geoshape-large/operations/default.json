@@ -156,6 +156,7 @@
   "index": "boundaries",
   "body": {
     "size": 0,
+    "track_total_hits": true,
     "query": {
       "geo_shape": {
         "shape": {
@@ -173,13 +174,20 @@
           "relation": "intersects"
         }
       }
+    },
+    "aggs": {
+      "count": {
+        "value_count": {
+          "field": "vertex_count"
+        }
+      }
     }
   }
 },
 {
   "name": "boundaries-intersects-count-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+  "query": "FROM boundaries | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(vertex_count)"
 },
 {
   "name": "boundaries-contains-count",
@@ -187,6 +195,7 @@
   "index": "boundaries",
   "body": {
     "size": 0,
+    "track_total_hits": true,
     "query": {
       "geo_shape": {
         "shape": {
@@ -203,13 +212,20 @@
           "relation": "contains"
         }
       }
+    },
+    "aggs": {
+      "count": {
+        "value_count": {
+          "field": "vertex_count"
+        }
+      }
     }
   }
 },
 {
   "name": "boundaries-contains-count-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries | WHERE ST_CONTAINS(shape, TO_GEOSHAPE(\"POLYGON((2.29 48.85, 2.31 48.85, 2.31 48.87, 2.29 48.87, 2.29 48.85))\")) | STATS count = COUNT(*)"
+  "query": "FROM boundaries | WHERE ST_CONTAINS(shape, TO_GEOSHAPE(\"POLYGON((2.29 48.85, 2.31 48.85, 2.31 48.87, 2.29 48.87, 2.29 48.85))\")) | STATS count = COUNT(vertex_count)"
 },
 {
   "name": "boundaries-within-count",
@@ -217,6 +233,7 @@
   "index": "boundaries",
   "body": {
     "size": 0,
+    "track_total_hits": true,
     "query": {
       "geo_shape": {
         "shape": {
@@ -234,13 +251,20 @@
           "relation": "within"
         }
       }
+    },
+    "aggs": {
+      "count": {
+        "value_count": {
+          "field": "vertex_count"
+        }
+      }
     }
   }
 },
 {
   "name": "boundaries-within-count-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries | WHERE ST_WITHIN(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+  "query": "FROM boundaries | WHERE ST_WITHIN(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(vertex_count)"
 },
 {
   "name": "boundaries-disjoint-count",
@@ -248,6 +272,7 @@
   "index": "boundaries",
   "body": {
     "size": 0,
+    "track_total_hits": true,
     "query": {
       "geo_shape": {
         "shape": {
@@ -265,18 +290,25 @@
           "relation": "disjoint"
         }
       }
+    },
+    "aggs": {
+      "count": {
+        "value_count": {
+          "field": "vertex_count"
+        }
+      }
     }
   }
 },
 {
   "name": "boundaries-disjoint-count-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries | WHERE ST_DISJOINT(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+  "query": "FROM boundaries | WHERE ST_DISJOINT(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(vertex_count)"
 },
 {
   "name": "boundaries-envelope-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(*)"
+  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(vertex_count), avg_out = AVG(ST_NPOINTS(env))"
 },
 {
   "name": "boundaries-simplify-esql",
@@ -430,6 +462,7 @@
   "index": "routes",
   "body": {
     "size": 0,
+    "track_total_hits": true,
     "query": {
       "geo_shape": {
         "shape": {
@@ -442,13 +475,20 @@
           "relation": "intersects"
         }
       }
+    },
+    "aggs": {
+      "count": {
+        "value_count": {
+          "field": "vertex_count"
+        }
+      }
     }
   }
 },
 {
   "name": "routes-intersects-count-esql",
   "operation-type": "esql",
-  "query": "FROM routes | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+  "query": "FROM routes | WHERE ST_INTERSECTS(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(vertex_count)"
 },
 {
   "name": "routes-within-count",
@@ -456,6 +496,7 @@
   "index": "routes",
   "body": {
     "size": 0,
+    "track_total_hits": true,
     "query": {
       "geo_shape": {
         "shape": {
@@ -468,13 +509,20 @@
           "relation": "within"
         }
       }
+    },
+    "aggs": {
+      "count": {
+        "value_count": {
+          "field": "vertex_count"
+        }
+      }
     }
   }
 },
 {
   "name": "routes-within-count-esql",
   "operation-type": "esql",
-  "query": "FROM routes | WHERE ST_WITHIN(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+  "query": "FROM routes | WHERE ST_WITHIN(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(vertex_count)"
 },
 {
   "name": "routes-disjoint-count",
@@ -482,6 +530,7 @@
   "index": "routes",
   "body": {
     "size": 0,
+    "track_total_hits": true,
     "query": {
       "geo_shape": {
         "shape": {
@@ -494,18 +543,25 @@
           "relation": "disjoint"
         }
       }
+    },
+    "aggs": {
+      "count": {
+        "value_count": {
+          "field": "vertex_count"
+        }
+      }
     }
   }
 },
 {
   "name": "routes-disjoint-count-esql",
   "operation-type": "esql",
-  "query": "FROM routes | WHERE ST_DISJOINT(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(*)"
+  "query": "FROM routes | WHERE ST_DISJOINT(shape, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count = COUNT(vertex_count)"
 },
 {
   "name": "routes-envelope-esql",
   "operation-type": "esql",
-  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(*)"
+  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(vertex_count), avg_out = AVG(ST_NPOINTS(env))"
 },
 {
   "name": "routes-simplify-esql",
@@ -678,6 +734,7 @@
   "index": "boundaries-xy",
   "body": {
     "size": 0,
+    "track_total_hits": true,
     "query": {
       "shape": {
         "shape": {
@@ -695,18 +752,25 @@
           "relation": "intersects"
         }
       }
+    },
+    "aggs": {
+      "count": {
+        "value_count": {
+          "field": "vertex_count"
+        }
+      }
     }
   }
 },
 {
   "name": "xy-boundaries-intersects-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries-xy | WHERE ST_INTERSECTS(shape, TO_CARTESIANSHAPE(\"POLYGON((-11131.9 6274861.4, 556597.5 6106854.8, 1669792.4 6274861.4, 1558472.9 8399737.9, -11131.9 8625823.2, -11131.9 6274861.4))\")) | STATS count = COUNT(*)"
+  "query": "FROM boundaries-xy | WHERE ST_INTERSECTS(shape, TO_CARTESIANSHAPE(\"POLYGON((-11131.9 6274861.4, 556597.5 6106854.8, 1669792.4 6274861.4, 1558472.9 8399737.9, -11131.9 8625823.2, -11131.9 6274861.4))\")) | STATS count = COUNT(vertex_count)"
 },
 {
   "name": "xy-boundaries-envelope-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(*)"
+  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(vertex_count), avg_out = AVG(ST_NPOINTS(env))"
 },
 {
   "name": "xy-boundaries-simplify-esql",
@@ -729,6 +793,7 @@
   "index": "routes-xy",
   "body": {
     "size": 0,
+    "track_total_hits": true,
     "query": {
       "shape": {
         "shape": {
@@ -746,13 +811,20 @@
           "relation": "intersects"
         }
       }
+    },
+    "aggs": {
+      "count": {
+        "value_count": {
+          "field": "vertex_count"
+        }
+      }
     }
   }
 },
 {
   "name": "xy-routes-intersects-esql",
   "operation-type": "esql",
-  "query": "FROM routes-xy | WHERE ST_INTERSECTS(shape, TO_CARTESIANSHAPE(\"POLYGON((-11131.9 6274861.4, 556597.5 6106854.8, 1669792.4 6274861.4, 1558472.9 8399737.9, -11131.9 8625823.2, -11131.9 6274861.4))\")) | STATS count = COUNT(*)"
+  "query": "FROM routes-xy | WHERE ST_INTERSECTS(shape, TO_CARTESIANSHAPE(\"POLYGON((-11131.9 6274861.4, 556597.5 6106854.8, 1669792.4 6274861.4, 1558472.9 8399737.9, -11131.9 8625823.2, -11131.9 6274861.4))\")) | STATS count = COUNT(vertex_count)"
 },
 {
   "name": "xy-routes-simplify-esql",

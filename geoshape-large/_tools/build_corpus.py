@@ -147,9 +147,7 @@ def download(url: str, dest: Path) -> None:
     require_free(MIN_FREE_GIB, f"downloading {dest.name}")
     partial = dest.with_suffix(dest.suffix + ".partial")
     log(f"downloading {url}")
-    subprocess.check_call(
-        ["curl", "-L", "--fail", "--retry", "5", "--retry-delay", "2", "-C", "-", "-o", str(partial), url]
-    )
+    subprocess.check_call(["curl", "-L", "--fail", "--retry", "5", "--retry-delay", "2", "-C", "-", "-o", str(partial), url])
     partial.replace(dest)
 
 
@@ -735,6 +733,7 @@ def build_scales() -> None:
                 if capped is None:
                     continue
                 verts = vertex_count(capped)
+
                 def text(value) -> str:
                     if value is None:
                         return ""
@@ -768,6 +767,11 @@ def build_scales() -> None:
 
 def write_compressed(paths: list[Path], dest: Path, limit: int | None = None) -> tuple[int, int, int]:
     dest.parent.mkdir(parents=True, exist_ok=True)
+    docs, raw = _write_compressed_lines(dest, paths, limit)
+    return docs, dest.stat().st_size, raw
+
+
+def _write_compressed_lines(dest: Path, paths: list[Path], limit: int | None) -> tuple[int, int]:
     docs = 0
     raw = 0
     with bz2.open(dest, "wt", encoding="utf-8", compresslevel=9) as out:
@@ -784,8 +788,8 @@ def write_compressed(paths: list[Path], dest: Path, limit: int | None = None) ->
                     docs += 1
                     raw += len(line.encode("utf-8"))
                     if limit is not None and docs >= limit:
-                        return docs, dest.stat().st_size, raw
-    return docs, dest.stat().st_size, raw
+                        return docs, raw
+    return docs, raw
 
 
 def histogram(paths: list[Path]) -> dict[str, int]:
@@ -841,8 +845,27 @@ def publish(corpus: str, filename: str, paths: list[Path]) -> dict:
     return meta
 
 
+def completed_slugs(kind: str) -> set[str]:
+    suffix = f".{kind}.done"
+    return {path.name[: -len(suffix)] for path in (WORK / "markers").glob(f"*{suffix}")}
+
+
 def existing_paths(pattern: str) -> list[Path]:
-    return sorted(WORK.glob(pattern))
+    """Glob corpus inputs, skipping regions whose completion marker is absent."""
+    boundary_done = completed_slugs("boundaries")
+    route_done = completed_slugs("routes")
+    scales_done = marker("scales.done").exists()
+    paths = []
+    for path in sorted(WORK.glob(pattern)):
+        parts = path.relative_to(WORK).parts
+        if parts[0] == "regions" and parts[1] not in boundary_done:
+            continue
+        if parts[0] == "routes" and parts[1] not in route_done:
+            continue
+        if parts[0] == "scales" and not scales_done:
+            continue
+        paths.append(path)
+    return paths
 
 
 def finalize() -> None:
@@ -932,8 +955,7 @@ def update_track_json(published: dict) -> None:
         if meta is None:
             return match.group(0)
         return (
-            f'{match.group(1)}{meta["documents"]}{match.group(3)}{meta["compressed_bytes"]}'
-            f'{match.group(4)}{meta["uncompressed_bytes"]}'
+            f'{match.group(1)}{meta["documents"]}{match.group(3)}{meta["compressed_bytes"]}' f'{match.group(4)}{meta["uncompressed_bytes"]}'
         )
 
     path.write_text(pattern.sub(replace, text))
@@ -971,11 +993,12 @@ def count_built_boundaries() -> int:
 
 def load_route_quota() -> Counter:
     quota = Counter()
+    done = completed_slugs("routes")
     for path in WORK.glob("routes/*/*.jsonl"):
+        if path.parent.name not in done:
+            continue
         band = path.stem
         if band.endswith("-xy"):
-            continue
-        if not path.exists():
             continue
         with path.open() as handle:
             quota[band] += sum(1 for line in handle if line.strip())

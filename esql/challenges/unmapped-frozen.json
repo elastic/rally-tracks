@@ -1,0 +1,101 @@
+{% set p_snapshot_repo_name = (snapshot_repo_name | default("esql-unmapped")) %}
+{% set p_snapshot_repo_type = (snapshot_repo_type | default("fs")) %}
+{% set p_snapshot_repo_settings = (snapshot_repo_settings | default({"location": "esql_unmapped_snapshots"})) %}
+{% set p_snapshot_name = (snapshot_name | default("unmapped-dense-sparse")) %}
+{% set densities = ["dense", "sparse"] %}
+{% set modes = ["default", "load", "load_all", "source"] %}
+{% set mounted = ["unmapped_bench_full_mapped_dense", "unmapped_bench_no_mapping_dense", "unmapped_bench_full_mapped_sparse", "unmapped_bench_no_mapping_sparse"] %}
+
+    {
+      "name": "esql_unmapped_fields_frozen",
+      "description": "ES|QL probes (default, load, LOAD_ALL and METADATA _source) over the unmapped-fields indices mounted from a snapshot as partially mounted searchable snapshots, the frozen tier. Each probe runs once with the shared cache cleared (cold) and then warm. Needs the snapshot that esql_unmapped_fields_snapshot makes, and a node with the data_frozen role and a shared cache.",
+      "default": false,
+      "schedule": [
+        {
+          "name": "register-snapshot-repository",
+          "operation": {
+            "operation-type": "create-snapshot-repository",
+            "repository": {{ p_snapshot_repo_name | tojson }},
+            "body": {
+              "type": {{ p_snapshot_repo_type | tojson }},
+              "settings": {{ p_snapshot_repo_settings | tojson }}
+            }
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "delete-mounted-indices",
+          "operation": {
+            "operation-type": "delete-index",
+            "index": "frozen_unmapped_bench_*",
+            "only-if-exists": true
+          },
+          "tags": ["setup"]
+        },
+{% for index in mounted %}
+        {
+          "name": "mount-{{ index }}",
+          "operation": {
+            "operation-type": "raw-request",
+            "method": "POST",
+            "path": "/_snapshot/{{ p_snapshot_repo_name }}/{{ p_snapshot_name }}/_mount",
+            "request-params": {
+              "storage": "shared_cache",
+              "wait_for_completion": "true"
+            },
+            "body": {
+              "index": "{{ index }}",
+              "renamed_index": "frozen_{{ index }}",
+              "index_settings": {
+                "index.number_of_replicas": 0
+              }
+            }
+          },
+          "tags": ["setup"]
+        },
+{% endfor %}
+        {
+          "name": "check-cluster-health-after-mount",
+          "operation": {
+            "operation-type": "cluster-health",
+            "index": "frozen_unmapped_bench_*",
+            "request-params": {
+              "wait_for_status": "{{cluster_health | default('green')}}",
+              "wait_for_no_relocating_shards": "true"
+            },
+            "retry-until-success": true
+          },
+          "tags": ["setup"]
+        },
+{% for density in densities %}
+{% for mode in modes %}
+        {
+          "name": "clear-shared-cache-{{ mode }}-{{ density }}",
+          "operation": {
+            "operation-type": "raw-request",
+            "method": "POST",
+            "path": "/_searchable_snapshots/cache/clear"
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "unmapped_frozen_{{ mode }}_{{ density }}_cold",
+          "operation": "unmapped_frozen_{{ mode }}_{{ density }}",
+          "tags": ["esql_unmapped", "frozen", "cold", "{{ mode }}", "{{ density }}"],
+          "clients": 1,
+          "warmup-iterations": 0,
+          "iterations": 1
+        },
+        {
+          "name": "unmapped_frozen_{{ mode }}_{{ density }}_warm",
+          "operation": "unmapped_frozen_{{ mode }}_{{ density }}",
+          "tags": ["esql_unmapped", "frozen", "warm", "{{ mode }}", "{{ density }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        }{% if not (density == densities[-1] and mode == modes[-1]) %},{% endif %}
+
+{% endfor %}
+{% endfor %}
+      ]
+    }

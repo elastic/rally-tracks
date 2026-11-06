@@ -1,0 +1,33 @@
+{# Probes of the frozen-tier challenge: the same four queries as the hot ones, over the partially mounted copies of the unmapped-fields
+   indices (frozen_<index>). The challenge mounts them from a snapshot, see challenges/unmapped-frozen.json. #}
+{% set n_unmapped_fields = (n_unmapped_fields | default(998)) %}
+
+{%- macro keep(n) -%}
+{%- for i in range(n) -%}
+{%- if not loop.first %}, {% endif -%}field_{{ i }}
+{%- endfor -%}
+{%- endmacro -%}
+
+{% for density in ["dense", "sparse"] %}
+    {
+      "name": "unmapped_frozen_default_{{ density }}",
+      "operation-type": "esql",
+      "query": "FROM frozen_unmapped_bench_full_mapped_{{ density }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_frozen_load_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM frozen_unmapped_bench_no_mapping_{{ density }} | KEEP {{ keep(n_unmapped_fields) }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_frozen_load_all_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM frozen_unmapped_bench_no_mapping_{{ density }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_frozen_source_{{ density }}",
+      "operation-type": "esql",
+      "query": "FROM frozen_unmapped_bench_no_mapping_{{ density }} METADATA _source | KEEP _source | LIMIT 1000"
+    }{% if not loop.last %},{% endif %}
+
+{% endfor %}

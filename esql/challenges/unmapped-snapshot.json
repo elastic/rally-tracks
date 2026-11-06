@@ -7,7 +7,7 @@
 
     {
       "name": "esql_unmapped_fields_snapshot",
-      "description": "Indexes the dense and sparse corpora of esql_unmapped_fields (the fully mapped and the unmapped copy of each) and snapshots them, for esql_unmapped_fields_frozen. Run it once per snapshot repository, not nightly.",
+      "description": "Indexes the dense and sparse corpora of esql_unmapped_fields (the fully mapped and the unmapped copy of each) and snapshots them, for esql_unmapped_fields_frozen. Any snapshot of the same name in the repository is deleted first, so it can be re-run against the same repository.",
       "default": false,
       "schedule": [
         {
@@ -66,6 +66,16 @@
               "type": {{ p_snapshot_repo_type | tojson }},
               "settings": {{ p_snapshot_repo_settings | tojson }}
             }
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "delete-previous-snapshot",
+          "operation": {
+            "operation-type": "raw-request",
+            "method": "DELETE",
+            "path": "/_snapshot/{{ p_snapshot_repo_name }}/{{ p_snapshot_name }}",
+            "ignore": [404]
           },
           "tags": ["setup"]
         },

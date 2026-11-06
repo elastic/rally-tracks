@@ -40,7 +40,7 @@ The unmapped-fields challenge defaults bulk indexing to `bulk_size: 500` because
 
 Two challenges, both off by default, measure `default`, `load`, `LOAD_ALL` and `_source` on partially mounted searchable snapshots (`storage=shared_cache`):
 
-* `esql_unmapped_fields_snapshot` indexes the dense and sparse corpora (fully mapped and unmapped twins), force-merges them to one segment and snapshots them into a repository. Run it once against a persistent repository.
+* `esql_unmapped_fields_snapshot` indexes the dense and sparse corpora (fully mapped and unmapped twins), force-merges them to one segment and snapshots them into a repository. Re-running it against the same repository deletes the previous snapshot of that name first.
 * `esql_unmapped_fields_frozen` mounts those snapshots as `frozen_unmapped_bench_*` and, for every density and mode, clears the shared cache and runs a `_cold` task (one iteration) and a `_warm` task. It needs a cluster with a frozen node and the snapshot from the first challenge.
 
 Track parameters: `snapshot_repo_name` (default `esql-unmapped`), `snapshot_repo_type` (default `fs`), `snapshot_repo_settings` (default `{"location": "esql_unmapped_snapshots"}`; an `fs` location must be under `path.repo`), `snapshot_name` (default `unmapped-dense-sparse`), `query_iterations` (default 100, warm task).

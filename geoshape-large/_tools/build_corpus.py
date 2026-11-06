@@ -15,7 +15,6 @@ is not downloaded again. It stops rather than filling the disk.
 from __future__ import annotations
 
 import argparse
-import bz2
 import json
 import math
 import os
@@ -772,23 +771,50 @@ def write_compressed(paths: list[Path], dest: Path, limit: int | None = None) ->
 
 
 def _write_compressed_lines(dest: Path, paths: list[Path], limit: int | None) -> tuple[int, int]:
+    """Compress with pbzip2 so Rally's parallel decompress can use every core.
+
+    A single libbzip2 stream stays single-threaded under ``pbzip2 -d``. pbzip2
+    writes one bzip2 stream per block, which is what that decompressor parallelizes.
+    """
+    pbzip2 = shutil.which("pbzip2")
+    if pbzip2 is None:
+        raise SystemExit("pbzip2 is required so Rally can decompress these corpora in parallel")
+    tmp = dest.with_name(dest.name + ".partial")
     docs = 0
     raw = 0
-    with bz2.open(dest, "wt", encoding="utf-8", compresslevel=9) as out:
-        for path in paths:
-            if not path.exists():
-                continue
-            with path.open() as handle:
-                for line in handle:
-                    if not line.strip():
-                        continue
-                    if not line.endswith("\n"):
-                        line += "\n"
-                    out.write(line)
-                    docs += 1
-                    raw += len(line.encode("utf-8"))
-                    if limit is not None and docs >= limit:
-                        return docs, raw
+    command = [pbzip2, "-c", "-9"]
+    threads = os.environ.get("PBZIP2_THREADS")
+    if threads:
+        command.append(f"-p{threads}")
+    with tmp.open("wb") as compressed:
+        proc = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=compressed, stderr=subprocess.PIPE)
+        assert proc.stdin is not None
+        reached_limit = False
+        try:
+            for path in paths:
+                if reached_limit or not path.exists():
+                    continue
+                with path.open("rb") as handle:
+                    for line in handle:
+                        if not line.strip():
+                            continue
+                        if not line.endswith(b"\n"):
+                            line += b"\n"
+                        proc.stdin.write(line)
+                        docs += 1
+                        raw += len(line)
+                        if limit is not None and docs >= limit:
+                            reached_limit = True
+                            break
+        finally:
+            proc.stdin.close()
+        stderr = proc.stderr.read() if proc.stderr else b""
+        return_code = proc.wait()
+    if return_code != 0:
+        tmp.unlink(missing_ok=True)
+        detail = stderr.decode(errors="replace")[:800]
+        raise RuntimeError(f"pbzip2 exited {return_code} while writing {dest.name}: {detail}")
+    os.replace(tmp, dest)
     return docs, raw
 
 

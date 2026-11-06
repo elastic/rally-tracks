@@ -38,7 +38,10 @@
   { "name": "unmapped_bench_no_mapping_dense",   "body": "unmapped_no_mapping.json"   },
   { "name": "unmapped_bench_no_mapping_sparse",  "body": "unmapped_no_mapping.json"   },
   { "name": "unmapped_bench_typed_mapped",       "body": "unmapped_typed_mapping.json" },
-  { "name": "unmapped_bench_typed_no_mapping",   "body": "unmapped_no_mapping.json"    }
+  { "name": "unmapped_bench_typed_no_mapping",   "body": "unmapped_no_mapping.json"    },
+  { "name": "unmapped_bench_partial10_dense",    "body": "unmapped_partial_mapping_p10.json" },
+  { "name": "unmapped_bench_partial50_dense",    "body": "unmapped_partial_mapping_p50.json" },
+  { "name": "unmapped_bench_partial90_dense",    "body": "unmapped_partial_mapping_p90.json" }
 ],
 "corpora": [
 {% for i in range(1, n_indices) %}
@@ -104,6 +107,27 @@
   "documents": [
     {
       "target-index": "unmapped_bench_no_mapping_dense",
+      "source-file": "unmapped_bench_dense.json.bz2",
+      "document-count": 1000000,
+      "compressed-bytes": 3614855830,
+      "uncompressed-bytes": 18905888890
+    },
+    {
+      "target-index": "unmapped_bench_partial10_dense",
+      "source-file": "unmapped_bench_dense.json.bz2",
+      "document-count": 1000000,
+      "compressed-bytes": 3614855830,
+      "uncompressed-bytes": 18905888890
+    },
+    {
+      "target-index": "unmapped_bench_partial50_dense",
+      "source-file": "unmapped_bench_dense.json.bz2",
+      "document-count": 1000000,
+      "compressed-bytes": 3614855830,
+      "uncompressed-bytes": 18905888890
+    },
+    {
+      "target-index": "unmapped_bench_partial90_dense",
       "source-file": "unmapped_bench_dense.json.bz2",
       "document-count": 1000000,
       "compressed-bytes": 3614855830,

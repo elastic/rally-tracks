@@ -71,7 +71,7 @@ There is no spatial join yet. `boundaries` is a separate index from `geoshape`'s
 python3 geoshape-large/_tools/build_corpus.py all
 ```
 
-Finished files are hard-linked into `~/.rally/benchmarks/data/<corpus>/` and written under `geoshape-large/dist/`. Publish both the full files and the `-1k` test-mode files to `https://rally-tracks.elastic.co/geoshape-large/` before this track can run from a clean machine. Until then, `it_tracks/test_all_tracks_and_challenges.py` skips the track.
+Finished files are hard-linked into `~/.rally/benchmarks/data/<corpus>/` and written under `geoshape-large/dist/`. Publish both the full files and the `-1k` test-mode files to `https://rally-tracks.elastic.co/geoshape-large/`. Corpora with at most 1,000 documents, such as `boundaries-stress`, have no `-1k` file because test mode uses the full file.
 
 Document counts below are filled in by the build.
 

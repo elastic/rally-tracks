@@ -51,48 +51,42 @@
   "operation-type": "raw-request",
   "method": "POST",
   "path": "/boundaries/_disk_usage?run_expensive_tasks=true&flush=true",
-  "request-timeout": 1800,
-  "body": {}
+  "request-timeout": 1800
 },
 {
   "name": "disk-usage-routes",
   "operation-type": "raw-request",
   "method": "POST",
   "path": "/routes/_disk_usage?run_expensive_tasks=true&flush=true",
-  "request-timeout": 1800,
-  "body": {}
+  "request-timeout": 1800
 },
 {
   "name": "disk-usage-scales",
   "operation-type": "raw-request",
   "method": "POST",
   "path": "/boundary-scales/_disk_usage?run_expensive_tasks=true&flush=true",
-  "request-timeout": 600,
-  "body": {}
+  "request-timeout": 600
 },
 {
   "name": "disk-usage-stress",
   "operation-type": "raw-request",
   "method": "POST",
   "path": "/boundaries-stress/_disk_usage?run_expensive_tasks=true&flush=true",
-  "request-timeout": 1800,
-  "body": {}
+  "request-timeout": 1800
 },
 {
   "name": "disk-usage-boundaries-xy",
   "operation-type": "raw-request",
   "method": "POST",
   "path": "/boundaries-xy/_disk_usage?run_expensive_tasks=true&flush=true",
-  "request-timeout": 1800,
-  "body": {}
+  "request-timeout": 1800
 },
 {
   "name": "disk-usage-routes-xy",
   "operation-type": "raw-request",
   "method": "POST",
   "path": "/routes-xy/_disk_usage?run_expensive_tasks=true&flush=true",
-  "request-timeout": 1800,
-  "body": {}
+  "request-timeout": 1800
 },
 {
   "name": "boundaries-bounds",

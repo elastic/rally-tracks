@@ -8,6 +8,16 @@
 {%- endfor -%}
 {%- endmacro -%}
 
+    {# The snapshot challenge snapshots only the fully mapped and the unmapped dense indices, so unlike index-unmapped-dense it does
+       not index (or download the data for) the partial-mapping indices. #}
+    {
+      "name": "index-unmapped-dense-for-snapshot",
+      "operation-type": "bulk",
+      "indices": ["unmapped_bench_full_mapped_dense", "unmapped_bench_no_mapping_dense"],
+      "bulk-size": {{ bulk_size | default(500) }},
+      "ingest-percentage": {{ ingest_percentage | default(100) }}
+    },
+
 {% for density in ["dense", "sparse"] %}
     {
       "name": "unmapped_frozen_default_{{ density }}",

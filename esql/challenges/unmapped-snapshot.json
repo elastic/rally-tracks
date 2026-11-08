@@ -30,7 +30,7 @@
           "tags": ["setup"]
         },
         {
-          "operation": "index-unmapped-dense",
+          "operation": "index-unmapped-dense-for-snapshot",
           "clients": {{bulk_indexing_clients | default(8)}},
           "tags": ["setup"]
         },

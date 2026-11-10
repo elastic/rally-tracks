@@ -306,8 +306,8 @@
           "operation": "unmapped_mix_load_all_sort_10fields_dense",
           "tags": ["esql_unmapped", "mix", "load_all", "dense", "targeted", "sort", "10fields"],
           "clients": {{query_clients | default(1)}},
-          "warmup-iterations": 100,
-          "iterations": {{query_iterations | default(100)}}
+          "warmup-iterations": {{slow_warmup_iterations | default(3)}},
+          "iterations": {{slow_iterations | default(20)}}
         },
         {
           "operation": "unmapped_mix_load_all_filter_10fields_sparse",

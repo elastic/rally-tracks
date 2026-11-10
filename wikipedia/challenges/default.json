@@ -175,6 +175,14 @@
     ]
   },
   {
+    "name": "fetch-phase-esql-dsl",
+    "description": "Indexes and executes nine fixed ES|QL queries and their Query DSL equivalents to compare the fetch phase",
+    "default": false,
+    "schedule": [
+      {{ rally.collect(parts="common/fetch-phase-esql-dsl.json") }}
+    ]
+  },
+  {
     "name": "ingest-autoscale",
     "description": "Benchmark bulk indexing with configurable steps",
     "default": false,

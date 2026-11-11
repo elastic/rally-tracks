@@ -1,7 +1,7 @@
 {% import "rally.helpers" as rally %}
 {
   "name": "many-shards-snapshots",
-  "description": "Indexes a large amount of shards and then sequentially takes a configurable number of snapshots. Used for benchmarks to help identify regressions related to snapshots with high index counts.",
+  "description": "Indexes a large amount of shards and then concurrently submits a configurable number of snapshots. Used for benchmarks to help identify regressions related to snapshots with high index counts.",
   "schedule": [
     {% include "tasks/many-shards-setup.json" %},
     {
@@ -39,25 +39,35 @@
         }
       }
     },
-    {# Issue <snapshot_counts> number of back to back snapshots and wait until all have completed #}
-      {% for snap_iter in range(snapshot_counts | default(100)) %}
-      {
-        "name": "create-snapshot-{{ snap_iter }}",
-        "operation": {
-          "operation-type": "create-snapshot",
-          "repository": {{ p_snapshot_repo_name | tojson }},
-          "snapshot": "{{ p_snapshot_name  }}-{{ snap_iter }}",
-          "wait-for-completion": false,
-          "body": {
-            "indices": {{ p_restore_data_streams | tojson }},
-            "ignore_unavailable": true,
-            "include_global_state": false,
-            "metadata": {{ p_snapshot_metadata | tojson }}
-          },
-          "include-in-reporting": true
-        }
-      },
-      {% endfor %}
+    {# Submit snapshot requests concurrently, like ILM does for independently managed indices. #}
+    {% set p_snapshot_counts = snapshot_counts | default(100) %}
+    {% if p_snapshot_counts > 0 %}
+    {
+      "parallel": {
+        "tasks": [
+          {% for snap_iter in range(p_snapshot_counts) %}
+          {
+            "name": "create-snapshot-{{ snap_iter }}",
+            "clients": 1,
+            "operation": {
+              "operation-type": "create-snapshot",
+              "repository": {{ p_snapshot_repo_name | tojson }},
+              "snapshot": "{{ p_snapshot_name  }}-{{ snap_iter }}",
+              "wait-for-completion": false,
+              "body": {
+                "indices": {{ p_restore_data_streams | tojson }},
+                "ignore_unavailable": true,
+                "include_global_state": false,
+                "metadata": {{ p_snapshot_metadata | tojson }}
+              },
+              "include-in-reporting": true
+            }
+          }{% if not loop.last %},{% endif %}
+          {% endfor %}
+        ]
+      }
+    },
+    {% endif %}
       {
         "name": "wait-for-snapshots",
         "operation": {

@@ -284,7 +284,7 @@ The following parameters are available:
 * `use_doc_values_skipper` (default: true) - Enable doc_values_skippers, and remove indexes on host.name and @timestamp
 
 ### Snapshot parameters
-* `snapshot_counts` (default: `100`) - Specifies the number of back to back snapshots to issue and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
+* `snapshot_counts` (default: `100`) - Specifies the number of snapshots to submit concurrently and wait until all have completed. Applicable only to [many-shards-snapshots challenge](#many-shards-snapshots-many-shards-snapshots).
 * `snapshot_repo_name` (default: `logging`) - Snapshot repository name.
 * `snapshot_repo_type` (default: `s3`) - Other valid choices can be `gcs` and `azure`.
 * `snapshot_repo_settings` (default: 
@@ -371,7 +371,7 @@ Note: If the indexing load is higher than the cluster can support, a time lag wi
 
 ### Many Shards Snapshots (many-shards-snapshots)
 
-This benchmarks aims to track performance and stability improvements related to snapshots in use cases with a high shard count. The challenge creates and indexes into initial set of indices (count controlled by `data.initial.indices` param); each index receives 100 auditbeat-like documents. Issues a number of sequential create snapshot requests (non blocking, using `wait_for_completion=false`), configurable via `snapshot_counts`. Waits until all snapshots have completed. The performance can be evaluated by the `service_time` of the `wait-for-snapshots` task.
+This benchmarks aims to track performance and stability improvements related to snapshots in use cases with a high shard count. The challenge creates and indexes into initial set of indices (count controlled by `data.initial.indices` param); each index receives 100 auditbeat-like documents. Submits create snapshot requests concurrently, with one client per request and the count configurable via `snapshot_counts`. Like ILM acting on independent indices, submission does not wait for another request to return. Requests use `wait_for_completion=false`, so the create request timings continue to measure snapshot initialization rather than completion. Waits until all snapshots have completed. The performance can be evaluated by the `service_time` of the `wait-for-snapshots` task.
 
 Note that this challenge requires you to be able to successfully create a snapshot repository using the `snapshot_repo_type`, and `many_shards_snapshot_repo_settings` track parameters.
 

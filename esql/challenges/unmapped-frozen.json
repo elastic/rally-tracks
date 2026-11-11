@@ -23,16 +23,18 @@
           },
           "tags": ["setup"]
         },
+{# Each mounted index is deleted by its exact name before it is mounted: with the default action.destructive_requires_name a wildcard
+   delete is rejected as soon as a previous run left mounted indices behind. #}
+{% for index in mounted %}
         {
-          "name": "delete-mounted-indices",
+          "name": "delete-mounted-{{ index }}",
           "operation": {
             "operation-type": "delete-index",
-            "index": "frozen_unmapped_bench_*",
+            "index": "frozen_{{ index }}",
             "only-if-exists": true
           },
           "tags": ["setup"]
         },
-{% for index in mounted %}
         {
           "name": "mount-{{ index }}",
           "operation": {

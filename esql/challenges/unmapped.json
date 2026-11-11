@@ -297,32 +297,57 @@
         },
         {
           "operation": "unmapped_mix_load_all_filter_10fields_dense",
-          "tags": ["esql_unmapped", "mix", "load_all", "dense", "targeted", "filter", "10fields"],
+          "tags": ["esql_unmapped", "mix", "load_all", "dense", "targeted", "filter", "10fields", "full_width"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "unmapped_mix_load_all_sort_10fields_dense",
-          "tags": ["esql_unmapped", "mix", "load_all", "dense", "targeted", "sort", "10fields"],
+          "tags": ["esql_unmapped", "mix", "load_all", "dense", "targeted", "sort", "10fields", "full_width"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": {{slow_warmup_iterations | default(3)}},
           "iterations": {{slow_iterations | default(20)}}
         },
         {
           "operation": "unmapped_mix_load_all_filter_10fields_sparse",
-          "tags": ["esql_unmapped", "mix", "load_all", "sparse", "targeted", "filter", "10fields"],
+          "tags": ["esql_unmapped", "mix", "load_all", "sparse", "targeted", "filter", "10fields", "full_width"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "unmapped_mix_load_all_sort_10fields_sparse",
-          "tags": ["esql_unmapped", "mix", "load_all", "sparse", "targeted", "sort", "10fields"],
+          "tags": ["esql_unmapped", "mix", "load_all", "sparse", "targeted", "sort", "10fields", "full_width"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 100,
           "iterations": {{query_iterations | default(100)}}
         },
+{# Baselines for the four LOAD_ALL filter and sort probes above (all columns returned, no KEEP): default and LOAD. The LOAD sorts
+   read field_0 from _source for the unmapped index, so they are as slow as the LOAD_ALL ones and use the slow iteration counts. #}
+{% for density in ["dense", "sparse"] %}
+{% for mode in ["default", "load"] %}
+        {
+          "operation": "unmapped_mix_{{ mode }}_filter_all_{{ density }}",
+          "tags": ["esql_unmapped", "mix", "{{ mode }}", "{{ density }}", "filter", "full_width"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_{{ mode }}_sort_all_{{ density }}",
+          "tags": ["esql_unmapped", "mix", "{{ mode }}", "{{ density }}", "sort", "full_width"],
+          "clients": {{query_clients | default(1)}},
+{% if mode == "load" %}
+          "warmup-iterations": {{slow_warmup_iterations | default(3)}},
+          "iterations": {{slow_iterations | default(20)}}
+{% else %}
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+{% endif %}
+        },
+{% endfor %}
+{% endfor %}
 
 {# Partial-mapping benchmark: DEFAULT vs LOAD_ALL vs LOAD on partially-mapped dense indices. #}
 {% set partial_configs = [(10, 100), (50, 499), (90, 898)] %}

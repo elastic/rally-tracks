@@ -206,6 +206,48 @@
       "operation-type": "esql",
       "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | SORT field_0 | LIMIT 1000"
     },
+    {# Baselines for the four LOAD_ALL filter and sort probes above. Those return every column, so these do the same without KEEP,
+       in the default mode and with LOAD (which reads field_0 from _source for the unmapped index but builds no _unmapped_fields). #}
+    {
+      "name": "unmapped_mix_default_filter_all_dense",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_default_sort_all_dense",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_filter_all_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_sort_all_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_default_filter_all_sparse",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_default_sort_all_sparse",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_filter_all_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_sort_all_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | SORT field_0 | LIMIT 1000"
+    },
 
 {# Partial-mapping benchmark: DEFAULT vs LOAD_ALL vs LOAD on indices where N% of fields are mapped.
    p10 = 100/998 mapped (~10%), p50 = 499/998 (~50%), p90 = 898/998 (~90%).

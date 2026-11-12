@@ -354,21 +354,21 @@
 {% for pct, n_mapped in partial_configs %}
         {
           "operation": "unmapped_partial_default_p{{ pct }}_dense",
-          "tags": ["esql_unmapped", "partial_mapping", "default", "dense", "p{{ pct }}"],
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "default", "dense", "p{{ pct }}"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "unmapped_partial_load_all_p{{ pct }}_dense",
-          "tags": ["esql_unmapped", "partial_mapping", "load_all", "dense", "p{{ pct }}"],
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "load_all", "dense", "p{{ pct }}"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "unmapped_partial_load_p{{ pct }}_dense",
-          "tags": ["esql_unmapped", "partial_mapping", "load", "dense", "p{{ pct }}"],
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "load", "dense", "p{{ pct }}"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
@@ -382,14 +382,14 @@
 {% for lim in full_mapped_limits %}
         {
           "operation": "unmapped_full_mapped_default_limit{{ lim }}_dense",
-          "tags": ["esql_unmapped", "full_mapped", "default", "dense", "limit_sweep"],
+          "tags": ["esql_unmapped", "nightly", "full_mapped", "default", "dense", "limit_sweep"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "unmapped_full_mapped_load_all_limit{{ lim }}_dense",
-          "tags": ["esql_unmapped", "full_mapped", "load_all", "dense", "limit_sweep"],
+          "tags": ["esql_unmapped", "nightly", "full_mapped", "load_all", "dense", "limit_sweep"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
@@ -398,28 +398,28 @@
 {# Back-compat aliases and aggregation planner behaviour. #}
         {
           "operation": "unmapped_full_mapped_default_dense",
-          "tags": ["esql_unmapped", "full_mapped", "default", "dense"],
+          "tags": ["esql_unmapped", "nightly", "full_mapped", "default", "dense"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "unmapped_full_mapped_load_all_dense",
-          "tags": ["esql_unmapped", "full_mapped", "load_all", "dense"],
+          "tags": ["esql_unmapped", "nightly", "full_mapped", "load_all", "dense"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "unmapped_partial_agg_default_p10_dense",
-          "tags": ["esql_unmapped", "partial_mapping", "agg", "default", "dense", "p10"],
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "agg", "default", "dense", "p10"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
         },
         {
           "operation": "unmapped_partial_agg_load_all_p10_dense",
-          "tags": ["esql_unmapped", "partial_mapping", "agg", "load_all", "dense", "p10"],
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "agg", "load_all", "dense", "p10"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}

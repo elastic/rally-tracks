@@ -3,6 +3,7 @@
 {%- set p_conflict_probability = conflict_probability | default(25) %}
 {%- set p_on_conflict = on_conflict | default('index') %}
 {%- set p_cluster_health = cluster_health | default('green') %}
+{% set p_use_ingest_pipeline = use_ingest_pipeline | default(true) -%}
 {% set p_detailed_results = detailed_results | default(false) -%}
 {% set _base_url = (base_url | default("https://rally-tracks.elastic.co/github_archive")) %}
 {% set p_query_end_date = query_end_date | default("2021-10-05") -%}
@@ -67,6 +68,9 @@
     {
       "name": "github_archive0",
       "base-url": "{{_base_url}}",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20211001.json.bz2",
@@ -241,6 +245,9 @@
     {
       "name": "github_archive1",
       "base-url": "{{_base_url}}",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
           {
             "source-file": "documents-20211101.json.zst",
@@ -425,9 +432,12 @@
       ]
     },
     {
-    "name": "github_archive2",
-    "base-url": "{{_base_url}}",
-    "documents": [
+      "name": "github_archive2",
+      "base-url": "{{_base_url}}",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
+      "documents": [
       {
         "source-file": "documents-20211201.json.zst",
         "document-count": 3607185,
@@ -619,6 +629,9 @@
     {
       "name": "github_archive3",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-2022-01.json.zst",
@@ -631,6 +644,9 @@
     {
       "name": "github_archive4",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20220201-14.json.zst",
@@ -649,6 +665,9 @@
     {
       "name": "github_archive5",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20220301-15.json.zst",
@@ -667,6 +686,9 @@
     {
       "name": "github_archive6",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20220401-15.json.zst",
@@ -685,6 +707,9 @@
     {
       "name": "github_archive7",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20220501-15.json.zst",
@@ -703,6 +728,9 @@
     {
       "name": "github_archive8",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20220601-15.json.zst",
@@ -721,6 +749,9 @@
     {
       "name": "github_archive9",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20220701-15.json.zst",
@@ -739,6 +770,9 @@
     {
       "name": "github_archive10",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20220801-15.json.zst",
@@ -757,6 +791,9 @@
     {
       "name": "github_archive11",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20220901-15.json.zst",
@@ -775,6 +812,9 @@
     {
       "name": "github_archive12",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20221001-15.json.zst",
@@ -793,6 +833,9 @@
     {
       "name": "github_archive13",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20221101-15.json.zst",
@@ -811,6 +854,9 @@
     {
       "name": "github_archive14",
       "base-url": "{{_base_url}}/2022",
+      {% if p_data_stream -%}
+      "target-data-stream": "gharchive",
+      {% endif -%}
       "documents": [
         {
           "source-file": "documents-20221201-15.json.zst",

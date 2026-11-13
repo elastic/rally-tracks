@@ -984,7 +984,7 @@ def select_stress(paths: list[Path]) -> list[Path]:
         with path.open() as handle:
             for line_no, line in enumerate(handle):
                 if line_no in wanted:
-                    repaired = repair_stress_line(line)
+                    repaired = repair_stress_document(line)
                     if repaired is None:
                         log(f"dropping unusable stress document from {path}")
                         continue
@@ -997,7 +997,7 @@ def select_stress(paths: list[Path]) -> list[Path]:
     return [dest]
 
 
-def repair_stress_line(line: str) -> tuple[int, str] | None:
+def repair_stress_document(line: str) -> tuple[int, str] | None:
     """Rewrite one stored stress document so the polygon Elasticsearch receives is valid."""
     from shapely import from_wkt
 

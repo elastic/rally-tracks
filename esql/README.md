@@ -23,15 +23,24 @@ This track allows to overwrite the following parameters using `--track-params`:
 
 ### `esql_unmapped_fields` challenge notes
 
-This challenge benchmarks `SET unmapped_fields="load"` against `nullify` and mapped baselines over dense and sparse corpora. It includes:
+This challenge benchmarks `SET unmapped_fields="load"` and `"LOAD_ALL"` against `nullify` and mapped baselines over dense and sparse corpora. It includes:
 
 * single-index unmapped queries (`load` and `nullify`)
 * mixed mapped+unmapped queries (`mix_load` and `mix_nullify`)
 * `_source` variants on mapped-only queries
 * cast probes, two-field-extraction probes (`*_2fe_*`), and targeted filter/sort probes (`*_keep_10fields_*`)
 * PUNK single-type probes (`unmapped_typed_*`) — see below
+* `LOAD_ALL` probes (`unmapped_load_all_<density>`, `unmapped_mix_load_all_<density>`, `unmapped_mix_load_all_{filter,sort}_10fields_<density>`): `LOAD_ALL` returns every unmapped field in one `_unmapped_fields` column whatever the query names, so unlike `load` these have no field count
+* partial-mapping probes (`unmapped_partial_{default,load,load_all}_p{10,50,90}_dense`, `unmapped_partial_agg_*_p10_dense`): the dense corpus indexed with 10, 50 or 90 percent of its fields mapped
+* `LIMIT` sweep over the fully mapped dense index (`unmapped_full_mapped_{default,load_all}_limit{10,100,1000,10000}_dense`)
 
 The unmapped-fields challenge defaults bulk indexing to `bulk_size: 500` because dense documents are very wide. Passing `bulk_size` overrides it.
+
+A sort on an unmapped field over the mixed dense indices (`unmapped_mix_load_all_sort_10fields_dense`) takes about 50 s per request at full size, because every document of the unmapped index is read from `_source`. It therefore runs `slow_warmup_iterations` (default 3) warmup and `slow_iterations` (default 20) timed iterations instead of 100 and `query_iterations`. The older `unmapped_mix_load_sort_keep_10fields_dense` has the same cost and still runs 100 and 100, so a full run of the challenge takes hours; exclude it with `exclude.tasks` for a faster run.
+
+The four `LOAD_ALL` filter and sort probes over the mixed indices return every column, where the older `LOAD` and default probes keep 10 fields. To compare like with like, each has a default and a `LOAD` baseline without `KEEP` (`unmapped_mix_{default,load}_{filter,sort}_all_{dense,sparse}`). All twelve carry the `full_width` tag, so `include.tasks: ["tag:setup", "tag:full_width"]` runs just that comparison.
+
+The `nightly` tag marks a lean subset (the partial-mapping probes and the full-mapped probes, including the `LIMIT` sweep, for `default` and `LOAD_ALL`) that avoids the slow full-width sorts: `include.tasks: ["tag:setup", "tag:nightly"]`.
 
 #### Data generation
 

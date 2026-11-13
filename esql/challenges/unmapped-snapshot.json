@@ -1,0 +1,98 @@
+{% set p_include_non_serverless_index_settings = (include_non_serverless_index_settings | default(build_flavor != "serverless")) %}
+{% set p_snapshot_repo_name = (snapshot_repo_name | default("esql-unmapped")) %}
+{% set p_snapshot_repo_type = (snapshot_repo_type | default("fs")) %}
+{# an fs repository needs a location below path.repo; a gcs or s3 one needs its bucket (and a base_path) in snapshot_repo_settings #}
+{% set p_snapshot_repo_settings = (snapshot_repo_settings | default({"location": "esql_unmapped_snapshots"})) %}
+{% set p_snapshot_name = (snapshot_name | default("unmapped-dense-sparse")) %}
+
+    {
+      "name": "esql_unmapped_fields_snapshot",
+      "description": "Indexes the dense and sparse corpora of esql_unmapped_fields (the fully mapped and the unmapped copy of each) and snapshots them, for esql_unmapped_fields_frozen. Any snapshot of the same name in the repository is deleted first, so it can be re-run against the same repository.",
+      "default": false,
+      "schedule": [
+        {
+          "operation": "delete-index",
+          "tags": ["setup"]
+        },
+        {
+          "operation": {
+            "operation-type": "create-index",
+            "settings": {%- if index_settings is defined %} {{index_settings | tojson}} {%- else %} {
+              {# non-serverless-index-settings-marker-start #}{%- if build_flavor != "serverless" or serverless_operator == true -%}
+                {% if p_include_non_serverless_index_settings %}
+              "index.translog.flush_threshold_size": "4g",
+                {% endif %}
+              {%- endif -%}{# non-serverless-index-settings-marker-end #}
+              "index.codec": "best_compression",
+              "index.refresh_interval": "30s"
+            }{%- endif %}
+          },
+          "tags": ["setup"]
+        },
+        {
+          "operation": "index-unmapped-dense-for-snapshot",
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "tags": ["setup"]
+        },
+        {
+          "operation": "index-unmapped-sparse",
+          "clients": {{bulk_indexing_clients | default(8)}},
+          "tags": ["setup"]
+        },
+        {
+          "name": "refresh-before-snapshot",
+          "operation": {
+            "operation-type": "refresh",
+            "index": "unmapped_bench_full_mapped_*,unmapped_bench_no_mapping_*"
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "force-merge-before-snapshot",
+          "operation": {
+            "operation-type": "force-merge",
+            "index": "unmapped_bench_full_mapped_*,unmapped_bench_no_mapping_*",
+            "max-num-segments": 1,
+            "request-timeout": 7200
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "register-snapshot-repository",
+          "operation": {
+            "operation-type": "create-snapshot-repository",
+            "repository": {{ p_snapshot_repo_name | tojson }},
+            "body": {
+              "type": {{ p_snapshot_repo_type | tojson }},
+              "settings": {{ p_snapshot_repo_settings | tojson }}
+            }
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "delete-previous-snapshot",
+          "operation": {
+            "operation-type": "raw-request",
+            "method": "DELETE",
+            "path": "/_snapshot/{{ p_snapshot_repo_name }}/{{ p_snapshot_name }}",
+            "ignore": [404]
+          },
+          "tags": ["setup"]
+        },
+        {
+          "name": "create-snapshot",
+          "operation": {
+            "operation-type": "create-snapshot",
+            "repository": {{ p_snapshot_repo_name | tojson }},
+            "snapshot": {{ p_snapshot_name | tojson }},
+            "body": {
+              "indices": "unmapped_bench_full_mapped_dense,unmapped_bench_no_mapping_dense,unmapped_bench_full_mapped_sparse,unmapped_bench_no_mapping_sparse",
+              "include_global_state": false
+            },
+            "wait-for-completion": true,
+            "request-timeout": 7200
+          },
+          "tags": ["setup"]
+        }
+      ]
+    }

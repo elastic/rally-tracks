@@ -41,7 +41,11 @@ Three more challenges stay off the default run:
 
 ### Queries
 
-Relation queries are `STATS count` over a fixed polygon, so the result does not depend on Lucene doc order. Per-document `ST_ENVELOPE`, `ST_SIMPLIFY`, `ST_SIMPLIFYPRESERVETOPOLOGY` and `ST_BUFFER` filter on `vertex_count`. Grid aggregations pass an explicit Paris bounds and a precision that stays under the 10,000-cell ES|QL limit. `ST_BUFFER` and `ST_SIMPLIFYPRESERVETOPOLOGY` need Elasticsearch 9.4 or later.
+Relation queries are `STATS count` over a fixed polygon, so the result does not depend on Lucene doc order. Per-document `ST_ENVELOPE`, `ST_SIMPLIFY`, `ST_SIMPLIFYPRESERVETOPOLOGY` and `ST_BUFFER` filter on `vertex_count`. Grid aggregations pass an explicit Paris bounds and a precision that stays under the 10,000-cell ES|QL limit.
+
+### Elasticsearch version
+
+The track requires Elasticsearch 9.6.0 or later. `ST_GEOHASH`, `ST_GEOTILE`, and `ST_GEOHEX` accept `geo_shape` values only from 9.6.0, and the default challenge calls those functions. `ST_BUFFER` and `ST_SIMPLIFYPRESERVETOPOLOGY` were added in 9.4, so they are not what sets the minimum version.
 
 There is no spatial join yet. `boundaries` is a separate index from `geoshape`'s `osm*` indices so a later `LOOKUP JOIN` on `ST_INTERSECTS` can be added without changing the OSM nightly.
 
@@ -90,7 +94,7 @@ Document counts below are filled in by the build.
 
 `vertex_count` is stored on every document. The histogram above is the one to read before comparing doc-value formats: fixed per-document overhead dominates the OSM `geoshape` track and is a small fraction of these shapes.
 
-Polygons that cross the antimeridian are left out of the main and cartesian indexes. Web Mercator copies also drop geometries within 5 degrees of a pole.
+Polygons that cross the antimeridian are left out of the main, cartesian, and stress indexes. Web Mercator copies also drop geometries within 5 degrees of a pole.
 
 ### License
 

@@ -217,7 +217,7 @@
 },
 {
   "name": "stress",
-  "description": "The 40 largest administrative polygons, uncapped, that still fit in one bulk request. Doc-value size and simplification.",
+  "description": "The 40 largest administrative polygons, uncapped. Each document is one bulk request. Measures doc-value size and simplification.",
   "default": false,
   "schedule": [
     {

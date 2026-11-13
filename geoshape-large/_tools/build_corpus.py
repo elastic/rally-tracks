@@ -234,6 +234,36 @@ def polygonal(geom):
     return None
 
 
+def stable_polygon_wkt(geom) -> str | None:
+    """Round a polygon for the corpus, then repair intersections that rounding creates.
+
+    Six-decimal WKT is compact, but it can push a valid coastline into a
+    self-intersection. Elasticsearch rejects that polygon and, with the default
+    non-fatal error level, drops the document without failing the race.
+    """
+    from shapely import from_wkt, to_wkt
+
+    current = polygonal(geom)
+    if current is None or crosses_dateline(current):
+        return None
+    text = to_wkt(current, rounding_precision=6)
+    for _ in range(4):
+        parsed = polygonal(from_wkt(text))
+        if parsed is None or parsed.is_empty or crosses_dateline(parsed):
+            return None
+        if parsed.is_valid:
+            compact = to_wkt(parsed, rounding_precision=6)
+            reparsed = from_wkt(compact)
+            if reparsed.is_valid and reparsed.geom_type in ("Polygon", "MultiPolygon"):
+                return compact
+            exact = to_wkt(parsed, rounding_precision=-1)
+            if from_wkt(exact).is_valid:
+                return exact
+            return None
+        text = to_wkt(parsed, rounding_precision=-1)
+    return None
+
+
 def cap_vertices(geom, cap: int):
     from shapely import make_valid, simplify
 
@@ -325,7 +355,7 @@ def set_fine_count(value: int) -> None:
 
 
 def process_boundaries(region: str, urls: dict[str, str], seen: set[str]) -> int:
-    from shapely import force_2d, to_wkt
+    from shapely import force_2d, from_wkt, to_wkt
     from shapely.geometry import shape
 
     name = slug(region)
@@ -429,21 +459,24 @@ def process_boundaries(region: str, urls: dict[str, str], seen: set[str]) -> int
                     "region": region,
                     "osm_id": key,
                 }
-                if raw_verts > VERTEX_CAP:
-                    original = dict(base, vertex_count=raw_verts, shape=to_wkt(geom, rounding_precision=6))
-                    encoded = dump(original)
-                    if len(encoded.encode("utf-8")) <= STRESS_MAX_BYTES:
-                        stress_seq += 1
-                        item = (raw_verts, stress_seq, encoded)
-                        if len(stress_heap) < STRESS_KEEP:
-                            heappush(stress_heap, item)
-                        else:
-                            heappushpop(stress_heap, item)
                 if crosses_dateline(geom):
                     stats["dateline"] += 1
                     seen.add(key)
                     ids.write(key + "\n")
                     continue
+                if raw_verts > VERTEX_CAP:
+                    repaired = stable_polygon_wkt(geom)
+                    if repaired is not None:
+                        repaired_verts = vertex_count(from_wkt(repaired))
+                        original = dict(base, vertex_count=repaired_verts, shape=repaired)
+                        encoded = dump(original)
+                        if len(encoded.encode("utf-8")) <= STRESS_MAX_BYTES:
+                            stress_seq += 1
+                            item = (repaired_verts, stress_seq, encoded)
+                            if len(stress_heap) < STRESS_KEEP:
+                                heappush(stress_heap, item)
+                            else:
+                                heappushpop(stress_heap, item)
                 capped = cap_vertices(geom, VERTEX_CAP)
                 if capped is None:
                     stats["uncappable"] += 1
@@ -901,26 +934,20 @@ def finalize() -> None:
         "geoshape-large-boundaries-xy": ("boundaries-xy.json.bz2", [f"regions/*/xy{i}.jsonl" for i in range(5)]),
         "geoshape-large-routes": (
             "routes.json.bz2",
-            ["routes/* /100.jsonl", "routes/*/1000.jsonl", "routes/*/10000.jsonl", "routes/*/50000.jsonl"],
+            [f"routes/*/{band}.jsonl" for band in ("100", "1000", "10000", "50000")],
         ),
         "geoshape-large-routes-xy": (
             "routes-xy.json.bz2",
-            ["routes/*/*-xy.jsonl"],
+            [f"routes/*/{band}-xy.jsonl" for band in ("100", "1000", "10000", "50000")],
         ),
         "geoshape-large-boundary-scales": ("boundary-scales.json.bz2", [f"scales/b{i}.jsonl" for i in range(5)]),
         "geoshape-large-boundaries-stress": ("boundaries-stress.json.bz2", ["regions/*/stress.jsonl"]),
     }
-    # The xy route glob above is not bucket-ordered. Rebuild that list explicitly.
-    datasets["geoshape-large-routes-xy"] = (
-        "routes-xy.json.bz2",
-        [f"routes/*/{band}-xy.jsonl" for band in ("100", "1000", "10000", "50000")],
-    )
-    # Stress keeps the largest geometries, not the small-first test-mode order.
     published = {}
     for corpus, (filename, patterns) in datasets.items():
         paths = []
         for pattern in patterns:
-            paths.extend(existing_paths(pattern.replace(" ", "")))
+            paths.extend(existing_paths(pattern))
         if corpus == "geoshape-large-boundaries-stress":
             paths = select_stress(paths)
         if not paths:
@@ -957,15 +984,31 @@ def select_stress(paths: list[Path]) -> list[Path]:
         with path.open() as handle:
             for line_no, line in enumerate(handle):
                 if line_no in wanted:
-                    if not line.endswith("\n"):
-                        line += "\n"
-                    ranked.append((wanted[line_no], line))
+                    repaired = repair_stress_line(line)
+                    if repaired is None:
+                        log(f"dropping unusable stress document from {path}")
+                        continue
+                    ranked.append(repaired)
     ranked.sort()  # smallest of the stress set first, for test mode
     dest = WORK / "stress-selected.jsonl"
     with dest.open("w") as handle:
         for _verts, line in ranked:
             handle.write(line)
     return [dest]
+
+
+def repair_stress_line(line: str) -> tuple[int, str] | None:
+    """Rewrite one stored stress document so the polygon Elasticsearch receives is valid."""
+    from shapely import from_wkt
+
+    doc = json.loads(line)
+    repaired = stable_polygon_wkt(from_wkt(doc["shape"]))
+    if repaired is None:
+        return None
+    verts = vertex_count(from_wkt(repaired))
+    doc["shape"] = repaired
+    doc["vertex_count"] = verts
+    return verts, dump(doc)
 
 
 def update_track_json(published: dict) -> None:

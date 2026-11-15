@@ -948,7 +948,7 @@ def finalize() -> None:
         paths = []
         for pattern in patterns:
             paths.extend(existing_paths(pattern))
-        if corpus == "geoshape-large-boundaries-stress":
+        if corpus == "geoshape-large-boundaries-stress" and paths:
             paths = select_stress(paths)
         if not paths:
             log(f"no files for {corpus}, skipping")
@@ -966,7 +966,11 @@ def select_stress(paths: list[Path]) -> list[Path]:
 
     The scan records positions only. The bodies of the chosen documents are
     read afterwards, so a multi-megabyte coastline is not held for every candidate.
+    An empty input returns no file, so finalize skips the corpus instead of
+    publishing a zero-document archive over the existing one.
     """
+    if not paths:
+        return []
     index = []
     for path in paths:
         with path.open() as handle:
@@ -989,6 +993,8 @@ def select_stress(paths: list[Path]) -> list[Path]:
                         log(f"dropping unusable stress document from {path}")
                         continue
                     ranked.append(repaired)
+    if not ranked:
+        return []
     ranked.sort()  # smallest of the stress set first, for test mode
     dest = WORK / "stress-selected.jsonl"
     with dest.open("w") as handle:
@@ -1126,6 +1132,8 @@ def command_all_fixed() -> None:
             log(f"{region}: FAILED boundaries: {exc}")
             with (WORK / "failures.txt").open("a") as handle:
                 handle.write(f"{region} boundaries: {exc}\n")
+            # IDs added before the failure are not in a completed region, so drop them.
+            seen = load_seen()
             continue
         if region in ROUTE_REGIONS:
             try:
@@ -1134,6 +1142,8 @@ def command_all_fixed() -> None:
                 log(f"{region}: FAILED routes: {exc}")
                 with (WORK / "failures.txt").open("a") as handle:
                     handle.write(f"{region} routes: {exc}\n")
+                # Unpublished route files must not keep consuming the shared quota.
+                quota = load_route_quota()
     finalize()
 
 

@@ -7,14 +7,15 @@
         "index.number_of_shards": {{number_of_shards | default(5)}},
         "index.number_of_replicas": {{number_of_replicas | default(0)}},
       {% endif %}
-        "index.requests.cache.enable": false
+        "index.requests.cache.enable": false,
     {%- endif -%}{# non-serverless-index-settings-marker-end #}
+    {% if index_mode is defined %}
+    "index.mode": {{ index_mode | tojson }},
+    {% endif %}
+    "index.mapping.source.mode": {{ source_mode | default("stored") | tojson }}
   },
   "mappings": {
     "dynamic": false,
-    "_source": {
-      "mode": {{ source_mode | default("stored") | tojson }}
-    },
     "properties": {
 {% for i in range(0, 100) %}
       "field_{{ i }}": { "type": "keyword" },

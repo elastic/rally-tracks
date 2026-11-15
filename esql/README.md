@@ -11,6 +11,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_replicas` (default: 1): This only applies to the main index (not to lookup indexes)
 * `number_of_shards` (default: 5): This only applies to the main index (not to lookup indexes)
 * `source_mode` (default: stored): Should the `_source` be `stored` to disk exactly as sent (the default), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
+* `index_mode` (default: not set): sets `index.mode` on the `unmapped_bench_partial{10,50,90}_dense` indices, for example `logsdb`
 * `index_settings`: A list of index settings. Index settings defined elsewhere need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
@@ -36,7 +37,7 @@ This challenge benchmarks `SET unmapped_fields="load"` and `"LOAD_ALL"` against 
 
 The unmapped-fields challenge defaults bulk indexing to `bulk_size: 500` because dense documents are very wide. Passing `bulk_size` overrides it.
 
-A sort on an unmapped field over the mixed dense indices (`unmapped_mix_load_all_sort_10fields_dense`) takes about 50 s per request at full size, because every document of the unmapped index is read from `_source`. It therefore runs `slow_warmup_iterations` (default 3) warmup and `slow_iterations` (default 20) timed iterations instead of 100 and `query_iterations`. The older `unmapped_mix_load_sort_keep_10fields_dense` has the same cost and still runs 100 and 100, so a full run of the challenge takes hours; exclude it with `exclude.tasks` for a faster run.
+A sort on an unmapped field over the mixed dense indices (`unmapped_mix_load_all_sort_10fields_dense`) is slow. It therefore runs `slow_warmup_iterations` (default 3) warmup and `slow_iterations` (default 20) timed iterations instead of 100 and `query_iterations`. The older `unmapped_mix_load_sort_keep_10fields_dense` has the same cost and still runs 100 and 100, so a full run of the challenge takes hours; exclude it with `exclude.tasks` for a faster run.
 
 The four `LOAD_ALL` filter and sort probes over the mixed indices return every column, where the older `LOAD` and default probes keep 10 fields. To compare like with like, each has a default and a `LOAD` baseline without `KEEP` (`unmapped_mix_{default,load}_{filter,sort}_all_{dense,sparse}`). All twelve carry the `full_width` tag, so `include.tasks: ["tag:setup", "tag:full_width"]` runs just that comparison.
 

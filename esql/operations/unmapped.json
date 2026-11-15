@@ -206,8 +206,7 @@
       "operation-type": "esql",
       "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | SORT field_0 | LIMIT 1000"
     },
-    {# Baselines for the four LOAD_ALL filter and sort probes above. Those return every column, so these do the same without KEEP,
-       in the default mode and with LOAD (which reads field_0 from _source for the unmapped index but builds no _unmapped_fields). #}
+    {# Full-width baselines (no KEEP) for the four LOAD_ALL filter and sort probes above. #}
     {
       "name": "unmapped_mix_default_filter_all_dense",
       "operation-type": "esql",
@@ -249,23 +248,7 @@
       "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | SORT field_0 | LIMIT 1000"
     },
 
-{# Partial-mapping benchmark: DEFAULT vs LOAD_ALL vs LOAD on indices where N% of fields are mapped.
-   p10 = 100/998 mapped (~10%), p50 = 499/998 (~50%), p90 = 898/998 (~90%).
-   All indices use the same dense 1M-doc corpus; only the mapping differs (dynamic:false).
-
-   Query shapes:
-     default  — FROM ... | LIMIT 1000              (mapped fields only, pure Lucene read)
-     load_all — SET unmapped_fields="LOAD_ALL"; FROM ... | LIMIT 1000
-                (mapped fields from Lucene + all unmapped fields surfaced from _source)
-     load     — SET unmapped_fields="load"; FROM ... | KEEP [unmapped fields] | LIMIT 1000
-                (only the unmapped fields, fetched from _source)
-
-   Cost model:
-     default  scales linearly with mapped field count (~0.36ms/field on 1M docs, 3 shards).
-     load     scales linearly with unmapped field count — measures pure _source extraction cost.
-     load_all ≈ default + load overhead. At high mapping ratios the Lucene mapped-field read
-               dominates, so LOAD_ALL gets slower as more fields are mapped — not because of
-               unmapped expansion, but because the mapped side is more expensive. #}
+{# Partial mapping: default vs LOAD_ALL vs load, with 10, 50 and 90 percent of the fields mapped. #}
 
 {% set partial_configs = [(10, 100), (50, 499), (90, 898)] %}
 {% for pct, n_mapped in partial_configs %}
@@ -287,16 +270,7 @@
 
 {% endfor %}
 
-{# Full-mapped fetch: DEFAULT vs LOAD_ALL, LIMIT sweep.
-   On a fully-mapped index LOAD_ALL reads _source for every row to produce $unmapped_fields,
-   then the coordinator finds unique_fields=0 and does nothing. The _source read is pure overhead.
-
-   Cost model:
-     default  — pure Lucene columnar read of all 998 mapped fields.
-     load_all — same Lucene read + unnecessary _source read per row.
-
-   LIMIT sweep (10/100/1000/10000) tests whether overhead is per-doc (ratio grows with LIMIT)
-   or a fixed per-query startup cost (ratio shrinks with LIMIT). #}
+{# LIMIT sweep over the fully mapped dense index: default vs LOAD_ALL. #}
 {% set full_mapped_limits = [10, 100, 1000, 10000] %}
 {% for lim in full_mapped_limits %}
     {
@@ -323,12 +297,7 @@
       "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_dense | LIMIT 1000"
     },
 
-{# Aggregation: DEFAULT vs LOAD_ALL, grouping by a mapped field.
-   The planner prunes $unmapped_fields from the execution plan when it is not referenced
-   in the query output. These two operations should therefore be identical in cost, confirming
-   that LOAD_ALL does not add overhead for aggregation queries over mapped fields.
-
-   Cost model: both read field_0 doc values for 1M docs, aggregate, return 100 groups. #}
+{# Aggregation: default vs LOAD_ALL, grouping by a mapped field. #}
     {
       "name": "unmapped_partial_agg_default_p10_dense",
       "operation-type": "esql",

@@ -75,6 +75,8 @@ This track accepts the following parameters with Rally 0.8.0+ using `--track-par
 * `corpora` (default: "so_vector_float"): The dataset to use. The default data set represents vectors as float arrays. Use "so_vector_base64" for the same dataset with vectors encoded as base64 strings.
 * `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
 * `iterations` (default: 100) - Number of measurement iterations that each client executes.
+* `exact_search_warmup_iterations` (default: 10) - Number of warmup iterations for exact (brute-force) search operations.
+* `exact_search_iterations` (default: 50) - Number of measurement iterations for exact (brute-force) search operations.
 * `profile_iterations` (default: 100) - Number of profiling iterations that each client executes.
 * `search_clients` (default: 8) - Number of clients that issue search requests in the multi-client search challenges.
 * `vector_index_element_type` (default: "float"): Sets the dense_vector element type.

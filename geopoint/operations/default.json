@@ -50,6 +50,38 @@
       "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(*)"
     },
     {
+      "name": "polygon-intersects-count",
+      "operation-type": "search",
+      "index": "osmgeopoints",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              }
+            }
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "polygon-contains",
       "operation-type": "search",
       "index": "osmgeopoints",
@@ -84,6 +116,39 @@
       "name": "polygon-contains-count-esql",
       "operation-type": "esql",
       "query": "FROM osmgeopoints | WHERE ST_Contains(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(*)"
+    },
+    {
+      "name": "polygon-contains-count",
+      "operation-type": "search",
+      "index": "osmgeopoints",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "contains"
+            }
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
     },
     {
       "name": "polygon-disjoint",
@@ -122,6 +187,39 @@
       "query": "FROM osmgeopoints | WHERE ST_Disjoint(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(*)"
     },
     {
+      "name": "polygon-disjoint-count",
+      "operation-type": "search",
+      "index": "osmgeopoints",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "disjoint"
+            }
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
+    },
+    {
       "name": "polygon-within",
       "operation-type": "search",
       "index": "osmgeopoints",
@@ -156,6 +254,39 @@
       "name": "polygon-within-count-esql",
       "operation-type": "esql",
       "query": "FROM osmgeopoints | WHERE ST_Within(location, TO_GEOSHAPE(\"POLYGON((-0.1 49.0, 5.0 48.0, 15.0 49.0, 14.0 60.0, -0.1 61.0, -0.1 49.0))\")) | STATS count=COUNT(*)"
+    },
+    {
+      "name": "polygon-within-count",
+      "operation-type": "search",
+      "index": "osmgeopoints",
+      "body": {
+        "size": 0,
+        "query": {
+          "geo_shape": {
+            "location": {
+              "shape": {
+                "type": "polygon",
+                "coordinates" : [[
+                  [-0.1, 49.0],
+                  [5.0, 48.0],
+                  [15.0, 49.0],
+                  [14.0, 60.0],
+                  [-0.1, 61.0],
+                  [-0.1, 49.0]
+                ]]
+              },
+              "relation": "within"
+            }
+          }
+        },
+        "aggs": {
+          "count": {
+            "value_count": {
+              "field": "location"
+            }
+          }
+        }
+      }
     },
     {
       "name": "polygon-centroid",
@@ -237,7 +368,7 @@
     {
       "name": "bbox-intersects-esql",
       "operation-type": "esql",
-      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX((-0.1, 15.0, 61.0, 48.0))\")) | LIMIT 10"
+      "query": "FROM osmgeopoints | WHERE ST_Intersects(location, TO_GEOSHAPE(\"BBOX(-0.1, 15.0, 61.0, 48.0)\")) | LIMIT 10"
     },
     {
       "name": "distanceFilter",

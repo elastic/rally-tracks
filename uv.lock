@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.10, <3.14"
 
 [[package]]
@@ -525,14 +525,14 @@ async = [
 
 [[package]]
 name = "eql"
-version = "0.9.19"
+version = "1.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "lark-parser" },
+    { name = "lark" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6e/50/6a821be1a7ccfe4bfce3fcf5d38dc737cc393ba769c8985f947595774cfc/eql-0.9.19.tar.gz", hash = "sha256:e2bac25f9fc01cc2734023d62914a758f7090ff1f9b86d3eeffe8972c08bca83", size = 99919, upload-time = "2023-10-31T19:30:19.851Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/90/b8/ab05f5f8aff108a1c50a9d6f003d2bcc5816216670aa20b1045336c612cd/eql-1.0.1.tar.gz", hash = "sha256:f6c973dd7055eeb067ee68b14372c63b5ad5d19a862bdca2c85781bb28e789de", size = 130918, upload-time = "2026-08-07T14:47:33.792Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1b/da/7eac5afbc8f1a9859993b61639c6081097b95a42998fe0d1a707c33d0a23/eql-0.9.19-py2.py3-none-any.whl", hash = "sha256:87c7ac7378ffc9c8b89737703115a44711d0b19b37812602199c53df5104958c", size = 105822, upload-time = "2023-10-31T19:30:17.382Z" },
+    { url = "https://files.pythonhosted.org/packages/29/66/06ec724197f540163b7a2fb708f9e3a538bf48c84f85871912b227a40ec5/eql-1.0.1-py2.py3-none-any.whl", hash = "sha256:8d169d3491446cdd693778c27c89eb1820bf3bf6bf31bbc8e886701bd959a981", size = 107194, upload-time = "2026-08-07T14:47:32.595Z" },
 ]
 
 [[package]]
@@ -706,7 +706,7 @@ wheels = [
 
 [[package]]
 name = "geneve"
-version = "0.3.0"
+version = "0.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "elasticsearch" },
@@ -718,9 +718,9 @@ dependencies = [
     { name = "requests" },
     { name = "ruamel-yaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a3/da/87e2d3102426616e624823a6c3c563199c183cffd06ee85aa7cb3c99a54f/geneve-0.3.0.tar.gz", hash = "sha256:441981896be3f6eb54a40f2ed01265973df473d1dc8866bdb9ff2614850eb057", size = 59942, upload-time = "2024-08-26T22:29:36.684Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/72/07/9908b80e1a39937f089da8375a1f1d098a7608b9d35db5cc211fe9bea7eb/geneve-0.5.0.tar.gz", hash = "sha256:24c672f4d5d0f77845c96d0d03718a3a470932135065673a8532ce6a648abf68", size = 61902, upload-time = "2026-10-27T16:00:07.907Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8c/e8/6332e9fe5db1d81d6ba5dc9ed748e00dda18211657942e7dd5ab96c65b49/geneve-0.3.0-py3-none-any.whl", hash = "sha256:35497d885174c71b4fe0987ddc76d3c90f6107f7b4bc43d05b9d735777cc0cd9", size = 61092, upload-time = "2024-08-26T22:29:35.382Z" },
+    { url = "https://files.pythonhosted.org/packages/76/92/98fd024f0ec80ba9c2596dd6f6d87b02a88c7e927a1c10ae6f7be302a4d2/geneve-0.5.0-py3-none-any.whl", hash = "sha256:d547c14dcc8dc15b5f65c4d9339f5aa8b92f51fe4d1e9bd0c22329f8d649ee4b", size = 62964, upload-time = "2026-10-27T16:00:06.413Z" },
 ]
 
 [[package]]
@@ -1093,12 +1093,12 @@ wheels = [
 ]
 
 [[package]]
-name = "lark-parser"
-version = "0.12.0"
+name = "lark"
+version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/5a/ee/fd1192d7724419ddfe15b6f17d1c8742800d4de917c0adac3b6aaf22e921/lark-parser-0.12.0.tar.gz", hash = "sha256:15967db1f1214013dca65b1180745047b9be457d73da224fcda3d9dd4e96a138", size = 235029, upload-time = "2021-08-30T09:14:44.484Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/da/34/28fff3ab31ccff1fd4f6c7c7b0ceb2b6968d8ea4950663eadcb5720591a0/lark-1.3.1.tar.gz", hash = "sha256:b426a7a6d6d53189d318f2b6236ab5d6429eaf09259f1ca33eb716eed10d2905", size = 382732, upload-time = "2025-10-27T18:25:56.653Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/76/00/90f05db333fe1aa6b6ffea83a35425b7d53ea95c8bba0b1597f226cf1d5f/lark_parser-0.12.0-py2.py3-none-any.whl", hash = "sha256:0eaf30cb5ba787fe404d73a7d6e61df97b21d5a63ac26c5008c78a494373c675", size = 103498, upload-time = "2021-08-30T13:01:01.603Z" },
+    { url = "https://files.pythonhosted.org/packages/82/3d/14ce75ef66813643812f3093ab17e46d3a206942ce7376d31ec2d36229e7/lark-1.3.1-py3-none-any.whl", hash = "sha256:c629b661023a014c37da873b4ff58a817398d12635d3bbb2c5a03be7fe5d1e12", size = 113151, upload-time = "2025-10-27T18:25:54.882Z" },
 ]
 
 [[package]]
@@ -1831,7 +1831,7 @@ it-serverless = [
 unit = [
     { name = "elastic-package-assets", git = "https://github.com/elastic/package-assets.git?branch=main" },
     { name = "esrally", git = "https://github.com/elastic/rally.git?branch=master" },
-    { name = "geneve", specifier = "==0.3.0" },
+    { name = "geneve", specifier = "==0.5.0" },
     { name = "pytest", specifier = "==8.4.2" },
     { name = "pytest-asyncio", specifier = "==1.2.0" },
 ]

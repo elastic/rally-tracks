@@ -90,4 +90,24 @@
       "name": "esql_sort_numeric_with_match",
       "operation-type": "esql",
       "query": "FROM logs-* | WHERE status == 200 | SORT size DESC | LIMIT 100"
+    },
+    {
+      "name": "esql_in_subquery_clientip_1k",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | KEEP clientip | LIMIT 1000) | STATS c = COUNT(*), bytes = SUM(size)"
+    },
+    {
+      "name": "esql_in_subquery_clientip_10k",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | KEEP clientip | LIMIT 10000) | STATS c = COUNT(*), bytes = SUM(size)"
+    },
+    {
+      "name": "esql_in_subquery_clientip_50k",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | KEEP clientip | LIMIT 50000) | STATS c = COUNT(*), bytes = SUM(size)"
+    },
+    {
+      "name": "esql_in_subquery_clientip_10k_with_where",
+      "operation-type": "esql",
+      "query": "FROM logs-* | WHERE status == 200 | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | KEEP clientip | LIMIT 10000) | STATS c = COUNT(*), bytes = SUM(size)"
     }

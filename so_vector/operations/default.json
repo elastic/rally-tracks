@@ -245,6 +245,11 @@
   "param-source": "esql-knn-param-source"
 },
 {
+  "name": "esql-profile-knn-search-default-match-all",
+  "operation-type": "esql-profile",
+  "param-source": "esql-knn-param-source"
+},
+{
   "name": "knn-recall-default-match-all",
   "operation-type": "knn-recall",
   "request-timeout": 600,
@@ -302,6 +307,13 @@
 {
   "name": "esql-knn-search-100-300-match-all",
   "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "k": 100,
+  "num_candidates": 300
+},
+{
+  "name": "esql-profile-knn-search-100-300-match-all",
+  "operation-type": "esql-profile",
   "param-source": "esql-knn-param-source",
   "k": 100,
   "num_candidates": 300
@@ -367,6 +379,13 @@
 {
   "name": "esql-script-score-query-match-all",
   "operation-type": "esql",
+  "param-source": "esql-knn-param-source",
+  "exact": true,
+  "k": 10
+},
+{
+  "name": "esql-profile-script-score-query-match-all",
+  "operation-type": "esql-profile",
   "param-source": "esql-knn-param-source",
   "exact": true,
   "k": 10

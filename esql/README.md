@@ -11,7 +11,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_replicas` (default: 1): This only applies to the main index (not to lookup indexes)
 * `number_of_shards` (default: 5): This only applies to the main index (not to lookup indexes)
 * `source_mode` (default: stored): Should the `_source` be `stored` to disk exactly as sent (the default), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
-* `index_mode` (default: not set): sets `index.mode` on the `unmapped_bench_partial{10,50,90}_dense` indices, for example `logsdb`
+* `index_mode` (default: not set): sets `index.mode` on the `unmapped_bench_*` indices of the `esql_unmapped_fields` challenge. `standard` and `logsdb` work, with or without `source_mode: synthetic`. `time_series` is rejected, because the mappings have no `index.routing_path`, and `lookup` needs `number_of_shards: 1`. A rejected index creation does not fail the challenge: Rally keeps retrying its cluster health wait, so the run hangs instead of erroring.
 * `index_settings`: A list of index settings. Index settings defined elsewhere need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.

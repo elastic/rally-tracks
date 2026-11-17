@@ -38,7 +38,10 @@
   { "name": "unmapped_bench_no_mapping_dense",   "body": "unmapped_no_mapping.json"   },
   { "name": "unmapped_bench_no_mapping_sparse",  "body": "unmapped_no_mapping.json"   },
   { "name": "unmapped_bench_typed_mapped",       "body": "unmapped_typed_mapping.json" },
-  { "name": "unmapped_bench_typed_no_mapping",   "body": "unmapped_no_mapping.json"    }
+  { "name": "unmapped_bench_typed_no_mapping",   "body": "unmapped_no_mapping.json"    },
+  { "name": "unmapped_bench_partial10_dense",    "body": "unmapped_partial_mapping_p10.json" },
+  { "name": "unmapped_bench_partial50_dense",    "body": "unmapped_partial_mapping_p50.json" },
+  { "name": "unmapped_bench_partial90_dense",    "body": "unmapped_partial_mapping_p90.json" }
 ],
 "corpora": [
 {% for i in range(1, n_indices) %}
@@ -111,6 +114,23 @@
     }
   ]
 },
+{# Each partial-mapping index has its own corpus: Rally prepares the document sets of a corpus in parallel, and several sets
+   with the same source file in one corpus share a download path, so the workers race on its .tmp file. #}
+{% for pct in [10, 50, 90] %}
+{
+  "name": "unmapped_bench_partial{{pct}}_dense",
+  "base-url": "https://rally-tracks.elastic.co/esql_unmapped",
+  "documents": [
+    {
+      "target-index": "unmapped_bench_partial{{pct}}_dense",
+      "source-file": "unmapped_bench_dense.json.bz2",
+      "document-count": 1000000,
+      "compressed-bytes": 3614855830,
+      "uncompressed-bytes": 18905888890
+    }
+  ]
+},
+{% endfor %}
 {
   "name": "unmapped_bench_no_mapping_sparse",
   "base-url": "https://rally-tracks.elastic.co/esql_unmapped",

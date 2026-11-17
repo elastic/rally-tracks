@@ -12,7 +12,8 @@
     {
       "name": "index-unmapped-dense",
       "operation-type": "bulk",
-      "indices": ["unmapped_bench_full_mapped_dense", "unmapped_bench_no_mapping_dense"],
+      "indices": ["unmapped_bench_full_mapped_dense", "unmapped_bench_no_mapping_dense",
+                  "unmapped_bench_partial10_dense", "unmapped_bench_partial50_dense", "unmapped_bench_partial90_dense"],
       "bulk-size": {{unmapped_bulk_size}},
       "ingest-percentage": {{ingest_percentage | default(100)}}
     },
@@ -66,7 +67,20 @@
       "name": "unmapped_mix_load_{{ label }}_{{ density }}",
       "operation-type": "esql",
       "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_{{ density }}, unmapped_bench_no_mapping_{{ density }} | KEEP {{ keep(n) }} | LIMIT 1000"
-    }{% if not (d_last and loop.last) %},{% endif %}
+    }{% if loop.first or not (d_last and loop.last) %},{% endif %}
+{# LOAD_ALL returns every unmapped field whatever the query names, so its queries have no field count: one of each per density. #}
+{% if loop.first %}
+    {
+      "name": "unmapped_load_all_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_no_mapping_{{ density }} | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_all_{{ density }}",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_{{ density }}, unmapped_bench_no_mapping_{{ density }} | LIMIT 1000"
+    },
+{% endif %}
 
 {% endfor %}
 {% endfor %}
@@ -171,4 +185,126 @@
       "name": "unmapped_mix_load_sort_keep_10fields_sparse",
       "operation-type": "esql",
       "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | KEEP {{ keep(10) }} | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_all_filter_10fields_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_all_sort_10fields_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_all_filter_10fields_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_all_sort_10fields_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | SORT field_0 | LIMIT 1000"
+    },
+    {# Full-width baselines (no KEEP) for the four LOAD_ALL filter and sort probes above. #}
+    {
+      "name": "unmapped_mix_default_filter_all_dense",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_default_sort_all_dense",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_filter_all_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_sort_all_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_dense, unmapped_bench_no_mapping_dense | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_default_filter_all_sparse",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_default_sort_all_sparse",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | SORT field_0 | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_filter_all_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | WHERE field_0 IS NOT NULL | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_mix_load_sort_all_sparse",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_full_mapped_sparse, unmapped_bench_no_mapping_sparse | SORT field_0 | LIMIT 1000"
+    },
+
+{# Partial mapping: default vs LOAD_ALL vs load, with 10, 50 and 90 percent of the fields mapped. #}
+
+{% set partial_configs = [(10, 100), (50, 499), (90, 898)] %}
+{% for pct, n_mapped in partial_configs %}
+    {
+      "name": "unmapped_partial_default_p{{ pct }}_dense",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_partial{{ pct }}_dense | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_partial_load_all_p{{ pct }}_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_partial{{ pct }}_dense | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_partial_load_p{{ pct }}_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"load\"; FROM unmapped_bench_partial{{ pct }}_dense | KEEP {% for i in range(n_mapped, 998) %}{% if not loop.first %}, {% endif %}field_{{ i }}{% endfor %} | LIMIT 1000"
+    },
+
+{% endfor %}
+
+{# LIMIT sweep over the fully mapped dense index: default vs LOAD_ALL. #}
+{% set full_mapped_limits = [10, 100, 1000, 10000] %}
+{% for lim in full_mapped_limits %}
+    {
+      "name": "unmapped_full_mapped_default_limit{{ lim }}_dense",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_dense | LIMIT {{ lim }}"
+    },
+    {
+      "name": "unmapped_full_mapped_load_all_limit{{ lim }}_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_dense | LIMIT {{ lim }}"
+    },
+{% endfor %}
+
+{# Back-compat aliases for the pre-sweep operations (LIMIT 1000). #}
+    {
+      "name": "unmapped_full_mapped_default_dense",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_full_mapped_dense | LIMIT 1000"
+    },
+    {
+      "name": "unmapped_full_mapped_load_all_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_full_mapped_dense | LIMIT 1000"
+    },
+
+{# Aggregation: default vs LOAD_ALL, grouping by a mapped field. #}
+    {
+      "name": "unmapped_partial_agg_default_p10_dense",
+      "operation-type": "esql",
+      "query": "FROM unmapped_bench_partial10_dense | STATS COUNT(*) BY field_0 | LIMIT 100"
+    },
+    {
+      "name": "unmapped_partial_agg_load_all_p10_dense",
+      "operation-type": "esql",
+      "query": "SET unmapped_fields=\"LOAD_ALL\"; FROM unmapped_bench_partial10_dense | STATS COUNT(*) BY field_0 | LIMIT 100"
     }

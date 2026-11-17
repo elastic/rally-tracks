@@ -133,7 +133,23 @@
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": {{ warmup }},
           "iterations": {{query_iterations | default(100)}}
-        }{% if not (d_last and loop.last) %},{% endif %}
+        }{% if loop.first or not (d_last and loop.last) %},{% endif %}
+{% if loop.first %}
+        {
+          "operation": "unmapped_load_all_{{ density }}",
+          "tags": ["esql_unmapped", "load_all", "{{ density }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": {{ warmup }},
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_load_all_{{ density }}",
+          "tags": ["esql_unmapped", "mix", "load_all", "{{ density }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": {{ warmup }},
+          "iterations": {{query_iterations | default(100)}}
+        },
+{% endif %}
 
 {% endfor %}
 {% endfor %}
@@ -277,6 +293,135 @@
           "tags": ["esql_unmapped", "mix", "load", "sparse", "targeted", "sort", "10fields"],
           "clients": {{query_clients | default(1)}},
           "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_load_all_filter_10fields_dense",
+          "tags": ["esql_unmapped", "mix", "load_all", "dense", "targeted", "filter", "10fields", "full_width"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_load_all_sort_10fields_dense",
+          "tags": ["esql_unmapped", "mix", "load_all", "dense", "targeted", "sort", "10fields", "full_width"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": {{slow_warmup_iterations | default(3)}},
+          "iterations": {{slow_iterations | default(20)}}
+        },
+        {
+          "operation": "unmapped_mix_load_all_filter_10fields_sparse",
+          "tags": ["esql_unmapped", "mix", "load_all", "sparse", "targeted", "filter", "10fields", "full_width"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_load_all_sort_10fields_sparse",
+          "tags": ["esql_unmapped", "mix", "load_all", "sparse", "targeted", "sort", "10fields", "full_width"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+{# Baselines for the four LOAD_ALL filter and sort probes above (all columns returned, no KEEP): default and LOAD. The LOAD sorts
+   read field_0 from _source for the unmapped index, so they are as slow as the LOAD_ALL ones and use the slow iteration counts. #}
+{% for density in ["dense", "sparse"] %}
+{% for mode in ["default", "load"] %}
+        {
+          "operation": "unmapped_mix_{{ mode }}_filter_all_{{ density }}",
+          "tags": ["esql_unmapped", "mix", "{{ mode }}", "{{ density }}", "filter", "full_width"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_mix_{{ mode }}_sort_all_{{ density }}",
+          "tags": ["esql_unmapped", "mix", "{{ mode }}", "{{ density }}", "sort", "full_width"],
+          "clients": {{query_clients | default(1)}},
+{% if mode == "load" %}
+          "warmup-iterations": {{slow_warmup_iterations | default(3)}},
+          "iterations": {{slow_iterations | default(20)}}
+{% else %}
+          "warmup-iterations": 100,
+          "iterations": {{query_iterations | default(100)}}
+{% endif %}
+        },
+{% endfor %}
+{% endfor %}
+
+{# Partial-mapping benchmark: DEFAULT vs LOAD_ALL vs LOAD on partially-mapped dense indices. #}
+{% set partial_configs = [(10, 100), (50, 499), (90, 898)] %}
+{% for pct, n_mapped in partial_configs %}
+        {
+          "operation": "unmapped_partial_default_p{{ pct }}_dense",
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "default", "dense", "p{{ pct }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_partial_load_all_p{{ pct }}_dense",
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "load_all", "dense", "p{{ pct }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_partial_load_p{{ pct }}_dense",
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "load", "dense", "p{{ pct }}"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+        ,
+{# Full-mapped fetch overhead: LIMIT sweep across 10/100/1000/10000 docs.
+   Tests whether the _source-read overhead is per-doc (ratio grows with LIMIT) or a fixed startup cost. #}
+{% set full_mapped_limits = [10, 100, 1000, 10000] %}
+{% for lim in full_mapped_limits %}
+        {
+          "operation": "unmapped_full_mapped_default_limit{{ lim }}_dense",
+          "tags": ["esql_unmapped", "nightly", "full_mapped", "default", "dense", "limit_sweep"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_full_mapped_load_all_limit{{ lim }}_dense",
+          "tags": ["esql_unmapped", "nightly", "full_mapped", "load_all", "dense", "limit_sweep"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+{% endfor %}
+{# Back-compat aliases and aggregation planner behaviour. #}
+        {
+          "operation": "unmapped_full_mapped_default_dense",
+          "tags": ["esql_unmapped", "nightly", "full_mapped", "default", "dense"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_full_mapped_load_all_dense",
+          "tags": ["esql_unmapped", "nightly", "full_mapped", "load_all", "dense"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_partial_agg_default_p10_dense",
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "agg", "default", "dense", "p10"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
+          "iterations": {{query_iterations | default(100)}}
+        },
+        {
+          "operation": "unmapped_partial_agg_load_all_p10_dense",
+          "tags": ["esql_unmapped", "nightly", "partial_mapping", "agg", "load_all", "dense", "p10"],
+          "clients": {{query_clients | default(1)}},
+          "warmup-iterations": 10,
           "iterations": {{query_iterations | default(100)}}
         },
 

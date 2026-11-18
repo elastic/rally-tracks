@@ -92,6 +92,12 @@
           "tags": ["polygon", "esql"]
         },
         {
+          "operation": "polygon-intersects-count",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon"]
+        },
+        {
           "operation": "polygon-intersects-count-esql",
           "warmup-iterations": 200,
           "iterations": 100,
@@ -108,6 +114,12 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-contains-count",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon"]
         },
         {
           "operation": "polygon-contains-count-esql",
@@ -128,6 +140,12 @@
           "tags": ["polygon", "esql"]
         },
         {
+          "operation": "polygon-disjoint-count",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon"]
+        },
+        {
           "operation": "polygon-disjoint-count-esql",
           "warmup-iterations": 200,
           "iterations": 100,
@@ -144,6 +162,12 @@
           "warmup-iterations": 200,
           "iterations": 100,
           "tags": ["polygon", "esql"]
+        },
+        {
+          "operation": "polygon-within-count",
+          "warmup-iterations": 200,
+          "iterations": 100,
+          "tags": ["polygon"]
         },
         {
           "operation": "polygon-within-count-esql",

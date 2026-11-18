@@ -94,20 +94,20 @@
     {
       "name": "esql_in_subquery_clientip_1k",
       "operation-type": "esql",
-      "query": "FROM logs-* | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | KEEP clientip | LIMIT 1000) | STATS c = COUNT(*), bytes = SUM(size)"
+      "query": "FROM logs-* | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | SORT @timestamp, clientip | KEEP clientip | LIMIT 1000) | STATS c = COUNT(*), bytes = SUM(size)"
     },
     {
       "name": "esql_in_subquery_clientip_10k",
       "operation-type": "esql",
-      "query": "FROM logs-* | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | KEEP clientip | LIMIT 10000) | STATS c = COUNT(*), bytes = SUM(size)"
+      "query": "FROM logs-* | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | SORT @timestamp, clientip | KEEP clientip | LIMIT 10000) | STATS c = COUNT(*), bytes = SUM(size)"
     },
     {
-      "name": "esql_in_subquery_clientip_50k",
+      "name": "esql_in_subquery_clientip_day_distinct",
       "operation-type": "esql",
-      "query": "FROM logs-* | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | KEEP clientip | LIMIT 50000) | STATS c = COUNT(*), bytes = SUM(size)"
+      "query": "FROM logs-* | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | STATS BY clientip | KEEP clientip) | STATS c = COUNT(*), bytes = SUM(size)"
     },
     {
       "name": "esql_in_subquery_clientip_10k_with_where",
       "operation-type": "esql",
-      "query": "FROM logs-* | WHERE status == 200 | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | KEEP clientip | LIMIT 10000) | STATS c = COUNT(*), bytes = SUM(size)"
+      "query": "FROM logs-* | WHERE status == 200 | WHERE clientip IN (FROM logs-* | WHERE @timestamp >= \"1998-05-01T00:00:00.000Z\" AND @timestamp < \"1998-05-02T00:00:00.000Z\" | SORT @timestamp, clientip | KEEP clientip | LIMIT 10000) | STATS c = COUNT(*), bytes = SUM(size)"
     }

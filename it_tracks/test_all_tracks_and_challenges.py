@@ -38,7 +38,9 @@ class TestTrackRepository:
         "http_logs": ["append-no-conflicts", "runtime-fields"],
         "nyc_taxis": ["update-aggs-only"],
     }
-    skip_challenges = {"esql": ["query-searchable-snapshot"]}
+    # esql_unmapped_fields_{snapshot,frozen} register a snapshot repository (fs by default, gcs in benchmarks), which the
+    # integration test cluster cannot do because it has no path.repo setting.
+    skip_challenges = {"esql": ["query-searchable-snapshot", "esql_unmapped_fields_snapshot", "esql_unmapped_fields_frozen"]}
     snapshot_only_challenges = {"wikipedia": ["esql-full-text-functions"]}
 
     track_multiple_params = {"github_archive": {"data_stream": True}}

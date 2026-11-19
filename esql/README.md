@@ -11,7 +11,7 @@ This track allows to overwrite the following parameters using `--track-params`:
 * `number_of_replicas` (default: 1): This only applies to the main index (not to lookup indexes)
 * `number_of_shards` (default: 5): This only applies to the main index (not to lookup indexes)
 * `source_mode` (default: stored): Should the `_source` be `stored` to disk exactly as sent (the default), thrown away (`disabled`), or reconstructed on the fly (`synthetic`)
-* `index_mode` (default: not set): sets `index.mode` on the `unmapped_bench_partial{10,50,90}_dense` indices, for example `logsdb`
+* `index_mode` (default: not set): sets `index.mode` on the `unmapped_bench_*` indices of the `esql_unmapped_fields` challenge. `standard` and `logsdb` work, with or without `source_mode: synthetic`. `time_series` is rejected, because the mappings have no `index.routing_path`, and `lookup` needs `number_of_shards: 1`. A rejected index creation does not fail the challenge: Rally keeps retrying its cluster health wait, so the run hangs instead of erroring.
 * `index_settings`: A list of index settings. Index settings defined elsewhere need to be overridden explicitly.
 * `cluster_health` (default: "green"): The minimum required cluster health.
 * `include_non_serverless_index_settings` (default: true for non-serverless clusters, false for serverless clusters): Whether to include non-serverless index settings.
@@ -42,6 +42,17 @@ A sort on an unmapped field over the mixed dense indices (`unmapped_mix_load_all
 The four `LOAD_ALL` filter and sort probes over the mixed indices return every column, where the older `LOAD` and default probes keep 10 fields. To compare like with like, each has a default and a `LOAD` baseline without `KEEP` (`unmapped_mix_{default,load}_{filter,sort}_all_{dense,sparse}`). All twelve carry the `full_width` tag, so `include.tasks: ["tag:setup", "tag:full_width"]` runs just that comparison.
 
 The `nightly` tag marks a lean subset (the partial-mapping probes and the full-mapped probes, including the `LIMIT` sweep, for `default` and `LOAD_ALL`) that avoids the slow full-width sorts: `include.tasks: ["tag:setup", "tag:nightly"]`.
+
+#### Frozen tier (`esql_unmapped_fields_snapshot`, `esql_unmapped_fields_frozen`)
+
+Two challenges, both off by default, measure `default`, `load`, `LOAD_ALL` and `_source` on partially mounted searchable snapshots (`storage=shared_cache`):
+
+* `esql_unmapped_fields_snapshot` indexes the dense and sparse corpora (fully mapped and unmapped twins), force-merges them to one segment and snapshots them into a repository. Re-running it against the same repository deletes the previous snapshot of that name first.
+* `esql_unmapped_fields_frozen` mounts those snapshots as `frozen_unmapped_bench_*` and, for every density and mode, clears the shared cache and runs a `_cold` task (one iteration) and a `_warm` task. It needs a cluster with a frozen node and the snapshot from the first challenge.
+
+Track parameters: `snapshot_repo_name` (default `esql-unmapped`), `snapshot_repo_type` (default `fs`), `snapshot_repo_settings` (default `{"location": "esql_unmapped_snapshots"}`; an `fs` location must be under `path.repo`), `snapshot_name` (default `unmapped-dense-sparse`), `query_iterations` (default 100, warm task).
+
+The snapshot challenge creates its indices from the same mappings as `esql_unmapped_fields`, so `source_mode` and `index_mode` apply to it too, and the snapshot (and so the mounted indices) keeps them. `source_mode: synthetic` needs a trial licence; without one Elasticsearch silently falls back to stored source.
 
 #### Data generation
 

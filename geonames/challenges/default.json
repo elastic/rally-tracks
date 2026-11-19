@@ -209,6 +209,8 @@
           "target-throughput": 1.5
           {%- endif %}
         },
+        {# pre_filter_shard_size is not permitted for non-operator users on serverless #}
+        {%- if build_flavor != "serverless" or serverless_operator == true %}
         {
           "operation": "desc_sort_population_no_can_match_shortcut",
           "warmup-iterations": 200,
@@ -216,6 +218,7 @@
           "target-throughput": 1.5
           {%- endif %}
         },
+        {%- endif %}
 
         {
           "operation": "asc_sort_population",
@@ -265,7 +268,9 @@
           "iterations": 100{% if p_include_target_throughput %},
           "target-throughput": 1.5
           {%- endif %}
-        },
+        }
+        {# pre_filter_shard_size is not permitted for non-operator users on serverless #}
+        {%- if build_flavor != "serverless" or serverless_operator == true %},
         {
           "operation": "sort_country_code_no_can_match_shortcut",
           "warmup-iterations": 200,
@@ -273,6 +278,7 @@
           "target-throughput": 1.5
           {%- endif %}
         }
+        {%- endif %}
       ]
     },
     {

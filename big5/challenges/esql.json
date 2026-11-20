@@ -212,6 +212,32 @@
       "clients": {{ query_clients | default(1) }},
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "esql_wide_rows_time_window",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ wide_rows_warmup_iterations | default(2) }},
+      "iterations": {{ wide_rows_iterations | default(10) }}
+    },
+    {
+      "operation": "esql_wide_rows_wildcard",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ wide_rows_warmup_iterations | default(2) }},
+      "iterations": {{ wide_rows_iterations | default(10) }}
     }
+    {% if esql_doc_partitioning_for_wide_rows | default(false) %},
+    {
+      "operation": "esql_wide_rows_time_window_doc_partitioning",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ wide_rows_warmup_iterations | default(2) }},
+      "iterations": {{ wide_rows_iterations | default(10) }}
+    },
+    {
+      "operation": "esql_wide_rows_wildcard_doc_partitioning",
+      "clients": {{ query_clients | default(1) }},
+      "warmup-iterations": {{ wide_rows_warmup_iterations | default(2) }},
+      "iterations": {{ wide_rows_iterations | default(10) }}
+    }
+    {% endif %}
   ]
 }

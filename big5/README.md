@@ -88,5 +88,8 @@ The following parameters are available:
 * `warmup_iterations` (default: 100) - Number of iterations that each client should execute to warmup the benchmark candidate.
 * `iterations` (default: 1000) - Number of measurement iterations that each client executes.
 * `query_clients` (default: 1) - Number of clients issuing queries in parallel. Applies to the `big5-esql` challenge only; ignored by the default Big5 QueryDSL challenge.
+* `wide_rows_warmup_iterations` (default: 2) - Warmup iterations for the wide row operations of the `big5-esql` challenge. They read 15 keyword fields of millions of documents, so they run far fewer iterations than the other operations.
+* `wide_rows_iterations` (default: 10) - Measurement iterations for the wide row operations of the `big5-esql` challenge.
+* `esql_doc_partitioning_for_wide_rows` (default: false) - Also run the wide row operations of the `big5-esql` challenge with `SET doc_partitioning_for_wide_rows = true;`. Only enable it for Elasticsearch versions that have that query setting, older versions reject the query.
 * `index_mode` (default: null, which means logsdb will be used since the data matches `logs-*-*`) - Index mode to use for the data.
 * `mapping_source_mode` (default: null, which means to use the index mode's default) - Index mapping source mode for data.

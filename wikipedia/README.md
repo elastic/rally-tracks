@@ -182,6 +182,15 @@ Initial ingest of the full corpus, wait for merges to settle, then run a single 
   - `profile_iterations` (default: 100) - Number of profiling iterations that each client executes.
 
 
+### Parameters for fetch-phase-esql-dsl challenge
+
+Nine fixed ES|QL queries (full-text top 10/100/1000, title search, title-length re-ranking, three RRF/FORK+FUSE variants and a three-way hybrid) each paired with its Query DSL equivalent, to compare the fetch phase. Tasks are tagged `fetch-phase`, `esql` or `dsl`, and `q1`..`q9`. Index setup parameters are the same as for the esql-full-text-functions challenge.
+
+- `fetch_phase_search_clients` (default: `1`)
+- `fetch_phase_warmup_iterations` (default: `20`)
+- `fetch_phase_iterations` (default: `50`)
+
+
 ### License
 
 We use the same license for the data as the original data: [CC-SA-3.0](http://creativecommons.org/licenses/by-sa/3.0/).

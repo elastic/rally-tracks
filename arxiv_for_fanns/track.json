@@ -1,0 +1,62 @@
+{% import "rally.helpers" as rally with context %}
+{% set _base_url = (base_url | default("https://rally-tracks.elastic.co/arxiv_for_fanns")) %}
+{
+  "version": 2,
+  "description": "Benchmark for filtered dense vector indexing and search on an ArXiv embeddings dataset",
+  "indices": [
+    {
+      "name": "arxiv-for-fanns",
+      "body": "index.json"
+    }
+  ],
+  "corpora": [
+    {
+      "name": "arxiv-for-fanns-large",
+      "base-url": "{{_base_url}}",
+      "documents": [
+        {
+          "source-file": "arxiv_for_fanns_large_001.zst",
+          "document-count": 500000,
+          "compressed-bytes": 19780856504,
+          "uncompressed-bytes": 44164643502
+        },
+        {
+          "source-file": "arxiv_for_fanns_large_002.zst",
+          "document-count": 500000,
+          "compressed-bytes": 19791349354,
+          "uncompressed-bytes": 44172566995
+        },
+        {
+          "source-file": "arxiv_for_fanns_large_003.zst",
+          "document-count": 500000,
+          "compressed-bytes": 19797248874,
+          "uncompressed-bytes": 44174554365
+        },
+        {
+          "source-file": "arxiv_for_fanns_large_004.zst",
+          "document-count": 500000,
+          "compressed-bytes": 19800501318,
+          "uncompressed-bytes": 44174955116
+        },
+        {
+          "source-file": "arxiv_for_fanns_large_005.zst",
+          "document-count": 500000,
+          "compressed-bytes": 19787609122,
+          "uncompressed-bytes": 44161920602
+        },
+        {
+          "source-file": "arxiv_for_fanns_large_006.zst",
+          "document-count": 235264,
+          "compressed-bytes": 9294506041,
+          "uncompressed-bytes": 20763578437
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {{ rally.collect(parts="operations/*.json") }}
+  ],
+  "challenges": [
+    {{ rally.collect(parts="challenges/*.json") }}
+  ]
+}

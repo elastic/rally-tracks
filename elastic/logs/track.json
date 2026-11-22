@@ -490,6 +490,14 @@
         "template": "./templates/composable/logs-dynamic-false.json",
         "template-path": "index_template"
     }
+    {% elif p_mapping == "flattened" %}
+    {
+        "name": "logs-flattened",
+        "index-pattern": "logs-*-*",
+        "delete-matching-indices": false,
+        "template": "./templates/composable/logs-dynamic-flattened.json",
+        "template-path": "index_template"
+    }
     {% endif %}
   ],
   "corpora": [

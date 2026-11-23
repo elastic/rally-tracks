@@ -304,22 +304,26 @@
 {
   "name": "boundaries-envelope-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(vertex_count), avg_out = AVG(ST_NPOINTS(env))"
+  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(vertex_count), avg_out = AVG(ST_NPOINTS(env))",
+  "request-timeout": 3600
 },
 {
   "name": "boundaries-simplify-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))",
+  "request-timeout": 3600
 },
 {
   "name": "boundaries-simplify-preserve-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFYPRESERVETOPOLOGY(shape, 0.01) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+  "query": "FROM boundaries | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFYPRESERVETOPOLOGY(shape, 0.01) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))",
+  "request-timeout": 3600
 },
 {
   "name": "boundaries-buffer-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries | WHERE vertex_count >= 200 AND vertex_count < 800 | EVAL buffered = ST_BUFFER(shape, 0.001) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))"
+  "query": "FROM boundaries | WHERE vertex_count >= 200 AND vertex_count < 800 | EVAL buffered = ST_BUFFER(shape, 0.001) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))",
+  "request-timeout": 3600
 },
 {
   "name": "boundaries-geohash-grid",
@@ -554,27 +558,32 @@
 {
   "name": "routes-envelope-esql",
   "operation-type": "esql",
-  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(vertex_count), avg_out = AVG(ST_NPOINTS(env))"
+  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(vertex_count), avg_out = AVG(ST_NPOINTS(env))",
+  "request-timeout": 3600
 },
 {
   "name": "routes-simplify-esql",
   "operation-type": "esql",
-  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))",
+  "request-timeout": 3600
 },
 {
   "name": "routes-simplify-preserve-esql",
   "operation-type": "esql",
-  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL simplified = ST_SIMPLIFYPRESERVETOPOLOGY(shape, 0.01) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+  "query": "FROM routes | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL simplified = ST_SIMPLIFYPRESERVETOPOLOGY(shape, 0.01) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))",
+  "request-timeout": 3600
 },
 {
   "name": "routes-simplify-long-esql",
   "operation-type": "esql",
-  "query": "FROM routes | WHERE vertex_count >= 5000 AND vertex_count < 30000 | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))"
+  "query": "FROM routes | WHERE vertex_count >= 5000 AND vertex_count < 30000 | EVAL simplified = ST_SIMPLIFY(shape, 0.01) | STATS count = COUNT(*), avg_in = AVG(vertex_count), avg_out = AVG(ST_NPOINTS(simplified))",
+  "request-timeout": 3600
 },
 {
   "name": "routes-buffer-esql",
   "operation-type": "esql",
-  "query": "FROM routes | WHERE vertex_count >= 50 AND vertex_count < 400 | EVAL buffered = ST_BUFFER(shape, 0.001) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))"
+  "query": "FROM routes | WHERE vertex_count >= 50 AND vertex_count < 400 | EVAL buffered = ST_BUFFER(shape, 0.001) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))",
+  "request-timeout": 3600
 },
 {
   "name": "routes-geohash-grid",
@@ -762,22 +771,26 @@
 {
   "name": "xy-boundaries-envelope-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(vertex_count), avg_out = AVG(ST_NPOINTS(env))"
+  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL env = ST_ENVELOPE(shape) | STATS count = COUNT(vertex_count), avg_out = AVG(ST_NPOINTS(env))",
+  "request-timeout": 3600
 },
 {
   "name": "xy-boundaries-simplify-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFY(shape, 1000) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFY(shape, 1000) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))",
+  "request-timeout": 3600
 },
 {
   "name": "xy-boundaries-simplify-preserve-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFYPRESERVETOPOLOGY(shape, 1000) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+  "query": "FROM boundaries-xy | WHERE vertex_count >= 1000 AND vertex_count < 8000 | EVAL simplified = ST_SIMPLIFYPRESERVETOPOLOGY(shape, 1000) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))",
+  "request-timeout": 3600
 },
 {
   "name": "xy-boundaries-buffer-esql",
   "operation-type": "esql",
-  "query": "FROM boundaries-xy | WHERE vertex_count >= 200 AND vertex_count < 800 | EVAL buffered = ST_BUFFER(shape, 100) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))"
+  "query": "FROM boundaries-xy | WHERE vertex_count >= 200 AND vertex_count < 800 | EVAL buffered = ST_BUFFER(shape, 100) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))",
+  "request-timeout": 3600
 },
 {
   "name": "xy-routes-intersects-count",
@@ -820,10 +833,12 @@
 {
   "name": "xy-routes-simplify-esql",
   "operation-type": "esql",
-  "query": "FROM routes-xy | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL simplified = ST_SIMPLIFY(shape, 1000) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))"
+  "query": "FROM routes-xy | WHERE vertex_count >= 500 AND vertex_count < 4000 | EVAL simplified = ST_SIMPLIFY(shape, 1000) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(simplified))",
+  "request-timeout": 3600
 },
 {
   "name": "xy-routes-buffer-esql",
   "operation-type": "esql",
-  "query": "FROM routes-xy | WHERE vertex_count >= 50 AND vertex_count < 400 | EVAL buffered = ST_BUFFER(shape, 100) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))"
+  "query": "FROM routes-xy | WHERE vertex_count >= 50 AND vertex_count < 400 | EVAL buffered = ST_BUFFER(shape, 100) | STATS count = COUNT(*), avg_out = AVG(ST_NPOINTS(buffered))",
+  "request-timeout": 3600
 }

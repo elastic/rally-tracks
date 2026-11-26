@@ -134,6 +134,92 @@
       "warmup-iterations": 10,
       "iterations": 50
     },
+{%- if p_include_string_skipper_queries %}
+    {
+      "operation": "string-sorted-term",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "sorted"]
+    },
+    {
+      "operation": "string-sorted-terms-disjoint",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "sorted"]
+    },
+    {
+      "operation": "string-sorted-range",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "sorted"]
+    },
+    {
+      "operation": "string-sorted-wildcard",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "sorted"]
+    },
+    {
+      "operation": "string-dict-term",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "clustered-dict"]
+    },
+    {
+      "operation": "string-dict-terms-contiguous",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "clustered-dict"]
+    },
+    {
+      "operation": "string-dict-terms-disjoint",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "clustered-dict"]
+    },
+    {
+      "operation": "string-dict-range",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "clustered-dict"]
+    },
+    {
+      "operation": "string-plain-term",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "clustered-plain"]
+    },
+    {
+      "operation": "string-plain-terms-disjoint",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "clustered-plain"]
+    },
+    {
+      "operation": "string-plain-contains-long",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "plain-decode"]
+    },
+    {
+      "operation": "string-unclustered-term",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "control"]
+    },
+{%- endif %}
     {
       "name": "logging-queries",
       "parallel": {

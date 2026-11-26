@@ -836,4 +836,61 @@
           }
         ]
       }
+    },
+    {
+      "name": "query-string-absent-term-leading-wildcard",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "filter": [
+              { "term": { "aws.cloudwatch.log_stream": "mmmmmmmm" } },
+              {
+                "query_string": {
+                  "fields": ["message"],
+                  "query": "*zqxwv*"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "query-string-present-term-leading-wildcard",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "filter": [
+              { "term": { "aws.cloudwatch.log_stream": "indigodagger" } },
+              {
+                "query_string": {
+                  "fields": ["message"],
+                  "query": "*zqxwv*"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "query-string-absent-single-value-terms-leading-wildcard",
+      "operation-type": "search",
+      "body": {
+        "query": {
+          "bool": {
+            "filter": [
+              { "terms": { "aws.cloudwatch.log_stream": ["mmmmmmmm"] } },
+              {
+                "query_string": {
+                  "fields": ["message"],
+                  "query": "*zqxwv*"
+                }
+              }
+            ]
+          }
+        }
+      }
     }

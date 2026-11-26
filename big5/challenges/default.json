@@ -142,6 +142,21 @@
       "iterations": {{ iterations | default(1000) }}
     },
     {
+      "operation": "query-string-absent-term-leading-wildcard",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "query-string-present-term-leading-wildcard",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
+      "operation": "query-string-absent-single-value-terms-leading-wildcard",
+      "warmup-iterations": {{ warmup_iterations | default(100) }},
+      "iterations": {{ iterations | default(1000) }}
+    },
+    {
       "operation": "sort_keyword_can_match_shortcut",
       "warmup-iterations": {{ warmup_iterations | default(100) }},
       "iterations": {{ iterations | default(1000) }}

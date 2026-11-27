@@ -134,7 +134,7 @@
       "warmup-iterations": 10,
       "iterations": 50
     },
-{%- if p_include_string_skipper_queries %}
+{%- if p_include_string_skipper_queries and p_mapping == "mapped" %}
     {
       "operation": "string-sorted-term",
       "clients": 1,

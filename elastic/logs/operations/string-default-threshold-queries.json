@@ -1,0 +1,63 @@
+{
+  "name": "string-sorted-range-default-threshold",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "range": {
+        "host.name": {
+          "gte": "elasticsearch-ci-immutable-centos-7-1599126327061618290",
+          "lt": "elasticsearch-ci-immutable-sles-12-1599145054013723748"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "string-dict-terms-disjoint-default-threshold",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "terms": {
+        "host.hostname": [
+          "packer-5f44b003-0151-40c1-c29d-117b2a749e5b",
+          "packer-5f44b03a-b97f-35cd-6a0f-b4e615f5e7f7",
+          "packer-5f46fded-0d67-7ec5-407f-5b2ea3793bb7"
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "string-plain-terms-disjoint-default-threshold",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-nginx.access-default",
+  "request-params": {
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "terms": {
+        "url.query": [
+          "dateRangeStart=now-15m&dateRangeEnd=now",
+          "dateRangeStart=now-15m&dateRangeEnd=now&&&&&search=",
+          "dateRangeStart=now-15m&dateRangeEnd=now&pageSize=10&statusFilter=",
+          "limit=10000"
+        ]
+      }
+    }
+  }
+}

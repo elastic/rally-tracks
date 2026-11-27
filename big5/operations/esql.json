@@ -168,4 +168,25 @@
       "name": "esql_query_string_on_message_filtered_sorted_num",
       "operation-type": "esql",
       "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-03T00:00:00.000Z\" AND @timestamp < \"2023-01-03T10:00:00.000Z\" AND QSTR(\"message: monkey jackal bear\") | SORT @timestamp ASC | LIMIT 100"
+    },
+
+    {
+      "name": "esql_wide_rows_time_window",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-02T00:00:00.000Z\" AND @timestamp < \"2023-01-02T02:00:00.000Z\" | STATS agent_ephemeral_id = MAX(agent.ephemeral_id), agent_id = MAX(agent.id), agent_name = MAX(agent.name), agent_type = MAX(agent.type), agent_version = MAX(agent.version), aws_cloudwatch_ingestion_time = MAX(aws.cloudwatch.ingestion_time), aws_cloudwatch_log_group = MAX(aws.cloudwatch.log_group), aws_cloudwatch_log_stream = MAX(aws.cloudwatch.log_stream), cloud_region = MAX(cloud.region), ecs_version = MAX(ecs.version), event_dataset = MAX(event.dataset), event_id = MAX(event.id), input_type = MAX(input.type), log_file_path = MAX(log.file.path), meta_file = MAX(meta.file) BY process.name | LIMIT 100"
+    },
+    {
+      "name": "esql_wide_rows_wildcard",
+      "operation-type": "esql",
+      "query": "FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-02T00:00:00.000Z\" AND @timestamp < \"2023-01-02T02:00:00.000Z\" AND process.name LIKE \"ker*\" | STATS agent_ephemeral_id = MAX(agent.ephemeral_id), agent_id = MAX(agent.id), agent_name = MAX(agent.name), agent_type = MAX(agent.type), agent_version = MAX(agent.version), aws_cloudwatch_ingestion_time = MAX(aws.cloudwatch.ingestion_time), aws_cloudwatch_log_group = MAX(aws.cloudwatch.log_group), aws_cloudwatch_log_stream = MAX(aws.cloudwatch.log_stream), cloud_region = MAX(cloud.region), ecs_version = MAX(ecs.version), event_dataset = MAX(event.dataset), event_id = MAX(event.id), input_type = MAX(input.type), log_file_path = MAX(log.file.path), meta_file = MAX(meta.file) BY process.name | LIMIT 100"
+    },
+    {
+      "name": "esql_wide_rows_time_window_doc_partitioning",
+      "operation-type": "esql",
+      "query": "SET doc_partitioning_for_wide_rows = true; FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-02T00:00:00.000Z\" AND @timestamp < \"2023-01-02T02:00:00.000Z\" | STATS agent_ephemeral_id = MAX(agent.ephemeral_id), agent_id = MAX(agent.id), agent_name = MAX(agent.name), agent_type = MAX(agent.type), agent_version = MAX(agent.version), aws_cloudwatch_ingestion_time = MAX(aws.cloudwatch.ingestion_time), aws_cloudwatch_log_group = MAX(aws.cloudwatch.log_group), aws_cloudwatch_log_stream = MAX(aws.cloudwatch.log_stream), cloud_region = MAX(cloud.region), ecs_version = MAX(ecs.version), event_dataset = MAX(event.dataset), event_id = MAX(event.id), input_type = MAX(input.type), log_file_path = MAX(log.file.path), meta_file = MAX(meta.file) BY process.name | LIMIT 100"
+    },
+    {
+      "name": "esql_wide_rows_wildcard_doc_partitioning",
+      "operation-type": "esql",
+      "query": "SET doc_partitioning_for_wide_rows = true; FROM logs-benchmark-dev | WHERE @timestamp >= \"2023-01-02T00:00:00.000Z\" AND @timestamp < \"2023-01-02T02:00:00.000Z\" AND process.name LIKE \"ker*\" | STATS agent_ephemeral_id = MAX(agent.ephemeral_id), agent_id = MAX(agent.id), agent_name = MAX(agent.name), agent_type = MAX(agent.type), agent_version = MAX(agent.version), aws_cloudwatch_ingestion_time = MAX(aws.cloudwatch.ingestion_time), aws_cloudwatch_log_group = MAX(aws.cloudwatch.log_group), aws_cloudwatch_log_stream = MAX(aws.cloudwatch.log_stream), cloud_region = MAX(cloud.region), ecs_version = MAX(ecs.version), event_dataset = MAX(event.dataset), event_id = MAX(event.id), input_type = MAX(input.type), log_file_path = MAX(log.file.path), meta_file = MAX(meta.file) BY process.name | LIMIT 100"
     }

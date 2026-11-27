@@ -219,6 +219,27 @@
       "iterations": 50,
       "tags": ["string-skipper", "control"]
     },
+    {
+      "operation": "string-sorted-range-default-threshold",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "default-threshold", "sorted"]
+    },
+    {
+      "operation": "string-dict-terms-disjoint-default-threshold",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "default-threshold", "dictionary"]
+    },
+    {
+      "operation": "string-plain-terms-disjoint-default-threshold",
+      "clients": 1,
+      "warmup-iterations": 10,
+      "iterations": 50,
+      "tags": ["string-skipper", "default-threshold", "plain"]
+    },
 {%- endif %}
     {
       "name": "logging-queries",

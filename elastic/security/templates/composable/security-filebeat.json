@@ -27943,7 +27943,7 @@
                               "type" : "date"
                             },
                             "sections" : {
-                              "type" : "nested",
+                              "type" : "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                               "properties" : {
                                 "chi2" : {
                                   "type" : "long"
@@ -27983,7 +27983,7 @@
                               "type" : "keyword"
                             },
                             "segments" : {
-                              "type" : "nested",
+                              "type" : "{% if index_mode | default('') == 'logsdb_columnar' %}object{% else %}nested{% endif %}",
                               "properties" : {
                                 "type" : {
                                   "ignore_above" : 1024,

@@ -1,6 +1,7 @@
 {
   "template" : {
     "mappings" : {
+      {%- if index_mode | default('') != 'logsdb_columnar' %}
       "runtime": {
         "rally.doc_size": {
           "type": "long"
@@ -9,6 +10,7 @@
           "type": "long"
         }
       },
+      {%- endif %}
       "properties" : {
         "event": {
           "properties": {

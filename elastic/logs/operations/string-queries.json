@@ -1,0 +1,244 @@
+{
+  "name": "string-sorted-term",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "term": {
+        "host.name": "localhost"
+      }
+    }
+  }
+},
+{
+  "name": "string-sorted-terms-disjoint",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "terms": {
+        "host.name": [
+          "kibana-ci-immutable-flyweight-1599036850555497590",
+          "kibana-ci-immutable-flyweight-1599044213366980923",
+          "kibana-ci-immutable-flyweight-1599071606591556709",
+          "localhost"
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "string-sorted-range",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "range": {
+        "host.name": {
+          "gte": "elasticsearch-ci-immutable-centos-7-1599126327061618290",
+          "lt": "elasticsearch-ci-immutable-sles-12-1599145054013723748"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "string-sorted-wildcard",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "wildcard": {
+        "host.name": {
+          "value": "kibana-ci-immutable-*-tests-xl-*"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "string-dict-term",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "term": {
+        "host.hostname": "packer-5f46fded-0d67-7ec5-407f-5b2ea3793bb7"
+      }
+    }
+  }
+},
+{
+  "name": "string-dict-terms-contiguous",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "terms": {
+        "host.hostname": [
+          "packer-5f44b028-76c6-0e2b-d5d5-9188784a3ed9",
+          "packer-5f44b03a-b97f-35cd-6a0f-b4e615f5e7f7",
+          "packer-5f44b03c-fe26-ad69-d52f-b19fc57ab169"
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "string-dict-terms-disjoint",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "terms": {
+        "host.hostname": [
+          "packer-5f44b003-0151-40c1-c29d-117b2a749e5b",
+          "packer-5f44b03a-b97f-35cd-6a0f-b4e615f5e7f7",
+          "packer-5f46fded-0d67-7ec5-407f-5b2ea3793bb7"
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "string-dict-range",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-system.syslog-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "range": {
+        "host.hostname": {
+          "gte": "packer-5f44b003",
+          "lt": "packer-5f46fdef"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "string-plain-term",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-nginx.access-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "term": {
+        "url.query": "limit=10000"
+      }
+    }
+  }
+},
+{
+  "name": "string-plain-terms-disjoint",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-nginx.access-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "terms": {
+        "url.query": [
+          "dateRangeStart=now-15m&dateRangeEnd=now",
+          "dateRangeStart=now-15m&dateRangeEnd=now&&&&&search=",
+          "dateRangeStart=now-15m&dateRangeEnd=now&pageSize=10&statusFilter=",
+          "limit=10000"
+        ]
+      }
+    }
+  }
+},
+{
+  "name": "string-plain-contains-long",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-postgresql.log-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "wildcard": {
+        "postgresql.log.query": {
+          "value": "*FROM products*"
+        }
+      }
+    }
+  }
+},
+{
+  "name": "string-unclustered-term",
+  "operation-type": "search",
+  "clear-blob-cache": {{ p_clear_blob_cache | tojson }},
+  "index": "logs-nginx.access-default",
+  "request-params": {
+    "track_total_hits": "true",
+    "request_cache": "false"
+  },
+  "body": {
+    "size": 0,
+    "query": {
+      "term": {
+        "user.name": "mcarter"
+      }
+    }
+  }
+}

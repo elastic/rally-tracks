@@ -20,7 +20,9 @@
         }
       },
       "mappings": {
+        {%- if index_mode | default('') != 'logsdb_columnar' %}
         "dynamic": false,
+        {%- endif %}
         "properties": {
           "registry": {
             "properties": {
